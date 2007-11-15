@@ -4,17 +4,24 @@
 
 package de.dini.oanetzwerk;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.InvalidPropertiesFormatException;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.naming.StringRefAddr;
 import javax.sql.DataSource;
+
+import com.sybase.jdbc3.jdbc.SybDataSource;
 
 import junit.framework.Assert;
 
@@ -50,8 +57,9 @@ public class dbAccess {
 				
 		System.setProperty (Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 		System.setProperty (Context.PROVIDER_URL, "file:///tmp");
+		Properties prop = new Properties ( );
 		DataSource ds = null;
-		InitialContext ic = null;
+//		InitialContext ic = null;
 		InitialContext ic2 = null;
 		
 		@SuppressWarnings("unused")
@@ -59,34 +67,69 @@ public class dbAccess {
 		
 		try {
 			
-			ic = new InitialContext ( );
+			prop.loadFromXML (new FileInputStream ("/home/mkuehn/workspace/oa-netzwerk-develop/dbprop.xml"));
 			
-			Reference cpdsRef = new Reference ("org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS",
+			SybDataSource source = new SybDataSource ( );
+			source.setDataSourceName (prop.getProperty ("dataSourceName"));
+			source.setServerName ("themis.rz.hu-berlin.de");
+			source.setPortNumber (2025);
+			source.setDatabaseName ("oanetztest");
+			source.setUser (prop.getProperty ("user"));
+			source.setPassword (prop.getProperty ("password"));
+			new InitialContext ( ).rebind (prop.getProperty ("dataSourceName"), source);
+			
+/*			Reference cpdsRef = new Reference ("org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS",
 					"org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS", null);
-			cpdsRef.add (new StringRefAddr ("driver", "com.sybase.jdbc2.jdbc.SybDriver"));
+			cpdsRef.add (new StringRefAddr ("driver", prop.getProperty ("driver")));
+			cpdsRef.add (new StringRefAddr ("url", prop.getProperty ("url")));
+			cpdsRef.add (new StringRefAddr ("user", prop.getProperty ("user")));
+			cpdsRef.add (new StringRefAddr ("password", prop.getProperty ("password")));
+*/
+/*			cpdsRef.add (new StringRefAddr ("driver", "com.sybase.jdbc2.jdbc.SybDriver"));
 			cpdsRef.add (new StringRefAddr ("url", "jdbc:sybase:Tds:host:1234/database"));
 			cpdsRef.add (new StringRefAddr ("user", "foo"));
-			cpdsRef.add (new StringRefAddr ("password", "bar"));
-			ic.rebind ("oanetzwerk", cpdsRef);
+			cpdsRef.add (new StringRefAddr ("password", "bar"));*/
+			//ic.rebind (prop.getProperty ("dataSourceName"), cpdsRef);
 			
-			Reference ref = new Reference ("org.apache.commons.dbcp.datasources.PerUserPoolDataSource",
+/*			Reference ref = new Reference ("org.apache.commons.dbcp.datasources.PerUserPoolDataSource",
 					"org.apache.commons.dbcp.datasources.PerUserPoolDataSourceFactory", null);
-			ref.add (new StringRefAddr ("dataSourceName", "oanetzwerk"));
+			
+			ref.add (new StringRefAddr ("dataSourceName", prop.getProperty ("dataSourceName")));
+			ref.add (new StringRefAddr ("defaultMaxActive", prop.getProperty ("defaultMaxActive")));
+			ref.add (new StringRefAddr ("defaultMaxIdle", prop.getProperty ("defaultMaxIdle")));
+			ref.add (new StringRefAddr ("defaultMaxWait", prop.getProperty ("defaultMaxWait")));
+*/			
+/*			ref.add (new StringRefAddr ("dataSourceName", "oanetzwerk"));
 			ref.add (new StringRefAddr ("defaultMaxActive", "100"));
 			ref.add (new StringRefAddr ("defaultMaxIdle", "30"));
 			ref.add (new StringRefAddr ("defaultMaxWait", "10000"));
-			ic.rebind ("oanetzwerk", ref);
+*/
+			//ic.rebind (prop.getProperty ("dataSourceName"), ref);
 			
 			ic2 = new InitialContext ( );
 			
-			ds = (DataSource) ic2.lookup ("oanetzwerk");
+			ds = (DataSource) ic2.lookup (prop.getProperty ("dataSourceName"));
 			Assert.assertNotNull (ds);
 			conn = ds.getConnection ( );
 			
+			BufferedReader file = new BufferedReader (new FileReader ("/home/mkuehn/workspace/oa-netzwerk-develop/db-schema/oan-db-model.sql"));
+			StringBuffer sql = new StringBuffer (""); 
+			
+			for (String line; (line = file.readLine ( )) != null;) {
+				
+				sql.append (line);
+			}
+			
+			
+			System.out.println (sql.toString ( ));
+			
+			stmt = conn.createStatement ( );
 			conn.setAutoCommit (false);
-			stmt.addBatch ("CREATE TABLE dbo.AggregatorMetadata");
+			stmt.addBatch (sql.toString ( ));
 			updateCounts = stmt.executeBatch ( );
 			conn.setAutoCommit (true);
+			
+			file.close ( );
 			
 /*			stmt.executeUpdate ("DROP TABLE dbo.AggregatorMetadata");
 			stmt.executeUpdate ("CREATE TABLE dbo.AggregatorMetadata (" +
@@ -303,6 +346,15 @@ public class dbAccess {
 					sqlex.printStackTrace ( );
 				}
 			}
-		}*/
+		}*/ catch (InvalidPropertiesFormatException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		} catch (FileNotFoundException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		} catch (IOException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
 	}
 }
