@@ -1,28 +1,3 @@
-DROP TABLE dbo.RawData;
-DROP TABLE dbo.Identifier;
-DROP TABLE dbo.Format;
-DROP TABLE dbo.Publisher;
-DROP TABLE dbo.Description;
-DROP TABLE dbo.DateValues;
-DROP TABLE dbo.Other_Classification;
-DROP TABLE dbo.DINI_Set_Classification;
-DROP TABLE dbo.DNB_Classification;
-DROP TABLE dbo.DCC_Classification;
-DROP TABLE dbo.Object2Keywords;
-DROP TABLE dbo.Object2Editor;
-DROP TABLE dbo.Object2Contributor;
-DROP TABLE dbo.Object2Author;
-DROP TABLE dbo.Titles;
-DROP TABLE dbo.Object;
-DROP TABLE dbo.Repositories;
-DROP TABLE dbo.Other_Categories;
-DROP TABLE dbo.DINI_Set_Categories;
-DROP TABLE dbo.DNB_Categories;
-DROP TABLE dbo.DCC_Categories;
-DROP TABLE dbo.Keywords;
-DROP TABLE dbo.Person;
-DROP TABLE dbo.AggregatorMetadata;
-
 CREATE TABLE dbo.AggregatorMetadata (
        object_id INTEGER NOT NULL
      , harvested datetime NOT NULL
