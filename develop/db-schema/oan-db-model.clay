@@ -1,62 +1,62 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <clay-model clay-version="1.4.0">
 <database-model alias="" author="" begin-script="" end-script="" name="oan-db-model" remarks="" sql-dialect-id="jp.azzurri.clay.dialect.MySQL_5_0_Dialect" uid="4f5403:1161f7e7d4d:-8000" version="1.0">
-<database-model-description/>
+<database-model-description></database-model-description>
 <schema-list>
 <schema alias="" name="dbo" remarks="" uid="4f5403:1161f7e7d4d:-7ffd">
-<schema-description/>
+<schema-description></schema-description>
 <domain-list/>
 <table-list>
 <table alias="Object" name="Object" remarks="" uid="4f5403:1161f7e7d4d:-7fff">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="132" width="217" x="312" y="174"/>
 <column-list>
 <column alias="Object Id" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7ffa">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="repository_id" remarks="" uid="4f5403:1161f7e7d4d:-7feb">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="harvested" remarks="" uid="4f5403:1161f7e7d4d:-7c69">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
 <variant type-name-pattern="DATETIME"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="repository_datestamp" remarks="" uid="4f5403:1161f7e7d4d:-75ea">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
 <variant type-name-pattern="DATETIME"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="repository_identifier" remarks="" uid="4f5403:1161f7e7d4d:-75e7">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_OBJECT" remarks="" uid="4f5403:1161f7e7d4d:-7ffe">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Object_1" on-delete="" on-update="" referenced-key="PK_REPOSITORIES" referenced-table="Repositories" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="1..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7f9f">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
 <foreign-key-column column-name="repository_id" referenced-key-column-name="repository_id"/>
 </foreign-key>
 <foreign-key alias="" name="FK_Object_2" on-delete="" on-update="" referenced-key="PK_AGGREGATORMETADATA" referenced-table="AggregatorMetadata" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="1" source-relationship-type="" target-entity-role="" target-multiplicity="1..*" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7c7c">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -66,18 +66,18 @@
 <index-list/>
 </table>
 <table alias="Repositories" name="Repositories" remarks="" uid="4f5403:1161f7e7d4d:-7ff4">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="97" y="39"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="repository_id" remarks="" uid="4f5403:1161f7e7d4d:-7fee">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_REPOSITORIES" remarks="" uid="4f5403:1161f7e7d4d:-7ff3">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="repository_id"/>
 </primary-key>
 <unique-key-list/>
@@ -85,40 +85,37 @@
 <index-list/>
 </table>
 <table alias="Raw Data" name="RawData" remarks="" uid="4f5403:1161f7e7d4d:-7f6a">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="36" y="94"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7f62">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="collected" remarks="" uid="4f5403:1161f7e7d4d:-7f61">
-<column-description/>
-<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="TIMESTAMP" selected-variant-pattern="TIMESTAMP">
-<variant type-name-pattern="TIMESTAMP"/>
-<variant type-name-pattern="TIMESTAMP WITH TIME ZONE"/>
-<variant precision-max="9" precision-min="1" precision-variable="%p" type-name-pattern="TIMESTAMP(%p)"/>
-<variant precision-max="9" precision-min="1" precision-variable="%p" type-name-pattern="TIMESTAMP(%p) WITH TIME ZONE"/>
+<column-description></column-description>
+<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
+<variant type-name-pattern="DATETIME"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="data" remarks="" uid="4f5403:1161f7e7d4d:-7f60">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="-1" literal-prefix="'" literal-suffix="'" name="TEXT" selected-variant-pattern="TEXT">
 <variant type-name-pattern="TEXT"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_RAWDATA" remarks="" uid="4f5403:1161f7e7d4d:-7f69">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="collected"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_RawData_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="1..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7f42">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -128,27 +125,24 @@
 <index-list/>
 </table>
 <table alias="" name="AggregatorMetadata" remarks="" uid="4f5403:1161f7e7d4d:-7f37">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="585" y="31"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7f33">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="harvested" remarks="" uid="4f5403:1161f7e7d4d:-7f32">
-<column-description/>
-<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="TIMESTAMP" selected-variant-pattern="TIMESTAMP">
-<variant type-name-pattern="TIMESTAMP"/>
-<variant type-name-pattern="TIMESTAMP WITH TIME ZONE"/>
-<variant precision-max="9" precision-min="1" precision-variable="%p" type-name-pattern="TIMESTAMP(%p)"/>
-<variant precision-max="9" precision-min="1" precision-variable="%p" type-name-pattern="TIMESTAMP(%p) WITH TIME ZONE"/>
+<column-description></column-description>
+<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
+<variant type-name-pattern="DATETIME"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_AGGREGATORMETADATA" remarks="" uid="4f5403:1161f7e7d4d:-7f36">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 </primary-key>
 <unique-key-list/>
@@ -156,43 +150,43 @@
 <index-list/>
 </table>
 <table alias="Titles" name="Titles" remarks="" uid="4f5403:1161f7e7d4d:-7ec7">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="795" y="59"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7ec1">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="title" remarks="" uid="4f5403:1161f7e7d4d:-7ec0">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="50" decimal-digits="0" default-value="" mandatory="true" name="qualifier" remarks="Main title, sub title, etc. number" uid="4f5403:1161f7e7d4d:-7ebd">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="3" decimal-digits="0" default-value="" mandatory="false" name="lang" remarks="" uid="edd9de:11638587e4b:-7f79">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_TITLES" remarks="" uid="4f5403:1161f7e7d4d:-7ec6">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="qualifier"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Titles_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7e6b">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -202,54 +196,54 @@
 <index-list/>
 </table>
 <table alias="" name="Person" remarks="" uid="4f5403:1161f7e7d4d:-7e4c">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="16" y="526"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="person_id" remarks="" uid="4f5403:1161f7e7d4d:-7e48">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="number" remarks="" uid="4f5403:1161f7e7d4d:-7e47">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="firstname" remarks="" uid="4f5403:1161f7e7d4d:-7e46">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="lastname" remarks="" uid="4f5403:1161f7e7d4d:-7e45">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="title" remarks="" uid="4f5403:1161f7e7d4d:-7e44">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="institution" remarks="" uid="4f5403:1161f7e7d4d:-7e43">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="email" remarks="" uid="4f5403:1161f7e7d4d:-7e42">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_PERSON" remarks="" uid="4f5403:1161f7e7d4d:-7e4b">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="person_id"/>
 </primary-key>
 <unique-key-list/>
@@ -257,31 +251,31 @@
 <index-list/>
 </table>
 <table alias="" name="Object2Author" remarks="" uid="4f5403:1161f7e7d4d:-7e41">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="12" y="232"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7e3d">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="author_id" remarks="" uid="4f5403:1161f7e7d4d:-7e3c">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_OBJECT2AUTHOR" remarks="" uid="4f5403:1161f7e7d4d:-7e40">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="author_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Object2Author_2" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7da7">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-source-terminal x="93" y="29"/>
 <fk-fig-bendpoint-list/>
@@ -289,7 +283,7 @@
 <foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
 </foreign-key>
 <foreign-key alias="" name="FK_Object2Author_3" on-delete="" on-update="" referenced-key="PK_PERSON" referenced-table="Person" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7d66">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -299,38 +293,38 @@
 <index-list/>
 </table>
 <table alias="" name="Object2Contributor" remarks="" uid="4f5403:1161f7e7d4d:-7d40">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="50" width="120" x="279" y="507"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7d3c">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="contributor_id" remarks="" uid="4f5403:1161f7e7d4d:-7ce2">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_OBJECT2CONTRIBUTOR" remarks="" uid="4f5403:1161f7e7d4d:-7d3f">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="contributor_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Object2Contributor_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7d2f">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
 <foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
 </foreign-key>
 <foreign-key alias="" name="FK_Object2Contributor_2" on-delete="" on-update="" referenced-key="PK_PERSON" referenced-table="Person" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7b1e">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -340,38 +334,38 @@
 <index-list/>
 </table>
 <table alias="" name="Object2Editor" remarks="" uid="4f5403:1161f7e7d4d:-7c68">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="50" width="120" x="174" y="320"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7c66">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="editor_id" remarks="" uid="4f5403:1161f7e7d4d:-7c65">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_OBJECT2EDITOR" remarks="" uid="4f5403:1161f7e7d4d:-7c64">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="editor_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Object2Editor_2" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7b85">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
 <foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
 </foreign-key>
 <foreign-key alias="" name="FK_Object2Editor_1" on-delete="" on-update="" referenced-key="PK_PERSON" referenced-table="Person" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7bc8">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -381,23 +375,23 @@
 <index-list/>
 </table>
 <table alias="" name="Keywords" remarks="" uid="4f5403:1161f7e7d4d:-7b08">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="671" y="456"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="keyword_id" remarks="" uid="4f5403:1161f7e7d4d:-7b04">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="keyword" remarks="" uid="4f5403:1161f7e7d4d:-7b03">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="3" decimal-digits="0" default-value="" mandatory="false" name="lang" remarks="" uid="4f5403:1161f7e7d4d:-7b02">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="1" literal-prefix="'" literal-suffix="'" name="CHAR" selected-variant-pattern="CHAR(%n)">
 <variant precision-max="2000" precision-min="1" precision-variable="%n" type-name-pattern="CHAR(%n)"/>
 <variant type-name-pattern="CHAR"/>
@@ -405,7 +399,7 @@
 </column>
 </column-list>
 <primary-key alias="" name="PK_KEYWORDS" remarks="" uid="4f5403:1161f7e7d4d:-7b07">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="keyword_id"/>
 </primary-key>
 <unique-key-list/>
@@ -413,38 +407,38 @@
 <index-list/>
 </table>
 <table alias="" name="Object2Keywords" remarks="" uid="4f5403:1161f7e7d4d:-7b01">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="684" y="313"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7afd">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="keyword_id" remarks="" uid="4f5403:1161f7e7d4d:-7afc">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_OBJECT2KEYWORDS" remarks="" uid="4f5403:1161f7e7d4d:-7b00">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="keyword_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Object2Keywords_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-78b0">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
 <foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
 </foreign-key>
 <foreign-key alias="" name="FK_Object2Keywords_2" on-delete="" on-update="" referenced-key="PK_KEYWORDS" referenced-table="Keywords" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7880">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -454,25 +448,25 @@
 <index-list/>
 </table>
 <table alias="" name="DCC_Categories" remarks="" uid="4f5403:1161f7e7d4d:-783a">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="305" y="717"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DCC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-7836">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="1" literal-prefix="'" literal-suffix="'" name="CHAR" selected-variant-pattern="CHAR(%n)">
 <variant precision-max="2000" precision-min="1" precision-variable="%n" type-name-pattern="CHAR(%n)"/>
 <variant type-name-pattern="CHAR"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="name" remarks="" uid="4f5403:1161f7e7d4d:-7835">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_DCC_CATEGORIES" remarks="" uid="4f5403:1161f7e7d4d:-7839">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="DCC_Categorie"/>
 </primary-key>
 <unique-key-list/>
@@ -480,17 +474,17 @@
 <index-list/>
 </table>
 <table alias="" name="DCC_Classification" remarks="" uid="4f5403:1161f7e7d4d:-7834">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="343" y="611"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7830">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DCC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-782f">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="1" literal-prefix="'" literal-suffix="'" name="CHAR" selected-variant-pattern="CHAR(%n)">
 <variant precision-max="2000" precision-min="1" precision-variable="%n" type-name-pattern="CHAR(%n)"/>
 <variant type-name-pattern="CHAR"/>
@@ -498,21 +492,21 @@
 </column>
 </column-list>
 <primary-key alias="" name="PK_DCC_CLASSIFICATION" remarks="" uid="4f5403:1161f7e7d4d:-7833">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="DCC_Categorie"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_DCC_Classification_1" on-delete="" on-update="" referenced-key="PK_DCC_CATEGORIES" referenced-table="DCC_Categories" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-780f">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
 <foreign-key-column column-name="DCC_Categorie" referenced-key-column-name="DCC_Categorie"/>
 </foreign-key>
 <foreign-key alias="" name="FK_DCC_Classification_2" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-77cb">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -522,24 +516,24 @@
 <index-list/>
 </table>
 <table alias="" name="DNB_Categories" remarks="" uid="4f5403:1161f7e7d4d:-77b7">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="494" y="717"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DNB_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-77b5">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="name" remarks="" uid="4f5403:1161f7e7d4d:-77b4">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_DNB_CATEGORIES" remarks="" uid="4f5403:1161f7e7d4d:-77b3">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="DNB_Categorie"/>
 </primary-key>
 <unique-key-list/>
@@ -547,38 +541,38 @@
 <index-list/>
 </table>
 <table alias="" name="DNB_Classification" remarks="" uid="4f5403:1161f7e7d4d:-77b2">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="511" y="591"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-77b0">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DNB_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-77af">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_DNB_CLASSIFICATION" remarks="" uid="4f5403:1161f7e7d4d:-77ae">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="DNB_Categorie"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_DNB_Classification_1" on-delete="" on-update="" referenced-key="PK_DNB_CATEGORIES" referenced-table="DNB_Categories" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7793">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
 <foreign-key-column column-name="DNB_Categorie" referenced-key-column-name="DNB_Categorie"/>
 </foreign-key>
 <foreign-key alias="" name="FK_DNB_Classification_2" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7760">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -588,38 +582,38 @@
 <index-list/>
 </table>
 <table alias="" name="DINI_Set_Classification" remarks="" uid="4f5403:1161f7e7d4d:-76ab">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="606" y="533"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-76a7">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DINI_set_id" remarks="" uid="4f5403:1161f7e7d4d:-76a6">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_DINI_SET_CLASSIFICATION" remarks="" uid="4f5403:1161f7e7d4d:-76aa">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="DINI_set_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_DINI_Set_Classification_1" on-delete="" on-update="" referenced-key="PK_DINI_SET_CATEGORIES" referenced-table="DINI_Set_Categories" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7688">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
 <foreign-key-column column-name="DINI_set_id" referenced-key-column-name="DINI_set_id"/>
 </foreign-key>
 <foreign-key alias="" name="FK_DINI_Set_Classification_2" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-765e">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -629,24 +623,24 @@
 <index-list/>
 </table>
 <table alias="" name="DINI_Set_Categories" remarks="" uid="4f5403:1161f7e7d4d:-76a5">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="703" y="693"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DINI_set_id" remarks="" uid="4f5403:1161f7e7d4d:-76a1">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="name" remarks="" uid="4f5403:1161f7e7d4d:-76a0">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_DINI_SET_CATEGORIES" remarks="" uid="4f5403:1161f7e7d4d:-76a4">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="DINI_set_id"/>
 </primary-key>
 <unique-key-list/>
@@ -654,38 +648,38 @@
 <index-list/>
 </table>
 <table alias="" name="Other_Classification" remarks="" uid="4f5403:1161f7e7d4d:-75e6">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="801" y="229"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-75e4">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="other_id" remarks="" uid="4f5403:1161f7e7d4d:-75e3">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_OTHER_CLASSIFICATION" remarks="" uid="4f5403:1161f7e7d4d:-75e2">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="other_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Other_Classification_1" on-delete="" on-update="" referenced-key="PK_OTHER_CATEGORIES" referenced-table="Other_Categories" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-75b2">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
 <foreign-key-column column-name="other_id" referenced-key-column-name="other_id"/>
 </foreign-key>
 <foreign-key alias="" name="FK_Other_Classification_2" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-757a">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -695,24 +689,24 @@
 <index-list/>
 </table>
 <table alias="" name="Other_Categories" remarks="" uid="4f5403:1161f7e7d4d:-75e1">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="776" y="555"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="other_id" remarks="" uid="4f5403:1161f7e7d4d:-75df">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="name" remarks="" uid="4f5403:1161f7e7d4d:-75de">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_OTHER_CATEGORIES" remarks="" uid="4f5403:1161f7e7d4d:-75dd">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="other_id"/>
 </primary-key>
 <unique-key-list/>
@@ -720,37 +714,37 @@
 <index-list/>
 </table>
 <table alias="" name="DateValues" remarks="" uid="edd9de:11638587e4b:-7fda">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="503" y="-92"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7fd6">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="number" remarks="" uid="edd9de:11638587e4b:-7fd4">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="value" remarks="" uid="edd9de:11638587e4b:-7fd5">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
 <variant type-name-pattern="DATETIME"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_DATEVALUES" remarks="" uid="edd9de:11638587e4b:-7fd9">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="number"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_DateValues_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="edd9de:11638587e4b:-7fc6">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -760,43 +754,43 @@
 <index-list/>
 </table>
 <table alias="" name="Description" remarks="" uid="edd9de:11638587e4b:-7f78">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="362" y="-65"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7f74">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="number" remarks="" uid="edd9de:11638587e4b:-7f72">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="abstract" remarks="" uid="edd9de:11638587e4b:-7f73">
-<column-description/>
-<data-type jdbc-type="-1" literal-prefix="'" literal-suffix="'" name="TEXT" selected-variant-pattern="TEXT">
-<variant type-name-pattern="TEXT"/>
+<column-description></column-description>
+<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
+<variant type-name-pattern="DATETIME"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="3" decimal-digits="0" default-value="" mandatory="false" name="lang" remarks="" uid="edd9de:11638587e4b:-7f71">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_DESCRIPTION" remarks="" uid="edd9de:11638587e4b:-7f77">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="number"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Description_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="edd9de:11638587e4b:-7f5c">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -806,37 +800,37 @@
 <index-list/>
 </table>
 <table alias="" name="Publisher" remarks="" uid="edd9de:11638587e4b:-7f46">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="222" y="-98"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7f42">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="number" remarks="" uid="edd9de:11638587e4b:-7f41">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="name" remarks="" uid="edd9de:11638587e4b:-7f40">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_PUBLISHER" remarks="" uid="edd9de:11638587e4b:-7f45">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="number"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Publisher_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="edd9de:11638587e4b:-7f1f">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
@@ -846,37 +840,37 @@
 <index-list/>
 </table>
 <table alias="" name="Format" remarks="" uid="edd9de:11638587e4b:-7ef3">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="747" y="-24"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7eef">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="number" remarks="" uid="edd9de:11638587e4b:-7eed">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="schema_f" remarks="" uid="edd9de:11638587e4b:-7eee">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_FORMAT" remarks="" uid="edd9de:11638587e4b:-7ef2">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="number"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Format_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="edd9de:11638587e4b:-7ea2">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-target-terminal x="215" y="9"/>
 <fk-fig-bendpoint-list/>
@@ -887,37 +881,37 @@
 <index-list/>
 </table>
 <table alias="" name="Identifier" remarks="" uid="edd9de:11638587e4b:-7eec">
-<table-description/>
+<table-description></table-description>
 <table-figure-bounds height="-1" width="-1" x="989" y="176"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7ee8">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="number" remarks="" uid="edd9de:11638587e4b:-7ee7">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
 <variant type-name-pattern="INTEGER"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="identifier" remarks="" uid="edd9de:11638587e4b:-7ee6">
-<column-description/>
+<column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_IDENTIFIER" remarks="" uid="edd9de:11638587e4b:-7eeb">
-<primary-key-description/>
+<primary-key-description></primary-key-description>
 <primary-key-column name="object_id"/>
 <primary-key-column name="number"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
 <foreign-key alias="" name="FK_Identifier_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="edd9de:11638587e4b:-7e80">
-<foreign-key-description/>
+<foreign-key-description></foreign-key-description>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>

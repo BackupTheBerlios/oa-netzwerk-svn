@@ -1,3 +1,28 @@
+DROP TABLE dbo.RawData;
+DROP TABLE dbo.Identifier;
+DROP TABLE dbo.Format;
+DROP TABLE dbo.Publisher;
+DROP TABLE dbo.Description;
+DROP TABLE dbo.DateValues;
+DROP TABLE dbo.Other_Classification;
+DROP TABLE dbo.DINI_Set_Classification;
+DROP TABLE dbo.DNB_Classification;
+DROP TABLE dbo.DCC_Classification;
+DROP TABLE dbo.Object2Keywords;
+DROP TABLE dbo.Object2Editor;
+DROP TABLE dbo.Object2Contributor;
+DROP TABLE dbo.Object2Author;
+DROP TABLE dbo.Titles;
+DROP TABLE dbo.Object;
+DROP TABLE dbo.Repositories;
+DROP TABLE dbo.Other_Categories;
+DROP TABLE dbo.DINI_Set_Categories;
+DROP TABLE dbo.DNB_Categories;
+DROP TABLE dbo.DCC_Categories;
+DROP TABLE dbo.Keywords;
+DROP TABLE dbo.Person;
+DROP TABLE dbo.AggregatorMetadata;
+
 CREATE TABLE dbo.AggregatorMetadata (
        object_id INTEGER NOT NULL
      , harvested datetime NOT NULL
@@ -55,7 +80,7 @@ CREATE TABLE dbo.Object (
        object_id INTEGER NOT NULL
      , repository_id INTEGER NOT NULL
      , harvested datetime NOT NULL
-     , repository_datestamp DATE
+     , repository_datestamp DATETIME
      , repository_identifier VARCHAR(255) NOT NULL
      , PRIMARY KEY (object_id)
      , FOREIGN KEY (repository_id)
@@ -203,7 +228,7 @@ CREATE TABLE dbo.Identifier (
 CREATE TABLE dbo.RawData (
        object_id INTEGER NOT NULL
      , collected datetime NOT NULL
-     , data CHAR
+     , data TEXT
      , PRIMARY KEY (object_id, collected)
      , FOREIGN KEY (object_id)
                   REFERENCES dbo.Object (object_id)
