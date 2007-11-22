@@ -33,6 +33,8 @@ public class RestServer extends HttpServlet {
 	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		out = res.getWriter ( );
+
+		String xml = HelperMethods.stream2String (req.getInputStream ( ));
 	}
 
 	protected void doDelete (HttpServletRequest req, HttpServletResponse res) throws IOException {
