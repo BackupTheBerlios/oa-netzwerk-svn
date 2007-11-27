@@ -35,6 +35,7 @@ public class RestServer extends HttpServlet {
 		out = res.getWriter ( );
 
 		String xml = HelperMethods.stream2String (req.getInputStream ( ));
+		System.out.println (xml);
 	}
 
 	protected void doDelete (HttpServletRequest req, HttpServletResponse res) throws IOException {

@@ -13,7 +13,8 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  * @author Michael Kühn
@@ -25,9 +26,11 @@ public class RestClient {
 	private boolean nossl;
 	private String url;
 	private String path;
+	static Logger logger = Logger.getLogger (RestClient.class);
 
 	private RestClient (String url, String path) {
 		
+		DOMConfigurator.configure ("log4j.xml");
 		this.url = filterurl (url);
 		this.nossl = setSSL (url);
 		this.path = filterpath (path);
@@ -52,11 +55,21 @@ public class RestClient {
 	
 	private boolean setSSL (String url) {
 		
-		if (url.equalsIgnoreCase ("localhost") || url.equalsIgnoreCase ("127.0.0.1"))
-			return false;
-		
-		else
+		if (url.equalsIgnoreCase ("localhost") || url.equalsIgnoreCase ("127.0.0.1")) {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("noSSL");
+			
 			return true;
+		}
+		
+		else {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("SSL");
+			
+			return false;
+		}
 	}
 
 	/**
@@ -68,9 +81,18 @@ public class RestClient {
 
 		String filteredUrl = url;
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("filtered URL: " + filteredUrl);
+		
 		return filteredUrl;
 	}
 
+	/**
+	 * @param incomming_url
+	 * @param path
+	 * @return
+	 */
+	
 	public static RestClient createRestClient (String incomming_url, String path) {
 		
 		RestClient restclient = new RestClient (incomming_url, path);
@@ -92,6 +114,8 @@ public class RestClient {
 			
 			int statusCode = client.executeMethod (method);
 			
+			logger.info ("HttpStatusCode: " + statusCode);
+			
 			if (statusCode != HttpStatus.SC_OK)
 				;//meckern
 			
@@ -104,7 +128,13 @@ public class RestClient {
 		} finally {
 			
 			method.releaseConnection ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Connection closed");
 		}
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Response: " + new String (responseBody));
 		
 		return new String (responseBody);
 	}
@@ -127,8 +157,11 @@ public class RestClient {
 			buffer.append ("https://");
 		}
 		
-		buffer.append (this.url).append (":8080/OA-Netzwerk/").append (path);
+		buffer.append (this.url).append (":8080/restserver/").append (path);
 		this.url = buffer.toString ( );
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("client created");
 		
 		return newclient;
 	}
@@ -138,11 +171,16 @@ public class RestClient {
 		HttpClient client = prepareConnection ( );
 		GetMethod method = new GetMethod (this.url);
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("getRequest");
+		
 		return sendrequest (client, method);
 	}
 	
 	public final String PostData (String data) {
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("postRequest");
 		
 		return "";
 	}
@@ -161,11 +199,16 @@ public class RestClient {
 			ex.printStackTrace ( );
 		}
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("putRequest");
+		
 		return sendrequest (client, method);
 	}
 	
 	public final String DeleteData ( ) {
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("deleteRequest");
 		
 		return "";
 	}
