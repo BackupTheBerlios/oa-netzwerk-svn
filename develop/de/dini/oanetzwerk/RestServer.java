@@ -30,12 +30,36 @@ public class RestServer extends HttpServlet {
 		out = res.getWriter ( );
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		out = res.getWriter ( );
-
+		
+		System.out.println (req.getRemoteUser ( ) + req.getRemoteHost ( ));
+		
+		String classname = "de.dini.oanetzwerk." + req.getRemoteUser ( ) + "2Database";
+		
 		String xml = HelperMethods.stream2String (req.getInputStream ( ));
-		System.out.println (xml);
+		
+		try {
+			
+			Class <Modul2Database> c = (Class <Modul2Database>) Class.forName (classname);
+			Object o = c.newInstance ( );
+			
+			((Modul2Database) o).processRequest (xml);
+			
+		} catch (ClassNotFoundException ex) {
+			
+			ex.printStackTrace ( );
+			
+		} catch (InstantiationException ex) {
+			
+			ex.printStackTrace ( );
+			
+		} catch (IllegalAccessException ex) {
+			
+			ex.printStackTrace ( );
+		}
 	}
 
 	protected void doDelete (HttpServletRequest req, HttpServletResponse res) throws IOException {

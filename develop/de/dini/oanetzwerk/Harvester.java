@@ -85,7 +85,7 @@ public class Harvester {
 	
 	private void deliverResult2DB (String data, String id) {
 		
-		RestClient restclient = RestClient.createRestClient ("localhost", id);
+		RestClient restclient = RestClient.createRestClient ("localhost", id, "", "");
 		restclient.PutData (data);
 	}
 

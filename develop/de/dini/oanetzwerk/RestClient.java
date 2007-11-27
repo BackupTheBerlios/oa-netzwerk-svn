@@ -7,9 +7,12 @@ package de.dini.oanetzwerk;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
@@ -26,14 +29,18 @@ public class RestClient {
 	private boolean nossl;
 	private String url;
 	private String path;
+	private String username;
+	private String password;
 	static Logger logger = Logger.getLogger (RestClient.class);
 
-	private RestClient (String url, String path) {
+	private RestClient (String url, String path, String user, String pwd) {
 		
 		DOMConfigurator.configure ("log4j.xml");
 		this.url = filterurl (url);
 		this.nossl = setSSL (url);
 		this.path = filterpath (path);
+		this.username = user;
+		this.password = pwd;
 	}
 	
 	/**
@@ -93,9 +100,9 @@ public class RestClient {
 	 * @return
 	 */
 	
-	public static RestClient createRestClient (String incomming_url, String path) {
+	public static RestClient createRestClient (String incomming_url, String path, String userName, String passWord) {
 		
-		RestClient restclient = new RestClient (incomming_url, path);
+		RestClient restclient = new RestClient (incomming_url, path, userName, passWord);
 		
 		return restclient;
 	}
@@ -147,6 +154,10 @@ public class RestClient {
 		
 		HttpClient newclient = new HttpClient ( );
 		StringBuffer buffer = new StringBuffer ("");
+		
+		newclient.getParams ( ).setAuthenticationPreemptive (true);
+		Credentials defaultcreds = new UsernamePasswordCredentials (this.username, this.password);
+		newclient.getState ( ).setCredentials (new AuthScope (this.url, 8080, AuthScope.ANY_REALM), defaultcreds);
 		
 		if (this.nossl) {
 			
