@@ -12,6 +12,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 
 /**
@@ -22,6 +24,18 @@ import org.apache.commons.httpclient.methods.GetMethod;
 public class Harvester {
 	
 	private List <String> ids;
+	static Logger logger = Logger.getLogger (Harvester.class);
+	
+	//TODO: put these data in a config file
+	
+	private final static String host = "localhost";
+	private final static String username = "";
+	private final static String password = "";
+	
+	public Harvester ( ) {
+		
+		DOMConfigurator.configure ("log4j.xml");
+	}
 	
 	/**
 	 * @param args
@@ -43,6 +57,7 @@ public class Harvester {
 		
 		HttpClient client;
 		GetMethod method;
+		//TODO: Urls have to be added in a config file
 		String url = "http://edoc.hu-berlin.de/OAI-2.0?verb=GetRecord&metadataPrefix=oai_dc&identifier=";
 		
 		for (int i = 0; i < this.ids.size ( ); i++) {
@@ -54,9 +69,11 @@ public class Harvester {
 				
 				int statuscode = client.executeMethod (method);
 				
+				logger.info ("HttpStatusCode: " + statuscode);
+				
 				if (statuscode != HttpStatus.SC_OK) {
 					
-					//meckern
+					//TODO: Error Handling
 				}
 								
 				deliverResult2DB (HelperMethods.stream2String (method.getResponseBodyAsStream ( )), ids.get (i));
@@ -85,7 +102,7 @@ public class Harvester {
 	
 	private void deliverResult2DB (String data, String id) {
 		
-		RestClient restclient = RestClient.createRestClient ("localhost", id, "", "");
+		RestClient restclient = RestClient.createRestClient (host, id, username, password);
 		restclient.PutData (data);
 	}
 
@@ -96,6 +113,8 @@ public class Harvester {
 	private void processIds ( ) {
 		
 		ids = new ArrayList <String> ( );
+		
+		//TODO: implement ID-processing
 		
 		ids.add ("oai:HUBerlin.de:10068");
 		ids.add ("oai:HUBerlin.de:10018");

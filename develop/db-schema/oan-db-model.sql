@@ -1,9 +1,3 @@
-CREATE TABLE dbo.AggregatorMetadata (
-       object_id INTEGER NOT NULL
-     , harvested datetime NOT NULL
-     , PRIMARY KEY (object_id)
-);
-
 CREATE TABLE dbo.Person (
        person_id INTEGER NOT NULL
      , number INTEGER
@@ -60,8 +54,14 @@ CREATE TABLE dbo.Object (
      , PRIMARY KEY (object_id)
      , FOREIGN KEY (repository_id)
                   REFERENCES dbo.Repositories (repository_id)
+);
+
+CREATE TABLE dbo.AggregatorMetadata (
+       object_id INTEGER NOT NULL
+     , harvested datetime NOT NULL
+     , PRIMARY KEY (object_id)
      , FOREIGN KEY (object_id)
-                  REFERENCES dbo.AggregatorMetadata (object_id)
+                  REFERENCES dbo.Object (object_id)
 );
 
 CREATE TABLE dbo.Titles (

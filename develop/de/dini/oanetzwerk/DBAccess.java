@@ -11,6 +11,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.InvalidPropertiesFormatException;
@@ -20,6 +23,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
+//import org.apache.log4j.xml.DOMConfigurator;
 
 import com.sybase.jdbc3.jdbc.SybDataSource;
 
@@ -31,7 +37,12 @@ import junit.framework.Assert;
  */
 
 public class DBAccess implements DBAccessInterface {
-
+	
+	static Logger logger = Logger.getLogger (DBAccess.class);
+	
+	public static enum moduls {
+		Harvester, Aggregator
+	}
 	/**
 	 * @param args
 	 */
@@ -43,8 +54,10 @@ public class DBAccess implements DBAccessInterface {
 	
 	private DBAccess ( ) {
 		
+		//DOMConfigurator.configure ("log4j.xml");
 		System.setProperty (Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 		System.setProperty (Context.PROVIDER_URL, "file:///tmp");
+		
 		this.prop = new Properties ( );
 		
 		try {
@@ -65,7 +78,7 @@ public class DBAccess implements DBAccessInterface {
 		
 		return db;
 	}
-	
+		
 	protected void setProperties ( ) {
 		
 		try {
@@ -141,6 +154,7 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#closeConnection()
 	 */
+	
 	public void closeConnection ( ) {
 		
 		try {
@@ -153,9 +167,22 @@ public class DBAccess implements DBAccessInterface {
 		}
 	}
 	
+	public void setAutoCom (boolean ac) {
+		
+		try {
+			
+			conn.setAutoCommit (ac);
+			
+		} catch (SQLException ex) {
+			
+			ex.printStackTrace ( );
+		}
+	}
+	
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#getConnetion()
 	 */
+	
 	public Connection getConnetion ( ) {
 		
 		return conn;
@@ -179,14 +206,16 @@ public class DBAccess implements DBAccessInterface {
 		
 		DBAccessInterface db = createDBAccess ( );
 		int [ ] updateCounts = null;
+		BufferedReader file = null;
 		
 		try {
 			
-			BufferedReader file = new BufferedReader (new FileReader ("/home/mkuehn/workspace/oa-netzwerk-develop/db-schema/oan-db-model.sql"));
+			file = new BufferedReader (new FileReader ("/home/mkuehn/workspace/oa-netzwerk-develop/db-schema/oan-db-model.sql"));
 			StringBuffer sql = new StringBuffer ("");
 			db.createConnection ( );
 			Statement stmt = conn.createStatement ( );
-			conn.setAutoCommit (false);
+			//conn.setAutoCommit (false);
+			db.setAutoCom (false);
 			
 			for (String line; (line = file.readLine ( )) != null;) {
 				
@@ -203,12 +232,9 @@ public class DBAccess implements DBAccessInterface {
 			}
 			
 			updateCounts = stmt.executeBatch ( );
-			conn.setAutoCommit (true);
 			
 			for (int i = 0; i < updateCounts.length; i++)
 				System.out.println ("UpdateCount: " + updateCounts);
-			
-			file.close ( );
 					
 		} catch (BatchUpdateException buex) {
 			
@@ -224,6 +250,14 @@ public class DBAccess implements DBAccessInterface {
 			
 		} catch (SQLException ex) {
 			
+			try {
+				
+				conn.rollback ( );
+				
+			} catch (SQLException ex1) {
+				
+				ex1.printStackTrace ( );
+			}
 			ex.printStackTrace ( );
 			
 		} catch (InvalidPropertiesFormatException ex) {
@@ -240,7 +274,118 @@ public class DBAccess implements DBAccessInterface {
 			
 		} finally {
 			
+			db.setAutoCom (true);
 			db.closeConnection ( );
+			
+			try {
+				
+				file.close ( );
+				
+			} catch (IOException ex) {
+				
+				ex.printStackTrace ( );
+			}
+		}
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#putData(de.dini.oanetzwerk.DBAccess.moduls, int, java.lang.String, java.lang.String)
+	 */
+	
+	public void putData (moduls modul, int id, String data, String date) {
+		
+		switch (modul) {
+			
+		case Harvester: putHarvester (id, data, date); break;
+		case Aggregator: ; break;
+		default: ;
+		}
+	}
+
+	/**
+	 * @param id
+	 * @param data
+	 * @param date
+	 */
+	
+	private void putHarvester (int id, String data, String date) {
+		
+		createConnection ( );
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("SELECT repository_id FROM dbo.Repositories WHERE repository_id = ?");
+			pstmt.setInt (1, 13);
+			pstmt.addBatch ( );
+			
+			rs = pstmt.executeQuery ( );
+			
+			if (rs.next ( )) {
+				
+				rs.close ( );
+				
+				conn.setAutoCommit (false);
+				pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (object_id, repository_id, harvested, repository_datestamp, repository_identifier) VALUES (?, ?, ?, ?, ?)");
+				pstmt.setInt (1, id);
+				pstmt.setInt (2, id);
+				pstmt.setDate (3, Date.valueOf ("2007-11-27"));
+				pstmt.setDate (4, Date.valueOf ("2007-11-27"));
+				pstmt.setString (5, "HU");
+				pstmt.executeUpdate ( );
+				
+				pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, collected, data) VALUES (?, ?, ?)");
+				pstmt.setInt (1, id);
+				pstmt.setDate (2, Date.valueOf ("2007-11-27"));
+				pstmt.setString (3, data);
+				pstmt.executeUpdate ( );
+				
+/*				if (pstmt.executeUpdate ( ) != 1) {
+					
+					conn.rollback ( );
+					logger.error ("Can't insert Data");
+					pstmt.close ( );
+					pstmt = null;
+					
+				} else {
+					
+					pstmt.close ( );
+					
+					pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, collected, data) VALUES (?, ?, ?)");
+					pstmt.setInt (1, id);
+					pstmt.setDate (2, Date.valueOf ("2007-11-27"));
+					pstmt.setString (3, data);
+					
+					if (pstmt.executeUpdate ( ) != 1) {
+						
+						conn.rollback ( );
+						logger.error ("Can't insert Data");
+					}
+					
+					pstmt.close ( );
+					pstmt = null;
+				}*/
+				conn.commit ( );
+				conn.setAutoCommit (true);
+				pstmt.close ( );
+			}
+			
+		} catch (SQLException ex) {
+			
+			ex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				conn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+			}
 		}
 	}
 }

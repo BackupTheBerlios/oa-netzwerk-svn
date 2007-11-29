@@ -11,14 +11,24 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+//import org.apache.log4j.xml.DOMConfigurator;
+
 /**
  * @author Michael Kühn
  *
  */
 
+@SuppressWarnings("serial")
 public class RestServer extends HttpServlet {
 	
+	static Logger logger = Logger.getLogger (RestServer.class);
 	PrintWriter out;
+	
+	public RestServer ( ) {
+		
+		//DOMConfigurator.configure ("log4j.xml");
+	}
 	
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
@@ -38,6 +48,9 @@ public class RestServer extends HttpServlet {
 		System.out.println (req.getRemoteUser ( ) + req.getRemoteHost ( ));
 		
 		String classname = "de.dini.oanetzwerk." + req.getRemoteUser ( ) + "2Database";
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Class to be loaded: " + classname);
 		
 		String xml = HelperMethods.stream2String (req.getInputStream ( ));
 		

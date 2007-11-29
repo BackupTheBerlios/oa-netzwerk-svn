@@ -4,9 +4,8 @@
 
 package de.dini.oanetzwerk;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import org.apache.log4j.Logger;
+//import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  * @author Michael Kühn
@@ -14,15 +13,21 @@ import java.sql.Statement;
  */
 
 public class Harvester2Database implements Modul2Database {
-
+	
+	static Logger logger = Logger.getLogger (Harvester2Database.class);
+	
 	/**
 	 * @param args
 	 */
 	
+	public Harvester2Database ( ) {
+		
+		//DOMConfigurator.configure ("log4j.xml");
+	}
+	
 	public static void main (String [ ] args) {
-
-		// TODO Auto-generated method stub
-
+		
+		
 	}
 
 	/**
@@ -33,21 +38,7 @@ public class Harvester2Database implements Modul2Database {
 
 		System.out.println (request);
 		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
-		
-		String query = "Insert...";
-		
-		try {
-			
-			Statement stmt = db.getConnetion ( ).createStatement ( );
-			
-			
-			
-		} catch (SQLException ex) {
-			
-			ex.printStackTrace ( );
-		} 
+		db.putData (DBAccess.moduls.Harvester, 13, request, "date");
 		
 	}
-
 }

@@ -26,6 +26,8 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 public class RestClient {
 	
+	private static final int servletContainerPort = 8080;
+	private static final String servletPath = "restserver";
 	private boolean nossl;
 	private String url;
 	private String path;
@@ -157,7 +159,7 @@ public class RestClient {
 		
 		newclient.getParams ( ).setAuthenticationPreemptive (true);
 		Credentials defaultcreds = new UsernamePasswordCredentials (this.username, this.password);
-		newclient.getState ( ).setCredentials (new AuthScope (this.url, 8080, AuthScope.ANY_REALM), defaultcreds);
+		newclient.getState ( ).setCredentials (new AuthScope (this.url, servletContainerPort, AuthScope.ANY_REALM), defaultcreds);
 		
 		if (this.nossl) {
 			
@@ -168,7 +170,7 @@ public class RestClient {
 			buffer.append ("https://");
 		}
 		
-		buffer.append (this.url).append (":8080/restserver/").append (path);
+		buffer.append (this.url).append (":").append (servletContainerPort) .append ("/").append (servletPath) .append ("/") .append (path);
 		this.url = buffer.toString ( );
 		
 		if (logger.isDebugEnabled ( ))
@@ -233,5 +235,4 @@ public class RestClient {
 		// TODO Auto-generated method stub
 
 	}
-
 }
