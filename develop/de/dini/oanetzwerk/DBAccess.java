@@ -5,7 +5,6 @@
 package de.dini.oanetzwerk;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,6 +27,8 @@ import org.apache.log4j.Logger;
 //import org.apache.log4j.xml.DOMConfigurator;
 
 import com.sybase.jdbc3.jdbc.SybDataSource;
+
+import de.dini.oanetzwerk.utils.HelperMethods;
 
 import junit.framework.Assert;
 
@@ -54,11 +55,11 @@ public class DBAccess implements DBAccessInterface {
 	
 	private DBAccess ( ) {
 		
-		//DOMConfigurator.configure ("log4j.xml");
 		System.setProperty (Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 		System.setProperty (Context.PROVIDER_URL, "file:///tmp");
 		
-		this.prop = new Properties ( );
+		//this.prop = new Properties ( );
+		this.prop = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/workspace/oa-netzwerk-develop/dbprop.xml");
 		
 		try {
 			
@@ -73,33 +74,11 @@ public class DBAccess implements DBAccessInterface {
 	public static DBAccessInterface createDBAccess ( ) {
 		
 		DBAccess db = new DBAccess ( );
-		db.setProperties ( );
 		db.setDataSource ( );
 		
 		return db;
 	}
 		
-	protected void setProperties ( ) {
-		
-		try {
-			
-			this.prop.loadFromXML (new FileInputStream ("/home/mkuehn/workspace/oa-netzwerk-develop/dbprop.xml"));
-			
-		} catch (InvalidPropertiesFormatException ex) {
-			
-			ex.printStackTrace ( );
-			
-		} catch (FileNotFoundException ex) {
-			
-			ex.printStackTrace ( );
-			
-		} catch (IOException ex) {
-			
-			ex.printStackTrace ( );
-			
-		}
-	}
-	
 	protected void setDataSource ( ) {
 		
 		DataSource source;

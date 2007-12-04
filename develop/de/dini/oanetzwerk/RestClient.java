@@ -13,7 +13,9 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
@@ -21,7 +23,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  * @author Michael Kühn
- *
+ * foobarharharhar
  */
 
 public class RestClient {
@@ -35,6 +37,19 @@ public class RestClient {
 	private String password;
 	static Logger logger = Logger.getLogger (RestClient.class);
 
+	/**
+	 * Creates a new client and initialises this client.
+	 * The log4j is configured, the URL and the path are filtered and SSL, username and password are set.
+	 * This Constructor is private due to our factory method which will call this constructor and return an
+	 * instance of RestClient.
+	 * @see RestClient#createRestClient(String incomming_url, String path, String userName, String passWord)
+	 * 
+	 * @param url the name of the REST server: i.e. foo.bar, localhost, 0.0.0.0. 
+	 * @param path the path for the REST query
+	 * @param user username for the authentication at the REST server
+	 * @param pwd password for the authentication at the REST server
+	 */
+	
 	private RestClient (String url, String path, String user, String pwd) {
 		
 		DOMConfigurator.configure ("log4j.xml");
@@ -47,7 +62,7 @@ public class RestClient {
 	
 	/**
 	 * @param path
-	 * @return
+	 * @return the filtered path
 	 */
 	
 	private String filterpath (String path) {
@@ -58,8 +73,13 @@ public class RestClient {
 	}
 
 	/**
-	 * @param url
-	 * @return
+	 * Filters the given URL and decides whether SSL has to be used or not.
+	 * When the URL equals "localhost" or the ip address "127.0.0.1" SSL is not required.
+	 * Otherwise SSL is strongly recommended due to security reasons. In the case the data is only sent
+	 * within a private network SSL could be disabled.
+	 *  
+	 * @param url the URL of the REST server to connect to
+	 * @return true if no SSL is needed false if SSL is recommended
 	 */
 	
 	private boolean setSSL (String url) {
@@ -83,7 +103,7 @@ public class RestClient {
 
 	/**
 	 * @param url
-	 * @return
+	 * @return the filtered URL
 	 */
 	
 	private String filterurl (String url) {
@@ -97,9 +117,12 @@ public class RestClient {
 	}
 
 	/**
-	 * @param incomming_url
-	 * @param path
-	 * @return
+	 * Creates a {@link RestClient} and calls the {@link RestClient} Constructor. 
+	 * @see RestClient#RestClient(String url, String path, String user, String pwd)
+	 * 
+	 * @param incomming_url the name of the REST server: i.e. foo.bar, localhost, 0.0.0.0.
+	 * @param path the path for the REST query
+	 * @return an instance of RestClient
 	 */
 	
 	public static RestClient createRestClient (String incomming_url, String path, String userName, String passWord) {
@@ -110,9 +133,11 @@ public class RestClient {
 	}
 	
 	/**
-	 * @param client
-	 * @param method
-	 * @return
+	 * Sends the assembled request to the REST server.
+	 * 
+	 * @param client the {@link HttpClient} Object which handles the connection to the REST server
+	 * @param method the {@link HttpMethod} Object which encodes the specific method which connects to the REST server
+	 * @return the response received from the REST server
 	 */
 	
 	private String sendrequest (HttpClient client, HttpMethod method) {
@@ -122,20 +147,19 @@ public class RestClient {
 		try {
 			
 			int statusCode = client.executeMethod (method);
-			
 			logger.info ("HttpStatusCode: " + statusCode);
 			
 			if (statusCode != HttpStatus.SC_OK)
 				;//meckern
 			
 			responseBody = method.getResponseBody ( );
+
+		} catch (IOException ex) {
 			
-		} catch (IOException ioex) {
-			
-			ioex.printStackTrace ( );
+			ex.printStackTrace ( );
 			
 		} finally {
-			
+		
 			method.releaseConnection ( );
 			
 			if (logger.isDebugEnabled ( ))
@@ -149,7 +173,11 @@ public class RestClient {
 	}
 
 	/**
-	 * @return
+	 * Prepares the connection to the REST server.
+	 * This method sets the authentication which is needed for the REST server and decides whether http or https is used for the connection.
+	 * After all the final URI is prepared and assembled.
+	 *   
+	 * @return the initialised {@link HttpClient}
 	 */
 	
 	private HttpClient prepareConnection ( ) {
@@ -179,6 +207,12 @@ public class RestClient {
 		return newclient;
 	}
 
+	/**
+	 * Provides a {@link GetMethod} connection to the REST server.
+	 * 
+	 * @return the response received from the REST server
+	 */
+	
 	public final String GetData ( ) {
 		
 		HttpClient client = prepareConnection ( );
@@ -190,40 +224,63 @@ public class RestClient {
 		return sendrequest (client, method);
 	}
 	
-	public final String PostData (String data) {
+	/**
+	 * Provides a {@link PostMethod} connection to the REST server.
+	 * 
+	 * @param data the data which will be sent via POST method to the REST server
+	 * @return the response received from the REST server
+	 * @throws UnsupportedEncodingException
+	 */
+	
+	public final String PostData (String data) throws UnsupportedEncodingException {
+		
+		HttpClient client = prepareConnection ( );
+		PostMethod method = new PostMethod (this.url);
+		
+		method.setRequestEntity (new StringRequestEntity (data, "text/plain", "UTF-8"));
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("postRequest");
 		
-		return "";
+		return sendrequest (client, method);
 	}
 	
-	public final String PutData (String data) {
+	/**
+	 * Provides a {@link PutMethod} connection to the REST server.
+	 * 
+	 * @param data the data which will be sent via PUT method to the REST server
+	 * @return the response received from the REST server
+	 * @throws UnsupportedEncodingException
+	 */
+	
+	public final String PutData (String data) throws UnsupportedEncodingException {
 		
 		HttpClient client = prepareConnection ( );
 		PutMethod method = new PutMethod (this.url);
 		
-		try {
-			
-			method.setRequestEntity (new StringRequestEntity (data, "text/plain", "UTF-8"));
-			
-		} catch (UnsupportedEncodingException ex) {
-			
-			ex.printStackTrace ( );
-		}
-		
+		method.setRequestEntity (new StringRequestEntity (data, "text/plain", "UTF-8"));
+				
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("putRequest");
 		
 		return sendrequest (client, method);
 	}
 	
+	/**
+	 * Provides a {@link DeleteMethod} connection to the REST server.
+	 * 
+	 * @return the response received from the REST server
+	 */
+	
 	public final String DeleteData ( ) {
+		
+		HttpClient client = prepareConnection ( );
+		DeleteMethod method = new DeleteMethod (this.url);
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("deleteRequest");
 		
-		return "";
+		return sendrequest (client, method);
 	}
 	
 	/**

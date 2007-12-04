@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 //import org.apache.log4j.xml.DOMConfigurator;
 
+import de.dini.oanetzwerk.utils.HelperMethods;
+
 /**
  * @author Michael Kühn
  *
@@ -75,6 +77,9 @@ public class RestServer extends HttpServlet {
 		}
 	}
 
+	/**
+	 * @see javax.servlet.http.HttpServlet#doDelete(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	protected void doDelete (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		out = res.getWriter ( );
