@@ -81,8 +81,26 @@ set ???
 Volltextlink-Extraktion
 -----------------------
 
-später
+holt sich die Rohdaten und versucht dafür die Linkseite zu finden
 
+=> getRawdata
+	neueste Rohdaten holen
+
+=> storeLink (object_id)
+  Daten abspeichern, speichert vergibt automatisch eine Nr.
+
+
+=> getLinks (object_id)
+ Liefert alle Volltext-Links
+ 
+=> getLink (objekt_id, nr)
+ Liefert spezifischen Volltext-Link
+
+=> updateLink(objekt_id, nr)
+ Update eine Volltext-Links
+ 
+=> deleteLink
+ Rohdaten
 
 
 Statistik
