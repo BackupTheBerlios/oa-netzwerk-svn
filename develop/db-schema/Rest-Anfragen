@@ -1,0 +1,95 @@
+Objektverwaltung
+----------------
+
+speichereObjekt
+
+=>  existiertObjekt
+
+Zuerst muss geschaut werden, ob das Objekt schon existiert.
+
+	SELECT o.object_id FROM dbo.Object o WHERE o.object_id = ? and o.repository_id = ?
+	
+	Die Repository-ID muss bekannt sein. Alternativ kann auch direkt die Original-Rep.-ID genutzt werden.
+	
+	SELECT o.object_id FROM dbo.Object o WHERE o.repository_identifier = ? and o.repository_id = ?
+
+
+Da es vom Objekt eventuell mehrere Versionen gibt (durch zeitliche Updates), muss auch noch der Zeitstempel abgefragt werden können.
+Dies ist aber eigentlich nur notwendig, wenn die erste Anfrage ein Ergebnis geliefert hat.
+
+=> existiertObjekt  (objekt_id, Datum, Repository_ID)
+
+=> existiertObjekt  (Original_Repository_ID, Datum, Repository_ID)
+	
+
+schreibeNeuesObjekt
+
+=> schreiben in Object
+=> schreiben in RawData
+
+updateObjekt
+
+=> schreiben in RawData wie vorher
+=> updateObject (repository_timestamp, harvested)
+
+Objekt ist vorhanden und muss nicht erneut geharvested werden
+
+=> objektGefunden(harversted)
+	Setzt das Datum des letzten Zeitpunkts, an dem das Objekt gefunden wurde auf das aktuelle Datum
+	UPDATE dbo.Object SET harvested = NOW
+	
+	
+	
+Aggregator
+----------
+
+Holt sich Rohdaten ab, wertet diese aus und schreibt die Daten jeweils einzeln wieder zurück.
+
+getRawdata(object_id)
+
+	SELECT * FROM dbo.RawData WHERE object_id = ? and collected = max(colleceted) muss noch mal geprüft werden
+
+storeAuthor (object, nr, name)
+
+storeContributor (object, nr, name)
+
+storeEditor (object, nr, name)
+
+storeTitle
+
+storeFormat
+
+...
+
+
+
+Dublettenkontrolle
+------------------
+
+getTitle
+
+getAbstact
+
+getAuthor
+
+getKeyword
+
+set ???
+
+
+
+Volltextlink-Extraktion
+-----------------------
+
+später
+
+
+
+Statistik
+---------
+
+später
+
+
+
+
