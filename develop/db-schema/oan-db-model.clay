@@ -37,7 +37,7 @@
 <variant type-name-pattern="INTEGER ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="harvested" remarks="Zeitstempel, wann es zuletzt geharvestet wurde" uid="4f5403:1161f7e7d4d:-7c69">
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="harvested" remarks="Zeitstempel, wann es zuletzt geharvestet wurde, direkt vom Datenbankserver" uid="4f5403:1161f7e7d4d:-7c69">
 <column-description/>
 <data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
 <variant type-name-pattern="DATETIME"/>
