@@ -6,6 +6,7 @@ package de.dini.oanetzwerk;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
@@ -21,6 +22,8 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
+import de.dini.oanetzwerk.utils.HelperMethods;
+
 /**
  * @author Michael Kühn
  * foobarharharhar
@@ -29,12 +32,14 @@ import org.apache.log4j.xml.DOMConfigurator;
 public class RestClient {
 	
 	private static final int servletContainerPort = 8080;
+	private static final int servletContainerSSLPort = 8443;
 	private static final String servletPath = "restserver";
 	private boolean nossl;
 	private String url;
 	private String path;
 	private String username;
 	private String password;
+	private Properties props;
 	static Logger logger = Logger.getLogger (RestClient.class);
 
 	/**
@@ -58,6 +63,13 @@ public class RestClient {
 		this.path = filterpath (path);
 		this.username = user;
 		this.password = pwd;
+		this.props = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/workspace/oa-netzwerk-develop/restclientprop.xml");
+		
+		if (!this.nossl) {
+			
+			System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
+			System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
+		}
 	}
 	
 	/**
@@ -187,19 +199,24 @@ public class RestClient {
 		
 		newclient.getParams ( ).setAuthenticationPreemptive (true);
 		Credentials defaultcreds = new UsernamePasswordCredentials (this.username, this.password);
-		newclient.getState ( ).setCredentials (new AuthScope (this.url, servletContainerPort, AuthScope.ANY_REALM), defaultcreds);
 		
 		if (this.nossl) {
 			
+			newclient.getState ( ).setCredentials (new AuthScope (this.url, servletContainerPort, AuthScope.ANY_REALM), defaultcreds);
 			buffer.append ("http://");
+			buffer.append (this.url).append (":").append (servletContainerPort) .append ("/").append (servletPath) .append ("/") .append (path);
 			
 		} else {
 			
+			newclient.getState ( ).setCredentials (new AuthScope (this.url, servletContainerSSLPort, AuthScope.ANY_REALM), defaultcreds);
 			buffer.append ("https://");
+			buffer.append (this.url).append (":").append (servletContainerSSLPort) .append ("/").append (servletPath) .append ("/") .append (path);
 		}
+		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 		
-		buffer.append (this.url).append (":").append (servletContainerPort) .append ("/").append (servletPath) .append ("/") .append (path);
 		this.url = buffer.toString ( );
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("URL to connect to: " + this.url);
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("client created");

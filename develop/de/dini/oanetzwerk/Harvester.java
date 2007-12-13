@@ -18,7 +18,6 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
 
-
 /**
  * @author Michael Kühn
  *
@@ -33,7 +32,6 @@ public class Harvester {
 	public Harvester ( ) {
 		
 		DOMConfigurator.configure ("log4j.xml");
-		//this.props = new Properties ( );
 		this.props = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/workspace/oa-netzwerk-develop/harvesterprop.xml");
 	}
 	
@@ -43,6 +41,7 @@ public class Harvester {
 	
 	public static void main (String [ ] args) {
 		
+		// Parameter: repository_id, full/update-harvest
 		Harvester harvester = new Harvester ( );
 		
 		harvester.processIds ( );
@@ -65,6 +64,7 @@ public class Harvester {
 			
 			client = new HttpClient ( );
 			method = new GetMethod (url + ids.get (i));
+			client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 			
 			try {
 				
@@ -103,10 +103,9 @@ public class Harvester {
 	 * @throws HttpException 
 	 */
 	
-	private void deliverResult2DB (String data, String id) throws HttpException, IOException {
+	private void deliverResult2DB (String data, String header_identifier) throws HttpException, IOException {
 		
-		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), id, this.props.getProperty ("username"), this.props.getProperty ("password"));
-		//RestClient restclient = RestClient.createRestClient (host, id, username, password);
+		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), header_identifier, this.props.getProperty ("username"), this.props.getProperty ("password"));
 		restclient.PutData (data);
 	}
 
@@ -118,7 +117,7 @@ public class Harvester {
 		
 		ids = new ArrayList <String> ( );
 		
-		//TODO: implement ID-processing
+		//TODO: implement ID-processing + id-überprüfung (entscheidung zwischen put und post request)
 		
 		ids.add ("oai:HUBerlin.de:10068");
 		ids.add ("oai:HUBerlin.de:10018");

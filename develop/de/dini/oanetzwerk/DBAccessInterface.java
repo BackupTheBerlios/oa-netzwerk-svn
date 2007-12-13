@@ -6,7 +6,6 @@ package de.dini.oanetzwerk;
 
 import java.sql.Connection;
 
-import de.dini.oanetzwerk.DBAccess.moduls;
 
 /**
  * @author Michael Kühn
@@ -38,7 +37,7 @@ public interface DBAccessInterface {
 	 */
 	
 	public abstract void setAutoCom (boolean ac);
-
+	
 	/**
 	 * @param moduls
 	 * @param i
@@ -46,6 +45,6 @@ public interface DBAccessInterface {
 	 * @param string
 	 */
 	
-	public abstract void putData (moduls moduls, int i, String request,	String string);
+	public abstract void putData (DBAccess.moduls modul, String repositoryName, String repositoryIdentifier, String repositoryDate, String data);
 
 }

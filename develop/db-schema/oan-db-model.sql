@@ -42,11 +42,14 @@ CREATE TABLE dbo.Other_Categories (
 
 CREATE TABLE dbo.Repositories (
        repository_id INTEGER NOT NULL
+	 , name VARCHAR(255) NOT NULL
+	 , url VARCHAR(255)
+	 , oai_url VARCHAR(255)
      , PRIMARY KEY (repository_id)
 );
 
 CREATE TABLE dbo.Object (
-       object_id INTEGER NOT NULL
+       object_id INTEGER NOT NULL DEFAULT AUTOINCREMENT
      , repository_id INTEGER NOT NULL
      , harvested datetime NOT NULL
      , repository_datestamp DATETIME

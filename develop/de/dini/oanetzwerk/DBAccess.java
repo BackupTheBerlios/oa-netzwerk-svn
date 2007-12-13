@@ -67,7 +67,7 @@ public class DBAccess implements DBAccessInterface {
 			
 		} catch (NamingException ex) {
 			
-			ex.printStackTrace();
+			ex.printStackTrace ( );
 		}
 	}
 	
@@ -271,11 +271,11 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.DBAccessInterface#putData(de.dini.oanetzwerk.DBAccess.moduls, int, java.lang.String, java.lang.String)
 	 */
 	
-	public void putData (moduls modul, int id, String data, String date) {
+	public void putData (moduls modul, String repositoryName, String repositoryIdentifier, String repositoryDate, String data) {
 		
 		switch (modul) {
 			
-		case Harvester: putHarvester (id, data, date); break;
+		case Harvester: putHarvester (repositoryName, repositoryIdentifier, repositoryDate, data); break;
 		case Aggregator: ; break;
 		default: ;
 		}
@@ -284,10 +284,11 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @param id
 	 * @param data
+	 * @param repositoryDate 
 	 * @param date
 	 */
 	
-	private void putHarvester (int id, String data, String date) {
+	private void putHarvester (String repositoryName, String repositoryIdentifier, String repositoryDate, String data) {
 		
 		createConnection ( );
 		
@@ -296,28 +297,57 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("SELECT repository_id FROM dbo.Repositories WHERE repository_id = ?");
-			pstmt.setInt (1, 13);
-			pstmt.addBatch ( );
+			pstmt = conn.prepareStatement ("SELECT repository_id FROM dbo.Repositories WHERE name = ?");
+			pstmt.setString (1, repositoryName);
 			
 			rs = pstmt.executeQuery ( );
 			
 			if (rs.next ( )) {
 				
+				int repository_id = rs.getInt ("repository_id");
+				
 				rs.close ( );
+				
+				int object_id = 0;
+				
+				pstmt = conn.prepareStatement ("SELECT object_id FROM dbo.Object WHERE repository_identifier = ?");
+				pstmt.setString (1, repositoryIdentifier);
+				rs = pstmt.executeQuery ( );
+				
+				if (rs.next ( )) {
+					
+					object_id = rs.getInt ("object_id");
+					rs.close ( );
+					
+				} else {
+					
+					rs.close ( );
+					pstmt = conn.prepareStatement ("SELECT MAX(object_id) FROM dbo.Object");
+					rs = pstmt.executeQuery ( );
+					
+					if (rs.next ( )) {
+						
+						object_id = rs.getInt ("object_id");
+						
+					} else {
+						
+						//FEHLER
+					}
+					rs.close ( );
+				}
 				
 				conn.setAutoCommit (false);
 				pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (object_id, repository_id, harvested, repository_datestamp, repository_identifier) VALUES (?, ?, ?, ?, ?)");
-				pstmt.setInt (1, id);
-				pstmt.setInt (2, id);
-				pstmt.setDate (3, Date.valueOf ("2007-11-27"));
-				pstmt.setDate (4, Date.valueOf ("2007-11-27"));
-				pstmt.setString (5, "HU");
+				pstmt.setInt (1, object_id);
+				pstmt.setInt (2, repository_id);
+				pstmt.setDate (3, HelperMethods.today ( ));
+				pstmt.setDate (4, Date.valueOf (repositoryDate));
+				pstmt.setString (5, repositoryIdentifier);
 				pstmt.executeUpdate ( );
 				
 				pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, collected, data) VALUES (?, ?, ?)");
-				pstmt.setInt (1, id);
-				pstmt.setDate (2, Date.valueOf ("2007-11-27"));
+				pstmt.setInt (1, object_id);
+				pstmt.setDate (2, HelperMethods.today ( ));
 				pstmt.setString (3, data);
 				pstmt.executeUpdate ( );
 				
@@ -349,6 +379,10 @@ public class DBAccess implements DBAccessInterface {
 				conn.commit ( );
 				conn.setAutoCommit (true);
 				pstmt.close ( );
+				
+			} else {
+				
+				// Repository existiert nicht
 			}
 			
 		} catch (SQLException ex) {

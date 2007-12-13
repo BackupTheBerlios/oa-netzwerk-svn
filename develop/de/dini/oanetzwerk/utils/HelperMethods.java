@@ -5,6 +5,9 @@
 package de.dini.oanetzwerk.utils;
 
 import java.io.*;
+import java.sql.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
@@ -69,5 +72,16 @@ public class HelperMethods {
 		}
 		
 		return props;
+	}
+
+	/**
+	 * @return
+	 */
+	
+	public static Date today ( ) {
+		
+		Calendar cal = new GregorianCalendar ( );
+		
+		return new Date (cal.getTimeInMillis ( ));
 	}
 }

@@ -46,8 +46,9 @@ public class RestServer extends HttpServlet {
 	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		out = res.getWriter ( );
+		String path = req.getPathTranslated ( );
 		
-		System.out.println (req.getRemoteUser ( ) + req.getRemoteHost ( ));
+		//System.out.println (req.getRemoteUser ( ) + req.getRemoteHost ( ));
 		
 		String classname = "de.dini.oanetzwerk." + req.getRemoteUser ( ) + "2Database";
 		
@@ -61,7 +62,7 @@ public class RestServer extends HttpServlet {
 			Class <Modul2Database> c = (Class <Modul2Database>) Class.forName (classname);
 			Object o = c.newInstance ( );
 			
-			((Modul2Database) o).processRequest (xml);
+			((Modul2Database) o).processRequest (xml, path);
 			
 		} catch (ClassNotFoundException ex) {
 			

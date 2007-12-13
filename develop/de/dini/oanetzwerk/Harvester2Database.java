@@ -5,7 +5,6 @@
 package de.dini.oanetzwerk;
 
 import org.apache.log4j.Logger;
-//import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  * @author Michael Kühn
@@ -34,11 +33,36 @@ public class Harvester2Database implements Modul2Database {
 	 * @see de.dini.oanetzwerk.Modul2Database#processRequest()
 	 */
 	
-	public void processRequest (String request) {
-
-		System.out.println (request);
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.putData (DBAccess.moduls.Harvester, 13, request, "date");
+	public void processRequest (String data, String path) {
 		
+		DBAccessInterface db = DBAccess.createDBAccess ( );
+		String repositoryName = getRepositoryName ( );
+		String repositoryIdentifier = getRepositoryIdentifier ( );
+		String repositoryDate = getRepositoryDate ( );
+		db.putData (DBAccess.moduls.Harvester, repositoryName, repositoryIdentifier, repositoryDate, data);
+	}
+
+	/**
+	 * @return
+	 */
+	private String getRepositoryDate ( ) {
+
+		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	private String getRepositoryIdentifier ( ) {
+
+		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	private String getRepositoryName ( ) {
+
+		return null;
 	}
 }
