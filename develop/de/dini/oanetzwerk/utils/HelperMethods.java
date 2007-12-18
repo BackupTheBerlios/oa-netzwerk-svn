@@ -11,6 +11,9 @@ import java.util.GregorianCalendar;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+
 
 /**
  * @author Michael Kühn
@@ -83,5 +86,15 @@ public class HelperMethods {
 		Calendar cal = new GregorianCalendar ( );
 		
 		return new Date (cal.getTimeInMillis ( ));
+	}
+
+	/**
+	 * @param options
+	 */
+	public static void printhelp (String syntax, Options options) {
+
+		HelpFormatter formatter = new HelpFormatter ( );
+		formatter.printHelp (syntax, options, true);
+		
 	}
 }

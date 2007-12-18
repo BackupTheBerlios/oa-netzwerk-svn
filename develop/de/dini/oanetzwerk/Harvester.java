@@ -9,6 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
@@ -37,28 +42,123 @@ public class Harvester {
 	
 	/**
 	 * @param args
+	 * @throws ParseException 
 	 */
 	
-	public static void main (String [ ] args) {
+	@SuppressWarnings("static-access")
+	public static void main (String [ ] args) throws ParseException {
 		
-		// Parameter: repository_id, full/update-harvest
-		Harvester harvester = new Harvester ( );
+		Options options = new Options ( );
 		
-		harvester.processIds ( );
-		harvester.processRecords ( );	
+		options.addOption ("h", false, "show help");
+		options.addOption (OptionBuilder.withType (new String ( ))
+										.withLongOpt ("repositoryUrl")
+										.withArgName ("URL")
+										.withDescription ("URL of the repository which need to be harvested")
+										.withValueSeparator ( )
+										.hasArg ( )
+										.create ('u'));
+		options.addOption (OptionBuilder.withLongOpt ("repositoryId")
+										.withArgName ("ID")
+										.withDescription ("Id for the repositoryURL see database for details")
+										.withValueSeparator ( )
+										.hasArg ( )
+										.create ('i'));
+		options.addOption (OptionBuilder.withType (new String ( ))
+										.withLongOpt ("harvesttype")
+										.withArgName ("full|update")
+										.withDescription ("harvesting-type can be 'full' for a full harvest or 'update' for an updating harvest")
+										.withValueSeparator ( )
+										.hasArg ( )
+										.create ('t'));
+		
+		if (args.length > 0) {	
+			
+			CommandLine cmd = new GnuParser ( ).parse (options, args);
+			
+			if (cmd.hasOption ("h")) 				
+				HelperMethods.printhelp ("java " + Harvester.class.getCanonicalName ( ), options);
+				
+			else if ((cmd.hasOption ("repositoryUrl") || cmd.hasOption ('u')) && 
+					(cmd.hasOption ("repositoryId") || cmd.hasOption ('i')) &&
+					(cmd.hasOption ("harvesttype") || cmd.hasOption ('t'))) {
+				
+				String url;
+				int id;
+				boolean fullharvest;
+				
+				if ((url = filterUrl (cmd.getOptionValue ('u'))) == null)
+					url = filterUrl (cmd.getOptionValue ("repositoryUrl"));
+								
+				if (cmd.getOptionValue ('i') == null)
+					id = filterId (cmd.getOptionValue ("repositoryId"));
+				
+				else
+					id = filterId (cmd.getOptionValue ('i'));
+				
+				if (cmd.getOptionValue ('t') == null)
+					fullharvest = filterBool (cmd.getOptionValue ("harvesttype"));
+				
+				else
+					fullharvest = filterBool (cmd.getOptionValue ('t'));
+				
+				Harvester harvester = new Harvester ( );
+				
+				harvester.processIds (fullharvest);
+				harvester.processRecords (url, id);
+				
+			} else
+				HelperMethods.printhelp ("java " + Harvester.class.getCanonicalName ( ), options);
+			
+		} else
+			HelperMethods.printhelp ("java " + Harvester.class.getCanonicalName ( ), options);
 	}
 
 	/**
+	 * @param optionValue
+	 * @return
+	 */
+	private static boolean filterBool (String optionValue) {
+
+		if (optionValue.equalsIgnoreCase ("full"))
+			return true;
+		else
+			return false;
+	}
+
+	/**
+	 * @param optionValue
+	 * @return
+	 */
+	
+	private static int filterId (String optionValue) {
+		
+		int i = new Integer (optionValue);
+		
+		return i;
+	}
+
+	/**
+	 * @param optionValue
+	 */
+	
+	private static String filterUrl (String optionValue) {
+		
+		return optionValue;
+	}
+
+	/**
+	 * @param id 
+	 * @param url2 
 	 * 
 	 */
 	
-	private void processRecords ( ) {
+	private void processRecords (String url, int id) {
 		
 		HttpClient client;
 		GetMethod method;
 		
-		//TODO: Urls have to be put into a config file
-		String url = "http://edoc.hu-berlin.de/OAI-2.0?verb=GetRecord&metadataPrefix=oai_dc&identifier=";
+		//String url = "http://edoc.hu-berlin.de/OAI-2.0?verb=GetRecord&metadataPrefix=oai_dc&identifier=";
 		
 		for (int i = 0; i < this.ids.size ( ); i++) {
 			
@@ -110,10 +210,11 @@ public class Harvester {
 	}
 
 	/**
+	 * @param fullharvest 
 	 * 
 	 */
 	
-	private void processIds ( ) {
+	private void processIds (boolean fullharvest ) {
 		
 		ids = new ArrayList <String> ( );
 		

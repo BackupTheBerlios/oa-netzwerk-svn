@@ -212,6 +212,7 @@ public class RestClient {
 			buffer.append ("https://");
 			buffer.append (this.url).append (":").append (servletContainerSSLPort) .append ("/").append (servletPath) .append ("/") .append (path);
 		}
+		
 		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 		
 		this.url = buffer.toString ( );
