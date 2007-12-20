@@ -29,40 +29,38 @@ public class RestServer extends HttpServlet {
 	
 	public RestServer ( ) {
 		
-		//DOMConfigurator.configure ("log4j.xml");
 	}
 	
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		out = res.getWriter ( );
+		out.write (processRequest (req, 0));
 	}
 	
-	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws IOException {
-		
-		out = res.getWriter ( );
-	}
-
+	/**
+	 * @param req
+	 * @param i 
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
-	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
+	private String processRequest (HttpServletRequest req, int i) {
 		
-		out = res.getWriter ( );
-		String path = req.getPathTranslated ( );
-		
-		//System.out.println (req.getRemoteUser ( ) + req.getRemoteHost ( ));
-		
-		String classname = "de.dini.oanetzwerk." + req.getRemoteUser ( ) + "2Database";
+		String path [ ] = req.getPathTranslated ( ).split ("/");
+		String xml = "";
+		String classname = "de.dini.oanetzwerk." + path [0];
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("Class to be loaded: " + classname);
-		
-		String xml = HelperMethods.stream2String (req.getInputStream ( ));
-		
+			
 		try {
+			
+			if (i > 1)
+				 xml = HelperMethods.stream2String (req.getInputStream ( ));
 			
 			Class <Modul2Database> c = (Class <Modul2Database>) Class.forName (classname);
 			Object o = c.newInstance ( );
 			
-			((Modul2Database) o).processRequest (xml, path);
+			return (((Modul2Database) o).processRequest (xml, path, i));
 			
 		} catch (ClassNotFoundException ex) {
 			
@@ -75,15 +73,35 @@ public class RestServer extends HttpServlet {
 		} catch (IllegalAccessException ex) {
 			
 			ex.printStackTrace ( );
+			
+		} catch (IOException ex) {
+			
+			ex.printStackTrace ( );
 		}
+
+		return null;
+	}
+
+	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws IOException {
+		
+		out = res.getWriter ( );
+		out.write (processRequest (req, 2));
+	}
+
+	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
+		
+		out = res.getWriter ( );
+		out.write (processRequest (req, 3));
 	}
 
 	/**
 	 * @see javax.servlet.http.HttpServlet#doDelete(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	
 	protected void doDelete (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		out = res.getWriter ( );
+		out.write (processRequest (req, 1));
 	}
 	
 	/**

@@ -58,7 +58,6 @@ public class DBAccess implements DBAccessInterface {
 		System.setProperty (Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 		System.setProperty (Context.PROVIDER_URL, "file:///tmp");
 		
-		//this.prop = new Properties ( );
 		this.prop = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/workspace/oa-netzwerk-develop/dbprop.xml");
 		
 		try {
@@ -400,5 +399,138 @@ public class DBAccess implements DBAccessInterface {
 				ex.printStackTrace ( );
 			}
 		}
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
+	 */
+	public String selectObjectEntryId (String repositoryID, String externalOID) {
+		
+		createConnection ( );
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.repository_identifier = ? and o.repository_id = ?");
+			pstmt.setString (1, repositoryID);
+			pstmt.setString (2, externalOID);
+			
+			rs = pstmt.executeQuery ( );
+			
+			if (rs.next ( )) {
+				
+				return Integer.toString (rs.getInt ("object_id"), 10);
+				
+			} else 
+				return null;
+			
+		} catch (SQLException ex) {
+			
+			ex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				conn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+			}
+		}
+		return "DatabaseError";
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#selectRawRecordData(java.lang.String, java.lang.String)
+	 */
+	
+	public String selectRawRecordData (String internalOID, String datestamp) {
+
+		createConnection ( );
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = ?");
+			pstmt.setString (1, internalOID);
+			
+			if (datestamp.equals (""))
+				pstmt.setString (2, "max(collected)");
+			
+			else
+				pstmt.setString (2, datestamp);
+			
+			rs = pstmt.executeQuery ( );
+			
+			if (rs.next ( )) {
+				
+				//TODO: return rawdataset
+				
+			} else
+				return null;
+			
+		} catch (SQLException sqlex) {
+			
+		} finally {
+			
+			try {
+				
+				conn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+			}
+		}
+		return "DatabaseError";
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#selectRawRecordData(java.lang.String)
+	 */
+	public String selectRawRecordData (String internalOID) {
+
+		return selectRawRecordData (internalOID, "");
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#insertRawRecordData(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public int insertRawRecordData (int internalOID, String datestamp,
+			String blobbb) {
+
+		createConnection ( );
+		
+		PreparedStatement pstmt = null;
+		int rs = 0;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, collected, data) VALUES (?, ?, ?)");
+			pstmt.setInt (1, internalOID);
+			pstmt.setDate (2, HelperMethods.today ( ));
+			pstmt.setString (3, blobbb);
+			rs = pstmt.executeUpdate ( );
+
+		} catch (SQLException sqlex) {
+			
+		} finally {
+			
+			try {
+				
+				conn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+			}
+		}
+		return rs;
 	}
 }

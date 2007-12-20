@@ -12,5 +12,5 @@ package de.dini.oanetzwerk;
 
 public interface Modul2Database {
 	
-	public void processRequest (String data, String path);
+	public String processRequest (String data, String [ ] path, int i);
 }
