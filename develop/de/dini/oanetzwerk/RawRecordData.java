@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
  *
  */
 
-public class RawRecordData implements Modul2Database {
+public class RawRecordData implements Modul2Database{
 	
 	static Logger logger = Logger.getLogger (RawRecordData.class);
 	
@@ -44,7 +44,7 @@ public class RawRecordData implements Modul2Database {
 			postRawRecordData (path, data);
 			break;
 		case 3:
-			putORawRecordData (path, data);
+			putRawRecordData (path, data);
 			break;
 		default:
 			break;
@@ -57,7 +57,11 @@ public class RawRecordData implements Modul2Database {
 	 * @param path
 	 * @return
 	 */
+	
 	private String getRawRecordData (String [ ] path) {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("getRawRecordData");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		
@@ -73,6 +77,7 @@ public class RawRecordData implements Modul2Database {
 	/**
 	 * @param path
 	 */
+	
 	private void deleteORawRecordData (String [ ] path) {
 		//NOT IMPLEMENTED
 		// TODO Auto-generated method stub
@@ -83,6 +88,7 @@ public class RawRecordData implements Modul2Database {
 	 * @param path
 	 * @param data
 	 */
+	
 	private void postRawRecordData (String [ ] path, String data) {
 		//NOT IMPLEMENTED
 		// TODO Auto-generated method stub
@@ -93,7 +99,11 @@ public class RawRecordData implements Modul2Database {
 	 * @param path
 	 * @param data
 	 */
-	private void putORawRecordData (String [ ] path, String data) {
+	
+	private void putRawRecordData (String [ ] path, String data) {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("putRawRecordData");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.insertRawRecordData (new Integer (path [1]), path [2], data);

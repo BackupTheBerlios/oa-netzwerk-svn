@@ -6,9 +6,12 @@ package de.dini.oanetzwerk;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -29,6 +32,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
@@ -230,9 +234,39 @@ public class Harvester {
 			
 			// zuerst schauen, ob datestamp gleich, wenn ja, harvested auf today setzen, ansonsten metadaten putten
 			
-			if (this.ids.get (i).getInternalOID ( ) != 0) {
+			if (this.ids.get (i).getInternalOID ( ) == 0) {
 				
-				//TODO: create Object
+				String ressource = "ObjectEntry/";
+				RestClient restClient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+				
+				ObjectIdentifier tempobjid = this.ids.get (i);
+				
+				String result = restClient.GetData ( );
+				
+				try {
+					
+					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
+					DocumentBuilder builder = factory.newDocumentBuilder ( );
+					Document document = builder.parse (new InputSource (new StringReader (result)));
+					
+					NodeList internalOIDList = document.getElementsByTagName ("IOD");
+					
+					tempobjid.setInternalOID (new Integer(internalOIDList.item (1).getTextContent ( )));
+					
+					this.ids.set (i, tempobjid);
+					
+				} catch (SAXException saex) {
+					
+					saex.printStackTrace ( );
+					
+				} catch (ParserConfigurationException ex) {
+					
+					ex.printStackTrace ( );
+					
+				} catch (IOException ex) {
+					
+					ex.printStackTrace ( );
+				}
 				
 			} else {
 				
@@ -245,7 +279,7 @@ public class Harvester {
 					
 					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 					DocumentBuilder builder = factory.newDocumentBuilder ( );
-					Document document = builder.parse (result);
+					Document document = builder.parse (new InputSource (new StringReader(result)));
 					
 					NodeList idDatestampList = document.getElementsByTagName ("datestamp");
 					
@@ -255,11 +289,12 @@ public class Harvester {
 						
 						//TODO: implement proper change of harvested-timestamp
 						
-						System.exit (0);
+						return;
 						
 					}
 				} catch (SAXException saex) {
 					
+					saex.printStackTrace ( );
 					
 				} catch (ParserConfigurationException ex) {
 					
@@ -269,10 +304,10 @@ public class Harvester {
 					
 					ex.printStackTrace ( );
 				} catch (DOMException ex) {
-					// TODO Auto-generated catch block
+					
 					ex.printStackTrace();
 				} catch (java.text.ParseException ex) {
-					// TODO Auto-generated catch block
+					
 					ex.printStackTrace();
 				}
 			}
@@ -321,7 +356,10 @@ public class Harvester {
 	
 	private void deliverResult2DB (String data, String oid, Date datestamp) throws HttpException, IOException {
 		
-		String resource = "RawRecordData/" + oid + "/" + datestamp + "/";
+		GregorianCalendar cal = new GregorianCalendar ( );
+		cal.setTime (datestamp);
+		
+		String resource = "RawRecordData/" + oid + "/" + cal.get (Calendar.YEAR) + "-" + cal.get (Calendar.MONTH + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/";
 		
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 		restclient.PutData (data);
@@ -397,8 +435,15 @@ public class Harvester {
 				}
 				
 				internalOID = objectexists (repositoryId, externalOID);
+				
+				if (internalOID > 0)
+					ids.add (new ObjectIdentifier (externalOID, datestamp, internalOID));
+				
+				else {
 					
-				ids.add (new ObjectIdentifier (externalOID, datestamp, internalOID));
+					//TODO: better error-handling
+					logger.error ("Error occured!");
+				}
 			}
 			
 			NodeList rsList = document.getElementsByTagName ("resumptionToken");
@@ -446,7 +491,7 @@ public class Harvester {
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 		DocumentBuilder builder = factory.newDocumentBuilder ( );
-		Document document = builder.parse (result);
+		Document document = builder.parse (new InputSource (new StringReader(result)));
 		
 		if (document.getElementsByTagName ("NULL").getLength ( ) > 0)
 			return 0;

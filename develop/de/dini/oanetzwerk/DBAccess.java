@@ -441,7 +441,8 @@ public class DBAccess implements DBAccessInterface {
 				ex.printStackTrace ( );
 			}
 		}
-		return "DatabaseError";
+		
+		return "-500";
 	}
 
 	/**

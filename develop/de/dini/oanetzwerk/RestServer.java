@@ -45,9 +45,18 @@ public class RestServer extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	private String processRequest (HttpServletRequest req, int i) {
 		
-		String path [ ] = req.getPathTranslated ( ).split ("/");
+		String path [ ] = req.getPathInfo ( ).split ("/");
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("servlet: " + req.getContextPath ( ));
+			logger.debug ("PATH: " + req.getPathInfo ( ));
+			logger.debug ("PATH[0]: " + path [0]);
+			logger.debug ("PATH[1]: " + path [1]);
+		}
+		
 		String xml = "";
-		String classname = "de.dini.oanetzwerk." + path [0];
+		String classname = "de.dini.oanetzwerk." + path [1];
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("Class to be loaded: " + classname);
@@ -59,6 +68,9 @@ public class RestServer extends HttpServlet {
 			
 			Class <Modul2Database> c = (Class <Modul2Database>) Class.forName (classname);
 			Object o = c.newInstance ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug (Class.forName (classname) + "is created");			
 			
 			return (((Modul2Database) o).processRequest (xml, path, i));
 			
