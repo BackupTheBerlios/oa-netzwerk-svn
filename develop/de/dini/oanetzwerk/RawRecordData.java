@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
  *
  */
 
-public class RawRecordData implements Modul2Database{
+public class RawRecordData implements Modul2Database {
 	
 	static Logger logger = Logger.getLogger (RawRecordData.class);
 	
@@ -34,18 +34,41 @@ public class RawRecordData implements Modul2Database{
 	
 	public String processRequest (String data, String [ ] path, int i) {
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug (RawRecordData.class.getName ( ) + " called");
+		
 		switch (i) {
 		case 0:
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("get case chosen");
+			
 			return getRawRecordData (path);
-			case 1:
+			
+		case 1:
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("delete case chosen");
+			
 			deleteORawRecordData (path);
 			break;
+			
 		case 2:
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("post case chosen");
+			
 			postRawRecordData (path, data);
 			break;
+			
 		case 3:
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("put case chosen");
+			
 			putRawRecordData (path, data);
 			break;
+			
 		default:
 			break;
 		}

@@ -39,16 +39,43 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 
 /**
  * @author Michael Kühn
- *
+ * 
+ * The Harvester consists of two parts: the Harvester itself and the Object Manager. The Harvester
+ * makes a connection to a given repository where metadata-objects can be accessed.
+ * The Object Manager handles the harvested meta-data objects and ensures the safe storage of these objects
+ * in a database if necessary.
  */
 
 public class Harvester {
 	
+	/**
+	 * This is an ArrayList of ObjectIdentifiers where necessary information about the objects is stored @see de.dini.oanetzwerk.ObjectIdentifier
+	 */
+	
 	private ArrayList <ObjectIdentifier> ids;
+	
+	/**
+	 * The static log4j logger. All logging will be made with this nice static logger.
+	 */
+	
 	static Logger logger = Logger.getLogger (Harvester.class);
+	
+	/**
+	 * Properties. 
+	 */
+	
 	private Properties props;
+	
+	/**
+	 * The resumptionToken stores the link to the next x entries of the repositorie's response.
+	 */
+	
 	@SuppressWarnings("unused")
 	private String resumptionToken = "";
+	
+	/**
+	 * Standard Constructor which initializes the log4j and loads necessary properties.
+	 */
 	
 	public Harvester ( ) {
 		
@@ -57,8 +84,10 @@ public class Harvester {
 	}
 	
 	/**
+	 * Main class which have to be called.
+	 * 
 	 * @param args
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	
 	@SuppressWarnings("static-access")
@@ -234,16 +263,16 @@ public class Harvester {
 			
 			// zuerst schauen, ob datestamp gleich, wenn ja, harvested auf today setzen, ansonsten metadaten putten
 			
-			if (this.ids.get (i).getInternalOID ( ) == 0) {
+			if (this.ids.get (i).getInternalOID ( ) == -1) {
 				
 				String ressource = "ObjectEntry/";
 				RestClient restClient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 				
 				ObjectIdentifier tempobjid = this.ids.get (i);
 				
-				String result = restClient.GetData ( );
-				
 				try {
+					
+					String result = restClient.PutData ("");
 					
 					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 					DocumentBuilder builder = factory.newDocumentBuilder ( );
@@ -257,14 +286,17 @@ public class Harvester {
 					
 				} catch (SAXException saex) {
 					
+					logger.error (saex.getLocalizedMessage ( ));
 					saex.printStackTrace ( );
 					
 				} catch (ParserConfigurationException ex) {
 					
+					logger.error (ex.getLocalizedMessage ( ));
 					ex.printStackTrace ( );
 					
 				} catch (IOException ex) {
 					
+					logger.error (ex.getLocalizedMessage ( ));
 					ex.printStackTrace ( );
 				}
 				
@@ -402,10 +434,12 @@ public class Harvester {
 		
 		} catch (HttpException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			
 		} catch (IOException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
 	}
@@ -436,10 +470,25 @@ public class Harvester {
 				
 				internalOID = objectexists (repositoryId, externalOID);
 				
-				if (internalOID > 0)
+				if (internalOID > 0) {
+					
+					// we found this object in the database
+					
+					if (logger.isDebugEnabled ( ))
+						logger.debug (externalOID + " is " + internalOID + " in our database");
+					
 					ids.add (new ObjectIdentifier (externalOID, datestamp, internalOID));
-				
-				else {
+					
+				} else if (internalOID == -1) {
+					
+					// we found no object in the database
+					
+					if (logger.isDebugEnabled ( ))
+						logger.debug (externalOID + " is not in the database. so we have to create a new object");
+					
+					ids.add (new ObjectIdentifier (externalOID, datestamp, -1));
+					
+				} else {
 					
 					//TODO: better error-handling
 					logger.error ("Error occured!");
@@ -455,14 +504,17 @@ public class Harvester {
 			
 		} catch (ParserConfigurationException pacoex) {
 			
+			logger.error (pacoex.getLocalizedMessage ( ));
 			pacoex.printStackTrace ( );
 			
 		} catch (SAXException sex) {
 			
+			logger.error (sex.getLocalizedMessage ( ));
 			sex.printStackTrace ( );
 			
 		} catch (IOException ioex) {
 			
+			logger.error (ioex.getLocalizedMessage ( ));
 			ioex.printStackTrace ( );
 		}		
 	}
@@ -494,7 +546,7 @@ public class Harvester {
 		Document document = builder.parse (new InputSource (new StringReader(result)));
 		
 		if (document.getElementsByTagName ("NULL").getLength ( ) > 0)
-			return 0;
+			return -1;
 		
 		else {
 			
@@ -508,6 +560,11 @@ public class Harvester {
 		}
 	}
 }
+
+/**
+ * @author Michael Kühn
+ *
+ */
 
 class ObjectIdentifier {
 	

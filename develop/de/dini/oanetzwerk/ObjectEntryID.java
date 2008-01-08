@@ -6,6 +6,8 @@ package de.dini.oanetzwerk;
 
 import org.apache.log4j.Logger;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 /**
  * @author Michael Kühn
@@ -21,19 +23,42 @@ public class ObjectEntryID implements Modul2Database {
 	 */
 	
 	public String processRequest (String data, String [ ] path, int i) {
-
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug (ObjectEntryID.class.getName ( ) + " called");
+		
 		switch (i) {
 		case 0:
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("get case chosen");
+			
 			return getObjectEntryID (path);
-			case 1:
+			
+		case 1:
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("delete case chosen");
+						
 			deleteObjectEntryID (path);
 			break;
+			
 		case 2:
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("post case chosen");
+			
 			postObjectEntryID (path, data);
 			break;
+			
 		case 3:
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("put case chosen");
+
 			putObjectEntryID (path, data);
 			break;
+			
 		default:
 			break;
 		}
@@ -45,10 +70,12 @@ public class ObjectEntryID implements Modul2Database {
 	 * @param path
 	 * @param data
 	 */
+	
 	private void putObjectEntryID (String [ ] path, String data) {
-		//NOT IMPLEMENTED
-		// TODO Auto-generated method stub
 		
+		//NOT IMPLEMENTED
+		logger.warn ("putObjectEntryID is not implemented");
+		throw new NotImplementedException ( );
 	}
 
 	/**
@@ -56,18 +83,20 @@ public class ObjectEntryID implements Modul2Database {
 	 * @param data
 	 */
 	private void postObjectEntryID (String [ ] path, String data) {
-		//NOT IMPLEMENTED
-		// TODO Auto-generated method stub
 		
+		//NOT IMPLEMENTED
+		logger.warn ("postObjectEntryID is not implemented");
+		throw new NotImplementedException ( );		
 	}
 
 	/**
 	 * @param path
 	 */
 	private void deleteObjectEntryID (String [ ] path) {
-		//NOT IMPLEMENTED
-		// TODO Auto-generated method stub
 		
+		//NOT IMPLEMENTED
+		logger.warn ("deleteObjectEntryID is not implemented");
+		throw new NotImplementedException ( );
 	}
 
 	/**
@@ -76,17 +105,23 @@ public class ObjectEntryID implements Modul2Database {
 	
 	private String getObjectEntryID (String [ ] path) {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("getObjectEntryID");
-		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
-		String response = db.selectObjectEntryId (path[1], path[2]);
-
+		String response = db.selectObjectEntryId (path[2], path[3]);
+		
 		if (response != null) {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Database response: " + response);
 			
 			return ObjectEntryIDResponse ("<OID>" + response + "</OID>");
 			
-		} else return ObjectEntryIDResponse ("<NULL />");
+		} else {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Database response: NULL");
+			
+			return ObjectEntryIDResponse ("<NULL />");
+		}
 	}
 
 	/**
@@ -124,5 +159,4 @@ public class ObjectEntryID implements Modul2Database {
 		// TODO Auto-generated method stub
 
 	}
-
 }

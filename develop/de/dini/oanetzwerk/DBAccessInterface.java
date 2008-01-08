@@ -5,6 +5,7 @@
 package de.dini.oanetzwerk;
 
 import java.sql.Connection;
+import java.sql.Date;
 
 
 /**
@@ -72,5 +73,15 @@ public interface DBAccessInterface {
 	 */
 	public abstract int insertRawRecordData (int internalOID, String datestamp,
 			String blobbb);
+
+	/**
+	 * @param repository_id
+	 * @param harvested
+	 * @param repository_datestamp
+	 * @param repository_identifier
+	 * @return
+	 */
+	public abstract String insertObject (int repository_id, Date harvested,
+			Date repository_datestamp, String repository_identifier);
 
 }

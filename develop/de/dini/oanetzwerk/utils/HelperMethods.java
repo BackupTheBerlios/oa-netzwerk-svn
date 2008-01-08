@@ -91,10 +91,10 @@ public class HelperMethods {
 	/**
 	 * @param options
 	 */
+	
 	public static void printhelp (String syntax, Options options) {
 
 		HelpFormatter formatter = new HelpFormatter ( );
 		formatter.printHelp (syntax, options, true);
-		
 	}
 }

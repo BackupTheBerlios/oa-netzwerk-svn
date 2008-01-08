@@ -404,6 +404,7 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
 	 */
+	
 	public String selectObjectEntryId (String repositoryID, String externalOID) {
 		
 		createConnection ( );
@@ -414,20 +415,33 @@ public class DBAccess implements DBAccessInterface {
 		try {
 			
 			pstmt = conn.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.repository_identifier = ? and o.repository_id = ?");
-			pstmt.setString (1, repositoryID);
-			pstmt.setString (2, externalOID);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("repositoryID = " + repositoryID + " externalOID = " + externalOID);
+			
+			pstmt.setString (1, externalOID);
+			pstmt.setInt (2, new Integer (repositoryID));
 			
 			rs = pstmt.executeQuery ( );
 			
 			if (rs.next ( )) {
 				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("DB returned: objectId = " + rs.getInt ("object_id"));
+				
 				return Integer.toString (rs.getInt ("object_id"), 10);
 				
-			} else 
+			} else {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("There's no objectID");
+				
 				return null;
+			}
 			
 		} catch (SQLException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			
 		} finally {
@@ -438,6 +452,7 @@ public class DBAccess implements DBAccessInterface {
 				
 			} catch (SQLException ex) {
 				
+				logger.error (ex.getLocalizedMessage ( ));
 				ex.printStackTrace ( );
 			}
 		}
@@ -533,5 +548,29 @@ public class DBAccess implements DBAccessInterface {
 			}
 		}
 		return rs;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#insertObject(int, java.sql.Date, java.sql.Date, java.lang.String)
+	 */
+	public String insertObject (int repository_id, Date harvested,
+			Date repository_datestamp, String repository_identifier) {
+
+		createConnection ( );
+		
+		PreparedStatement pstmt = null;
+		int rs = 0;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (repository_id, harvested, repository_datestamp, repository_identifier) VALUES (?, ?, ?, ?)");
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+		
+		return null;
 	}
 }
