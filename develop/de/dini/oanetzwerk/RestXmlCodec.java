@@ -206,6 +206,22 @@ public class RestXmlCodec {
 		return listErrors;
 	}
 	
+	public static String fetchMessageType(String strXML) {
+		String type = null; //unknown
+		
+		org.jdom.Document doc;
+		SAXBuilder builder = new SAXBuilder();
+		try {		
+			doc = builder.build(new InputSource (new StringReader(strXML)));
+			Element mainElement = (Element)(doc.getRootElement().getChildren()).get(0);
+			type = mainElement.getName();
+		} catch(Exception e) {
+			System.out.println(e);
+		}
+		
+		return type;
+	}
+	
 	/**
 	 * Testroutine
 	 * @param args (none)
@@ -222,10 +238,12 @@ public class RestXmlCodec {
 		mapTestEntry.put("existent", "null");
 		listTestEntrySet.add(mapTestEntry);
 		
-		String strXMLRequest = encodeEntrySetRequestBody(listTestEntrySet);	
+		String strXMLRequest = encodeEntrySetRequestBody(listTestEntrySet);
+		System.out.println("MessageType == " + fetchMessageType(strXMLRequest));
 		System.out.println(strXMLRequest);
 		
-		String strXMLResponse = encodeEntrySetResponseBody(listTestEntrySet,"TestKeyword");	
+		String strXMLResponse = encodeEntrySetResponseBody(listTestEntrySet,"TestKeyword");
+		System.out.println("MessageType == " + fetchMessageType(strXMLResponse));
 		System.out.println(strXMLResponse);
 	
 		List<HashMap<String,String>> listTestEntrySet2 = decodeEntrySet(strXMLRequest);
@@ -255,6 +273,7 @@ public class RestXmlCodec {
 		listTestErrors.add(mapTestError);
 		
 		String strXMLErrors = encodeErrors(listTestErrors);	
+		System.out.println("MessageType == " + fetchMessageType(strXMLErrors));
 		System.out.println(strXMLErrors);
 		
 		List<HashMap<String,String>> listTestErrors2 = decodeErrors(strXMLErrors);
