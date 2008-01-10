@@ -80,7 +80,7 @@ public class Harvester {
 	public Harvester ( ) {
 		
 		DOMConfigurator.configure ("log4j.xml");
-		this.props = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/workspace/oa-netzwerk-develop/harvesterprop.xml");
+		this.props = HelperMethods.loadPropertiesFromFile ("harvesterprop.xml");
 	}
 	
 	/**

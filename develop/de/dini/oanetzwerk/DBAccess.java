@@ -57,7 +57,7 @@ public class DBAccess implements DBAccessInterface {
 		System.setProperty (Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 		System.setProperty (Context.PROVIDER_URL, "file:///tmp");
 		
-		this.prop = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/workspace/oa-netzwerk-develop/dbprop.xml");
+		this.prop = HelperMethods.loadPropertiesFromFile ("dbprop.xml");
 		
 		try {
 			

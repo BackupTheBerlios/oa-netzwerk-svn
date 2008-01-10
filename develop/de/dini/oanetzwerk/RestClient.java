@@ -63,7 +63,7 @@ public class RestClient {
 		this.path = filterpath (path);
 		this.username = user;
 		this.password = pwd;
-		this.props = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/workspace/oa-netzwerk-develop/restclientprop.xml");
+		this.props = HelperMethods.loadPropertiesFromFile ("restclientprop.xml");
 		
 		if (!this.nossl) {
 			
@@ -109,7 +109,9 @@ public class RestClient {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("SSL");
 			
-			return false;
+			//return false;
+			//TODO: if SSL works reenable false!!!!
+			return true;
 		}
 	}
 
