@@ -29,7 +29,7 @@ import com.sybase.jdbc3.jdbc.SybDataSource;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
 
-import junit.framework.Assert;
+//import junit.framework.Assert;
 
 /**
  * @author Michael Kühn
@@ -57,7 +57,7 @@ public class DBAccess implements DBAccessInterface {
 		System.setProperty (Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 		System.setProperty (Context.PROVIDER_URL, "file:///tmp");
 		
-		this.prop = HelperMethods.loadPropertiesFromFile ("dbprop.xml");
+		this.prop = HelperMethods.loadPropertiesFromFile ("webapps/restserver/WEB-INF/dbprop.xml");
 		
 		try {
 			
@@ -115,7 +115,7 @@ public class DBAccess implements DBAccessInterface {
 		try {
 			
 			this.ds = (DataSource) this.ic2.lookup (this.prop.getProperty ("dataSourceName"));
-			Assert.assertNotNull (ds);
+//			Assert.assertNotNull (ds);
 			conn = this.ds.getConnection ( );
 			
 		} catch (NamingException ex) {
