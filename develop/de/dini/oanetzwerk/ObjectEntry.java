@@ -14,7 +14,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -28,61 +27,16 @@ import de.dini.oanetzwerk.utils.HelperMethods;
  *
  */
 
-public class ObjectEntry implements Modul2Database {
+public class ObjectEntry extends 
+AbstractKeyWordHandler implements Modul2Database {
 	
-	static Logger logger = Logger.getLogger (ObjectEntry.class);
-	
-	/**
-	 * @see de.dini.oanetzwerk.Modul2Database#processRequest(java.lang.String, java.lang.String[], int)
-	 */
-	public String processRequest (String data, String [ ] path, int i) {
-
-		if (logger.isDebugEnabled ( ))
-			logger.debug (ObjectEntry.class.getName ( ) + " called");
-		
-		switch (i) {
-		case 0:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("get case chosen");
-			
-			return getObjectEntry (path);
-			
-		case 1:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("delete case chosen");
-						
-			return deleteObjectEntry (path);
-			
-		case 2:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("post case chosen");
-			
-			return postObjectEntry (path, data);
-			
-		case 3:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("put case chosen");
-
-			return putObjectEntry (path, data);
-			
-		default:
-			break;
-		}
-		
-		return "null";
-	}
-
 	/**
 	 * @param path
 	 * @param data
 	 * @return
 	 */
 	
-	private String putObjectEntry (String [ ] path, String data) {
+	String putObjectEntry (String [ ] path, String data) {
 		
 		int repository_id = extract_repository_id (data);
 		String repository_identifier = extract_repository_identifier (data);
@@ -142,7 +96,10 @@ public class ObjectEntry implements Modul2Database {
 	
 	private String parseXML (String data, String node) {
 		
-		String result = null;
+		String result = "";
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("data: " + data);
 		
 		try {
 			
@@ -150,9 +107,30 @@ public class ObjectEntry implements Modul2Database {
 			DocumentBuilder builder = factory.newDocumentBuilder ( );
 			Document document = builder.parse (new InputSource (new StringReader (data)));
 			
-			NodeList nodelist = document.getElementsByTagName (node);
+			NodeList nodelist = document.getElementsByTagName ("entry");
 			
-			result = nodelist.item (1).getTextContent ( );
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("nodlistlength: " + nodelist.getLength ( ));
+			
+			for (int i = 0; i < nodelist.getLength ( ); i++) {
+				
+				if (logger.isDebugEnabled ( )) {
+					
+					logger.debug (nodelist.item (i).getAttributes ( ).item (0).getNodeName ( ));
+					logger.debug (nodelist.item (i).getAttributes ( ).item (0).getNodeValue ( ));
+				}
+				
+				if (nodelist.item (i).getAttributes ( ).item (0).getNodeValue ( ).equals (node)) {
+					
+					result = nodelist.item (i).getTextContent ( );
+					break;
+				}
+			}
+			
+			//result = nodelist.item (1).getTextContent ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Node " + node + " = " + result);
 			
 		} catch (SAXException saex) {
 			
@@ -201,7 +179,7 @@ public class ObjectEntry implements Modul2Database {
 	 * @return
 	 */
 	
-	private String postObjectEntry (String [ ] path, String data) {
+	String postObjectEntry (String [ ] path, String data) {
 
 		// TODO Auto-generated method stub
 		return null;
@@ -212,7 +190,7 @@ public class ObjectEntry implements Modul2Database {
 	 * @return
 	 */
 	
-	private String deleteObjectEntry (String [ ] path) {
+	String deleteObjectEntry (String [ ] path) {
 
 		// TODO Auto-generated method stub
 		return null;
@@ -223,7 +201,7 @@ public class ObjectEntry implements Modul2Database {
 	 * @return
 	 */
 	
-	private String getObjectEntry (String [ ] path) {
+	String getObjectEntry (String [ ] path) {
 
 		// TODO Auto-generated method stub
 		return null;
@@ -237,5 +215,45 @@ public class ObjectEntry implements Modul2Database {
 
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 */
+	@Override
+	protected String deleteKeyWord (String [ ] path) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
+	 */
+	@Override
+	protected String getKeyWord (String [ ] path) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 */
+	@Override
+	protected String postKeyWord (String [ ] path, String data) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
+	 */
+	@Override
+	protected String putKeyWord (String [ ] path, String data) {
+
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

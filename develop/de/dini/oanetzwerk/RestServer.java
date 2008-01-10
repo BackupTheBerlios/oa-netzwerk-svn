@@ -70,7 +70,7 @@ public class RestServer extends HttpServlet {
 			Object o = c.newInstance ( );
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug (Class.forName (classname) + "is created");			
+				logger.debug (Class.forName (classname) + " is created");			
 			
 			return (((Modul2Database) o).processRequest (xml, path, i));
 			

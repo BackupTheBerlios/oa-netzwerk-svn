@@ -24,7 +24,6 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-//import org.apache.log4j.xml.DOMConfigurator;
 
 import com.sybase.jdbc3.jdbc.SybDataSource;
 
@@ -524,7 +523,6 @@ public class DBAccess implements DBAccessInterface {
 		createConnection ( );
 		
 		PreparedStatement pstmt = null;
-		int rs = 0;
 		
 		try {
 			
@@ -532,7 +530,7 @@ public class DBAccess implements DBAccessInterface {
 			pstmt.setInt (1, internalOID);
 			pstmt.setDate (2, HelperMethods.today ( ));
 			pstmt.setString (3, blobbb);
-			rs = pstmt.executeUpdate ( );
+			pstmt.executeUpdate ( );
 
 		} catch (SQLException sqlex) {
 			
@@ -547,23 +545,43 @@ public class DBAccess implements DBAccessInterface {
 				ex.printStackTrace ( );
 			}
 		}
-		return rs;
+		return internalOID;
 	}
 
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#insertObject(int, java.sql.Date, java.sql.Date, java.lang.String)
 	 */
+	
 	public String insertObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier) {
 
 		createConnection ( );
 		
 		PreparedStatement pstmt = null;
-		int rs = 0;
+		ResultSet rs = null;
+		int object_id = 0;
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (repository_id, harvested, repository_datestamp, repository_identifier) VALUES (?, ?, ?, ?)");
+			pstmt = conn.prepareStatement ("SELECT MAX(object_id) FROM dbo.Object");
+			rs = pstmt.executeQuery ( );
+			
+			
+			if (rs.next ( ))
+				object_id = rs.getInt (object_id);
+			
+			rs = null;
+			pstmt = null;
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (object_id, repository_id, harvested, repository_datestamp, repository_identifier) VALUES (?, ?, ?, ?, ?)");
+			
+			pstmt.setInt (1, ++object_id);
+			pstmt.setInt (2, repository_id);
+			pstmt.setDate (3, harvested);
+			pstmt.setDate (4, repository_datestamp);
+			pstmt.setString (5, repository_identifier);
+			
+			pstmt.executeUpdate ( );
 			
 		} catch (SQLException sqlex) {
 			
@@ -571,6 +589,6 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 		}
 		
-		return null;
+		return Integer.toString (object_id);
 	}
 }

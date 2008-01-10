@@ -272,7 +272,10 @@ public class Harvester {
 				
 				try {
 					
-					String result = restClient.PutData ("");
+					String result = restClient.PutData ("<oanrest>\n\t<request>\n\t\t<entryset>\n\t\t\t<entry key=\"repository_id\">" +
+							id +  "</entry>\n\t\t\t<entry key=\"repository_identifier\">" +
+							this.ids.get (i).getId ( ) + "</entry>\n\t\t\t<entry key=\"repository_datestamp\">" +
+							this.ids.get (i).getDatestamp ( ) +	"</entry>\n\t\t</entryset>\n\t</request>\n</oanrest>");
 					
 					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 					DocumentBuilder builder = factory.newDocumentBuilder ( );
