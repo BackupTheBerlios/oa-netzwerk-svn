@@ -1,16 +1,10 @@
 package de.dini.oanetzwerk;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.jdom.Content;
 import org.jdom.Element;
@@ -18,16 +12,17 @@ import org.jdom.Text;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+
 
 
 public class RestXmlCodec {
 
+	/**
+	 * encodes XML REST request body
+	 * @param listEntrySet list of hashmaps storing key-value-sets
+	 * @return XML encoded request body
+	 */
 	public static String encodeEntrySetRequestBody(List<HashMap<String, String>> listEntrySet) {
 		StringBuffer sbXML = new StringBuffer();
 		sbXML.append("<oanrest>\n");
@@ -38,6 +33,12 @@ public class RestXmlCodec {
 		return sbXML.toString();
 	}
 
+	/**
+	 * encodes XML REST response body
+	 * @param listEntrySet list of hashmaps storing key-value-sets
+	 * @param keyword a REST-keyword to deliver back by the server
+	 * @return XML encoded request body
+	 */	
 	public static String encodeEntrySetResponseBody(List<HashMap<String, String>> listEntrySet, String keyword) {
 		StringBuffer sbXML = new StringBuffer();
 		sbXML.append("<oanrest>\n");
@@ -50,7 +51,12 @@ public class RestXmlCodec {
 		return sbXML.toString();
 	}	
 	
-	public static String encodeEntrySet(List<HashMap<String, String>> listEntrySet) {
+	/**
+	 * encodes only the entryset (without header or footer)
+	 * @param listEntrySet list of hashmaps storing key-value-sets
+	 * @return XML encoded data
+	 */
+	private static String encodeEntrySet(List<HashMap<String, String>> listEntrySet) {
 		StringBuffer sbXML = new StringBuffer();
 		for(int i = 0; i < listEntrySet.size(); i++) {
 			sbXML.append("<entryset>\n");
@@ -74,63 +80,18 @@ public class RestXmlCodec {
 		return sbXML.toString();
 	}
 	
-	public static String encodeErrors(List<HashMap<String, String>> listErrors) {
-		StringBuffer sbXML = new StringBuffer();
-		sbXML.append("<oanrest>\n");
-		sbXML.append("<errors>\n");		
-		for(int i = 0; i < listErrors.size(); i++) {
-			HashMap mapError = listErrors.get(i);
-			Iterator it = mapError.keySet().iterator();
-			while(it.hasNext()) {
-				String key = (String)it.next();
-				sbXML.append("<error key=\"");
-				sbXML.append(key);
-				sbXML.append("\">\n");
-				sbXML.append("<description>");
-				sbXML.append(mapError.get(key));
-				sbXML.append("</description>\n");
-				sbXML.append("</error>\n");
-			}			
-		}
-		sbXML.append("</errors>\n");
-		sbXML.append("</oanrest>\n");
-		return sbXML.toString();
-	}	
-	
+	/**
+	 * decodes XML String to entryset 
+	 * @param strXML XML encoded data
+	 * @return list of hashmaps storing key-value-sets
+	 */
 	public static List<HashMap<String, String>> decodeEntrySet(String strXML) {
 		List<HashMap<String, String>> listEntrySet = new ArrayList<HashMap<String,String>>();
-		
-		/*
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
-			DocumentBuilder builder = factory.newDocumentBuilder ( );
-			Document document = builder.parse (new InputSource (new StringReader(strXML)));
 			
-			NodeList nlEntrySets = document.getElementsByTagName("entryset");
-			for(int i = 0; i < nlEntrySets.getLength(); i++) {
-				NodeList nlEntries = nlEntrySets.item(i).getChildNodes();
-				for(int j = 0; j < nlEntries.getLength(); j++) {
-					Node entry = nlEntries.item(j);
-					String key = entry.getAttributes().getNamedItem("key").getNodeName();
-				}
-			}			
-		} catch (SAXException ex) {		
-			ex.printStackTrace ( );
-		} catch (ParserConfigurationException ex) {
-			ex.printStackTrace ( );
-		} catch (IOException ex) {
-			ex.printStackTrace ( );
-		} catch (DOMException ex) {
-			ex.printStackTrace();
-		} 
-		*/
-		
 		org.jdom.Document doc;
-		Element root;	
 		SAXBuilder builder = new SAXBuilder();
 		try {		
 			doc = builder.build(new InputSource (new StringReader(strXML)));
-			root = doc.getRootElement();
 			
 			System.out.println("** doc generated");
 			
@@ -168,9 +129,86 @@ public class RestXmlCodec {
 		return listEntrySet;
 	}
 	
+	//TODO: Fehlerkodierung als Hash ist ungeschickt, da Errors eine Liste ist
+
 	
 	/**
-	 * @param args
+	 * encodes an error response
+	 * @param listErrors list of hashmaps storing key-description-sets
+	 * @return XML encoded errors
+	 */
+	public static String encodeErrors(List<HashMap<String, String>> listErrors) {
+		StringBuffer sbXML = new StringBuffer();
+		sbXML.append("<oanrest>\n");
+		sbXML.append("<errors>\n");		
+		for(int i = 0; i < listErrors.size(); i++) {
+			HashMap mapError = listErrors.get(i);
+			Iterator it = mapError.keySet().iterator();
+			while(it.hasNext()) {
+				String key = (String)it.next();
+				sbXML.append("<error key=\"");
+				sbXML.append(key);
+				sbXML.append("\">\n");
+				sbXML.append("<description>");
+				sbXML.append(mapError.get(key));
+				sbXML.append("</description>\n");
+				sbXML.append("</error>\n");
+			}			
+		}
+		sbXML.append("</errors>\n");
+		sbXML.append("</oanrest>\n");
+		return sbXML.toString();
+	}	
+
+	
+	/**
+	 * decodes XML String to error list 
+	 * @param strXML XML encoded data
+	 * @return list of hashmaps storing key-description-sets
+	 */
+	public static List<HashMap<String, String>> decodeErrors(String strXML) {
+		List<HashMap<String, String>> listErrors = new ArrayList<HashMap<String,String>>();
+			
+		org.jdom.Document doc;
+		SAXBuilder builder = new SAXBuilder();
+		try {		
+			doc = builder.build(new InputSource (new StringReader(strXML)));
+			
+			System.out.println("** doc generated");
+			
+			ElementFilter filter = new ElementFilter("errors");
+			Iterator iterator = doc.getDescendants(filter);
+			while (iterator.hasNext()) {
+				System.out.println("** <errors> found");
+				Element elementErrors = (Element) iterator.next();
+				HashMap<String,String> mapError = new HashMap<String,String>();
+				filter = new ElementFilter("error");
+				Iterator iterator2 = elementErrors.getDescendants(filter);
+				while (iterator2.hasNext()) {
+					System.out.println("** <error> found");					
+					Element elementError = (Element) iterator2.next();
+					String key = elementError.getAttributeValue("key");
+					System.out.println("** key == " + key);
+					String description = null; 
+					Element elementDescription = elementError.getChild("description");
+					if(elementDescription != null) {
+						description = ((Text)elementDescription.getContent(0)).getValue();
+					}
+					System.out.println("** description == " + description);					
+					mapError.put(key,description);
+				}
+				listErrors.add(mapError);
+			}
+		} catch(Exception e) {
+			System.out.println(e);
+		}
+		
+		return listErrors;
+	}
+	
+	/**
+	 * Testroutine
+	 * @param args (none)
 	 */
 	public static void main(String[] args) {
 		
@@ -184,16 +222,13 @@ public class RestXmlCodec {
 		mapTestEntry.put("existent", "null");
 		listTestEntrySet.add(mapTestEntry);
 		
-		String strTestXML = encodeEntrySetRequestBody(listTestEntrySet);	
-		System.out.println(strTestXML);
+		String strXMLRequest = encodeEntrySetRequestBody(listTestEntrySet);	
+		System.out.println(strXMLRequest);
 		
-		String strTestXML2 = encodeEntrySetResponseBody(listTestEntrySet,"TestKeyword");	
-		System.out.println(strTestXML2);
-
-		String strTestXML3 = encodeErrors(listTestEntrySet);	
-		System.out.println(strTestXML3);
-		
-		List<HashMap<String,String>> listTestEntrySet2 = decodeEntrySet(strTestXML);
+		String strXMLResponse = encodeEntrySetResponseBody(listTestEntrySet,"TestKeyword");	
+		System.out.println(strXMLResponse);
+	
+		List<HashMap<String,String>> listTestEntrySet2 = decodeEntrySet(strXMLRequest);
 		System.out.println("");
 		for(int i = 0; i < listTestEntrySet2.size(); i++) {
 			System.out.println("EINTRAG " + i);
@@ -204,6 +239,35 @@ public class RestXmlCodec {
 				System.out.println("key == \"" + key + "\"");
 				String value = entry.get(key);
 				System.out.println("value == " + (value==null ? "<NULL>" : ("\"" + value + "\"")));
+			}
+		}
+		
+		System.out.println("");
+		
+		List<HashMap<String,String>> listTestErrors = new ArrayList<HashMap<String,String>>();
+		HashMap<String,String> mapTestError = new HashMap<String,String>();
+		mapTestError.put("ServerError", "SQLException... ");
+		mapTestError.put("ServerError", "IOException..");
+		listTestErrors.add(mapTestError);
+		mapTestError = new HashMap<String,String>();
+		mapTestError.put("ServerError", "OutOfIdeasException... ");
+		mapTestError.put("NOObject", "Object referenced by EXT_OID=1234 and REP_ID=0815 does not exist in database.");
+		listTestErrors.add(mapTestError);
+		
+		String strXMLErrors = encodeErrors(listTestErrors);	
+		System.out.println(strXMLErrors);
+		
+		List<HashMap<String,String>> listTestErrors2 = decodeErrors(strXMLErrors);
+		System.out.println("");
+		System.out.println("ERRORS");
+		for(int i = 0; i < listTestErrors2.size(); i++) {
+			HashMap<String,String> entry = listTestErrors2.get(i);
+			Iterator it = entry.keySet().iterator();
+			while(it.hasNext()) {
+				String key = (String)it.next();
+				System.out.println("key == \"" + key + "\"");
+				String value = entry.get(key);
+				System.out.println("description == " + (value==null ? "<NULL>" : ("\"" + value + "\"")));
 			}
 		}
 		
