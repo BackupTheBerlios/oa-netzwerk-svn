@@ -14,10 +14,13 @@ import org.jdom.input.SAXBuilder;
 
 import org.xml.sax.InputSource;
 
-
-
 public class RestXmlCodec {
+	
+	private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    // bisher nur lokal bei mir, könnte aber auf Scope1 deponiert werden (rm)
+	private static final String XML_ROOT = "<oanrest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"N:\\EIGENE~1\\_Aufgaben\\OA-NETZWERK\\OANREST2.xsd\">\n";
 
+	
 	/**
 	 * encodes XML REST request body
 	 * @param listEntrySet list of hashmaps storing key-value-sets
@@ -25,7 +28,8 @@ public class RestXmlCodec {
 	 */
 	public static String encodeEntrySetRequestBody(List<HashMap<String, String>> listEntrySet) {
 		StringBuffer sbXML = new StringBuffer();
-		sbXML.append("<oanrest>\n");
+		sbXML.append(XML_HEADER);
+		sbXML.append(XML_ROOT);
 		sbXML.append("<request>\n");		
 		sbXML.append(encodeEntrySet(listEntrySet));
 		sbXML.append("</request>\n");
@@ -41,7 +45,8 @@ public class RestXmlCodec {
 	 */	
 	public static String encodeEntrySetResponseBody(List<HashMap<String, String>> listEntrySet, String keyword) {
 		StringBuffer sbXML = new StringBuffer();
-		sbXML.append("<oanrest>\n");
+		sbXML.append(XML_HEADER);
+		sbXML.append(XML_ROOT);
 		sbXML.append("<response keyword=\"");
 		sbXML.append(keyword);
 		sbXML.append("\">\n");		
@@ -139,7 +144,8 @@ public class RestXmlCodec {
 	 */
 	public static String encodeErrors(List<HashMap<String, String>> listErrors) {
 		StringBuffer sbXML = new StringBuffer();
-		sbXML.append("<oanrest>\n");
+		sbXML.append(XML_HEADER);
+		sbXML.append(XML_ROOT);
 		sbXML.append("<errors>\n");		
 		for(int i = 0; i < listErrors.size(); i++) {
 			HashMap mapError = listErrors.get(i);
@@ -206,6 +212,12 @@ public class RestXmlCodec {
 		return listErrors;
 	}
 	
+	/**
+	 * parses the XML String for mutually exclusive tags determining the message type
+	 * (used to check as to whether there was an error instead of a data response)
+	 * @param strXML XML encoded data
+	 * @return identifying String (errors|response|request)
+	 */
 	public static String fetchMessageType(String strXML) {
 		String type = null; //unknown
 		
