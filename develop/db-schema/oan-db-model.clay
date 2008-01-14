@@ -155,6 +155,12 @@
 <variant type-name-pattern="TEXT"/>
 </data-type>
 </column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="precleaned_data" remarks="" uid="dff6e3:117774ce7b2:-7fe6">
+<column-description/>
+<data-type jdbc-type="-1" literal-prefix="'" literal-suffix="'" name="TEXT" selected-variant-pattern="TEXT">
+<variant type-name-pattern="TEXT"/>
+</data-type>
+</column>
 </column-list>
 <primary-key alias="" name="PK_RAWDATA" remarks="" uid="4f5403:1161f7e7d4d:-7f69">
 <primary-key-description/>
