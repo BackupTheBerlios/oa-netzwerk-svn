@@ -84,4 +84,10 @@ public interface DBAccessInterface {
 	public abstract String insertObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier);
 
+	/**
+	 * @param string
+	 * @return
+	 */
+	public abstract String getObject (int oid);
+
 }

@@ -14,13 +14,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
-
 
 /**
  * @author Michael Kühn
@@ -30,24 +30,14 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 public class ObjectEntry extends 
 AbstractKeyWordHandler implements Modul2Database {
 	
-	/**
-	 * @param path
-	 * @param data
-	 * @return
-	 */
+	static Logger logger = Logger.getLogger (ObjectEntry.class);
 	
-	String putObjectEntry (String [ ] path, String data) {
+	public ObjectEntry ( ) {
 		
-		int repository_id = extract_repository_id (data);
-		String repository_identifier = extract_repository_identifier (data);
-		Date repository_datestamp = extract_repository_datestamp (data);
-		Date harvested = HelperMethods.today ( );
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		String response = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
-		
-		return ObjectEntryResponse ("<OID>" + response + "</OID>");
+		if (logger.isDebugEnabled ( ))
+			logger.debug (ObjectEntry.class.getName ( ) + " is called");
 	}
-
+	
 	/**
 	 * @param response
 	 * @return
@@ -66,23 +56,42 @@ AbstractKeyWordHandler implements Modul2Database {
 		
 		return buffer.toString ( );
 	}
-
+	
 	/**
 	 * @param data
 	 * @return
 	 */
-	
 	private Date extract_repository_datestamp (String data) {
 		
 		Date date = null;
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("extract_repository_datestamp");
+		
 		try {
 			
-			date = new Date (new SimpleDateFormat ("yyyy-MM-dd").parse (parseXML (data, "repository_datestamp")).getTime ( ));
+			//date = new Date (new SimpleDateFormat ("yyyy-MM-dd").parse (parseXML (data, "repository_datestamp")).getTime ( ));			
+			
+			String dateString = parseXML (data, "repository_datestamp");
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("datestring: " + dateString);
+						
+			java.util.Date sdf = new SimpleDateFormat ("yyyy-MM-dd").parse (dateString);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("sdf: " + sdf.toString ( ));
+			
+			date = new Date (sdf.getTime ( ));
+			//date = new Date ((sdf.parse (parseXML (data, "repository_datestamp"))).getTime ( ));
+			
+			
+			
+			//date = new Date (new SimpleDateFormat ("EEE MMM d HH:mm:ss z yyyy").parse (parseXML (data, "repository_datestamp")).getTime ( ));
 			
 		} catch (ParseException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
+			logger.error ("ParseError: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
 		
@@ -174,40 +183,6 @@ AbstractKeyWordHandler implements Modul2Database {
 	}
 
 	/**
-	 * @param path
-	 * @param data
-	 * @return
-	 */
-	
-	String postObjectEntry (String [ ] path, String data) {
-
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @param path
-	 * @return
-	 */
-	
-	String deleteObjectEntry (String [ ] path) {
-
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @param path
-	 * @return
-	 */
-	
-	String getObjectEntry (String [ ] path) {
-
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
 	 * @param args
 	 */
 	
@@ -232,9 +207,11 @@ AbstractKeyWordHandler implements Modul2Database {
 	 */
 	@Override
 	protected String getKeyWord (String [ ] path) {
-
-		// TODO Auto-generated method stub
-		return null;
+		
+		DBAccessInterface db = DBAccess.createDBAccess ( );
+		String response = db.getObject (Integer.parseInt (path [2]));
+		//SELECT o.object_id FROM dbo.Object o WHERE o.object_id = ?
+		return ObjectEntryResponse ("<repository_datestamp>\n" + response + "</repository_datestamp>\n");
 	}
 
 	/**
@@ -252,8 +229,14 @@ AbstractKeyWordHandler implements Modul2Database {
 	 */
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {
-
-		// TODO Auto-generated method stub
-		return null;
+		
+		int repository_id = extract_repository_id (data);
+		String repository_identifier = extract_repository_identifier (data);
+		Date repository_datestamp = extract_repository_datestamp (data);
+		Date harvested = HelperMethods.today ( );
+		DBAccessInterface db = DBAccess.createDBAccess ( );
+		String response = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
+		
+		return ObjectEntryResponse ("<OID>" + response + "</OID>");
 	}
 }

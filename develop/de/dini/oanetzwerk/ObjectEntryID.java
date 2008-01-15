@@ -14,116 +14,17 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  *
  */
 
-public class ObjectEntryID implements Modul2Database {
+public class ObjectEntryID extends 
+AbstractKeyWordHandler implements Modul2Database {
 	
 	static Logger logger = Logger.getLogger (ObjectEntryID.class);
 	
-	/**
-	 * @see de.dini.oanetzwerk.Modul2Database#processRequest(java.lang.String, java.lang.String[], int)
-	 */
-	
-	public String processRequest (String data, String [ ] path, int i) {
+	public ObjectEntryID ( ) {
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug (ObjectEntryID.class.getName ( ) + " called");
-		
-		switch (i) {
-		case 0:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("get case chosen");
-			
-			return getObjectEntryID (path);
-			
-		case 1:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("delete case chosen");
-						
-			deleteObjectEntryID (path);
-			break;
-			
-		case 2:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("post case chosen");
-			
-			postObjectEntryID (path, data);
-			break;
-			
-		case 3:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("put case chosen");
-
-			putObjectEntryID (path, data);
-			break;
-			
-		default:
-			break;
-		}
-		
-		return "null";
+			logger.debug (ObjectEntryID.class.getName ( ) + " is called");
 	}
-
-	/**
-	 * @param path
-	 * @param data
-	 */
 	
-	private void putObjectEntryID (String [ ] path, String data) {
-		
-		//NOT IMPLEMENTED
-		logger.warn ("putObjectEntryID is not implemented");
-		throw new NotImplementedException ( );
-	}
-
-	/**
-	 * @param path
-	 * @param data
-	 */
-	private void postObjectEntryID (String [ ] path, String data) {
-		
-		//NOT IMPLEMENTED
-		logger.warn ("postObjectEntryID is not implemented");
-		throw new NotImplementedException ( );		
-	}
-
-	/**
-	 * @param path
-	 */
-	private void deleteObjectEntryID (String [ ] path) {
-		
-		//NOT IMPLEMENTED
-		logger.warn ("deleteObjectEntryID is not implemented");
-		throw new NotImplementedException ( );
-	}
-
-	/**
-	 * @param path
-	 */
-	
-	private String getObjectEntryID (String [ ] path) {
-		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		String response = db.selectObjectEntryId (path[2], path[3]);
-		
-		if (response != null) {
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("Database response: " + response);
-			
-			return ObjectEntryIDResponse ("<OID>" + response + "</OID>");
-			
-		} else {
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("Database response: NULL");
-			
-			return ObjectEntryIDResponse ("<NULL />");
-		}
-	}
-
 	/**
 	 * @param string
 	 * @return
@@ -158,5 +59,63 @@ public class ObjectEntryID implements Modul2Database {
 
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 */
+	@Override
+	protected String deleteKeyWord (String [ ] path) {
+
+		//NOT IMPLEMENTED
+		logger.warn ("deleteObjectEntryID is not implemented");
+		throw new NotImplementedException ( );
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
+	 */
+	@Override
+	protected String getKeyWord (String [ ] path) {
+
+		DBAccessInterface db = DBAccess.createDBAccess ( );
+		String response = db.selectObjectEntryId (path[2], path[3]);
+		
+		if (response != null) {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Database response: " + response);
+			
+			return ObjectEntryIDResponse ("<OID>" + response + "</OID>");
+			
+		} else {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Database response: NULL");
+			
+			return ObjectEntryIDResponse ("<NULL />");
+		}
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 */
+	@Override
+	protected String postKeyWord (String [ ] path, String data) {
+
+		//NOT IMPLEMENTED
+		logger.warn ("postObjectEntryID is not implemented");
+		throw new NotImplementedException ( );
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
+	 */
+	@Override
+	protected String putKeyWord (String [ ] path, String data) {
+
+		//NOT IMPLEMENTED
+		logger.warn ("putObjectEntryID is not implemented");
+		throw new NotImplementedException ( );
 	}
 }

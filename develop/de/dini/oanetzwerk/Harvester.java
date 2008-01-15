@@ -270,20 +270,47 @@ public class Harvester {
 				
 				ObjectIdentifier tempobjid = this.ids.get (i);
 				
+				GregorianCalendar cal = new GregorianCalendar ( );
+				cal.setTime (this.ids.get (i).getDatestamp ( ));
+				
+				String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
+				
+				if (logger.isDebugEnabled ( )) {
+					
+					logger.debug ("Month: " + cal.get (Calendar.MONTH));
+					logger.debug ("Date: " + datestamp);
+				}
+				
 				try {
 					
 					String result = restClient.PutData ("<oanrest>\n\t<request>\n\t\t<entryset>\n\t\t\t<entry key=\"repository_id\">" +
 							id +  "</entry>\n\t\t\t<entry key=\"repository_identifier\">" +
 							this.ids.get (i).getId ( ) + "</entry>\n\t\t\t<entry key=\"repository_datestamp\">" +
-							this.ids.get (i).getDatestamp ( ) +	"</entry>\n\t\t</entryset>\n\t</request>\n</oanrest>");
+							//this.ids.get (i).getDatestamp ( ) +	"</entry>\n\t\t</entryset>\n\t</request>\n</oanrest>");
+							datestamp +	"</entry>\n\t\t</entryset>\n\t</request>\n</oanrest>");
 					
 					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 					DocumentBuilder builder = factory.newDocumentBuilder ( );
 					Document document = builder.parse (new InputSource (new StringReader (result)));
 					
-					NodeList internalOIDList = document.getElementsByTagName ("IOD");
+					NodeList internalOIDList = document.getElementsByTagName ("OID");
 					
-					tempobjid.setInternalOID (new Integer(internalOIDList.item (1).getTextContent ( )));
+					if (logger.isDebugEnabled ( ))
+						logger.debug ("resultlength = " + internalOIDList.getLength ( ));
+					
+					String oid = internalOIDList.item (0).getTextContent ( );
+					
+					if (logger.isDebugEnabled ( ))
+						logger.debug ("oid: " + oid);
+					
+					int intoid = new Integer (internalOIDList.item (0).getTextContent ( ));
+					
+					if (logger.isDebugEnabled ( ))
+						logger.debug ("intoid: " + intoid);
+					
+					tempobjid.setInternalOID (intoid);
+					
+					//tempobjid.setInternalOID (new Integer (internalOIDList.item (1).getTextContent ( )));
 					
 					this.ids.set (i, tempobjid);
 					
@@ -305,7 +332,7 @@ public class Harvester {
 				
 			} else {
 				
-				String ressource = "RawRecordData/" + this.ids.get (i).getInternalOID ( ) + "/";
+				String ressource = "ObjectEntry/" + this.ids.get (i).getInternalOID ( ) + "/";
 				RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 				
 				String result = restclient.GetData ( );
@@ -316,15 +343,19 @@ public class Harvester {
 					DocumentBuilder builder = factory.newDocumentBuilder ( );
 					Document document = builder.parse (new InputSource (new StringReader(result)));
 					
-					NodeList idDatestampList = document.getElementsByTagName ("datestamp");
+					NodeList idDatestampList = document.getElementsByTagName ("repository_datestamp");
 					
 					Date repositoryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (idDatestampList.item (1).getTextContent ( ));
 					
 					if (repositoryDate.before (this.ids.get (i).getDatestamp ( )) || repositoryDate.equals (this.ids.get (i).getDatestamp ( ))) {
 						
+						if (logger.isDebugEnabled ( )) {
+							
+							logger.debug ("RepositoryDate is " + repositoryDate + " and before or equal the harvested");
+						}
 						//TODO: implement proper change of harvested-timestamp
 						
-						return;
+						continue;
 						
 					}
 				} catch (SAXException saex) {
@@ -362,7 +393,7 @@ public class Harvester {
 					;
 				}
 				
-				deliverResult2DB (HelperMethods.stream2String (method.getResponseBodyAsStream ( )), ids.get (i).getId ( ), ids.get (i).getDatestamp ( ));
+				deliverResult2DB (HelperMethods.stream2String (method.getResponseBodyAsStream ( )), ids.get (i).getInternalOID ( ), ids.get (i).getDatestamp ( ));
 				
 			} catch (HttpException ex) {
 				
@@ -389,7 +420,7 @@ public class Harvester {
 	 * @throws HttpException 
 	 */
 	
-	private void deliverResult2DB (String data, String oid, Date datestamp) throws HttpException, IOException {
+	private void deliverResult2DB (String data, int oid, Date datestamp) throws HttpException, IOException {
 		
 		GregorianCalendar cal = new GregorianCalendar ( );
 		cal.setTime (datestamp);
@@ -617,7 +648,7 @@ class ObjectIdentifier {
 	 */
 	
 	final Date getDatestamp ( ) {
-	
+		
 		return this.datestamp;
 	}
 	

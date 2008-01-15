@@ -11,7 +11,8 @@ import org.apache.log4j.Logger;
  *
  */
 
-public class RawRecordData implements Modul2Database {
+public class RawRecordData extends
+AbstractKeyWordHandler implements Modul2Database {
 	
 	static Logger logger = Logger.getLogger (RawRecordData.class);
 	
@@ -21,67 +22,30 @@ public class RawRecordData implements Modul2Database {
 	
 	public RawRecordData ( ) {
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug (RawRecordData.class.getName ( ) + " is called");
 	}
 	
 	public static void main (String [ ] args) {
 		
 		
 	}
-
-	/**
-	 * @see de.dini.oanetzwerk.Modul2Database#processRequest()
-	 */
 	
-	public String processRequest (String data, String [ ] path, int i) {
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug (RawRecordData.class.getName ( ) + " called");
-		
-		switch (i) {
-		case 0:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("get case chosen");
-			
-			return getRawRecordData (path);
-			
-		case 1:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("delete case chosen");
-			
-			deleteORawRecordData (path);
-			break;
-			
-		case 2:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("post case chosen");
-			
-			postRawRecordData (path, data);
-			break;
-			
-		case 3:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("put case chosen");
-			
-			putRawRecordData (path, data);
-			break;
-			
-		default:
-			break;
-		}
-		
-		return "null";
+	/**
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 */
+	@Override
+	protected String deleteKeyWord (String [ ] path) {
+
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
-	 * @param path
-	 * @return
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
-	
-	private String getRawRecordData (String [ ] path) {
+	@Override
+	protected String getKeyWord (String [ ] path) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("getRawRecordData");
@@ -98,37 +62,27 @@ public class RawRecordData implements Modul2Database {
 	}
 
 	/**
-	 * @param path
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
-	
-	private void deleteORawRecordData (String [ ] path) {
-		//NOT IMPLEMENTED
+	@Override
+	protected String postKeyWord (String [ ] path, String data) {
+
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	/**
-	 * @param path
-	 * @param data
+	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 */
-	
-	private void postRawRecordData (String [ ] path, String data) {
-		//NOT IMPLEMENTED
-		// TODO Auto-generated method stub
-		
-	}
+	@Override
+	protected String putKeyWord (String [ ] path, String data) {
 
-	/**
-	 * @param path
-	 * @param data
-	 */
-	
-	private void putRawRecordData (String [ ] path, String data) {
-		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("putRawRecordData");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.insertRawRecordData (new Integer (path [1]), path [2], data);
+		db.insertRawRecordData (new Integer (path [2]), path [3], data);
+		
+		return path [2];
 	}
 }

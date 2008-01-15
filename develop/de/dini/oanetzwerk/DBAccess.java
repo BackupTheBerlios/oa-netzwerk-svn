@@ -554,7 +554,7 @@ public class DBAccess implements DBAccessInterface {
 	
 	public String insertObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier) {
-
+		
 		createConnection ( );
 		
 		PreparedStatement pstmt = null;
@@ -568,7 +568,10 @@ public class DBAccess implements DBAccessInterface {
 			
 			
 			if (rs.next ( ))
-				object_id = rs.getInt (object_id);
+				object_id = rs.getInt (1);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("objectid: " + object_id);
 			
 			rs = null;
 			pstmt = null;
@@ -581,6 +584,9 @@ public class DBAccess implements DBAccessInterface {
 			pstmt.setDate (4, repository_datestamp);
 			pstmt.setString (5, repository_identifier);
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
 			pstmt.executeUpdate ( );
 			
 		} catch (SQLException sqlex) {
@@ -590,5 +596,41 @@ public class DBAccess implements DBAccessInterface {
 		}
 		
 		return Integer.toString (object_id);
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#getObject(java.lang.String)
+	 */
+	public String getObject (int oid) {
+		
+		createConnection ( );
+		
+		PreparedStatement pstmt = null;
+		
+		String result = "<NULL />";
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("SELECT * FROM dbo.Object o WHERE o.object_id = ?");
+			
+			pstmt.setInt (1, oid);
+			
+			ResultSet rs = pstmt.executeQuery ( );
+			
+			if (rs.next ( )) {
+				
+				StringBuffer resultbuffer = new StringBuffer("<object_id>" + rs.getInt (1) + "</object_id>\n");
+				resultbuffer.append ("<repository_id>").append (rs.getInt (2)).append ("</repository_id>\n");
+				resultbuffer.append ("<harvested>").append (rs.getDate (3)).append ("</harvested>\n");
+				resultbuffer.append ("<repository_datestamp>").append (rs.getDate (4)).append ("</repository_datestamp>\n");
+				resultbuffer.append ("<repository_identifier>").append (rs.getString (5)).append ("</repository_identifier>\n");
+				result = resultbuffer.toString ( );
+			}
+			
+		} catch (SQLException ex) {
+			
+			ex.printStackTrace ( );
+		}
+		return result;
 	}
 }

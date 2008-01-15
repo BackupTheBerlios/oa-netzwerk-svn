@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractKeyWordHandler implements Modul2Database {
 
-	protected static Logger logger = Logger.getLogger (ObjectEntry.class);
+	protected static Logger logger = Logger.getLogger (AbstractKeyWordHandler.class);
 
 	/**
 	 * 
@@ -27,36 +27,33 @@ public abstract class AbstractKeyWordHandler implements Modul2Database {
 	 */
 	
 	public String processRequest (String data, String [ ] path, int i) {
-	
-		if (logger.isDebugEnabled ( ))
-			logger.debug (ObjectEntry.class.getName ( ) + " called");
-		
+			
 		switch (i) {
 		case 0:
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("get case chosen");
+				logger.debug ("GET case chosen");
 			
 			return getKeyWord (path);
 			
 		case 1:
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("delete case chosen");
+				logger.debug ("DELTE case chosen");
 						
 			return deleteKeyWord (path);
 			
 		case 2:
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("post case chosen");
+				logger.debug ("POST case chosen");
 			
 			return postKeyWord (path, data);
 			
 		case 3:
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("put case chosen");
+				logger.debug ("PUT case chosen");
 	
 			return putKeyWord (path, data);
 			
