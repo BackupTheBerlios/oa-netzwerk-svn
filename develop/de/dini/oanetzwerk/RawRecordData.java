@@ -51,14 +51,19 @@ AbstractKeyWordHandler implements Modul2Database {
 			logger.debug ("getRawRecordData");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
+		String result = "";
 		
 		if (path.length > 2)
-			db.selectRawRecordData (path [1], path [2]);
+			result = db.selectRawRecordData (path [1], path [2]);
 		
 		else
-			db.selectRawRecordData (path [1]);
+			result = db.selectRawRecordData (path [1]);
 		
-		return null;
+		return "<OAN-REST xmlns=\"http://localhost/\"\n" +
+				"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+				"xsi:schemaLocation=\"http://localhost/schema.xsd\">\n" +
+				"\t<RawRecordData>\n\t\t" + result + "\n\t</RawRecordData>\n" +
+				"</OAN-REST>";
 	}
 
 	/**
