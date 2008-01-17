@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -497,22 +500,18 @@ public class Harvester {
 
 	/**
 	 * @param url
-	 * @param id 
+	 * @param repositoryID 
 	 */
 	
-	private void processRecords (String url, int id) {
+	private void processRecords (String url, int repositoryID) {
 		
 		HttpClient client;
 		GetMethod method;
-		
-		//String url = "http://edoc.hu-berlin.de/OAI-2.0?verb=GetRecord&metadataPrefix=oai_dc&identifier=";
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("now we process " + this.ids.size ( ) + "Records");
 		
 		for (int i = 0; i < this.ids.size ( ); i++) {
-			
-			// zuerst schauen, ob datestamp gleich, wenn ja, harvested auf today setzen, ansonsten metadaten putten
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("Obect No. " + i + " is processed");
@@ -536,41 +535,46 @@ public class Harvester {
 				
 				try {
 					
-					//TODO: rewrite XML!!!
-					String result = restClient.PutData ("<oanrest>\n\t<request>\n\t\t<entryset>\n\t\t\t<entry key=\"repository_id\">" +
-							id +  "</entry>\n\t\t\t<entry key=\"repository_identifier\">" +
-							this.ids.get (i).getExternalOID ( ) + "</entry>\n\t\t\t<entry key=\"repository_datestamp\">" +
-							datestamp +	"</entry>\n\t\t</entryset>\n\t</request>\n</oanrest>");
+					List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+					HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+					mapEntry.put ("repository_id", Integer.toString (repositoryID));
+					mapEntry.put ("repository_identifier", this.ids.get (i).getExternalOID ( ));
+					mapEntry.put ("repository_datestamp", datestamp);
+					listentries.add (mapEntry);
 					
-					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
-					DocumentBuilder builder = factory.newDocumentBuilder ( );
-					Document document = builder.parse (new InputSource (new StringReader (result)));
-					
-					NodeList internalOIDList = document.getElementsByTagName ("OID");
+					String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
 					
 					if (logger.isDebugEnabled ( ))
-						logger.debug ("resultlength = " + internalOIDList.getLength ( ));
+						logger.debug ("xml: " + requestxml);
 					
-					int intoid = new Integer (internalOIDList.item (0).getTextContent ( ));
+					String result = restClient.PutData (requestxml);
+					
+					listentries = null;
+					mapEntry = null;
+					
+					listentries = RestXmlCodec.decodeEntrySet (result);
+					mapEntry = listentries.get (0);
+					Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+					String key = "";
+					String value = "";
+					
+					while (it.hasNext ( )) {
+						
+						key = it.next ( );
+						
+						if (key.equalsIgnoreCase ("oid")) {
+							
+							value = mapEntry.get (key);
+							break;
+						}
+					}
+					
+					int intoid = new Integer (value);
 					
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("internalOID: " + intoid);
 					
-					//tempobjid.setInternalOID (intoid);
-					
 					this.ids.get (i).setInternalOID (intoid);
-					
-					//this.ids.set (i, tempobjid);
-					
-				} catch (SAXException saex) {
-					
-					logger.error (saex.getLocalizedMessage ( ));
-					saex.printStackTrace ( );
-					
-				} catch (ParserConfigurationException ex) {
-					
-					logger.error (ex.getLocalizedMessage ( ));
-					ex.printStackTrace ( );
 					
 				} catch (IOException ex) {
 					

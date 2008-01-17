@@ -9,6 +9,9 @@ import java.io.StringReader;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -237,6 +240,11 @@ AbstractKeyWordHandler implements Modul2Database {
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		String response = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
 		
-		return ObjectEntryResponse ("<OID>" + response + "</OID>");
+		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		mapEntry.put ("oid", response);
+		listentries.add (mapEntry);
+		
+		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "ObjectEntry");
 	}
 }

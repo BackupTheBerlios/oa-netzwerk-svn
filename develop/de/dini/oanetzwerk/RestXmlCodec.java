@@ -17,7 +17,7 @@ import org.xml.sax.InputSource;
 public class RestXmlCodec {
 	
 	private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-    // bisher nur lokal bei mir, könnte aber auf Scope1 deponiert werden (rm)
+    // bisher nur lokal bei mir, kÃ¶nnte aber auf Scope1 deponiert werden (rm)
 	private static final String XML_ROOT = "<oanrest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"N:\\EIGENE~1\\_Aufgaben\\OA-NETZWERK\\OANREST2.xsd\">\n";
 
 	
@@ -61,6 +61,7 @@ public class RestXmlCodec {
 	 * @param listEntrySet list of hashmaps storing key-value-sets
 	 * @return XML encoded data
 	 */
+	@SuppressWarnings("unchecked")
 	private static String encodeEntrySet(List<HashMap<String, String>> listEntrySet) {
 		StringBuffer sbXML = new StringBuffer();
 		for(int i = 0; i < listEntrySet.size(); i++) {
@@ -90,6 +91,7 @@ public class RestXmlCodec {
 	 * @param strXML XML encoded data
 	 * @return list of hashmaps storing key-value-sets
 	 */
+	@SuppressWarnings("unchecked")
 	public static List<HashMap<String, String>> decodeEntrySet(String strXML) {
 		List<HashMap<String, String>> listEntrySet = new ArrayList<HashMap<String,String>>();
 			
@@ -142,6 +144,7 @@ public class RestXmlCodec {
 	 * @param listErrors list of hashmaps storing key-description-sets
 	 * @return XML encoded errors
 	 */
+	@SuppressWarnings("unchecked")
 	public static String encodeErrors(List<HashMap<String, String>> listErrors) {
 		StringBuffer sbXML = new StringBuffer();
 		sbXML.append(XML_HEADER);
@@ -172,6 +175,7 @@ public class RestXmlCodec {
 	 * @param strXML XML encoded data
 	 * @return list of hashmaps storing key-description-sets
 	 */
+	@SuppressWarnings("unchecked")
 	public static List<HashMap<String, String>> decodeErrors(String strXML) {
 		List<HashMap<String, String>> listErrors = new ArrayList<HashMap<String,String>>();
 			
@@ -238,6 +242,7 @@ public class RestXmlCodec {
 	 * Testroutine
 	 * @param args (none)
 	 */
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		
 		List<HashMap<String,String>> listTestEntrySet = new ArrayList<HashMap<String,String>>();

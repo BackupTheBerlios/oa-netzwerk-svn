@@ -400,6 +400,9 @@ public class DBAccess implements DBAccessInterface {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("connection created");
+		
 		try {
 			
 			pstmt = conn.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.repository_identifier = ? and o.repository_id = ?");
