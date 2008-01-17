@@ -79,6 +79,8 @@ public class RestClient {
 	
 	private String filterpath (String path) {
 		
+		//TODO: filter path!
+		
 		String filteredPath = path;
 		
 		return filteredPath;
@@ -121,7 +123,9 @@ public class RestClient {
 	 */
 	
 	private String filterurl (String url) {
-
+		
+		//TODO: filter URL!
+		
 		String filteredUrl = url;
 		
 		if (logger.isDebugEnabled ( ))
@@ -142,6 +146,9 @@ public class RestClient {
 	public static RestClient createRestClient (String incomming_url, String path, String userName, String passWord) {
 		
 		RestClient restclient = new RestClient (incomming_url, path, userName, passWord);
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("new restclient created");
 		
 		return restclient;
 	}
@@ -218,11 +225,12 @@ public class RestClient {
 		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 		
 		this.url = buffer.toString ( );
+		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("URL to connect to: " + this.url);
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("client created");
+			logger.debug ("connection prepared");
 		
 		return newclient;
 	}
@@ -239,7 +247,7 @@ public class RestClient {
 		GetMethod method = new GetMethod (this.url);
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("getRequest");
+			logger.debug ("getRequest will be used");
 		
 		return sendrequest (client, method);
 	}
@@ -260,7 +268,7 @@ public class RestClient {
 		method.setRequestEntity (new StringRequestEntity (data, "text/plain", "UTF-8"));
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("postRequest");
+			logger.debug ("postRequest will be used");
 		
 		return sendrequest (client, method);
 	}
@@ -281,7 +289,7 @@ public class RestClient {
 		method.setRequestEntity (new StringRequestEntity (data, "text/plain", "UTF-8"));
 				
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("putRequest");
+			logger.debug ("putRequest will be used");
 		
 		return sendrequest (client, method);
 	}
@@ -298,7 +306,7 @@ public class RestClient {
 		DeleteMethod method = new DeleteMethod (this.url);
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("deleteRequest");
+			logger.debug ("deleteRequest will be used");
 		
 		return sendrequest (client, method);
 	}

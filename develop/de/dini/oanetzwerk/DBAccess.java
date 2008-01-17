@@ -57,7 +57,7 @@ public class DBAccess implements DBAccessInterface {
 		System.setProperty (Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 		System.setProperty (Context.PROVIDER_URL, "file:///tmp");
 		
-		this.prop = HelperMethods.loadPropertiesFromFile ("webapps/restserver/WEB-INF/dbprop.xml");
+		this.prop = HelperMethods.loadPropertiesFromFile ("/usr/local/tomcat/webapps/restserver/WEB-INF/dbprop.xml");
 		
 		try {
 			
