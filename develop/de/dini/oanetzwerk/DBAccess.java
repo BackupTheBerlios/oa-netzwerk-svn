@@ -264,12 +264,8 @@ public class DBAccess implements DBAccessInterface {
 			}
 		}
 	}
-
-	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#putData(de.dini.oanetzwerk.DBAccess.moduls, int, java.lang.String, java.lang.String)
-	 */
 	
-	public void putData (moduls modul, String repositoryName, String repositoryIdentifier, String repositoryDate, String data) {
+/*	public void putData (moduls modul, String repositoryName, String repositoryIdentifier, String repositoryDate, String data) {
 		
 		switch (modul) {
 			
@@ -278,15 +274,8 @@ public class DBAccess implements DBAccessInterface {
 		default: ;
 		}
 	}
-
-	/**
-	 * @param id
-	 * @param data
-	 * @param repositoryDate 
-	 * @param date
-	 */
-	
-	private void putHarvester (String repositoryName, String repositoryIdentifier, String repositoryDate, String data) {
+*/
+/*	private void putHarvester (String repositoryName, String repositoryIdentifier, String repositoryDate, String data) {
 		
 		createConnection ( );
 		
@@ -349,7 +338,7 @@ public class DBAccess implements DBAccessInterface {
 				pstmt.setString (3, data);
 				pstmt.executeUpdate ( );
 				
-/*				if (pstmt.executeUpdate ( ) != 1) {
+				if (pstmt.executeUpdate ( ) != 1) {
 					
 					conn.rollback ( );
 					logger.error ("Can't insert Data");
@@ -373,7 +362,7 @@ public class DBAccess implements DBAccessInterface {
 					
 					pstmt.close ( );
 					pstmt = null;
-				}*/
+				}
 				conn.commit ( );
 				conn.setAutoCommit (true);
 				pstmt.close ( );
@@ -399,7 +388,7 @@ public class DBAccess implements DBAccessInterface {
 			}
 		}
 	}
-
+*/
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
 	 */
@@ -470,25 +459,32 @@ public class DBAccess implements DBAccessInterface {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
+		String result = "<NULL />";
+		
 		try {
 			
-			pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = ?");
-			pstmt.setString (1, internalOID);
-			
 			if (datestamp.equals (""))
-				pstmt.setString (2, "max(collected)");
+				
+				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = (SELECT max(collected) FROM dbo.RawData)");
 			
-			else
+			else {
+				
+				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = ?");
 				pstmt.setString (2, datestamp);
+			}
+			
+			pstmt.setString (1, internalOID);	
 			
 			rs = pstmt.executeQuery ( );
 			
 			if (rs.next ( )) {
 				
-				//TODO: return rawdataset
+				StringBuffer resultbuffer = new StringBuffer ("<object_id>" + rs.getInt (1) + "</object_id>\n");
+				resultbuffer.append ("<collected>" + rs.getDate (2) + "</collected>\n");
+				resultbuffer.append ("<data>" + rs.getString (3) + "</data>\n");
 				
-			} else
-				return null;
+				result = resultbuffer.toString ( );
+			}
 			
 		} catch (SQLException sqlex) {
 			
@@ -503,7 +499,7 @@ public class DBAccess implements DBAccessInterface {
 				ex.printStackTrace ( );
 			}
 		}
-		return "DatabaseError";
+		return result;
 	}
 
 	/**

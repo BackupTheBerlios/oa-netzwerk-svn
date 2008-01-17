@@ -514,6 +514,9 @@ public class Harvester {
 			
 			// zuerst schauen, ob datestamp gleich, wenn ja, harvested auf today setzen, ansonsten metadaten putten
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Obect No. " + i + " is processed");
+			
 			int internalOID = this.ids.get (i).getInternalOID ( );
 			
 			if (internalOID == -1) {

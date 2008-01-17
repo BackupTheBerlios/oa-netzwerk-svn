@@ -40,15 +40,6 @@ public interface DBAccessInterface {
 	public abstract void setAutoCom (boolean ac);
 	
 	/**
-	 * @param moduls
-	 * @param i
-	 * @param request
-	 * @param string
-	 */
-	
-	public abstract void putData (DBAccess.moduls modul, String repositoryName, String repositoryIdentifier, String repositoryDate, String data);
-
-	/**
 	 * @param string
 	 * @param string2
 	 * @return
