@@ -171,7 +171,7 @@ public class RestClient {
 			logger.info ("HttpStatusCode: " + statusCode);
 			
 			if (statusCode != HttpStatus.SC_OK)
-				;//meckern
+				logger.debug("Statuscode : " + statusCode);//meckern
 			
 			responseBody = method.getResponseBody ( );
 
@@ -282,6 +282,9 @@ public class RestClient {
 	 */
 	
 	public final String PutData (String data) throws UnsupportedEncodingException {
+		
+		
+		System.out.println("PUT Request");
 		
 		HttpClient client = prepareConnection ( );
 		PutMethod method = new PutMethod (this.url);

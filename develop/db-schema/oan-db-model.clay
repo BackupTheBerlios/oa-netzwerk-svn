@@ -9,7 +9,7 @@
 <table-list>
 <table alias="Object" name="Object" remarks="" uid="4f5403:1161f7e7d4d:-7fff">
 <table-description/>
-<table-figure-bounds height="132" width="217" x="312" y="174"/>
+<table-figure-bounds height="118" width="217" x="312" y="174"/>
 <column-list>
 <column alias="Object Id" auto-increment="true" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7ffa">
 <column-description/>
@@ -37,7 +37,7 @@
 <variant type-name-pattern="INTEGER ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="harvested" remarks="Zeitstempel, wann es zuletzt geharvestet wurde, direkt vom Datenbankserver" uid="4f5403:1161f7e7d4d:-7c69">
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="harvested" remarks="Zeitstempel, wann es zuletzt erfolgreicht geharvestet bzw. im Repository unverändert gefunden wurde, direkt vom Datenbankserver" uid="4f5403:1161f7e7d4d:-7c69">
 <column-description/>
 <data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
 <variant type-name-pattern="DATETIME"/>
@@ -60,6 +60,19 @@
 <column-description/>
 <data-type jdbc-type="-7" name="BOOLEAN" selected-variant-pattern="BOOLEAN">
 <variant type-name-pattern="BOOLEAN"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="0" mandatory="true" name="failure_counter" remarks="" uid="dff6e3:117774ce7b2:-7fdb">
+<column-description/>
+<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
+<variant type-name-pattern="INTEGER"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n)"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) ZEROFILL"/>
+<variant type-name-pattern="INTEGER UNSIGNED"/>
+<variant type-name-pattern="INTEGER UNSIGNED ZEROFILL"/>
+<variant type-name-pattern="INTEGER ZEROFILL"/>
 </data-type>
 </column>
 </column-list>
@@ -981,6 +994,59 @@
 <foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
 </foreign-key>
 </foreign-key-list>
+<index-list/>
+</table>
+<table alias="" name="DuplicatePossibilties" remarks="" uid="dff6e3:117774ce7b2:-7fe5">
+<table-description/>
+<table-figure-bounds height="70" width="118" x="963" y="330"/>
+<column-list>
+<column alias="" auto-increment="true" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="Original-Object" uid="dff6e3:117774ce7b2:-7fe1">
+<column-description/>
+<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
+<variant type-name-pattern="INTEGER"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n)"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) ZEROFILL"/>
+<variant type-name-pattern="INTEGER UNSIGNED"/>
+<variant type-name-pattern="INTEGER UNSIGNED ZEROFILL"/>
+<variant type-name-pattern="INTEGER ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="duplicate_id" remarks="ID des Objekts, dass mit percentage Wahrscheinlichkeit ähnlich ist zu object_id" uid="dff6e3:117774ce7b2:-7fe0">
+<column-description/>
+<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
+<variant type-name-pattern="INTEGER"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n)"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) ZEROFILL"/>
+<variant type-name-pattern="INTEGER UNSIGNED"/>
+<variant type-name-pattern="INTEGER UNSIGNED ZEROFILL"/>
+<variant type-name-pattern="INTEGER ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="percentage" remarks="Prozentzahl, wie wahrscheinlich es ist" uid="dff6e3:117774ce7b2:-7fdf">
+<column-description/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+</data-type>
+</column>
+</column-list>
+<primary-key alias="" name="PK_DUPLICATEPOSSIBILTIES" remarks="" uid="dff6e3:117774ce7b2:-7fe4">
+<primary-key-description/>
+<primary-key-column name="object_id"/>
+</primary-key>
+<unique-key-list/>
+<foreign-key-list/>
 <index-list/>
 </table>
 </table-list>

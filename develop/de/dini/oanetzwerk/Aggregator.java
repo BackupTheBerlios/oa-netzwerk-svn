@@ -61,6 +61,9 @@ public class Aggregator {
 	 * Properties. 
 	 */
 	
+	
+	private int currentRecordId = 0;
+	
 	private int recordno = 0;
 	
 	private Properties props;
@@ -76,6 +79,8 @@ public class Aggregator {
 		DOMConfigurator.configure ("log4j.xml");
 		this.props = HelperMethods.loadPropertiesFromFile ("aggregatorprop.xml");
 	}
+
+	
 	
 	/**
 	 * Main class which have to be called.
@@ -92,33 +97,18 @@ public class Aggregator {
 		options.addOption ("h", false, "show help");
 		
 			
-//		options.addOption (OptionBuilder.withType (new String ( ))
-//										.withLongOpt ("repositoryUrl")
-//										.withArgName ("URL")
-//										.withDescription ("URL of the repository which need to be harvested")
-//										.withValueSeparator ( )
-//										.hasArg ( )
-//										.create ('u'));
 		options.addOption (OptionBuilder.withLongOpt ("itemId")
 										.withArgName ("ID")
 										.withDescription ("Id of the database object, that shall be extracted and converted")
 										.withValueSeparator ( )
 										.hasArg ( )
 										.create ('i'));
-//		options.addOption (OptionBuilder.withType (new String ( ))
-//										.withLongOpt ("harvesttype")
-//										.withArgName ("full|update")
-//										.withDescription ("harvesting-type can be 'full' for a full harvest or 'update' for an updating harvest")
-//										.withValueSeparator ( )
-//										.hasArg ( )
-//										.create ('t'));
-//		options.addOption (OptionBuilder.withType (new String ( ))
-//										.withLongOpt ("updateDate")
-//										.withArgName ("yyyy-mm-dd")
-//										.withDescription ("Date from which on the Records are harvested, when update-harvest-type is specified")
-//										.withValueSeparator ( )
-//										.hasArg ( )
-//										.create ('d'));
+		options.addOption (OptionBuilder.withLongOpt ("auto")
+				.withDescription ("Automatic mode, no given ID is necessary")
+				
+				
+				.create ('a'));
+
 		
 		if (args.length > 0) {	
 			
@@ -129,32 +119,35 @@ public class Aggregator {
 				if (cmd.hasOption ("h")) 				
 					HelperMethods.printhelp ("java " + Aggregator.class.getCanonicalName ( ), options);
 					
-				else if (cmd.hasOption ("itemId") || cmd.hasOption ('i')) {
+				else if (cmd.hasOption ("itemId") || cmd.hasOption ('i') || cmd.hasOption('a') || cmd.hasOption("auto")) {
 					
-					String url;
-					int id;
-					boolean fullharvest;
-					String updateDate = "";
+					int id = 0;
 					
-					if (cmd.getOptionValue ('i') == null)
+					// Bestimmen, ob nur eine einzelne ID übergeben wurde oder der Auto-Modus genutzt werden soll
+					if (cmd.getOptionValue ('i') != null) 
+						id = filterId (cmd.getOptionValue ('i'));
+					if (cmd.getOptionValue ("itemId") != null)
 						id = filterId (cmd.getOptionValue ("itemId"));
 					
-					else
-						id = filterId (cmd.getOptionValue ('i'));
 					
-					// Here we go: create a new instance of the harvester
+					
+					// Here we go: create a new instance of the aggregator
 					
 					Aggregator aggregator = new Aggregator ( );
+
+					// hier wird entweder die spezifische Objekt-ID übergeben oder ein Auto-Durchlauf gestartet					
+					if (id > 0) {
+						aggregator.startSingleRecord(id);
+					} else {
+						aggregator.startAutoMode();
+					}
+						
 					
-					/* 
-					 * firstly we have to collect some data from the repository, which have to be processed
-					 * when we finished processing all these data, we have the IDs form all records we have
-					 * to collect. This is the next step: we catch the records for all the IDs and put the
-					 * raw datas into the database, if they don't exist or newer than in the database.
-					 */
 					
-//					harvester.processIds (url, fullharvest, updateDate, id);
-//					harvester.processRecords (url, id);
+
+					
+					
+					
 					
 			} else {
 				
@@ -176,6 +169,131 @@ public class Aggregator {
 			System.exit (1);
 		}
 	}
+
+	private void startAutoMode() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	private void startSingleRecord(int id) {
+		// TODO Auto-generated method stub
+		this.currentRecordId = id;
+		
+		
+		Object data;
+		
+		// laden der Rohdaten
+		data = loadRawData(this.currentRecordId);
+		if (data == null) {
+			// Daten für dieses Objekt konnten nicht geladen werden
+			return;
+		}
+		// Auseinandernehmen der Rohdaten
+		
+		// Prüfen der Codierung der Rohdaten
+		data = checkEncoding(data);
+		if (data == null) {
+			// beim Check des Encoding trat ein Fehler auf, keine weitere Behandlung möglich
+			return;
+		}
+		
+		// XML-Fehler müssen behoben werden
+		data = checkXML(data);
+		if (data == null) {
+			// beim Prüfen auf XML-Fehler trat ein Fehler auf, keine weitere Bearbeitung möglich
+			return;
+		}		
+		// Schreiben der bereinigten Rohdaten
+		data = storeCleanedRawData(data);
+		if (data == null) {
+			// die bereinigten Rohdaten konnten nicht gespeichert werden, eine weitere Bearbeitung sollte nicht erfolgen
+			return;
+		}
+		
+		// Auslesen der Metadaten
+		data = extractMetaData(data);
+		if (data == null) {
+			// die Metadaten konnten nicht ausgelesen werden, keine weitere Bearbeitung sinnvoll
+			return;
+		}
+		
+		// schreiben der Metadaten
+		data = storeMetaData(data);
+		if (data == null) {
+			// Schreiben der Metadaten ist fehlgeschlagen, Objekt sollte später noch einmal prozessiert werden,
+			// jetzt keine weitere Bearbeitung sinnvoll
+			return;
+		}
+		
+		// Zustandsänderung für dieses Objekt speichern
+		setAggregationCompleted(id);
+		
+		
+	}
+
+
+
+	private void setAggregationCompleted(int id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	private Object storeMetaData(Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	private Object extractMetaData(Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	private Object storeCleanedRawData(Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	private Object checkXML(Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	private Object checkEncoding(Object data) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	private Object loadRawData(int id) {
+		// TODO Auto-generated method stub
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("loadRawData started");
+
+		String ressource = "RawRecordData/" + id;
+		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+		
+		String result = restclient.GetData ( );
+
+		
+		
+		
+		return null;
+	}
+
+
 
 	/**
 	 * The date which comes from the command line will be filtered and observed.
@@ -691,87 +809,3 @@ public class Aggregator {
 	}
 }
 
-/**
- * @author Michael Kühn
- *
- */
-
-class ObjectIdentifier {
-	
-	private String externalOID;
-	private Date datestamp;
-	private int internalOID;
-	
-	/**
-	 * @param externalOID
-	 * @param datestamp
-	 */
-	
-	public ObjectIdentifier (String externalOID, String datestamp, int internalOID) {
-		
-		try {
-			
-			this.externalOID = externalOID;
-			this.datestamp = new SimpleDateFormat ("yyyy-MM-dd").parse (datestamp);
-			this.internalOID = internalOID;
-			
-		} catch (java.text.ParseException ex) {
-			
-			ex.printStackTrace ( );
-		}
-	}
-	
-	/**
-	 * @return the id
-	 */
-	
-	final String getExternalOID ( ) {
-	
-		return this.externalOID;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	
-	final void setExternalOID (String id) {
-	
-		this.externalOID = id;
-	}
-
-	/**
-	 * @return the datestamp
-	 */
-	
-	final Date getDatestamp ( ) {
-		
-		return this.datestamp;
-	}
-	
-	/**
-	 * @param datestamp the datestamp to set
-	 */
-	
-	final void setDatestamp (Date datestamp) {
-	
-		this.datestamp = datestamp;
-	}
-
-	
-	/**
-	 * @return the internalOID
-	 */
-	final int getInternalOID ( ) {
-	
-		return this.internalOID;
-	}
-
-	
-	/**
-	 * @param internalOID the internalOID to set
-	 */
-	final void setInternalOID (int internalOID) {
-	
-		this.internalOID = internalOID;
-	}
-}

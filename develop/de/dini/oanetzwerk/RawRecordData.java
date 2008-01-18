@@ -85,6 +85,8 @@ AbstractKeyWordHandler implements Modul2Database {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("putRawRecordData");
 		
+		System.out.println("RawRecordData: putKeyWord");
+		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.insertRawRecordData (new Integer (path [2]), path [3], data);
 		

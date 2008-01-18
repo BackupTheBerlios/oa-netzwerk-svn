@@ -689,7 +689,9 @@ public class Harvester {
 		String resource = "RawRecordData/" + internalOID + "/" + cal.get (Calendar.YEAR) + "-" + cal.get (Calendar.MONTH + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/";
 		
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-		restclient.PutData (data);
+//		restclient.PutData (data);
+		
+		System.out.println("Rawdata put: id : " + restclient.PutData (data)); 
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("uploaded rawdata for Database Object " + internalOID);

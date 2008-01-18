@@ -523,15 +523,22 @@ public class DBAccess implements DBAccessInterface {
 		
 		PreparedStatement pstmt = null;
 		
+		System.out.println("insertRawRecordData");
+		
 		try {
 			
 			pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, collected, data) VALUES (?, ?, ?)");
+			System.out.println("Statement: " + pstmt.toString());
+			System.out.println("");
+			
 			pstmt.setInt (1, internalOID);
 			pstmt.setDate (2, HelperMethods.today ( ));
 			pstmt.setString (3, blobbb);
+			System.out.println("Statement: " + pstmt.toString());
 			pstmt.executeUpdate ( );
 
 		} catch (SQLException sqlex) {
+			logger.error ("insertRawRecordData: SQLException using Object " + internalOID);
 			
 		} finally {
 			

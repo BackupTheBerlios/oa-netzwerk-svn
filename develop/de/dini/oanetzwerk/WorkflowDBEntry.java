@@ -67,7 +67,7 @@ AbstractKeyWordHandler implements Modul2Database {
 //				"xsi:schemaLocation=\"http://localhost/schema.xsd\">\n" +
 //				"\t<RawRecordData>\n\t\t" + result + "\n\t</RawRecordData>\n" +
 //				"</OAN-REST>";
-//	}
+	}
 
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
