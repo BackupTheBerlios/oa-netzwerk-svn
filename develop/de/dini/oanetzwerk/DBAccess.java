@@ -81,6 +81,9 @@ public class DBAccess implements DBAccessInterface {
 		
 		DataSource source;
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("trying to set DataSource");
+		
 		if (this.prop.getProperty ("DataBase").equals ("Sybase")) {
 			
 			source = new SybDataSource ( );
@@ -100,8 +103,12 @@ public class DBAccess implements DBAccessInterface {
 				ex.printStackTrace ( );
 			}
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("DataSource successfully set");
+			
 		} else {
 			
+			logger.error ("DataBase not supported");
 			System.out.println ("DataBase not supported");
 		}
 	}
@@ -114,18 +121,26 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("trying to create a connection");
+			
 			this.ds = (DataSource) this.ic2.lookup (this.prop.getProperty ("dataSourceName"));
 //			Assert.assertNotNull (ds);
 			conn = this.ds.getConnection ( );
 			
 		} catch (NamingException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			
 		} catch (SQLException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Connection sucessfully created");
 	}
 	
 	/**
@@ -136,12 +151,19 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Trying to close Connection");
+			
 			conn.close ( );
 			
 		} catch (SQLException ex) {
 			
+			logger.error ("Could close connection: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Connection successfully closed");
 	}
 	
 	public void setAutoCom (boolean ac) {
@@ -191,7 +213,6 @@ public class DBAccess implements DBAccessInterface {
 			StringBuffer sql = new StringBuffer ("");
 			db.createConnection ( );
 			Statement stmt = conn.createStatement ( );
-			//conn.setAutoCommit (false);
 			db.setAutoCom (false);
 			
 			for (String line; (line = file.readLine ( )) != null;) {
@@ -265,130 +286,6 @@ public class DBAccess implements DBAccessInterface {
 		}
 	}
 	
-/*	public void putData (moduls modul, String repositoryName, String repositoryIdentifier, String repositoryDate, String data) {
-		
-		switch (modul) {
-			
-		case Harvester: putHarvester (repositoryName, repositoryIdentifier, repositoryDate, data); break;
-		case Aggregator: ; break;
-		default: ;
-		}
-	}
-*/
-/*	private void putHarvester (String repositoryName, String repositoryIdentifier, String repositoryDate, String data) {
-		
-		createConnection ( );
-		
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		
-		try {
-			
-			pstmt = conn.prepareStatement ("SELECT repository_id FROM dbo.Repositories WHERE name = ?");
-			pstmt.setString (1, repositoryName);
-			
-			rs = pstmt.executeQuery ( );
-			
-			if (rs.next ( )) {
-				
-				int repository_id = rs.getInt ("repository_id");
-				
-				rs.close ( );
-				
-				int object_id = 0;
-				
-				pstmt = conn.prepareStatement ("SELECT object_id FROM dbo.Object WHERE repository_identifier = ?");
-				pstmt.setString (1, repositoryIdentifier);
-				rs = pstmt.executeQuery ( );
-				
-				if (rs.next ( )) {
-					
-					object_id = rs.getInt ("object_id");
-					rs.close ( );
-					
-				} else {
-					
-					rs.close ( );
-					pstmt = conn.prepareStatement ("SELECT MAX(object_id) FROM dbo.Object");
-					rs = pstmt.executeQuery ( );
-					
-					if (rs.next ( )) {
-						
-						object_id = rs.getInt ("object_id");
-						
-					} else {
-						
-						//FEHLER
-					}
-					rs.close ( );
-				}
-				
-				conn.setAutoCommit (false);
-				pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (object_id, repository_id, harvested, repository_datestamp, repository_identifier) VALUES (?, ?, ?, ?, ?)");
-				pstmt.setInt (1, object_id);
-				pstmt.setInt (2, repository_id);
-				pstmt.setDate (3, HelperMethods.today ( ));
-				pstmt.setDate (4, Date.valueOf (repositoryDate));
-				pstmt.setString (5, repositoryIdentifier);
-				pstmt.executeUpdate ( );
-				
-				pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, collected, data) VALUES (?, ?, ?)");
-				pstmt.setInt (1, object_id);
-				pstmt.setDate (2, HelperMethods.today ( ));
-				pstmt.setString (3, data);
-				pstmt.executeUpdate ( );
-				
-				if (pstmt.executeUpdate ( ) != 1) {
-					
-					conn.rollback ( );
-					logger.error ("Can't insert Data");
-					pstmt.close ( );
-					pstmt = null;
-					
-				} else {
-					
-					pstmt.close ( );
-					
-					pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, collected, data) VALUES (?, ?, ?)");
-					pstmt.setInt (1, id);
-					pstmt.setDate (2, Date.valueOf ("2007-11-27"));
-					pstmt.setString (3, data);
-					
-					if (pstmt.executeUpdate ( ) != 1) {
-						
-						conn.rollback ( );
-						logger.error ("Can't insert Data");
-					}
-					
-					pstmt.close ( );
-					pstmt = null;
-				}
-				conn.commit ( );
-				conn.setAutoCommit (true);
-				pstmt.close ( );
-				
-			} else {
-				
-				// Repository existiert nicht
-			}
-			
-		} catch (SQLException ex) {
-			
-			ex.printStackTrace ( );
-			
-		} finally {
-			
-			try {
-				
-				conn.close ( );
-				
-			} catch (SQLException ex) {
-				
-				ex.printStackTrace ( );
-			}
-		}
-	}
-*/
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
 	 */
@@ -399,10 +296,7 @@ public class DBAccess implements DBAccessInterface {
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("connection created");
-		
+				
 		try {
 			
 			pstmt = conn.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.repository_identifier = ? and o.repository_id = ?");
@@ -456,7 +350,10 @@ public class DBAccess implements DBAccessInterface {
 	 */
 	
 	public String selectRawRecordData (String internalOID, String datestamp) {
-
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("entering selectRawRecordData");
+		
 		createConnection ( );
 		
 		PreparedStatement pstmt = null;
@@ -478,6 +375,9 @@ public class DBAccess implements DBAccessInterface {
 					logger.debug ("1 parameter for select RawRecordData");
 				
 				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = (SELECT max(collected) FROM dbo.RawData)");
+				//pstmt.setString (1, internalOID);
+				pstmt.setInt (1, new Integer (internalOID));
+				
 			
 			} else {
 				
@@ -485,10 +385,12 @@ public class DBAccess implements DBAccessInterface {
 					logger.debug ("2 parameter for select RawRecordData");
 				
 				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = ?");
+				//pstmt.setString (1, internalOID);
+				pstmt.setInt (1, new Integer (internalOID));
 				pstmt.setString (2, datestamp);
 			}
 			
-			pstmt.setString (1, internalOID);
+			//pstmt.setString (1, internalOID);
 			
 			rs = pstmt.executeQuery ( );
 			
@@ -530,7 +432,10 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.DBAccessInterface#selectRawRecordData(java.lang.String)
 	 */
 	public String selectRawRecordData (String internalOID) {
-
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("entering selectRawRecordData with only one parameter");
+		
 		return selectRawRecordData (internalOID, "");
 	}
 
@@ -559,6 +464,7 @@ public class DBAccess implements DBAccessInterface {
 			pstmt.executeUpdate ( );
 
 		} catch (SQLException sqlex) {
+			
 			logger.error ("insertRawRecordData: SQLException using Object " + internalOID);
 			
 		} finally {
