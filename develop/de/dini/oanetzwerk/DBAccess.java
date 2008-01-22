@@ -464,23 +464,41 @@ public class DBAccess implements DBAccessInterface {
 		
 		String result = "<NULL />";
 		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("internalOID: " + internalOID);
+			logger.debug ("datestamp :" + datestamp);
+		}
+		
 		try {
 			
-			if (datestamp.equals (""))
+			if (datestamp.equals ("")) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("1 parameter for select RawRecordData");
 				
 				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = (SELECT max(collected) FROM dbo.RawData)");
 			
-			else {
+			} else {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("2 parameter for select RawRecordData");
 				
 				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = ?");
 				pstmt.setString (2, datestamp);
 			}
 			
-			pstmt.setString (1, internalOID);	
+			pstmt.setString (1, internalOID);
 			
 			rs = pstmt.executeQuery ( );
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("statement: " + rs.getStatement ( ));
+			
 			if (rs.next ( )) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("resultbuffer is created");
 				
 				StringBuffer resultbuffer = new StringBuffer ("<object_id>" + rs.getInt (1) + "</object_id>\n");
 				resultbuffer.append ("<collected>" + rs.getDate (2) + "</collected>\n");
@@ -491,6 +509,8 @@ public class DBAccess implements DBAccessInterface {
 			
 		} catch (SQLException sqlex) {
 			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			
 		} finally {
 			
 			try {
@@ -499,6 +519,7 @@ public class DBAccess implements DBAccessInterface {
 				
 			} catch (SQLException ex) {
 				
+				logger.error (ex.getLocalizedMessage ( ));
 				ex.printStackTrace ( );
 			}
 		}
