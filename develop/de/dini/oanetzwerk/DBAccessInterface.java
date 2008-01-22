@@ -6,6 +6,7 @@ package de.dini.oanetzwerk;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.ResultSet;
 
 
 /**
@@ -44,7 +45,7 @@ public interface DBAccessInterface {
 	 * @param string2
 	 * @return
 	 */
-	public abstract String selectObjectEntryId (String repositoryID, String externalOID);
+	public abstract ResultSet selectObjectEntryId (String repositoryID, String externalOID);
 
 	/**
 	 * @param string
@@ -79,6 +80,6 @@ public interface DBAccessInterface {
 	 * @param string
 	 * @return
 	 */
-	public abstract String getObject (int oid);
+	public abstract ResultSet getObject (int oid);
 
 }

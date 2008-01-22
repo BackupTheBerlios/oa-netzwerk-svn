@@ -7,6 +7,8 @@ package de.dini.oanetzwerk;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,32 +36,14 @@ public class ObjectEntry extends
 AbstractKeyWordHandler implements Modul2Database {
 	
 	static Logger logger = Logger.getLogger (ObjectEntry.class);
+	private ResultSet resultset;
 	
 	public ObjectEntry ( ) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug (ObjectEntry.class.getName ( ) + " is called");
 	}
-	
-	/**
-	 * @param response
-	 * @return
-	 */
-	
-	private String ObjectEntryResponse (String response) {
-
-		StringBuffer buffer = new StringBuffer ("<OAN-REST xmlns=\"http://localhost/\"\n")
-		.append("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n")
-		.append("xsi:schemaLocation=\"http://localhost/schema.xsd\">\n")
-		.append ("\t<ObjectEntryResponse>\n");
 		
-		buffer.append ("\t\t").append (response).append ("\n");
-		buffer.append ("\t</ObjectEntryResponse>\n");
-		buffer.append ("</OAN-REST>");
-		
-		return buffer.toString ( );
-	}
-	
 	/**
 	 * @param data
 	 * @return
@@ -208,18 +192,46 @@ AbstractKeyWordHandler implements Modul2Database {
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
+	
 	@Override
 	protected String getKeyWord (String [ ] path) {
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
-		String response = db.getObject (Integer.parseInt (path [2]));
-		//SELECT o.object_id FROM dbo.Object o WHERE o.object_id = ?
-		return ObjectEntryResponse ("<repository_datestamp>\n" + response + "</repository_datestamp>\n");
+		db.createConnection ( );
+		
+		resultset = db.getObject (Integer.parseInt (path [2]));
+		
+		db.closeConnection ( );
+		
+		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		
+		try {
+			
+			if (resultset.next ( )) {
+				
+				mapEntry.put ("object_id", Integer.toString (resultset.getInt (1)));
+				mapEntry.put ("repository_id", Integer.toString (resultset.getInt (2)));
+				mapEntry.put ("harvested", resultset.getDate (3).toString ( ));
+				mapEntry.put ("repository_datestamp", resultset.getDate (4).toString ( ));
+				mapEntry.put ("repository_identifier", resultset.getString (5));				
+			}
+			
+		} catch (SQLException ex) {
+			
+			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+		
+		listentries.add (mapEntry);
+		
+		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "ObjectEntry");
 	}
 
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
+	
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
 
@@ -230,6 +242,7 @@ AbstractKeyWordHandler implements Modul2Database {
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 */
+	
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {
 		
@@ -237,8 +250,14 @@ AbstractKeyWordHandler implements Modul2Database {
 		String repository_identifier = extract_repository_identifier (data);
 		Date repository_datestamp = extract_repository_datestamp (data);
 		Date harvested = HelperMethods.today ( );
+		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
+		db.createConnection ( );
+		
+		//resultset = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
 		String response = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
+		
+		db.closeConnection ( );
 		
 		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
 		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );

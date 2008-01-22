@@ -6,7 +6,6 @@ package de.dini.oanetzwerk;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,10 +31,8 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
@@ -514,7 +511,7 @@ public class Harvester {
 		for (int i = 0; i < this.ids.size ( ); i++) {
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("Obect No. " + i + " is processed");
+				logger.debug ("Object No. " + i + " is processed");
 			
 			int internalOID = this.ids.get (i).getInternalOID ( );
 			
@@ -594,11 +591,47 @@ public class Harvester {
 				
 				String result = restclient.GetData ( );
 				
+				List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+				HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+
+				listentries = RestXmlCodec.decodeEntrySet (result);
+				mapEntry = listentries.get (0);
+				Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+				String key = "";
+				String value = "";
+				
+				while (it.hasNext ( )) {
+									
+					key = it.next ( );
+					
+					if (logger.isDebugEnabled ( ))
+						logger.debug ("key: " + key + " value: " + mapEntry.get (key));
+					
+					if (key.equalsIgnoreCase ("repository_datestamp")) {
+						
+						value = mapEntry.get (key);
+						break;
+					}
+				}
+				
 				try {
+					
+					Date repositoryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (value);	
+					
+					if (repositoryDate.before (this.ids.get (i).getDatestamp ( )) || repositoryDate.equals (this.ids.get (i).getDatestamp ( ))) {
+						
+						if (logger.isDebugEnabled ( )) {
+							
+							logger.debug ("RepositoryDate is " + repositoryDate + " and before or equal the harvested: " + this.ids.get (i).getDatestamp ( ));
+						}
+						//TODO: implement proper change of harvested-timestamp
+						
+						continue;
+					}
 					
 					//TODO: rewrite XML
 					
-					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
+/*					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 					DocumentBuilder builder = factory.newDocumentBuilder ( );
 					Document document = builder.parse (new InputSource (new StringReader(result)));
 					
@@ -631,10 +664,11 @@ public class Harvester {
 					
 				} catch (DOMException ex) {
 					
-					ex.printStackTrace ( );
+					ex.printStackTrace ( );*/
 					
 				} catch (java.text.ParseException ex) {
 					
+					logger.error (ex.getLocalizedMessage ( ));
 					ex.printStackTrace ( );
 				}
 			}
@@ -714,24 +748,38 @@ public class Harvester {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug (result);
+				
+		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+
+		listentries = RestXmlCodec.decodeEntrySet (result);
+		mapEntry = listentries.get (0);
+		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+		String key = "";
+		String value = "";
+		int intoid = -1;
 		
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
-		DocumentBuilder builder = factory.newDocumentBuilder ( );
-		Document document = builder.parse (new InputSource (new StringReader(result)));
-		
-		if (document.getElementsByTagName ("NULL").getLength ( ) > 0)
-			return -1;
-		
-		else {
+		while (it.hasNext ( )) {
+							
+			key = it.next ( );
 			
-			NodeList OIDNodeList = document.getElementsByTagName ("OID");
-		
-			if (OIDNodeList.getLength ( ) != 1)
-				throw new SAXException ("too many datestamps in raw-data-record from database!");
-		
-			else
-				return new Integer (OIDNodeList.item (0).getTextContent ( ));
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("key: " + key + " value: " + mapEntry.get (key));
+			
+			if (key.equalsIgnoreCase ("oid")) {
+				
+				value = mapEntry.get (key);
+				break;
+			}
 		}
+		
+		if (value == null)
+			intoid = -1;
+		
+		else
+			intoid = new Integer (value);
+		
+		return intoid;
 	}
 }
 
