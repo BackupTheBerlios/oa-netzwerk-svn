@@ -35,6 +35,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import sun.misc.BASE64Decoder;
+
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 /**
@@ -43,6 +45,10 @@ import de.dini.oanetzwerk.utils.HelperMethods;
  * Aggregator:  extracts metadata and stores it into the db
  */
 
+/**
+ * @author klattman
+ *
+ */
 public class Aggregator {
 	
 	/**
@@ -142,13 +148,6 @@ public class Aggregator {
 						aggregator.startAutoMode();
 					}
 						
-					
-					
-
-					
-					
-					
-					
 			} else {
 				
 				HelperMethods.printhelp ("java " + Aggregator.class.getCanonicalName ( ), options);
@@ -181,6 +180,7 @@ public class Aggregator {
 		// TODO Auto-generated method stub
 		this.currentRecordId = id;
 		
+		System.out.println("StartSingleRecord:  RecordId=" + this.currentRecordId);
 		
 		Object data;
 		
@@ -188,9 +188,18 @@ public class Aggregator {
 		data = loadRawData(this.currentRecordId);
 		if (data == null) {
 			// Daten für dieses Objekt konnten nicht geladen werden
+			logger.error ("loadRawData not successful");
 			return;
 		}
 		// Auseinandernehmen der Rohdaten
+		System.out.println("Geladene Daten: " + data);
+		if (logger.isDebugEnabled()) {
+			logger.debug("retrieved data: " + data);
+		}
+		
+//		data = decodeBase64(data);
+
+		
 		
 		// Prüfen der Codierung der Rohdaten
 		data = checkEncoding(data);
@@ -235,6 +244,24 @@ public class Aggregator {
 
 
 
+	/**
+	 * @param data Daten, die als Base64-String ankommen und decodiert werden sollen
+	 * @return byte[] enthält base64-decodierten String
+	 */
+	private Object decodeBase64(Object data) {
+		// Daten müssen Base64-decodiert werden
+		byte[] b = null;
+		try {
+			b = new BASE64Decoder().decodeBuffer((String) data);
+		} catch (IOException e) {
+			logger.error("decodeBase64 : ioException\n");
+			e.printStackTrace();
+		} 
+		return b;
+	}
+
+
+
 	private void setAggregationCompleted(int id) {
 		// TODO Auto-generated method stub
 		
@@ -265,20 +292,34 @@ public class Aggregator {
 
 	private Object checkXML(Object data) {
 		// TODO Auto-generated method stub
-		return null;
+		String result = (String) data;
+		return result;
 	}
 
 
 
+	/**
+	 * @param data
+	 * @return
+	 */
 	private Object checkEncoding(Object data) {
-		// TODO Auto-generated method stub
-		return null;
+		String result = (String) data;
+		
+		// noch zu klären, wie Fehler in der Codierung ausgegeben werden (Exception), 
+		// oder ob der Rückgabetyp geändert werden kann und ein weiterer Wert übergeben werden kann
+		
+		return result;
 	}
 
 
 
+	/**
+	 * loadRawData    retrieve RawData from the database using Rest
+	 * 
+	 * @param id	id of the object that shall be retrieved
+	 * @return		data of the object
+	 */
 	private Object loadRawData(int id) {
-		// TODO Auto-generated method stub
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("loadRawData started");
 
@@ -286,11 +327,7 @@ public class Aggregator {
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 		
 		String result = restclient.GetData ( );
-
-		
-		
-		
-		return null;
+		return result;
 	}
 
 
