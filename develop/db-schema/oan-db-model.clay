@@ -1323,7 +1323,7 @@
 </table>
 <table alias="" name="WorkflowDB" remarks="" uid="16946d4:117ab0a590d:-7fe7">
 <table-description/>
-<table-figure-bounds height="171" width="152" x="1312" y="174"/>
+<table-figure-bounds height="171" width="201" x="1263" y="174"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="workflow_id" remarks="" uid="16946d4:117ab0a590d:-7fe3">
 <column-description/>
@@ -1339,9 +1339,9 @@
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="16946d4:117ab0a590d:-7fe2">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="16946d4:117ab0a590d:-7fe2">
 <column-description/>
-<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC">
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
 <variant type-name-pattern="NUMERIC"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
@@ -1399,7 +1399,7 @@
 </table>
 <table alias="" name="Services" remarks="" uid="16946d4:117ab0a590d:-7fdd">
 <table-description/>
-<table-figure-bounds height="105" width="128" x="1324" y="-93"/>
+<table-figure-bounds height="105" width="191" x="1261" y="-93"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="service_id" remarks="" uid="16946d4:117ab0a590d:-7fd9">
 <column-description/>
