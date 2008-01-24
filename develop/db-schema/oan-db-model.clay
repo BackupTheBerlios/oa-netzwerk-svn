@@ -9,32 +9,34 @@
 <table-list>
 <table alias="Object" name="Object" remarks="" uid="4f5403:1161f7e7d4d:-7fff">
 <table-description/>
-<table-figure-bounds height="118" width="217" x="312" y="174"/>
+<table-figure-bounds height="210" width="266" x="428" y="161"/>
 <column-list>
-<column alias="Object Id" auto-increment="true" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7ffa">
+<column alias="Object Id" auto-increment="true" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7ffa">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n)"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED ZEROFILL"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) ZEROFILL"/>
-<variant type-name-pattern="INTEGER UNSIGNED"/>
-<variant type-name-pattern="INTEGER UNSIGNED ZEROFILL"/>
-<variant type-name-pattern="INTEGER ZEROFILL"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="repository_id" remarks="ID des Repositories, entspricht &quot;Repositories.repository_id&quot;" uid="4f5403:1161f7e7d4d:-7feb">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="repository_id" remarks="ID des Repositories, entspricht &quot;Repositories.repository_id&quot;" uid="4f5403:1161f7e7d4d:-7feb">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n)"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED ZEROFILL"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) ZEROFILL"/>
-<variant type-name-pattern="INTEGER UNSIGNED"/>
-<variant type-name-pattern="INTEGER UNSIGNED ZEROFILL"/>
-<variant type-name-pattern="INTEGER ZEROFILL"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="harvested" remarks="Zeitstempel, wann es zuletzt erfolgreicht geharvestet bzw. im Repository unverändert gefunden wurde, direkt vom Datenbankserver" uid="4f5403:1161f7e7d4d:-7c69">
@@ -96,24 +98,32 @@
 </foreign-key-figure>
 <foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
 </foreign-key>
+<foreign-key alias="" name="FK_Object_3" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="16946d4:117ab0a590d:-7ea2">
+<foreign-key-description/>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
+</foreign-key>
 </foreign-key-list>
 <index-list/>
 </table>
 <table alias="Repositories" name="Repositories" remarks="" uid="4f5403:1161f7e7d4d:-7ff4">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="86" y="8"/>
+<table-figure-bounds height="-1" width="-1" x="7" y="-85"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="repository_id" remarks="OAI-Schittstelle des Servers, z.B. (edoc.hu-berlin.de/OAI-2.0/)" uid="4f5403:1161f7e7d4d:-7fee">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="repository_id" remarks="OAI-Schittstelle des Servers, z.B. (edoc.hu-berlin.de/OAI-2.0/)" uid="4f5403:1161f7e7d4d:-7fee">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n)"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED ZEROFILL"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) ZEROFILL"/>
-<variant type-name-pattern="INTEGER UNSIGNED"/>
-<variant type-name-pattern="INTEGER UNSIGNED ZEROFILL"/>
-<variant type-name-pattern="INTEGER ZEROFILL"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="name" remarks="Name des Repositories" uid="43ad4a:116a48a1fda:-7fce">
@@ -148,12 +158,20 @@
 </table>
 <table alias="Raw Data" name="RawData" remarks="" uid="4f5403:1161f7e7d4d:-7f6a">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="9" y="119"/>
+<table-figure-bounds height="-1" width="-1" x="-5" y="215"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7f62">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7f62">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="repository_timestamp" remarks="Zeitstempel des Repositories, wann die Rohdaten zuletzt geändert wurden,aktuelles Objekt =&gt; = object.rep_timestamp" uid="4f5403:1161f7e7d4d:-7f61">
@@ -194,12 +212,20 @@
 </table>
 <table alias="" name="AggregatorMetadata" remarks="" uid="4f5403:1161f7e7d4d:-7f37">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="585" y="31"/>
+<table-figure-bounds height="-1" width="-1" x="979" y="-193"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7f33">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7f33">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="harvested" remarks="" uid="4f5403:1161f7e7d4d:-7f32">
@@ -219,12 +245,20 @@
 </table>
 <table alias="Titles" name="Titles" remarks="" uid="4f5403:1161f7e7d4d:-7ec7">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="795" y="59"/>
+<table-figure-bounds height="-1" width="-1" x="995" y="131"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7ec1">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7ec1">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="title" remarks="" uid="4f5403:1161f7e7d4d:-7ec0">
@@ -265,12 +299,20 @@
 </table>
 <table alias="" name="Person" remarks="" uid="4f5403:1161f7e7d4d:-7e4c">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="16" y="526"/>
+<table-figure-bounds height="170" width="229" x="-4" y="585"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="person_id" remarks="" uid="4f5403:1161f7e7d4d:-7e48">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="person_id" remarks="" uid="4f5403:1161f7e7d4d:-7e48">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="number" remarks="" uid="4f5403:1161f7e7d4d:-7e47">
@@ -309,6 +351,20 @@
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
 </data-type>
 </column>
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="16946d4:117ab0a590d:-7d14">
+<column-description/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+</data-type>
+</column>
 </column-list>
 <primary-key alias="" name="PK_PERSON" remarks="" uid="4f5403:1161f7e7d4d:-7e4b">
 <primary-key-description/>
@@ -320,25 +376,41 @@
 </table>
 <table alias="" name="Object2Author" remarks="" uid="4f5403:1161f7e7d4d:-7e41">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="12" y="232"/>
+<table-figure-bounds height="-1" width="-1" x="-7" y="353"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7e3d">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7e3d">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="author_id" remarks="" uid="4f5403:1161f7e7d4d:-7e3c">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="person_id" remarks="" uid="4f5403:1161f7e7d4d:-7e3c">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_OBJECT2AUTHOR" remarks="" uid="4f5403:1161f7e7d4d:-7e40">
 <primary-key-description/>
 <primary-key-column name="object_id"/>
-<primary-key-column name="author_id"/>
+<primary-key-column name="person_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
@@ -355,32 +427,48 @@
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
-<foreign-key-column column-name="author_id" referenced-key-column-name="person_id"/>
+<foreign-key-column column-name="person_id" referenced-key-column-name="person_id"/>
 </foreign-key>
 </foreign-key-list>
 <index-list/>
 </table>
 <table alias="" name="Object2Contributor" remarks="" uid="4f5403:1161f7e7d4d:-7d40">
 <table-description/>
-<table-figure-bounds height="50" width="120" x="279" y="507"/>
+<table-figure-bounds height="82" width="178" x="-3" y="851"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7d3c">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7d3c">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="contributor_id" remarks="" uid="4f5403:1161f7e7d4d:-7ce2">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="person_id" remarks="" uid="4f5403:1161f7e7d4d:-7ce2">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%n)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_OBJECT2CONTRIBUTOR" remarks="" uid="4f5403:1161f7e7d4d:-7d3f">
 <primary-key-description/>
 <primary-key-column name="object_id"/>
-<primary-key-column name="contributor_id"/>
+<primary-key-column name="person_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
@@ -391,37 +479,53 @@
 </foreign-key-figure>
 <foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
 </foreign-key>
-<foreign-key alias="" name="FK_Object2Contributor_2" on-delete="" on-update="" referenced-key="PK_PERSON" referenced-table="Person" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7b1e">
+<foreign-key alias="" name="FK_Object2Contributor_2" on-delete="" on-update="" referenced-key="PK_PERSON" referenced-table="Person" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="16946d4:117ab0a590d:-7cb5">
 <foreign-key-description/>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
-<foreign-key-column column-name="contributor_id" referenced-key-column-name="person_id"/>
+<foreign-key-column column-name="person_id" referenced-key-column-name="person_id"/>
 </foreign-key>
 </foreign-key-list>
 <index-list/>
 </table>
 <table alias="" name="Object2Editor" remarks="" uid="4f5403:1161f7e7d4d:-7c68">
 <table-description/>
-<table-figure-bounds height="50" width="120" x="174" y="320"/>
+<table-figure-bounds height="73" width="169" x="185" y="398"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7c66">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7c66">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="editor_id" remarks="" uid="4f5403:1161f7e7d4d:-7c65">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="person_id" remarks="" uid="4f5403:1161f7e7d4d:-7c65">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 </column-list>
 <primary-key alias="" name="PK_OBJECT2EDITOR" remarks="" uid="4f5403:1161f7e7d4d:-7c64">
 <primary-key-description/>
 <primary-key-column name="object_id"/>
-<primary-key-column name="editor_id"/>
+<primary-key-column name="person_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
@@ -432,24 +536,32 @@
 </foreign-key-figure>
 <foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
 </foreign-key>
-<foreign-key alias="" name="FK_Object2Editor_1" on-delete="" on-update="" referenced-key="PK_PERSON" referenced-table="Person" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-7bc8">
+<foreign-key alias="" name="FK_Object2Editor_3" on-delete="" on-update="" referenced-key="PK_PERSON" referenced-table="Person" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="16946d4:117ab0a590d:-7c43">
 <foreign-key-description/>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
-<foreign-key-column column-name="editor_id" referenced-key-column-name="person_id"/>
+<foreign-key-column column-name="person_id" referenced-key-column-name="person_id"/>
 </foreign-key>
 </foreign-key-list>
 <index-list/>
 </table>
 <table alias="" name="Keywords" remarks="" uid="4f5403:1161f7e7d4d:-7b08">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="671" y="456"/>
+<table-figure-bounds height="-1" width="-1" x="1039" y="631"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="keyword_id" remarks="" uid="4f5403:1161f7e7d4d:-7b04">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="keyword_id" remarks="" uid="4f5403:1161f7e7d4d:-7b04">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="keyword" remarks="" uid="4f5403:1161f7e7d4d:-7b03">
@@ -476,18 +588,34 @@
 </table>
 <table alias="" name="Object2Keywords" remarks="" uid="4f5403:1161f7e7d4d:-7b01">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="684" y="313"/>
+<table-figure-bounds height="-1" width="-1" x="872" y="482"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7afd">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7afd">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="keyword_id" remarks="" uid="4f5403:1161f7e7d4d:-7afc">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="keyword_id" remarks="" uid="4f5403:1161f7e7d4d:-7afc">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 </column-list>
@@ -517,7 +645,7 @@
 </table>
 <table alias="" name="DCC_Categories" remarks="" uid="4f5403:1161f7e7d4d:-783a">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="305" y="717"/>
+<table-figure-bounds height="-1" width="-1" x="252" y="858"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DCC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-7836">
 <column-description/>
@@ -543,12 +671,20 @@
 </table>
 <table alias="" name="DCC_Classification" remarks="" uid="4f5403:1161f7e7d4d:-7834">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="343" y="611"/>
+<table-figure-bounds height="-1" width="-1" x="300" y="657"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7830">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-7830">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DCC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-782f">
@@ -585,12 +721,20 @@
 </table>
 <table alias="" name="DNB_Categories" remarks="" uid="4f5403:1161f7e7d4d:-77b7">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="494" y="717"/>
+<table-figure-bounds height="-1" width="-1" x="538" y="860"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DNB_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-77b5">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="DNB_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-77b5">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="name" remarks="" uid="4f5403:1161f7e7d4d:-77b4">
@@ -610,18 +754,34 @@
 </table>
 <table alias="" name="DNB_Classification" remarks="" uid="4f5403:1161f7e7d4d:-77b2">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="511" y="591"/>
+<table-figure-bounds height="-1" width="-1" x="544" y="617"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-77b0">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-77b0">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DNB_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-77af">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="DNB_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-77af">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 </column-list>
@@ -651,18 +811,34 @@
 </table>
 <table alias="" name="DINI_Set_Classification" remarks="" uid="4f5403:1161f7e7d4d:-76ab">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="606" y="533"/>
+<table-figure-bounds height="-1" width="-1" x="808" y="617"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-76a7">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-76a7">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DINI_set_id" remarks="" uid="4f5403:1161f7e7d4d:-76a6">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="DINI_set_id" remarks="" uid="4f5403:1161f7e7d4d:-76a6">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 </column-list>
@@ -692,12 +868,20 @@
 </table>
 <table alias="" name="DINI_Set_Categories" remarks="" uid="4f5403:1161f7e7d4d:-76a5">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="703" y="693"/>
+<table-figure-bounds height="-1" width="-1" x="796" y="866"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DINI_set_id" remarks="" uid="4f5403:1161f7e7d4d:-76a1">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="DINI_set_id" remarks="" uid="4f5403:1161f7e7d4d:-76a1">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="name" remarks="" uid="4f5403:1161f7e7d4d:-76a0">
@@ -717,18 +901,34 @@
 </table>
 <table alias="" name="Other_Classification" remarks="" uid="4f5403:1161f7e7d4d:-75e6">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="801" y="229"/>
+<table-figure-bounds height="-1" width="-1" x="919" y="307"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-75e4">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="4f5403:1161f7e7d4d:-75e4">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="other_id" remarks="" uid="4f5403:1161f7e7d4d:-75e3">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="other_id" remarks="" uid="4f5403:1161f7e7d4d:-75e3">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 </column-list>
@@ -758,12 +958,20 @@
 </table>
 <table alias="" name="Other_Categories" remarks="" uid="4f5403:1161f7e7d4d:-75e1">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="776" y="555"/>
+<table-figure-bounds height="-1" width="-1" x="1251" y="535"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="other_id" remarks="" uid="4f5403:1161f7e7d4d:-75df">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="other_id" remarks="" uid="4f5403:1161f7e7d4d:-75df">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="name" remarks="" uid="4f5403:1161f7e7d4d:-75de">
@@ -783,12 +991,20 @@
 </table>
 <table alias="" name="DateValues" remarks="" uid="edd9de:11638587e4b:-7fda">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="503" y="-92"/>
+<table-figure-bounds height="-1" width="-1" x="594" y="-221"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7fd6">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7fd6">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="number" remarks="" uid="edd9de:11638587e4b:-7fd4">
@@ -823,12 +1039,20 @@
 </table>
 <table alias="" name="Description" remarks="" uid="edd9de:11638587e4b:-7f78">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="362" y="-65"/>
+<table-figure-bounds height="-1" width="-1" x="397" y="-51"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7f74">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7f74">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="number" remarks="" uid="edd9de:11638587e4b:-7f72">
@@ -869,12 +1093,20 @@
 </table>
 <table alias="" name="Publisher" remarks="" uid="edd9de:11638587e4b:-7f46">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="222" y="-98"/>
+<table-figure-bounds height="94" width="172" x="220" y="-86"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7f42">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7f42">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="number" remarks="" uid="edd9de:11638587e4b:-7f41">
@@ -909,12 +1141,20 @@
 </table>
 <table alias="" name="Format" remarks="" uid="edd9de:11638587e4b:-7ef3">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="747" y="-24"/>
+<table-figure-bounds height="-1" width="-1" x="847" y="-91"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7eef">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7eef">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="number" remarks="" uid="edd9de:11638587e4b:-7eed">
@@ -950,12 +1190,20 @@
 </table>
 <table alias="" name="Identifier" remarks="" uid="edd9de:11638587e4b:-7eec">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="989" y="176"/>
+<table-figure-bounds height="-1" width="-1" x="1046" y="-92"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7ee8">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7ee8">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="number" remarks="Nummer des Identifiers, die die Reihenfolge angibt, in der es vom Server geliefert wurde" uid="edd9de:11638587e4b:-7ee7">
@@ -998,32 +1246,34 @@
 </table>
 <table alias="" name="DuplicatePossibilties" remarks="" uid="dff6e3:117774ce7b2:-7fe5">
 <table-description/>
-<table-figure-bounds height="70" width="118" x="963" y="330"/>
+<table-figure-bounds height="120" width="172" x="-7" y="44"/>
 <column-list>
-<column alias="" auto-increment="true" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="Original-Object" uid="dff6e3:117774ce7b2:-7fe1">
+<column alias="" auto-increment="true" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="Original-Object" uid="dff6e3:117774ce7b2:-7fe1">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n)"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED ZEROFILL"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) ZEROFILL"/>
-<variant type-name-pattern="INTEGER UNSIGNED"/>
-<variant type-name-pattern="INTEGER UNSIGNED ZEROFILL"/>
-<variant type-name-pattern="INTEGER ZEROFILL"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="duplicate_id" remarks="ID des Objekts, dass mit percentage Wahrscheinlichkeit ähnlich ist zu object_id" uid="dff6e3:117774ce7b2:-7fe0">
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="duplicate_id" remarks="ID des Objekts, dass mit percentage Wahrscheinlichkeit ähnlich ist zu object_id" uid="dff6e3:117774ce7b2:-7fe0">
 <column-description/>
-<data-type jdbc-type="4" name="INTEGER" selected-variant-pattern="INTEGER">
-<variant type-name-pattern="INTEGER"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n)"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) UNSIGNED ZEROFILL"/>
-<variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INTEGER(%n) ZEROFILL"/>
-<variant type-name-pattern="INTEGER UNSIGNED"/>
-<variant type-name-pattern="INTEGER UNSIGNED ZEROFILL"/>
-<variant type-name-pattern="INTEGER ZEROFILL"/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="percentage" remarks="Prozentzahl, wie wahrscheinlich es ist" uid="dff6e3:117774ce7b2:-7fdf">
@@ -1044,6 +1294,138 @@
 <primary-key alias="" name="PK_DUPLICATEPOSSIBILTIES" remarks="" uid="dff6e3:117774ce7b2:-7fe4">
 <primary-key-description/>
 <primary-key-column name="object_id"/>
+</primary-key>
+<unique-key-list/>
+<foreign-key-list>
+<foreign-key alias="" name="FK_DuplicatePossibilties_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="16946d4:117ab0a590d:-7b1f">
+<foreign-key-description/>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
+</foreign-key>
+<foreign-key alias="" name="FK_DuplicatePossibilties_2" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="16946d4:117ab0a590d:-7a73">
+<foreign-key-description/>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="duplicate_id" referenced-key-column-name="object_id"/>
+</foreign-key>
+<foreign-key alias="" name="FK_DuplicatePossibilties_3" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="16946d4:117ab0a590d:-79fc">
+<foreign-key-description/>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
+</foreign-key>
+</foreign-key-list>
+<index-list/>
+</table>
+<table alias="" name="WorkflowDB" remarks="" uid="16946d4:117ab0a590d:-7fe7">
+<table-description/>
+<table-figure-bounds height="171" width="152" x="1312" y="174"/>
+<column-list>
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="workflow_id" remarks="" uid="16946d4:117ab0a590d:-7fe3">
+<column-description/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="16946d4:117ab0a590d:-7fe2">
+<column-description/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="time" remarks="" uid="16946d4:117ab0a590d:-7fe1">
+<column-description/>
+<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
+<variant type-name-pattern="DATETIME"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="service_id" remarks="Gibt an, welcher Dienst mit diesem Objekt fertig war, den Eintrag also erzeugt hat." uid="16946d4:117ab0a590d:-7fe0">
+<column-description/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+</data-type>
+</column>
+</column-list>
+<primary-key alias="" name="PK_WORKFLOWDB" remarks="" uid="16946d4:117ab0a590d:-7fe6">
+<primary-key-description/>
+<primary-key-column name="workflow_id"/>
+</primary-key>
+<unique-key-list/>
+<foreign-key-list>
+<foreign-key alias="" name="FK_WorkflowDB_1" on-delete="" on-update="" referenced-key="PK_SERVICES" referenced-table="Services" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="16946d4:117ab0a590d:-7f20">
+<foreign-key-description/>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="service_id" referenced-key-column-name="service_id"/>
+</foreign-key>
+<foreign-key alias="" name="FK_WorkflowDB_2" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="16946d4:117ab0a590d:-7db6">
+<foreign-key-description/>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
+</foreign-key>
+</foreign-key-list>
+<index-list/>
+</table>
+<table alias="" name="Services" remarks="" uid="16946d4:117ab0a590d:-7fdd">
+<table-description/>
+<table-figure-bounds height="105" width="128" x="1324" y="-93"/>
+<column-list>
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="service_id" remarks="" uid="16946d4:117ab0a590d:-7fd9">
+<column-description/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="name" remarks="" uid="16946d4:117ab0a590d:-7fd8">
+<column-description/>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
+</data-type>
+</column>
+</column-list>
+<primary-key alias="" name="PK_SERVICES" remarks="" uid="16946d4:117ab0a590d:-7fdc">
+<primary-key-description/>
+<primary-key-column name="service_id"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list/>
