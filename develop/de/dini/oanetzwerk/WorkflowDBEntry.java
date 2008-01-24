@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
  */
 
 public class WorkflowDBEntry extends
-AbstractKeyWordHandler implements Modul2Database {
+AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	static Logger logger = Logger.getLogger (WorkflowDBEntry.class);
 	

@@ -21,7 +21,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 
 public class ObjectEntryID extends 
-AbstractKeyWordHandler implements Modul2Database {
+AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	static Logger logger = Logger.getLogger (ObjectEntryID.class);
 	private ResultSet resultset;
@@ -44,6 +44,7 @@ AbstractKeyWordHandler implements Modul2Database {
 
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 * This method is not implemented because this would be useless request for now.
 	 */
 	
 	@Override
@@ -56,6 +57,8 @@ AbstractKeyWordHandler implements Modul2Database {
 
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
+	 * This method returns for a given RepositoryID and a given external ObjectID an
+	 * internal ObjectID is it exists. When it does not exist "null" will be returned.
 	 */
 	
 	@Override
@@ -64,7 +67,10 @@ AbstractKeyWordHandler implements Modul2Database {
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
-		resultset = db.selectObjectEntryId (path[2], path[3]);
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("RepositoryID = " + path [2] + " || externalOID = " + path [3]);
+		
+		resultset = db.selectObjectEntryId (path [2], path [3]);
 		
 		db.closeConnection ( );
 		
@@ -76,14 +82,14 @@ AbstractKeyWordHandler implements Modul2Database {
 			if (resultset.next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: objectId = " + resultset.getInt ("object_id"));
+					logger.debug ("DB returned: internal objectID = " + resultset.getInt ("object_id"));
 
 				mapEntry.put ("oid", Integer.toString (resultset.getInt ("object_id")));
 				
 			} else {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("There's no objectID");
+					logger.debug ("No matching internal objectID found");
 				
 				mapEntry.put ("oid", null);
 			}
@@ -101,6 +107,7 @@ AbstractKeyWordHandler implements Modul2Database {
 
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 * This method is not implemented because this would be useless request for now. 
 	 */
 	
 	@Override
@@ -113,6 +120,7 @@ AbstractKeyWordHandler implements Modul2Database {
 
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
+	 * This method is not implemented because this would be useless request for now.
 	 */
 	
 	@Override

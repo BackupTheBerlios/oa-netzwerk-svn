@@ -4,6 +4,7 @@
 
 package de.dini.oanetzwerk;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -83,7 +85,26 @@ public class Aggregator {
 	public Aggregator ( ) {
 		
 		DOMConfigurator.configure ("log4j.xml");
-		this.props = HelperMethods.loadPropertiesFromFile ("aggregatorprop.xml");
+		
+		try {
+			
+			this.props = HelperMethods.loadPropertiesFromFile ("aggregatorprop.xml");
+			
+		} catch (InvalidPropertiesFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} catch (FileNotFoundException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} catch (IOException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
 	}
 
 	

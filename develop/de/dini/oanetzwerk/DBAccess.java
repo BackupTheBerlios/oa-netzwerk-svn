@@ -57,14 +57,29 @@ public class DBAccess implements DBAccessInterface {
 		System.setProperty (Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
 		System.setProperty (Context.PROVIDER_URL, "file:///tmp");
 		
-		this.prop = HelperMethods.loadPropertiesFromFile ("/usr/local/tomcat/webapps/restserver/WEB-INF/dbprop.xml");
-		
 		try {
 			
+			this.prop = HelperMethods.loadPropertiesFromFile ("/usr/local/tomcat/webapps/restserver/WEB-INF/dbprop.xml");
 			ic2 = new InitialContext ( );
+			
+		} catch (InvalidPropertiesFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} catch (FileNotFoundException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} catch (IOException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
 			
 		} catch (NamingException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
 	}
@@ -100,6 +115,7 @@ public class DBAccess implements DBAccessInterface {
 				
 			} catch (NamingException ex) {
 				
+				logger.error (ex.getLocalizedMessage ( ));
 				ex.printStackTrace ( );
 			}
 			
@@ -170,10 +186,14 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("autoCommit is set to " + ac);
+			
 			conn.setAutoCommit (ac);
 			
 		} catch (SQLException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
 	}
@@ -378,6 +398,7 @@ public class DBAccess implements DBAccessInterface {
 		} catch (SQLException sqlex) {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
 			
 		} finally {
 			
@@ -432,6 +453,7 @@ public class DBAccess implements DBAccessInterface {
 		} catch (SQLException sqlex) {
 			
 			logger.error ("insertRawRecordData: SQLException using Object " + internalOID);
+			sqlex.printStackTrace ( );
 			
 		} finally {
 			
@@ -441,9 +463,11 @@ public class DBAccess implements DBAccessInterface {
 				
 			} catch (SQLException ex) {
 				
+				logger.error (ex.getLocalizedMessage ( ));
 				ex.printStackTrace ( );
 			}
 		}
+		
 		return internalOID;
 	}
 
@@ -539,4 +563,4 @@ public class DBAccess implements DBAccessInterface {
 		}
 		return null;
 	}
-}
+} //end of class

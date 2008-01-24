@@ -4,8 +4,10 @@
 
 package de.dini.oanetzwerk;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 import org.apache.commons.httpclient.Credentials;
@@ -63,7 +65,26 @@ public class RestClient {
 		this.path = filterpath (path);
 		this.username = user;
 		this.password = pwd;
-		this.props = HelperMethods.loadPropertiesFromFile ("restclientprop.xml");
+		
+		try {
+			
+			this.props = HelperMethods.loadPropertiesFromFile ("restclientprop.xml");
+			
+		} catch (InvalidPropertiesFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} catch (FileNotFoundException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} catch (IOException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
 		
 		if (!this.nossl) {
 			

@@ -66,13 +66,13 @@ public class RestServer extends HttpServlet {
 			if (i > 1)
 				 xml = HelperMethods.stream2String (req.getInputStream ( ));
 			
-			Class <Modul2Database> c = (Class <Modul2Database>) Class.forName (classname);
+			Class <KeyWord2DatabaseInterface> c = (Class <KeyWord2DatabaseInterface>) Class.forName (classname);
 			Object o = c.newInstance ( );
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug (Class.forName (classname) + " is created");			
 			
-			return (((Modul2Database) o).processRequest (xml, path, i));
+			return (((KeyWord2DatabaseInterface) o).processRequest (xml, path, i));
 			
 		} catch (ClassNotFoundException ex) {
 			

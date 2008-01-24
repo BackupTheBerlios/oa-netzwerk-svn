@@ -4,6 +4,7 @@
 
 package de.dini.oanetzwerk;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -12,6 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -77,7 +79,26 @@ public class Harvester {
 	public Harvester ( ) {
 		
 		DOMConfigurator.configure ("log4j.xml");
-		this.props = HelperMethods.loadPropertiesFromFile ("harvesterprop.xml");
+		
+		try {
+			
+			this.props = HelperMethods.loadPropertiesFromFile ("harvesterprop.xml");
+			
+		} catch (InvalidPropertiesFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} catch (FileNotFoundException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} catch (IOException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
 	}
 	
 	/**

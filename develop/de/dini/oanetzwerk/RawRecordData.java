@@ -6,13 +6,15 @@ package de.dini.oanetzwerk;
 
 import org.apache.log4j.Logger;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 /**
  * @author Michael Kühn
  *
  */
 
 public class RawRecordData extends
-AbstractKeyWordHandler implements Modul2Database {
+AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	static Logger logger = Logger.getLogger (RawRecordData.class);
 	
@@ -28,17 +30,20 @@ AbstractKeyWordHandler implements Modul2Database {
 	
 	public static void main (String [ ] args) {
 		
-		
+		//TODO: Testing stuff
 	}
 	
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 * This method is not implemented because this would be useless request for now.
 	 */
+	
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
-
-		// TODO Auto-generated method stub
-		return null;
+		
+		//NOT IMPLEMENTED
+		logger.warn ("postObjectEntryID is not implemented");
+		throw new NotImplementedException ( );
 	}
 
 	/**
@@ -71,12 +76,15 @@ AbstractKeyWordHandler implements Modul2Database {
 
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 * This method is not implemented because this would be useless request for now.
 	 */
+	
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
-
-		// TODO Auto-generated method stub
-		return null;
+		
+		//NOT IMPLEMENTED
+		logger.warn ("postObjectEntryID is not implemented");
+		throw new NotImplementedException ( );
 	}
 
 	/**

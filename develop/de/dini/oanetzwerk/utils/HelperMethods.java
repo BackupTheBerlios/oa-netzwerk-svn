@@ -6,6 +6,8 @@ package de.dini.oanetzwerk.utils;
 
 import java.io.*;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.InvalidPropertiesFormatException;
@@ -22,7 +24,7 @@ import org.apache.commons.cli.Options;
 
 public class HelperMethods {
 	
-	public static String stream2String (InputStream stream) {
+	public static String stream2String (InputStream stream) throws IOException {
 		
 		BufferedReader in = new BufferedReader (new InputStreamReader (stream));
 		
@@ -36,7 +38,7 @@ public class HelperMethods {
 			
 		} catch (IOException ex) {
 			
-			ex.printStackTrace ( );
+			throw ex;
 			
 		} finally {
 			
@@ -46,33 +48,18 @@ public class HelperMethods {
 				
 			} catch (IOException ex) {
 				
-				ex.printStackTrace ( );
+				throw ex;
 			}
 		}
 		
 		return sb.toString ( );
 	}
 	
-	public static Properties loadPropertiesFromFile (String file) {
+	public static Properties loadPropertiesFromFile (String file) throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		
 		Properties props = new Properties ( );
-		
-		try {
 			
-			props.loadFromXML (new FileInputStream (file));
-			
-		} catch (InvalidPropertiesFormatException ex) {
-			
-			ex.printStackTrace ( );
-			
-		} catch (FileNotFoundException ex) {
-			
-			ex.printStackTrace ( );
-			
-		} catch (IOException ex) {
-			
-			ex.printStackTrace ( );
-		}
+		props.loadFromXML (new FileInputStream (file));
 		
 		return props;
 	}
@@ -96,5 +83,19 @@ public class HelperMethods {
 
 		HelpFormatter formatter = new HelpFormatter ( );
 		formatter.printHelp (syntax, options, true);
+	}
+	
+	public static Date extract_repository_datestamp (String dateString) throws ParseException {
+		
+		Date date = null;
+		//date = new Date (new SimpleDateFormat ("yyyy-MM-dd").parse (parseXML (data, "repository_datestamp")).getTime ( ));			
+		
+		//String dateString = parseXML (data, "repository_datestamp");
+		
+		java.util.Date sdf = new SimpleDateFormat ("yyyy-MM-dd").parse (dateString);
+		
+		date = new Date (sdf.getTime ( ));
+		
+		return date;
 	}
 }
