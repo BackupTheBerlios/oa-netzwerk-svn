@@ -77,7 +77,7 @@ public interface DBAccessInterface {
 	 * @return
 	 */
 	
-	public abstract String insertObject (int repository_id, Date harvested,
+	public abstract ResultSet insertObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier);
 
 	/**

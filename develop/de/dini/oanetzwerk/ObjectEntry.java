@@ -239,13 +239,28 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					"\n\texternal OID = " + repository_identifier);
 		
 		//resultset = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
-		String response = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
+		this.resultset = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
 		
 		db.closeConnection ( );
 		
 		listentries = new ArrayList <HashMap <String, String>> ( );
 		mapEntry = new HashMap <String ,String> ( );
-		mapEntry.put ("oid", response);
+		
+		try {
+			
+			if (resultset.next ( )) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("DB returned: object_id = " + resultset.getInt (1));
+				mapEntry.put ("oid", Integer.toString (resultset.getInt (1)));
+				
+			}
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace();
+		}
+		
 		listentries.add (mapEntry);
 		
 		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "ObjectEntry");

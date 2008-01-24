@@ -485,7 +485,7 @@ public class DBCreate implements DBAccessInterface  {
 		return null;
 	}
 
-	public String insertObject(int repository_id, Date harvested,
+	public ResultSet insertObject(int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier) {
 		// TODO Auto-generated method stub
 		return null;

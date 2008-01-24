@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.Date;
@@ -436,15 +437,19 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, collected, data) VALUES (?, ?, ?)");			
-			pstmt.setInt (1, internalOID);
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, repository_timestamp, data) VALUES (?, ?, ?)");
+			
+			pstmt.setBigDecimal (1, new BigDecimal (internalOID));
+			//TODO: insert right Timestamp into repository_timestamp!!!
 			pstmt.setDate (2, HelperMethods.today ( ));
 			pstmt.setString (3, blobbb);
 			pstmt.executeUpdate ( );
-
+			
 		} catch (SQLException sqlex) {
 			
 			logger.error ("insertRawRecordData: SQLException using Object " + internalOID);
+			logger.error (sqlex.getLocalizedMessage ( ));
+			
 			sqlex.printStackTrace ( );
 		}
 		
@@ -455,7 +460,7 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.DBAccessInterface#insertObject(int, java.sql.Date, java.sql.Date, java.lang.String)
 	 */
 	
-	public String insertObject (int repository_id, Date harvested,
+	public ResultSet insertObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier) {
 		
 //		createConnection ( );
@@ -463,12 +468,21 @@ public class DBAccess implements DBAccessInterface {
 		//PreparedStatement pstmt = null;
 		//Statement stmt = null;		
 		// ResultSet rs = null;
-		int object_id = 0;
+	//	int object_id = 0;
+		
+		
+		PreparedStatement pstmt = null;
 		
 		try {
 			
-			Statement stmt = conn.createStatement (ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stmt.executeQuery ("SELECT * FROM dbo.Object FOR UPDATE WHERE object_id = (SELECT MAX (object_id) FROM dbo.Object)");
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (repository_id, harvested, repository_datestamp, repository_identifier) VALUES (?, ?, ?, ?)");
+		
+		//try {
+			
+			
+			
+//			Statement stmt = conn.createStatement (ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+/*			ResultSet rs = stmt.executeQuery ("SELECT * FROM dbo.Object FOR UPDATE WHERE object_id = (SELECT MAX (object_id) FROM dbo.Object)");
 			
 			if (rs.next ( ))
 				object_id = rs.getInt (1);
@@ -481,20 +495,25 @@ public class DBAccess implements DBAccessInterface {
 			rs.updateInt (2, repository_id);
 			rs.updateDate (3, harvested);
 			rs.updateDate (4, repository_datestamp);
-			rs.updateString (5, repository_identifier);
+			rs.updateString (5, repository_identifier);*/
 			
-			/*pstmt.setInt (1, ++object_id);
-			pstmt.setInt (2, repository_id);
-			pstmt.setDate (3, harvested);
-			pstmt.setDate (4, repository_datestamp);
-			pstmt.setString (5, repository_identifier);*/
+			pstmt.setInt (1, repository_id);
+			pstmt.setDate (2, harvested);
+			pstmt.setDate (3, repository_datestamp);
+			pstmt.setString (4, repository_identifier);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("execute");
 			
-			//pstmt.executeUpdate ( );
+			pstmt.executeUpdate ( );
 			
-			rs.insertRow ( );
+			pstmt = conn.prepareStatement ("SELECT object_id FROM dbo.Object WHERE repository_id = ? AND repository_identifier = ? AND repository_datestamp = ?");
+			
+			pstmt.setInt (1, repository_id);
+			pstmt.setString (2, repository_identifier);
+			pstmt.setDate (3, repository_datestamp);
+			
+			return pstmt.executeQuery ( );
 			
 		} catch (SQLException sqlex) {
 			
@@ -502,7 +521,7 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 		}
 		
-		return Integer.toString (object_id);
+		return null;
 	}
 
 	/**
