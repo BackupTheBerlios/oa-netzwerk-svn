@@ -51,19 +51,22 @@ public interface DBAccessInterface {
 	 * @param string
 	 * @param string2
 	 */
-	public abstract String selectRawRecordData (String internalOID, String datestamp);
+	
+	public abstract ResultSet selectRawRecordData (String internalOID, String datestamp);
 
 	/**
 	 * @param string
 	 */
-	public abstract String selectRawRecordData (String internalOID);
+	
+	public abstract ResultSet selectRawRecordData (String internalOID);
 
 	/**
 	 * @param string
 	 * @param string2
 	 * @param data
 	 */
-	public abstract int insertRawRecordData (int internalOID, String datestamp,
+	
+	public abstract String insertRawRecordData (int internalOID, String datestamp,
 			String blobbb);
 
 	/**
@@ -73,6 +76,7 @@ public interface DBAccessInterface {
 	 * @param repository_identifier
 	 * @return
 	 */
+	
 	public abstract String insertObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier);
 
@@ -81,5 +85,16 @@ public interface DBAccessInterface {
 	 * @return
 	 */
 	public abstract ResultSet getObject (int oid);
+
+	/**
+	 * @param repository_id
+	 * @param harvested
+	 * @param repository_datestamp
+	 * @param repository_identifier
+	 * @return
+	 */
+	
+	public abstract String updateObject (int repository_id, Date harvested,
+			Date repository_datestamp, String repository_identifier);
 
 }

@@ -339,17 +339,15 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.DBAccessInterface#selectRawRecordData(java.lang.String, java.lang.String)
 	 */
 	
-	public String selectRawRecordData (String internalOID, String datestamp) {
+	public ResultSet selectRawRecordData (String internalOID, String datestamp) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("entering selectRawRecordData");
 		
-		createConnection ( );
-		
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;
+		//ResultSet rs = null;
 		
-		String result = "<NULL />";
+//		String result = "<NULL />";
 		
 		if (logger.isDebugEnabled ( )) {
 			
@@ -378,7 +376,9 @@ public class DBAccess implements DBAccessInterface {
 				pstmt.setString (2, datestamp);
 			}
 			
-			rs = pstmt.executeQuery ( );
+			return pstmt.executeQuery ( );
+			
+			/*rs = pstmt.executeQuery ( );
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("statement: " + rs.getStatement ( ));
@@ -393,14 +393,14 @@ public class DBAccess implements DBAccessInterface {
 				resultbuffer.append ("<data>" + rs.getString (3) + "</data>\n");
 				
 				result = resultbuffer.toString ( );
-			}
+			}*/
 			
 		} catch (SQLException sqlex) {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
 			
-		} finally {
+		} /*finally {
 			
 			try {
 				
@@ -411,14 +411,14 @@ public class DBAccess implements DBAccessInterface {
 				logger.error (ex.getLocalizedMessage ( ));
 				ex.printStackTrace ( );
 			}
-		}
-		return result;
+		}*/
+		return null;
 	}
 
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#selectRawRecordData(java.lang.String)
 	 */
-	public String selectRawRecordData (String internalOID) {
+	public ResultSet selectRawRecordData (String internalOID) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("entering selectRawRecordData with only one parameter");
@@ -429,46 +429,26 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#insertRawRecordData(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public int insertRawRecordData (int internalOID, String datestamp,
+	public String insertRawRecordData (int internalOID, String datestamp,
 			String blobbb) {
-
-		createConnection ( );
 		
 		PreparedStatement pstmt = null;
 		
-		System.out.println("insertRawRecordData");
-		
 		try {
 			
-			pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, collected, data) VALUES (?, ?, ?)");
-			System.out.println("Statement: " + pstmt.toString());
-			System.out.println("");
-			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, collected, data) VALUES (?, ?, ?)");			
 			pstmt.setInt (1, internalOID);
 			pstmt.setDate (2, HelperMethods.today ( ));
 			pstmt.setString (3, blobbb);
-			System.out.println("Statement: " + pstmt.toString());
 			pstmt.executeUpdate ( );
 
 		} catch (SQLException sqlex) {
 			
 			logger.error ("insertRawRecordData: SQLException using Object " + internalOID);
 			sqlex.printStackTrace ( );
-			
-		} finally {
-			
-			try {
-				
-				conn.close ( );
-				
-			} catch (SQLException ex) {
-				
-				logger.error (ex.getLocalizedMessage ( ));
-				ex.printStackTrace ( );
-			}
 		}
 		
-		return internalOID;
+		return Integer.toString (internalOID);
 	}
 
 	/**
@@ -562,5 +542,15 @@ public class DBAccess implements DBAccessInterface {
 			ex.printStackTrace ( );
 		}
 		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#updateObject(int, java.sql.Date, java.sql.Date, java.lang.String)
+	 */
+	public String updateObject (int repository_id, Date harvested,
+			Date repository_datestamp, String repository_identifier) {
+
+		// TODO Auto-generated method stub
+		return "";
 	}
 } //end of class

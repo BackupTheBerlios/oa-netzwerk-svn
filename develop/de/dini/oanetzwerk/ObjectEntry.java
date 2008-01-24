@@ -84,8 +84,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				if (logger.isDebugEnabled ( )) 
 					logger.debug ("DB returned: \n\tobject_id = " + resultset.getInt (1) +
 							"\n\trepository_id = " + resultset.getInt (2) +
-							"\n\tharvested = " + resultset.getDate (3) +
-							"\n\trepository_datestamp = " + resultset.getDate (4) +
+							"\n\tharvested = " + resultset.getDate (3).toString ( ) +
+							"\n\trepository_datestamp = " + resultset.getDate (4).toString ( ) +
 							"\n\trepository_identifier = " + resultset.getString (5));
 				
 				mapEntry.put ("object_id", Integer.toString (resultset.getInt (1)));
@@ -112,9 +112,70 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
+		
+		int repository_id = 0;
+		String repository_identifier = "";
+		Date repository_datestamp = null;
+		
+		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		
+		listentries = RestXmlCodec.decodeEntrySet (data);
+		mapEntry = listentries.get (0);
+		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+		String key = "";
+		
+		while (it.hasNext ( )) {
+			
+			key = it.next ( );
+			
+			if (key.equalsIgnoreCase ("repository_id")) {
+				
+				if (mapEntry.get (key) != null)
+					repository_id = new Integer (mapEntry.get (key));
+				
+				else repository_id = -1;
+				
+			} else if (key.equalsIgnoreCase ("repository_identifier")) {
+				
+				if (mapEntry.get (key) != null)
+					repository_identifier = mapEntry.get (key);
+				
+				else repository_identifier = "";
+				
+			} else if (key.equalsIgnoreCase ("repository_datestamp")) {
+				
+				if (mapEntry.get (key) != null) {
+					try {
+						
+						repository_datestamp = HelperMethods.extract_repository_datestamp (mapEntry.get (key));
+						
+					} catch (ParseException ex) {
+						
+						logger.error (ex.getLocalizedMessage ( ));
+						ex.printStackTrace ( );
+					}
+					
+				} else repository_datestamp = null;
+				
+			} else continue;
+		}
 
-		// TODO Auto-generated method stub
-		return null;
+		Date harvested = HelperMethods.today ( );
+		
+		DBAccessInterface db = DBAccess.createDBAccess ( );
+		db.createConnection ( );
+		
+		String response = db.updateObject (repository_id, harvested, repository_datestamp, repository_identifier);
+		
+		db.closeConnection ( );
+		
+		listentries = new ArrayList <HashMap <String, String>> ( );
+		mapEntry = new HashMap <String ,String> ( );
+		mapEntry.put ("oid", response);
+		listentries.add (mapEntry);
+		
+		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "ObjectEntry");
 	}
 
 	/**
@@ -166,11 +227,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			} else continue;
 		}
 
-		
-		//TODO: write xml
-		//int repository_id = extract_repository_id (data);
-		//String repository_identifier = extract_repository_identifier (data);
-		//Date repository_datestamp = extract_repository_datestamp (data);
 		Date harvested = HelperMethods.today ( );
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
