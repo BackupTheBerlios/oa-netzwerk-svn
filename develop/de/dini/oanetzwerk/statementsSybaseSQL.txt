@@ -1,0 +1,8 @@
+# Konfigfile für Zugriff auf Sybase
+
+selectObjectEntryId = SELECT o.object_id FROM dbo.Object o WHERE o.repository_identifier = ? and o.repository_id = ?
+selectRawRecordData1 = SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = (SELECT max(collected) FROM dbo.RawData)
+
+# Kommentar
+selectRawRecordData2 = SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = ?
+insertRawRecordData = INSERT INTO dbo.RawData (object_id, repository_timestamp, data) VALUES (?, ?, ?)
