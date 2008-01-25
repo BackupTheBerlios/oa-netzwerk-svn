@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.Text;
@@ -15,6 +16,8 @@ import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 
 public class RestXmlCodec {
+	
+	static Logger logger = Logger.getLogger (RestXmlCodec.class);
 	
 	private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     // bisher nur lokal bei mir, könnte aber auf Scope1 deponiert werden (rm)
@@ -100,21 +103,21 @@ public class RestXmlCodec {
 		try {		
 			doc = builder.build(new InputSource (new StringReader(strXML)));
 			
-			System.out.println("** doc generated");
+			logger.debug("** doc generated");
 			
 			ElementFilter filter = new ElementFilter("entryset");
 			Iterator iterator = doc.getDescendants(filter);
 			while (iterator.hasNext()) {
-				System.out.println("** <entryset> found");
+				logger.debug("** <entryset> found");
 				Element elementEntrySet = (Element) iterator.next();
 				HashMap<String,String> mapEntry = new HashMap<String,String>();
 				filter = new ElementFilter("entry");
 				Iterator iterator2 = elementEntrySet.getDescendants(filter);
 				while (iterator2.hasNext()) {
-					System.out.println("** <entry> found");					
+					logger.debug("** <entry> found");					
 					Element elementEntry = (Element) iterator2.next();
 					String key = elementEntry.getAttributeValue("key");
-					System.out.println("** key == " + key);
+					logger.debug("** key == " + key);
 					Content content = elementEntry.getContent(0);
 					String value = "";
 					if(content instanceof org.jdom.Text) {
@@ -124,13 +127,13 @@ public class RestXmlCodec {
 							value = null;
 						}
 					}			
-					System.out.println("** value == " + value);					
+					logger.debug("** value == " + value);					
 					mapEntry.put(key,value);
 				}
 				listEntrySet.add(mapEntry);
 			}
 		} catch(Exception e) {
-			System.out.println(e);
+			logger.error("error while decoding XML String: " + e);
 		}
 		
 		return listEntrySet;
@@ -184,33 +187,33 @@ public class RestXmlCodec {
 		try {		
 			doc = builder.build(new InputSource (new StringReader(strXML)));
 			
-			System.out.println("** doc generated");
+			logger.debug("** doc generated");
 			
 			ElementFilter filter = new ElementFilter("errors");
 			Iterator iterator = doc.getDescendants(filter);
 			while (iterator.hasNext()) {
-				System.out.println("** <errors> found");
+				logger.debug("** <errors> found");
 				Element elementErrors = (Element) iterator.next();
 				HashMap<String,String> mapError = new HashMap<String,String>();
 				filter = new ElementFilter("error");
 				Iterator iterator2 = elementErrors.getDescendants(filter);
 				while (iterator2.hasNext()) {
-					System.out.println("** <error> found");					
+					logger.debug("** <error> found");					
 					Element elementError = (Element) iterator2.next();
 					String key = elementError.getAttributeValue("key");
-					System.out.println("** key == " + key);
+					logger.debug("** key == " + key);
 					String description = null; 
 					Element elementDescription = elementError.getChild("description");
 					if(elementDescription != null) {
 						description = ((Text)elementDescription.getContent(0)).getValue();
 					}
-					System.out.println("** description == " + description);					
+					logger.debug("** description == " + description);					
 					mapError.put(key,description);
 				}
 				listErrors.add(mapError);
 			}
 		} catch(Exception e) {
-			System.out.println(e);
+			logger.error("error while decoding XML String: " + e);
 		}
 		
 		return listErrors;
@@ -224,15 +227,17 @@ public class RestXmlCodec {
 	 */
 	public static String fetchMessageType(String strXML) {
 		String type = null; //unknown
+		Element mainElement = null;
 		
 		org.jdom.Document doc;
 		SAXBuilder builder = new SAXBuilder();
 		try {		
 			doc = builder.build(new InputSource (new StringReader(strXML)));
-			Element mainElement = (Element)(doc.getRootElement().getChildren()).get(0);
+			mainElement = (Element)(doc.getRootElement().getChildren()).get(0);
 			type = mainElement.getName();
 		} catch(Exception e) {
-			System.out.println(e);
+			logger.error("couldn't fetch message type - cue element: " + 
+					      mainElement + " exception : " + e);
 		}
 		
 		return type;
