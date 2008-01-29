@@ -13,7 +13,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,6 +28,7 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
@@ -36,6 +40,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.apache.commons.codec.binary.Base64;
+import org.jdom.Content;
+import org.jdom.Element;
+import org.jdom.Text;
+import org.jdom.filter.ElementFilter;
+import org.jdom.input.SAXBuilder;
 
 import sun.misc.BASE64Decoder;
 
@@ -218,8 +228,8 @@ public class Aggregator {
 			logger.debug("retrieved data: " + data);
 		}
 		
-//		data = decodeBase64(data);
-
+//		data = decodeBase64(((String) data).getBytes());
+		data = decodeBase64(data);
 		
 		
 		// Prüfen der Codierung der Rohdaten
@@ -271,14 +281,16 @@ public class Aggregator {
 	 */
 	private Object decodeBase64(Object data) {
 		// Daten müssen Base64-decodiert werden
-		byte[] b = null;
+		
+		System.out.println(new String(Base64.decodeBase64(((String) data).getBytes())));
 		try {
-			b = new BASE64Decoder().decodeBuffer((String) data);
-		} catch (IOException e) {
+			return new String(Base64.decodeBase64(((String) data).getBytes()));
+		} catch (Exception e) {
 			logger.error("decodeBase64 : ioException\n");
 			e.printStackTrace();
-		} 
-		return b;
+			
+		}
+		return null;
 	}
 
 
@@ -297,8 +309,56 @@ public class Aggregator {
 
 
 
+	@SuppressWarnings("unchecked")
 	private Object extractMetaData(Object data) {
 		// TODO Auto-generated method stub
+		
+		System.out.println("extractMetadata");
+		
+		List<HashMap<String, String>> listEntrySet = new ArrayList<HashMap<String,String>>();
+		
+		org.jdom.Document doc;
+		SAXBuilder builder = new SAXBuilder();
+		try {		
+			doc = builder.build(new InputSource (new StringReader((String) data)));
+			
+			logger.debug("** doc generated");
+			
+			ElementFilter filter = new ElementFilter("metadata");
+			Iterator iterator = doc.getDescendants(filter);
+			while (iterator.hasNext()) {
+				logger.debug("** <oai_dc:dc> found");
+				Element elementEntrySet = (Element) iterator.next();
+				HashMap<String,String> mapEntry = new HashMap<String,String>();
+				filter = new ElementFilter("entry");
+				Iterator iterator2 = elementEntrySet.getDescendants(filter);
+				while (iterator2.hasNext()) {
+					logger.debug("** <entry> found");					
+					Element elementEntry = (Element) iterator2.next();
+					String key = elementEntry.getAttributeValue("key");
+					logger.debug("** key == " + key);
+					Content content = elementEntry.getContent(0);
+					String value = "";
+					if(content instanceof org.jdom.Text) {
+						value = ((Text)content).getValue();
+					} else if(content instanceof org.jdom.Element) {
+						if(((Element)content).getName().equals("NULL")) {
+							value = null;
+						}
+					}			
+					logger.debug("** value == " + value);					
+					mapEntry.put(key,value);
+				}
+				listEntrySet.add(mapEntry);
+			}
+		} catch(Exception e) {
+			logger.error("error while decoding XML String: " + e);
+		}
+		
+//		return listEntrySet;
+		
+		
+		
 		return null;
 	}
 
@@ -306,7 +366,9 @@ public class Aggregator {
 
 	private Object storeCleanedRawData(Object data) {
 		// TODO Auto-generated method stub
-		return null;
+		
+		String result = (String) data;
+		return result;
 	}
 
 
@@ -348,7 +410,35 @@ public class Aggregator {
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 		
 		String result = restclient.GetData ( );
-		return result;
+		// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus dem XML extrahiert werden
+
+		
+		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+
+		listentries = null;
+		mapEntry = null;
+		
+		listentries = RestXmlCodec.decodeEntrySet (result);
+		mapEntry = listentries.get (0);
+		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+		String key = "";
+		String value = "";
+		
+		while (it.hasNext ( )) {
+			
+			key = it.next ( );
+			
+			if (key.equalsIgnoreCase ("data")) {
+				value = mapEntry.get (key);
+				break;
+			}
+		}
+
+		logger.debug("recognized value: " + value);
+		if (!value.equals("")) return value;
+		else
+			return null;
 	}
 
 
