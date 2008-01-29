@@ -101,11 +101,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("DB returned: \n\tobject_id = " + resultset.getInt (1) +
-							"\n\tcollected = " + resultset.getDate (2).toString ( ) +
+							"\n\trepository_timestamp = " + resultset.getDate (2).toString ( ) +
 							"\n\tdata = " + resultset.getString (3));
 				
 				mapEntry.put ("object_id", Integer.toString (resultset.getInt (1)));
-				mapEntry.put ("collected", resultset.getDate (2).toString ( ));
+				mapEntry.put ("repository_timestamp", resultset.getDate (2).toString ( ));
 				mapEntry.put ("data", resultset.getString (3));
 			}
 			

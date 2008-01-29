@@ -364,7 +364,7 @@ public class DBAccess implements DBAccessInterface {
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("1 parameter for select RawRecordData");
 				
-				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = (SELECT max(collected) FROM dbo.RawData)");
+				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND repository_timestamp = (SELECT max(repository_timestamp) FROM dbo.RawData)");
 				pstmt.setInt (1, new Integer (internalOID));
 				
 			
@@ -373,7 +373,7 @@ public class DBAccess implements DBAccessInterface {
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("2 parameter for select RawRecordData");
 				
-				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND collected = ?");
+				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND repository_timestamp = ?");
 				pstmt.setInt (1, new Integer (internalOID));
 				pstmt.setString (2, datestamp);
 			}
