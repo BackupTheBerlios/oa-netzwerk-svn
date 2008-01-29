@@ -60,7 +60,8 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			this.prop = HelperMethods.loadPropertiesFromFile ("/usr/local/tomcat/webapps/restserver/WEB-INF/dbprop.xml");
+			this.prop = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/apache-tomcat-5.5.25/webapps/restserver/WEB-INF/dbprop.xml");
+			//this.prop = HelperMethods.loadPropertiesFromFile ("/usr/local/tomcat/webapps/restserver/WEB-INF/dbprop.xml");
 			ic2 = new InitialContext ( );
 			
 		} catch (InvalidPropertiesFormatException ex) {
