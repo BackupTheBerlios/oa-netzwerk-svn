@@ -40,14 +40,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.apache.commons.codec.binary.Base64;
+
 import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.Text;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 
-import sun.misc.BASE64Decoder;
+
 
 import de.dini.oanetzwerk.utils.HelperMethods;
 
@@ -213,45 +213,45 @@ public class Aggregator {
 		
 		System.out.println("StartSingleRecord:  RecordId=" + this.currentRecordId);
 		
-		Object data;
-		
-		// laden der Rohdaten
-		data = loadRawData(this.currentRecordId);
-		if (data == null) {
-			// Daten für dieses Objekt konnten nicht geladen werden
-			logger.error ("loadRawData not successful");
-			return;
-		}
-		// Auseinandernehmen der Rohdaten
-		System.out.println("Geladene Daten: " + data);
-		if (logger.isDebugEnabled()) {
-			logger.debug("retrieved data: " + data);
-		}
-		
-//		data = decodeBase64(((String) data).getBytes());
-		data = decodeBase64(data);
-		
-		
-		// Prüfen der Codierung der Rohdaten
-		data = checkEncoding(data);
-		if (data == null) {
-			// beim Check des Encoding trat ein Fehler auf, keine weitere Behandlung möglich
-			return;
-		}
-		
-		// XML-Fehler müssen behoben werden
-		data = checkXML(data);
-		if (data == null) {
-			// beim Prüfen auf XML-Fehler trat ein Fehler auf, keine weitere Bearbeitung möglich
-			return;
-		}		
-		// Schreiben der bereinigten Rohdaten
-		data = storeCleanedRawData(data);
-		if (data == null) {
-			// die bereinigten Rohdaten konnten nicht gespeichert werden, eine weitere Bearbeitung sollte nicht erfolgen
-			return;
-		}
-		
+		Object data = null;
+//		
+//		// laden der Rohdaten
+//		data = loadRawData(this.currentRecordId);
+//		if (data == null) {
+//			// Daten für dieses Objekt konnten nicht geladen werden
+//			logger.error ("loadRawData not successful");
+//			return;
+//		}
+//		// Auseinandernehmen der Rohdaten
+//		System.out.println("Geladene Daten: " + data);
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("retrieved data: " + data);
+//		}
+//		
+////		data = decodeBase64(((String) data).getBytes());
+//		data = decodeBase64(data);
+//		
+//		
+//		// Prüfen der Codierung der Rohdaten
+//		data = checkEncoding(data);
+//		if (data == null) {
+//			// beim Check des Encoding trat ein Fehler auf, keine weitere Behandlung möglich
+//			return;
+//		}
+//		
+//		// XML-Fehler müssen behoben werden
+//		data = checkXML(data);
+//		if (data == null) {
+//			// beim Prüfen auf XML-Fehler trat ein Fehler auf, keine weitere Bearbeitung möglich
+//			return;
+//		}		
+//		// Schreiben der bereinigten Rohdaten
+//		data = storeCleanedRawData(data);
+//		if (data == null) {
+//			// die bereinigten Rohdaten konnten nicht gespeichert werden, eine weitere Bearbeitung sollte nicht erfolgen
+//			return;
+//		}
+//		
 		// Auslesen der Metadaten
 		data = extractMetaData(data);
 		if (data == null) {
@@ -319,15 +319,25 @@ public class Aggregator {
 		
 		org.jdom.Document doc;
 		SAXBuilder builder = new SAXBuilder();
+		Element root;
 		try {		
-			doc = builder.build(new InputSource (new StringReader((String) data)));
+			InputSource is = new InputSource("testdata.xml");
+			doc = builder.build(is);
+//			root = doc.getRootElement();
+			
+//			System.out.println("root: " + root.getName());
+//			doc = builder.build(new InputSource (new StringReader((String) data)));
 			
 			logger.debug("** doc generated");
 			
-			ElementFilter filter = new ElementFilter("metadata");
+			// nach <metadata> suchen, da darunter der gesamte Eintrag steht
+//			ElementFilter filter = new ElementFilter("metadata");
+			// erweitern um Namespace
+			ElementFilter filter = new ElementFilter("dc");
 			Iterator iterator = doc.getDescendants(filter);
 			while (iterator.hasNext()) {
-				logger.debug("** <oai_dc:dc> found");
+				System.out.println("** <metadata> found");
+				logger.debug("** <metadata> found");
 				Element elementEntrySet = (Element) iterator.next();
 				HashMap<String,String> mapEntry = new HashMap<String,String>();
 				filter = new ElementFilter("entry");
@@ -352,6 +362,8 @@ public class Aggregator {
 				listEntrySet.add(mapEntry);
 			}
 		} catch(Exception e) {
+			System.err.println("Fehler beim Parsen");
+			System.err.println("error while decoding XML String: " + e);
 			logger.error("error while decoding XML String: " + e);
 		}
 		
