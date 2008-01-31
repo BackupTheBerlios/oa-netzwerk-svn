@@ -36,7 +36,8 @@ import de.dini.oanetzwerk.utils.HelperMethods;
  *
  */
 
-public class DBCreate implements DBAccessInterface  {
+public class DBCreate {
+//implements DBAccessInterface  {
 	
 	static Logger logger = Logger.getLogger (DBCreate.class);
 	
@@ -86,7 +87,7 @@ public class DBCreate implements DBAccessInterface  {
 		}
 	}
 	
-	public static DBAccessInterface createDBAccess ( ) {
+	public static DBCreate createDBAccess ( ) {
 		
 		DBCreate db = new DBCreate ( );
 		db.setDataSource ( );
@@ -224,7 +225,7 @@ public class DBCreate implements DBAccessInterface  {
 	
 	private static void dropDB ( ) {
 		
-		DBAccessInterface db = createDBAccess ( );
+		DBCreate db = createDBAccess ( );
 		int [ ] updateCounts = null;
 		BufferedReader file = null;
 		
@@ -314,7 +315,7 @@ public class DBCreate implements DBAccessInterface  {
 	
 	private static void createDB ( ) {
 		
-		DBAccessInterface db = createDBAccess ( );
+		DBCreate db = createDBAccess ( );
 		int [ ] updateCounts = null;
 		BufferedReader file = null;
 		
@@ -398,7 +399,7 @@ public class DBCreate implements DBAccessInterface  {
 	}
 	private static void fillDBWithStandardValues ( ) {
 		
-		DBAccessInterface db = createDBAccess ( );
+		DBCreate db = createDBAccess ( );
 		int [ ] updateCounts = null;
 		BufferedReader file = null;
 		

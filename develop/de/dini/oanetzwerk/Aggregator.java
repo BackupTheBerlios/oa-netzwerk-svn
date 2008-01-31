@@ -43,6 +43,7 @@ import org.xml.sax.SAXException;
 
 import org.jdom.Content;
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jdom.Text;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
@@ -311,55 +312,75 @@ public class Aggregator {
 
 	@SuppressWarnings("unchecked")
 	private Object extractMetaData(Object data) {
-		// TODO Auto-generated method stub
+
 		
 		System.out.println("extractMetadata");
 		
 		List<HashMap<String, String>> listEntrySet = new ArrayList<HashMap<String,String>>();
 		
+		InternalMetadata im = new InternalMetadata();
+		
 		org.jdom.Document doc;
 		SAXBuilder builder = new SAXBuilder();
-		Element root;
+		
+		
+		Namespace namespace = Namespace.getNamespace("oai_dc","http://www.openarchives.org/OAI/2.0/oai_dc/");
 		try {		
 			InputSource is = new InputSource("testdata.xml");
 			doc = builder.build(is);
-//			root = doc.getRootElement();
-			
-//			System.out.println("root: " + root.getName());
 //			doc = builder.build(new InputSource (new StringReader((String) data)));
 			
 			logger.debug("** doc generated");
+
+			// hier fehlt noch die Auswertung der SET-Struktur aus dem Header
 			
-			// nach <metadata> suchen, da darunter der gesamte Eintrag steht
-//			ElementFilter filter = new ElementFilter("metadata");
-			// erweitern um Namespace
-			ElementFilter filter = new ElementFilter("dc");
+			
+			// nach <oai_dc:dc> suchen, da darunter der gesamte Metadaten-Eintrag steht
+			ElementFilter filter = new ElementFilter("dc",namespace);
 			Iterator iterator = doc.getDescendants(filter);
 			while (iterator.hasNext()) {
-				System.out.println("** <metadata> found");
-				logger.debug("** <metadata> found");
-				Element elementEntrySet = (Element) iterator.next();
-				HashMap<String,String> mapEntry = new HashMap<String,String>();
-				filter = new ElementFilter("entry");
-				Iterator iterator2 = elementEntrySet.getDescendants(filter);
-				while (iterator2.hasNext()) {
-					logger.debug("** <entry> found");					
-					Element elementEntry = (Element) iterator2.next();
-					String key = elementEntry.getAttributeValue("key");
-					logger.debug("** key == " + key);
-					Content content = elementEntry.getContent(0);
-					String value = "";
-					if(content instanceof org.jdom.Text) {
-						value = ((Text)content).getValue();
-					} else if(content instanceof org.jdom.Element) {
-						if(((Element)content).getName().equals("NULL")) {
-							value = null;
+				System.out.println("** <oai_dc:dc> found");
+				logger.debug("** <oai_dc:dc> found");
+				
+				Element metadataSet = (Element) iterator.next();
+				List metadataList = metadataSet.getChildren();
+				Iterator iteratorMetadata = metadataList.iterator(); 
+				while (iteratorMetadata.hasNext()) {
+						Element metadataEntry = (Element) iteratorMetadata.next();
+						System.out.println("Element: " + metadataEntry.getName());
+						
+						if (metadataEntry.getName().equals("title")) {
+							System.out.println(metadataEntry.getText());
+							im.addTitle(metadataEntry.getText(), "Title", null);
 						}
-					}			
-					logger.debug("** value == " + value);					
-					mapEntry.put(key,value);
+						if (metadataEntry.getName().equals("creator")) {
+							im.addAuthor(metadataEntry.getText());
+						}
+						if (metadataEntry.getName().equals("subject")) {
+							im.addKeyword(metadataEntry.getText());
+						}
+						if (metadataEntry.getName().equals("description")) {
+							
+						}
+						if (metadataEntry.getName().equals("publisher")) {
+							
+						}
+						if (metadataEntry.getName().equals("date")) {
+							
+						}
+						if (metadataEntry.getName().equals("type")) {
+
+						}
+						if (metadataEntry.getName().equals("format")) {
+						}
+						if (metadataEntry.getName().equals("identifier")) {
+						}
+
+
+
+						
 				}
-				listEntrySet.add(mapEntry);
+				
 			}
 		} catch(Exception e) {
 			System.err.println("Fehler beim Parsen");

@@ -1063,8 +1063,8 @@
 </column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="abstract" remarks="" uid="edd9de:11638587e4b:-7f73">
 <column-description/>
-<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
-<variant type-name-pattern="DATETIME"/>
+<data-type jdbc-type="-1" literal-prefix="'" literal-suffix="'" name="TEXT" selected-variant-pattern="TEXT">
+<variant type-name-pattern="TEXT"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="3" decimal-digits="0" default-value="" mandatory="false" name="lang" remarks="" uid="edd9de:11638587e4b:-7f71">
@@ -1399,7 +1399,7 @@
 </table>
 <table alias="" name="Services" remarks="" uid="16946d4:117ab0a590d:-7fdd">
 <table-description/>
-<table-figure-bounds height="105" width="191" x="1275" y="-93"/>
+<table-figure-bounds height="105" width="191" x="1275" y="-60"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="service_id" remarks="" uid="16946d4:117ab0a590d:-7fd9">
 <column-description/>
@@ -1431,15 +1431,60 @@
 <foreign-key-list/>
 <index-list/>
 </table>
-<table alias="" name="TABLE_28" remarks="" uid="15c0d7:117c5cf3580:-7fde">
+<table alias="" name="ServicesOrder" remarks="" uid="15c0d7:117c5cf3580:-7fde">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="1299" y="-172"/>
-<column-list/>
-<primary-key alias="" name="PK_TABLE_28" remarks="" uid="15c0d7:117c5cf3580:-7fdd">
+<table-figure-bounds height="61" width="190" x="1272" y="-209"/>
+<column-list>
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="service_id" remarks="" uid="1a11a8e:117cec78154:-7fe2">
+<column-description/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%n)">
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="false" name="predecessor_id" remarks="" uid="1a11a8e:117cec78154:-7fe1">
+<column-description/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%n)">
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+</data-type>
+</column>
+</column-list>
+<primary-key alias="" name="PK_SERVICESORDER" remarks="" uid="15c0d7:117c5cf3580:-7fdd">
 <primary-key-description/>
+<primary-key-column name="service_id"/>
 </primary-key>
 <unique-key-list/>
-<foreign-key-list/>
+<foreign-key-list>
+<foreign-key alias="" name="FK_ServicesOrder_1" on-delete="" on-update="" referenced-key="PK_SERVICES" referenced-table="Services" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="1a11a8e:117cec78154:-7f96">
+<foreign-key-description/>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="service_id" referenced-key-column-name="service_id"/>
+</foreign-key>
+<foreign-key alias="" name="FK_ServicesOrder_2" on-delete="" on-update="" referenced-key="PK_SERVICES" referenced-table="Services" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="1a11a8e:117cec78154:-7f2c">
+<foreign-key-description/>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="predecessor_id" referenced-key-column-name="service_id"/>
+</foreign-key>
+</foreign-key-list>
 <index-list/>
 </table>
 </table-list>
