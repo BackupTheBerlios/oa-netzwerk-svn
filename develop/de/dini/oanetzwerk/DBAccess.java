@@ -463,40 +463,12 @@ public class DBAccess implements DBAccessInterface {
 	
 	public ResultSet insertObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier) {
-		
-//		createConnection ( );
-		
-		//PreparedStatement pstmt = null;
-		//Statement stmt = null;		
-		// ResultSet rs = null;
-	//	int object_id = 0;
-		
-		
+				
 		PreparedStatement pstmt = null;
 		
 		try {
 			
 			pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (repository_id, harvested, repository_datestamp, repository_identifier) VALUES (?, ?, ?, ?)");
-		
-		//try {
-			
-			
-			
-//			Statement stmt = conn.createStatement (ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-/*			ResultSet rs = stmt.executeQuery ("SELECT * FROM dbo.Object FOR UPDATE WHERE object_id = (SELECT MAX (object_id) FROM dbo.Object)");
-			
-			if (rs.next ( ))
-				object_id = rs.getInt (1);
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("objectid: " + object_id);
-						
-			rs.moveToInsertRow ( );
-			rs.updateInt (1, ++object_id);
-			rs.updateInt (2, repository_id);
-			rs.updateDate (3, harvested);
-			rs.updateDate (4, repository_datestamp);
-			rs.updateString (5, repository_identifier);*/
 			
 			pstmt.setInt (1, repository_id);
 			pstmt.setDate (2, harvested);
@@ -530,11 +502,7 @@ public class DBAccess implements DBAccessInterface {
 	 */
 	public ResultSet getObject (int oid) {
 		
-//		createConnection ( );
-		
 		PreparedStatement pstmt = null;
-		
-//		String result = "<NULL />";
 		
 		try {
 			
@@ -544,33 +512,161 @@ public class DBAccess implements DBAccessInterface {
 			
 			return pstmt.executeQuery ( );
 			
-/*			ResultSet rs = pstmt.executeQuery ( );
-			
-			if (rs.next ( )) {
-				
-				StringBuffer resultbuffer = new StringBuffer("<object_id>" + rs.getInt (1) + "</object_id>\n");
-				resultbuffer.append ("<repository_id>").append (rs.getInt (2)).append ("</repository_id>\n");
-				resultbuffer.append ("<harvested>").append (rs.getDate (3)).append ("</harvested>\n");
-				resultbuffer.append ("<repository_datestamp>").append (rs.getDate (4)).append ("</repository_datestamp>\n");
-				resultbuffer.append ("<repository_identifier>").append (rs.getString (5)).append ("</repository_identifier>\n");
-				result = resultbuffer.toString ( );
-			}*/
-			
 		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
+		
 		return null;
 	}
 
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#updateObject(int, java.sql.Date, java.sql.Date, java.lang.String)
 	 */
+	
 	public String updateObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier) {
 
 		// TODO Auto-generated method stub
 		return "";
 	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#getService()
+	 */
+	@Override
+	public ResultSet selectService (BigDecimal service_id) {
+		
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("SELECT * FROM dbo.Services WHERE service_id = ?");
+			pstmt.setBigDecimal (1, service_id);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#getService()
+	 */
+	@Override
+	public ResultSet selectService (String name) {
+		
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("SELECT * FROM dbo.Services WHERE name = ?");
+			pstmt.setString (1, name);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+		
+		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#selectServicesOrder(java.math.BigDecimal)
+	 */
+	@Override
+	public ResultSet selectServicesOrder (BigDecimal predecessor_id) {
+		
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("SELECT predecessor_id FROM dbo.ServicesOrder WHERE service_id = ?");
+			pstmt.setBigDecimal (1, predecessor_id);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
+	 */
+	@Override
+	public ResultSet selectWorkflow (BigDecimal predecessor_id,
+			BigDecimal service_id) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("SELECT w1.workflow_id, w1.object_id FROM WorkflowDB w1 WHERE w1.service_id = ? and (SELECT 1 FROM workflow_db w2 WHERE w2.object_id = w1.object_id and w2.service_id = ? and w2.time > w1.time) != 1");
+			pstmt.setBigDecimal (1, predecessor_id);
+			pstmt.setBigDecimal (2, service_id);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.DBAccessInterface#insertWorkflowDBEntry(java.math.BigDecimal, java.sql.Date, java.math.BigDecimal)
+	 */
+	@Override
+	public ResultSet insertWorkflowDBEntry (BigDecimal object_id, Date time,
+			BigDecimal service_id) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO WorkflowDB (object_id, time, service_id) VALUES (?, ?, ?)");
+			
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setDate (2, time);
+			pstmt.setBigDecimal (3, service_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+			pstmt = conn.prepareStatement ("SELECT workflow_id FROM dbo.WorkflowDB WHERE object_id = ? AND repository_identifier = ? AND time = ? AND service_id = ?");
+			
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setDate (2, time);
+			pstmt.setBigDecimal (3, service_id);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+		
+		return null;
+	}
+	
 } //end of class

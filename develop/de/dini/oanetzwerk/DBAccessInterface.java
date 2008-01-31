@@ -4,6 +4,7 @@
 
 package de.dini.oanetzwerk;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -96,5 +97,38 @@ public interface DBAccessInterface {
 	
 	public abstract String updateObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier);
+
+	/**
+	 * @return
+	 */
+	public abstract ResultSet selectService (BigDecimal service_id);
+	
+	/**
+	 * @return
+	 */
+	public abstract ResultSet selectService (String name);
+
+	/**
+	 * @param bigDecimal
+	 * @return
+	 */
+	public abstract ResultSet selectServicesOrder (BigDecimal bigDecimal);
+
+	/**
+	 * @param bigDecimal
+	 * @param bigDecimal2
+	 * @return
+	 */
+	public abstract ResultSet selectWorkflow (BigDecimal bigDecimal,
+			BigDecimal bigDecimal2);
+
+	/**
+	 * @param object_id
+	 * @param time
+	 * @param service_id
+	 * @return
+	 */
+	public abstract ResultSet insertWorkflowDBEntry (BigDecimal object_id,
+			Date time, BigDecimal service_id);
 
 }

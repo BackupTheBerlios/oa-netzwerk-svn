@@ -252,13 +252,14 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("DB returned: object_id = " + resultset.getInt (1));
+				
 				mapEntry.put ("oid", Integer.toString (resultset.getInt (1)));
 				
 			}
 		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace();
+			ex.printStackTrace ( );
 		}
 		
 		listentries.add (mapEntry);
