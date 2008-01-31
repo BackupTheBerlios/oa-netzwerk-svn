@@ -231,14 +231,18 @@ class Description {
 	String language;
 	int number = 0;
 	
-	public Description(String description, String language, int number) {
+	private void init(String description, String language, int number) {
 		this.description = description;
 		this.language = language;
 		this.number = number;
 	}
 	
+	public Description(String description, String language, int number) {
+		this.init(description, language, number);
+	}
+	
 	public Description(String description, int number) {
-		Description(description, null, number);
+		this.init(description, null, number);
 	}
 	
 	public String toString() {
