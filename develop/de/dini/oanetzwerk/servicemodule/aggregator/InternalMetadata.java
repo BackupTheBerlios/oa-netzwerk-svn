@@ -1,4 +1,4 @@
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.servicemodule.aggregator;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,6 +14,15 @@ public class InternalMetadata {
 
 	List<Keyword> keywords;
 	
+	List<Description> descriptions;
+	int descriptionCounter = 0;
+	
+	List<Publisher> publishers;
+	int publisherCounter = 0;
+
+	List<DateValue> dateValues;
+	int dateValueCounter = 0;
+	
 	public InternalMetadata() {
 		titles = new LinkedList<Title>();
 		titleCounter = 0;
@@ -22,6 +31,15 @@ public class InternalMetadata {
 		authorCounter = 0;
 
 		keywords = new LinkedList<Keyword>();
+		
+		descriptions = new LinkedList<Description>();
+		descriptionCounter = 0;
+		
+		publishers = new LinkedList<Publisher>();
+		publisherCounter = 0;
+		
+		dateValues = new LinkedList<DateValue>();
+		dateValueCounter = 0;
 	}
 	
 	public int addKeyword(String keyword) {
@@ -36,6 +54,55 @@ public class InternalMetadata {
 		this.keywords.add(temp);
 		System.out.println(temp);
 		return result;
+	}
+
+	public int addPublisher(String name) {
+		int result = 0;
+		publisherCounter ++;
+		result = this.addPublisher(name, this.publisherCounter);
+		return result;
+	}
+	
+	public int addPublisher(String name, int number) {
+		int result = 0;
+		Publisher temp = new Publisher(name, number);
+		this.publishers.add(temp);
+		System.out.println(temp);
+		return result;
+	}
+
+	public int addDateValue(String dateValue) {
+		int result = 0;
+		dateValueCounter ++;
+		result = this.addDateValue(dateValue, this.publisherCounter);
+		return result;
+	}
+	
+	public int addDateValue(String dateValue, int number) {
+		int result = 0;
+		DateValue temp = new DateValue(dateValue, number);
+		this.dateValues.add(temp);
+		System.out.println(temp);
+		return result;
+	}
+	
+	
+	public int addDescription(String description) {
+		int result = 0;
+		descriptionCounter ++;
+		result = this.addDescription(description, null, this.descriptionCounter );
+		return result;
+	}
+	
+	public int addDescription(String description, String language, int number) {
+		int result = 0;
+		Description temp = new Description(description,language, number);
+		this.descriptions.add(temp);
+		
+		System.out.println(temp);
+		
+		return result;
+
 	}
 	
 	public int addTitle(String title, String qualifier, String lang) {
@@ -253,3 +320,42 @@ class Description {
 	}
 	
 }
+
+class Publisher {
+	String name;
+	int number = 0;
+	
+	private void init(String name, int number) {
+		this.name = name;
+		this.number = number;
+	}
+	
+	public Publisher(String name, int number) {
+		this.init(name, number);
+	}
+	
+	public String toString() {
+		String result = "name=" +this.name;
+		result = result + "\n" + "number=" + this.number;
+		return result;
+	}
+	
+}
+
+class DateValue {
+	String dateValue;
+	int number;
+	
+	public DateValue(String dateValue, int number) {
+		this.dateValue = dateValue;
+		this.number = number;
+	}
+
+	public String toString() {
+		String result = "dateValue=" +this.dateValue;
+		result = result + "\n" + "number=" + this.number;
+		return result;
+	}
+}
+
+

@@ -1141,7 +1141,7 @@
 </table>
 <table alias="" name="Format" remarks="" uid="edd9de:11638587e4b:-7ef3">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="847" y="-91"/>
+<table-figure-bounds height="79" width="214" x="795" y="-91"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7eef">
 <column-description/>

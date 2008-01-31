@@ -435,7 +435,6 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getService()
 	 */
-	@Override
 	public ResultSet selectService (BigDecimal service_id) {
 		
 		PreparedStatement pstmt = null;
@@ -459,7 +458,6 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getService()
 	 */
-	@Override
 	public ResultSet selectService (String name) {
 		
 		PreparedStatement pstmt = null;
@@ -483,7 +481,6 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectServicesOrder(java.math.BigDecimal)
 	 */
-	@Override
 	public ResultSet selectServicesOrder (BigDecimal predecessor_id) {
 		
 		PreparedStatement pstmt = null;
@@ -507,7 +504,6 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
 	 */
-	@Override
 	public ResultSet selectWorkflow (BigDecimal predecessor_id,
 			BigDecimal service_id) {
 
@@ -533,7 +529,6 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertWorkflowDBEntry(java.math.BigDecimal, java.sql.Date, java.math.BigDecimal)
 	 */
-	@Override
 	public ResultSet insertWorkflowDBEntry (BigDecimal object_id, Date time,
 			BigDecimal service_id) {
 
