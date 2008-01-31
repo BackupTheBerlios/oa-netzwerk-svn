@@ -55,7 +55,7 @@ public class Harvester {
 	 * This is an ArrayList of ObjectIdentifiers where necessary information about the objects is stored @see de.dini.oanetzwerk.ObjectIdentifier
 	 */
 	
-	private ArrayList <ObjectIdentifier> ids;
+	private ArrayList <ObjectIdentifier> ids = null;
 	
 	/**
 	 * The static log4j logger. All logging will be made with this nice static logger.
@@ -69,7 +69,7 @@ public class Harvester {
 	
 	private int recordno = 0;
 	
-	private Properties props;
+	private Properties props = null;
 
 	private int errorretry = 0;
 		
@@ -252,7 +252,6 @@ public class Harvester {
 	
 	private static boolean filterBool (String optionValue, CommandLine cmd) throws ParseException {
 		
-		
 		if (optionValue.equalsIgnoreCase ("full")) {
 			
 			if (logger.isDebugEnabled ( ))
@@ -321,9 +320,10 @@ public class Harvester {
 	private void processIds (String url, boolean fullharvest, String updateFrom, int repositoryId ) {
 		
 		HttpClient client = new HttpClient ( );
-		GetMethod getmethod;
+		GetMethod getmethod = null;
 		String resumptionToken = null;
 		Boolean resumptionSet = true;
+		int errorcounter = 0;
 		
 		if (!fullharvest) {
 			
@@ -350,13 +350,32 @@ public class Harvester {
 				
 				logger.info ("ID-List HttpStatusCode: " + statuscode);
 				
+				client = null;
+				
 				if (statuscode != HttpStatus.SC_OK) {
 					
-					//TODO: proper implementation
-					;
+					logger.error ("A http-error occured while processing the IDs from server " + url);
+					logger.error (getmethod.getStatusText ( ));
+					
+					if (errorcounter++ > 10) {
+						
+						logger.error ("We got a http-error more than 10 times during communication with server " + url + " Now we are aborting communcation and trying to process the collected datas");
+						getmethod = null;
+						resumptionToken = null;
+						return;
+						
+					} else {
+						
+						logger.info (errorcounter + " errors occured. Server: " + url);
+						continue;
+					}
 				}
 				
+				if (errorcounter > 0)
+					errorcounter--;
+				
 				resumptionToken = extractIds (getmethod.getResponseBodyAsStream ( ), repositoryId);
+				getmethod = null;
 				
 				if (resumptionToken != null) {
 					
@@ -384,6 +403,8 @@ public class Harvester {
 						} else;
 					}
 					
+					resumptionToken = null;
+					
 				} else {
 					
 					if (logger.isDebugEnabled ( ))
@@ -400,8 +421,13 @@ public class Harvester {
 				ex.printStackTrace ( );
 				this.errorretry++;
 				
-				if (errorretry > 5)
+				if (errorretry > 5) {
+					
+					client = null;
+					getmethod = null;
+					resumptionToken = null;
 					System.exit (5);
+				}
 				
 			} catch (IOException ex) {
 				
@@ -479,8 +505,8 @@ public class Harvester {
 					
 				} else {
 					
-					//TODO: better error-handling
-					logger.error ("Error occured!");
+					logger.error ("Error with number " + internalOID + "occured while processing Object " + externalOID);
+					logger.info ("Skipping object " + externalOID + " and continue with the next one");
 				}
 			}
 			
@@ -511,7 +537,6 @@ public class Harvester {
 			
 			logger.error (ioex.getLocalizedMessage ( ));
 			ioex.printStackTrace ( );
-			
 		}
 		
 		return resumptionToken;
@@ -524,8 +549,8 @@ public class Harvester {
 	
 	private void processRecords (String url, int repositoryID) {
 		
-		HttpClient client;
-		GetMethod method;
+		HttpClient client = null;
+		GetMethod method = null;
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("now we process " + this.ids.size ( ) + "Records");
@@ -549,6 +574,8 @@ public class Harvester {
 				
 				String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
 				
+				cal = null;
+				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("creating Object No. " + i + ": " + this.ids.get (i).getExternalOID ( ));
 				
@@ -570,6 +597,7 @@ public class Harvester {
 					
 					listentries = null;
 					mapEntry = null;
+					restClient = null;
 					
 					listentries = RestXmlCodec.decodeEntrySet (result);
 					mapEntry = listentries.get (0);
@@ -615,7 +643,9 @@ public class Harvester {
 				
 				List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
 				HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-
+				
+				restclient = null;
+				
 				listentries = RestXmlCodec.decodeEntrySet (result);
 				mapEntry = listentries.get (0);
 				Iterator <String> it = mapEntry.keySet ( ).iterator ( );
@@ -646,50 +676,62 @@ public class Harvester {
 							
 							logger.debug ("RepositoryDate is " + repositoryDate + " and before or equal the harvested: " + this.ids.get (i).getDatestamp ( ));
 						}
-						//TODO: implement proper change of harvested-timestamp
 						
-						continue;
-					}
-					
-					//TODO: rewrite XML
-					
-/*					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
-					DocumentBuilder builder = factory.newDocumentBuilder ( );
-					Document document = builder.parse (new InputSource (new StringReader(result)));
-					
-					NodeList idDatestampList = document.getElementsByTagName ("repository_datestamp");
-					
-					Date repositoryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (idDatestampList.item (1).getTextContent ( ));
-					
-					if (repositoryDate.before (this.ids.get (i).getDatestamp ( )) || repositoryDate.equals (this.ids.get (i).getDatestamp ( ))) {
+						listentries = new ArrayList <HashMap <String, String>> ( );
+						mapEntry = new HashMap <String ,String> ( );
 						
-						if (logger.isDebugEnabled ( )) {
+						GregorianCalendar cal = new GregorianCalendar ( );
+						cal.setTime (this.ids.get (i).getDatestamp ( ));
+						
+						String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
+						
+						mapEntry.put ("repository_id", Integer.toString (repositoryID));
+						mapEntry.put ("repository_identifier", this.ids.get (i).getExternalOID ( ));
+						mapEntry.put ("repository_datestamp", datestamp);
+						listentries.add (mapEntry);
+						
+						String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
+						
+						restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+						
+						result = restclient.PostData (requestxml);
+						
+						listentries = null;
+						mapEntry = null;
+						restclient = null;
+						
+						listentries = RestXmlCodec.decodeEntrySet (result);
+						mapEntry = listentries.get (0);
+						it = mapEntry.keySet ( ).iterator ( );
+						key = "";
+						value = "";
+						
+						while (it.hasNext ( )) {
 							
-							logger.debug ("RepositoryDate is " + repositoryDate + " and before or equal the harvested: " + this.ids.get (i).getDatestamp ( ));
+							key = it.next ( );
+							
+							if (key.equalsIgnoreCase ("oid")) {
+								
+								value = mapEntry.get (key);
+								break;
+							}
 						}
-						//TODO: implement proper change of harvested-timestamp
+						
+						int intoid = new Integer (value);
+						
+						if (logger.isDebugEnabled ( ))
+							logger.debug ("internalOID: " + intoid);
 						
 						continue;
-						
 					}
-				} catch (SAXException saex) {
-					
-					saex.printStackTrace ( );
-					
-				} catch (ParserConfigurationException ex) {
-					
-					ex.printStackTrace ( );
 					
 				} catch (IOException ex) {
 					
+					logger.error (ex.getLocalizedMessage ( ));
 					ex.printStackTrace ( );
 					
-				} catch (DOMException ex) {
-					
-					ex.printStackTrace ( );*/
-					
 				} catch (java.text.ParseException ex) {
-					
+
 					logger.error (ex.getLocalizedMessage ( ));
 					ex.printStackTrace ( );
 				}
@@ -725,6 +767,7 @@ public class Harvester {
 				method.releaseConnection ( );
 			}
 			
+			method = null;
 			client = null;
 		}
 	}

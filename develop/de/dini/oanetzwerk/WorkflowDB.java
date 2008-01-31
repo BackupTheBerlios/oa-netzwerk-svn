@@ -147,7 +147,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 			
 			if (resultset.next ( )) {
 		
-				mapEntry.put ("worklflow_id", resultset.getBigDecimal (1).toPlainString ( ));
+				mapEntry.put ("workflow_id", resultset.getBigDecimal (1).toPlainString ( ));
 			}
 			
 		} catch (SQLException ex) {

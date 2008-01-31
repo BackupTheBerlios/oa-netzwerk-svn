@@ -53,13 +53,13 @@ public interface DBAccessInterface {
 	 * @param string2
 	 */
 	
-	public abstract ResultSet selectRawRecordData (String internalOID, String datestamp);
+	public abstract ResultSet selectRawRecordData (BigDecimal object_id, Date datestamp);
 
 	/**
 	 * @param string
 	 */
 	
-	public abstract ResultSet selectRawRecordData (String internalOID);
+	public abstract ResultSet selectRawRecordData (BigDecimal object_id);
 
 	/**
 	 * @param string
@@ -67,7 +67,7 @@ public interface DBAccessInterface {
 	 * @param data
 	 */
 	
-	public abstract String insertRawRecordData (int internalOID, String datestamp,
+	public abstract String insertRawRecordData (BigDecimal object_id, Date datestamp,
 			String blobbb);
 
 	/**
@@ -95,12 +95,13 @@ public interface DBAccessInterface {
 	 * @return
 	 */
 	
-	public abstract String updateObject (int repository_id, Date harvested,
+	public abstract ResultSet updateObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier);
 
 	/**
 	 * @return
 	 */
+	
 	public abstract ResultSet selectService (BigDecimal service_id);
 	
 	/**

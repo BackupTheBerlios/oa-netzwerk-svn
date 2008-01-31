@@ -34,20 +34,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (logger.isDebugEnabled ( ))
 			logger.debug (ObjectEntry.class.getName ( ) + " is called");
 	}
-		
-	/**
-	 * @param args
-	 */
 	
-	public static void main (String [ ] args) {
-
-		// TODO Testing stuff
-
-	}
-
 	/**
 	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
+	
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
 
@@ -70,7 +61,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("internal OID = " + path [2]);
 		
-		resultset = db.getObject (Integer.parseInt (path [2]));
+		this.resultset = db.getObject (Integer.parseInt (path [2]));
 		
 		db.closeConnection ( );
 		
@@ -166,13 +157,30 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
-		String response = db.updateObject (repository_id, harvested, repository_datestamp, repository_identifier);
+		this.resultset = db.updateObject (repository_id, harvested, repository_datestamp, repository_identifier);
 		
 		db.closeConnection ( );
 		
 		listentries = new ArrayList <HashMap <String, String>> ( );
 		mapEntry = new HashMap <String ,String> ( );
-		mapEntry.put ("oid", response);
+		
+		try {
+			
+			if (resultset.next ( )) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("DB returned: object_id = " + resultset.getInt (1));
+				
+				mapEntry.put ("oid", Integer.toString (resultset.getInt (1)));
+
+			}
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+		
 		listentries.add (mapEntry);
 		
 		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "ObjectEntry");
@@ -256,6 +264,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				mapEntry.put ("oid", Integer.toString (resultset.getInt (1)));
 				
 			}
+			
 		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
@@ -265,5 +274,15 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		listentries.add (mapEntry);
 		
 		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "ObjectEntry");
+	}
+	
+	/**
+	 * @param args
+	 */
+	
+	public static void main (String [ ] args) {
+
+		//TODO: Testing stuff
+
 	}
 } // end of class

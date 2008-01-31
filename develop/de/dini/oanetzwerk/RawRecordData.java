@@ -4,13 +4,18 @@
 
 package de.dini.oanetzwerk;
 
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import de.dini.oanetzwerk.utils.HelperMethods;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -60,37 +65,40 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String getKeyWord (String [ ] path) {
 		
+		BigDecimal object_id = new BigDecimal (path [2]);
+		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
 		if (path.length > 3) {
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("internal OID = " + path [2] + " || Repository-Timestamp = " + path [3]);
+			Date repository_timestamp = null;
 			
-			this.resultset = db.selectRawRecordData (path [2], path [3]);
+			try {
+				
+				repository_timestamp = HelperMethods.extract_repository_datestamp (path [3]);
+				
+			} catch (ParseException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ));
+				ex.printStackTrace ( );
+			}
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("internal OID = " + object_id.toPlainString ( ) + " || Repository-Timestamp = " + repository_timestamp.toString ( ));
+			
+			this.resultset = db.selectRawRecordData (object_id, repository_timestamp);
 			
 		} else {
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("internal OID = " + path [2]);
+				logger.debug ("internal OID = " + object_id.toPlainString ( ));
 			
-			this.resultset = db.selectRawRecordData (path [2]);
+			this.resultset = db.selectRawRecordData (object_id);
 		}
 		
-/*		String result = "";
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("length = " + path.length);
-		
-		if (path.length > 3)
-			result = db.selectRawRecordData (path [2], path [3]);
-		
-		else
-			result = db.selectRawRecordData (path [2]);
-		*/
-		
 		db.closeConnection ( );
+		object_id = null;
 		
 		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
 		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
@@ -114,12 +122,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
-		
-/*		return "<OAN-REST xmlns=\"http://localhost/\"\n" +
-				"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-				"xsi:schemaLocation=\"http://localhost/schema.xsd\">\n" +
-				"\t<RawRecordData>\n\t\t" + result + "\n\t</RawRecordData>\n" +
-				"</OAN-REST>";*/
 		
 		listentries.add (mapEntry);
 		
@@ -146,17 +148,32 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {
 		
+		BigDecimal object_id = new BigDecimal (path [2]);
+		Date repository_timestamp = null;
+		
+		try {
+			
+			repository_timestamp = HelperMethods.extract_repository_datestamp (path [3]);
+			
+		} catch (ParseException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("The following values will be inserted:\n\tinternal OID = " + path [2] +
-					"\n\tRepository Datestamp = " + path [3] +
+			logger.debug ("The following values will be inserted:\n\tinternal OID = " + object_id +
+					"\n\tRepository Datestamp = " + repository_timestamp +
 					"\n\tData = " + data);
 
-		String response = db.insertRawRecordData (new Integer (path [2]), path [3], data);
-		
+		String response = db.insertRawRecordData (object_id, repository_timestamp, data);
+					
 		db.closeConnection ( );
+		
+		object_id = null;
 		
 		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
 		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );

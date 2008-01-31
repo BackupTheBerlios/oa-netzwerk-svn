@@ -4,18 +4,14 @@
 
 package de.dini.oanetzwerk;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
@@ -211,103 +207,9 @@ public class DBAccess implements DBAccessInterface {
 	
 	public static void main (String [ ] args) {
 		
-		System.out.println ("DB-Test");
-		
-		if (args [0].equals ("--createDB")) {
-			
-			createDB ( );
-		}
+		//TODO: add testing
 	}
 
-	/**
-	 * 
-	 */
-	
-	private static void createDB ( ) {
-		
-		DBAccessInterface db = createDBAccess ( );
-		int [ ] updateCounts = null;
-		BufferedReader file = null;
-		
-		try {
-			
-			file = new BufferedReader (new FileReader ("/home/mkuehn/workspace/oa-netzwerk-develop/db-schema/oan-db-model.sql"));
-			StringBuffer sql = new StringBuffer ("");
-			db.createConnection ( );
-			Statement stmt = conn.createStatement ( );
-			db.setAutoCom (false);
-			
-			for (String line; (line = file.readLine ( )) != null;) {
-				
-				if (line.matches (".*;")) {
-					
-					sql.append (line.replace (';', ' '));
-					sql.trimToSize ( );
-					System.out.println (sql.toString ( ));
-					stmt.addBatch (sql.toString ( ));
-					sql = new StringBuffer ("");
-					
-				} else
-					sql.append (line);
-			}
-			
-			updateCounts = stmt.executeBatch ( );
-			
-			for (int i = 0; i < updateCounts.length; i++)
-				System.out.println ("UpdateCount: " + updateCounts);
-					
-		} catch (BatchUpdateException buex) {
-			
-			try {
-				
-				conn.rollback ( );
-				buex.printStackTrace ( );
-				
-			} catch (SQLException ex) {
-				
-				ex.printStackTrace ( );
-			}
-			
-		} catch (SQLException ex) {
-			
-			try {
-				
-				conn.rollback ( );
-				
-			} catch (SQLException ex1) {
-				
-				ex1.printStackTrace ( );
-			}
-			ex.printStackTrace ( );
-			
-		} catch (InvalidPropertiesFormatException ex) {
-			
-			ex.printStackTrace ( );
-			
-		} catch (FileNotFoundException ex) {
-			
-			ex.printStackTrace ( );
-			
-		} catch (IOException ex) {
-			
-			ex.printStackTrace ( );
-			
-		} finally {
-			
-			db.setAutoCom (true);
-			db.closeConnection ( );
-			
-			try {
-				
-				file.close ( );
-				
-			} catch (IOException ex) {
-				
-				ex.printStackTrace ( );
-			}
-		}
-	}
-	
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
 	 */
@@ -341,97 +243,65 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.DBAccessInterface#selectRawRecordData(java.lang.String, java.lang.String)
 	 */
 	
-	public ResultSet selectRawRecordData (String internalOID, String datestamp) {
+	public ResultSet selectRawRecordData (BigDecimal internalOID, Date datestamp) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("entering selectRawRecordData");
 		
 		PreparedStatement pstmt = null;
-		//ResultSet rs = null;
-		
-//		String result = "<NULL />";
 		
 		if (logger.isDebugEnabled ( )) {
 			
-			logger.debug ("internalOID: " + internalOID);
+			logger.debug ("internalOID: " + internalOID.toPlainString ( ));
 			logger.debug ("datestamp :" + datestamp);
 		}
 		
 		try {
 			
-			if (datestamp.equals ("")) {
+			if (datestamp == null) {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("1 parameter for select RawRecordData");
 				
 				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND repository_timestamp = (SELECT max(repository_timestamp) FROM dbo.RawData)");
-				pstmt.setInt (1, new Integer (internalOID));
+				pstmt.setBigDecimal (1, internalOID);
 				
-			
 			} else {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("2 parameter for select RawRecordData");
 				
 				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND repository_timestamp = ?");
-				pstmt.setInt (1, new Integer (internalOID));
-				pstmt.setString (2, datestamp);
+				pstmt.setBigDecimal (1, internalOID);
+				pstmt.setDate (2, datestamp);
 			}
 			
 			return pstmt.executeQuery ( );
-			
-			/*rs = pstmt.executeQuery ( );
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("statement: " + rs.getStatement ( ));
-			
-			if (rs.next ( )) {
-				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("resultbuffer is created");
-				
-				StringBuffer resultbuffer = new StringBuffer ("<object_id>" + rs.getInt (1) + "</object_id>\n");
-				resultbuffer.append ("<collected>" + rs.getDate (2) + "</collected>\n");
-				resultbuffer.append ("<data>" + rs.getString (3) + "</data>\n");
-				
-				result = resultbuffer.toString ( );
-			}*/
 			
 		} catch (SQLException sqlex) {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
-			
-		} /*finally {
-			
-			try {
-				
-				conn.close ( );
-				
-			} catch (SQLException ex) {
-				
-				logger.error (ex.getLocalizedMessage ( ));
-				ex.printStackTrace ( );
-			}
-		}*/
+		}
+		
 		return null;
 	}
 
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#selectRawRecordData(java.lang.String)
 	 */
-	public ResultSet selectRawRecordData (String internalOID) {
+	public ResultSet selectRawRecordData (BigDecimal internalOID) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("entering selectRawRecordData with only one parameter");
 		
-		return selectRawRecordData (internalOID, "");
+		return selectRawRecordData (internalOID, null);
 	}
 
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#insertRawRecordData(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public String insertRawRecordData (int internalOID, String datestamp,
+	public String insertRawRecordData (BigDecimal internalOID, Date datestamp,
 			String blobbb) {
 		
 		PreparedStatement pstmt = null;
@@ -440,9 +310,8 @@ public class DBAccess implements DBAccessInterface {
 			
 			pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, repository_timestamp, data) VALUES (?, ?, ?)");
 			
-			pstmt.setBigDecimal (1, new BigDecimal (internalOID));
-			//TODO: insert right Timestamp into repository_timestamp!!!
-			pstmt.setDate (2, HelperMethods.today ( ));
+			pstmt.setBigDecimal (1, internalOID);
+			pstmt.setDate (2, datestamp);
 			pstmt.setString (3, blobbb);
 			pstmt.executeUpdate ( );
 			
@@ -454,7 +323,7 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 		}
 		
-		return Integer.toString (internalOID);
+		return internalOID.toPlainString ( );
 	}
 
 	/**
@@ -500,6 +369,7 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.DBAccessInterface#getObject(java.lang.String)
 	 */
+	
 	public ResultSet getObject (int oid) {
 		
 		PreparedStatement pstmt = null;
@@ -525,11 +395,41 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.DBAccessInterface#updateObject(int, java.sql.Date, java.sql.Date, java.lang.String)
 	 */
 	
-	public String updateObject (int repository_id, Date harvested,
+	public ResultSet updateObject (int repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier) {
 
-		// TODO Auto-generated method stub
-		return "";
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("UPDATE dbo.Object SET harvested=?, repository_datestamp=? WHERE object_id = ?");
+			
+			pstmt.setInt (1, repository_id);
+			pstmt.setDate (2, harvested);
+			pstmt.setDate (3, repository_datestamp);
+			pstmt.setString (4, repository_identifier);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+			pstmt = conn.prepareStatement ("SELECT object_id FROM dbo.Object WHERE repository_id = ? AND repository_identifier = ? AND repository_datestamp = ?");
+			
+			pstmt.setInt (1, repository_id);
+			pstmt.setString (2, repository_identifier);
+			pstmt.setDate (3, repository_datestamp);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+		
+		return null;
+		
 	}
 
 	/**
@@ -668,5 +568,4 @@ public class DBAccess implements DBAccessInterface {
 		
 		return null;
 	}
-	
 } //end of class
