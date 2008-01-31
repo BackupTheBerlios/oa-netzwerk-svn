@@ -2,7 +2,7 @@
  * 
  */
 
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.server.database;
 
 import java.math.BigDecimal;
 import java.sql.Connection;

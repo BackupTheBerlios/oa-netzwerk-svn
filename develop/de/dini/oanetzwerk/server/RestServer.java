@@ -2,7 +2,7 @@
  * 
  */
 
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 //import org.apache.log4j.xml.DOMConfigurator;
 
+import de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 /**

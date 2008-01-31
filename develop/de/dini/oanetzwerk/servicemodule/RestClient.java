@@ -2,7 +2,7 @@
  * 
  */
 
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.servicemodule;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

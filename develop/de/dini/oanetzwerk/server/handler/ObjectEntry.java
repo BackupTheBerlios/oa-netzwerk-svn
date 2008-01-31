@@ -2,7 +2,7 @@
  * 
  */
 
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.server.handler;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -16,7 +16,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.server.database.DBAccess;
+import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.utils.RestXmlCodec;
 
 /**
  * @author Michael Kühn
@@ -36,7 +39,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 	
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
 	
 	@Override
@@ -47,7 +50,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 * This method returns for a given internal ObjectID the key values for this Object.
 	 * If the object does not exist "null" will be returned. 
 	 */
@@ -98,7 +101,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
 	
 	@Override
@@ -187,7 +190,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 * This method inserts a new Object entry. The values for the new object will be extracted from the
 	 * HTTP-Body's data.
 	 * The internal ObjectID of the newly created Object will be returned.

@@ -2,10 +2,13 @@
  * 
  */
 
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
+
+import de.dini.oanetzwerk.server.database.DBAccess;
+import de.dini.oanetzwerk.server.database.DBAccessInterface;
 
 
 /**
@@ -19,7 +22,7 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	private ResultSet resultset;
 	
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
@@ -32,7 +35,7 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
 	@Override
 	protected String getKeyWord (String [ ] path) {
@@ -47,7 +50,7 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
@@ -60,7 +63,7 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 */
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {

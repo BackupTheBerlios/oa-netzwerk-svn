@@ -2,9 +2,10 @@
  *
  */
 
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.server.handler;
 
 import org.apache.log4j.Logger;
+
 
 /**
  * @author Michael Kühn
@@ -31,7 +32,7 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	}
 	
 	/**
-	 * @see de.dini.oanetzwerk.KeyWord2DatabaseInterface#processRequest(java.lang.String, java.lang.String[], int)
+	 * @see de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface#processRequest(java.lang.String, java.lang.String[], int)
 	 */
 	
 	final public String processRequest (String data, String [ ] path, int i) {

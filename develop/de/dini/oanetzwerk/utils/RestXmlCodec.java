@@ -1,4 +1,4 @@
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.utils;
 
 import java.io.StringReader;
 import java.util.ArrayList;

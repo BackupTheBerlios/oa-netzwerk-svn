@@ -2,19 +2,19 @@
  * 
  */
 
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.server.database.DBAccess;
+import de.dini.oanetzwerk.server.database.DBAccessInterface;
+import de.dini.oanetzwerk.utils.RestXmlCodec;
 
 
 /**
@@ -22,13 +22,13 @@ import de.dini.oanetzwerk.utils.HelperMethods;
  *
  */
 
-public class WorkflowDB extends AbstractKeyWordHandler implements
+public class Services extends AbstractKeyWordHandler implements
 		KeyWord2DatabaseInterface {
 	
 	private ResultSet resultset;
 	
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
@@ -37,20 +37,25 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		db.createConnection ( );
 		
 		db.closeConnection ( );
+		
 		return null;
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
 	
 	@Override
 	protected String getKeyWord (String [ ] path) {
-		
+
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
-		this.resultset = db.selectWorkflow (new BigDecimal (path [2]), new BigDecimal (path [3]));
+		if (path [2].equalsIgnoreCase ("byName"))
+			this.resultset = db.selectService (new String (path [3]));
+		
+		else 
+			this.resultset = db.selectService (new BigDecimal (path [2]));
 		
 		db.closeConnection ( );
 		
@@ -61,8 +66,8 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 			
 			if (resultset.next ( )) {
 				
-				mapEntry.put ("workflow_id", Integer.toString (resultset.getInt (1)));
-				mapEntry.put ("object_id", Integer.toString (resultset.getInt (2)));
+				mapEntry.put ("service_id", Integer.toString (resultset.getInt (1)));
+				mapEntry.put ("name", resultset.getString (2));
 			}
 			
 		} catch (SQLException ex) {
@@ -77,27 +82,25 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
 
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
-		
-		db.closeConnection ( );
+
 		return null;
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 */
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {
 		
-		BigDecimal object_id = null;
-		BigDecimal service_id = null;
-		Date time = null;
+		int service_id;
+		String name;
 		
 		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
 		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
@@ -112,49 +115,25 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 			key = it.next ( );
 			
 			if (key.equalsIgnoreCase ("service_id"))
-				object_id = new BigDecimal (mapEntry.get (key));
+				service_id = new Integer (mapEntry.get (key));
 			
-			else if (key.equalsIgnoreCase ("name")) {
-				
-				try {
-					
-					time = HelperMethods.extract_repository_datestamp (mapEntry.get (key));
-					
-				} catch (ParseException ex) {
-					
-					logger.error (ex.getLocalizedMessage ( ));
-					ex.printStackTrace ( );
-				}
-				
-			} else if (key.equalsIgnoreCase ("service_id"))
-				service_id = new BigDecimal (mapEntry.get (key));
+			else if (key.equalsIgnoreCase ("name"))
+				name = mapEntry.get (key);
 			
 			else continue;
 		}
-
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
-		this.resultset = db.insertWorkflowDBEntry (object_id, time, service_id);
+		//result = bla
 		
 		db.closeConnection ( );
 		
 		listentries = new ArrayList <HashMap <String, String>> ( );
 		mapEntry = new HashMap <String ,String> ( );
 		
-		try {
-			
-			if (resultset.next ( )) {
-		
-				mapEntry.put ("workflow_id", resultset.getBigDecimal (1).toPlainString ( ));
-			}
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
+		mapEntry.put ("", "");
 		
 		listentries.add (mapEntry);
 		

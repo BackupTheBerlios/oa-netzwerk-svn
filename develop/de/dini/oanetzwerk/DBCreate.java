@@ -133,7 +133,7 @@ public class DBCreate {
 	}
 	
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#createConnection()
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#createConnection()
 	 */
 	
 	public void createConnection ( ) {
@@ -163,7 +163,7 @@ public class DBCreate {
 	}
 	
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#closeConnection()
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#closeConnection()
 	 */
 	
 	public void closeConnection ( ) {
@@ -202,7 +202,7 @@ public class DBCreate {
 	}
 	
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#getConnetion()
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getConnetion()
 	 */
 	
 	public Connection getConnetion ( ) {

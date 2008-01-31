@@ -6,6 +6,11 @@ package de.dini.oanetzwerk;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.server.database.DBAccess;
+import de.dini.oanetzwerk.server.database.DBAccessInterface;
+import de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler;
+import de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface;
+
 /**
  * @author Michael Kühn
  *
@@ -32,7 +37,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 	
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
@@ -42,7 +47,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
 	@Override
 	protected String getKeyWord (String [ ] path) {
@@ -70,7 +75,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
@@ -81,7 +86,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 */
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {

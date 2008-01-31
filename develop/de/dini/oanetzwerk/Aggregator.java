@@ -50,7 +50,9 @@ import org.jdom.input.SAXBuilder;
 
 
 
+import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.utils.RestXmlCodec;
 
 /**
  * @author Manuel Klatt-Kafemann

@@ -2,7 +2,7 @@
  * 
  */
 
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.server.handler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import de.dini.oanetzwerk.server.database.DBAccess;
+import de.dini.oanetzwerk.server.database.DBAccessInterface;
+import de.dini.oanetzwerk.utils.RestXmlCodec;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -43,7 +47,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 * This method is not implemented because this would be useless request for now.
 	 */
 	
@@ -56,7 +60,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 * This method returns for a given RepositoryID and a given external ObjectID an
 	 * internal ObjectID is it exists. When it does not exist "null" will be returned.
 	 */
@@ -106,7 +110,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 * This method is not implemented because this would be useless request for now. 
 	 */
 	
@@ -119,7 +123,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 * This method is not implemented because this would be useless request for now.
 	 */
 	

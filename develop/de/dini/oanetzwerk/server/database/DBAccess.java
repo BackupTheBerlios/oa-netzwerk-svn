@@ -2,7 +2,7 @@
  * 
  */
 
-package de.dini.oanetzwerk;
+package de.dini.oanetzwerk.server.database;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -128,7 +128,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 	
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#createConnection()
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#createConnection()
 	 */
 	
 	public void createConnection ( ) {
@@ -158,7 +158,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 	
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#closeConnection()
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#closeConnection()
 	 */
 	
 	public void closeConnection ( ) {
@@ -197,7 +197,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 	
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#getConnetion()
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getConnetion()
 	 */
 	
 	public Connection getConnetion ( ) {
@@ -211,7 +211,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
 	 */
 	
 	public ResultSet selectObjectEntryId (String repositoryID, String externalOID) {
@@ -240,7 +240,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#selectRawRecordData(java.lang.String, java.lang.String)
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectRawRecordData(java.lang.String, java.lang.String)
 	 */
 	
 	public ResultSet selectRawRecordData (BigDecimal internalOID, Date datestamp) {
@@ -288,7 +288,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#selectRawRecordData(java.lang.String)
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectRawRecordData(java.lang.String)
 	 */
 	public ResultSet selectRawRecordData (BigDecimal internalOID) {
 		
@@ -299,7 +299,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#insertRawRecordData(java.lang.String, java.lang.String, java.lang.String)
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertRawRecordData(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public String insertRawRecordData (BigDecimal internalOID, Date datestamp,
 			String blobbb) {
@@ -327,7 +327,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#insertObject(int, java.sql.Date, java.sql.Date, java.lang.String)
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertObject(int, java.sql.Date, java.sql.Date, java.lang.String)
 	 */
 	
 	public ResultSet insertObject (int repository_id, Date harvested,
@@ -367,7 +367,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#getObject(java.lang.String)
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getObject(java.lang.String)
 	 */
 	
 	public ResultSet getObject (int oid) {
@@ -392,7 +392,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#updateObject(int, java.sql.Date, java.sql.Date, java.lang.String)
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#updateObject(int, java.sql.Date, java.sql.Date, java.lang.String)
 	 */
 	
 	public ResultSet updateObject (int repository_id, Date harvested,
@@ -433,7 +433,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#getService()
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getService()
 	 */
 	@Override
 	public ResultSet selectService (BigDecimal service_id) {
@@ -457,7 +457,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 	
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#getService()
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getService()
 	 */
 	@Override
 	public ResultSet selectService (String name) {
@@ -481,7 +481,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#selectServicesOrder(java.math.BigDecimal)
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectServicesOrder(java.math.BigDecimal)
 	 */
 	@Override
 	public ResultSet selectServicesOrder (BigDecimal predecessor_id) {
@@ -505,7 +505,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
 	 */
 	@Override
 	public ResultSet selectWorkflow (BigDecimal predecessor_id,
@@ -531,7 +531,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
-	 * @see de.dini.oanetzwerk.DBAccessInterface#insertWorkflowDBEntry(java.math.BigDecimal, java.sql.Date, java.math.BigDecimal)
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertWorkflowDBEntry(java.math.BigDecimal, java.sql.Date, java.math.BigDecimal)
 	 */
 	@Override
 	public ResultSet insertWorkflowDBEntry (BigDecimal object_id, Date time,
