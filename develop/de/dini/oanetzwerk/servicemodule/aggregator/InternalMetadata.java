@@ -23,6 +23,14 @@ public class InternalMetadata {
 	List<DateValue> dateValues;
 	int dateValueCounter = 0;
 	
+	List<Format> formatList;
+	int formatCounter = 0;
+
+	List<Identifier> identifierList;
+	int identifierCounter = 0;
+
+	
+	
 	public InternalMetadata() {
 		titles = new LinkedList<Title>();
 		titleCounter = 0;
@@ -40,6 +48,13 @@ public class InternalMetadata {
 		
 		dateValues = new LinkedList<DateValue>();
 		dateValueCounter = 0;
+		
+		formatList = new LinkedList<Format>();
+		formatCounter = 0;
+
+		identifierList = new LinkedList<Identifier>();
+		identifierCounter = 0;
+
 	}
 	
 	public int addKeyword(String keyword) {
@@ -85,6 +100,37 @@ public class InternalMetadata {
 		System.out.println(temp);
 		return result;
 	}
+
+	public int addIdentifier(String identifier) {
+		int result = 0;
+		identifierCounter ++;
+		result = this.addIdentifier(identifier, this.identifierCounter);
+		return result;
+	}
+	
+	public int addIdentifier(String identifier, int number) {
+		int result = 0;
+		Identifier temp = new Identifier(identifier, number);
+		this.identifierList.add(temp);
+		System.out.println(temp);
+		return result;
+	}
+
+	public int addFormat(String format) {
+		int result = 0;
+		this.formatCounter ++;
+		result = this.addFormat(format, this.formatCounter);
+		return result;
+	}
+	
+	public int addFormat(String format, int number) {
+		int result = 0;
+		Format temp = new Format(format, number);
+		this.formatList.add(temp);
+		System.out.println(temp);
+		return result;
+	}	
+	
 	
 	
 	public int addDescription(String description) {
@@ -358,4 +404,42 @@ class DateValue {
 	}
 }
 
+class Type {
 
+}
+
+class Format {
+	
+	int number = 0;
+	String schema_f;
+	
+	public Format(String schema_f, int number) {
+		this.schema_f = schema_f;
+		this.number = number;
+	}
+
+	public String toString() {
+		String result = "schema_f=" +this.schema_f;
+		result = result + "\n" + "number=" + this.number;
+		return result;
+	}
+	
+}
+
+class Identifier {
+	
+	int number = 0;
+	String identifier;
+	
+	public Identifier(String identifier, int number) {
+		this.identifier = identifier;
+		this.number = number;
+	}
+	
+	public String toString() {
+		String result = "identifier=" +this.identifier;
+		result = result + "\n" + "number=" + this.number;
+		return result;
+	}
+
+}

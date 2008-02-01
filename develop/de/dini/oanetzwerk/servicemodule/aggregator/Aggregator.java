@@ -374,10 +374,14 @@ public class Aggregator {
 
 						}
 						if (metadataEntry.getName().equals("format")) {
+							im.addFormat(metadataEntry.getText());
 						}
 						if (metadataEntry.getName().equals("identifier")) {
+							im.addIdentifier(metadataEntry.getText());
 						}
+						if (metadataEntry.getName().equals("language")) {
 
+						}
 
 
 						
