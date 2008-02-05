@@ -318,13 +318,9 @@ public class Aggregator {
 		
 		System.out.println("extractMetadata");
 		
-//		List<HashMap<String, String>> listEntrySet = new ArrayList<HashMap<String,String>>();
-		
 		InternalMetadata im = new InternalMetadata();
-		
 		org.jdom.Document doc;
 		SAXBuilder builder = new SAXBuilder();
-		
 		
 		Namespace namespace = Namespace.getNamespace("oai_dc","http://www.openarchives.org/OAI/2.0/oai_dc/");
 		try {		
@@ -334,12 +330,28 @@ public class Aggregator {
 			
 			logger.debug("** doc generated");
 
-			// hier fehlt noch die Auswertung der SET-Struktur aus dem Header
-			
+			// Auswertung der SET-Struktur aus dem Header
+			ElementFilter filter = new ElementFilter("header");
+			Iterator iterator = doc.getDescendants(filter);
+			while (iterator.hasNext()) {
+//				System.out.println("** <header> found");
+				if (logger.isDebugEnabled()) {
+					logger.debug("** <header> found");
+				}
+				Element headerSet = (Element) iterator.next();
+				List headerList = headerSet.getChildren();
+				Iterator iteratorHeader = headerList.iterator();
+				while (iteratorHeader.hasNext()) {
+					Element headerEntry = (Element) iteratorHeader.next();
+					if (headerEntry.getName().equals("setSpec")) {
+						im.addClassfication(headerEntry.getValue());
+					}
+				}
+			}
 			
 			// nach <oai_dc:dc> suchen, da darunter der gesamte Metadaten-Eintrag steht
-			ElementFilter filter = new ElementFilter("dc",namespace);
-			Iterator iterator = doc.getDescendants(filter);
+			filter = new ElementFilter("dc",namespace);
+			iterator = doc.getDescendants(filter);
 			while (iterator.hasNext()) {
 				System.out.println("** <oai_dc:dc> found");
 				logger.debug("** <oai_dc:dc> found");
@@ -349,10 +361,13 @@ public class Aggregator {
 				Iterator iteratorMetadata = metadataList.iterator(); 
 				while (iteratorMetadata.hasNext()) {
 						Element metadataEntry = (Element) iteratorMetadata.next();
-						System.out.println("Element: " + metadataEntry.getName());
+//						System.out.println("Element: " + metadataEntry.getName());
+						if (logger.isDebugEnabled()) {
+							logger.debug("Element: " + metadataEntry.getName());
+						}
+
 						
 						if (metadataEntry.getName().equals("title")) {
-							System.out.println(metadataEntry.getText());
 							im.addTitle(metadataEntry.getText(), "Title", null);
 						}
 						if (metadataEntry.getName().equals("creator")) {
@@ -382,6 +397,7 @@ public class Aggregator {
 						if (metadataEntry.getName().equals("language")) {
 							im.addLanguage(metadataEntry.getText());
 						}
+
 
 
 						

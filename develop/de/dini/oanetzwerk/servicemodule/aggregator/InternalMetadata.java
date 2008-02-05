@@ -35,6 +35,8 @@ public class InternalMetadata {
 	List<Language> languageList;
 	int languageCounter = 0;
 	
+	List<Classification> classificationList;
+	
 	
 	
 	public InternalMetadata() {
@@ -67,6 +69,30 @@ public class InternalMetadata {
 		languageList = new LinkedList<Language>();
 		languageCounter = 0;
 
+		classificationList = new LinkedList<Classification>();
+		
+	}
+	
+	public int addClassfication(String value) {
+		int result = 0;
+		Classification cl = null;
+		if (Classification.isDDC(value)) {
+			cl = new DDCClassification(value);
+		} else if (Classification.isDNB(value)) {
+			cl = new DNBClassification(value);
+		} else if (Classification.isDINISet(value)) {
+			cl = new DINISetClassification(value);
+		} else if (Classification.isOther(value)) {
+			cl = new OtherClassification(value);
+		}
+		
+		if (cl != null) {
+			this.classificationList.add(cl);
+			System.out.println(cl);
+		}
+		
+		return result;
+		
 	}
 	
 	public int addKeyword(String keyword) {
@@ -518,3 +544,97 @@ class Identifier {
 	}
 
 }
+
+
+abstract class  Classification {
+	String value;
+	
+	public static boolean isDDC(String testvalue) {
+		if (testvalue.toLowerCase().startsWith("ddc:")) return true;
+		else 
+			return false;
+	}
+
+	public static boolean isDNB(String testvalue) {
+		if (testvalue.toLowerCase().startsWith("dnb:")) return true;
+		else 
+			return false;
+	}
+	
+	public static boolean isDINISet(String testvalue) {
+		if (testvalue.toLowerCase().startsWith("pub-type:")) return true;
+		else 
+			return false;
+	}
+	
+	public static boolean isOther(String testvalue) {
+		if (!(isDNB(testvalue)) && !(isDDC(testvalue)) && !(isDINISet(testvalue))) {
+			return true;
+		} else
+			return false;
+	}
+	
+	public void setSplitValue() {
+		String[] temp = this.value.split(":");
+		if (temp.length < 2) {
+			// Fehler, keine korrekte DNB-Codierung bzw. kein Wert
+			// ÜBergangsweise wird der gesamte Eintrag eingestellt
+//			this.value = value;
+		} else {
+			this.value = value.split(":")[1];
+		}
+	}
+
+	
+	public Classification(String value) {
+		this.value = value;
+	}
+	public Classification() {}
+}
+
+class DDCClassification extends Classification {
+	public DDCClassification(String value) {
+		super(value);
+		setSplitValue();
+	}
+	
+	public String toString() {
+		String result = "DDC Classification, value=" + this.value;
+		return result;
+	}
+}
+
+class DNBClassification extends Classification {
+	public DNBClassification(String value) {
+		super(value);
+		setSplitValue();
+	}
+
+	public String toString() {
+		String result = "DNB Classification, value=" + this.value;
+		return result;
+	}
+
+}
+
+class DINISetClassification extends Classification {
+	public DINISetClassification(String value) {
+		super(value);
+		setSplitValue();
+	}
+	public String toString() {
+		String result = "DINISet Classification, value=" + this.value;
+		return result;
+	}
+}
+
+class OtherClassification extends Classification {
+	public OtherClassification(String value) {
+		super(value);
+	}
+	public String toString() {
+		String result = "Other Classification, value=" + this.value;
+		return result;
+	}
+}
+
