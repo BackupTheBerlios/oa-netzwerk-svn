@@ -29,6 +29,12 @@ public class InternalMetadata {
 	List<Identifier> identifierList;
 	int identifierCounter = 0;
 
+	List<TypeValue> typeValueList;
+	int typeValueCounter = 0;
+	
+	List<Language> languageList;
+	int languageCounter = 0;
+	
 	
 	
 	public InternalMetadata() {
@@ -54,6 +60,12 @@ public class InternalMetadata {
 
 		identifierList = new LinkedList<Identifier>();
 		identifierCounter = 0;
+		
+		typeValueList = new LinkedList<TypeValue>();
+		typeValueCounter = 0;
+		
+		languageList = new LinkedList<Language>();
+		languageCounter = 0;
 
 	}
 	
@@ -116,6 +128,37 @@ public class InternalMetadata {
 		return result;
 	}
 
+	public int addTypeValue(String value) {
+		int result = 0;
+		typeValueCounter ++;
+		result = this.addTypeValue(value, this.typeValueCounter);
+		return result;
+	}
+	
+	public int addTypeValue(String value, int number) {
+		int result = 0;
+		TypeValue temp = new TypeValue(value, number);
+		this.typeValueList.add(temp);
+		System.out.println(temp);
+		return result;
+	}
+
+	public int addLanguage(String value) {
+		int result = 0;
+		languageCounter ++;
+		result = this.addLanguage(value, this.languageCounter);
+		return result;
+	}
+	
+	public int addLanguage(String value, int number) {
+		int result = 0;
+		Language temp = new Language(value, number);
+		this.languageList.add(temp);
+		System.out.println(temp);
+		return result;
+	}
+	
+	
 	public int addFormat(String format) {
 		int result = 0;
 		this.formatCounter ++;
@@ -404,9 +447,41 @@ class DateValue {
 	}
 }
 
-class Type {
 
+class TypeValue {
+	String typeValue;
+	int number;
+
+	public TypeValue(String typeValue, int number) {
+		this.typeValue = typeValue;
+		this.number = number;
+	}
+
+	public String toString() {
+		String result = "typeValue=" +this.typeValue;
+		result = result + "\n" + "number=" + this.number;
+		return result;
+	}
 }
+
+
+class Language {
+	String language;
+	int number;
+
+	public Language(String language, int number) {
+		this.language = language;
+		this.number = number;
+	}
+
+	public String toString() {
+		String result = "language=" +this.language;
+		result = result + "\n" + "number=" + this.number;
+		return result;
+	}
+}
+
+
 
 class Format {
 	

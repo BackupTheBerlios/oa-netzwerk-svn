@@ -6,9 +6,9 @@ package de.dini.oanetzwerk.servicemodule.aggregator;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+//import java.io.InputStream;
 import java.io.StringReader;
-import java.text.SimpleDateFormat;
+//import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,22 +29,22 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.httpclient.HttpClient;
+//import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+//import org.apache.commons.httpclient.HttpStatus;
+//import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.w3c.dom.DOMException;
+//import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import org.jdom.Content;
+//import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.jdom.Text;
+//import org.jdom.Text;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 
@@ -318,7 +318,7 @@ public class Aggregator {
 		
 		System.out.println("extractMetadata");
 		
-		List<HashMap<String, String>> listEntrySet = new ArrayList<HashMap<String,String>>();
+//		List<HashMap<String, String>> listEntrySet = new ArrayList<HashMap<String,String>>();
 		
 		InternalMetadata im = new InternalMetadata();
 		
@@ -371,7 +371,7 @@ public class Aggregator {
 							im.addDateValue(metadataEntry.getText());
 						}
 						if (metadataEntry.getName().equals("type")) {
-
+							im.addTypeValue(metadataEntry.getText());
 						}
 						if (metadataEntry.getName().equals("format")) {
 							im.addFormat(metadataEntry.getText());
@@ -380,7 +380,7 @@ public class Aggregator {
 							im.addIdentifier(metadataEntry.getText());
 						}
 						if (metadataEntry.getName().equals("language")) {
-
+							im.addLanguage(metadataEntry.getText());
 						}
 
 

@@ -4,28 +4,33 @@ CREATE TABLE dbo.AggregatorMetadata (
      , PRIMARY KEY (object_id)
 );
 
+
 CREATE TABLE dbo.Person (
        person_id NUMERIC(38) IDENTITY
-     , number INTEGER
-     , firstname VARCHAR(255)
+     , firstname VARCHAR(255) NULL
      , lastname VARCHAR(255)
-     , title VARCHAR(255)
-     , institution VARCHAR(255)
-     , email VARCHAR(255)
-     , object_id NUMERIC(38) NOT NULL
+     , title VARCHAR(255) NULL
+     , institution VARCHAR(255) NULL
+     , email VARCHAR(255) NULL
      , PRIMARY KEY (person_id)
+);
+
+CREATE TABLE dbo.Language (
+       language_id NUMERIC(38) IDENTITY
+     , language VARCHAR(255) NOT NULL
+     , PRIMARY KEY (language_id)
 );
 
 CREATE TABLE dbo.Keywords (
        keyword_id NUMERIC(38) IDENTITY
-     , keyword VARCHAR(255)
-     , lang CHAR(3)
+     , keyword VARCHAR(255) NOT NULL
+     , lang CHAR(3) NULL
      , PRIMARY KEY (keyword_id)
 );
 
 CREATE TABLE dbo.DCC_Categories (
        DCC_Categorie CHAR(10) NOT NULL
-     , name VARCHAR(255)
+     , name VARCHAR(255) NOT NULL
      , PRIMARY KEY (DCC_Categorie)
 );
 
@@ -50,6 +55,12 @@ CREATE TABLE dbo.Other_Categories (
 CREATE TABLE dbo.Services (
        service_id NUMERIC(38) IDENTITY
      , name VARCHAR(255) NOT NULL
+     , PRIMARY KEY (service_id)
+);
+
+CREATE TABLE dbo.ServicesOrder (
+       service_id NUMERIC(38) NOT NULL
+     , predecessor_id NUMERIC(38) NULL
      , PRIMARY KEY (service_id)
 );
 
@@ -80,28 +91,40 @@ CREATE TABLE dbo.Titles (
      , PRIMARY KEY (object_id, qualifier)
 );
 
+
 CREATE TABLE dbo.Object2Author (
        object_id NUMERIC(38) NOT NULL
      , person_id NUMERIC(38) NOT NULL
+     , number INTEGER
      , PRIMARY KEY (object_id, person_id)
 );
 
 CREATE TABLE dbo.Object2Contributor (
        object_id NUMERIC(38) NOT NULL
      , person_id NUMERIC(38) NOT NULL
+     , number INTEGER
      , PRIMARY KEY (object_id, person_id)
 );
 
 CREATE TABLE dbo.Object2Editor (
        object_id NUMERIC(38) NOT NULL
      , person_id NUMERIC(38) NOT NULL
+     , number INTEGER
      , PRIMARY KEY (object_id, person_id)
 );
+
 
 CREATE TABLE dbo.Object2Keywords (
        object_id NUMERIC(38) NOT NULL
      , keyword_id NUMERIC(38) NOT NULL
      , PRIMARY KEY (object_id, keyword_id)
+);
+
+CREATE TABLE dbo.Object2Language (
+       object_id NUMERIC(38) NOT NULL
+     , language_id NUMERIC(38) NOT NULL
+     , number INTEGER
+     , PRIMARY KEY (object_id, language_id)
 );
 
 CREATE TABLE dbo.DCC_Classification (
@@ -187,6 +210,14 @@ CREATE TABLE dbo.RawData (
      , PRIMARY KEY (object_id, repository_timestamp)
 );
 
+CREATE TABLE dbo.TypeValue (
+       type_id NUMERIC(38) IDENTITY
+     , object_id NUMERIC(38) NOT NULL
+     , value VARCHAR(255) NOT NULL
+     , PRIMARY KEY (type_id)
+);
+
+
 ALTER TABLE dbo.Object
   ADD CONSTRAINT FK_Object_1
       FOREIGN KEY (repository_id)
@@ -198,6 +229,13 @@ ALTER TABLE dbo.Titles
   ADD CONSTRAINT FK_Titles_1
       FOREIGN KEY (object_id)
       REFERENCES dbo.Object (object_id);
+
+
+ALTER TABLE dbo.TypeValue
+  ADD CONSTRAINT FK_TypeValue_1
+      FOREIGN KEY (object_id)
+      REFERENCES dbo.Object (object_id);
+
 
 ALTER TABLE dbo.Object2Author
   ADD CONSTRAINT FK_Object2Author_2
@@ -335,3 +373,23 @@ ALTER TABLE dbo.AggregatorMetadata
   ADD CONSTRAINT FK_Object_2
       FOREIGN KEY (object_id)
       REFERENCES dbo.Object (object_id);
+
+ALTER TABLE dbo.Object2Language
+  ADD CONSTRAINT FK_Object2Language_1
+      FOREIGN KEY (language_id)
+      REFERENCES dbo.Language (language_id);
+
+ALTER TABLE dbo.Object2Language
+  ADD CONSTRAINT FK_Object2Language_2
+      FOREIGN KEY (object_id)
+      REFERENCES dbo.Object (object_id);
+
+ALTER TABLE dbo.ServicesOrder
+  ADD CONSTRAINT FK_ServicesOrder_1
+      FOREIGN KEY (service_id)
+      REFERENCES dbo.Services (service_id);
+
+ALTER TABLE dbo.ServicesOrder
+  ADD CONSTRAINT FK_ServicesOrder_2
+      FOREIGN KEY (predecessor_id)
+      REFERENCES dbo.Services (service_id);
