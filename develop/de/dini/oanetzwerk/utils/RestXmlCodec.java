@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.jdom.Content;
 import org.jdom.Element;
@@ -24,40 +25,66 @@ public class RestXmlCodec {
 	private static final String XML_ROOT = "<oanrest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"N:\\EIGENE~1\\_Aufgaben\\OA-NETZWERK\\OANREST2.xsd\">\n";
 
 	
+	private static String encodeBase64(String data) {
+		try {
+			return new String (Base64.encodeBase64 (data.getBytes ("UTF-8")));
+		} catch(Exception ex) {
+			logger.error(ex);
+			return null;
+		}
+	}
+	
+	private static String decodeBase64(String data) {
+		try {
+			return new String(Base64.decodeBase64(((String) data).getBytes()));
+		} catch(Exception ex) {
+			logger.error(ex);
+			return null;
+		}
+	}
+	
 	/**
 	 * encodes XML REST request body
 	 * @param listEntrySet list of hashmaps storing key-value-sets
 	 * @return XML encoded request body
 	 */
-	public static String encodeEntrySetRequestBody(List<HashMap<String, String>> listEntrySet) {
+	public static String encodeEntrySetRequestBody(List<HashMap<String, String>> listEntrySet, boolean useBase64keys, boolean useBase64values) {
 		StringBuffer sbXML = new StringBuffer();
 		sbXML.append(XML_HEADER);
 		sbXML.append(XML_ROOT);
 		sbXML.append("<request>\n");		
-		sbXML.append(encodeEntrySet(listEntrySet));
+		sbXML.append(encodeEntrySet(listEntrySet, useBase64keys, useBase64values));
 		sbXML.append("</request>\n");
 		sbXML.append("</oanrest>\n");
 		return sbXML.toString();
 	}
 
+	public static String encodeEntrySetRequestBody(List<HashMap<String, String>> listEntrySet) {
+		return encodeEntrySetRequestBody(listEntrySet, true, true);
+	}
+	
 	/**
 	 * encodes XML REST response body
 	 * @param listEntrySet list of hashmaps storing key-value-sets
 	 * @param keyword a REST-keyword to deliver back by the server
 	 * @return XML encoded request body
 	 */	
-	public static String encodeEntrySetResponseBody(List<HashMap<String, String>> listEntrySet, String keyword) {
+	public static String encodeEntrySetResponseBody(List<HashMap<String, String>> listEntrySet, String keyword, boolean useBase64keys, boolean useBase64values) {
 		StringBuffer sbXML = new StringBuffer();
 		sbXML.append(XML_HEADER);
 		sbXML.append(XML_ROOT);
 		sbXML.append("<response keyword=\"");
 		sbXML.append(keyword);
 		sbXML.append("\">\n");		
-		sbXML.append(encodeEntrySet(listEntrySet));
+		sbXML.append(encodeEntrySet(listEntrySet, useBase64keys, useBase64values));
 		sbXML.append("</response>\n");
 		sbXML.append("</oanrest>\n");
 		return sbXML.toString();
 	}	
+	
+	public static String encodeEntrySetResponseBody(List<HashMap<String, String>> listEntrySet, String keyword) {
+		return encodeEntrySetResponseBody(listEntrySet, keyword, true, true);
+	}
 	
 	/**
 	 * encodes only the entryset (without header or footer)
@@ -65,7 +92,7 @@ public class RestXmlCodec {
 	 * @return XML encoded data
 	 */
 	@SuppressWarnings("unchecked")
-	private static String encodeEntrySet(List<HashMap<String, String>> listEntrySet) {
+	private static String encodeEntrySet(List<HashMap<String, String>> listEntrySet, boolean useBase64keys, boolean useBase64values) {
 		StringBuffer sbXML = new StringBuffer();
 		for(int i = 0; i < listEntrySet.size(); i++) {
 			sbXML.append("<entryset>\n");
@@ -74,13 +101,21 @@ public class RestXmlCodec {
 			while(it.hasNext()) {
 				String key = (String)it.next();
 				sbXML.append("<entry key=\"");
-				sbXML.append(key);
+				if(useBase64keys) {
+					sbXML.append(encodeBase64(key));	
+				} else {
+					sbXML.append(key);
+				}				
 				sbXML.append("\">");
 				String value = mapEntry.get(key); 
 				if(value == null) {
 					sbXML.append("<NULL/>");
 				} else {
-					sbXML.append(value);
+					if(useBase64values) {
+						sbXML.append(encodeBase64(value));
+					} else {
+						sbXML.append(value);
+					}
 				}
 				sbXML.append("</entry>\n");
 			}
@@ -89,13 +124,17 @@ public class RestXmlCodec {
 		return sbXML.toString();
 	}
 	
+	/*private static String encodeEntrySet(List<HashMap<String, String>> listEntrySet) {
+		return encodeEntrySet(listEntrySet, true, true);
+	}*/
+	
 	/**
 	 * decodes XML String to entryset 
 	 * @param strXML XML encoded data
 	 * @return list of hashmaps storing key-value-sets
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<HashMap<String, String>> decodeEntrySet(String strXML) {
+	public static List<HashMap<String, String>> decodeEntrySet(String strXML, boolean useBase64keys, boolean useBase64values) {
 		List<HashMap<String, String>> listEntrySet = new ArrayList<HashMap<String,String>>();
 			
 		org.jdom.Document doc;
@@ -116,12 +155,21 @@ public class RestXmlCodec {
 				while (iterator2.hasNext()) {
 					logger.debug("** <entry> found");					
 					Element elementEntry = (Element) iterator2.next();
-					String key = elementEntry.getAttributeValue("key");
+					String key = "";
+					if(useBase64keys) {
+						key = decodeBase64(elementEntry.getAttributeValue("key"));
+					} else {
+						key = elementEntry.getAttributeValue("key");
+					}					
 					logger.debug("** key == " + key);
 					Content content = elementEntry.getContent(0);
 					String value = "";
 					if(content instanceof org.jdom.Text) {
-						value = ((Text)content).getValue();
+						if(useBase64values) {
+							value = decodeBase64(((Text)content).getValue());
+						} else {
+							value = ((Text)content).getValue();
+						}						
 					} else if(content instanceof org.jdom.Element) {
 						if(((Element)content).getName().equals("NULL")) {
 							value = null;
@@ -137,6 +185,10 @@ public class RestXmlCodec {
 		}
 		
 		return listEntrySet;
+	}
+	
+	public static List<HashMap<String, String>> decodeEntrySet(String strXML) {
+		return decodeEntrySet(strXML, true, true);
 	}
 	
 	//TODO: Fehlerkodierung als Hash ist ungeschickt, da Errors eine Liste ist

@@ -126,15 +126,15 @@ public class TestRestXmlCodec {
 		mapTestEntry.put("existent", "null");
 		listTestEntrySet.add(mapTestEntry);
 		
-		String strXMLRequest = RestXmlCodec.encodeEntrySetRequestBody(listTestEntrySet);
+		String strXMLRequest = RestXmlCodec.encodeEntrySetRequestBody(listTestEntrySet,false,true);
 		System.out.println("MessageType == " + RestXmlCodec.fetchMessageType(strXMLRequest));
 		System.out.println(strXMLRequest);
 		
-		String strXMLResponse = RestXmlCodec.encodeEntrySetResponseBody(listTestEntrySet,"TestKeyword");
+		String strXMLResponse = RestXmlCodec.encodeEntrySetResponseBody(listTestEntrySet,"TestKeyword",false,true);
 		System.out.println("MessageType == " + RestXmlCodec.fetchMessageType(strXMLResponse));
 		System.out.println(strXMLResponse);
 	
-		List<HashMap<String,String>> listTestEntrySet2 = RestXmlCodec.decodeEntrySet(strXMLRequest);
+		List<HashMap<String,String>> listTestEntrySet2 = RestXmlCodec.decodeEntrySet(strXMLRequest,false,true);
 		System.out.println("");
 		for(int i = 0; i < listTestEntrySet2.size(); i++) {
 			System.out.println("EINTRAG " + i);
