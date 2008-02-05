@@ -296,7 +296,7 @@ public class Harvester {
 
 	/**
 	 * ensures that the given string is a correct url
-	 * @param optionValue the rpository-url
+	 * @param optionValue the repository-url
 	 * @return filtered url
 	 */
 	
