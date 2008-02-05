@@ -260,8 +260,9 @@ public class DBAccess implements DBAccessInterface {
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("1 parameter for select RawRecordData");
 				
-				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND repository_timestamp = (SELECT max(repository_timestamp) FROM dbo.RawData)");
+				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND repository_timestamp = (SELECT max(repository_timestamp) FROM dbo.RawData WHERE object_id = ?)");
 				pstmt.setBigDecimal (1, internalOID);
+				pstmt.setBigDecimal (2, internalOID);
 				
 			} else {
 				

@@ -118,6 +118,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				mapEntry.put ("object_id", Integer.toString (resultset.getInt (1)));
 				mapEntry.put ("repository_timestamp", resultset.getDate (2).toString ( ));
 				mapEntry.put ("data", resultset.getString (3));
+				
+			} else {
+				
+				logger.warn ("no results at all. Continueing...");
 			}
 			
 		} catch (SQLException ex) {
