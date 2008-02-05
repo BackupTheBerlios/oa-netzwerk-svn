@@ -121,7 +121,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 				
 				try {
 					
-					time = HelperMethods.extract_repository_datestamp (mapEntry.get (key));
+					time = HelperMethods.extract_datestamp (mapEntry.get (key));
 					
 				} catch (ParseException ex) {
 					

@@ -37,9 +37,6 @@ public class DBAccess implements DBAccessInterface {
 	
 	static Logger logger = Logger.getLogger (DBAccess.class);
 	
-	public static enum moduls {
-		Harvester, Aggregator
-	}
 	/**
 	 * @param args
 	 */
@@ -429,7 +426,6 @@ public class DBAccess implements DBAccessInterface {
 		}
 		
 		return null;
-		
 	}
 
 	/**

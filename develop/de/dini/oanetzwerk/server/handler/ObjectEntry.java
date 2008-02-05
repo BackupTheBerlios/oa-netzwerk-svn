@@ -142,7 +142,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				if (mapEntry.get (key) != null) {
 					try {
 						
-						repository_datestamp = HelperMethods.extract_repository_datestamp (mapEntry.get (key));
+						repository_datestamp = HelperMethods.extract_datestamp (mapEntry.get (key));
 						
 					} catch (ParseException ex) {
 						
@@ -227,7 +227,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 				try {
 					
-					repository_datestamp = HelperMethods.extract_repository_datestamp (mapEntry.get (key));
+					repository_datestamp = HelperMethods.extract_datestamp (mapEntry.get (key));
 					
 				} catch (ParseException ex) {
 					

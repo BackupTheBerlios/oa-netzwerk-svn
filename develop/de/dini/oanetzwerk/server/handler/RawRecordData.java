@@ -79,7 +79,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			try {
 				
-				repository_timestamp = HelperMethods.extract_repository_datestamp (path [3]);
+				repository_timestamp = HelperMethods.extract_datestamp (path [3]);
 				
 			} catch (ParseException ex) {
 				
@@ -156,7 +156,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		try {
 			
-			repository_timestamp = HelperMethods.extract_repository_datestamp (path [3]);
+			repository_timestamp = HelperMethods.extract_datestamp (path [3]);
 			
 		} catch (ParseException ex) {
 			

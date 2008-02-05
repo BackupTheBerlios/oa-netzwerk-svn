@@ -16,13 +16,20 @@ import java.util.Properties;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
-
 /**
  * @author Michael Kühn
  *
  */
 
 public class HelperMethods {
+	
+	/**
+	 * This method converts an InputStream into a String.
+	 *
+	 * @param stream the stream to be converted
+	 * @return the converted stream as String
+	 * @throws IOException
+	 */
 	
 	public static String stream2String (InputStream stream) throws IOException {
 		
@@ -45,6 +52,9 @@ public class HelperMethods {
 			try {
 				
 				in.close ( );
+				in = null;
+				line = null;
+				stream = null;
 				
 			} catch (IOException ex) {
 				
@@ -54,6 +64,16 @@ public class HelperMethods {
 		
 		return sb.toString ( );
 	}
+	
+	/**
+	 * This methods loads Properties from a given file. The properties must be XML.
+	 * 
+	 * @param file the file name from which the properties are read.
+	 * @return the properties read from file
+	 * @throws InvalidPropertiesFormatException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	
 	public static Properties loadPropertiesFromFile (String file) throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		
@@ -65,7 +85,9 @@ public class HelperMethods {
 	}
 
 	/**
-	 * @return
+	 * This method returns the todays date.
+	 * 
+	 * @return the date as {@link Date}
 	 */
 	
 	public static Date today ( ) {
@@ -76,7 +98,10 @@ public class HelperMethods {
 	}
 
 	/**
-	 * @param options
+	 * This method handles the printing of the help for the given syntax and options.
+	 * 
+	 * @param syntax the command line syntax
+	 * @param options the options instance {@link Options}
 	 */
 	
 	public static void printhelp (String syntax, Options options) {
@@ -85,16 +110,24 @@ public class HelperMethods {
 		formatter.printHelp (syntax, options, true);
 	}
 	
-	public static Date extract_repository_datestamp (String dateString) throws ParseException {
+	/**
+	 * This method extracts the datestamp from a string. The datestamp within the dateString 
+	 * MUST have the following format: yyyy-MM-dd
+	 * 
+	 * @param dateString the String from which the date will be extracted
+	 * @return the extracted {@link Date}
+	 * @throws ParseException
+	 */
+	
+	public static Date extract_datestamp (String dateString) throws ParseException {
 		
 		Date date = null;
-		//date = new Date (new SimpleDateFormat ("yyyy-MM-dd").parse (parseXML (data, "repository_datestamp")).getTime ( ));			
-		
-		//String dateString = parseXML (data, "repository_datestamp");
 		
 		java.util.Date sdf = new SimpleDateFormat ("yyyy-MM-dd").parse (dateString);
 		
 		date = new Date (sdf.getTime ( ));
+		
+		sdf = null;
 		
 		return date;
 	}

@@ -57,7 +57,7 @@ public class RestServer extends HttpServlet {
 		}
 		
 		String xml = "";
-		String classname = "de.dini.oanetzwerk." + path [1];
+		String classname = "de.dini.oanetzwerk.server.handler." + path [1];
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("Class to be loaded: " + classname);

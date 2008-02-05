@@ -35,7 +35,7 @@ public class RestClient {
 	
 	private static final int servletContainerPort = 8080;
 	private static final int servletContainerSSLPort = 8443;
-	private static final String servletPath = "restserver";
+	private static final String servletPath = "restserver/server/";
 	private boolean nossl;
 	private String url;
 	private String path;
@@ -185,19 +185,42 @@ public class RestClient {
 	private String sendrequest (HttpClient client, HttpMethod method) {
 
 		byte [ ] responseBody = null;
+		int errorcounter = 0;
+		boolean cont = false;
 		
 		try {
 			
-			int statusCode = client.executeMethod (method);
-			logger.info ("HttpStatusCode: " + statusCode);
+			do {
 			
-			if (statusCode != HttpStatus.SC_OK)
-				logger.debug("Statuscode : " + statusCode);//meckern
+				int statusCode = client.executeMethod (method);
+				logger.info ("HttpStatusCode: " + statusCode);
+				
+				if (statusCode != HttpStatus.SC_OK) {
+					
+					logger.error ("A http-error occured while processing the IDs from server " + url);
+					logger.error (method.getStatusText ( ));
+	
+					if (errorcounter++ > 10) {
+						
+						logger.error ("We got a http-error more than 10 times during communication with server " + url + " Now we are aborting communcation and trying to process the collected datas");
+						method = null;
+						
+						return null;
+						
+					} else {
+						
+						logger.info (errorcounter + " errors occured. Server: " + url);
+						continue;
+					}
+				}
+				
+			} while (cont);
 			
 			responseBody = method.getResponseBody ( );
 
 		} catch (IOException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			
 		} finally {
@@ -253,6 +276,8 @@ public class RestClient {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("connection prepared");
 		
+		buffer = null;
+		
 		return newclient;
 	}
 
@@ -304,7 +329,6 @@ public class RestClient {
 	
 	public final String PutData (String data) throws UnsupportedEncodingException {
 		
-		
 		System.out.println("PUT Request");
 		
 		HttpClient client = prepareConnection ( );
@@ -341,7 +365,6 @@ public class RestClient {
 	
 	public static void main (String [ ] args) {
 
-		// TODO Auto-generated method stub
-
+		// TODO: Testing stuff!
 	}
 }
