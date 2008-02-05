@@ -132,6 +132,11 @@ public class Aggregator {
 	@SuppressWarnings("static-access")
 	public static void main (String [ ] args) {
 		
+		Aggregator a = new Aggregator();
+		a.startAutoMode();
+		System.exit(0);
+		
+		
 		Options options = new Options ( );
 		
 		options.addOption ("h", false, "show help");
@@ -205,9 +210,51 @@ public class Aggregator {
 
 	private void startAutoMode() {
 		// TODO Auto-generated method stub
+	
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("loadRawData started");
+
+		String ressource = "WorkflowDB/2"; // + id;
+		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+		
+		String result = restclient.GetData ( );
+		// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus dem XML extrahiert werden
+
+		
+		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+
+		listentries = null;
+		mapEntry = null;
+		
+		listentries = RestXmlCodec.decodeEntrySet (result);
+		mapEntry = listentries.get (0);
+		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+		String key = "";
+		String value = "";
+		
+		while (it.hasNext ( )) {
+			
+			key = it.next ( );
+			
+			if (key.equalsIgnoreCase ("data")) {
+				value = mapEntry.get (key);
+				break;
+			}
+		}
+
+		System.out.println("erkannte Werte" + value);
+		logger.debug("recognized value: " + value);
+//		if (!value.equals("")) return value;
+//		else
+//			return null;
+//		
+		
 		
 	}
 
+	
+	
 
 
 	private void startSingleRecord(int id) {
@@ -217,44 +264,44 @@ public class Aggregator {
 		System.out.println("StartSingleRecord:  RecordId=" + this.currentRecordId);
 		
 		Object data = null;
-//		
-//		// laden der Rohdaten
-//		data = loadRawData(this.currentRecordId);
-//		if (data == null) {
-//			// Daten für dieses Objekt konnten nicht geladen werden
-//			logger.error ("loadRawData not successful");
-//			return;
-//		}
-//		// Auseinandernehmen der Rohdaten
-//		System.out.println("Geladene Daten: " + data);
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("retrieved data: " + data);
-//		}
-//		
-////		data = decodeBase64(((String) data).getBytes());
-//		data = decodeBase64(data);
-//		
-//		
-//		// Prüfen der Codierung der Rohdaten
-//		data = checkEncoding(data);
-//		if (data == null) {
-//			// beim Check des Encoding trat ein Fehler auf, keine weitere Behandlung möglich
-//			return;
-//		}
-//		
-//		// XML-Fehler müssen behoben werden
-//		data = checkXML(data);
-//		if (data == null) {
-//			// beim Prüfen auf XML-Fehler trat ein Fehler auf, keine weitere Bearbeitung möglich
-//			return;
-//		}		
-//		// Schreiben der bereinigten Rohdaten
-//		data = storeCleanedRawData(data);
-//		if (data == null) {
-//			// die bereinigten Rohdaten konnten nicht gespeichert werden, eine weitere Bearbeitung sollte nicht erfolgen
-//			return;
-//		}
-//		
+		
+		// laden der Rohdaten
+		data = loadRawData(this.currentRecordId);
+		if (data == null) {
+			// Daten für dieses Objekt konnten nicht geladen werden
+			logger.error ("loadRawData not successful");
+			return;
+		}
+		// Auseinandernehmen der Rohdaten
+		System.out.println("Geladene Daten: " + data);
+		if (logger.isDebugEnabled()) {
+			logger.debug("retrieved data: " + data);
+		}
+		
+//		data = decodeBase64(((String) data).getBytes());
+		data = decodeBase64(data);
+		
+		
+		// Prüfen der Codierung der Rohdaten
+		data = checkEncoding(data);
+		if (data == null) {
+			// beim Check des Encoding trat ein Fehler auf, keine weitere Behandlung möglich
+			return;
+		}
+		
+		// XML-Fehler müssen behoben werden
+		data = checkXML(data);
+		if (data == null) {
+			// beim Prüfen auf XML-Fehler trat ein Fehler auf, keine weitere Bearbeitung möglich
+			return;
+		}		
+		// Schreiben der bereinigten Rohdaten
+		data = storeCleanedRawData(data);
+		if (data == null) {
+			// die bereinigten Rohdaten konnten nicht gespeichert werden, eine weitere Bearbeitung sollte nicht erfolgen
+			return;
+		}
+		
 		// Auslesen der Metadaten
 		data = extractMetaData(data);
 		if (data == null) {
@@ -412,9 +459,9 @@ public class Aggregator {
 		
 //		return listEntrySet;
 		
+		return im;
 		
-		
-		return null;
+//		return null;
 	}
 
 
