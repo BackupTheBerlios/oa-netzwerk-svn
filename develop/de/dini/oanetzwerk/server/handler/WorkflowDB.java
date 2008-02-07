@@ -62,10 +62,12 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		
 		try {
 			
-			if (resultset.next ( )) {
+			while (resultset.next ( )) {
 				
-				mapEntry.put ("workflow_id", Integer.toString (resultset.getInt (1)));
-				mapEntry.put ("object_id", Integer.toString (resultset.getInt (2)));
+				mapEntry = new HashMap <String ,String> ( );
+				//mapEntry.put ("workflow_id", Integer.toString (resultset.getInt (1)));
+				mapEntry.put ("object_id", Integer.toString (resultset.getInt (1)));
+				listentries.add (mapEntry);
 			}
 			
 		} catch (SQLException ex) {
@@ -73,8 +75,6 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 			logger.error ("An error occured while processing Get Service: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
-		
-		listentries.add (mapEntry);
 		
 		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "Services");
 	}

@@ -402,11 +402,9 @@ public class DBAccess implements DBAccessInterface {
 			
 			pstmt = conn.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ? WHERE object_id = ?");
 			
-			//pstmt.setInt (1, repository_id);
 			pstmt.setDate (1, harvested);
 			pstmt.setDate (2, repository_datestamp);
 			pstmt.setInt (3, repository_id);
-			//pstmt.setString (4, repository_identifier);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("execute");
@@ -509,9 +507,12 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("SELECT w1.workflow_id, w1.object_id FROM WorkflowDB w1 WHERE w1.service_id = ? and (SELECT 1 FROM workflow_db w2 WHERE w2.object_id = w1.object_id and w2.service_id = ? and w2.time > w1.time) != 1");
-			pstmt.setBigDecimal (1, predecessor_id);
-			pstmt.setBigDecimal (2, service_id);
+			pstmt = conn.prepareStatement ("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? " + 
+											"WHERE (w1.time > (SELECT MAX(time) FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id) " +
+											"OR w1.object_id NOT IN (SELECT object_id FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id)) GROUP BY w1.object_id");
+			
+			//pstmt.setBigDecimal (1, predecessor_id);
+			pstmt.setBigDecimal (1, service_id);
 			
 			return pstmt.executeQuery ( );
 			
