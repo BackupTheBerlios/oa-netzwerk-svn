@@ -132,10 +132,10 @@ public class Aggregator {
 	@SuppressWarnings("static-access")
 	public static void main (String [ ] args) {
 		
-		Aggregator a = new Aggregator();
-		a.startAutoMode();
-		System.exit(0);
-		
+//		Aggregator a = new Aggregator();
+//		a.startAutoMode();
+//		System.exit(0);
+//		
 		
 		Options options = new Options ( );
 		
