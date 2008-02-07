@@ -18,10 +18,10 @@
     <!--appender-ref ref="MeinAppender" /-->
   </logger>
   <root>
-    <priority value="INFO" />
   <!--
-    <priority value="DEBUG" />
+    <priority value="INFO" />
   -->  
+    <priority value="DEBUG" />
     <appender-ref ref="MeinAppender" />
   </root>
 </log4j:configuration>

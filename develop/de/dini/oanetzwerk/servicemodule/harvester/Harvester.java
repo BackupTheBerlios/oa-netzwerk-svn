@@ -353,8 +353,6 @@ public class Harvester {
 				
 				logger.info ("ID-List HttpStatusCode: " + statuscode);
 				
-				client = null;
-				
 				if (statuscode != HttpStatus.SC_OK) {
 					
 					logger.error ("A http-error occured while processing the IDs from server " + url);

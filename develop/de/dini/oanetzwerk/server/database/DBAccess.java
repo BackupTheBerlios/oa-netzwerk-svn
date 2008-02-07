@@ -400,12 +400,13 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("UPDATE dbo.Object SET harvested=?, repository_datestamp=? WHERE object_id = ?");
+			pstmt = conn.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ? WHERE object_id = ?");
 			
-			pstmt.setInt (1, repository_id);
-			pstmt.setDate (2, harvested);
-			pstmt.setDate (3, repository_datestamp);
-			pstmt.setString (4, repository_identifier);
+			//pstmt.setInt (1, repository_id);
+			pstmt.setDate (1, harvested);
+			pstmt.setDate (2, repository_datestamp);
+			pstmt.setInt (3, repository_id);
+			//pstmt.setString (4, repository_identifier);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("execute");
