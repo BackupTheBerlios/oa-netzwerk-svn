@@ -58,5 +58,6 @@ public class Title {
 		else
 			this.lang = lang;
 	}
+	
 }
 

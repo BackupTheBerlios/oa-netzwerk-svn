@@ -1,12 +1,20 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
+import javax.xml.bind.annotation.XmlAttribute;
+
+import org.apache.commons.lang.StringUtils;
+
+//@XmlType( name="", propOrder={"number","firstname","lastname"})
 public class Author {
+	
 	String firstname;
-
 	String lastname;
-
 	int number;
 
+	public Author() {
+		
+	}
+	
 	public int init(String original, int number) {
 		int result = 0;
 
@@ -19,11 +27,19 @@ public class Author {
 		} else {
 			// wenn es nicht genug Elemente gibt, konnte nicht gesplittet werden, neuer Versuch am Leerzeichen
 			temp = original.split(" ");
+			if (temp.length >= 2) {
+				this.lastname = temp[1];
+				this.firstname = temp[0];
+			}
 		}
+
 		if (temp.length < 2) {
 			temp[0] = original;
 		}
 
+		firstname = StringUtils.trim(firstname);
+		lastname = StringUtils.trim(lastname);
+		
 		this.number = number;
 
 		return result;
@@ -45,6 +61,7 @@ public class Author {
 		this.lastname = lastname;
 	}
 
+	@XmlAttribute()
 	public int getNumber() {
 		return number;
 	}
@@ -60,4 +77,5 @@ public class Author {
 		return result;
 	}
 
+	
 }

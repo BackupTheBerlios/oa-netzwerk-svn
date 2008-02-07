@@ -1,6 +1,9 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
-public class DDCClassification extends Classification {
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+public class DDCClassification extends Classification  implements ClassificationInterface {
 	public DDCClassification(String value) {
 		super(value);
 		setSplitValue();
@@ -9,5 +12,9 @@ public class DDCClassification extends Classification {
 	public String toString() {
 		String result = "DDC Classification, value=" + this.value;
 		return result;
+	}
+	
+	public DDCClassification() {
+		
 	}
 }

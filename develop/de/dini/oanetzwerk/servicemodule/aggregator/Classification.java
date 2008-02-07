@@ -1,6 +1,9 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
-public abstract class  Classification {
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+public abstract class Classification implements ClassificationInterface {
+	
 	String value;
 	
 	public static boolean isDDC(String testvalue) {
@@ -43,5 +46,25 @@ public abstract class  Classification {
 	public Classification(String value) {
 		this.value = value;
 	}
+	
 	public Classification() {}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
+	static class Adapter extends XmlAdapter<Classification,ClassificationInterface> {
+		public ClassificationInterface unmarshal(Classification v) {
+			System.out.println("unmarshal(" + v +")");
+			return v;
+		}
+	    public Classification marshal(ClassificationInterface v) {
+			System.out.println("marshal(" + v +")");
+	    	return (Classification)v;
+	    }
+	}
 }

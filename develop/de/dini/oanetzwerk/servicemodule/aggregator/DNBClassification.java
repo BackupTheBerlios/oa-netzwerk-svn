@@ -1,6 +1,10 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
-public class DNBClassification extends Classification {
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+public class DNBClassification extends Classification  implements ClassificationInterface {
+	
 	public DNBClassification(String value) {
 		super(value);
 		setSplitValue();
@@ -11,4 +15,7 @@ public class DNBClassification extends Classification {
 		return result;
 	}
 
+	public DNBClassification() {
+		
+	}
 }

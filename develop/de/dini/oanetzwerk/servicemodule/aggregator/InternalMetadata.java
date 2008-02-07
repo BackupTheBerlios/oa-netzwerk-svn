@@ -3,8 +3,13 @@ package de.dini.oanetzwerk.servicemodule.aggregator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class InternalMetadata {
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement( namespace = "http://oanetzwerk.dini.de/" ) 
+public class InternalMetadata {
 
 	List<Title> titles;
 	int titleCounter = 0;
@@ -37,8 +42,6 @@ public class InternalMetadata {
 	
 	List<Classification> classificationList;
 	
-	
-	
 	public InternalMetadata() {
 		titles = new LinkedList<Title>();
 		titleCounter = 0;
@@ -69,8 +72,7 @@ public class InternalMetadata {
 		languageList = new LinkedList<Language>();
 		languageCounter = 0;
 
-		classificationList = new LinkedList<Classification>();
-		
+		classificationList = new LinkedList<Classification>();	
 	}
 	
 	public int addClassfication(String value) {
@@ -127,7 +129,7 @@ public class InternalMetadata {
 	public int addDateValue(String dateValue) {
 		int result = 0;
 		dateValueCounter ++;
-		result = this.addDateValue(dateValue, this.publisherCounter);
+		result = this.addDateValue(dateValue, this.dateValueCounter);
 		return result;
 	}
 	
@@ -200,8 +202,6 @@ public class InternalMetadata {
 		return result;
 	}	
 	
-	
-	
 	public int addDescription(String description) {
 		int result = 0;
 		descriptionCounter ++;
@@ -259,6 +259,218 @@ public class InternalMetadata {
 		return result;
 	}
 	
+	public int getAuthorCounter() {
+		return authorCounter;
+	}
+
+	public void setAuthorCounter(int authorCounter) {
+		this.authorCounter = authorCounter;
+	}
+
+	public List<Author> getAuthors() {
+		return authors;
+	}
+
+	public void setAuthors(List<Author> authors) {
+		this.authors = authors;
+	}
+
+	//@XmlElementWrapper
+    //@XmlAnyElement
+	public List<Classification> getClassificationList() {
+		return classificationList;
+	}
+
+	public void setClassificationList(List<Classification> classificationList) {
+		this.classificationList = classificationList;
+	}
+
+	public int getDateValueCounter() {
+		return dateValueCounter;
+	}
+
+	public void setDateValueCounter(int dateValueCounter) {
+		this.dateValueCounter = dateValueCounter;
+	}
+
+	public List<DateValue> getDateValues() {
+		return dateValues;
+	}
+
+	public void setDateValues(List<DateValue> dateValues) {
+		this.dateValues = dateValues;
+	}
+
+	public int getDescriptionCounter() {
+		return descriptionCounter;
+	}
+
+	public void setDescriptionCounter(int descriptionCounter) {
+		this.descriptionCounter = descriptionCounter;
+	}
+
+	public List<Description> getDescriptions() {
+		return descriptions;
+	}
+
+	public void setDescriptions(List<Description> descriptions) {
+		this.descriptions = descriptions;
+	}
+
+	public int getFormatCounter() {
+		return formatCounter;
+	}
+
+	public void setFormatCounter(int formatCounter) {
+		this.formatCounter = formatCounter;
+	}
+
+	public List<Format> getFormatList() {
+		return formatList;
+	}
+
+	public void setFormatList(List<Format> formatList) {
+		this.formatList = formatList;
+	}
+
+	public int getIdentifierCounter() {
+		return identifierCounter;
+	}
+
+	public void setIdentifierCounter(int identifierCounter) {
+		this.identifierCounter = identifierCounter;
+	}
+
+	public List<Identifier> getIdentifierList() {
+		return identifierList;
+	}
+
+	public void setIdentifierList(List<Identifier> identifierList) {
+		this.identifierList = identifierList;
+	}
+
+	@XmlElementWrapper( name = "keywords" )
+	@XmlElement ( name = "keyword" )
+	public List<Keyword> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(List<Keyword> keywords) {
+		this.keywords = keywords;
+	}
+
+	public int getLanguageCounter() {
+		return languageCounter;
+	}
+
+	public void setLanguageCounter(int languageCounter) {
+		this.languageCounter = languageCounter;
+	}
+
+	public List<Language> getLanguageList() {
+		return languageList;
+	}
+
+	public void setLanguageList(List<Language> languageList) {
+		this.languageList = languageList;
+	}
+
+	public int getPublisherCounter() {
+		return publisherCounter;
+	}
+
+	public void setPublisherCounter(int publisherCounter) {
+		this.publisherCounter = publisherCounter;
+	}
+
+	public List<Publisher> getPublishers() {
+		return publishers;
+	}
+
+	public void setPublishers(List<Publisher> publishers) {
+		this.publishers = publishers;
+	}
+
+	public int getTitleCounter() {
+		return titleCounter;
+	}
+
+	public void setTitleCounter(int titleCounter) {
+		this.titleCounter = titleCounter;
+	}
+
+	public List<Title> getTitles() {
+		return titles;
+	}
+
+	public void setTitles(List<Title> titles) {
+		this.titles = titles;
+	}
+
+	public int getTypeValueCounter() {
+		return typeValueCounter;
+	}
+
+	public void setTypeValueCounter(int typeValueCounter) {
+		this.typeValueCounter = typeValueCounter;
+	}
+
+	public List<TypeValue> getTypeValueList() {
+		return typeValueList;
+	}
+
+	public void setTypeValueList(List<TypeValue> typeValueList) {
+		this.typeValueList = typeValueList;
+	}
+
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("\n-- titles -- counter " +  titleCounter + " :\n");
+		for(Title title : titles) {
+			sb.append(title+"\n");
+		}
+		sb.append("\n-- authors -- counter " +  authorCounter + " :\n");
+		for(Author author : authors) {
+			sb.append(author+"\n");
+		}
+		sb.append("\n-- keywords:\n");
+		for(Keyword keyword : keywords) {
+			sb.append(keyword+"\n");
+		}
+		sb.append("\n-- descriptions -- counter " +  descriptionCounter + " :\n");
+		for(Description desc : descriptions) {
+			sb.append(desc+"\n");
+		}
+		sb.append("\n-- publishers -- counter " +  publisherCounter + " :\n");
+		for(Publisher publisher : publishers) {
+			sb.append(publisher+"\n");
+		}
+		sb.append("\n-- dateValues -- counter " +  dateValueCounter + " :\n");
+		for(DateValue dv : dateValues) {
+			sb.append(dv+"\n");
+		}
+		sb.append("\n-- formatList -- counter " +  formatCounter + " :\n");
+		for(Format format : formatList) {
+			sb.append(format+"\n");
+		}
+		sb.append("\n-- identifierList -- counter " +  identifierCounter + " :\n");
+		for(Identifier ident : identifierList) {
+			sb.append(ident+"\n");
+		}
+		sb.append("\n-- typeValueList -- counter " +  typeValueCounter + " :\n");
+		for(TypeValue tv : typeValueList) {
+			sb.append(tv+"\n");
+		}
+		sb.append("\n-- languageList -- counter " +  languageCounter + " :\n");
+		for(Language lang : languageList) {
+			sb.append(lang+"\n");
+		}
+		sb.append("\n-- classificationList:\n");
+		for(ClassificationInterface classification : classificationList) {
+			sb.append(classification+"\n");
+		}
+		return sb.toString();
+	}
 	
 	/**
 	 * @param args
