@@ -41,10 +41,6 @@ public class TestRestXmlCodec {
 //		System.out.println("\n\nDas mache ich NACH JEDEM Testfall.\n\n");
 	}
 	
-	@Ignore @Test
-	public void doTestcaseFoo() {
-//		System.out.println("\n\nMit @Ignore ist dieser Testfall abgeschaltet.\n\n");
-	}
 	
 	public void printDiff(List<HashMap<String,String>> input, List<HashMap<String,String>> output) {
 		for(int i = 0; i < input.size() && i < output.size(); i++) {
@@ -58,7 +54,10 @@ public class TestRestXmlCodec {
 				String oKey = (String)oIt.next();
 				String iValue = iEntry.get(iKey);
 				String oValue = oEntry.get(oKey);
-				System.out.println("   " + iKey + "=" + iValue + " <---> " + oKey + "=" + oValue);
+				System.out.println("   " + iKey + "=" + 
+						           (iValue==null ? "<NULL>" : ("\"" + iValue + "\"")) + 
+						           " <---> " + oKey + "=" +
+						           (oValue==null ? "<NULL>" : ("\"" + oValue + "\"")) );
 			}
 		}
 	}
@@ -126,15 +125,15 @@ public class TestRestXmlCodec {
 		mapTestEntry.put("existent", "null");
 		listTestEntrySet.add(mapTestEntry);
 		
-		String strXMLRequest = RestXmlCodec.encodeEntrySetRequestBody(listTestEntrySet,false,true);
+		String strXMLRequest = RestXmlCodec.encodeEntrySetRequestBody(listTestEntrySet);
 		System.out.println("MessageType == " + RestXmlCodec.fetchMessageType(strXMLRequest));
 		System.out.println(strXMLRequest);
 		
-		String strXMLResponse = RestXmlCodec.encodeEntrySetResponseBody(listTestEntrySet,"TestKeyword",false,true);
+		String strXMLResponse = RestXmlCodec.encodeEntrySetResponseBody(listTestEntrySet,"TestKeyword");
 		System.out.println("MessageType == " + RestXmlCodec.fetchMessageType(strXMLResponse));
 		System.out.println(strXMLResponse);
 	
-		List<HashMap<String,String>> listTestEntrySet2 = RestXmlCodec.decodeEntrySet(strXMLRequest,false,true);
+		List<HashMap<String,String>> listTestEntrySet2 = RestXmlCodec.decodeEntrySet(strXMLRequest);
 		System.out.println("");
 		for(int i = 0; i < listTestEntrySet2.size(); i++) {
 			System.out.println("EINTRAG " + i);

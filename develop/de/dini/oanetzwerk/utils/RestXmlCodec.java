@@ -20,6 +20,9 @@ public class RestXmlCodec {
 	
 	static Logger logger = Logger.getLogger (RestXmlCodec.class);
 	
+	final static boolean DEFAULT_FLAG_BASE64KEYS = true;
+	final static boolean DEFAULT_FLAG_BASE64VALUES = true;
+	
 	private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     // bisher nur lokal bei mir, könnte aber auf Scope1 deponiert werden (rm)
 	private static final String XML_ROOT = "<oanrest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"N:\\EIGENE~1\\_Aufgaben\\OA-NETZWERK\\OANREST2.xsd\">\n";
@@ -60,7 +63,7 @@ public class RestXmlCodec {
 	}
 
 	public static String encodeEntrySetRequestBody(List<HashMap<String, String>> listEntrySet) {
-		return encodeEntrySetRequestBody(listEntrySet, true, true);
+		return encodeEntrySetRequestBody(listEntrySet, DEFAULT_FLAG_BASE64KEYS, DEFAULT_FLAG_BASE64VALUES);
 	}
 	
 	/**
@@ -83,7 +86,7 @@ public class RestXmlCodec {
 	}	
 	
 	public static String encodeEntrySetResponseBody(List<HashMap<String, String>> listEntrySet, String keyword) {
-		return encodeEntrySetResponseBody(listEntrySet, keyword, true, true);
+		return encodeEntrySetResponseBody(listEntrySet, keyword, DEFAULT_FLAG_BASE64KEYS, DEFAULT_FLAG_BASE64VALUES);
 	}
 	
 	/**
@@ -188,7 +191,7 @@ public class RestXmlCodec {
 	}
 	
 	public static List<HashMap<String, String>> decodeEntrySet(String strXML) {
-		return decodeEntrySet(strXML, true, true);
+		return decodeEntrySet(strXML, DEFAULT_FLAG_BASE64KEYS, DEFAULT_FLAG_BASE64VALUES);
 	}
 	
 	//TODO: Fehlerkodierung als Hash ist ungeschickt, da Errors eine Liste ist
