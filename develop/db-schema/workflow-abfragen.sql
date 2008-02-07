@@ -22,3 +22,5 @@ SELECT w1.workflow_id, w1.service_id, so.predecessor_id FROM dbo.WorkflowDB w1 J
 SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id and so.service_id = 2 
 where (w1.time > (select MAX(time) from dbo.WorkflowDB where object_id = w1.object_id and service_id= so.service_id)
 or w1.object_id not in (select object_id from dbo.WorkflowDB where object_id = w1.object_id and service_id = so.service_id)) group by object_id
+
+

@@ -1058,7 +1058,7 @@
 </table>
 <table alias="" name="Description" remarks="" uid="edd9de:11638587e4b:-7f78">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="397" y="-51"/>
+<table-figure-bounds height="-1" width="-1" x="418" y="-118"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="edd9de:11638587e4b:-7f74">
 <column-description/>
