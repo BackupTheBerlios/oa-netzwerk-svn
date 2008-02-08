@@ -57,7 +57,7 @@ import de.dini.oanetzwerk.utils.RestXmlCodec;
 /**
  * @author Manuel Klatt-Kafemann
  * 
- * Aggregator:  extracts metadata and stores it into the db
+ * Aggregator:  extracts metadata and stores it in the db
  */
 
 /**
@@ -83,13 +83,10 @@ public class Aggregator {
 	 */
 	
 	
-	private int currentRecordId = 0;
-	
-	private int recordno = 0;
-	
-	private Properties props;
+	private int currentRecordId = 0; // stores object_id which is currently being worked on
+	private Properties props; // special aggregator settings like connecting server
 
-	private int errorretry = 0;
+	
 		
 	/**
 	 * Standard Constructor which initialises the log4j and loads necessary properties.
@@ -210,41 +207,53 @@ public class Aggregator {
 
 	private void startAutoMode() {
 		// TODO Auto-generated method stub
-	
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("loadRawData started");
 
-		String ressource = "WorkflowDB/2"; // + id;
+		// zuerst muss die Workflow-DB nach Arbeitsobjekten befragt werden
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Aggregator AutoMode started");
+
+		String ressource = "WorkflowDB/2/2"; // + id;
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 		
 		String result = restclient.GetData ( );
 		// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus dem XML extrahiert werden
-
 		
 		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+//		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
 
 		listentries = null;
-		mapEntry = null;
+//		mapEntry = null;
 		
 		listentries = RestXmlCodec.decodeEntrySet (result);
-		mapEntry = listentries.get (0);
+		
+		for (HashMap<String, String> mapEntry : listentries) {
+			
+		
+//		mapEntry = listentries.get (0);
 		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
 		String key = "";
 		String value = "";
 		
 		while (it.hasNext ( )) {
-			
 			key = it.next ( );
-			
-			if (key.equalsIgnoreCase ("data")) {
+			System.out.println("key: " + key);
+			// hier wird die Rueckgabe überprüft, ist es einen object_id, dann muss diese bearbeitet werden
+			if (key.equalsIgnoreCase ("object_id")) {
 				value = mapEntry.get (key);
-				break;
+				logger.debug("recognized value: " + value);		
+				if (!value.equals("")) 
+					startSingleRecord((new Integer(value).intValue()));
+//				else
+//					return null;
+
+//				startSingleRecord((new Integer(value).intValue());
+				
+//				break;
 			}
 		}
-
-		System.out.println("erkannte Werte" + value);
-		logger.debug("recognized value: " + value);
+		}
+//		System.out.println("erkannte Werte" + value);
+//		logger.debug("recognized value: " + value);
 //		if (!value.equals("")) return value;
 //		else
 //			return null;
@@ -253,8 +262,6 @@ public class Aggregator {
 		
 	}
 
-	
-	
 
 
 	private void startSingleRecord(int id) {
@@ -323,8 +330,6 @@ public class Aggregator {
 		
 	}
 
-
-
 	/**
 	 * @param data Daten, die als Base64-String ankommen und decodiert werden sollen
 	 * @return byte[] enthält base64-decodierten String
@@ -350,14 +355,10 @@ public class Aggregator {
 		
 	}
 
-
-
 	private Object storeMetaData(Object data) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
 
 	@SuppressWarnings("unchecked")
 	private Object extractMetaData(Object data) {
@@ -371,9 +372,9 @@ public class Aggregator {
 		
 		Namespace namespace = Namespace.getNamespace("oai_dc","http://www.openarchives.org/OAI/2.0/oai_dc/");
 		try {		
-			InputSource is = new InputSource("testdata.xml");
-			doc = builder.build(is);
-//			doc = builder.build(new InputSource (new StringReader((String) data)));
+//			InputSource is = new InputSource("testdata.xml");
+//			doc = builder.build(is);
+			doc = builder.build(new InputSource (new StringReader((String) data)));
 			
 			logger.debug("** doc generated");
 
@@ -545,56 +546,8 @@ public class Aggregator {
 
 
 
-	/**
-	 * The date which comes from the command line will be filtered and observed.
-	 * 
-	 * @param optionValue the date string which is filtered
-	 * @return the proper date string when it could be extracted null otherwise
-	 */
-	
-	private static String filterDate (String optionValue) {
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("filtered Date: " + optionValue);
-		
-		//TODO: proper implementation
-		
-		return optionValue;
-	}
 
-	/**
-	 * The option whether a full or only an update harvest will be processed will be discovered.
-	 * If update is specified the date from which on has to be set, otherwise an error occurs.
-	 * 
-	 * @param optionValue should be "full" for a full-harvest or "update".
-	 * @param cmd should has option "updateDate" if "update" is set
-	 * @return true when full harvest is discovered false when update is discovered
-	 * @throws ParseException when update is specified and no date is set
-	 */
-	
-	private static boolean filterBool (String optionValue, CommandLine cmd) throws ParseException {
-		
-		
-		if (optionValue.equalsIgnoreCase ("full")) {
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("filteredBool: " + Boolean.TRUE);
-			
-			return true;
-			
-		} else {
-			
-			if (cmd.hasOption ('d') || cmd.hasOption ("updateDate")) {
-				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("filteredBool: " + Boolean.FALSE);
-				
-				return false;
-				
-			} else
-				throw new ParseException ("UpdateHarvest without a Date from which on the harvest shall be start isn't allowed!");
-		}
-	}
+
 	
 	/**
 	 * ensures the right value for the repository ID.
@@ -603,7 +556,6 @@ public class Aggregator {
 	 * @return an integer which represents the repository ID
 	 * @throws ParseException when the repository ID is negative
 	 */
-	
 	private static int filterId (String optionValue) throws ParseException {
 		
 		int i = new Integer (optionValue);

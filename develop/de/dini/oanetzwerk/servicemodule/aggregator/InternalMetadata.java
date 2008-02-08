@@ -75,6 +75,7 @@ public class InternalMetadata {
 		classificationList = new LinkedList<Classification>();	
 	}
 	
+	@Deprecated
 	public int addClassfication(String value) {
 		int result = 0;
 		Classification cl = null;
@@ -97,12 +98,31 @@ public class InternalMetadata {
 		
 	}
 	
+	public int addClassfication(Classification cl) {
+		int result = 0;
+		if (cl != null) {
+			this.classificationList.add(cl);
+			System.out.println(cl);
+		}
+		return result;
+	}
+	
+	public int addKeyword(Keyword value) {
+		int result = 0;
+		if (value != null) {
+			this.keywords.add(value);
+		}
+		return result;
+	}
+	
+	@Deprecated
 	public int addKeyword(String keyword) {
 		int result = 0;
 		result = this.addKeyword(keyword, null);
 		return result;
 	}
-	
+
+	@Deprecated
 	public int addKeyword(String keyword, String language) {
 		int result = 0;
 		Keyword temp = new Keyword(keyword, language);
@@ -111,13 +131,23 @@ public class InternalMetadata {
 		return result;
 	}
 
+	public int addPublisher(Publisher value) {
+		int result = 0;
+		if (value != null) {
+			this.publishers.add(value);
+		}
+		return result;
+	}
+	
+	@Deprecated
 	public int addPublisher(String name) {
 		int result = 0;
 		publisherCounter ++;
 		result = this.addPublisher(name, this.publisherCounter);
 		return result;
 	}
-	
+
+	@Deprecated
 	public int addPublisher(String name, int number) {
 		int result = 0;
 		Publisher temp = new Publisher(name, number);
@@ -126,13 +156,27 @@ public class InternalMetadata {
 		return result;
 	}
 
+
+	public int addDateValue(DateValue value) {
+		int result = 0;
+		if (value != null) {
+			this.dateValues.add(value);
+		}
+		return result;
+	}
+
+	
+	
+	
+	@Deprecated
 	public int addDateValue(String dateValue) {
 		int result = 0;
 		dateValueCounter ++;
 		result = this.addDateValue(dateValue, this.dateValueCounter);
 		return result;
 	}
-	
+
+	@Deprecated
 	public int addDateValue(String dateValue, int number) {
 		int result = 0;
 		DateValue temp = new DateValue(dateValue, number);
@@ -140,14 +184,26 @@ public class InternalMetadata {
 		System.out.println(temp);
 		return result;
 	}
+	
+	
+	public int addIdentifier(Identifier value) {
+		int result = 0;
+		if (value != null) {
+			this.identifierList.add(value);
+		}
+		return result;
+	}
 
+	
+	@Deprecated
 	public int addIdentifier(String identifier) {
 		int result = 0;
 		identifierCounter ++;
 		result = this.addIdentifier(identifier, this.identifierCounter);
 		return result;
 	}
-	
+
+	@Deprecated
 	public int addIdentifier(String identifier, int number) {
 		int result = 0;
 		Identifier temp = new Identifier(identifier, number);
@@ -156,13 +212,24 @@ public class InternalMetadata {
 		return result;
 	}
 
+	public int addTypeValue(TypeValue value) {
+		int result = 0;
+		if (value != null) {
+			this.typeValueList.add(value);
+		}
+		return result;
+	}
+
+	
+	@Deprecated
 	public int addTypeValue(String value) {
 		int result = 0;
 		typeValueCounter ++;
 		result = this.addTypeValue(value, this.typeValueCounter);
 		return result;
 	}
-	
+
+	@Deprecated
 	public int addTypeValue(String value, int number) {
 		int result = 0;
 		TypeValue temp = new TypeValue(value, number);
@@ -171,6 +238,16 @@ public class InternalMetadata {
 		return result;
 	}
 
+	public int addLanguage(Language value) {
+		int result = 0;
+		if (value != null) {
+			this.languageList.add(value);
+		}
+		return result;
+	}
+
+	
+	@Deprecated
 	public int addLanguage(String value) {
 		int result = 0;
 		languageCounter ++;
@@ -178,6 +255,7 @@ public class InternalMetadata {
 		return result;
 	}
 	
+	@Deprecated
 	public int addLanguage(String value, int number) {
 		int result = 0;
 		Language temp = new Language(value, number);
@@ -187,13 +265,23 @@ public class InternalMetadata {
 	}
 	
 	
+	public int addFormat(Format value) {
+		int result = 0;
+		if (value != null) {
+			this.formatList.add(value);
+		}
+		return result;
+	}
+
+	
+	@Deprecated
 	public int addFormat(String format) {
 		int result = 0;
 		this.formatCounter ++;
 		result = this.addFormat(format, this.formatCounter);
 		return result;
 	}
-	
+	@Deprecated
 	public int addFormat(String format, int number) {
 		int result = 0;
 		Format temp = new Format(format, number);
@@ -202,6 +290,16 @@ public class InternalMetadata {
 		return result;
 	}	
 	
+	
+	public int addDescription(Description value) {
+		int result = 0;
+		if (value != null) {
+			this.descriptions.add(value);
+		}
+		return result;
+	}
+	
+	@Deprecated
 	public int addDescription(String description) {
 		int result = 0;
 		descriptionCounter ++;
@@ -209,6 +307,7 @@ public class InternalMetadata {
 		return result;
 	}
 	
+	@Deprecated
 	public int addDescription(String description, String language, int number) {
 		int result = 0;
 		Description temp = new Description(description,language, number);
@@ -220,6 +319,15 @@ public class InternalMetadata {
 
 	}
 	
+	public int addTitle(Title title) {
+		int result = 0;
+		if (title != null) {
+			this.titles.add(title);
+		}
+		return result;
+	}
+	
+	@Deprecated
 	public int addTitle(String title, String qualifier, String lang) {
 		// es wurde der Titel-Zähler nicht angegeben, deshalb wird der interne Zähler erhöht und übergeben
 		int result = 0;
@@ -228,6 +336,7 @@ public class InternalMetadata {
 		return result;
 	}
 	
+	@Deprecated
 	public int addTitle(String title, String qualifier, String lang, int number) {
 		int result = 0;
 
@@ -243,6 +352,15 @@ public class InternalMetadata {
 		return result;
 	}
 	
+	public int addAuthor(Author author) {
+		int result = 0;
+		if (author != null) {
+			this.authors.add(author);
+		}
+		return result;
+	}
+	
+	@Deprecated
 	public int addAuthor(String original) {
 		int result = 0;
 		authorCounter ++;
@@ -250,6 +368,7 @@ public class InternalMetadata {
 		return result;
 	}
 	
+	@Deprecated
 	public int addAuthor(String original, int number) {
 		int result = 0;
 		Author temp = new Author();
