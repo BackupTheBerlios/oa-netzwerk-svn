@@ -300,17 +300,18 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertRawRecordData(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public String insertRawRecordData (BigDecimal internalOID, Date datestamp,
-			String blobbb) {
+			String blobbb, String metaDataFormat) {
 		
 		PreparedStatement pstmt = null;
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, repository_timestamp, data) VALUES (?, ?, ?)");
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.RawData (object_id, repository_timestamp, data, MetaDataFormat) VALUES (?, ?, ?, ?)");
 			
 			pstmt.setBigDecimal (1, internalOID);
 			pstmt.setDate (2, datestamp);
 			pstmt.setString (3, blobbb);
+			pstmt.setString (4, metaDataFormat);
 			pstmt.executeUpdate ( );
 			
 		} catch (SQLException sqlex) {
@@ -335,12 +336,13 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (repository_id, harvested, repository_datestamp, repository_identifier) VALUES (?, ?, ?, ?)");
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (repository_id, harvested, repository_datestamp, repository_identifier, testdata) VALUES (?, ?, ?, ?, ?)");
 			
 			pstmt.setInt (1, repository_id);
 			pstmt.setDate (2, harvested);
 			pstmt.setDate (3, repository_datestamp);
 			pstmt.setString (4, repository_identifier);
+			pstmt.setBoolean (5, true);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("execute");
@@ -400,11 +402,12 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ? WHERE object_id = ?");
+			pstmt = conn.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ?, testdata = ? WHERE object_id = ?");
 			
 			pstmt.setDate (1, harvested);
 			pstmt.setDate (2, repository_datestamp);
-			pstmt.setInt (3, repository_id);
+			pstmt.setBoolean (3, true);
+			pstmt.setInt (4, repository_id);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("execute");

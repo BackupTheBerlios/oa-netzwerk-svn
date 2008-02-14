@@ -62,13 +62,14 @@ public interface DBAccessInterface {
 	public abstract ResultSet selectRawRecordData (BigDecimal object_id);
 
 	/**
+	 * @param metaDataFormat 
 	 * @param string
 	 * @param string2
 	 * @param data
 	 */
 	
 	public abstract String insertRawRecordData (BigDecimal object_id, Date datestamp,
-			String blobbb);
+			String blobbb, String metaDataFormat);
 
 	/**
 	 * @param repository_id

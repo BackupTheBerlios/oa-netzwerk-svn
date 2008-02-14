@@ -157,6 +157,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		BigDecimal object_id = new BigDecimal (path [2]);
 		Date repository_timestamp = null;
+		String metaDataFormat = path [4];
 		
 		try {
 			
@@ -174,9 +175,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("The following values will be inserted:\n\tinternal OID = " + object_id +
 					"\n\tRepository Datestamp = " + repository_timestamp +
-					"\n\tData = " + data);
+					"\n\tData = " + data +
+					"\n\tMetaDataFormat = " + metaDataFormat);
 
-		String response = db.insertRawRecordData (object_id, repository_timestamp, data);
+		String response = db.insertRawRecordData (object_id, repository_timestamp, data, metaDataFormat);
 					
 		db.closeConnection ( );
 		

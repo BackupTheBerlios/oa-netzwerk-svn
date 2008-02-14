@@ -75,6 +75,8 @@ public class Harvester {
 	private Properties props = null;
 
 	private int errorretry = 0;
+	
+	private String metaDataFormat ="oai_dc";
 		
 	/**
 	 * Standard Constructor which initialises the log4j and loads necessary properties.
@@ -235,10 +237,39 @@ public class Harvester {
 	
 	private static String filterDate (String optionValue) {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("filtered Date: " + optionValue);
-		
-		//TODO: proper implementation
+		if (optionValue.matches ("\\d\\d\\d\\d-\\d\\d-\\d\\d")) {
+			
+			String [ ] today = HelperMethods.today ( ).toString ( ).split ("-");
+			String [ ] dateComponents = optionValue.split ("-");
+			
+			if ( (new Integer (dateComponents [0]) < 1377) || (new Integer (dateComponents [0]) > new Integer (today [0]))) {
+				
+				logger.error ("Year must be between 1377 and " + today [0]);
+				logger.error ("You can not search in the future or in the past before the first book was printed!");
+				System.err.println ("Year must be between 1377 and " + today [0]);
+				
+				System.exit (10);
+				
+			} else ;
+			
+			if ( (new Integer (dateComponents [1]) < 1) || (new Integer (dateComponents [1]) > 12)) {
+				
+				logger.error ("The year has only 12 months. You tried to get month number " + dateComponents [1]);
+				System.err.println ("The year has only 12 months. You tried to get month number " + dateComponents [1]);
+				
+				System.exit (10);
+			}
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("filtered Date: " + optionValue);
+			
+		} else {
+			
+			logger.error ("Date Format wrong! Must be yyyy-mm-dd and not " + optionValue);
+			System.err.println ("Date Format wrong! Must be yyyy-mm-dd and not " + optionValue);
+			
+			System.exit (10);
+		}
 		
 		return optionValue;
 	}
@@ -327,6 +358,29 @@ public class Harvester {
 		String resumptionToken = null;
 		Boolean resumptionSet = true;
 		int errorcounter = 0;
+		int statuscode = 0;
+		
+		try {
+			
+			getmethod = new GetMethod (url + "?verb=ListMetadataFormats");
+			statuscode = client.executeMethod (getmethod);
+			if (statuscode != HttpStatus.SC_OK) {
+				
+				
+			} else {
+			
+				getmethod.getResponseBodyAsStream ( );
+			}
+			
+			
+		} catch (HttpException ex1) {
+			
+			ex1.printStackTrace ( );
+			
+		} catch (IOException ex1) {
+			
+			ex1.printStackTrace ( );
+		}
 		
 		if (!fullharvest) {
 			
@@ -346,10 +400,11 @@ public class Harvester {
 		while (resumptionSet) {
 		
 			client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
+			statuscode = 0;
 			
 			try {
 				
-				int statuscode = client.executeMethod (getmethod);
+				statuscode = client.executeMethod (getmethod);
 				
 				logger.info ("ID-List HttpStatusCode: " + statuscode);
 				
@@ -739,7 +794,7 @@ public class Harvester {
 			}
 			
 			client = new HttpClient ( );
-			method = new GetMethod (url + "?verb=GetRecord&metadataPrefix=oai_dc&identifier=" + ids.get (i).getExternalOID ( ));
+			method = new GetMethod (url + "?verb=GetRecord&metadataPrefix=" + metaDataFormat + "&identifier=" + ids.get (i).getExternalOID ( ));
 			client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 			
 			try {
@@ -753,7 +808,7 @@ public class Harvester {
 					;
 				}
 				
-				uploadRawData (HelperMethods.stream2String (method.getResponseBodyAsStream ( )), ids.get (i).getInternalOID ( ), ids.get (i).getDatestamp ( ));
+				uploadRawData (HelperMethods.stream2String (method.getResponseBodyAsStream ( )), ids.get (i).getInternalOID ( ), ids.get (i).getDatestamp ( ), metaDataFormat);
 				
 			} catch (HttpException ex) {
 				
@@ -781,12 +836,12 @@ public class Harvester {
 	 * @throws HttpException 
 	 */
 	
-	private void uploadRawData (String data, int internalOID, Date datestamp) throws HttpException, IOException {
+	private void uploadRawData (String data, int internalOID, Date datestamp, String metaDataFormat) throws HttpException, IOException {
 		
 		GregorianCalendar cal = new GregorianCalendar ( );
 		cal.setTime (datestamp);
 		
-		String resource = "RawRecordData/" + internalOID + "/" + cal.get (Calendar.YEAR) + "-" + cal.get (Calendar.MONTH + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/";
+		String resource = "RawRecordData/" + internalOID + "/" + cal.get (Calendar.YEAR) + "-" + cal.get (Calendar.MONTH + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/" + metaDataFormat + "/";
 		
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 		restclient.PutData (new String (Base64.encodeBase64 (data.getBytes ("UTF-8"))));
