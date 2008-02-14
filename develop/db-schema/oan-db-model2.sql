@@ -209,7 +209,7 @@ CREATE TABLE dbo.RawData (
      , repository_timestamp DATETIME NOT NULL
      , MetaDataFormat VARCHAR(255) NOT NULL
      , data TEXT
-     , precleaned_data TEXT
+     , precleaned_data TEXT NULL
      , PRIMARY KEY (object_id, repository_timestamp, MetaDataFormat)
 )
 

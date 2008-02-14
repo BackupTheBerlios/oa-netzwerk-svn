@@ -42,6 +42,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 //import org.jdom.Content;
+import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.Namespace;
 //import org.jdom.Text;
@@ -378,9 +379,46 @@ public class Aggregator {
 			
 			logger.debug("** doc generated");
 
-			// Auswertung der SET-Struktur aus dem Header
-			ElementFilter filter = new ElementFilter("header");
+			ElementFilter filter = new ElementFilter("OAI-PMH");
+			String metadataFormat = null;
 			Iterator iterator = doc.getDescendants(filter);
+			// Bestimmung, welches Metadatenformat vorliegt
+			while (iterator.hasNext()) {
+				Element contentSet = (Element) iterator.next();
+				List contentList = contentSet.getChildren();
+				Iterator iteratorContent = contentList.iterator();
+				while (iteratorContent.hasNext()) {
+					Element contentEntry = (Element) iteratorContent.next();
+					System.out.println(contentEntry.getName()+"\n");
+					if (contentEntry.getName().equals("request")) {
+						if ((contentEntry.getAttribute("metadataPrefix").getValue()).equals("oai_dc")) {
+							metadataFormat = "oai_dc";
+							System.out.println("oai_dc found");
+						}
+						System.out.println("request found");
+					}
+				}
+				
+				
+
+			}
+			
+			// Auswertung des ermittelten Metadatenformats
+			
+			if (metadataFormat.equals("oai_dc")) {
+				System.out.println("IMFGeneratorDCSimple wird gestartet");
+				IMFGeneratorDCSimple imGen = new IMFGeneratorDCSimple();
+				im = imGen.generateIMF((String) data);
+			}
+			
+			if (im != null) return im;
+			
+			
+			System.exit(-1);
+			
+			filter = new ElementFilter("header");
+			iterator = doc.getDescendants(filter);
+			// Auswertung der SET-Struktur aus dem Header
 			while (iterator.hasNext()) {
 //				System.out.println("** <header> found");
 				if (logger.isDebugEnabled()) {

@@ -11,10 +11,8 @@ import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 
-public class IMFGeneratorDCSimple {
+public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 
-	private String xmlData;
-	private InternalMetadata im;
 	
 	private int titleCounter = 0;
 	private int authorCounter = 0;
@@ -32,8 +30,8 @@ public class IMFGeneratorDCSimple {
 	static Logger logger = Logger.getLogger (IMFGeneratorDCSimple.class);
 	
 	public IMFGeneratorDCSimple() {
-		xmlData = null;
-		im = new InternalMetadata();
+		super();
+
 		titleCounter = 0;
 		authorCounter = 0;
 		descriptionCounter = 0;
@@ -64,6 +62,7 @@ public class IMFGeneratorDCSimple {
 			Iterator iteratorHeader = headerList.iterator();
 			while (iteratorHeader.hasNext()) {
 				Element headerEntry = (Element) iteratorHeader.next();
+				System.out.println("Name: " + headerEntry.getName() + "\t value: " + headerEntry.getText());
 				if (headerEntry.getName().equals("setSpec")) {
 					Classification cl = this.extractClassification(headerEntry.getValue());
 					if (cl != null) {
@@ -233,7 +232,7 @@ public class IMFGeneratorDCSimple {
 	@SuppressWarnings("unchecked")
 	public InternalMetadata generateIMF(String data) {
 
-		this.im = new InternalMetadata();
+//		this.im = new InternalMetadata();
 		//		InternalMetadata im = new InternalMetadata();
 		this.xmlData = data;
 
@@ -242,10 +241,11 @@ public class IMFGeneratorDCSimple {
 		
 		Namespace namespace = Namespace.getNamespace("oai_dc","http://www.openarchives.org/OAI/2.0/oai_dc/");
 		try {		
-			InputSource is = new InputSource("testdata.xml");
-			doc = builder.build(is);
-//			doc = builder.build(new InputSource (new StringReader((String) data)));
+//			InputSource is = new InputSource("testdata.xml");
+//			doc = builder.build(is);
+			doc = builder.build(new InputSource (new StringReader((String) data)));
 		
+			// Set-Informationen laden
 			this.addSetInformation(doc);
 			
 			logger.debug("** doc generated");
