@@ -180,6 +180,13 @@
 <variant type-name-pattern="DATETIME"/>
 </data-type>
 </column>
+<column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="MetaDataFormat" remarks="speichert Metadatenformat, dass über OAI übertragen wird, in dem die Daten in &quot;data&quot; vorliegen" uid="1c40f51:11817173bdb:-7fdd">
+<column-description/>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
+</data-type>
+</column>
 <column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="data" remarks="" uid="4f5403:1161f7e7d4d:-7f60">
 <column-description/>
 <data-type jdbc-type="-1" literal-prefix="'" literal-suffix="'" name="TEXT" selected-variant-pattern="TEXT">
@@ -197,6 +204,7 @@
 <primary-key-description/>
 <primary-key-column name="object_id"/>
 <primary-key-column name="repository_timestamp"/>
+<primary-key-column name="MetaDataFormat"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>

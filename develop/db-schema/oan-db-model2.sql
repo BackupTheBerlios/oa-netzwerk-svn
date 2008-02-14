@@ -202,13 +202,16 @@ CREATE TABLE dbo.WorkflowDB (
      , PRIMARY KEY (workflow_id)
 );
 
+
+
 CREATE TABLE dbo.RawData (
        object_id NUMERIC(38) NOT NULL
      , repository_timestamp DATETIME NOT NULL
-     , data TEXT NOT NULL
-     , precleaned_data TEXT NULL
-     , PRIMARY KEY (object_id, repository_timestamp)
-);
+     , MetaDataFormat VARCHAR(255) NOT NULL
+     , data TEXT
+     , precleaned_data TEXT
+     , PRIMARY KEY (object_id, repository_timestamp, MetaDataFormat)
+)
 
 CREATE TABLE dbo.TypeValue (
        type_id NUMERIC(38) IDENTITY
