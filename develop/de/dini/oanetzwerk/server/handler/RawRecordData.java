@@ -115,9 +115,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 							"\n\trepository_timestamp = " + resultset.getDate (2).toString ( ) +
 							"\n\tdata = " + resultset.getString (3));
 				
-				mapEntry.put ("object_id", Integer.toString (resultset.getInt (1)));
-				mapEntry.put ("repository_timestamp", resultset.getDate (2).toString ( ));
-				mapEntry.put ("data", resultset.getString (3));
+				mapEntry.put ("object_id", Integer.toString (resultset.getInt ("object_id")));
+				mapEntry.put ("repository_timestamp", resultset.getDate ("repository_timestamp").toString ( ));
+				//TODO: MetaDataFormat
+				mapEntry.put ("data", resultset.getString ("data"));
 				
 			} else {
 				

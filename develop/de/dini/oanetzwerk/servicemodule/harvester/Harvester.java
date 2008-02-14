@@ -9,25 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -242,26 +230,45 @@ public class Harvester {
 			String [ ] today = HelperMethods.today ( ).toString ( ).split ("-");
 			String [ ] dateComponents = optionValue.split ("-");
 			
-			if ( (new Integer (dateComponents [0]) < 1377) || (new Integer (dateComponents [0]) > new Integer (today [0]))) {
+			if ( (new Integer (dateComponents [0]) < 1970) || (new Integer (dateComponents [0]) > new Integer (today [0]))) {
 				
-				logger.error ("Year must be between 1377 and " + today [0]);
-				logger.error ("You can not search in the future or in the past before the first book was printed!");
-				System.err.println ("Year must be between 1377 and " + today [0]);
+				logger.error ("Year must be between 1970 and " + today [0] + ".\nYou asked for the year " + dateComponents [0]);
+				System.err.println ("Year must be between 1970 and " + today [0] + ".\nYou asked for the year " + dateComponents [0]);
+				
+				System.exit (10);
+				
+			} else if ( (new Integer (dateComponents [1]) < 1) || (new Integer (dateComponents [1]) > 12)) {
+				
+				logger.error ("The year has only 12 months. You asked for month number " + dateComponents [1]);
+				System.err.println ("The year has only 12 months. You asked for month number " + dateComponents [1]);
 				
 				System.exit (10);
 				
-			} else ;
-			
-			if ( (new Integer (dateComponents [1]) < 1) || (new Integer (dateComponents [1]) > 12)) {
+			} else if ( (new Integer (dateComponents [2]) < 1) || (new Integer (dateComponents [2]) > 31)) {
 				
-				logger.error ("The year has only 12 months. You tried to get month number " + dateComponents [1]);
-				System.err.println ("The year has only 12 months. You tried to get month number " + dateComponents [1]);
+				logger.error ("Months have the max of 31, 30, 29 or 28 days. You asked for day number " + dateComponents [2]);
+				System.err.println ("Months have the max of 31, 30, 29 or 28 days. You asked for day number " + dateComponents [2]);
 				
 				System.exit (10);
+				
+			} else {
+				
+				java.sql.Date date2test = null;
+				
+				try {
+					
+					date2test = HelperMethods.extract_datestamp (optionValue);
+					
+				} catch (java.text.ParseException ex) {
+					
+					ex.printStackTrace ( );
+				}
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("filtered Date: " + date2test.toString ( ));
+				
+				return date2test.toString ( );
 			}
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("filtered Date: " + optionValue);
 			
 		} else {
 			
@@ -271,7 +278,7 @@ public class Harvester {
 			System.exit (10);
 		}
 		
-		return optionValue;
+		return null;
 	}
 
 	/**
@@ -353,85 +360,28 @@ public class Harvester {
 	
 	private void processIds (String url, boolean fullharvest, String updateFrom, int repositoryId ) {
 		
-		HttpClient client = new HttpClient ( );
-		GetMethod getmethod = null;
 		String resumptionToken = null;
 		Boolean resumptionSet = true;
-		int errorcounter = 0;
-		int statuscode = 0;
+		InputStream response = null;
 		
 		try {
 			
-			getmethod = new GetMethod (url + "?verb=ListMetadataFormats");
-			statuscode = client.executeMethod (getmethod);
-			if (statuscode != HttpStatus.SC_OK) {
-				
-				
-			} else {
-			
-				getmethod.getResponseBodyAsStream ( );
-			}
-			
-			
-		} catch (HttpException ex1) {
-			
-			ex1.printStackTrace ( );
-			
-		} catch (IOException ex1) {
-			
-			ex1.printStackTrace ( );
-		}
-		
-		if (!fullharvest) {
-			
-			getmethod = new GetMethod (url + "?verb=ListIdentifiers&metadataPrefix=oai_dc&from=" + updateFrom);
+			response = listMetaDataFormats (url);
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("Update Harvest: " + url + getmethod.getQueryString ( ));
+				logger.debug ("metaDataFormats found");
 			
-		} else {
+			response = null;
+			 
+			if (!fullharvest)
+				response = listIdentifiers (url, "oai_dc", updateFrom);
 			
-			getmethod = new GetMethod (url + "?verb=ListIdentifiers&metadataPrefix=oai_dc");
+			else
+				response = listIdentifiers (url, "oai_dc");
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("Full Harvest: " + url + getmethod.getQueryString ( ));
-		}
-		
-		while (resumptionSet) {
-		
-			client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
-			statuscode = 0;
-			
-			try {
+			while (resumptionSet) {
 				
-				statuscode = client.executeMethod (getmethod);
-				
-				logger.info ("ID-List HttpStatusCode: " + statuscode);
-				
-				if (statuscode != HttpStatus.SC_OK) {
-					
-					logger.error ("A http-error occured while processing the IDs from server " + url);
-					logger.error (getmethod.getStatusText ( ));
-					
-					if (errorcounter++ > 10) {
-						
-						logger.error ("We got a http-error more than 10 times during communication with server " + url + " Now we are aborting communcation and trying to process the collected datas");
-						getmethod = null;
-						resumptionToken = null;
-						return;
-						
-					} else {
-						
-						logger.info (errorcounter + " errors occured. Server: " + url);
-						continue;
-					}
-				}
-				
-				if (errorcounter > 0)
-					errorcounter--;
-				
-				resumptionToken = extractIds (getmethod.getResponseBodyAsStream ( ), repositoryId);
-				getmethod = null;
+				resumptionToken = extractIds (response, repositoryId);
 				
 				if (resumptionToken != null) {
 					
@@ -448,13 +398,12 @@ public class Harvester {
 						resumptionSet = false;
 						
 					} else {
-						
-						getmethod = new GetMethod (url + "?verb=ListIdentifiers&resumptionToken=" + resumptionToken);
+												
+						listIdentifiers (url, "resumptionToken", resumptionToken);
 						
 						if (logger.isDebugEnabled ( )) {
 							
 							logger.debug ("ResumptionToken: " + resumptionToken);
-							logger.debug ("ResumptionQuery: " + url + getmethod.getQueryString ( ));
 							
 						} else;
 					}
@@ -470,32 +419,109 @@ public class Harvester {
 					
 					resumptionSet = false;
 				}
+			} 
+		
+		} catch (HttpException ex) {
 			
-			} catch (HttpException ex) {
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.errorretry++;
+			
+			if (errorretry > 5) {
 				
-				logger.error (ex.getLocalizedMessage ( ));
-				ex.printStackTrace ( );
-				this.errorretry++;
-				
-				if (errorretry > 5) {
-					
-					client = null;
-					getmethod = null;
-					resumptionToken = null;
-					System.exit (5);
-				}
-				
-			} catch (IOException ex) {
-				
-				logger.error (ex.getLocalizedMessage ( ));
-				ex.printStackTrace ( );
-				
-				this.errorretry++;
-				
-				if (errorretry > 5)
-					System.exit (5);
+				resumptionToken = null;
+				System.exit (5);
 			}
+			
+		} catch (IOException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+			this.errorretry++;
+			
+			if (errorretry > 5)
+				System.exit (5);
 		}
+	}
+
+	/**
+	 * @param url
+	 * @return
+	 * @throws IOException 
+	 * @throws HttpException 
+	 */
+	
+	private InputStream listMetaDataFormats (String url) throws HttpException, IOException {
+				
+		return repositoryAnswer (url, "listMetaDataFormat", "");
+	}
+
+	/**
+	 * @param url
+	 * @param string
+	 * @throws IOException 
+	 * @throws HttpException 
+	 */
+	
+	private InputStream listIdentifiers (String url, String metaDataFormat) throws HttpException, IOException {
+		
+		return repositoryAnswer (url, "ListIdentifiers", "&metadataPrefix=" + metaDataFormat);
+	}
+
+	/**
+	 * @param url
+	 * @param string
+	 * @param updateFrom
+	 * @throws IOException 
+	 * @throws HttpException 
+	 */
+	
+	private InputStream listIdentifiers (String url, String metaDataFormat, String updateFrom) throws HttpException, IOException {
+		
+		if (metaDataFormat.equalsIgnoreCase ("resumptionToken")) {
+			
+			String resumptionToken = updateFrom;
+			
+			return repositoryAnswer (url, "ListIdentifiers", "&resumptionToken=" + resumptionToken);
+			
+		} else {
+			
+			return repositoryAnswer (url, "ListIdentifiers", "&metadataPrefix=" + metaDataFormat + "&from=" + updateFrom);	
+		}
+	}
+
+	/**
+	 * @param url
+	 * @param string
+	 * @param string2
+	 * @return
+	 * @throws IOException 
+	 * @throws HttpException 
+	 */
+	
+	private InputStream repositoryAnswer (String url, String verb,
+			String parameter) throws HttpException, IOException {
+		
+		int statuscode = 0;
+		HttpClient client = new HttpClient ( );
+		GetMethod getmethod = new GetMethod (url + "?verb=" + verb + parameter);
+		
+		client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug (url + getmethod.getQueryString ( ));
+		
+		statuscode = client.executeMethod (getmethod);
+		
+		logger.info ("HttpStatusCode: " + statuscode);
+		
+		if (statuscode != HttpStatus.SC_OK) {
+			
+		}
+		
+		client = null;
+		return getmethod.getResponseBodyAsStream ( );
 	}
 
 	/**
