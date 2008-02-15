@@ -393,9 +393,9 @@ public class Aggregator {
 					if (contentEntry.getName().equals("request")) {
 						if ((contentEntry.getAttribute("metadataPrefix").getValue()).equals("oai_dc")) {
 							metadataFormat = "oai_dc";
-							System.out.println("oai_dc found");
+//							System.out.println("oai_dc found");
 						}
-						System.out.println("request found");
+//						System.out.println("request found");
 					}
 				}
 				
@@ -406,90 +406,16 @@ public class Aggregator {
 			// Auswertung des ermittelten Metadatenformats
 			
 			if (metadataFormat.equals("oai_dc")) {
-				System.out.println("IMFGeneratorDCSimple wird gestartet");
+//				System.out.println("IMFGeneratorDCSimple wird gestartet");
 				IMFGeneratorDCSimple imGen = new IMFGeneratorDCSimple();
 				im = imGen.generateIMF((String) data);
 			}
 			
-			if (im != null) return im;
+//			if (im != null) return im;
 			
 			
-			System.exit(-1);
-			
-			filter = new ElementFilter("header");
-			iterator = doc.getDescendants(filter);
-			// Auswertung der SET-Struktur aus dem Header
-			while (iterator.hasNext()) {
-//				System.out.println("** <header> found");
-				if (logger.isDebugEnabled()) {
-					logger.debug("** <header> found");
-				}
-				Element headerSet = (Element) iterator.next();
-				List headerList = headerSet.getChildren();
-				Iterator iteratorHeader = headerList.iterator();
-				while (iteratorHeader.hasNext()) {
-					Element headerEntry = (Element) iteratorHeader.next();
-					if (headerEntry.getName().equals("setSpec")) {
-						im.addClassfication(headerEntry.getValue());
-					}
-				}
-			}
-			
-			// nach <oai_dc:dc> suchen, da darunter der gesamte Metadaten-Eintrag steht
-			filter = new ElementFilter("dc",namespace);
-			iterator = doc.getDescendants(filter);
-			while (iterator.hasNext()) {
-				System.out.println("** <oai_dc:dc> found");
-				logger.debug("** <oai_dc:dc> found");
+	
 				
-				Element metadataSet = (Element) iterator.next();
-				List metadataList = metadataSet.getChildren();
-				Iterator iteratorMetadata = metadataList.iterator(); 
-				while (iteratorMetadata.hasNext()) {
-						Element metadataEntry = (Element) iteratorMetadata.next();
-//						System.out.println("Element: " + metadataEntry.getName());
-						if (logger.isDebugEnabled()) {
-							logger.debug("Element: " + metadataEntry.getName());
-						}
-
-						
-						if (metadataEntry.getName().equals("title")) {
-							im.addTitle(metadataEntry.getText(), "Title", null);
-						}
-						if (metadataEntry.getName().equals("creator")) {
-							im.addAuthor(metadataEntry.getText());
-						}
-						if (metadataEntry.getName().equals("subject")) {
-							im.addKeyword(metadataEntry.getText());
-						}
-						if (metadataEntry.getName().equals("description")) {
-							im.addDescription(metadataEntry.getText());
-						}
-						if (metadataEntry.getName().equals("publisher")) {
-							im.addPublisher(metadataEntry.getText());
-						}
-						if (metadataEntry.getName().equals("date")) {
-							im.addDateValue(metadataEntry.getText());
-						}
-						if (metadataEntry.getName().equals("type")) {
-							im.addTypeValue(metadataEntry.getText());
-						}
-						if (metadataEntry.getName().equals("format")) {
-							im.addFormat(metadataEntry.getText());
-						}
-						if (metadataEntry.getName().equals("identifier")) {
-							im.addIdentifier(metadataEntry.getText());
-						}
-						if (metadataEntry.getName().equals("language")) {
-							im.addLanguage(metadataEntry.getText());
-						}
-
-
-
-						
-				}
-				
-			}
 		} catch(Exception e) {
 			System.err.println("Fehler beim Parsen");
 			System.err.println("error while decoding XML String: " + e);
