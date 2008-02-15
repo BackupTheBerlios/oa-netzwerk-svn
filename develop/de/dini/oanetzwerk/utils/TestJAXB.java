@@ -17,6 +17,24 @@ public class TestJAXB {
 
 	public static JAXBContext context;
 		
+	public static final String xmlDataWithEntities = 
+		"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+		"<ns2:club xmlns:ns2=\"http://tutego.com/\">\n" +
+		"    <dj>\n" +
+		"        <name>John Peel</name>\n" +
+		"    </dj>\n" +
+		"    <numberOfPersons>1234</numberOfPersons>\n" +
+		"    <djstaff>\n" +
+		"        <name>\"Test&amp;quot; &quot; &gt; \\rth{}</name>\n" +
+		"    </djstaff>\n" +
+		"    <djstaff>\n" +
+		"        <name>K&amp;uuml;.. &#176;&#5677;&#1766;&#1476;</name>\n" +
+		"    </djstaff>\n" +
+		"    <djstaff>\n" +
+		"        <name>ABC &lt;&#60; &amp;cent;&apos;&amp;nbsp;&amp;copy;&amp;divide;</name>\n" +
+		"    </djstaff>\n" +
+		"</ns2:club>\n";
+	
 	@BeforeClass
 	public static void init() {
 		try {
@@ -62,7 +80,7 @@ public class TestJAXB {
 		
 		try {
 			Unmarshaller um = context.createUnmarshaller(); 
-			Club club2 = (Club) um.unmarshal( new StringReader(sw.toString()) ); 
+			Club club2 = (Club) um.unmarshal( new StringReader(sw.toString()) ); 			
 			System.out.println( club2.getDj().getDjName() ); 
 			System.out.println( club2.getNumberOfPersons() );
 			for(DJ staffmember : club2.getStaff()) {
@@ -74,4 +92,19 @@ public class TestJAXB {
 	}
 
 
+	@Test
+	public void testUnmarshallEntities() {
+		System.out.println("\n" + xmlDataWithEntities+"\n");
+		try {
+			Unmarshaller um = context.createUnmarshaller(); 
+			Club club2 = (Club) um.unmarshal( new StringReader(xmlDataWithEntities) );
+			System.out.println( club2.getDj().getDjName() ); 
+			System.out.println( club2.getNumberOfPersons() );
+			for(DJ staffmember : club2.getStaff()) {
+				System.out.println( staffmember.getDjName() );
+			}
+		} catch(JAXBException jex) {
+			System.err.println(jex);
+		}
+	}
 }
