@@ -46,7 +46,7 @@ public class InternalMetadataJAXBMarshaller {
 	}
 	
 	public InternalMetadata unmarshall (String xmldata) {
-		
+		init ( );
 		InternalMetadata result = null;
 		
 		try {

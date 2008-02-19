@@ -55,11 +55,42 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	protected String getKeyWord (String [ ] path) {
 
-		// TODO Auto-generated method stub
-		return null;
+		InternalMetadata myIM = new InternalMetadata();
+		myIM.addAuthor("Max Mustermann");
+		myIM.addAuthor("Mustermann, Max");
+		myIM.addAuthor("Test Spitze<>");
+		myIM.addClassfication("foo:bar");
+		myIM.addClassfication("pub-type:foo1");
+		myIM.addClassfication("ddc:foo2");
+		myIM.addClassfication("dnb:foo3");
+		myIM.addDateValue("DateValue");
+		myIM.addDescription("Beschreibung xyz");
+		myIM.addFormat("Format");
+		myIM.addIdentifier("Identifier");
+		myIM.addKeyword("Schlüsselwort1");
+		myIM.addKeyword("Schlüsselwort2");
+		myIM.addKeyword("Schlüsselwort3");
+		myIM.addLanguage("ger");
+		myIM.addPublisher("Publisher");
+		myIM.addTitle("Mustertitel", null, null);
+		myIM.addTypeValue("TypeValue");
+		
+		InternalMetadataJAXBMarshaller marshaller = new InternalMetadataJAXBMarshaller();
+		String xmlData;
+		xmlData = marshaller.marshall (myIM);
+		
+		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		
+		mapEntry.put ("internalmetadata", xmlData);
+		listentries.add (mapEntry);
+		String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
+		
+		return requestxml;
 	}
 
 	/**
@@ -110,7 +141,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		}
 		
 		
-		List <Title> titlelist = imf.getTitles ( );
+//		List <Title> titlelist = imf.getTitles ( );
 		//List <Author> authors;
 		//List <Keyword> keywords = imf.getKeywords ( );
 //		List <Description> descriptions = imf.getDescriptions ( );
@@ -126,8 +157,8 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		db.setAutoCom (false);
 		
-		for (Title title : titlelist)			
-			db.insertTitle (object_id, title.getQualifier ( ), title.getTitle ( ), title.getLang ( ));
+		//for (Title title : titlelist)			
+			//db.insertTitle (object_id, title.getQualifier ( ), title.getTitle ( ), title.getLang ( ));
 		
 		//for (Keyword keyword : keywords)
 		//	db.insertkeyword ( );
