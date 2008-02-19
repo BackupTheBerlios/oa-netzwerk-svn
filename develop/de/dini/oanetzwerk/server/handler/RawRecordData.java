@@ -31,22 +31,26 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class RawRecordData extends
 AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
+	/**
+	 * 
+	 */
+	
 	static Logger logger = Logger.getLogger (RawRecordData.class);
+	
+	/**
+	 * 
+	 */
+	
 	private ResultSet resultset;
 	
 	/**
-	 * @param args
+	 * 
 	 */
 	
 	public RawRecordData ( ) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug (RawRecordData.class.getName ( ) + " is called");
-	}
-	
-	public static void main (String [ ] args) {
-		
-		//TODO: Testing stuff
 	}
 	
 	/**
@@ -58,13 +62,14 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	protected String deleteKeyWord (String [ ] path) {
 		
 		//NOT IMPLEMENTED
-		logger.warn ("postObjectEntryID is not implemented");
+		logger.warn ("deleteRawRecordData is not implemented");
 		throw new NotImplementedException ( );
 	}
 
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
+	
 	@Override
 	protected String getKeyWord (String [ ] path) {
 		
@@ -145,7 +150,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	protected String postKeyWord (String [ ] path, String data) {
 		
 		//NOT IMPLEMENTED
-		logger.warn ("postObjectEntryID is not implemented");
+		logger.warn ("postRawRecordData is not implemented");
 		throw new NotImplementedException ( );
 	}
 
@@ -192,5 +197,14 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		listentries.add (mapEntry);
 		
 		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "RawRecordData");
+	}
+	
+	/**
+	 * @param args
+	 */
+	
+	public static void main (String [ ] args) {
+		
+		//TODO: Testing stuff
 	}
 }
