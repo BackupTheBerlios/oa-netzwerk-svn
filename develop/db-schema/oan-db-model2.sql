@@ -161,7 +161,7 @@ CREATE TABLE dbo.DateValues (
 CREATE TABLE dbo.Description (
        object_id NUMERIC(38) NOT NULL
      , number INTEGER NOT NULL
-     , abstract DATETIME
+     , abstract TEXT
      , lang VARCHAR(3)
      , PRIMARY KEY (object_id, number)
 );

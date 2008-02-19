@@ -376,8 +376,8 @@ public class Aggregator {
 		String xmlData;
 		xmlData = marshaller.marshall(im);
 		
-//		System.out.println("### XMLDATA ###");
-//		System.out.println(xmlData);
+		System.out.println("### XMLDATA ###");
+		System.out.println(xmlData);
 		
 		// Rest-Client initialisieren
 		String resource = "InternalMetadataEntry/" + this.currentRecordId;
@@ -407,26 +407,29 @@ public class Aggregator {
 			}
 			
 			
-//			listentries = null;
-//			mapEntry = null;
-//			restclient = null;
-//			
-//			listentries = RestXmlCodec.decodeEntrySet (result);
-//			mapEntry = listentries.get (0);
-//			Iterator <String> it = mapEntry.keySet ( ).iterator ( );
-//			String key = "";
-//			String value = "";
-//			
-//			while (it.hasNext ( )) {
-//				
-//				key = it.next ( );
-//				
-//				if (key.equalsIgnoreCase ("oid")) {
-//					
-//					value = mapEntry.get (key);
-//					break;
-//				}
-//			}
+			listentries = null;
+			mapEntry = null;
+			restclient = null;
+			
+			listentries = RestXmlCodec.decodeEntrySet (result);
+			mapEntry = listentries.get (0);
+			Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+			String key = "";
+			String value = "";
+			
+			while (it.hasNext ( )) {
+				
+				key = it.next ( );
+				System.out.println("key = " + key);
+				
+				if (key.equalsIgnoreCase ("oid")) {
+					
+					
+					value = mapEntry.get (key);
+					System.out.println(value);
+					break;
+				}
+			}
 //			
 //			int intoid = new Integer (value);
 //			

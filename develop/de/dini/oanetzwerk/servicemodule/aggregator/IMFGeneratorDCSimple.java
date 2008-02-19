@@ -129,8 +129,25 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 			title = new Title();
 			title.setTitle(value);
 			title.setNumber(this.titleCounter);
+			title.setQualifier(this.titleQualifier(this.titleCounter));
 		}
 		return title;
+	}
+	
+	private String titleQualifier(int titlenumber) {
+		String result = null;
+		
+		switch (titlenumber) {
+			case 1 : 
+				result = "main";
+				break;
+			case 2 :
+				result = "subtitle";
+				break;
+			default :
+				result = ""+titlenumber;
+		}	
+		return result;
 	}
 	
 	private Description extractDescription(String value) {
@@ -234,16 +251,16 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 				temp = value.split(" ");
 				if (temp.length < 2) {
 					// Split nicht erfolgreich, es gibt wohl nur einen Nachnamen
-					author.setLastname(value);
+					author.setLastname(value.trim());
 				} else {
-					author.setFirstname(temp[0]);
-					author.setLastname(temp[1]);
+					author.setFirstname(temp[0].trim());
+					author.setLastname(temp[1].trim());
 				}
 			
 			} else {
 				// Split nach , war erfolgreich, Format wird als Nachname, Vorname angenommen
-				author.setFirstname(temp[1]);
-				author.setLastname(temp[0]);
+				author.setFirstname(temp[1].trim());
+				author.setLastname(temp[0].trim());
 		
 			}
 			author.setNumber(this.authorCounter);
