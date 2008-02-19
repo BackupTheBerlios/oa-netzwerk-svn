@@ -48,12 +48,13 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 	@SuppressWarnings("unchecked")
 	private int addSetInformation(org.jdom.Document doc) {
 		int result = 0;
-
+		if (logger.isDebugEnabled()) {
+			logger.debug("** Auswertung SET-Struktur im <header>");
+		}
 		// Auswertung der SET-Struktur aus dem Header
 		ElementFilter filter = new ElementFilter("header");
 		Iterator iterator = doc.getDescendants(filter);
 		while (iterator.hasNext()) {
-//			System.out.println("** <header> found");
 			if (logger.isDebugEnabled()) {
 				logger.debug("** <header> found");
 			}
@@ -62,13 +63,13 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 			Iterator iteratorHeader = headerList.iterator();
 			while (iteratorHeader.hasNext()) {
 				Element headerEntry = (Element) iteratorHeader.next();
-				System.out.println("Name: " + headerEntry.getName() + "\t value: " + headerEntry.getText());
 				if (headerEntry.getName().equals("setSpec")) {
 					Classification cl = this.extractClassification(headerEntry.getValue());
 					if (cl != null) {
 						this.im.addClassfication(cl);
+					} else {
+						// cl wurde nicht erzeugt, muss noch als DEBUG raus
 					}
-//					this.im.addClassfication(headerEntry.getValue());
 				}
 			}
 		}
@@ -78,14 +79,18 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 	private Classification extractClassification(String metadataEntry) {
 		Classification result = null;
 		String value = null;
-		String[] temp = metadataEntry.split(":");
-		if (temp.length < 2) {
-			// Fehler, keine korrekte DNB-Codierung bzw. kein Wert
-			// ÜBergangsweise wird der gesamte Eintrag eingestellt
-			value = metadataEntry;
-		} else {
-			value = value.split(":")[1];
-		}
+		
+		value = metadataEntry;
+//		String[] temp = metadataEntry.split(":");
+//		if (temp.length < 2) {
+//			// Fehler, keine korrekte DNB-Codierung bzw. kein Wert
+//			// ÜBergangsweise wird der gesamte Eintrag eingestellt
+//			value = metadataEntry;
+//		} else {
+////			value = temp[1];
+//			value = metadataEntry;
+//			//			value = value.split(":")[1];
+//		}
 		
 		if (Classification.isDDC(value)) {
 			result = new DDCClassification(value);
