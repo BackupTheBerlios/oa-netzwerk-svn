@@ -11,6 +11,23 @@ import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 
+import de.dini.oanetzwerk.utils.imf.Author;
+import de.dini.oanetzwerk.utils.imf.Classification;
+import de.dini.oanetzwerk.utils.imf.DDCClassification;
+import de.dini.oanetzwerk.utils.imf.DINISetClassification;
+import de.dini.oanetzwerk.utils.imf.DNBClassification;
+import de.dini.oanetzwerk.utils.imf.DateValue;
+import de.dini.oanetzwerk.utils.imf.Description;
+import de.dini.oanetzwerk.utils.imf.Format;
+import de.dini.oanetzwerk.utils.imf.Identifier;
+import de.dini.oanetzwerk.utils.imf.InternalMetadata;
+import de.dini.oanetzwerk.utils.imf.Keyword;
+import de.dini.oanetzwerk.utils.imf.Language;
+import de.dini.oanetzwerk.utils.imf.OtherClassification;
+import de.dini.oanetzwerk.utils.imf.Publisher;
+import de.dini.oanetzwerk.utils.imf.Title;
+import de.dini.oanetzwerk.utils.imf.TypeValue;
+
 public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 
 	

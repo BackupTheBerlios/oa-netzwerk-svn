@@ -1,4 +1,4 @@
-package de.dini.oanetzwerk.servicemodule.aggregator;
+package de.dini.oanetzwerk.utils.imf;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -45,6 +45,23 @@ public class InternalMetadataJAXBMarshaller {
 		return result;
 	}
 	
+	public InternalMetadata unmarshall (String xmldata) {
+		
+		InternalMetadata result = null;
+		
+		try {
+			
+			Unmarshaller um = context.createUnmarshaller ( ); 
+			um.setEventHandler (new javax.xml.bind.helpers.DefaultValidationEventHandler ( ));
+			result = (InternalMetadata) um.unmarshal (new StringReader (xmldata));
+			
+		} catch (JAXBException ex) {
+			
+			ex.printStackTrace ( );
+		}
+		
+		return result;
+	}
 	
 	private InternalMetadata createTestInstance() {
 		InternalMetadata myIM = new InternalMetadata();

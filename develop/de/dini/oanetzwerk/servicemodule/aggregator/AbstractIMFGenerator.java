@@ -1,5 +1,7 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
+import de.dini.oanetzwerk.utils.imf.InternalMetadata;
+
 abstract class AbstractIMFGenerator {
 
 	protected String xmlData;

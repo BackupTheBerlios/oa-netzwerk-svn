@@ -1,4 +1,4 @@
-package de.dini.oanetzwerk.servicemodule.aggregator;
+package de.dini.oanetzwerk.utils.imf;
 
 import java.util.LinkedList;
 import java.util.List;

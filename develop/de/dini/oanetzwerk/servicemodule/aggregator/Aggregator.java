@@ -49,6 +49,8 @@ import org.jdom.input.SAXBuilder;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.RestXmlCodec;
+import de.dini.oanetzwerk.utils.imf.InternalMetadata;
+import de.dini.oanetzwerk.utils.imf.InternalMetadataJAXBMarshaller;
 
 /**
  * @author Manuel Klatt-Kafemann

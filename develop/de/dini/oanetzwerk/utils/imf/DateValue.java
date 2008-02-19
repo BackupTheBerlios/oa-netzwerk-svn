@@ -1,4 +1,4 @@
-package de.dini.oanetzwerk.servicemodule.aggregator;
+package de.dini.oanetzwerk.utils.imf;
 
 public class DateValue {
 	String dateValue;

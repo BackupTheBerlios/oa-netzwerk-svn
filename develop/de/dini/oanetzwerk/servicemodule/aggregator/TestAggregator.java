@@ -11,6 +11,12 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.dini.oanetzwerk.utils.imf.DDCClassification;
+import de.dini.oanetzwerk.utils.imf.DINISetClassification;
+import de.dini.oanetzwerk.utils.imf.DNBClassification;
+import de.dini.oanetzwerk.utils.imf.InternalMetadata;
+import de.dini.oanetzwerk.utils.imf.OtherClassification;
+
 public class TestAggregator {
 
 	public static JAXBContext context;

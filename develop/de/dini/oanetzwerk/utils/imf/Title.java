@@ -1,4 +1,4 @@
-package de.dini.oanetzwerk.servicemodule.aggregator;
+package de.dini.oanetzwerk.utils.imf;
 
 public class Title {
 	String title;

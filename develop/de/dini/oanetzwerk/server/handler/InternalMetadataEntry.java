@@ -7,6 +7,7 @@ package de.dini.oanetzwerk.server.handler;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -16,7 +17,6 @@ import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.utils.RestXmlCodec;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 
 /**
  * @author Michael Kühn
@@ -86,14 +86,30 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("");
 		
+		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		
+		listentries = RestXmlCodec.decodeEntrySet (data);
+		mapEntry = listentries.get (0);
+		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+		String key = "";
+		
+		while (it.hasNext ( )) {
+			
+			key = it.next ( );
+			
+			if (key.equalsIgnoreCase ("internalmetadata")) {
+				
+			} else continue;
+		}
 		//String response = db.insertInternalMetadataEntry ( );
 		
 		db.closeConnection ( );
 		
-		object_id = null;
+		//object_id = null;
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+/*		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );*/
 		
 		//TODO: use real values from the database!
 		mapEntry.put ("oid", object_id.toPlainString ( ));

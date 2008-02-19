@@ -1,4 +1,4 @@
-package de.dini.oanetzwerk.servicemodule.aggregator;
+package de.dini.oanetzwerk.utils.imf;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
