@@ -193,6 +193,41 @@ public class DBAccess implements DBAccessInterface {
 		}
 	}
 	
+	public boolean commit ( ) {
+		
+		boolean result = true;
+		
+		try {
+			
+			conn.commit ( );
+			
+		} catch (SQLException ex) {
+			
+			result = false;
+			ex.printStackTrace ( );
+		}
+		
+		return result;
+	}
+
+	public boolean rollback ( ) {
+		
+		boolean result = true;
+		
+		try {
+			
+			conn.rollback ( );
+			
+		} catch (SQLException ex) {
+			
+			result = false;
+			ex.printStackTrace ( );
+		}
+		
+		return result;
+	}
+
+	
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getConnetion()
 	 */
@@ -538,7 +573,7 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("INSERT INTO WorkflowDB (object_id, time, service_id) VALUES (?, ?, ?)");
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.WorkflowDB (object_id, time, service_id) VALUES (?, ?, ?)");
 			
 			pstmt.setBigDecimal (1, object_id);
 			pstmt.setDate (2, time);
@@ -564,5 +599,129 @@ public class DBAccess implements DBAccessInterface {
 		}
 		
 		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertTitle(java.lang.String, int, java.lang.String, java.lang.String)
+	 */
+	
+	@Override
+	public ResultSet insertTitle (BigDecimal object_id, String qualifier,
+			String title, String lang) {
+		
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Titles (object_id, qualifier, title, lang) VALUES (?,?,?,?)");
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setString (2, qualifier);
+			pstmt.setString (3, title);
+			pstmt.setString (4, lang);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+/*			pstmt = conn.prepareStatement ("SELECT object_id From dbo.Titles WHERE qualifier = ? AND object_id = ?");
+			pstmt.setString (1, qualifier);
+			pstmt.setBigDecimal (2, object_id);
+			
+			return pstmt.executeQuery ( );*/
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+		
+		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertDateValue(java.math.BigDecimal, int, java.sql.Date)
+	 */
+	
+	@Override
+	public void insertDateValue (BigDecimal object_id, int number,
+			Date value) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.DateValues (object_id, number, value) VALUES (?,?,?)");
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setInt (2, number);
+			pstmt.setDate (3, value);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertFormat(java.math.BigDecimal, int, java.lang.String)
+	 */
+	
+	@Override
+	public void insertFormat (BigDecimal object_id, int number, String schema_f) {
+		
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Format (object_id, number, schema_f) VALUES (?,?,?)");
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setInt (2, number);
+			pstmt.setString (3, schema_f);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertIdentifier(java.math.BigDecimal, int, java.lang.String)
+	 */
+	
+	@Override
+	public void insertIdentifier (BigDecimal object_id, int number,
+			String identifier) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Identifier (object_id, number, identifier) VALUES (?,?,?)");
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setInt (2, number);
+			pstmt.setString (3, identifier);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
 	}
 } //end of class

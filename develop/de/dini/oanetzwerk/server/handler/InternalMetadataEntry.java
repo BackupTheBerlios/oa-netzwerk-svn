@@ -5,6 +5,7 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,7 +15,9 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
+import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.RestXmlCodec;
+import de.dini.oanetzwerk.utils.imf.*;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -93,6 +96,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		mapEntry = listentries.get (0);
 		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
 		String key = "";
+		InternalMetadata imf = null;
 		
 		while (it.hasNext ( )) {
 			
@@ -100,18 +104,63 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			if (key.equalsIgnoreCase ("internalmetadata")) {
 				
+				imf = new InternalMetadataJAXBMarshaller ( ).unmarshall (mapEntry.get (key));
+				
 			} else continue;
 		}
-		//String response = db.insertInternalMetadataEntry ( );
+		
+		
+		List <Title> titlelist = imf.getTitles ( );
+		//List <Author> authors;
+		//List <Keyword> keywords = imf.getKeywords ( );
+//		List <Description> descriptions = imf.getDescriptions ( );
+		//List <Publisher> publishers;
+		List <DateValue> dateValues = imf.getDateValues ( );
+		List <Format> formatList = imf.getFormatList ( );
+		List <Identifier> identifierList = imf.getIdentifierList ( );
+//		List <TypeValue> typeValueList = imf.getTypeValueList ( );
+		//List <Language> languageList;
+		//List<Classification> classificationList;
+		
+		//ResultSet resultset;
+		
+		db.setAutoCom (false);
+		
+		for (Title title : titlelist)			
+			db.insertTitle (object_id, title.getQualifier ( ), title.getTitle ( ), title.getLang ( ));
+		
+		//for (Keyword keyword : keywords)
+		//	db.insertkeyword ( );
+		
+		//for (Description description : descriptions)
+		//	db.insertDescription ( );
+		
+		for (DateValue dateValue : dateValues)
+			
+			try {
+				
+				db.insertDateValue (object_id, dateValue.getNumber ( ), HelperMethods.extract_datestamp (dateValue.getDateValue ( )));
+				
+			} catch (ParseException ex) {
+				
+				logger.error ("Datestamp with datevalue incorrect");
+				ex.printStackTrace();
+			}
+		
+		for (Format format : formatList)
+			db.insertFormat (object_id, format.getNumber ( ), format.getSchema_f ( ));
+		
+		for (Identifier identifier : identifierList)
+			db.insertIdentifier (object_id, identifier.getNumber ( ), identifier.getIdentifier ( ));
+		
+		//for (TypeValue typeValue : typeValueList)
+		//	db.insertTypeValue ( );
+		
+		db.commit ( );
+		db.setAutoCom (true);
 		
 		db.closeConnection ( );
 		
-		//object_id = null;
-		
-/*		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );*/
-		
-		//TODO: use real values from the database!
 		mapEntry.put ("oid", object_id.toPlainString ( ));
 		listentries.add (mapEntry);
 		
