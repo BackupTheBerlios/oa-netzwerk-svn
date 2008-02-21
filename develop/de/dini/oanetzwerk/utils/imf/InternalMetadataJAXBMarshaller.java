@@ -14,6 +14,7 @@ import org.junit.Test;
 public class InternalMetadataJAXBMarshaller {
 
 	public static JAXBContext context;
+	private static InternalMetadataJAXBMarshaller instance;
 	
 	@BeforeClass
 	public static void init() {
@@ -24,13 +25,19 @@ public class InternalMetadataJAXBMarshaller {
 		}
 	}
 	
-
+	public static InternalMetadataJAXBMarshaller getInstance() {
+		if(instance == null) {
+			init();
+		}
+		return instance;
+	}
 	
-	public String marshall(InternalMetadata imf) {
-		String result = null;
+	public static String marshall(InternalMetadata imf) {
+		String result = null;	
+		StringWriter sw = new StringWriter();
+		
 		init();
 
-		StringWriter sw = new StringWriter();
 		try {
 			Marshaller m = context.createMarshaller(); 
 			m.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
@@ -45,9 +52,10 @@ public class InternalMetadataJAXBMarshaller {
 		return result;
 	}
 	
-	public InternalMetadata unmarshall (String xmldata) {
-		init ( );
+	public static InternalMetadata unmarshall (String xmldata) {
 		InternalMetadata result = null;
+
+		init();
 		
 		try {
 			
@@ -63,15 +71,11 @@ public class InternalMetadataJAXBMarshaller {
 		return result;
 	}
 	
-	private InternalMetadata createTestInstance() {
-		InternalMetadata myIM = new InternalMetadata();
-		return myIM;
-	}
 	
 	@Test
 	public void test_IMF_marshalling() {
 		
-		InternalMetadata originalIM = createTestInstance();
+		InternalMetadata originalIM = InternalMetadata.createDummy();
 	
 		System.out.println("");
 		System.out.println(originalIM);
@@ -116,9 +120,7 @@ public class InternalMetadataJAXBMarshaller {
 	        "</dnbClassification>" +
 	        "</classificationList>" +
 		    "</ns2:internalMetadata>" ));*/
-			
-			
-			
+						
 			System.out.println("");
 			System.out.println( receivedIM ); 
 			System.out.println("");
