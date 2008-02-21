@@ -74,6 +74,112 @@ public class InternalMetadata {
 		classificationList = new LinkedList<Classification>();	
 	}
 	
+	public static InternalMetadata createDummy() {
+		InternalMetadata myIM = new InternalMetadata();
+		
+		Author author = new Author();
+		author.setNumber(1);
+		author.setFirstname("Max");
+		author.setLastname("Mustermann");	
+		myIM.addAuthor(author);
+		author = new Author();
+		author.setNumber(2);
+		author.setFirstname("Maxine");
+		author.setLastname("Musterfrau");
+		myIM.addAuthor(author);
+		
+		Title title = new Title();
+		title.setNumber(1);
+		title.setLang("de");
+		title.setQualifier("main");
+		title.setTitle("Titel des Musterdatensatzes");
+		myIM.addTitle(title);
+		title = new Title();
+		title.setNumber(2);
+		title.setLang("en");
+		title.setQualifier("main");
+		title.setTitle("title of sample metadata entry");
+		myIM.addTitle(title);	
+		
+		Classification classi = new DNBClassification();
+		classi.setValue("dnb-typischer Klassifikationswert");
+		myIM.addClassfication(classi);
+		classi = new DDCClassification();
+		classi.setValue("ddc-typischer Klassifikationswert");
+		myIM.addClassfication(classi);
+		classi = new DINISetClassification();
+		classi.setValue("DINI-typischer Klassifikationswert");
+		myIM.addClassfication(classi);
+		classi = new OtherClassification();
+		classi.setValue("unbekannter Klassifikationswert");
+		myIM.addClassfication(classi);
+		
+		DateValue dv = new DateValue();
+		dv.setNumber(1);
+		dv.setDateValue("2008-02-28");
+		myIM.addDateValue(dv);
+		
+		Description desc = new Description();
+		desc.setNumber(1);
+		desc.setLanguage("de");
+		desc.setDescription("Dies ist eine deutschsprachige Musterzusammenfassung.");
+		myIM.addDescription(desc);
+		desc = new Description();
+		desc.setNumber(2);
+		desc.setLanguage("en");
+		desc.setDescription("This is a sample abstract in English language.");
+		myIM.addDescription(desc);
+		desc = new Description();
+		desc.setNumber(3);
+		desc.setLanguage(null);
+		desc.setDescription("Dies ist eine Musterzusammenfassung, für die keine Sprache ermittelt werden konnte.");
+		myIM.addDescription(desc);
+		
+		Format format = new Format();
+		format.setNumber(1);
+		format.setSchema_f("text/pdf");
+		myIM.addFormat(format);
+		
+		Identifier ident = new Identifier();
+		ident.setNumber(1);
+		ident.setIdentifier("www.noSuchURL.foo/downloads/Musterdoc.pdf");
+        myIM.addIdentifier(ident);
+
+        Keyword keyword = new Keyword();
+        keyword.setLanguage("en");
+        keyword.setKeyword("keyword A");
+        myIM.addKeyword(keyword);
+        keyword = new Keyword();
+        keyword.setLanguage("de");
+        keyword.setKeyword("Schlagwort A");
+        myIM.addKeyword(keyword);
+        keyword = new Keyword();
+        keyword.setLanguage("en");
+        keyword.setKeyword("keyword B");
+        myIM.addKeyword(keyword);
+        keyword = new Keyword();
+        keyword.setLanguage("de");
+        keyword.setKeyword("Schlagwort B");
+        myIM.addKeyword(keyword);
+        
+        Language lang = new Language();
+        lang.setNumber(1);
+        lang.setLanguage("de");
+        myIM.addLanguage(lang);
+        
+        Publisher pub = new Publisher();
+        pub.setNumber(1);
+        pub.setName("Musterherausgeber, Musterstadt");
+		myIM.addPublisher(pub);
+		
+		TypeValue tv = new TypeValue();
+		tv.setNumber(1);
+		tv.setTypeValue("article");
+		myIM.addTypeValue(tv);
+		
+		return myIM;
+	}
+	
 	@Deprecated
 	public int addClassfication(String value) {
 		int result = 0;
