@@ -44,6 +44,12 @@ public class InspectorServlet extends HttpServlet {
 	private String sParamShowCodecData;
 	private String sParamMode;
 	
+	private String sExtURLRestServer;
+	private String sExtHarvUser;
+	private String sExtHarvPass;
+	private String sExtAggrUser;
+	private String sExtAggrPass;
+	
 	private StringBuffer sbErrors;
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
@@ -54,8 +60,15 @@ public class InspectorServlet extends HttpServlet {
 		sParamShowCodecData = StringUtils.defaultString(req.getParameter("ShowCodecData"),"true");
 		sParamMode = StringUtils.defaultString(req.getParameter("Mode"),"RawRecordData");
 		
-		sSelfURL = "http://lolita.cms.hu-berlin.de:8080/inspector/";//getServletContext().getInitParameter("");
+//		sSelfURL = "http://lolita.cms.hu-berlin.de:8080/inspector/";
+		sSelfURL = getServletContext().getInitParameter("SelfURL");		
 				
+		sExtURLRestServer = getServletContext().getInitParameter("URLRestServer");
+		sExtHarvUser = getServletContext().getInitParameter("HarvUser");
+		sExtHarvPass = getServletContext().getInitParameter("HarvPass");
+		sExtAggrUser = getServletContext().getInitParameter("AggrUser");
+		sExtAggrPass = getServletContext().getInitParameter("AggrPass");		
+		
 		sbErrors = new StringBuffer();
 		
 		out.write(renderContent(sParamMode));
@@ -156,10 +169,10 @@ public class InspectorServlet extends HttpServlet {
 		if(mode != null) {		
 			if(mode.equals("RawRecordData")) {					
 				String ressource = "RawRecordData/" + sParamOID;
-				restclient = RestClient.createRestClient("xml7.cms.hu-berlin.de", ressource, "Harvester", "retsevrah");		
+				restclient = RestClient.createRestClient(sExtURLRestServer, ressource, sExtHarvUser, sExtHarvPass);		
 			} else if(mode.equals("InternalMetadataEntry")) {			
 				String ressource = "InternalMetadataEntry/" + sParamOID;
-				restclient = RestClient.createRestClient("xml7.cms.hu-berlin.de", ressource, "Aggregator", "rotagergga");				
+				restclient = RestClient.createRestClient(sExtURLRestServer, ressource, sExtAggrUser, sExtAggrPass);				
 			}		
 		}
 			
