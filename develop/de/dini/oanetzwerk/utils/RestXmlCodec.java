@@ -20,7 +20,7 @@ public class RestXmlCodec {
 	
 	static Logger logger = Logger.getLogger (RestXmlCodec.class);
 	
-	final static boolean DEFAULT_FLAG_BASE64KEYS = true;
+	final static boolean DEFAULT_FLAG_BASE64KEYS = false;
 	final static boolean DEFAULT_FLAG_BASE64VALUES = true;
 	
 	private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
