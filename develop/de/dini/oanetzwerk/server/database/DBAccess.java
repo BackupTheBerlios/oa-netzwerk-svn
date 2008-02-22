@@ -729,8 +729,8 @@ public class DBAccess implements DBAccessInterface {
 		PreparedStatement pstmt = null;
 		
 		try {
-
-			pstmt = conn.prepareStatement ("SELECT title, qualifier, lang, number FROM dbo.Title WHERE object_id = ?");
+			// number ?????
+			pstmt = conn.prepareStatement ("SELECT title, qualifier, lang FROM dbo.Titles WHERE object_id = ?");
 			
 			//pstmt.setBigDecimal (1, predecessor_id);
 			pstmt.setBigDecimal (1, object_id);

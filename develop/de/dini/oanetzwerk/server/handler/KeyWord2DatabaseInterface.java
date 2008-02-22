@@ -4,6 +4,9 @@
 
 package de.dini.oanetzwerk.server.handler;
 
+import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
+import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+
 
 /**
  * @author Michael Kühn
@@ -19,7 +22,9 @@ public interface KeyWord2DatabaseInterface {
 	 * @param path the request-path
 	 * @param i specifies which HTTP-Method has been called
 	 * @return Response which will be sent back to the Client
+	 * @throws NotEnoughParametersException 
+	 * @throws MethodNotImplementedException 
 	 */
 	
-	public String processRequest (String data, String [ ] path, int i);
+	public String processRequest (String data, String [ ] path, int i) throws NotEnoughParametersException, MethodNotImplementedException;
 }

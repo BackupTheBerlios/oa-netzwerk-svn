@@ -18,6 +18,7 @@ import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.RestXmlCodec;
+import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 
 /**
@@ -33,9 +34,10 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
+	
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
-
+		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
@@ -44,11 +46,15 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 	}
 
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
 	
 	@Override
-	protected String getKeyWord (String [ ] path) {
+	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
+		
+		if (path.length < 4)
+			throw new NotEnoughParametersException ("This method needs at least 3 parameters");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );

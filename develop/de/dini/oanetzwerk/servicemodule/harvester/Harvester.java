@@ -63,25 +63,19 @@ public class Harvester {
 	private Properties props = null;
 
 	/**
-	 * 
-	 */
-	
-	private int errorretry = 0;
-	
-	/**
-	 * 
+	 * Here we store the harvested MetaDataFormat.
 	 */
 	
 	private String metaDataFormat ="oai_dc";
 	
 	/**
-	 * 
+	 * This is the Base-URL of the repository we have to connect to.
 	 */
 	
 	private String repositoryURL;
 	
 	/**
-	 * 
+	 * This is the corresponding ID to the repository we'll connect to.
 	 */
 	
 	private int repositoryID;
@@ -102,16 +96,19 @@ public class Harvester {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			System.exit (1);
 			
 		} catch (FileNotFoundException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			System.exit (1);
 			
 		} catch (IOException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			System.exit (1);
 		}
 		
 		this.repositoryURL = url;
@@ -182,7 +179,10 @@ public class Harvester {
 					
 				} catch (java.text.ParseException ex) {
 					
+					logger.error ("Can't extract Datestamp from parameter 'updateDate'");
+					logger.error (ex.getLocalizedMessage ( ));
 					ex.printStackTrace ( );
+					System.exit (10);
 				}
 				
 				if (logger.isDebugEnabled ( ))
@@ -273,10 +273,14 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param url 
-	 * @param fullharvest 
-	 * @param updateFrom 
-	 * @param repositoryId 
+	 * This method fetches data from the repository and processes it.
+	 * Firstly the list of supported MetaDataFormats is requested. Secondly the first List of Identifiers is requested.
+	 * The retrieved list is parsed and the resumption Token, if it exists, is extracted. While all Ids are checked.
+	 * The already checked Id are processed and finally if there is a resumptionToken a new List of Ids is requested.
+	 * Then all begins from the very beginning until there are no more Identifiers to request.
+	 * 
+	 * @param fullharvest specifies whether we have a full or update harvest 
+	 * @param updateFrom stores the timestamp for the update harvest. 
 	 */
 	
 	private void processIds (boolean fullharvest, String updateFrom) {
@@ -293,16 +297,17 @@ public class Harvester {
 				logger.debug ("metaDataFormats found");
 			
 			response = null;
-			 
+			
 			if (!fullharvest)
-				response = listIdentifiers (getRepositoryURL ( ), "oai_dc", updateFrom);
+				response = listIdentifiers (getRepositoryURL ( ), this.metaDataFormat, updateFrom);
 			
 			else
-				response = listIdentifiers (getRepositoryURL ( ), "oai_dc");
-			
+				response = listIdentifiers (getRepositoryURL ( ), this.metaDataFormat);
+
 			while (resumptionSet) {
-				
+					
 				resumptionToken = extractIdsAndGetResumptionToken (response, getRepositoryID ( ));
+				processRecords ( );
 				
 				if (resumptionToken != null) {
 					
@@ -322,11 +327,9 @@ public class Harvester {
 												
 						listIdentifiers (getRepositoryURL ( ), "resumptionToken", resumptionToken);
 						
-						if (logger.isDebugEnabled ( )) {
-							
+						if (logger.isDebugEnabled ( ))
 							logger.debug ("ResumptionToken: " + resumptionToken);
-							
-						} else;
+						else;
 					}
 					
 					resumptionToken = null;
@@ -340,29 +343,19 @@ public class Harvester {
 					
 					resumptionSet = false;
 				}
+				
+				response = null;
 			} 
 		
 		} catch (HttpException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			this.errorretry++;
-			
-			if (errorretry > 5) {
-				
-				resumptionToken = null;
-				System.exit (5);
-			}
 			
 		} catch (IOException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			
-			this.errorretry++;
-			
-			if (errorretry > 5)
-				System.exit (5);
 		}
 	}
 
@@ -375,6 +368,9 @@ public class Harvester {
 	
 	private InputStream listMetaDataFormats (String url) throws HttpException, IOException {
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("listMetaDataFormat");
+		
 		return repositoryAnswer (url, "listMetaDataFormat", "");
 	}
 
@@ -386,6 +382,9 @@ public class Harvester {
 	 */
 	
 	private InputStream listIdentifiers (String url, String metaDataFormat) throws HttpException, IOException {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("ListIdentifiers with MetaDataFormat " + metaDataFormat);
 		
 		return repositoryAnswer (url, "ListIdentifiers", "&metadataPrefix=" + metaDataFormat);
 	}
@@ -402,12 +401,19 @@ public class Harvester {
 		
 		if (metaDataFormat.equalsIgnoreCase ("resumptionToken")) {
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("listIdentifiers with ResumptionToken and MetaDataFormat " +
+						 metaDataFormat);
+			
 			String resumptionToken = updateFrom;
 			
 			return repositoryAnswer (url, "ListIdentifiers", "&resumptionToken=" + resumptionToken);
 			
 		} else {
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("listIdentifiers with MetaDataFormat " + metaDataFormat + " from " + updateFrom);
+						
 			return repositoryAnswer (url, "ListIdentifiers", "&metadataPrefix=" + metaDataFormat + "&from=" + updateFrom);	
 		}
 	}
@@ -457,8 +463,6 @@ public class Harvester {
 		
 		try {
 			
-			//TODO: xml-handling has to be rewritten!
-			
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 			DocumentBuilder builder = factory.newDocumentBuilder ( );
 			Document document = builder.parse (responseBody);
@@ -466,8 +470,13 @@ public class Harvester {
 			NodeList idNodeList = document.getElementsByTagName ("identifier");
 			NodeList datestampNodeList = document.getElementsByTagName ("datestamp");
 			
-			if (this.ids == null)
+			if (this.ids == null) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("List of ObjectIdentifiers is NULL, so I create a new one");
+							
 				this.ids = new ArrayList <ObjectIdentifier> ( );
+			}
 			
 			if (logger.isDebugEnabled ( )) {
 				
@@ -475,16 +484,18 @@ public class Harvester {
 				logger.debug ("we have " + datestampNodeList.getLength ( ) + " Datestamps to extract");
 			}
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("we have " + idNodeList.getLength ( ) + " ID-Nodes to process");
+			
 			for (int i = 0; i < idNodeList.getLength ( ); i++) {
 				
 				int internalOID;
 				String externalOID = idNodeList.item (i).getTextContent ( );
 				String datestamp = datestampNodeList.item (i).getTextContent ( );
 				
-				if (logger.isDebugEnabled ( )) {
-					
+				if (logger.isDebugEnabled ( ))
 					logger.debug ("List Record No. " + recordno++ + " " + externalOID  + " " + datestamp);
-				}
+				
 				
 				internalOID = objectexists (repositoryId, externalOID);
 				
@@ -583,25 +594,9 @@ public class Harvester {
 					
 				
 			} //endelse
-			
-/*			client = new HttpClient ( );
-			method = new GetMethod (getRepositoryURL ( ) + "?verb=GetRecord&metadataPrefix=" + metaDataFormat + "&identifier=" + ids.get (i).getExternalOID ( ));
-			client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
-			
-			try {
-				
-				int statuscode = client.executeMethod (method);
-				
-				logger.info ("HttpStatusCode: " + statuscode);
-				
-				if (statuscode != HttpStatus.SC_OK) {
-					
-					;
-				}*/
-				
-				//uploadRawData (HelperMethods.stream2String (method.getResponseBodyAsStream ( )), ids.get (i).getInternalOID ( ), ids.get (i).getDatestamp ( ), metaDataFormat);
-				
 		}
+		
+		this.ids = null;
 	}
 	
 	/**
@@ -609,6 +604,9 @@ public class Harvester {
 	 */
 	
 	private void createObjectEntry (int index) {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("we have to create a new Object");
 		
 		String ressource = "ObjectEntry/";
 		RestClient restClient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
@@ -663,7 +661,7 @@ public class Harvester {
 			int intoid = new Integer (value);
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("internalOID: " + intoid);
+				logger.debug ("The internalOID for " + this.ids.get (index).getExternalOID ( ) + " is " + intoid);
 			
 			this.ids.get (index).setInternalOID (intoid);
 			
@@ -681,8 +679,11 @@ public class Harvester {
 	private boolean checkRawData (int i) {
 		
 		//first we need the datestamp from the database
-		if (logger.isDebugEnabled ( ))
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("We have to check the RawData, whether it is outdated or not");
 			logger.debug ("observing Object No. " + i + ": " + this.ids.get (i).getExternalOID ( ));
+		}
 		
 		String ressource = "ObjectEntry/" + this.ids.get (i).getInternalOID ( ) + "/";
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
@@ -718,12 +719,10 @@ public class Harvester {
 			
 			Date repositoryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (value);	
 			
-			if (repositoryDate.before (this.ids.get (i).getDatestamp ( ))) {
+			if (!repositoryDate.before (this.ids.get (i).getDatestamp ( ))) {
 				
-				if (logger.isDebugEnabled ( )) {
-					
+				if (logger.isDebugEnabled ( ))
 					logger.debug ("RepositoryDate is " + repositoryDate + " and before the harvested: " + this.ids.get (i).getDatestamp ( ));
-				}
 				
 				this.ids.get (i).setDatestamp (repositoryDate);
 				
@@ -731,8 +730,12 @@ public class Harvester {
 				
 			} else {
 				
-				return false;
 				// updated harvesteddatstamp and exit
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("RepositoryDate is " + repositoryDate + " and after the harvested: " + this.ids.get (i).getDatestamp ( ));
+				
+				return false;
+				
 			}
 			
 		} catch (java.text.ParseException ex) {
@@ -748,6 +751,9 @@ public class Harvester {
 	 */
 	
 	private void updateHarvestedDatestamp (int index) {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("We must update the harvested datestamp only"); 
 		
 		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
 		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
@@ -802,8 +808,8 @@ public class Harvester {
 		int intoid = new Integer (value);
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("internalOID: " + intoid);
-
+			logger.debug ("internalOID: " + intoid + " has been successfully updated");
+		
 	}
 	
 	/**
@@ -815,10 +821,12 @@ public class Harvester {
 	 */
 	
 	private void updateRawData (int index) {
-	//private void uploadRawData (String data, int internalOID, Date datestamp, String metaDataFormat) throws HttpException, IOException {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Now we're going to update the RawData");
 		
 		HttpClient client = new HttpClient ( );
-		HttpMethod method = new GetMethod (getRepositoryURL ( ) + "?verb=GetRecord&metadataPrefix=" + metaDataFormat + "&identifier=" + ids.get (index).getExternalOID ( ));
+		HttpMethod method = new GetMethod (getRepositoryURL ( ) + "?verb=GetRecord&metadataPrefix=" + this.metaDataFormat + "&identifier=" + ids.get (index).getExternalOID ( ));
 		client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 		
 		try {
@@ -835,7 +843,7 @@ public class Harvester {
 			GregorianCalendar cal = new GregorianCalendar ( );
 			cal.setTime (ids.get (index).getDatestamp ( ));
 			
-			String resource = "RawRecordData/" + ids.get (index).getInternalOID ( ) + "/" + cal.get (Calendar.YEAR) + "-" + cal.get (Calendar.MONTH + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/" + metaDataFormat + "/";
+			String resource = "RawRecordData/" + ids.get (index).getInternalOID ( ) + "/" + cal.get (Calendar.YEAR) + "-" + cal.get (Calendar.MONTH + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/" + this.metaDataFormat + "/";
 			
 			RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 			restclient.PutData (new String (Base64.encodeBase64 (HelperMethods.stream2String (method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));
@@ -848,7 +856,6 @@ public class Harvester {
 			ex.printStackTrace ( );
 			
 		} catch (IOException ex) {
-			
 			
 			ex.printStackTrace ( );
 		}
@@ -864,6 +871,10 @@ public class Harvester {
 	 */
 	
 	private int objectexists (int repositoryId, String externalOID) throws ParserConfigurationException, SAXException, IOException {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("We are going to have a look if the object with the externalOID " + externalOID + " in repository nr. " +
+					repositoryId + " already exists");
 		
 		String ressource = "ObjectEntryID/" + repositoryId + "/" + externalOID + "/";
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
@@ -1004,7 +1015,7 @@ public class Harvester {
 					 */
 					
 					harvester.processIds (fullharvest, updateDate);
-					harvester.processRecords ( );
+					//harvester.processRecords ( );
 					
 			} else {
 				

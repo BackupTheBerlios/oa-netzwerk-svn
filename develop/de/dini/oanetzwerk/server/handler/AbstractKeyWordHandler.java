@@ -6,6 +6,9 @@ package de.dini.oanetzwerk.server.handler;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
+import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+
 
 /**
  * @author Michael Kühn
@@ -32,10 +35,12 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	}
 	
 	/**
+	 * @throws NotEnoughParametersException 
+	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface#processRequest(java.lang.String, java.lang.String[], int)
 	 */
 	
-	final public String processRequest (String data, String [ ] path, int i) {
+	final public String processRequest (String data, String [ ] path, int i) throws NotEnoughParametersException, MethodNotImplementedException {
 			
 		switch (i) {
 		case 0:
@@ -80,9 +85,11 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	 * @param data the data transmitted within the HTTP-Body which will be inserted
 	 * 
 	 * @return the response which will be sent back to the client
+	 * @throws NotEnoughParametersException 
+	 * @throws MethodNotImplementedException 
 	 */
 	
-	abstract protected String putKeyWord (String [ ] path, String data);
+	abstract protected String putKeyWord (String [ ] path, String data) throws NotEnoughParametersException, MethodNotImplementedException;
 
 	/**
 	 * This method handles the HTTP-POST Request which updates data.
@@ -91,9 +98,10 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	 * @param data the data transmitted within the HTTP-Body which will used for the update
 	 * 
 	 * @return the response which will be sent back to the client
+	 * @throws MethodNotImplementedException 
 	 */
 	
-	abstract protected String postKeyWord (String [ ] path, String data);
+	abstract protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException;
 
 	/**
 	 * This method handles the HTTP-DELETE Request which deletes data.
@@ -101,9 +109,10 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	 * @param path the request path from the HTTP-Request
 	 * 
 	 * @return the response which will be sent back to the client
+	 * @throws MethodNotImplementedException 
 	 */
 	
-	abstract protected String deleteKeyWord (String [ ] path);
+	abstract protected String deleteKeyWord (String [ ] path) throws MethodNotImplementedException;
 
 	/**
 	 * This method handles the HTTP-GET Request which selects data.
@@ -111,7 +120,8 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	 * @param path the request path from the HTTP-Request
 	 * 
 	 * @return the response which will be sent back to the client
+	 * @throws NotEnoughParametersException 
 	 */
 	
-	abstract protected String getKeyWord (String [ ] path);
+	abstract protected String getKeyWord (String [ ] path) throws NotEnoughParametersException;
 } // end of class

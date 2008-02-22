@@ -16,6 +16,8 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
+import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 /**
  * @author Michael Kühn
@@ -77,22 +79,40 @@ public class RestServer extends HttpServlet {
 			
 		} catch (ClassNotFoundException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			return ex.getLocalizedMessage ( );
 			
 		} catch (InstantiationException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			return ex.getLocalizedMessage ( );
 			
 		} catch (IllegalAccessException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			return ex.getLocalizedMessage ( );
 			
 		} catch (IOException ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			return ex.getLocalizedMessage ( );
+			
+		} catch (NotEnoughParametersException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			return ex.getLocalizedMessage ( );
+			
+		} catch (MethodNotImplementedException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			return ex.getLocalizedMessage ( );
 		}
-
-		return null;
 	}
 
 	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws IOException {

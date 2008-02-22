@@ -20,6 +20,7 @@ import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.RestXmlCodec;
+import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 /**
  * @author Michael Kühn
@@ -50,13 +51,17 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 * This method returns for a given internal ObjectID the key values for this Object.
 	 * If the object does not exist "null" will be returned. 
 	 */
 	
 	@Override
-	protected String getKeyWord (String [ ] path) {
+	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
+		
+		if (path.length < 3)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );

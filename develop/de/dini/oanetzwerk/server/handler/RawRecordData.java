@@ -19,9 +19,7 @@ import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.RestXmlCodec;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
+import de.dini.oanetzwerk.utils.exceptions.*;
 
 /**
  * @author Michael Kühn
@@ -54,24 +52,29 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 	
 	/**
+	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 * This method is not implemented because this would be useless request for now.
 	 */
 	
 	@Override
-	protected String deleteKeyWord (String [ ] path) {
+	protected String deleteKeyWord (String [ ] path) throws MethodNotImplementedException {
 		
 		//NOT IMPLEMENTED
 		logger.warn ("deleteRawRecordData is not implemented");
-		throw new NotImplementedException ( );
+		throw new MethodNotImplementedException ("This method is not implemented due to specification!");
 	}
 
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
 	
 	@Override
-	protected String getKeyWord (String [ ] path) {
+	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
+		
+		if (path.length < 3)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the object ID");
 		
 		BigDecimal object_id = new BigDecimal (path [2]);
 		
@@ -142,24 +145,29 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
+	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 * This method is not implemented because this would be useless request for now.
 	 */
 	
 	@Override
-	protected String postKeyWord (String [ ] path, String data) {
+	protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException {
 		
 		//NOT IMPLEMENTED
 		logger.warn ("postRawRecordData is not implemented");
-		throw new NotImplementedException ( );
+		throw new MethodNotImplementedException ("This method is not implemented due to specification!");
 	}
 
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 */
 	
 	@Override
-	protected String putKeyWord (String [ ] path, String data) {
+	protected String putKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
+		
+		if (path.length < 5)
+			throw new NotEnoughParametersException ("This method needs 4 parameters: the keyword, the object ID, the repository timestamp and the metadataformat");
 		
 		BigDecimal object_id = new BigDecimal (path [2]);
 		Date repository_timestamp = null;

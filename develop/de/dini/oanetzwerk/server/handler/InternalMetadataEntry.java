@@ -76,6 +76,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		// Auswertung der Titel
 		rs = db.selectTitle (oid);
 		
+		if (rs == null)
+			logger.warn ("resultset empty!");
+		
 		try {
 			
 			while (rs.next ( )) {
@@ -84,7 +87,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				temp.setTitle (rs.getString ("title"));
 				temp.setQualifier (rs.getString ("qualifier"));
 				temp.setLang (rs.getString ("lang"));
-				temp.setNumber (rs.getInt ("number"));
+				//temp.setNumber (rs.getInt ("number"));
 				imf.addTitle (temp);
 			}
 			
