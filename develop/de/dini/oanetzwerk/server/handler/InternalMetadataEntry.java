@@ -32,6 +32,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		KeyWord2DatabaseInterface {
 	
 	static Logger logger = Logger.getLogger (InternalMetadataEntry.class);
+	private InternalMetadataJAXBMarshaller imMarsch;
 	
 	/**
 	 * 
@@ -41,6 +42,8 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug (InternalMetadataEntry.class.getName ( ) + " is called");
+		
+		imMarsch = InternalMetadataJAXBMarshaller.getInstance ( );
 	}
 
 	/**
@@ -57,9 +60,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
-	@SuppressWarnings("deprecation")
+	
 	@Override
 	protected String getKeyWord (String [ ] path) {
+		
 		// erzeuge imf-Object, das Schrittweise mit Daten befüllt wird
 		InternalMetadata imf = new InternalMetadata();
 		
@@ -70,44 +74,27 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		BigDecimal oid = new BigDecimal (path [2]);
 		
 		// Auswertung der Titel
-		rs = db.selectTitle(oid);
+		rs = db.selectTitle (oid);
 		
 		try {
+			
 			while (rs.next ( )) {
-				Title temp = new Title();
-				temp.setTitle(rs.getString("title"));
-				temp.setQualifier(rs.getString("qualifier"));
-				temp.setLang(rs.getString("lang"));
-				temp.setNumber(rs.getInt("number"));
-				imf.addTitle(temp);
+				
+				Title temp = new Title ( );
+				temp.setTitle (rs.getString ("title"));
+				temp.setQualifier (rs.getString ("qualifier"));
+				temp.setLang (rs.getString ("lang"));
+				temp.setNumber (rs.getInt ("number"));
+				imf.addTitle (temp);
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+		} catch (SQLException ex) {
+			
+			ex.printStackTrace ( );
 		}
 		
-		imf.addAuthor("Max Mustermann");
-		imf.addAuthor("Mustermann, Max");
-		imf.addAuthor("Test Spitze<>");
-		imf.addClassfication("foo:bar");
-		imf.addClassfication("pub-type:foo1");
-		imf.addClassfication("ddc:foo2");
-		imf.addClassfication("dnb:foo3");
-		imf.addDateValue("DateValue");
-		imf.addDescription("Beschreibung xyz");
-		imf.addFormat("Format");
-		imf.addIdentifier("Identifier");
-		imf.addKeyword("Schlüsselwort1");
-		imf.addKeyword("Schlüsselwort2");
-		imf.addKeyword("Schlüsselwort3");
-		imf.addLanguage("ger");
-		imf.addPublisher("Publisher");
-		imf.addTitle("Mustertitel", null, null);
-		imf.addTypeValue("TypeValue");
-		
-//		InternalMetadataJAXBMarshaller marshaller = new InternalMetadataJAXBMarshaller();
 		String xmlData;
-		xmlData = InternalMetadataJAXBMarshaller.marshall (imf);
+		xmlData = imMarsch.marshall (imf);
 		
 		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
 		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
@@ -161,7 +148,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			if (key.equalsIgnoreCase ("internalmetadata")) {
 				
-				imf = new InternalMetadataJAXBMarshaller ( ).unmarshall (mapEntry.get (key));
+				imf = imMarsch.unmarshall (mapEntry.get (key));
 				
 			} else continue;
 		}
@@ -227,6 +214,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	/**
 	 * @param args
 	 */
+	
 	public static void main (String [ ] args) {
 
 		// TODO Auto-generated method stub

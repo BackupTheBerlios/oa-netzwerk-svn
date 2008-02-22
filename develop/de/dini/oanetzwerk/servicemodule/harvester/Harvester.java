@@ -201,7 +201,7 @@ public class Harvester {
 		
 		return null;
 	}
-
+	
 	/**
 	 * The option whether a full or only an update harvest will be processed will be discovered.
 	 * If update is specified the date from which on has to be set, otherwise an error occurs.
@@ -257,9 +257,9 @@ public class Harvester {
 	}
 
 	/**
-	 * ensures that the given string is a correct url
-	 * @param optionValue the rpository-url
-	 * @return filtered url
+	 * ensures that the given string is a correct URL
+	 * @param optionValue the repository URL
+	 * @return filtered URL
 	 */
 	
 	private static String filterUrl (String optionValue) {
@@ -552,9 +552,6 @@ public class Harvester {
 	
 	private void processRecords ( ) {
 		
-		HttpClient client = null;
-		GetMethod method = null;
-		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("now we process " + this.ids.size ( ) + "Records");
 		
@@ -568,22 +565,26 @@ public class Harvester {
 				// when internalOID == -1 than Object is not in the database and we have to create it
 				createObjectEntry (i);
 				
+				// after that we have to upload the new rawdata
+				updateRawData (i);
+				
 			} else {
 				
 				// Object exists and we have to look if our Rawdata is newer than the database one
-				if (checkRawdata (i) == true) {
+				if (checkRawData (i) == true) {
 					
-					//updatedharvestedDate ( );
+					updateHarvestedDatestamp (i);
 					
 				} else {
 					
-					//updateRawdata ( );
+					// if not, upload the new rawdata
+					updateRawData (i);
 				}
 					
 				
 			} //endelse
 			
-			client = new HttpClient ( );
+/*			client = new HttpClient ( );
 			method = new GetMethod (getRepositoryURL ( ) + "?verb=GetRecord&metadataPrefix=" + metaDataFormat + "&identifier=" + ids.get (i).getExternalOID ( ));
 			client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 			
@@ -596,34 +597,19 @@ public class Harvester {
 				if (statuscode != HttpStatus.SC_OK) {
 					
 					;
-				}
+				}*/
 				
-				uploadRawData (HelperMethods.stream2String (method.getResponseBodyAsStream ( )), ids.get (i).getInternalOID ( ), ids.get (i).getDatestamp ( ), metaDataFormat);
+				//uploadRawData (HelperMethods.stream2String (method.getResponseBodyAsStream ( )), ids.get (i).getInternalOID ( ), ids.get (i).getDatestamp ( ), metaDataFormat);
 				
-			} catch (HttpException ex) {
-				
-				ex.printStackTrace ( );
-				
-			} catch (IOException ex) {
-				
-				ex.printStackTrace ( );
-								
-			} finally {
-				
-				method.releaseConnection ( );
-			}
-			
-			method = null;
-			client = null;
 		}
 	}
-
+	
 	/**
 	 * 
 	 */
 	
 	private void createObjectEntry (int index) {
-
+		
 		String ressource = "ObjectEntry/";
 		RestClient restClient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 		
@@ -692,9 +678,9 @@ public class Harvester {
 	 * @param i
 	 */
 	
-	private boolean checkRawdata (int i) {
+	private boolean checkRawData (int i) {
 		
-		//first we need the datastamp from the database
+		//first we need the datestamp from the database
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("observing Object No. " + i + ": " + this.ids.get (i).getExternalOID ( ));
 		
@@ -732,57 +718,14 @@ public class Harvester {
 			
 			Date repositoryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (value);	
 			
-			if (repositoryDate.before (this.ids.get (i).getDatestamp ( ))) {// || repositoryDate.equals (this.ids.get (i).getDatestamp ( ))) {
+			if (repositoryDate.before (this.ids.get (i).getDatestamp ( ))) {
 				
 				if (logger.isDebugEnabled ( )) {
 					
 					logger.debug ("RepositoryDate is " + repositoryDate + " and before the harvested: " + this.ids.get (i).getDatestamp ( ));
 				}
 				
-				/*listentries = new ArrayList <HashMap <String, String>> ( );
-				mapEntry = new HashMap <String ,String> ( );
-				
-				GregorianCalendar cal = new GregorianCalendar ( );
-				cal.setTime (this.ids.get (i).getDatestamp ( ));
-				
-				String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
-				
-				mapEntry.put ("repository_id", Integer.toString (getRepositoryID ( )));
-				mapEntry.put ("repository_identifier", this.ids.get (i).getExternalOID ( ));
-				mapEntry.put ("repository_datestamp", datestamp);
-				listentries.add (mapEntry);
-				
-				String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
-				
-				restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-				
-				result = restclient.PostData (requestxml);
-				
-				listentries = null;
-				mapEntry = null;
-				restclient = null;
-				
-				listentries = RestXmlCodec.decodeEntrySet (result);
-				mapEntry = listentries.get (0);
-				it = mapEntry.keySet ( ).iterator ( );
-				key = "";
-				value = "";
-				
-				while (it.hasNext ( )) {
-					
-					key = it.next ( );
-					
-					if (key.equalsIgnoreCase ("oid")) {
-						
-						value = mapEntry.get (key);
-						break;
-					}
-				}
-				
-				int intoid = new Integer (value);
-				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("internalOID: " + intoid);*/
+				this.ids.get (i).setDatestamp (repositoryDate);
 				
 				return true;
 				
@@ -799,7 +742,70 @@ public class Harvester {
 			return true;
 		}		
 	}
+	
+	/**
+	 * 
+	 */
+	
+	private void updateHarvestedDatestamp (int index) {
+		
+		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
+		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		
+		GregorianCalendar cal = new GregorianCalendar ( );
+		cal.setTime (this.ids.get (index).getDatestamp ( ));
+		
+		String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
+		
+		mapEntry.put ("repository_id", Integer.toString (getRepositoryID ( )));
+		mapEntry.put ("repository_identifier", this.ids.get (index).getExternalOID ( ));
+		mapEntry.put ("repository_datestamp", datestamp);
+		listentries.add (mapEntry);
+		
+		String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
+		String ressource = "ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/";
+		
+		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+		
+		String result = "";
+		
+		try {
+			
+			result = restclient.PostData (requestxml);
+			
+		} catch (UnsupportedEncodingException ex) {
+			
+			ex.printStackTrace ( );
+		}
+		
+		listentries = null;
+		mapEntry = null;
+		restclient = null;
+		
+		listentries = RestXmlCodec.decodeEntrySet (result);
+		mapEntry = listentries.get (0);
+		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+		String key = "";
+		String value = "";
+		
+		while (it.hasNext ( )) {
+			
+			key = it.next ( );
+			
+			if (key.equalsIgnoreCase ("oid")) {
+				
+				value = mapEntry.get (key);
+				break;
+			}
+		}
+		
+		int intoid = new Integer (value);
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("internalOID: " + intoid);
 
+	}
+	
 	/**
 	 * @param data
 	 * @param internalOID
@@ -808,20 +814,45 @@ public class Harvester {
 	 * @throws HttpException 
 	 */
 	
-	private void uploadRawData (String data, int internalOID, Date datestamp, String metaDataFormat) throws HttpException, IOException {
+	private void updateRawData (int index) {
+	//private void uploadRawData (String data, int internalOID, Date datestamp, String metaDataFormat) throws HttpException, IOException {
 		
-		GregorianCalendar cal = new GregorianCalendar ( );
-		cal.setTime (datestamp);
+		HttpClient client = new HttpClient ( );
+		HttpMethod method = new GetMethod (getRepositoryURL ( ) + "?verb=GetRecord&metadataPrefix=" + metaDataFormat + "&identifier=" + ids.get (index).getExternalOID ( ));
+		client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 		
-		String resource = "RawRecordData/" + internalOID + "/" + cal.get (Calendar.YEAR) + "-" + cal.get (Calendar.MONTH + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/" + metaDataFormat + "/";
-		
-		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-		restclient.PutData (new String (Base64.encodeBase64 (data.getBytes ("UTF-8"))));
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("uploaded rawdata for Database Object " + internalOID);
+		try {
+			
+			int statuscode = client.executeMethod (method);
+			
+			logger.info ("HttpStatusCode: " + statuscode);
+			
+			if (statuscode != HttpStatus.SC_OK) {
+				
+				;
+			}
+			
+			GregorianCalendar cal = new GregorianCalendar ( );
+			cal.setTime (ids.get (index).getDatestamp ( ));
+			
+			String resource = "RawRecordData/" + ids.get (index).getInternalOID ( ) + "/" + cal.get (Calendar.YEAR) + "-" + cal.get (Calendar.MONTH + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/" + metaDataFormat + "/";
+			
+			RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+			restclient.PutData (new String (Base64.encodeBase64 (HelperMethods.stream2String (method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("uploaded rawdata for Database Object " + ids.get (index).getInternalOID ( ));
+
+		} catch (HttpException ex) {
+			
+			ex.printStackTrace ( );
+			
+		} catch (IOException ex) {
+			
+			
+			ex.printStackTrace ( );
+		}
 	}
-	
 
 	/**
 	 * @param oid
