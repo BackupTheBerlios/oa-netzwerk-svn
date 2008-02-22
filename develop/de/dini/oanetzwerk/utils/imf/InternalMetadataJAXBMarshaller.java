@@ -10,10 +10,10 @@ import javax.xml.bind.Unmarshaller;
 
 public class InternalMetadataJAXBMarshaller {
 
-	public static JAXBContext context;
+	private static JAXBContext context;
 	private static InternalMetadataJAXBMarshaller instance;
-	
-	public static void init() {
+		
+	private InternalMetadataJAXBMarshaller() {
 		try {
 			context = JAXBContext.newInstance( InternalMetadata.class, OtherClassification.class, DINISetClassification.class, DNBClassification.class, DDCClassification.class ); 
 		} catch(JAXBException jex) {
@@ -23,23 +23,20 @@ public class InternalMetadataJAXBMarshaller {
 	
 	public static InternalMetadataJAXBMarshaller getInstance() {
 		if(instance == null) {
-			init();
+			instance = new InternalMetadataJAXBMarshaller();
 		}
 		return instance;
 	}
 	
-	public static String marshall(InternalMetadata imf) {
+	public String marshall(InternalMetadata imf) {
 		String result = null;	
 		StringWriter sw = new StringWriter();
-		
-		init();
 
 		try {
 			Marshaller m = context.createMarshaller(); 
 			m.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
 			m.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 			m.setProperty( Marshaller.JAXB_FRAGMENT, Boolean.TRUE );
-//			m.marshal( imf, System.out );
 			m.marshal( imf, sw);
 			result = sw.toString();
 		} catch(JAXBException jex) {
@@ -48,10 +45,8 @@ public class InternalMetadataJAXBMarshaller {
 		return result;
 	}
 	
-	public static InternalMetadata unmarshall (String xmldata) {
+	public InternalMetadata unmarshall (String xmldata) {
 		InternalMetadata result = null;
-
-		init();
 		
 		try {
 			
@@ -66,8 +61,5 @@ public class InternalMetadataJAXBMarshaller {
 		
 		return result;
 	}
-	
-	
-	
 	
 }

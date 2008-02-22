@@ -108,6 +108,8 @@ public class InspectorServlet extends HttpServlet {
 	private String renderContent(InspectorModeEnum mode) {
 		StringBuffer sb = new StringBuffer();
 
+		InternalMetadataJAXBMarshaller imMarshaller = InternalMetadataJAXBMarshaller.getInstance();
+		
 		sb.append(renderHTMLHeader());
 		sb.append(renderContentHeader());		
 		
@@ -143,14 +145,14 @@ public class InspectorServlet extends HttpServlet {
 					String data = decodeRESTResponse(response, InspectorModeEnum.InternalMetadataEntry);
 					
 					if(data == null) {
-						data = InternalMetadataJAXBMarshaller.marshall(InternalMetadata.createDummy());
+						data = imMarshaller.marshall(InternalMetadata.createDummy());
 						sbErrors.append("<br/><i>Fehler beim Beziehen des gemarshallten IM</i><br/>\n");
-						sbErrors.append("<br/><i>marshalle (korrekte) Musterinstanz des IM als Daten für das Unmarshalling</i><br/>\n");	
+						sbErrors.append("<br/><i>marshalle (korrekte) Musterinstanz des IM als Daten f&uuml;r das Unmarshalling</i><br/>\n");	
 					}
 					
 					sb.append(renderDecodedData(data));
-				
-					myIM = InternalMetadataJAXBMarshaller.unmarshall(data);
+					
+					myIM = imMarshaller.unmarshall(data);
 					
 				}
 
@@ -368,15 +370,15 @@ public class InspectorServlet extends HttpServlet {
 					
 		if (listentries != null && listentries.size() > 0) {
 			
-			mapEntry = listentries.get(0);
+			
 			String key = "";
 			String value = "";
-
+			Iterator<String> it;
+			
 			switch(mode) {						
 			case RawRecordData:
-			case InternalMetadataEntry:
-				
-				Iterator<String> it = mapEntry.keySet().iterator();
+				mapEntry = listentries.get(0);
+				it = mapEntry.keySet().iterator();
 				while (it.hasNext()) {
 					key = it.next();
 					if (key.equalsIgnoreCase("data")) {
@@ -387,16 +389,28 @@ public class InspectorServlet extends HttpServlet {
 					}
 				}
 				break;		
+			case InternalMetadataEntry: 
+				mapEntry = listentries.get(0);
+				it = mapEntry.keySet().iterator();
+				while (it.hasNext()) {
+					key = it.next();
+					if (key.equalsIgnoreCase("internalmetadata")) {
+						value = mapEntry.get(key);							
+						result.append(value);						
+						return result.toString();
+					}
+				}
+				break;
 			default:
-				for(HashMap mapEntry2 : listentries) {			
-					Iterator<String> it2 = mapEntry2.keySet().iterator();
-					result.append("entry\n");
-					while (it2.hasNext()) {
-						key = it2.next();
-						value = mapEntry.get(key);
-						result.append("  key = ");
+				for(HashMap<String, String> mapEntry2 : listentries) {			
+					it = mapEntry2.keySet().iterator();
+					result.append("Eintrag:\n");
+					while (it.hasNext()) {
+						key = it.next();
+						value = mapEntry2.get(key);
+						result.append("  Schlüssel = ");
 						result.append(key + "\n");
-						result.append("  value = ");
+						result.append("  Wert = ");
 						result.append(value + "\n");
 					}				
 				}
