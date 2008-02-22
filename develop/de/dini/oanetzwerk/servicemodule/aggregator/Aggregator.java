@@ -7,7 +7,6 @@ package de.dini.oanetzwerk.servicemodule.aggregator;
 import java.io.FileNotFoundException;
 import java.io.IOException; // import java.io.InputStream;
 import java.io.StringReader; // import java.text.SimpleDateFormat;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -372,7 +371,7 @@ public class Aggregator {
 		}
 		// ansonsten sollte die Verarbeitung beginnen
 		im = (InternalMetadata) data;
-		InternalMetadataJAXBMarshaller marshaller = new InternalMetadataJAXBMarshaller();
+		InternalMetadataJAXBMarshaller marshaller = InternalMetadataJAXBMarshaller.getInstance ( );
 		String xmlData;
 		xmlData = marshaller.marshall(im);
 		
