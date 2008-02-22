@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
@@ -58,30 +60,54 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	@SuppressWarnings("deprecation")
 	@Override
 	protected String getKeyWord (String [ ] path) {
-
-		InternalMetadata myIM = new InternalMetadata();
-		myIM.addAuthor("Max Mustermann");
-		myIM.addAuthor("Mustermann, Max");
-		myIM.addAuthor("Test Spitze<>");
-		myIM.addClassfication("foo:bar");
-		myIM.addClassfication("pub-type:foo1");
-		myIM.addClassfication("ddc:foo2");
-		myIM.addClassfication("dnb:foo3");
-		myIM.addDateValue("DateValue");
-		myIM.addDescription("Beschreibung xyz");
-		myIM.addFormat("Format");
-		myIM.addIdentifier("Identifier");
-		myIM.addKeyword("Schlüsselwort1");
-		myIM.addKeyword("Schlüsselwort2");
-		myIM.addKeyword("Schlüsselwort3");
-		myIM.addLanguage("ger");
-		myIM.addPublisher("Publisher");
-		myIM.addTitle("Mustertitel", null, null);
-		myIM.addTypeValue("TypeValue");
+		// erzeuge imf-Object, das Schrittweise mit Daten befüllt wird
+		InternalMetadata imf = new InternalMetadata();
 		
-		InternalMetadataJAXBMarshaller marshaller = new InternalMetadataJAXBMarshaller();
+		ResultSet rs;
+		DBAccessInterface db = DBAccess.createDBAccess ( );
+		db.createConnection ( );
+		
+		BigDecimal oid = new BigDecimal (path [2]);
+		
+		// Auswertung der Titel
+		rs = db.selectTitle(oid);
+		
+		try {
+			while (rs.next ( )) {
+				Title temp = new Title();
+				temp.setTitle(rs.getString("title"));
+				temp.setQualifier(rs.getString("qualifier"));
+				temp.setLang(rs.getString("lang"));
+				temp.setNumber(rs.getInt("number"));
+				imf.addTitle(temp);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		imf.addAuthor("Max Mustermann");
+		imf.addAuthor("Mustermann, Max");
+		imf.addAuthor("Test Spitze<>");
+		imf.addClassfication("foo:bar");
+		imf.addClassfication("pub-type:foo1");
+		imf.addClassfication("ddc:foo2");
+		imf.addClassfication("dnb:foo3");
+		imf.addDateValue("DateValue");
+		imf.addDescription("Beschreibung xyz");
+		imf.addFormat("Format");
+		imf.addIdentifier("Identifier");
+		imf.addKeyword("Schlüsselwort1");
+		imf.addKeyword("Schlüsselwort2");
+		imf.addKeyword("Schlüsselwort3");
+		imf.addLanguage("ger");
+		imf.addPublisher("Publisher");
+		imf.addTitle("Mustertitel", null, null);
+		imf.addTypeValue("TypeValue");
+		
+//		InternalMetadataJAXBMarshaller marshaller = new InternalMetadataJAXBMarshaller();
 		String xmlData;
-		xmlData = marshaller.marshall (myIM);
+		xmlData = InternalMetadataJAXBMarshaller.marshall (imf);
 		
 		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
 		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );

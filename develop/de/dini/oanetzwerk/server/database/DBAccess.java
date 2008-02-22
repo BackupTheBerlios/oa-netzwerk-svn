@@ -605,7 +605,6 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertTitle(java.lang.String, int, java.lang.String, java.lang.String)
 	 */
 	
-	@Override
 	public ResultSet insertTitle (BigDecimal object_id, String qualifier,
 			String title, String lang) {
 		
@@ -643,7 +642,6 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertDateValue(java.math.BigDecimal, int, java.sql.Date)
 	 */
 	
-	@Override
 	public void insertDateValue (BigDecimal object_id, int number,
 			Date value) {
 
@@ -672,7 +670,6 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertFormat(java.math.BigDecimal, int, java.lang.String)
 	 */
 	
-	@Override
 	public void insertFormat (BigDecimal object_id, int number, String schema_f) {
 		
 		PreparedStatement pstmt = null;
@@ -700,7 +697,6 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertIdentifier(java.math.BigDecimal, int, java.lang.String)
 	 */
 	
-	@Override
 	public void insertIdentifier (BigDecimal object_id, int number,
 			String identifier) {
 
@@ -724,4 +720,32 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 		}
 	}
+	
+	/**
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
+	 */
+	public ResultSet selectTitle (BigDecimal object_id) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+
+			pstmt = conn.prepareStatement ("SELECT title, qualifier, lang, number FROM dbo.Title WHERE object_id = ?");
+			
+			//pstmt.setBigDecimal (1, predecessor_id);
+			pstmt.setBigDecimal (1, object_id);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+	
+	
+	
 } //end of class
