@@ -101,7 +101,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		mapEntry.put ("internalmetadata", xmlData);
 		listentries.add (mapEntry);
-		String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
+		String requestxml = RestXmlCodec.encodeEntrySetResponseBody (listentries, "InternalMetadataEntry");
 		
 		return requestxml;
 	}
