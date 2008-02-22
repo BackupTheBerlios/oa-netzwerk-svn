@@ -24,6 +24,8 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 /**
@@ -355,6 +357,29 @@ public class RestClient {
 			logger.debug ("deleteRequest will be used");
 		
 		return sendrequest (client, method);
+	}
+	
+	
+	public RestMessage sendGetRestMessage() {
+		String response = GetData(); 		
+		return RestXmlCodec.decodeRestMessage(response);
+	}
+	
+	public RestMessage sendPostRestMessage(RestMessage msg) throws UnsupportedEncodingException {
+		String request = RestXmlCodec.encodeRestMessage(msg);
+		String response = PostData(request); 		
+		return RestXmlCodec.decodeRestMessage(response);
+	}
+	
+	public RestMessage sendPutRestMessage(RestMessage msg) throws UnsupportedEncodingException {
+		String request = RestXmlCodec.encodeRestMessage(msg);
+		String response = PutData(request); 		
+		return RestXmlCodec.decodeRestMessage(response);
+	}
+	
+	public RestMessage sendDeleteRestMessage() {
+		String response = DeleteData(); 		
+		return RestXmlCodec.decodeRestMessage(response);
 	}
 	
 	/**
