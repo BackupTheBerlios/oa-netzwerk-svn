@@ -152,15 +152,15 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		}
 		
 		
-//		List <Title> titlelist = imf.getTitles ( );
+		List <Title> titlelist = imf.getTitles ( );
 		//List <Author> authors;
 		//List <Keyword> keywords = imf.getKeywords ( );
-//		List <Description> descriptions = imf.getDescriptions ( );
 		//List <Publisher> publishers;
 		List <DateValue> dateValues = imf.getDateValues ( );
 		List <Format> formatList = imf.getFormatList ( );
 		List <Identifier> identifierList = imf.getIdentifierList ( );
-//		List <TypeValue> typeValueList = imf.getTypeValueList ( );
+		List <Description> descriptionList = imf.getDescriptions();
+		List <TypeValue> typeValueList = imf.getTypeValueList ( );
 		//List <Language> languageList;
 		//List<Classification> classificationList;
 		
@@ -176,30 +176,43 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		//for (Description description : descriptions)
 		//	db.insertDescription ( );
-		
-		for (DateValue dateValue : dateValues)
+
+		try {
 			
-			try {
-				
-				db.insertDateValue (object_id, dateValue.getNumber ( ), HelperMethods.extract_datestamp (dateValue.getDateValue ( )));
-				
-			} catch (ParseException ex) {
-				
-				logger.error ("Datestamp with datevalue incorrect");
-				ex.printStackTrace();
-			}
+			for (DateValue dateValue : dateValues)
+
+				try {
+
+					db.insertDateValue(object_id, dateValue.getNumber(),
+							HelperMethods.extract_datestamp(dateValue
+									.getDateValue()));
+
+				} catch (ParseException ex) {
+
+					logger.error("Datestamp with datevalue incorrect");
+					ex.printStackTrace();
+				}
+
+			for (Format format : formatList)
+				db.insertFormat(object_id, format.getNumber(), format
+						.getSchema_f());
+
+			for (Identifier identifier : identifierList)
+				db.insertIdentifier(object_id, identifier.getNumber(),
+						identifier.getIdentifier());
+
+			for (Description description : descriptionList)
+				db.insertDescription(object_id, description.getNumber(), description.getDescription());
+			// for (TypeValue typeValue : typeValueList)
+			// db.insertTypeValue ( );
+
+			db.commit();
+			db.setAutoCom(true);
+
+		} catch (SQLException sqlex) {
+			db.rollback();
+		}
 		
-		for (Format format : formatList)
-			db.insertFormat (object_id, format.getNumber ( ), format.getSchema_f ( ));
-		
-		for (Identifier identifier : identifierList)
-			db.insertIdentifier (object_id, identifier.getNumber ( ), identifier.getIdentifier ( ));
-		
-		//for (TypeValue typeValue : typeValueList)
-		//	db.insertTypeValue ( );
-		
-		db.commit ( );
-		db.setAutoCom (true);
 		
 		db.closeConnection ( );
 		

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 /**
@@ -180,10 +181,10 @@ public interface DBAccessInterface {
 	 * @param identifier
 	 */
 	public abstract void insertIdentifier (BigDecimal object_id, int number,
-			String identifier);
+			String identifier) throws SQLException;
 
 	public abstract void insertDescription (BigDecimal object_id, int number,
-			String description);
+			String description) throws SQLException;
 	
 	public abstract ResultSet selectTitle(BigDecimal oid);
 	

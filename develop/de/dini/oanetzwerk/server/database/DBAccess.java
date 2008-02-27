@@ -699,7 +699,7 @@ public class DBAccess implements DBAccessInterface {
 	 */
 	
 	public void insertIdentifier (BigDecimal object_id, int number,
-			String identifier) {
+			String identifier) throws SQLException {
 
 		PreparedStatement pstmt = null;
 		
@@ -853,7 +853,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	public void insertDescription (BigDecimal object_id, int number,
-			String description) {
+			String description) throws SQLException {
 
 		PreparedStatement pstmt = null;
 		
@@ -873,6 +873,8 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+			throw sqlex;
 		}
 	}
 
