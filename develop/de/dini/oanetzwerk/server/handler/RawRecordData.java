@@ -6,19 +6,18 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.utils.RestXmlCodec;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.*;
 
 /**
@@ -39,16 +38,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	 * 
 	 */
 	
-	private ResultSet resultset;
-	
-	/**
-	 * 
-	 */
-	
 	public RawRecordData ( ) {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug (RawRecordData.class.getName ( ) + " is called");
+		super (RawRecordData.class.getName ( ), RestKeyword.RawRecordData);
 	}
 	
 	/**
@@ -111,37 +103,45 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		db.closeConnection ( );
 		object_id = null;
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			
-			if (resultset.next ( )) {
+			if (this.resultset.next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: \n\tobject_id = " + resultset.getInt (1) +
-							"\n\trepository_timestamp = " + resultset.getDate (2).toString ( ) +
-							"\n\tdata = " + resultset.getString (3));
+					logger.debug ("DB returned: \n\tobject_id = " + this.resultset.getInt (1) +
+							"\n\trepository_timestamp = " + this.resultset.getDate (2).toString ( ) +
+							"\n\tdata = " + this.resultset.getString (3));
 				
-				mapEntry.put ("object_id", Integer.toString (resultset.getInt ("object_id")));
-				mapEntry.put ("repository_timestamp", resultset.getDate ("repository_timestamp").toString ( ));
+				res.addEntry ("object_id", Integer.toString (this.resultset.getInt ("object_id")));
+				res.addEntry ("repository_timestamp", this.resultset.getDate ("repository_timestamp").toString ( ));
 				//TODO: MetaDataFormat
-				mapEntry.put ("data", resultset.getString ("data"));
+				res.addEntry ("data", this.resultset.getString ("data"));
+				this.rms.setStatus (RestStatusEnum.OK);
 				
 			} else {
 				
 				logger.warn ("no results at all. Continueing...");
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND);
+				this.rms.setStatusDescription ("No matching RawRecordData found");
 			}
 			
 		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			this.rms.addEntrySet (res);
+			this.resultset = null;
+			res = null;
 		}
-		
-		listentries.add (mapEntry);
-		
-		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "RawRecordData");
+				
+		return RestXmlCodec.encodeRestMessage (rms);
 	}
 
 	/**
@@ -198,13 +198,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		object_id = null;
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		RestEntrySet res = new RestEntrySet ( );
 		
-		mapEntry.put ("oid", response);
-		listentries.add (mapEntry);
+		res.addEntry ("oid", response);
+		this.rms.setStatus (RestStatusEnum.OK);
+		this.rms.addEntrySet (res);
 		
-		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "RawRecordData");
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 	
 	/**

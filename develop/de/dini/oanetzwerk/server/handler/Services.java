@@ -5,13 +5,13 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.utils.RestXmlCodec;
@@ -25,8 +25,15 @@ import de.dini.oanetzwerk.utils.RestXmlCodec;
 public class Services extends AbstractKeyWordHandler implements
 		KeyWord2DatabaseInterface {
 	
-	private ResultSet resultset;
-	
+	/**
+	 * @param objectName
+	 * @param rkw
+	 */
+	public Services ( ) {
+
+		super (Services.class.getName ( ), RestKeyword.Services);
+	}
+
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */

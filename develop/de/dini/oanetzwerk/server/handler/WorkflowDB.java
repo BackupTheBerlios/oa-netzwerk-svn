@@ -6,18 +6,18 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.utils.RestXmlCodec;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 
@@ -29,8 +29,15 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 public class WorkflowDB extends AbstractKeyWordHandler implements
 		KeyWord2DatabaseInterface {
 	
-	private ResultSet resultset;
-	
+	/**
+	 * @param objectName
+	 * @param rkw
+	 */
+	public WorkflowDB ( ) {
+
+		super (WorkflowDB.class.getName ( ), RestKeyword.WorkflowDB);
+	}
+
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
@@ -42,7 +49,8 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		db.createConnection ( );
 		
 		db.closeConnection ( );
-		return null;
+		this.rms.setStatus (RestStatusEnum.UNKNOWN_ERROR);
+		return RestXmlCodec.encodeRestMessage (rms);
 	}
 
 	/**
@@ -63,26 +71,34 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		
 		db.closeConnection ( );
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		RestEntrySet res;
 		
 		try {
 			
-			while (resultset.next ( )) {
+			while (this.resultset.next ( )) {
 				
-				mapEntry = new HashMap <String ,String> ( );
+				res = new RestEntrySet ( );
 				//mapEntry.put ("workflow_id", Integer.toString (resultset.getInt (1)));
-				mapEntry.put ("object_id", Integer.toString (resultset.getInt (1)));
-				listentries.add (mapEntry);
+				res.addEntry ("object_id", Integer.toString (this.resultset.getInt (1)));
+				this.rms.addEntrySet (res);
 			}
+			
+			this.rms.setStatus (RestStatusEnum.OK);
 			
 		} catch (SQLException ex) {
 			
 			logger.error ("An error occured while processing Get Service: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			this.resultset = null;
+			res = null;
 		}
 		
-		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "Services");
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -95,7 +111,8 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		db.createConnection ( );
 		
 		db.closeConnection ( );
-		return null;
+		this.rms.setStatus (RestStatusEnum.UNKNOWN_ERROR);
+		return RestXmlCodec.encodeRestMessage (rms);
 	}
 
 	/**
@@ -108,12 +125,10 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		BigDecimal service_id = null;
 		Date time = null;
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-		
-		listentries = RestXmlCodec.decodeEntrySet (data);
-		mapEntry = listentries.get (0);
-		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+		this.rms = RestXmlCodec.decodeRestMessage (data);
+		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
+
+		Iterator <String> it = res.getKeyIterator ( );
 		String key = "";
 		
 		while (it.hasNext ( )) {
@@ -121,13 +136,13 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 			key = it.next ( );
 			
 			if (key.equalsIgnoreCase ("service_id"))
-				object_id = new BigDecimal (mapEntry.get (key));
+				object_id = new BigDecimal (res.getValue (key));
 			
 			else if (key.equalsIgnoreCase ("name")) {
 				
 				try {
 					
-					time = HelperMethods.extract_datestamp (mapEntry.get (key));
+					time = HelperMethods.extract_datestamp (res.getValue (key));
 					
 				} catch (ParseException ex) {
 					
@@ -136,7 +151,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 				}
 				
 			} else if (key.equalsIgnoreCase ("service_id"))
-				service_id = new BigDecimal (mapEntry.get (key));
+				service_id = new BigDecimal (res.getValue (key));
 			
 			else continue;
 		}
@@ -149,25 +164,37 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		
 		db.closeConnection ( );
 		
-		listentries = new ArrayList <HashMap <String, String>> ( );
-		mapEntry = new HashMap <String ,String> ( );
+		this.rms = new RestMessage (RestKeyword.ObjectEntry);
+		res = new RestEntrySet ( );
 		
 		try {
 			
 			if (resultset.next ( )) {
 		
-				mapEntry.put ("workflow_id", resultset.getBigDecimal (1).toPlainString ( ));
+				res.addEntry ("workflow_id", resultset.getBigDecimal (1).toPlainString ( ));
+				this.rms.setStatus (RestStatusEnum.OK);
+				
+			} else {
+				
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND);
+				this.rms.setStatusDescription ("No matching WorklflowDB Entry found");
 			}
 			
 		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			this.rms.addEntrySet (res);
+			this.resultset = null;
+			res = null;
 		}
 		
-		listentries.add (mapEntry);
-		
-		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "ObjectEntry");
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**

@@ -6,6 +6,7 @@ package de.dini.oanetzwerk;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler;
@@ -27,8 +28,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	public WorkflowDBEntry ( ) {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug (WorkflowDBEntry.class.getName ( ) + " is called");
+		super ("", RestKeyword.UNKNOWN);
 	}
 	
 	public static void main (String [ ] args) {

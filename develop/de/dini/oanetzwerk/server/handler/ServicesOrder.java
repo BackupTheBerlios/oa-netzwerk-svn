@@ -5,8 +5,8 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 
+import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
 
@@ -19,7 +19,10 @@ import de.dini.oanetzwerk.server.database.DBAccessInterface;
 public class ServicesOrder extends AbstractKeyWordHandler implements
 		KeyWord2DatabaseInterface {
 	
-	private ResultSet resultset;
+	public ServicesOrder ( ) {
+
+		super (ServicesOrder.class.getName ( ), RestKeyword.ServiceOrder);
+	}
 	
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])

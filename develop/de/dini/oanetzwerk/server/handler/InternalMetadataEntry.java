@@ -6,19 +6,19 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.database.DBAccess;
-import de.dini.oanetzwerk.server.database.DBAccessInterface;
+import de.dini.oanetzwerk.server.database.*;
 import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.utils.RestXmlCodec;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.imf.*;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -40,9 +40,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	
 	public InternalMetadataEntry ( ) {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug (InternalMetadataEntry.class.getName ( ) + " is called");
-		
+		super (InternalMetadataEntry.class.getName ( ), RestKeyword.InternalMetadataEntry);
 		imMarsch = InternalMetadataJAXBMarshaller.getInstance ( );
 	}
 
@@ -67,26 +65,25 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		// erzeuge imf-Object, das Schrittweise mit Daten befüllt wird
 		InternalMetadata imf = new InternalMetadata();
 		
-		ResultSet rs;
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
 		BigDecimal oid = new BigDecimal (path [2]);
 		
 		// Auswertung der Titel
-		rs = db.selectTitle (oid);
+		this.resultset = db.selectTitle (oid);
 		
-		if (rs == null)
+		if (this.resultset == null)
 			logger.warn ("resultset empty!");
 		
 		try {
 			
-			while (rs.next ( )) {
+			while (this.resultset.next ( )) {
 				
 				Title temp = new Title ( );
-				temp.setTitle (rs.getString ("title"));
-				temp.setQualifier (rs.getString ("qualifier"));
-				temp.setLang (rs.getString ("lang"));
+				temp.setTitle (this.resultset.getString ("title"));
+				temp.setQualifier (this.resultset.getString ("qualifier"));
+				temp.setLang (this.resultset.getString ("lang"));
 				//temp.setNumber (rs.getInt ("number"));
 				imf.addTitle (temp);
 			}
@@ -99,14 +96,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		String xmlData;
 		xmlData = imMarsch.marshall (imf);
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		RestEntrySet res = new RestEntrySet ( );
 		
-		mapEntry.put ("internalmetadata", xmlData);
-		listentries.add (mapEntry);
-		String requestxml = RestXmlCodec.encodeEntrySetResponseBody (listentries, "InternalMetadataEntry");
+		res.addEntry ("internalmetadata", xmlData);
 		
-		return requestxml;
+		this.rms.setStatus (RestStatusEnum.OK);
+		this.rms.addEntrySet (res);
+		
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -136,12 +133,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("");
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-		
-		listentries = RestXmlCodec.decodeEntrySet (data);
-		mapEntry = listentries.get (0);
-		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+		this.rms = RestXmlCodec.decodeRestMessage (data);
+		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
+
+		Iterator <String> it = res.getKeyIterator ( );
 		String key = "";
 		InternalMetadata imf = null;
 		
@@ -151,7 +146,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			if (key.equalsIgnoreCase ("internalmetadata")) {
 				
-				imf = imMarsch.unmarshall (mapEntry.get (key));
+				imf = imMarsch.unmarshall (res.getValue (key));
 				
 			} else continue;
 		}
@@ -208,10 +203,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		db.closeConnection ( );
 		
-		mapEntry.put ("oid", object_id.toPlainString ( ));
-		listentries.add (mapEntry);
+		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+		res = new RestEntrySet ( );
 		
-		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "InternalMetadataEntry");
+		res.addEntry ("oid", object_id.toPlainString ( ));
+		this.rms.setStatus (RestStatusEnum.OK);
+		this.rms.addEntrySet (res);
+		
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -223,5 +222,4 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		// TODO Auto-generated method stub
 
 	}
-
 }

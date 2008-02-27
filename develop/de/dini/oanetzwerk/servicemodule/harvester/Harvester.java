@@ -863,11 +863,11 @@ public class Harvester {
 	
 	/**
 	 * @param result
-	 * @param string
+	 * @param keyword
 	 * @return
 	 */
 	
-	private String getValueFromKey (String result, String string) {
+	private String getValueFromKey (String result, String keyword) {
 		
 		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
 		RestEntrySet res = rms.getListEntrySets ( ).get (0);
@@ -883,7 +883,7 @@ public class Harvester {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("key: " + key + " value: " + res.getValue (key));
 			
-			if (key.equalsIgnoreCase ("oid")) {
+			if (key.equalsIgnoreCase (keyword)) {
 				
 				value = res.getValue (key);
 				break;

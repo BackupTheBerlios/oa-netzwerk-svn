@@ -111,7 +111,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			res = null;
 		}
 		
-		return RestXmlCodec.encodeRestMessage (rms);
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
