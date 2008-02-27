@@ -182,6 +182,9 @@ public interface DBAccessInterface {
 	public abstract void insertIdentifier (BigDecimal object_id, int number,
 			String identifier);
 
+	public abstract void insertDescription (BigDecimal object_id, int number,
+			String description);
+	
 	public abstract ResultSet selectTitle(BigDecimal oid);
 	
 	public abstract ResultSet selectAuthors(BigDecimal oid);

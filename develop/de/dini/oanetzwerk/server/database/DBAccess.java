@@ -721,6 +721,10 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 		}
 	}
+
+	
+	
+	
 	
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
@@ -847,6 +851,31 @@ public class DBAccess implements DBAccessInterface {
 			
 		return null;
 	}
+
+	public void insertDescription (BigDecimal object_id, int number,
+			String description) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Description (object_id, number, abstract) VALUES (?,?,?)");
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setInt (2, number);
+			pstmt.setString (3, description);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+	}
+
 	
 	
 } //end of class
