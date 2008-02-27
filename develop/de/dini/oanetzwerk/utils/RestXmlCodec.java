@@ -16,6 +16,7 @@ import org.jdom.input.SAXBuilder;
 
 import org.xml.sax.InputSource;
 
+@Deprecated
 public class RestXmlCodec {
 	
 	static Logger logger = Logger.getLogger (RestXmlCodec.class);
@@ -52,6 +53,7 @@ public class RestXmlCodec {
 	 * @param listEntrySet list of hashmaps storing key-value-sets
 	 * @return XML encoded request body
 	 */
+	@Deprecated
 	public static String encodeEntrySetRequestBody(List<HashMap<String, String>> listEntrySet, boolean useBase64keys, boolean useBase64values) {
 		StringBuffer sbXML = new StringBuffer();
 		sbXML.append(XML_HEADER);
@@ -62,7 +64,7 @@ public class RestXmlCodec {
 		sbXML.append("</oanrest>\n");
 		return sbXML.toString();
 	}
-
+	@Deprecated
 	public static String encodeEntrySetRequestBody(List<HashMap<String, String>> listEntrySet) {
 		return encodeEntrySetRequestBody(listEntrySet, DEFAULT_FLAG_BASE64KEYS, DEFAULT_FLAG_BASE64VALUES);
 	}
@@ -73,6 +75,7 @@ public class RestXmlCodec {
 	 * @param keyword a REST-keyword to deliver back by the server
 	 * @return XML encoded request body
 	 */	
+	@Deprecated
 	public static String encodeEntrySetResponseBody(List<HashMap<String, String>> listEntrySet, String keyword, boolean useBase64keys, boolean useBase64values) {
 		StringBuffer sbXML = new StringBuffer();
 		sbXML.append(XML_HEADER);
@@ -85,7 +88,7 @@ public class RestXmlCodec {
 		sbXML.append("</oanrest>\n");
 		return sbXML.toString();
 	}	
-	
+	@Deprecated
 	public static String encodeEntrySetResponseBody(List<HashMap<String, String>> listEntrySet, String keyword) {
 		return encodeEntrySetResponseBody(listEntrySet, keyword, DEFAULT_FLAG_BASE64KEYS, DEFAULT_FLAG_BASE64VALUES);
 	}
@@ -137,6 +140,7 @@ public class RestXmlCodec {
 	 * @param strXML XML encoded data
 	 * @return list of hashmaps storing key-value-sets
 	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public static List<HashMap<String, String>> decodeEntrySet(String strXML, boolean useBase64keys, boolean useBase64values) {
 		List<HashMap<String, String>> listEntrySet = new ArrayList<HashMap<String,String>>();
@@ -190,7 +194,7 @@ public class RestXmlCodec {
 		
 		return listEntrySet;
 	}
-	
+	@Deprecated
 	public static List<HashMap<String, String>> decodeEntrySet(String strXML) {
 		return decodeEntrySet(strXML, DEFAULT_FLAG_BASE64KEYS, DEFAULT_FLAG_BASE64VALUES);
 	}
@@ -203,6 +207,7 @@ public class RestXmlCodec {
 	 * @param listErrors list of hashmaps storing key-description-sets
 	 * @return XML encoded errors
 	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public static String encodeErrors(List<HashMap<String, String>> listErrors) {
 		StringBuffer sbXML = new StringBuffer();
@@ -234,6 +239,7 @@ public class RestXmlCodec {
 	 * @param strXML XML encoded data
 	 * @return list of hashmaps storing key-description-sets
 	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public static List<HashMap<String, String>> decodeErrors(String strXML) {
 		List<HashMap<String, String>> listErrors = new ArrayList<HashMap<String,String>>();
@@ -281,6 +287,7 @@ public class RestXmlCodec {
 	 * @param strXML XML encoded data
 	 * @return identifying String (errors|response|request)
 	 */
+	@Deprecated
 	public static String fetchMessageType(String strXML) {
 		String type = null; //unknown
 		Element mainElement = null;

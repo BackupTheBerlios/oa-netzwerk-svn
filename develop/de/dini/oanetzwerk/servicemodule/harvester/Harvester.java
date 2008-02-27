@@ -25,7 +25,11 @@ import org.xml.sax.SAXException;
 
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.utils.RestXmlCodec;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 
 /**
  * @author Michael Kühn
@@ -623,41 +627,32 @@ public class Harvester {
 		
 		try {
 			
-			List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-			HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-			mapEntry.put ("repository_id", Integer.toString (getRepositoryID ( )));
-			mapEntry.put ("repository_identifier", this.ids.get (index).getExternalOID ( ));
-			mapEntry.put ("repository_datestamp", datestamp);
-			listentries.add (mapEntry);
+			RestMessage rms = new RestMessage ( );
 			
-			String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
+			rms.setKeyword (RestKeyword.ObjectEntry);
+			rms.setStatus (RestStatusEnum.OK);
+			
+			RestEntrySet res = new RestEntrySet ( );
+			
+			res.addEntry ("repository_id", Integer.toString (getRepositoryID ( )));
+			res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
+			res.addEntry ("repository_datestamp", datestamp);
+			
+			rms.addEntrySet (res);
+			
+			String requestxml = RestXmlCodec.encodeRestMessage (rms);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("xml: " + requestxml);
 			
 			String result = restClient.PutData (requestxml);
 			
-			listentries = null;
-			mapEntry = null;
+			rms = null;
+			res = null;
 			restClient = null;
 			
-			listentries = RestXmlCodec.decodeEntrySet (result);
-			mapEntry = listentries.get (0);
-			Iterator <String> it = mapEntry.keySet ( ).iterator ( );
-			String key = "";
-			String value = "";
-			
-			while (it.hasNext ( )) {
-				
-				key = it.next ( );
-				
-				if (key.equalsIgnoreCase ("oid")) {
-					
-					value = mapEntry.get (key);
-					break;
-				}
-			}
-			
+			String value = getValueFromKey (result, "oid");
+						
 			int intoid = new Integer (value);
 			
 			if (logger.isDebugEnabled ( ))
@@ -690,30 +685,8 @@ public class Harvester {
 		
 		String result = restclient.GetData ( );
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-		
 		restclient = null;
-		
-		listentries = RestXmlCodec.decodeEntrySet (result);
-		mapEntry = listentries.get (0);
-		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
-		String key = "";
-		String value = "";
-		
-		while (it.hasNext ( )) {
-							
-			key = it.next ( );
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("key: " + key + " value: " + mapEntry.get (key));
-			
-			if (key.equalsIgnoreCase ("repository_datestamp")) {
-				
-				value = mapEntry.get (key);
-				break;
-			}
-		}
+		String value = getValueFromKey (result, "repository_datestamp");
 		
 		try {
 			
@@ -755,20 +728,26 @@ public class Harvester {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("We must update the harvested datestamp only"); 
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-		
 		GregorianCalendar cal = new GregorianCalendar ( );
 		cal.setTime (this.ids.get (index).getDatestamp ( ));
 		
 		String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
 		
-		mapEntry.put ("repository_id", Integer.toString (getRepositoryID ( )));
-		mapEntry.put ("repository_identifier", this.ids.get (index).getExternalOID ( ));
-		mapEntry.put ("repository_datestamp", datestamp);
-		listentries.add (mapEntry);
+		RestMessage rms = new RestMessage ( );
 		
-		String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
+		rms.setKeyword (RestKeyword.ObjectEntry);
+		rms.setStatus (RestStatusEnum.OK);
+		
+		RestEntrySet res = new RestEntrySet ( );
+		
+		res.addEntry ("repository_id", Integer.toString (getRepositoryID ( )));
+		res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
+		res.addEntry ("repository_datestamp", datestamp);
+		
+		rms.addEntrySet (res);
+		
+		String requestxml = RestXmlCodec.encodeRestMessage (rms);
+		
 		String ressource = "ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/";
 		
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
@@ -784,26 +763,11 @@ public class Harvester {
 			ex.printStackTrace ( );
 		}
 		
-		listentries = null;
-		mapEntry = null;
+		rms = null;
+		res = null;
 		restclient = null;
 		
-		listentries = RestXmlCodec.decodeEntrySet (result);
-		mapEntry = listentries.get (0);
-		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
-		String key = "";
-		String value = "";
-		
-		while (it.hasNext ( )) {
-			
-			key = it.next ( );
-			
-			if (key.equalsIgnoreCase ("oid")) {
-				
-				value = mapEntry.get (key);
-				break;
-			}
-		}
+		String value = getValueFromKey (result, "oid");
 		
 		int intoid = new Integer (value);
 		
@@ -883,31 +847,11 @@ public class Harvester {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug (result);
-				
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-
-		listentries = RestXmlCodec.decodeEntrySet (result);
-		mapEntry = listentries.get (0);
-		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
-		String key = "";
-		String value = "";
+		
+		String value = getValueFromKey (result, "oid");
+		
 		int intoid = -1;
-		
-		while (it.hasNext ( )) {
-							
-			key = it.next ( );
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("key: " + key + " value: " + mapEntry.get (key));
-			
-			if (key.equalsIgnoreCase ("oid")) {
 				
-				value = mapEntry.get (key);
-				break;
-			}
-		}
-		
 		if (value == null)
 			intoid = -1;
 		
@@ -917,6 +861,39 @@ public class Harvester {
 		return intoid;
 	}
 	
+	/**
+	 * @param result
+	 * @param string
+	 * @return
+	 */
+	
+	private String getValueFromKey (String result, String string) {
+		
+		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		RestEntrySet res = rms.getListEntrySets ( ).get (0);
+		
+		Iterator <String> it = res.getKeyIterator ( );
+		String key = "";
+		String value = null;
+		
+		while (it.hasNext ( )) {
+							
+			key = it.next ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("key: " + key + " value: " + res.getValue (key));
+			
+			if (key.equalsIgnoreCase ("oid")) {
+				
+				value = res.getValue (key);
+				break;
+			}
+		}
+		
+		return value;
+	}
+
+
 	/**
 	 * Main class which have to be called.
 	 * 

@@ -76,7 +76,7 @@ public class RestXmlCodec {
 				sbXML.append("  <entryset>\n");
 				RestEntrySet restDataEntrySet = msg.getListEntrySets().get(i);
 //				Iterator it = restDataEntrySet.getEntryHashMap().keySet().iterator();
-				Iterator it = restDataEntrySet.getKeyIterator();
+				Iterator <String> it = restDataEntrySet.getKeyIterator();
 				while(it.hasNext()) {
 					String key = (String)it.next();
 					sbXML.append("    <entry key=\"");

@@ -20,6 +20,19 @@ public class RestMessage {
 		restURL = "";
 	}
 
+	/**
+	 * @param restKeyword
+	 */
+	
+	public RestMessage (RestKeyword restKeyword) {
+
+		this.listEntrySets = new ArrayList<RestEntrySet>();
+		this.status = RestStatusEnum.OK;
+		this.statusDescription = "";
+		this.keyword = restKeyword;
+		this.restURL = "";
+	}
+
 	public List<RestEntrySet> getListEntrySets() {
 		return listEntrySets;
 	}

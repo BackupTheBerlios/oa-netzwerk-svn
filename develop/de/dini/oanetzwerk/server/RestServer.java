@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 //import org.apache.log4j.xml.DOMConfigurator;
 
+import de.dini.oanetzwerk.codec.*;
 import de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
@@ -45,6 +46,7 @@ public class RestServer extends HttpServlet {
 	 * @param i 
 	 * @return
 	 */
+	
 	@SuppressWarnings("unchecked")
 	private String processRequest (HttpServletRequest req, int i) {
 		
@@ -81,38 +83,59 @@ public class RestServer extends HttpServlet {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			return ex.getLocalizedMessage ( );
+			
+			return createErrorResponse (ex, RestStatusEnum.CLASS_NOT_FOUND_ERROR);
 			
 		} catch (InstantiationException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			return ex.getLocalizedMessage ( );
+			
+			return createErrorResponse (ex, RestStatusEnum.CLASS_COULD_NOT_BE_INSTANTIATED_ERROR);
 			
 		} catch (IllegalAccessException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			return ex.getLocalizedMessage ( );
+			
+			return createErrorResponse (ex, RestStatusEnum.ILLEGAL_ACCESS_ERROR);
 			
 		} catch (IOException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			return ex.getLocalizedMessage ( );
+			
+			return createErrorResponse (ex, RestStatusEnum.IO_ERROR);
 			
 		} catch (NotEnoughParametersException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			return ex.getLocalizedMessage ( );
+			
+			return createErrorResponse (ex, RestStatusEnum.NOT_ENOUGH_PARAMETERS_ERROR);
 			
 		} catch (MethodNotImplementedException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			return ex.getLocalizedMessage ( );
+			
+			return createErrorResponse (ex, RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		}
+	}
+
+	/**
+	 * @param ex
+	 * @param restStatusEnum 
+	 * @return
+	 */
+	
+	private String createErrorResponse (Exception ex, RestStatusEnum restStatusEnum) {
+		
+		RestMessage rms = new RestMessage (RestKeyword.UNKNOWN);
+		rms.setStatus (restStatusEnum);
+		rms.setStatusDescription (ex.getLocalizedMessage ( ));
+		
+		return RestXmlCodec.encodeRestMessage (rms);
 	}
 
 	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws IOException {

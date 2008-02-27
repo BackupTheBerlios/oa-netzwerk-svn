@@ -6,15 +6,10 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.database.DBAccess;
-import de.dini.oanetzwerk.server.database.DBAccessInterface;
-import de.dini.oanetzwerk.utils.RestXmlCodec;
+import de.dini.oanetzwerk.server.database.*;
+import de.dini.oanetzwerk.codec.*;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
@@ -31,8 +26,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	public ObjectEntryID ( ) {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug (ObjectEntryID.class.getName ( ) + " is called");
+		super (ObjectEntryID.class.getName ( ), RestKeyword.ObjectEntryID);
 	}
 	
 	/**
@@ -41,8 +35,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	public static void main (String [ ] args) {
 		
-		//TODO: Testing!!!
-		
+		//TODO: Testing!!!		
 	}
 
 	/**
@@ -78,39 +71,47 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("RepositoryID = " + path [2] + " || externalOID = " + path [3]);
 		
-		resultset = db.selectObjectEntryId (path [2], path [3]);
+		this.resultset = db.selectObjectEntryId (path [2], path [3]);
 		
 		db.closeConnection ( );
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			
-			if (resultset.next ( )) {
+			if (this.resultset.next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("DB returned: internal objectID = " + resultset.getInt ("object_id"));
-
-				mapEntry.put ("oid", Integer.toString (resultset.getInt ("object_id")));
+				
+				res.addEntry ("oid", Integer.toString (resultset.getInt ("object_id")));
+				this.rms.setStatus (RestStatusEnum.OK);
 				
 			} else {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("No matching internal objectID found");
 				
-				mapEntry.put ("oid", null);
+				res.addEntry ("oid", null);
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND);
+				this.rms.setStatusDescription ("No matching internal objectID found");
 			}
 			
 		} catch (SQLException ex) {
 			
 			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			this.rms.addEntrySet (res);
+			this.resultset = null;
+			res = null;
 		}
 		
-		listentries.add (mapEntry);
-		
-		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "ObjectEntryId");
+		return RestXmlCodec.encodeRestMessage (rms);
 	}
 
 	/**

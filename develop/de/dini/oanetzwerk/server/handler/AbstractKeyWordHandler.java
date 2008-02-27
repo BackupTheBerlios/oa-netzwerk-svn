@@ -4,8 +4,12 @@
 
 package de.dini.oanetzwerk.server.handler;
 
+import java.sql.ResultSet;
+
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
@@ -24,14 +28,22 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 	protected static Logger logger = Logger.getLogger (AbstractKeyWordHandler.class);
+	protected RestMessage rms;
+	protected ResultSet resultset;
 
 	/**
 	 * This is the standard constructor which calls the super class. 
+	 * @param objectName 
 	 */
 	
-	public AbstractKeyWordHandler ( ) {
+	public AbstractKeyWordHandler (String objectName, RestKeyword rkw) {
 		
 		super ( );
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug (objectName + " is called");
+		
+		this.rms = new RestMessage (rkw);
 	}
 	
 	/**
