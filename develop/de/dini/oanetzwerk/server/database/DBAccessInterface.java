@@ -184,4 +184,13 @@ public interface DBAccessInterface {
 
 	public abstract ResultSet selectTitle(BigDecimal oid);
 	
+	public abstract ResultSet selectAuthors(BigDecimal oid);
+	
+	public abstract ResultSet selectDescription(BigDecimal oid);
+	
+	public abstract ResultSet selectIdentifier(BigDecimal oid);
+	
+	public abstract ResultSet selectFormat(BigDecimal oid);
+	
+	
 }

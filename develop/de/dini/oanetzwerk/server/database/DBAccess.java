@@ -53,7 +53,8 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			this.prop = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/apache-tomcat-5.5.25/webapps/restserver/WEB-INF/dbprop.xml");
+			this.prop = HelperMethods.loadPropertiesFromFile ("dbprop.xml");
+//			this.prop = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/apache-tomcat-5.5.25/webapps/restserver/WEB-INF/dbprop.xml");
 			//this.prop = HelperMethods.loadPropertiesFromFile ("/usr/local/tomcat/webapps/restserver/WEB-INF/dbprop.xml");
 			ic2 = new InitialContext ( );
 			
@@ -745,7 +746,107 @@ public class DBAccess implements DBAccessInterface {
 			
 		return null;
 	}
+
 	
+	/**
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
+	 */
+	public ResultSet selectAuthors (BigDecimal object_id) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			// number ?????
+			pstmt = conn.prepareStatement ("SELECT O.number, P.firstname, P.lastname, P.title, P.institution, P.email FROM dbo.Person P JOIN dbo.Object2Author O ON P.person_id = O.person_id WHERE O.object_id = ?");
+			
+			//pstmt.setBigDecimal (1, predecessor_id);
+			pstmt.setBigDecimal (1, object_id);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
+	 */
+	public ResultSet selectDescription (BigDecimal object_id) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			// number ?????
+			pstmt = conn.prepareStatement ("SELECT abstract, lang, number FROM dbo.Description WHERE object_id = ?");
+			
+			//pstmt.setBigDecimal (1, predecessor_id);
+			pstmt.setBigDecimal (1, object_id);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}	
+
+	/**
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
+	 */
+	public ResultSet selectIdentifier (BigDecimal object_id) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			// number ?????
+			pstmt = conn.prepareStatement ("SELECT identifier, number FROM dbo.Identifier WHERE object_id = ?");
+			
+			//pstmt.setBigDecimal (1, predecessor_id);
+			pstmt.setBigDecimal (1, object_id);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
+	 */
+	public ResultSet selectFormat (BigDecimal object_id) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			// number ?????
+			pstmt = conn.prepareStatement ("SELECT schema_f, number FROM dbo.Format WHERE object_id = ?");
+			
+			//pstmt.setBigDecimal (1, predecessor_id);
+			pstmt.setBigDecimal (1, object_id);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
 	
 	
 } //end of class
