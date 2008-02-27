@@ -168,8 +168,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		db.setAutoCom (false);
 		
-		//for (Title title : titlelist)			
-			//db.insertTitle (object_id, title.getQualifier ( ), title.getTitle ( ), title.getLang ( ));
 		
 		//for (Keyword keyword : keywords)
 		//	db.insertkeyword ( );
@@ -178,6 +176,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		//	db.insertDescription ( );
 
 		try {
+
+			for (Title title : titlelist)			
+				db.insertTitle (object_id, title.getQualifier ( ), title.getTitle ( ), title.getLang ( ));
 			
 			for (DateValue dateValue : dateValues)
 
@@ -203,8 +204,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 
 			for (Description description : descriptionList)
 				db.insertDescription(object_id, description.getNumber(), description.getDescription());
-			// for (TypeValue typeValue : typeValueList)
-			// db.insertTypeValue ( );
+			
+//			for (TypeValue typeValue : typeValueList)
+//				db.insertTypeValue ( );
 
 			db.commit();
 			db.setAutoCom(true);
