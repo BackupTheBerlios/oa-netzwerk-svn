@@ -24,7 +24,7 @@ public class RestXmlCodec {
 	
 	private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     // bisher nur lokal bei mir, könnte aber auf Scope1 deponiert werden (rm)
-	private static final String XML_ROOT = "<oanrest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"N:\\EIGENE~1\\_Aufgaben\\OA-NETZWERK\\OANREST2.xsd\">\n";
+	private static final String XML_ROOT = "<oanrest xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"N:\\EIGENE~1\\_Aufgaben\\OA-NETZWERK\\OANRestMessage.xsd\">\n";
 
 	
 	private static String encodeBase64(String data) {

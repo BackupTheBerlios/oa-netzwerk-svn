@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:element name="oanrest" type="oanrest-type"/>
+	<xsd:element name="keyword" type="keyword-type"/>
+	<xsd:element name="status" type="status-type"/>
+	<xsd:element name="description" type="description-type"/>
+	<xsd:element name="resturl" type="resturl-type"/>
+	<xsd:element name="entryset" type="entryset-type"/>
+	<xsd:element name="entry" type="entry-type"/>
+	<xsd:complexType name="oanrest-type">
+		<xsd:sequence>
+			<xsd:element ref="keyword"/>
+			<xsd:element ref="resturl"/>
+			<xsd:element ref="status"/>
+			<xsd:element ref="entryset" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="keyword-type" mixed="false">
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="status-type" mixed="false">
+		<xsd:sequence>
+			<xsd:element ref="description"/>
+		</xsd:sequence>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="description-type" mixed="true"/>
+	<xsd:complexType name="resturl-type" mixed="false">
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="entryset-type" mixed="false">
+		<xsd:sequence>
+			<xsd:element ref="entry" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="entry-type" mixed="true">
+		<xsd:sequence>
+			<xsd:element name="NULL" minOccurs="0">
+				<xsd:complexType/>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="key" type="xsd:string" use="required"/>
+	</xsd:complexType>
+</xsd:schema>
