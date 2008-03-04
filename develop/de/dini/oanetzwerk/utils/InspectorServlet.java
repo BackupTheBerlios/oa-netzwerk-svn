@@ -2,8 +2,6 @@ package de.dini.oanetzwerk.utils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +13,9 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.Classification;
@@ -131,7 +132,7 @@ public class InspectorServlet extends HttpServlet {
 				if(response != null) {
 					sb.append(renderRESTResponse(response));
 
-					String data = decodeRESTResponse(response, InspectorModeEnum.RawRecordData);
+					String data = decodeRESTResponse(RestXmlCodec.decodeRestMessage(response), InspectorModeEnum.RawRecordData);
 					sb.append(renderDecodedData(data));
 				}
 
@@ -142,7 +143,7 @@ public class InspectorServlet extends HttpServlet {
 				if(response != null) {
 					sb.append(renderRESTResponse(response));
 
-					String data = decodeRESTResponse(response, InspectorModeEnum.InternalMetadataEntry);
+					String data = decodeRESTResponse(RestXmlCodec.decodeRestMessage(response), InspectorModeEnum.InternalMetadataEntry);
 					
 					if(data == null) {
 						data = imMarshaller.marshall(InternalMetadata.createDummy());
@@ -171,7 +172,7 @@ public class InspectorServlet extends HttpServlet {
 				if(response != null) {
 					sb.append(renderRESTResponse(response));
 					
-					String data = decodeRESTResponse(response, InspectorModeEnum.ObjectEntry);
+					String data = decodeRESTResponse(RestXmlCodec.decodeRestMessage(response), InspectorModeEnum.ObjectEntry);
 
 					sb.append(renderDecodedData(data));
 				}
@@ -340,12 +341,10 @@ public class InspectorServlet extends HttpServlet {
 	 * @param mode
 	 * @return
 	 */
-	private String decodeRESTResponse(String response, InspectorModeEnum mode) {
+	private String decodeRESTResponse(RestMessage responseMsg, InspectorModeEnum mode) {
 		StringBuffer result = new StringBuffer();
 		
-        // ToDO: implementierung checken
-		
-		String sMessageType = RestXmlCodec.fetchMessageType(response);
+		/*String sMessageType = RestXmlCodec.fetchMessageType(response);
 		
 		if(sMessageType != null) {
 			if (!sMessageType.equals("response")) {
@@ -357,32 +356,36 @@ public class InspectorServlet extends HttpServlet {
 			sbErrors.append("<br/><i>Fehler beim Beziehen der Daten &uuml;ber die Rest-Schnittstelle</i><br/>\n");
 			sbErrors.append("<br/><i>message type unbekannt</i><br/>\n");
 			return null;
+		}*/
+		
+		switch(responseMsg.getStatus()) {
+			case OK:
+				// alles ok!
+				break;
+			default:
+				sbErrors.append("<br/><i>Fehler beim Beziehen der Daten &uuml;ber die Rest-Schnittstelle</i><br/>\n");
+				sbErrors.append("<br/><i>" + responseMsg.getStatus()+ "</i><br/>\n");
+				sbErrors.append("<br/><i>" + responseMsg.getStatusDescription() + "</i><br/>\n");
+				return null;				
 		}
-		
-		
-		// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus dem
-		// XML extrahiert werden
-
-		List<HashMap<String, String>> listentries = new ArrayList<HashMap<String, String>>();
-		HashMap<String, String> mapEntry = new HashMap<String, String>();
-
-		listentries = RestXmlCodec.decodeEntrySet(response);
-					
-		if (listentries != null && listentries.size() > 0) {
 			
-			
+		List<RestEntrySet> listEntrySet = responseMsg.getListEntrySets();
+		
+		if (listEntrySet != null && listEntrySet.size() > 0) {
+						
 			String key = "";
 			String value = "";
 			Iterator<String> it;
+			RestEntrySet entrySet;
 			
 			switch(mode) {						
 			case RawRecordData:
-				mapEntry = listentries.get(0);
-				it = mapEntry.keySet().iterator();
+				entrySet = listEntrySet.get(0);
+				it = entrySet.getKeyIterator();
 				while (it.hasNext()) {
 					key = it.next();
 					if (key.equalsIgnoreCase("data")) {
-						value = mapEntry.get(key);					
+						value = entrySet.getValue(key);					
 						value = decodeBase64(value);
 						result.append(value);
 						return result.toString();
@@ -390,24 +393,24 @@ public class InspectorServlet extends HttpServlet {
 				}
 				break;		
 			case InternalMetadataEntry: 
-				mapEntry = listentries.get(0);
-				it = mapEntry.keySet().iterator();
+				entrySet = listEntrySet.get(0);
+				it = entrySet.getKeyIterator();
 				while (it.hasNext()) {
 					key = it.next();
 					if (key.equalsIgnoreCase("internalmetadata")) {
-						value = mapEntry.get(key);							
+						value = entrySet.getValue(key);							
 						result.append(value);						
 						return result.toString();
 					}
 				}
 				break;
 			default:
-				for(HashMap<String, String> mapEntry2 : listentries) {			
-					it = mapEntry2.keySet().iterator();
+				for(RestEntrySet entrySet2: listEntrySet) {			
+					it = entrySet2.getKeyIterator();
 					result.append("Eintrag:\n");
 					while (it.hasNext()) {
 						key = it.next();
-						value = mapEntry2.get(key);
+						value = entrySet2.getValue(key);
 						result.append("  Schlüssel = ");
 						result.append(key + "\n");
 						result.append("  Wert = ");
