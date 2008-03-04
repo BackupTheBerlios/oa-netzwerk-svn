@@ -98,6 +98,12 @@ public class InspectorServlet extends HttpServlet {
 		out.write(renderContent(enumParamMode));
 	}
 	
+	public void addErrorMsg(String msg) {
+		sbErrors.append("<ul><li><font color=\"#FF0000\"><b>\n");
+		sbErrors.append(StringEscapeUtils.escapeHtml(msg).replaceAll("\n", "<br/>\n"));
+		sbErrors.append("\n</li></ul></b></font><br/>\n");
+	}
+	
 	/**
 	 * rendert den HTML-Response in Abhängigkeit des Zustands der Anwendung (d.h. der Requestparameter)
 	 *
@@ -147,8 +153,7 @@ public class InspectorServlet extends HttpServlet {
 					
 					if(data == null) {
 						data = imMarshaller.marshall(InternalMetadata.createDummy());
-						sbErrors.append("<br/><i>Fehler beim Beziehen des gemarshallten IM</i><br/>\n");
-						sbErrors.append("<br/><i>marshalle (korrekte) Musterinstanz des IM als Daten f&uuml;r das Unmarshalling</i><br/>\n");	
+						addErrorMsg("Fehler beim Beziehen des gemarshallten IM\nmarshalle (korrekte) Musterinstanz des IM als Daten für das Unmarshalling");
 					}
 					
 					sb.append(renderDecodedData(data));
@@ -159,8 +164,7 @@ public class InspectorServlet extends HttpServlet {
 
 				if(myIM == null) {
 					myIM = InternalMetadata.createDummy();
-					sbErrors.append("<br/><i>Fehler beim Unmarshalling des IM</i><br/>\n");
-					sbErrors.append("<br/><i>lege Musterinstanz des IM an</i><br/>\n");	
+					addErrorMsg("Fehler beim Unmarshalling des IM\nlege Musterinstanz des IM an");
 				}
 					
 				sb.append("<h3>Webdarstellung eines InternalMetadata-Objektes</h3>\n");			
@@ -184,12 +188,15 @@ public class InspectorServlet extends HttpServlet {
 				
 				if(response != null) {
 					sb.append(renderRESTResponse(response));
+					String data = decodeRESTResponse(RestXmlCodec.decodeRestMessage(response), mode);
+					sb.append(renderDecodedData(data));
+					
 				}
 					
 			} 
 
 		}
-		
+				
 		sb.append(sbErrors.toString());
 		
 		sb.append(renderHTMLFooter());
@@ -290,15 +297,13 @@ public class InspectorServlet extends HttpServlet {
 		}
 			
 		if(restclient == null) {
-			sbErrors.append("<br/><i>Fehler beim Beziehen der Daten &uuml;ber die Rest-Schnittstelle</i><br/>\n");
-			sbErrors.append("<br/><i>REST-Client konnte nicht initialisiert werden</i><br/>\n");	
+			addErrorMsg("Fehler beim Beziehen der Daten über die Rest-Schnittstelle\nREST-Client konnte nicht initialisiert werden");
 			return null;
 		}
 		
 		String result = restclient.GetData();		
 		if(result == null) {
-			sbErrors.append("<br/><i>Fehler beim Beziehen der Daten &uuml;ber die Rest-Schnittstelle</i><br/>\n");
-			sbErrors.append("<br/><i>REST-Response ist null</i><br/>\n");		
+			addErrorMsg("Fehler beim Beziehen der Daten über die Rest-Schnittstelle\nREST-Response ist null");
 		}
 		
 		return result;
@@ -342,30 +347,15 @@ public class InspectorServlet extends HttpServlet {
 	 * @return
 	 */
 	private String decodeRESTResponse(RestMessage responseMsg, InspectorModeEnum mode) {
-		StringBuffer result = new StringBuffer();
-		
-		/*String sMessageType = RestXmlCodec.fetchMessageType(response);
-		
-		if(sMessageType != null) {
-			if (!sMessageType.equals("response")) {
-				sbErrors.append("<br/><i>Fehler beim Beziehen der Daten &uuml;ber die Rest-Schnittstelle</i><br/>\n");
-				sbErrors.append("<br/><i>error response</i><br/>\n");
-				return null;
-			}
-		} else {
-			sbErrors.append("<br/><i>Fehler beim Beziehen der Daten &uuml;ber die Rest-Schnittstelle</i><br/>\n");
-			sbErrors.append("<br/><i>message type unbekannt</i><br/>\n");
-			return null;
-		}*/
+		StringBuffer result = new StringBuffer();		
 		
 		switch(responseMsg.getStatus()) {
 			case OK:
 				// alles ok!
 				break;
 			default:
-				sbErrors.append("<br/><i>Fehler beim Beziehen der Daten &uuml;ber die Rest-Schnittstelle</i><br/>\n");
-				sbErrors.append("<br/><i>" + responseMsg.getStatus()+ "</i><br/>\n");
-				sbErrors.append("<br/><i>" + responseMsg.getStatusDescription() + "</i><br/>\n");
+				addErrorMsg("Fehler beim Beziehen der Daten über die Rest-Schnittstelle\n" +
+						    responseMsg.getStatus() + "\n" + responseMsg.getStatusDescription() + "\n");
 				return null;				
 		}
 			
@@ -421,8 +411,7 @@ public class InspectorServlet extends HttpServlet {
 			}
 			
 		} else {
-			sbErrors.append("<br/><i>Fehler beim Beziehen der Daten &uuml;ber die Rest-Schnittstelle</i><br/>\n");
-			sbErrors.append("<br/><i>keine Daten im REST-Response</i><br/>\n");
+			addErrorMsg("Fehler beim Beziehen der Daten über die Rest-Schnittstelle\nkeine Daten im REST-Response");
 			return null;
 		}
 		
@@ -487,15 +476,19 @@ public class InspectorServlet extends HttpServlet {
 	private String frameXMLString(String content, boolean xmlSyntaxHighlight) {
 		StringBuffer sb = new StringBuffer();
 
-		if(content == null) return "(null)";
+		if(content == null) {
+			content = "<b>(NULL)</b>";
+		} else {
 		
-		content = StringEscapeUtils.escapeHtml(content).replaceAll("\n", "<br/>\n");
-		if(xmlSyntaxHighlight) {
-			content = content.replaceAll("&lt;", "<b><small>&lt;");
-			content = content.replaceAll("&gt;", "&gt;</small></b>");
-			content = content.replaceAll(" ", "&nbsp;");
-		}
+			content = StringEscapeUtils.escapeHtml(content).replaceAll("\n", "<br/>\n");
+			if(xmlSyntaxHighlight) {
+				content = content.replaceAll("&lt;", "<b><small>&lt;");
+				content = content.replaceAll("&gt;", "&gt;</small></b>");
+				content = content.replaceAll(" ", "&nbsp;");
+			}
 				
+		}
+		
 		sb.append("<table width=\"100%\" border=\"1\" cellspacing=\"1\" cellpadding=\"10\">\n");
 		sb.append("<tr>\n");
 		sb.append("<td bgcolor=\"" + COLOR_TABLE_CONTENT + "\" >\n");
