@@ -35,7 +35,7 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
  * @author Michael Kühn
  * 
  * The Harvester consists of two parts: the Harvester itself and the Object Manager. The Harvester
- * makes a connection to a given repository where metadata-objects can be accessed.
+ * creates a connection to a given repository where metadata-objects can be accessed.
  * The Object Manager handles the harvested meta-data objects and ensures the safe storage of these objects
  * in a database if necessary.
  */
@@ -295,21 +295,33 @@ public class Harvester {
 		
 		try {
 			
+			// this will get all metadataformats, the repository supports 
+			
 			response = listMetaDataFormats (getRepositoryURL ( ));
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("metaDataFormats found");
 			
+			// here has to be inserted the code which decides which format is chosen for the following harvest
 			response = null;
 			
+			// when we only want to get all new rawdata from the given data, we'll end in here 
 			if (!fullharvest)
 				response = listIdentifiers (getRepositoryURL ( ), this.metaDataFormat, updateFrom);
 			
+			// if we do a harvest of all rawdata, this will be chosen
 			else
 				response = listIdentifiers (getRepositoryURL ( ), this.metaDataFormat);
-
-			while (resumptionSet) {
-					
+			
+			while (resumptionSet) { // until we have a ResumptionToken to process
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("resumptionSet = true");
+				
+				/* 
+				 * the response of the harvested repository is taken and the Ids in it will be extracted and we'll have
+				 * 
+				 */
 				resumptionToken = extractIdsAndGetResumptionToken (response, getRepositoryID ( ));
 				processRecords ( );
 				
@@ -329,26 +341,24 @@ public class Harvester {
 						
 					} else {
 												
-						listIdentifiers (getRepositoryURL ( ), "resumptionToken", resumptionToken);
+						response = listIdentifiers (getRepositoryURL ( ), "resumptionToken", resumptionToken);
 						
 						if (logger.isDebugEnabled ( ))
 							logger.debug ("ResumptionToken: " + resumptionToken);
+						
 						else;
 					}
 					
-					resumptionToken = null;
+					//resumptionToken = null;
 					
 				} else {
 					
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("no ResumptionToken found, IdentifierList complete");
-					
 					else;
 					
 					resumptionSet = false;
 				}
-				
-				response = null;
 			} 
 		
 		} catch (HttpException ex) {
@@ -360,6 +370,11 @@ public class Harvester {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			
+		} finally {
+			
+			resumptionToken = null;
+			response = null;
 		}
 	}
 
@@ -434,6 +449,7 @@ public class Harvester {
 	private InputStream repositoryAnswer (String url, String verb,
 			String parameter) throws HttpException, IOException {
 		
+		InputStream inst;
 		int statuscode = 0;
 		HttpClient client = new HttpClient ( );
 		GetMethod getmethod = new GetMethod (url + "?verb=" + verb + parameter);
@@ -441,7 +457,7 @@ public class Harvester {
 		client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug (url + getmethod.getQueryString ( ));
+			logger.debug (url +  "?" + getmethod.getQueryString ( ));
 		
 		statuscode = client.executeMethod (getmethod);
 		
@@ -451,8 +467,13 @@ public class Harvester {
 			
 		}
 		
-		client = null;
-		return getmethod.getResponseBodyAsStream ( );
+		inst = getmethod.getResponseBodyAsStream ( );
+		
+		if (inst != null)
+			return inst;
+		
+		else
+			throw new HttpException ("ResponseBody is null!");
 	}
 
 	/**
@@ -464,6 +485,9 @@ public class Harvester {
 	private String extractIdsAndGetResumptionToken (InputStream responseBody, int repositoryId) {
 		
 		String resumptionToken = null; 
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("ResponseBody: " + responseBody.toString ( ));
 		
 		try {
 			
@@ -580,6 +604,17 @@ public class Harvester {
 				// when internalOID == -1 than Object is not in the database and we have to create it
 				createObjectEntry (i);
 				
+				if ((i % 20) == 0) try {
+					
+					logger.debug ("Going to sleep for 5 seconds, letting the repository recover a bit");
+					Thread.sleep (5000);
+					logger.debug ("Continuing to ask the repository for some records");
+					
+				} catch (InterruptedException ex) {
+					
+					ex.printStackTrace ( );
+				}
+				
 				// after that we have to upload the new rawdata
 				updateRawData (i);
 				
@@ -592,11 +627,20 @@ public class Harvester {
 					
 				} else {
 					
+					if ((i % 20) == 0) try {
+						
+						logger.debug ("Going to sleep for 5 seconds, letting the repository recover a bit");
+						Thread.sleep (5000);
+						logger.debug ("Continuing to ask the repository for some records");
+						
+					} catch (InterruptedException ex) {
+						
+						ex.printStackTrace ( );
+					}
+					
 					// if not, upload the new rawdata
 					updateRawData (i);
 				}
-					
-				
 			} //endelse
 		}
 		
@@ -992,7 +1036,6 @@ public class Harvester {
 					 */
 					
 					harvester.processIds (fullharvest, updateDate);
-					//harvester.processRecords ( );
 					
 			} else {
 				
