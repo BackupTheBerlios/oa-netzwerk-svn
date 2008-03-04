@@ -1,12 +1,6 @@
 package de.dini.oanetzwerk.servicemodule.harvester;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 

@@ -7,11 +7,6 @@ package de.dini.oanetzwerk.servicemodule.aggregator;
 import java.io.FileNotFoundException;
 import java.io.IOException; // import java.io.InputStream;
 import java.io.StringReader; // import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.List;
@@ -28,8 +23,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.codec.binary.Base64; // import
 												// org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException; // import
-													// org.apache.commons.httpclient.HttpStatus;
 // import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator; // import
@@ -47,7 +40,8 @@ import org.jdom.input.SAXBuilder;
 
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.utils.RestXmlCodec;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 import de.dini.oanetzwerk.utils.imf.InternalMetadataJAXBMarshaller;
 
@@ -220,21 +214,19 @@ public class Aggregator {
 				.getProperty("host"), ressource, this.props
 				.getProperty("username"), this.props.getProperty("password"));
 
-		String result = restclient.GetData();
+		//String result = restclient.GetData();
 		// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus dem
 		// XML extrahiert werden
+		//RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		RestMessage rms = restclient.sendGetRestMessage();
+		
+		//TODO: hier Fehlerbehandlung via rms.getStatus()
+		
+		List<RestEntrySet> listEntrySets = rms.getListEntrySets();
+				
+		for (RestEntrySet entrySet : listEntrySets) {
 
-		List<HashMap<String, String>> listentries = new ArrayList<HashMap<String, String>>();
-		// HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-
-		listentries = null;
-
-		listentries = RestXmlCodec.decodeEntrySet(result);
-
-		for (HashMap<String, String> mapEntry : listentries) {
-
-			// mapEntry = listentries.get (0);
-			Iterator<String> it = mapEntry.keySet().iterator();
+			Iterator<String> it = entrySet.getKeyIterator();
 			String key = "";
 			String value = "";
 
@@ -244,7 +236,7 @@ public class Aggregator {
 				// hier wird die Rueckgabe überprüft, ist es einen object_id,
 				// dann muss diese bearbeitet werden
 				if (key.equalsIgnoreCase("object_id")) {
-					value = mapEntry.get(key);
+					value = entrySet.getValue(key);
 					logger.debug("recognized value: " + value);
 					if (!value.equals(""))
 						startSingleRecord((new Integer(value).intValue()));
@@ -383,36 +375,34 @@ public class Aggregator {
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 
 		try {
-			List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-			HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+				
+			RestMessage msg = new RestMessage();
+			RestEntrySet inputEntrySet = new RestEntrySet();
+			inputEntrySet.addEntry("internalmetadata", xmlData);
+			msg.addEntrySet(inputEntrySet);					
 			
-			mapEntry.put ("internalmetadata", xmlData);
-			listentries.add (mapEntry);
-			String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
+			RestMessage response = restclient.sendPutRestMessage(msg);
+			
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("xml: " + requestxml);
-			// abschicken der Daten
-			String result = restclient.PutData (requestxml);
-		
+				logger.debug ("RestMessage response: " + response);
+			// abschicken der Daten	
 			
 			// auswerten des Resultats
 			// wenn gar keine Rückmeldung, dann auf jeden Fall ein Fehler
-			if (result == null) {
+			if (response == null) {
 				System.out.println("REST-Uebertragung fehlgeschlagen");
 				return null;
 			} else {
-				System.out.println("Resultat der Übertragung: " + result);
+				System.out.println("Resultat der Übertragung: " + response);
 			}
 			
 			
-			listentries = null;
-			mapEntry = null;
+
 			restclient = null;
-			
-			listentries = RestXmlCodec.decodeEntrySet (result);
-			mapEntry = listentries.get (0);
-			Iterator <String> it = mapEntry.keySet ( ).iterator ( );
+						
+			RestEntrySet resultEntrySet = response.getListEntrySets().get(0);
+			Iterator <String> it = resultEntrySet.getKeyIterator();
 			String key = "";
 			String value = "";
 			
@@ -424,7 +414,7 @@ public class Aggregator {
 				if (key.equalsIgnoreCase ("oid")) {
 					
 					
-					value = mapEntry.get (key);
+					value = resultEntrySet.getValue(key);
 					System.out.println(value);
 					break;
 				}
@@ -561,19 +551,17 @@ public class Aggregator {
 				.getProperty("host"), ressource, this.props
 				.getProperty("username"), this.props.getProperty("password"));
 
-		String result = restclient.GetData();
+		//String result = restclient.GetData();
 		// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus dem
-		// XML extrahiert werden
-
-		List<HashMap<String, String>> listentries = new ArrayList<HashMap<String, String>>();
-		HashMap<String, String> mapEntry = new HashMap<String, String>();
-
-		listentries = null;
-		mapEntry = null;
-
-		listentries = RestXmlCodec.decodeEntrySet(result);
-		mapEntry = listentries.get(0);
-		Iterator<String> it = mapEntry.keySet().iterator();
+		// XML extrahiert werden		
+		//RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		RestMessage response = restclient.sendGetRestMessage();
+		
+		//TODO: hier Fehlerbehandlung via rms.getStatus()
+		
+		RestEntrySet entrySet = response.getListEntrySets().get(0);
+		Iterator<String> it = entrySet.getKeyIterator();
+		
 		String key = "";
 		String value = "";
 
@@ -582,7 +570,7 @@ public class Aggregator {
 			key = it.next();
 
 			if (key.equalsIgnoreCase("data")) {
-				value = mapEntry.get(key);
+				value = entrySet.getValue(key);
 				break;
 			}
 		}
@@ -1037,7 +1025,7 @@ public class Aggregator {
 	 * @throws HttpException
 	 */
 
-	private void uploadRawData(String data, int internalOID, Date datestamp)
+	/*private void uploadRawData(String data, int internalOID, Date datestamp)
 			throws HttpException, IOException {
 
 		GregorianCalendar cal = new GregorianCalendar();
@@ -1054,6 +1042,6 @@ public class Aggregator {
 
 		if (logger.isDebugEnabled())
 			logger.debug("uploaded rawdata for Database Object " + internalOID);
-	}
+	}*/
 
 }
