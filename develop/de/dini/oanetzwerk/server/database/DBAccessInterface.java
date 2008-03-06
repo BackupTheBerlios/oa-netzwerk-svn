@@ -190,11 +190,32 @@ public interface DBAccessInterface {
 	
 	public abstract ResultSet selectAuthors(BigDecimal oid);
 	
+	public abstract ResultSet selectEditors(BigDecimal oid);
+	
+	public abstract ResultSet selectContributors(BigDecimal oid);
+	
 	public abstract ResultSet selectDescription(BigDecimal oid);
 	
 	public abstract ResultSet selectIdentifier(BigDecimal oid);
 	
 	public abstract ResultSet selectFormat(BigDecimal oid);
 	
+	public abstract ResultSet selectDateValues(BigDecimal oid);
+	
+	public abstract ResultSet selectTypeValue(BigDecimal oid);
+	
+	public abstract ResultSet selectPublisher(BigDecimal oid);
+	
+	public abstract ResultSet selectDDCClassification(BigDecimal oid);
+	
+	public abstract ResultSet selectDNBClassification(BigDecimal oid);
+	
+	public abstract ResultSet selectDINISetClassification(BigDecimal oid);
+	
+	public abstract ResultSet selectOtherClassification(BigDecimal oid);
+	
+	public abstract ResultSet selectKeywords(BigDecimal oid);
+	
+	public abstract ResultSet selectLanguages(BigDecimal oid);
 	
 }

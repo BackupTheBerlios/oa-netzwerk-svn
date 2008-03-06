@@ -16,6 +16,12 @@ public class InternalMetadata {
 	List<Author> authors;
 	int authorCounter = 0;
 
+	List<Editor> editorList;
+	int editorCounter = 0;
+	
+	List<Contributor> contributorList;
+	int contributorCounter = 0;
+	
 	List<Keyword> keywords;
 	
 	List<Description> descriptions;
@@ -464,6 +470,23 @@ public class InternalMetadata {
 		}
 		return result;
 	}
+
+	public int addEditor(Editor editor) {
+		int result = 0;
+		if (editor != null) {
+			this.editorList.add(editor);
+		}
+		return result;
+	}
+	
+	public int addContributor(Contributor contributor) {
+		int result = 0;
+		if (contributor != null) {
+			this.contributorList.add(contributor);
+		}
+		return result;
+	}
+	
 	
 	@Deprecated
 	public int addAuthor(String original) {
@@ -702,6 +725,38 @@ public class InternalMetadata {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public List<Editor> getEditorList() {
+		return editorList;
+	}
+
+	public void setEditorList(List<Editor> editorList) {
+		this.editorList = editorList;
+	}
+
+	public int getEditorCounter() {
+		return editorCounter;
+	}
+
+	public void setEditorCounter(int editorCounter) {
+		this.editorCounter = editorCounter;
+	}
+
+	public List<Contributor> getContributorList() {
+		return contributorList;
+	}
+
+	public void setContributorList(List<Contributor> contributorList) {
+		this.contributorList = contributorList;
+	}
+
+	public int getContributorCounter() {
+		return contributorCounter;
+	}
+
+	public void setContributorCounter(int contributorCounter) {
+		this.contributorCounter = contributorCounter;
 	}
 
 }

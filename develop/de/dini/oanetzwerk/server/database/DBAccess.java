@@ -878,6 +878,220 @@ public class DBAccess implements DBAccessInterface {
 		}
 	}
 
+	public ResultSet selectContributors(BigDecimal oid) {
+		PreparedStatement pstmt = null;
+		
+		try {
+			// number ?????
+			pstmt = conn.prepareStatement ("SELECT O.number, P.firstname, P.lastname, P.title, P.institution, P.email FROM dbo.Person P JOIN dbo.Object2Contributor O ON P.person_id = O.person_id WHERE O.object_id = ?");
+			
+			//pstmt.setBigDecimal (1, predecessor_id);
+			pstmt.setBigDecimal (1, oid);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+	
+	public ResultSet selectDateValues(BigDecimal oid) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			// number ?????
+			pstmt = conn.prepareStatement ("SELECT number, value FROM dbo.DateValues WHERE object_id = ?");
+			pstmt.setBigDecimal (1, oid);
+			return pstmt.executeQuery ( );
+
+		} catch (SQLException ex) {
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	
+	
+	public ResultSet selectEditors(BigDecimal oid) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			// number ?????
+			pstmt = conn.prepareStatement ("SELECT O.number, P.firstname, P.lastname, P.title, P.institution, P.email FROM dbo.Person P JOIN dbo.Object2Editor O ON P.person_id = O.person_id WHERE O.object_id = ?");
+			pstmt.setBigDecimal (1, oid);
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	
+	public ResultSet selectPublisher(BigDecimal oid) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT name, number FROM dbo.Publisher WHERE object_id = ?");
+			pstmt.setBigDecimal (1, oid);
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	public ResultSet selectTypeValue(BigDecimal oid) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			// number ?????
+			pstmt = conn.prepareStatement ("SELECT value FROM dbo.TypeValue WHERE object_id = ?");
+			pstmt.setBigDecimal (1, oid);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	
+	public ResultSet selectDDCClassification(BigDecimal oid) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT name, D.DCC_Categorie FROM dbo.DCC_Classification D JOIN dbo.DCC_Categories C ON D.DCC_Categorie = C.DCC_Categorie WHERE D.object_id = ?");
+			pstmt.setBigDecimal (1, oid);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	public ResultSet selectDNBClassification(BigDecimal oid) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT name, D.DNB_Categorie FROM dbo.DNB_Classification D JOIN dbo.DNB_Categories C ON D.DNB_Categorie = C.DNB_Categorie WHERE D.object_id = ?");
+			pstmt.setBigDecimal (1, oid);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+	
+
+	public ResultSet selectDINISetClassification(BigDecimal oid) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT name, D.DINI_set_id FROM dbo.DINI_Set_Classification D JOIN dbo.DINI_Set_Categories C ON D.DINI_set_id = C.DINI_set_id WHERE D.object_id = ?");
+			pstmt.setBigDecimal (1, oid);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	
+	public ResultSet selectOtherClassification(BigDecimal oid) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT name, D.other_id FROM dbo.Other_Classification D JOIN dbo.Other_Categories C ON D.other_id = C.other_id WHERE D.object_id = ?");
+			pstmt.setBigDecimal (1, oid);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+
+	
+	public ResultSet selectKeywords(BigDecimal oid) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT keyword, lang FROM dbo.Keywords K JOIN dbo.Object2Keywords O ON K.keyword_id = O.keyword_id WHERE O.object_id = ?");
+			pstmt.setBigDecimal (1, oid);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
+	
+	public ResultSet selectLanguages(BigDecimal oid) {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT L.language, number FROM dbo.Language L JOIN dbo.Object2Language O ON L.language_id = O.language_id WHERE O.object_id = ?");
+			pstmt.setBigDecimal (1, oid);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+			
+		return null;
+	}
 	
 	
 } //end of class

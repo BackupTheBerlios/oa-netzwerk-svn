@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang.StringUtils;
 
 //@XmlType( name="", propOrder={"number","firstname","lastname","email","institution","title"})
-public class Author {
+public class Editor {
 	
 	String firstname;
 	String lastname;
@@ -14,7 +14,7 @@ public class Author {
 	String title;
 	int number;
 
-	public Author() {
+	public Editor() {
 		
 	}
 	
