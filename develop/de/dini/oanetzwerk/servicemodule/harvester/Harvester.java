@@ -55,7 +55,7 @@ public class Harvester {
 	static Logger logger = Logger.getLogger (Harvester.class);
 	
 	/**
-	 * 
+	 * The counter for the Records we are processing.
 	 */
 	
 	private int recordno = 0;
@@ -117,10 +117,15 @@ public class Harvester {
 		
 		this.repositoryURL = url;
 		this.repositoryID = id;
+		
+		url = null;
+		return;
 	}
 	
 	
 	/**
+	 * Getter method for repositoryURL
+	 * 
 	 * @return the repositoryURL
 	 */
 	
@@ -130,6 +135,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Getter method for repositoryID
+	 * 
 	 * @return the repositoryID
 	 */
 	
@@ -156,7 +163,7 @@ public class Harvester {
 				
 				logger.error ("Year must be between 1970 and " + today [0] + ".\nYou asked for the year " + dateComponents [0]);
 				System.err.println ("Year must be between 1970 and " + today [0] + ".\nYou asked for the year " + dateComponents [0]);
-				
+								
 				System.exit (10);
 				
 			} else if ( (new Integer (dateComponents [1]) < 1) || (new Integer (dateComponents [1]) > 12)) {
@@ -320,11 +327,14 @@ public class Harvester {
 				
 				/* 
 				 * the response of the harvested repository is taken and the Ids in it will be extracted and we'll have
-				 * 
+				 * returned the resumption Token if it exists
 				 */
 				resumptionToken = extractIdsAndGetResumptionToken (response, getRepositoryID ( ));
+				
+				// Now the list of objects will be processed
 				processRecords ( );
 				
+				// if we have resumption token, we have to find out, whether it's the last entryset or not
 				if (resumptionToken != null) {
 					
 					if (logger.isDebugEnabled ( ))
@@ -335,9 +345,9 @@ public class Harvester {
 						
 						if (logger.isDebugEnabled ( ))
 							logger.debug ("ResumptionToken empty, IdentifierList complete");
-						else;
 						
 						resumptionSet = false;
+						break;
 						
 					} else {
 												
@@ -346,18 +356,16 @@ public class Harvester {
 						if (logger.isDebugEnabled ( ))
 							logger.debug ("ResumptionToken: " + resumptionToken);
 						
-						else;
+						continue;
 					}
-					
-					//resumptionToken = null;
 					
 				} else {
 					
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("no ResumptionToken found, IdentifierList complete");
-					else;
 					
 					resumptionSet = false;
+					break;
 				}
 			} 
 		
@@ -376,11 +384,15 @@ public class Harvester {
 			resumptionToken = null;
 			response = null;
 		}
+		
+		return;
 	}
 
 	/**
-	 * @param url
-	 * @return
+	 * This method encapsulates the request to list all Meta Data Formats the repository supports.
+	 * 
+	 * @param url the repositoryURL to connect to
+	 * @return the Inputstream which contains the answer from the repository
 	 * @throws IOException 
 	 * @throws HttpException 
 	 */
@@ -1045,9 +1057,9 @@ public class Harvester {
 				
 		} catch (ParseException parex) {
 			
-			logger.error (parex.getMessage ( ));
-			System.out.println (parex.getMessage ( ));
+			logger.error (parex.getLocalizedMessage ( ));
 			HelperMethods.printhelp ("java " + Harvester.class.getCanonicalName ( ), options);
+			parex.printStackTrace ( );
 			System.exit (1);
 		}
 			
@@ -1061,7 +1073,9 @@ public class Harvester {
 
 /**
  * @author Michael Kühn
- *
+ * 
+ * This class represents an Object in which all necessary data for the Object-Manager will be stored.
+ * Every field can be accessed via setter and getter methods.
  */
 
 class ObjectIdentifier {
@@ -1069,10 +1083,19 @@ class ObjectIdentifier {
 	private String externalOID;
 	private Date datestamp;
 	private int internalOID;
+	static Logger logger = Logger.getLogger (ObjectIdentifier.class);
 	
 	/**
-	 * @param externalOID
-	 * @param datestamp
+	 * This is the standard constructor for ObjectIdentifier.
+	 * It stores the external Object Identifier (from the repository) the datestamp of the last change and
+	 * the internal Object identifier (used within our system)
+	 * These informations are necessary for the identification of a single object. It stores the relation
+	 * between the internal and the external Object Identifier. The Datestamp is used to distinguish the different versions
+	 * of one object harvested at different dates. 
+	 * 
+	 * @param externalOID the Object Identifier which is used in the harvested repository 
+	 * @param datestamp the date of the object's last change
+	 * @param internalOID the Object Identifier which is used in our internal system and database
 	 */
 	
 	public ObjectIdentifier (String externalOID, String datestamp, int internalOID) {
@@ -1085,12 +1108,13 @@ class ObjectIdentifier {
 			
 		} catch (java.text.ParseException ex) {
 			
+			logger.error (externalOID + "has no valid Datestamp!\n" + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
 	}
 	
 	/**
-	 * @return the id
+	 * @return the external object ID (comes from the harvested repository)
 	 */
 	
 	final String getExternalOID ( ) {
@@ -1099,7 +1123,7 @@ class ObjectIdentifier {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id the external object ID to set
 	 */
 	
 	final void setExternalOID (String id) {

@@ -119,7 +119,7 @@ public class RestXmlCodec {
 					
 		org.jdom.Document doc;
 		ElementFilter filter;
-		Iterator iterator;
+		Iterator <?> iterator;
 		SAXBuilder builder = new SAXBuilder();
 		
 		try {		
@@ -165,7 +165,7 @@ public class RestXmlCodec {
 				Element elementEntrySet = (Element) iterator.next();
 				RestEntrySet entrySet = new RestEntrySet();			
 				filter = new ElementFilter("entry");
-				Iterator iterator2 = elementEntrySet.getDescendants(filter);
+				Iterator <?> iterator2 = elementEntrySet.getDescendants(filter);
 				while (iterator2.hasNext()) {
 					
 					logger.debug("** <entry> found");	
