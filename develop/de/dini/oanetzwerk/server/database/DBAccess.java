@@ -878,6 +878,61 @@ public class DBAccess implements DBAccessInterface {
 		}
 	}
 
+	
+	public void insertPublisher (BigDecimal object_id, int number,
+			String name) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Publisher (object_id, number, name) VALUES (?,?,?)");
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setInt (2, number);
+			pstmt.setString (3, name);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	
+	public void insertTypeValue (BigDecimal object_id, 
+			String value) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.TypeValue (object_id, value) VALUES (?,?)");
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setString (2, value);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	
+	
 	public ResultSet selectContributors(BigDecimal oid) {
 		PreparedStatement pstmt = null;
 		

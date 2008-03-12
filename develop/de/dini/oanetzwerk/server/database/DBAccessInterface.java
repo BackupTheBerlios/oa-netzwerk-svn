@@ -185,6 +185,12 @@ public interface DBAccessInterface {
 
 	public abstract void insertDescription (BigDecimal object_id, int number,
 			String description) throws SQLException;
+
+	public abstract void insertPublisher (BigDecimal object_id, int number,
+			String name) throws SQLException;
+	
+	public void insertTypeValue (BigDecimal object_id, 
+			String value) throws SQLException;
 	
 	public abstract ResultSet selectTitle(BigDecimal oid);
 	

@@ -41,7 +41,9 @@ import org.jdom.input.SAXBuilder;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 import de.dini.oanetzwerk.utils.imf.InternalMetadataJAXBMarshaller;
 
@@ -375,14 +377,17 @@ public class Aggregator {
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 
 		try {
-				
-			RestMessage msg = new RestMessage();
-			RestEntrySet inputEntrySet = new RestEntrySet();
-			inputEntrySet.addEntry("internalmetadata", xmlData);
-			msg.addEntrySet(inputEntrySet);					
 			
-			RestMessage response = restclient.sendPutRestMessage(msg);
+			RestMessage rms = new RestMessage();
+			rms.setKeyword (RestKeyword.InternalMetadataEntry);
+			rms.setStatus (RestStatusEnum.OK);
 			
+			RestEntrySet res = new RestEntrySet ( );
+			
+			res.addEntry ("internalmetadata", xmlData);
+			rms.addEntrySet (res);
+			
+			RestMessage response = restclient.sendPutRestMessage(rms);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("RestMessage response: " + response);
@@ -399,33 +404,26 @@ public class Aggregator {
 			
 			
 
-			restclient = null;
-						
-			RestEntrySet resultEntrySet = response.getListEntrySets().get(0);
-			Iterator <String> it = resultEntrySet.getKeyIterator();
-			String key = "";
-			String value = "";
-			
-			while (it.hasNext ( )) {
-				
-				key = it.next ( );
-				System.out.println("key = " + key);
-				
-				if (key.equalsIgnoreCase ("oid")) {
-					
-					
-					value = resultEntrySet.getValue(key);
-					System.out.println(value);
-					break;
-				}
-			}
+//			restclient = null;
+//						
+//			RestEntrySet resultEntrySet = response.getListEntrySets().get(0);
+//			Iterator <String> it = resultEntrySet.getKeyIterator();
+//			String key = "";
+//			String value = "";
 //			
-//			int intoid = new Integer (value);
-//			
-//			if (logger.isDebugEnabled ( ))
-//				logger.debug ("internalOID: " + intoid);
-//			
-//			this.ids.get (i).setInternalOID (intoid);
+//			while (it.hasNext ( )) {
+//				
+//				key = it.next ( );
+//				System.out.println("key = " + key);
+//				
+//				if (key.equalsIgnoreCase ("oid")) {
+//					
+//					
+//					value = resultEntrySet.getValue(key);
+//					System.out.println(value);
+//					break;
+//				}
+//			}
 //			
 		} catch (IOException ex) {
 			

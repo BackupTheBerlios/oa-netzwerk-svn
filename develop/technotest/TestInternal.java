@@ -3,17 +3,135 @@ package technotest;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
+import de.dini.oanetzwerk.servicemodule.aggregator.Aggregator;
+import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.imf.*;
 
 public class TestInternal {
 
+	
+	static Logger logger = Logger.getLogger(TestInternal.class);
+	
+	public static void put(InternalMetadata imf) {
+		
+		BigDecimal object_id = new BigDecimal ("633");
+		
+		DBAccessInterface db = DBAccess.createDBAccess ( );
+		db.createConnection ( );
+		
+		String key = "";
+
+		
+		
+		List <Title> titleList = imf.getTitles ( );
+		List <DateValue> dateValueList = imf.getDateValues ( );
+		List <Format> formatList = imf.getFormatList ( );
+		List <Identifier> identifierList = imf.getIdentifierList ( );
+		List <Description> descriptionList = imf.getDescriptions();
+		List <Publisher> publisherList = imf.getPublishers();
+		
+		//		List <Author> authorList = imf.getAuthors();
+		//List <Keyword> keywordsList = imf.getKeywords ( );
+
+
+		List <TypeValue> typeValueList = imf.getTypeValueList ( );
+		//List <Language> languageList;
+		//List<Classification> classificationList;
+		
+		//ResultSet resultset;
+
+		// Autocommit ausschalten, nur eine vollständige Transaktion darf durchlaufen
+		db.setAutoCom (false);
+		
+		try {
+			// Titel speichern
+			for (Title title : titleList)			
+				db.insertTitle (object_id, title.getQualifier ( ), title.getTitle ( ), title.getLang ( ));
+
+			
+			// Datumswerte
+			for (DateValue dateValue : dateValueList) {
+				try {
+					db.insertDateValue(object_id, dateValue.getNumber(),
+							HelperMethods.extract_datestamp(dateValue
+									.getDateValue()));
+
+				} catch (ParseException ex) {
+					logger.error("Datestamp with datevalue incorrect");
+					ex.printStackTrace();
+				}
+			}
+
+			for (Format format : formatList)
+				db.insertFormat(object_id, format.getNumber(), format
+						.getSchema_f());
+
+			for (Identifier identifier : identifierList)
+				db.insertIdentifier(object_id, identifier.getNumber(),
+						identifier.getIdentifier());
+
+			for (Description description : descriptionList)
+				db.insertDescription(object_id, description.getNumber(), description.getDescription());
+			
+			for (TypeValue typeValue : typeValueList)
+				db.insertTypeValue(object_id, typeValue.getTypeValue());
+			
+			for (Publisher publisher : publisherList)
+				db.insertPublisher(object_id, publisher.getNumber(), publisher.getName());			
+			
+		//for (Keyword keyword : keywords)
+		//	db.insertkeyword ( );
+		
+
+			db.commit();
+			db.setAutoCom(true);
+
+		} catch (SQLException sqlex) {
+			db.rollback();
+		}
+		
+		
+		db.closeConnection ( );
+		
+//		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+//		res = new RestEntrySet ( );
+//		
+//		res.addEntry ("oid", object_id.toPlainString ( ));
+//		this.rms.setStatus (RestStatusEnum.OK);
+//		this.rms.addEntrySet (res);
+//		
+//		return RestXmlCodec.encodeRestMessage (this.rms);	}
+
+	}
+	
+	
+	public static void main(String[] args) {
+	
+		InternalMetadata imf = InternalMetadata.createDummy();
+
+		System.out.println(imf);
+	
+			
+		put(imf);
+	}
+	
+	
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void get() {
 		// TODO Auto-generated method stub
 
 		
