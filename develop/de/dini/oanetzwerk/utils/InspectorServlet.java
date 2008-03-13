@@ -44,6 +44,8 @@ public class InspectorServlet extends HttpServlet {
 	public final static String COLOR_TABLE_CONTENT = "LightGoldenrodYellow";
 	public final static String COLOR_TABLE_LEFT = "Gold";
 	public final static String COLOR_TABLE_TOP = "Goldenrod";
+	public final static String COLOR_XML_ATTRVAL = "#990000";
+	public final static String COLOR_XML_TAG = "#660000";
 	
 	private enum InspectorModeEnum {
 		ObjectEntry,
@@ -482,18 +484,20 @@ public class InspectorServlet extends HttpServlet {
 		
 			content = StringEscapeUtils.escapeHtml(content).replaceAll("\n", "<br/>\n");
 			if(xmlSyntaxHighlight) {
-				content = content.replaceAll("&lt;", "<b><small>&lt;");
-				content = content.replaceAll("&gt;", "&gt;</small></b>");
 				content = content.replaceAll(" ", "&nbsp;");
+				content = content.replaceAll("&lt;", "<b>&lt;<FONT COLOR=\""+COLOR_XML_TAG+"\">");
+				content = content.replaceAll("&gt;", "</FONT>&gt;</b>");
+				content = content.replaceAll("&quot;", "&quot;</FONT>");
+				content = content.replaceAll("=&quot;</FONT>", "=<FONT COLOR=\""+COLOR_XML_ATTRVAL+"\">&quot;");
 			}
 				
 		}
 		
 		sb.append("<table width=\"100%\" border=\"1\" cellspacing=\"1\" cellpadding=\"10\">\n");
 		sb.append("<tr>\n");
-		sb.append("<td bgcolor=\"" + COLOR_TABLE_CONTENT + "\" >\n");
+		sb.append("<td bgcolor=\"" + COLOR_TABLE_CONTENT + "\" ><FONT FACE=\"monospace\">\n");
 		sb.append(content);
-		sb.append("</td>\n");
+		sb.append("</FONT></td>\n");
 		sb.append("</tr>\n");		
 		sb.append("</table>\n");
 		
