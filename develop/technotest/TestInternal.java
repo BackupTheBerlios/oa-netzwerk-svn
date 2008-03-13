@@ -26,7 +26,7 @@ public class TestInternal {
 	
 	public static void put(InternalMetadata imf) {
 		
-		BigDecimal object_id = new BigDecimal ("633");
+		BigDecimal object_id = new BigDecimal ("634");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
@@ -96,13 +96,14 @@ public class TestInternal {
 		
 
 			db.commit();
-			db.setAutoCom(true);
+			
 
 		} catch (SQLException sqlex) {
+			System.out.println("Exception geworfen");
 			db.rollback();
 		}
 		
-		
+		db.setAutoCom(true);
 		db.closeConnection ( );
 		
 //		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);

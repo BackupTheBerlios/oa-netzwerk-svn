@@ -110,7 +110,7 @@
 </table>
 <table alias="Repositories" name="Repositories" remarks="" uid="4f5403:1161f7e7d4d:-7ff4">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="7" y="-85"/>
+<table-figure-bounds height="-1" width="-1" x="7" y="-141"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="repository_id" remarks="OAI-Schittstelle des Servers, z.B. (edoc.hu-berlin.de/OAI-2.0/)" uid="4f5403:1161f7e7d4d:-7fee">
 <column-description/>

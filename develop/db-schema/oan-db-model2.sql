@@ -69,6 +69,10 @@ CREATE TABLE dbo.Repositories (
      , name VARCHAR(255) NOT NULL
      , url VARCHAR(255)
      , oai_url VARCHAR(255)
+	 , test_data BIT default 1
+	 , harvest_amount INT default 10
+	 , harvest_pause INT default 5000
+		
      , PRIMARY KEY (repository_id)
 );
 
@@ -87,7 +91,7 @@ CREATE TABLE dbo.Titles (
        object_id NUMERIC(38) NOT NULL
      , title VARCHAR(255) NOT NULL
      , qualifier VARCHAR(50) NOT NULL
-     , lang VARCHAR(3)
+     , lang VARCHAR(3) NULL
      , PRIMARY KEY (object_id, qualifier)
 );
 
@@ -162,7 +166,7 @@ CREATE TABLE dbo.Description (
        object_id NUMERIC(38) NOT NULL
      , number INTEGER NOT NULL
      , abstract TEXT
-     , lang VARCHAR(3)
+     , lang VARCHAR(3) NULL
      , PRIMARY KEY (object_id, number)
 );
 

@@ -103,8 +103,8 @@ public class InternalMetadata {
 		title = new Title();
 		title.setNumber(2);
 		title.setLang("en");
-		title.setQualifier("main");
-		title.setTitle("title of sample metadata entry");
+		title.setQualifier("subtitle");
+		title.setTitle("subtitle of sample metadata entry");
 		myIM.addTitle(title);	
 		
 		Classification classi = new DNBClassification();
@@ -144,6 +144,9 @@ public class InternalMetadata {
 		Format format = new Format();
 		format.setNumber(1);
 		format.setSchema_f("text/pdf");
+		format = new Format();
+		format.setNumber(2);
+		format.setSchema_f("text/ps");
 		myIM.addFormat(format);
 		
 		Identifier ident = new Identifier();

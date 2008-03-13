@@ -189,8 +189,10 @@ public interface DBAccessInterface {
 	public abstract void insertPublisher (BigDecimal object_id, int number,
 			String name) throws SQLException;
 	
-	public void insertTypeValue (BigDecimal object_id, 
+	public abstract void insertTypeValue (BigDecimal object_id, 
 			String value) throws SQLException;
+	
+	public abstract void insertPerson (BigDecimal object_id, String firstname, String lastname, String title, String institution, String email) throws SQLException;
 	
 	public abstract ResultSet selectTitle(BigDecimal oid);
 	
@@ -223,5 +225,14 @@ public interface DBAccessInterface {
 	public abstract ResultSet selectKeywords(BigDecimal oid);
 	
 	public abstract ResultSet selectLanguages(BigDecimal oid);
+	
+	
+//	public abstract void deleteTitles(BigDecimal object_id) throws SQLException;
+	
+//	public abstract void deleteDateValues(BigDecimal object_id) throws SQLException;
+	
+//	public abstract void deleteFormats(BigDecimal object_id) throws SQLException;
+	
+//	public abstract void deletePublishers(BigDecimal object_id) throws SQLException;
 	
 }

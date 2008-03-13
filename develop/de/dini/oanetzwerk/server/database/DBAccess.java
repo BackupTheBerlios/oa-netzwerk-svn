@@ -1147,6 +1147,60 @@ public class DBAccess implements DBAccessInterface {
 			
 		return null;
 	}
+
+	public void deletePublishers (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.Publisher WHERE object_id = ?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+
+	public void insertPerson(BigDecimal object_id, String firstname,
+			String lastname, String title, String institution, String email)
+			throws SQLException {
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Person (object_id, firstname, lastname, title, institution, email) VALUES (?,?,?,?,?,?)");
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setString (2, firstname);
+			pstmt.setString (3, lastname);
+			pstmt.setString (4, title);
+			pstmt.setString (5, institution);
+			pstmt.setString (6, email);
+			
+			
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+	}
+	
+	
 	
 	
 } //end of class
