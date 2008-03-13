@@ -194,6 +194,14 @@ public interface DBAccessInterface {
 	
 	public abstract void insertPerson (BigDecimal object_id, String firstname, String lastname, String title, String institution, String email) throws SQLException;
 	
+	public abstract ResultSet selectLatestPerson(String firstname, String lastname) throws SQLException;
+	
+	public abstract void insertObject2Author(BigDecimal object_id, BigDecimal person_id, int number) throws SQLException;
+	
+	public abstract void insertObject2Editor(BigDecimal object_id, BigDecimal person_id, int number) throws SQLException;
+	
+	public abstract void insertObject2Contributor(BigDecimal object_id, BigDecimal person_id, int number) throws SQLException;
+	
 	public abstract ResultSet selectTitle(BigDecimal oid);
 	
 	public abstract ResultSet selectAuthors(BigDecimal oid);

@@ -1178,13 +1178,12 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("INSERT INTO dbo.Person (object_id, firstname, lastname, title, institution, email) VALUES (?,?,?,?,?,?)");
-			pstmt.setBigDecimal (1, object_id);
-			pstmt.setString (2, firstname);
-			pstmt.setString (3, lastname);
-			pstmt.setString (4, title);
-			pstmt.setString (5, institution);
-			pstmt.setString (6, email);
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Person (firstname, lastname, title, institution, email) VALUES (?,?,?,?,?)");
+			pstmt.setString (1, firstname);
+			pstmt.setString (2, lastname);
+			pstmt.setString (3, title);
+			pstmt.setString (4, institution);
+			pstmt.setString (5, email);
 			
 			
 			
@@ -1199,7 +1198,98 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 		}
 	}
+
+	public ResultSet selectLatestPerson(String firstname, String lastname) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT MAX(person_id) FROM dbo.Person WHERE (firstname = ? AND lastname = ?)");
+			pstmt.setString (1, firstname);
+			pstmt.setString (2, lastname);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			throw ex;
+		}
+			
+		
+	}
 	
+	public void insertObject2Author(BigDecimal object_id, BigDecimal person_id, int number)
+			throws SQLException {
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Object2Author (object_id, person_id, number) VALUES (?,?,?)");
+			pstmt.setBigDecimal (1, object_id);
+			pstmt.setBigDecimal (2, person_id);
+			pstmt.setInt (3, number);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+	}	
+
+	public void insertObject2Editor(BigDecimal object_id, BigDecimal person_id,
+			int number) throws SQLException {
+		PreparedStatement pstmt = null;
+
+		try {
+
+			pstmt = conn
+					.prepareStatement("INSERT INTO dbo.Object2Editor (object_id, person_id, number) VALUES (?,?,?)");
+			pstmt.setBigDecimal(1, object_id);
+			pstmt.setBigDecimal(2, person_id);
+			pstmt.setInt(3, number);
+
+			if (logger.isDebugEnabled())
+				logger.debug("execute");
+
+			pstmt.executeUpdate();
+
+		} catch (SQLException sqlex) {
+
+			logger.error(sqlex.getLocalizedMessage());
+			sqlex.printStackTrace();
+		}
+	}
+
+	public void insertObject2Contributor(BigDecimal object_id, BigDecimal person_id,
+			int number) throws SQLException {
+		PreparedStatement pstmt = null;
+
+		try {
+
+			pstmt = conn
+					.prepareStatement("INSERT INTO dbo.Object2Contributor (object_id, person_id, number) VALUES (?,?,?)");
+			pstmt.setBigDecimal(1, object_id);
+			pstmt.setBigDecimal(2, person_id);
+			pstmt.setInt(3, number);
+
+			if (logger.isDebugEnabled())
+				logger.debug("execute");
+
+			pstmt.executeUpdate();
+
+		} catch (SQLException sqlex) {
+
+			logger.error(sqlex.getLocalizedMessage());
+			sqlex.printStackTrace();
+		}
+	}	
 	
 	
 	

@@ -26,13 +26,15 @@ public class TestInternal {
 	
 	public static void put(InternalMetadata imf) {
 		
-		BigDecimal object_id = new BigDecimal ("634");
+		BigDecimal object_id = new BigDecimal ("635");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
+		ResultSet rs;
 		
 		String key = "";
 
+		
 		
 		
 		List <Title> titleList = imf.getTitles ( );
@@ -42,7 +44,9 @@ public class TestInternal {
 		List <Description> descriptionList = imf.getDescriptions();
 		List <Publisher> publisherList = imf.getPublishers();
 		
-		//		List <Author> authorList = imf.getAuthors();
+		List <Author> authorList = imf.getAuthors();
+		List <Editor> editorList = imf.getEditorList();
+		List <Contributor> contributorList = imf.getContributorList();
 		//List <Keyword> keywordsList = imf.getKeywords ( );
 
 
@@ -89,9 +93,56 @@ public class TestInternal {
 				db.insertTypeValue(object_id, typeValue.getTypeValue());
 			
 			for (Publisher publisher : publisherList)
-				db.insertPublisher(object_id, publisher.getNumber(), publisher.getName());			
+				db.insertPublisher(object_id, publisher.getNumber(), publisher.getName());
 			
-		//for (Keyword keyword : keywords)
+			for (Author author : authorList) {
+				BigDecimal person_id = null;
+				db.insertPerson(object_id, author.getFirstname(), author.getLastname(), author.getTitle(), author.getInstitution(), author.getEmail());
+				rs = db.selectLatestPerson(author.getFirstname(), author.getLastname());
+				if (rs == null) {
+					System.out.println("Person nicht eingetragen");
+					logger.warn ("resultset empty!");
+				} else {
+					while (rs.next()) {
+						person_id = rs.getBigDecimal(1);
+					}
+				}
+				db.insertObject2Author(object_id, person_id, author.getNumber());
+			}
+			
+			for (Editor editor : editorList) {
+				BigDecimal person_id = null;
+				db.insertPerson(object_id, editor.getFirstname(), editor.getLastname(), editor.getTitle(), editor.getInstitution(), editor.getEmail());
+				rs = db.selectLatestPerson(editor.getFirstname(), editor.getLastname());
+				if (rs == null) {
+					System.out.println("Person nicht eingetragen");
+					logger.warn ("resultset empty!");
+				} else {
+					while (rs.next()) {
+						person_id = rs.getBigDecimal(1);
+					}
+				}
+				db.insertObject2Editor(object_id, person_id, editor.getNumber());
+			}
+
+			for (Contributor contributor : contributorList) {
+				BigDecimal person_id = null;
+				db.insertPerson(object_id, contributor.getFirstname(), contributor.getLastname(), contributor.getTitle(), contributor.getInstitution(), contributor.getEmail());
+				rs = db.selectLatestPerson(contributor.getFirstname(), contributor.getLastname());
+				if (rs == null) {
+					System.out.println("Person nicht eingetragen");
+					logger.warn ("resultset empty!");
+				} else {
+					while (rs.next()) {
+						person_id = rs.getBigDecimal(1);
+					}
+				}
+				db.insertObject2Editor(object_id, person_id, contributor.getNumber());
+			}
+
+			
+			
+			//for (Keyword keyword : keywords)
 		//	db.insertkeyword ( );
 		
 
@@ -100,6 +151,8 @@ public class TestInternal {
 
 		} catch (SQLException sqlex) {
 			System.out.println("Exception geworfen");
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
 			db.rollback();
 		}
 		
