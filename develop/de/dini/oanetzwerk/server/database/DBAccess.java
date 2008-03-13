@@ -1171,7 +1171,7 @@ public class DBAccess implements DBAccessInterface {
 		}
 	}
 
-	public void insertPerson(BigDecimal object_id, String firstname,
+	public void insertPerson(String firstname,
 			String lastname, String title, String institution, String email)
 			throws SQLException {
 		PreparedStatement pstmt = null;
@@ -1185,17 +1185,15 @@ public class DBAccess implements DBAccessInterface {
 			pstmt.setString (4, institution);
 			pstmt.setString (5, email);
 			
-			
-			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("execute");
 			
 			pstmt.executeUpdate ( );
 			
 		} catch (SQLException sqlex) {
-			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			throw sqlex;
 		}
 	}
 
@@ -1216,8 +1214,6 @@ public class DBAccess implements DBAccessInterface {
 			ex.printStackTrace ( );
 			throw ex;
 		}
-			
-		
 	}
 	
 	public void insertObject2Author(BigDecimal object_id, BigDecimal person_id, int number)
@@ -1240,6 +1236,7 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			throw sqlex;
 		}
 	}	
 
@@ -1264,6 +1261,7 @@ public class DBAccess implements DBAccessInterface {
 
 			logger.error(sqlex.getLocalizedMessage());
 			sqlex.printStackTrace();
+			throw sqlex;
 		}
 	}
 
@@ -1288,9 +1286,145 @@ public class DBAccess implements DBAccessInterface {
 
 			logger.error(sqlex.getLocalizedMessage());
 			sqlex.printStackTrace();
+			throw sqlex;
 		}
 	}	
+
+
 	
+
+	public void insertKeyword(String keyword, String lang)
+			throws SQLException {
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Keywords (keyword, lang) VALUES (?,?)");
+			pstmt.setString (1, keyword);
+			pstmt.setString (2, lang);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			throw sqlex;
+		}
+	}
+	
+	
+	public ResultSet selectLatestKeyword(String keyword, String lang) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT MAX(keyword_id) FROM dbo.Keywords WHERE (keyword = ? AND lang = ?)");
+			pstmt.setString (1, keyword);
+			pstmt.setString (2, lang);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			throw ex;
+		}
+			
+		
+	}
+	
+	public void insertObject2Keyword(BigDecimal object_id, BigDecimal keyword_id) throws SQLException {
+		PreparedStatement pstmt = null;
+
+		try {
+
+			pstmt = conn
+					.prepareStatement("INSERT INTO dbo.Object2Keywords (object_id, keyword_id) VALUES (?,?)");
+			pstmt.setBigDecimal(1, object_id);
+			pstmt.setBigDecimal(2, keyword_id);
+
+			if (logger.isDebugEnabled())
+				logger.debug("execute");
+
+			pstmt.executeUpdate();
+
+		} catch (SQLException sqlex) {
+
+			logger.error(sqlex.getLocalizedMessage());
+			sqlex.printStackTrace();
+			throw sqlex;
+		}
+	}
+	
+	public ResultSet selectLanguageByName(String language) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT language_id FROM dbo.Language WHERE (language = ?)");
+			pstmt.setString (1, language);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			throw ex;
+		}
+	}
+
+	public void insertLanguage(String language) throws SQLException {
+		PreparedStatement pstmt = null;
+
+		try {
+
+			pstmt = conn
+					.prepareStatement("INSERT INTO dbo.Language (language) VALUES (?)");
+			pstmt.setString(1, language);
+
+			if (logger.isDebugEnabled())
+				logger.debug("execute");
+
+			pstmt.executeUpdate();
+
+		} catch (SQLException sqlex) {
+
+			logger.error(sqlex.getLocalizedMessage());
+			sqlex.printStackTrace();
+			throw sqlex;
+		}
+	}
+	
+	public void insertObject2Language(BigDecimal object_id, BigDecimal language_id,
+			int number) throws SQLException {
+		PreparedStatement pstmt = null;
+
+		try {
+
+			pstmt = conn
+					.prepareStatement("INSERT INTO dbo.Object2Language (object_id, language_id, number) VALUES (?,?,?)");
+			pstmt.setBigDecimal(1, object_id);
+			pstmt.setBigDecimal(2, language_id);
+			pstmt.setInt(3, number);
+
+			if (logger.isDebugEnabled())
+				logger.debug("execute");
+
+			pstmt.executeUpdate();
+
+		} catch (SQLException sqlex) {
+
+			logger.error(sqlex.getLocalizedMessage());
+			sqlex.printStackTrace();
+			throw sqlex;
+		}
+	}	
 	
 	
 } //end of class

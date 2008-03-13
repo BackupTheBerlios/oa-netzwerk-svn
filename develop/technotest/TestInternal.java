@@ -8,14 +8,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.codec.RestEntrySet;
-import de.dini.oanetzwerk.codec.RestKeyword;
-import de.dini.oanetzwerk.codec.RestMessage;
-import de.dini.oanetzwerk.codec.RestStatusEnum;
-import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
-import de.dini.oanetzwerk.servicemodule.aggregator.Aggregator;
+
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.imf.*;
 
@@ -26,13 +21,13 @@ public class TestInternal {
 	
 	public static void put(InternalMetadata imf) {
 		
-		BigDecimal object_id = new BigDecimal ("635");
+		BigDecimal object_id = new BigDecimal ("637");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		ResultSet rs;
 		
-		String key = "";
+//		String key = "";
 
 		
 		
@@ -47,11 +42,11 @@ public class TestInternal {
 		List <Author> authorList = imf.getAuthors();
 		List <Editor> editorList = imf.getEditorList();
 		List <Contributor> contributorList = imf.getContributorList();
-		//List <Keyword> keywordsList = imf.getKeywords ( );
-
-
+		
+		List <Keyword> keywordList = imf.getKeywords ( );
 		List <TypeValue> typeValueList = imf.getTypeValueList ( );
-		//List <Language> languageList;
+
+		List <Language> languageList = imf.getLanguageList();
 		//List<Classification> classificationList;
 		
 		//ResultSet resultset;
@@ -61,90 +56,162 @@ public class TestInternal {
 		
 		try {
 			// Titel speichern
-			for (Title title : titleList)			
-				db.insertTitle (object_id, title.getQualifier ( ), title.getTitle ( ), title.getLang ( ));
+			if (titleList != null) {
+				for (Title title : titleList)
+					db.insertTitle(object_id, title.getQualifier(), title
+							.getTitle(), title.getLang());
+			}
 
-			
 			// Datumswerte
-			for (DateValue dateValue : dateValueList) {
-				try {
-					db.insertDateValue(object_id, dateValue.getNumber(),
-							HelperMethods.extract_datestamp(dateValue
-									.getDateValue()));
+			if (dateValueList != null) {
+				for (DateValue dateValue : dateValueList) {
+					try {
+						db.insertDateValue(object_id, dateValue.getNumber(),
+								HelperMethods.extract_datestamp(dateValue
+										.getDateValue()));
 
-				} catch (ParseException ex) {
-					logger.error("Datestamp with datevalue incorrect");
-					ex.printStackTrace();
-				}
-			}
-
-			for (Format format : formatList)
-				db.insertFormat(object_id, format.getNumber(), format
-						.getSchema_f());
-
-			for (Identifier identifier : identifierList)
-				db.insertIdentifier(object_id, identifier.getNumber(),
-						identifier.getIdentifier());
-
-			for (Description description : descriptionList)
-				db.insertDescription(object_id, description.getNumber(), description.getDescription());
-			
-			for (TypeValue typeValue : typeValueList)
-				db.insertTypeValue(object_id, typeValue.getTypeValue());
-			
-			for (Publisher publisher : publisherList)
-				db.insertPublisher(object_id, publisher.getNumber(), publisher.getName());
-			
-			for (Author author : authorList) {
-				BigDecimal person_id = null;
-				db.insertPerson(object_id, author.getFirstname(), author.getLastname(), author.getTitle(), author.getInstitution(), author.getEmail());
-				rs = db.selectLatestPerson(author.getFirstname(), author.getLastname());
-				if (rs == null) {
-					System.out.println("Person nicht eingetragen");
-					logger.warn ("resultset empty!");
-				} else {
-					while (rs.next()) {
-						person_id = rs.getBigDecimal(1);
+					} catch (ParseException ex) {
+						logger.error("Datestamp with datevalue incorrect");
+						ex.printStackTrace();
 					}
 				}
-				db.insertObject2Author(object_id, person_id, author.getNumber());
-			}
-			
-			for (Editor editor : editorList) {
-				BigDecimal person_id = null;
-				db.insertPerson(object_id, editor.getFirstname(), editor.getLastname(), editor.getTitle(), editor.getInstitution(), editor.getEmail());
-				rs = db.selectLatestPerson(editor.getFirstname(), editor.getLastname());
-				if (rs == null) {
-					System.out.println("Person nicht eingetragen");
-					logger.warn ("resultset empty!");
-				} else {
-					while (rs.next()) {
-						person_id = rs.getBigDecimal(1);
-					}
-				}
-				db.insertObject2Editor(object_id, person_id, editor.getNumber());
 			}
 
-			for (Contributor contributor : contributorList) {
-				BigDecimal person_id = null;
-				db.insertPerson(object_id, contributor.getFirstname(), contributor.getLastname(), contributor.getTitle(), contributor.getInstitution(), contributor.getEmail());
-				rs = db.selectLatestPerson(contributor.getFirstname(), contributor.getLastname());
-				if (rs == null) {
-					System.out.println("Person nicht eingetragen");
-					logger.warn ("resultset empty!");
-				} else {
-					while (rs.next()) {
-						person_id = rs.getBigDecimal(1);
+			if (formatList != null) {
+				for (Format format : formatList)
+					db.insertFormat(object_id, format.getNumber(), format
+							.getSchema_f());
+			}
+
+			if (identifierList != null) {
+				for (Identifier identifier : identifierList)
+					db.insertIdentifier(object_id, identifier.getNumber(),
+							identifier.getIdentifier());
+			}
+
+			if (descriptionList != null) {
+				for (Description description : descriptionList)
+					db.insertDescription(object_id, description.getNumber(),
+							description.getDescription());
+			}
+
+			if (typeValueList != null) {
+				for (TypeValue typeValue : typeValueList)
+					db.insertTypeValue(object_id, typeValue.getTypeValue());
+			}
+
+			if (publisherList != null) {
+				for (Publisher publisher : publisherList)
+					db.insertPublisher(object_id, publisher.getNumber(),
+							publisher.getName());
+			}
+
+			if (authorList != null) {
+				for (Author author : authorList) {
+					BigDecimal person_id = null;
+					db.insertPerson(author.getFirstname(),
+							author.getLastname(), author.getTitle(), author
+									.getInstitution(), author.getEmail());
+					rs = db.selectLatestPerson(author.getFirstname(), author
+							.getLastname());
+					if (rs == null) {
+						System.out.println("Person nicht eingetragen");
+						logger.warn("resultset empty!");
+					} else {
+						while (rs.next()) {
+							person_id = rs.getBigDecimal(1);
+						}
 					}
+					db.insertObject2Author(object_id, person_id, author
+							.getNumber());
 				}
-				db.insertObject2Editor(object_id, person_id, contributor.getNumber());
+			}
+			
+			if (editorList != null) {
+				for (Editor editor : editorList) {
+					BigDecimal person_id = null;
+					db.insertPerson(editor.getFirstname(),
+							editor.getLastname(), editor.getTitle(), editor
+									.getInstitution(), editor.getEmail());
+					rs = db.selectLatestPerson(editor.getFirstname(), editor
+							.getLastname());
+					if (rs == null) {
+						System.out.println("Person nicht eingetragen");
+						logger.warn("resultset empty!");
+					} else {
+						while (rs.next()) {
+							person_id = rs.getBigDecimal(1);
+						}
+					}
+					db.insertObject2Editor(object_id, person_id, editor
+							.getNumber());
+				}
 			}
 
 			
+			if (contributorList != null) {
+				for (Contributor contributor : contributorList) {
+					BigDecimal person_id = null;
+					db.insertPerson(contributor.getFirstname(), contributor
+							.getLastname(), contributor.getTitle(), contributor
+							.getInstitution(), contributor.getEmail());
+					rs = db.selectLatestPerson(contributor.getFirstname(),
+							contributor.getLastname());
+					if (rs == null) {
+						System.out.println("Person nicht eingetragen");
+						logger.warn("resultset empty!");
+					} else {
+						while (rs.next()) {
+							person_id = rs.getBigDecimal(1);
+						}
+					}
+					db.insertObject2Editor(object_id, person_id, contributor
+							.getNumber());
+				}
+			}
+
+			if (keywordList != null) {
+				for (Keyword keyword : keywordList) {
+					BigDecimal keyword_id = null;
+					db.insertKeyword(keyword.getKeyword(), keyword
+							.getLanguage());
+					rs = db.selectLatestKeyword(keyword.getKeyword(), keyword
+							.getLanguage());
+					if (rs == null) {
+						System.out.println("Keyword nicht eingetragen");
+						logger.warn("resultset empty!");
+					} else {
+						while (rs.next()) {
+							keyword_id = rs.getBigDecimal(1);
+						}
+					}
+					db.insertObject2Keyword(object_id, keyword_id);
+				}
+			}
 			
-			//for (Keyword keyword : keywords)
-		//	db.insertkeyword ( );
-		
+			if (languageList != null) {
+				for (Language language : languageList) {
+					BigDecimal language_id = null;
+
+					rs = db.selectLanguageByName(language.getLanguage());
+					if (!rs.next()) {
+						// Sprache ist noch nicht vorhanden => einfügen und neue
+						// Sprach-ID auslesen
+						db.insertLanguage(language.getLanguage());
+					}
+					rs = db.selectLanguageByName(language.getLanguage());
+					if (rs == null) {
+						System.out.println("Sprache nicht eingetragen");
+					} else {
+						while (rs.next()) {
+							language_id = rs.getBigDecimal(1);
+						}
+					}
+					db.insertObject2Language(object_id, language_id, language
+							.getNumber());
+				}
+			}
+			
 
 			db.commit();
 			
@@ -539,7 +606,7 @@ public class TestInternal {
 
 		System.out.println(imf);
 		
-		String xmlData;
+//		String xmlData;
 // xmlData = imMarsch.marshall (imf);
 		
 // List <HashMap <String, String>> listentries = new ArrayList <HashMap <String,

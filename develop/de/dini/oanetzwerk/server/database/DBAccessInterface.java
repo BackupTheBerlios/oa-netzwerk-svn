@@ -192,7 +192,7 @@ public interface DBAccessInterface {
 	public abstract void insertTypeValue (BigDecimal object_id, 
 			String value) throws SQLException;
 	
-	public abstract void insertPerson (BigDecimal object_id, String firstname, String lastname, String title, String institution, String email) throws SQLException;
+	public abstract void insertPerson (String firstname, String lastname, String title, String institution, String email) throws SQLException;
 	
 	public abstract ResultSet selectLatestPerson(String firstname, String lastname) throws SQLException;
 	
@@ -201,6 +201,18 @@ public interface DBAccessInterface {
 	public abstract void insertObject2Editor(BigDecimal object_id, BigDecimal person_id, int number) throws SQLException;
 	
 	public abstract void insertObject2Contributor(BigDecimal object_id, BigDecimal person_id, int number) throws SQLException;
+	
+	public abstract void insertKeyword (String keyword, String lang) throws SQLException;
+	
+	public abstract ResultSet selectLatestKeyword(String keyword, String lang) throws SQLException;
+	
+	public abstract void insertObject2Keyword (BigDecimal object_id, BigDecimal keyword_id) throws SQLException;
+	
+	public abstract ResultSet selectLanguageByName(String language) throws SQLException;
+	
+	public abstract void insertLanguage(String language) throws SQLException;
+	
+	public abstract void insertObject2Language(BigDecimal object_id, BigDecimal language_id, int number) throws SQLException;
 	
 	public abstract ResultSet selectTitle(BigDecimal oid);
 	
