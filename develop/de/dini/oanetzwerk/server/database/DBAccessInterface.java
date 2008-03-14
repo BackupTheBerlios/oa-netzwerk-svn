@@ -214,6 +214,8 @@ public interface DBAccessInterface {
 	
 	public abstract void insertObject2Language(BigDecimal object_id, BigDecimal language_id, int number) throws SQLException;
 	
+//	public abstract ResultSet selectDDCClassificationByDecimal(String decimal) throws SQLException;
+	
 	public abstract ResultSet selectTitle(BigDecimal oid);
 	
 	public abstract ResultSet selectAuthors(BigDecimal oid);

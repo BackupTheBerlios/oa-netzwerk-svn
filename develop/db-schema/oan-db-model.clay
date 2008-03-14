@@ -704,7 +704,7 @@
 </table>
 <table alias="" name="DCC_Categories" remarks="" uid="4f5403:1161f7e7d4d:-783a">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="252" y="858"/>
+<table-figure-bounds height="-1" width="-1" x="298" y="857"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DCC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-7836">
 <column-description/>
@@ -1548,7 +1548,7 @@
 </table>
 <table alias="" name="Language" remarks="" uid="ca6a9e:117e88d1d4f:-7fd9">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="1303" y="673"/>
+<table-figure-bounds height="-1" width="-1" x="1295" y="763"/>
 <column-list>
 <column alias="" auto-increment="true" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="language_id" remarks="" uid="ca6a9e:117e88d1d4f:-7fd5">
 <column-description/>
@@ -1582,7 +1582,7 @@
 </table>
 <table alias="" name="Object2Language" remarks="" uid="ca6a9e:117e88d1d4f:-7fd1">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="1004" y="776"/>
+<table-figure-bounds height="-1" width="-1" x="1000" y="787"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="ca6a9e:117e88d1d4f:-7fcd">
 <column-description/>
