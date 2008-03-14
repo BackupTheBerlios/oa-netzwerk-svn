@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<project name="OA-Netzwerk" default="warServer" basedir=".">
+	<property name="src" value="."/>
+	<property name="build" value="build"/>
+	<property name="build.server" value="build/server"/>
+	<property name="archive" value="arch"/>
+	<property name="lib" value="lib"/>
+	
+	<path id="classpath">
+		<fileset dir="${lib}" includes="**/*.jar"/>
+	</path>
+	
+	<target name="init">
+		<mkdir dir="${build}"/>
+		<mkdir dir="${build.server}"/>
+	</target>
+	
+	<target name="initArch">
+		<tstamp/>
+		<mkdir dir="${archive}"/>
+	</target>
+	
+	<target name="tarSourceAll" depends="initArch">
+		<tar destfile="${archive}/oa-netzwerk-${DSTAMP}.tar">
+			<tarfileset dir="${src}/de" prefix="de">
+				<include name="**/*.java"/>
+				<include name="**/*.xsd"/>
+				<exclude name="**/*.svn"/>
+				<exclude name="**/*.properties"/>
+				<exclude name="**/*.class"/>
+				<exclude name="**/*.html"/>
+				<exclude name="**/*.txt"/>
+			</tarfileset>
+		</tar>
+	</target>
+	
+	<target name="tarbz2SourceAll" depends="initArch,tarSourceAll">
+		<bzip2 src="${archive}/oa-netzwerk-${DSTAMP}.tar" destfile="${archive}/oa-netzwerk-${DSTAMP}.tar.bz2"/>
+	</target>
+	
+	<target name="compileAll">
+		<tstamp/>
+		<javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
+	</target>
+	
+	<target name="jarAll" depends="compileAll">
+		<jar destfile="${build}/oa-netzwerk-${DSTAMP}.jar" basedir="${build}" excludes="**/technotest/**">
+			<manifest>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.Harvester"/>
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="warAll" depends="compileAll">
+			<war destfile="${build}/oa-netzwerk-develop.war" webxml="conf/web.xml">
+				<lib dir="${lib}"/>
+				<classes dir="${build}">
+					<exclude name="**/technotest/**"/>
+				</classes>
+    		</war>
+	</target>
+	
+	<target name="tarSourceServer" depends="initArch">
+		<tar destfile="${archive}/oa-netzwerk-server-${DSTAMP}.tar">
+			<tarfileset dir="${src}/de/dini/oanetzwerk/codec" prefix="de/dini/oanetzwerk/codec">
+				<include name="**/*.java"/>
+				<include name="**/*.xsd"/>
+				<exclude name="**/*.properties"/>
+				<exclude name="**/*.class"/>
+				<exclude name="**/*.html"/>
+				<exclude name="**/*.txt"/>
+			</tarfileset>
+			<tarfileset dir="${src}/de/dini/oanetzwerk/server" prefix="de/dini/oanetzwerk/server">
+				<include name="**/*.java"/>
+				<include name="**/*.xsd"/>
+				<exclude name="**/*.properties"/>
+				<exclude name="**/*.class"/>
+				<exclude name="**/*.html"/>
+				<exclude name="**/*.txt"/>
+			</tarfileset>
+			<tarfileset dir="${src}/de/dini/oanetzwerk/utils" prefix="de/dini/oanetzwerk/utils">
+				<include name="**/*.java"/>
+				<include name="**/*.xsd"/>
+				<exclude name="**/*.properties"/>
+				<exclude name="**/*.class"/>
+				<exclude name="**/*.html"/>
+				<exclude name="**/*.txt"/>
+			</tarfileset>
+		</tar>
+	</target>
+	
+	<target name="tarbz2SourceServer" depends="initArch,tarSourceServer">
+		<bzip2 src="${archive}/oa-netzwerk-server-${DSTAMP}.tar" destfile="${archive}/oa-netzwerk-server-${DSTAMP}.tar.bz2"/>
+	</target>
+	
+	<target name="compileServer" depends="init">
+		<tstamp/>
+		<javac destdir="${build.server}" classpathref="classpath">
+			<src path="${src}/de/dini/oanetzwerk/codec"/>
+			<src path="${src}/de/dini/oanetzwerk/server"/>
+			<src path="${src}/de/dini/oanetzwerk/utils"/>
+			<exclude name="**/InspectorServlet.java"/>
+		</javac>
+	</target>
+	
+	<target name="jarServer" depends="compileServer">
+		<jar destfile="${build}/oa-netzwerk-server-${DSTAMP}.jar" basedir="${build.server}" excludes="**/technotest/**"/>
+	</target>
+	
+	<target name="warServer" depends="compileServer">
+		<war destfile="${build}/restserver.war" webxml="conf/web.xml">
+			<lib dir="${lib}"/>
+			<classes dir="${build.server}">
+				<exclude name="**/technotest/**"/>
+			</classes>
+		</war>
+	</target>
+</project>
