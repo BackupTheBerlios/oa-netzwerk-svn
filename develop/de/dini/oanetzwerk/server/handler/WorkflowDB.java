@@ -72,18 +72,18 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		
 		db.closeConnection ( );
 		
-		RestEntrySet res;
+		RestEntrySet res = new RestEntrySet ( );;
 		
 		try {
 			
 			while (this.resultset.next ( )) {
 				
-				res = new RestEntrySet ( );
 				//mapEntry.put ("workflow_id", Integer.toString (resultset.getInt (1)));
 				res.addEntry ("object_id", Integer.toString (this.resultset.getInt (1)));
-				this.rms.addEntrySet (res);
+				
 			}
 			
+			this.rms.addEntrySet (res);
 			this.rms.setStatus (RestStatusEnum.OK);
 			
 		} catch (SQLException ex) {

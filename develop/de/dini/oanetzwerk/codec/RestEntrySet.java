@@ -30,4 +30,19 @@ public class RestEntrySet {
 	public Iterator<String> getKeyIterator() {
 		return entryHashMap.keySet().iterator();
 	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		Iterator<String> it = this.getKeyIterator();
+		if(!it.hasNext()) sb.append("empty RestEntrySet, no key-value pairs");
+		while(it.hasNext()) {
+			String key = it.next();
+			sb.append("key=");
+			sb.append(key);
+			sb.append(" value=");
+			sb.append(this.getValue(key));
+		}
+		return sb.toString();
+	}
+	
 }
