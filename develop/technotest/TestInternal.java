@@ -67,7 +67,7 @@ public class TestInternal {
 	
 	public static void put(InternalMetadata imf) {
 		
-		BigDecimal object_id = new BigDecimal ("637");
+		BigDecimal object_id = new BigDecimal ("638");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
@@ -260,38 +260,61 @@ public class TestInternal {
 			
 			if (classificationList != null) {
 				for (Classification classification : classificationList) {
+					// fuer jeden Klassifikationstypen muessen unterschiedliche Aktionen erfolgen
 					if (classification instanceof DDCClassification) {
-											
+						String ddcValue = null;
+						rs = db.selectDDCCategoriesByCategorie(classification.getValue());
+						while (rs.next()) {
+							ddcValue = rs.getString(1);
+						}
+						if (ddcValue == null) {
+							// Versuch, über den übergebenen Namen den richten DDC-Wert zu bestimmen
+							
+						}
+						// Daten zuordnen
+						db.insertDDCClassification(object_id, ddcValue);
 					}
 					if (classification instanceof DNBClassification) {
-						
-					}
-					
+						BigDecimal DNB_Categorie = null;
+						rs = db.selectDNBCategoriesByCategorie(classification.getValue());
+						while (rs.next()) {
+							DNB_Categorie = rs.getBigDecimal(1);
+						}
+						// Daten zuordnen
+						db.insertDNBClassification(object_id, DNB_Categorie);
+					}					
 					if (classification instanceof DINISetClassification) {
-						
+						BigDecimal DINI_set_id = null;
+						rs = db.selectDINISetCategoriesByName(classification.getValue());
+						while (rs.next()) {
+							DINI_set_id = rs.getBigDecimal(1);
+						}
+						// Daten zuordnen
+						db.insertDINISetClassification(object_id, DINI_set_id);						
 					}
 					
 					if (classification instanceof OtherClassification) {
-						
-						db.insertOtherCategories(classification.getValue());
-						
 						BigDecimal other_id = null;
+						// ID zum Klassifikationswort aus DB suchen 
 						rs = db.selectLatestOtherCategories(classification.getValue());
-						if (!rs.next()) {
-							// Sprache ist noch nicht vorhanden => einfügen und neue
-							// Sprach-ID auslesen
-						} else {
+						while (rs.next()) {
+							// Wort wohl vorhanden, sonst keine Rückgabe
+							other_id = rs.getBigDecimal(1);
+						} 
+						if (other_id == null) {
+							// Wort noch nicht vorhanden, neu eintragen
+							// Klassifikation eintragen
+							db.insertOtherCategories(classification.getValue());
+							rs = db.selectLatestOtherCategories(classification.getValue());
 							while (rs.next()) {
 								other_id = rs.getBigDecimal(1);
 							}
 						}
+						// ID dieser Klassifikation bestimmen und zuordnen
 						db.insertOtherClassification(object_id, other_id);
-						
 					}
 				}
 			}
-			
-
 			db.commit();
 			
 
@@ -323,9 +346,9 @@ public class TestInternal {
 
 		System.out.println(imf);
 	
-			
+		delete(new BigDecimal("638"));			
 		put(imf);
-		delete(new BigDecimal("637"));
+
 	}
 	
 	

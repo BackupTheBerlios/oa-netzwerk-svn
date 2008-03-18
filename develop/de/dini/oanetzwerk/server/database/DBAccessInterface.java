@@ -220,6 +220,18 @@ public interface DBAccessInterface {
 	
 	public abstract ResultSet selectLatestOtherCategories(String name) throws SQLException;
 	
+	public abstract ResultSet selectDDCCategoriesByCategorie(String categorie) throws SQLException;
+	
+	public abstract ResultSet selectDNBCategoriesByCategorie(String name) throws SQLException;
+	
+	public abstract ResultSet selectDINISetCategoriesByName(String name) throws SQLException;
+	
+	public abstract void insertDDCClassification (BigDecimal object_id, String ddcValue) throws SQLException;
+	
+	public abstract void insertDNBClassification (BigDecimal object_id, BigDecimal DNB_Categorie) throws SQLException;
+	
+	public abstract void insertDINISetClassification (BigDecimal object_id, BigDecimal DINI_set_id) throws SQLException;
+	
 //	public abstract void 
 	
 //	public abstract ResultSet selectDDCClassificationByDecimal(String decimal) throws SQLException;

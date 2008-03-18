@@ -1949,8 +1949,122 @@ public class DBAccess implements DBAccessInterface {
 	}
 	
 	
-	
+	public ResultSet selectDDCCategoriesByCategorie(String categorie) throws SQLException {
 
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT DDC_Categorie FROM dbo.DDC_Categories WHERE (DDC_Categorie = ?)");
+			pstmt.setString (1, categorie);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			throw ex;
+		}
+	}
+	
+	public ResultSet selectDNBCategoriesByCategorie(String name) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT DNB_Categorie FROM dbo.DNB_Categories WHERE (name = ?)");
+			pstmt.setString (1, name);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			throw ex;
+		}
+	}
+
+	public void insertDDCClassification(BigDecimal object_id, String ddcValue)
+			throws SQLException {
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.DDC_Classification (object_id, DDC_Categorie) VALUES (?, ?)");
+			pstmt.setBigDecimal(1, object_id);
+			pstmt.setString(2, ddcValue);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+		
+	}
+
+	public void insertDINISetClassification(BigDecimal object_id,
+			BigDecimal DINI_set_id) throws SQLException {
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.DINI_Set_Classification (object_id, DINI_set_id) VALUES (?, ?)");
+			pstmt.setBigDecimal(1, object_id);
+			pstmt.setBigDecimal(2, DINI_set_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+		
+	}
+
+	public void insertDNBClassification(BigDecimal object_id, BigDecimal DNB_Categorie)
+			throws SQLException {
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.DNB_Classification (object_id, DNB_Categorie) VALUES (?, ?)");
+			pstmt.setBigDecimal(1, object_id);
+			pstmt.setBigDecimal(2, DNB_Categorie);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+		
+	}
+
+	public ResultSet selectDINISetCategoriesByName(String name)
+			throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT DINI_set_id FROM dbo.DINI_Set_Categories WHERE (name = ?)");
+			pstmt.setString (1, name);
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			throw ex;
+		}
+	}
 	
 	
 	

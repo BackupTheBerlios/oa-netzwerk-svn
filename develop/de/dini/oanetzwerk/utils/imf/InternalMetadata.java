@@ -125,13 +125,13 @@ public class InternalMetadata {
 		myIM.addTitle(title);	
 		
 		Classification classi = new DNBClassification();
-		classi.setValue("dnb-typischer Klassifikationswert");
+		classi.setValue("40");
 		myIM.addClassfication(classi);
 		classi = new DDCClassification();
-		classi.setValue("ddc-typischer Klassifikationswert");
+		classi.setValue("000");
 		myIM.addClassfication(classi);
 		classi = new DINISetClassification();
-		classi.setValue("DINI-typischer Klassifikationswert");
+		classi.setValue("dissertation");
 		myIM.addClassfication(classi);
 		classi = new OtherClassification();
 		classi.setValue("unbekannter Klassifikationswert");
