@@ -35,6 +35,10 @@ DELETE FROM dbo.Person WHERE
 AND person_id NOT IN (SELECT person_id FROM dbo.Object2Editor GROUP BY person_id)
 AND person_id NOT IN (SELECT person_id FROM dbo.Object2Contributor GROUP BY person_id))
 
-# Loeschen der ueberzaehligen Personen
+# Loeschen der ueberzaehligen anderen Kategorien
 DELETE FROM dbo.Other_Categories WHERE 
 (other_id NOT IN (SELECT other_id FROM dbo.Other_Classification GROUP BY other_id) )
+
+# Loeschen der ueberzaehligen Schlagwoerter
+DELETE FROM dbo.Keywords WHERE 
+(keyword_id NOT IN (SELECT keyword_id FROM dbo.Object2Keywords GROUP BY keyword_id) )

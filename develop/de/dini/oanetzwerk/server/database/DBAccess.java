@@ -1801,6 +1801,99 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	
+	public void deleteKeywordsWithoutReference (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.Keywords WHERE "
+						+ "(keyword_id NOT IN (SELECT keyword_id FROM dbo.Object2Keywords GROUP BY keyword_id) )");
+						
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	
+	public void deleteOther_Classification (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM  dbo.Other_Classification WHERE object_id=?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+
+	
+	public void deleteOther_Categories (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.Other_Categories WHERE " 
+						+"(other_id NOT IN (SELECT other_id FROM dbo.Other_Classification GROUP BY other_id) )");
+
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+
+	public void deleteObject2Keywords(BigDecimal object_id) throws SQLException {
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement ("DELETE FROM  dbo.Object2Keywords WHERE object_id=?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}	}
+	
+	
+
+	
 	
 	
 } //end of class
