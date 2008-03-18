@@ -94,6 +94,17 @@ public class InternalMetadata {
 		author.setLastname("Musterfrau");
 		myIM.addAuthor(author);
 		
+		Contributor contri = new Contributor();
+		contri.setNumber(1);
+		contri.setFirstname("Hägar");
+		contri.setLastname("Löwenmaul");	
+		myIM.addContributor(contri);
+		contri = new Contributor();
+		contri.setNumber(2);
+		contri.setFirstname("Páris");
+		contri.setLastname("Mühlenstrauß");
+		myIM.addContributor(contri);
+		
 		Title title = new Title();
 		title.setNumber(1);
 		title.setLang("de");
@@ -722,14 +733,6 @@ public class InternalMetadata {
 		return sb.toString();
 	}
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public List<Editor> getEditorList() {
 		return editorList;
 	}
