@@ -43,8 +43,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
 
-		// TODO Auto-generated method stub
-		return null;
+		this.rms = new RestMessage (RestKeyword.ObjectEntry);
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		return RestXmlCodec.encodeRestMessage (this.rms);	
+		
 	}
 
 	/**
@@ -313,13 +315,4 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 	
-	/**
-	 * @param args
-	 */
-	
-	public static void main (String [ ] args) {
-
-		//TODO: Testing stuff
-
-	}
 } // end of class
