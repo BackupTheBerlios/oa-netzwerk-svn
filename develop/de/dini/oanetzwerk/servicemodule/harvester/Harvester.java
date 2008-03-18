@@ -42,6 +42,8 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 
 public class Harvester {
 	
+	private static Harvester harvester;
+	
 	/**
 	 * This is an ArrayList of ObjectIdentifiers where necessary information about the objects is stored @see de.dini.oanetzwerk.ObjectIdentifier
 	 */
@@ -73,28 +75,41 @@ public class Harvester {
 	private String metaDataFormat ="oai_dc";
 	
 	/**
+	 * This is the corresponding ID to the repository we'll connect to.
+	 */
+	
+	private int repositoryID;
+
+	/**
 	 * This is the Base-URL of the repository we have to connect to.
 	 */
 	
 	private String repositoryURL;
 	
-	/**
-	 * This is the corresponding ID to the repository we'll connect to.
-	 */
+	private boolean fullharvest;
 	
-	private int repositoryID;
-		
+	private String date;
+	
+	private int amount;
+	
+	private int interval;
+	
+	private boolean testData;
+	
 	/**
 	 * Standard Constructor which initialises the log4j and loads necessary properties.
 	 */
 	
-	public Harvester (String url, int id) {
+	private Harvester (int id) {
 		
 		DOMConfigurator.configure ("log4j.xml");
 		
 		try {
 			
 			this.props = HelperMethods.loadPropertiesFromFile ("harvesterprop.xml");
+			
+			getRepositoryDetails (id);
+			
 			
 		} catch (InvalidPropertiesFormatException ex) {
 			
@@ -115,13 +130,61 @@ public class Harvester {
 			System.exit (1);
 		}
 		
-		this.repositoryURL = url;
 		this.repositoryID = id;
 		
-		url = null;
 		return;
 	}
 	
+	/**
+	 * @param id
+	 */
+	
+	private void getRepositoryDetails (int id) {
+
+		RestClient restClient = RestClient.createRestClient (this.props.getProperty ("host"), "Repositories/" + id + "/", this.props.getProperty ("username"), this.props.getProperty ("password"));
+		String result = restClient.GetData ( );
+		
+		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		RestEntrySet res = rms.getListEntrySets ( ).get (0);
+		
+		Iterator <String> it = res.getKeyIterator ( );
+		String key = "";
+		
+		while (it.hasNext ( )) {
+							
+			key = it.next ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("key: " + key + " value: " + res.getValue (key));
+			
+			if (key.equalsIgnoreCase ("oai_url")) {
+				
+				this.setRepositoryURL (filterUrl (res.getValue (key)));
+				continue;
+				
+			} else if (key.equalsIgnoreCase ("test_data")) {
+				
+				this.setTestData (new Boolean (res.getValue (key)));
+				continue;
+				
+			} else if (key.equalsIgnoreCase ("harvest_amount")) {
+				
+				this.setAmount (filterAmount (res.getValue (key)));
+				continue;
+				
+			} else if (key.equalsIgnoreCase ("harvest_pause")) {
+				
+				this.setInterval (filterInterval (res.getValue (key)));
+				continue;
+				
+			} else continue;
+		}
+	}
+
+	private final Harvester getHarvester ( ) {
+		
+		return harvester;
+	}
 	
 	/**
 	 * Getter method for repositoryURL
@@ -132,6 +195,15 @@ public class Harvester {
 	private final String getRepositoryURL ( ) {
 	
 		return this.repositoryURL;
+	}
+		
+	/**
+	 * @param repositoryURL the repositoryURL to set
+	 */
+	
+	private final void setRepositoryURL (String repositoryURL) {
+	
+		this.repositoryURL = repositoryURL;
 	}
 	
 	/**
@@ -146,143 +218,95 @@ public class Harvester {
 	}
 
 	/**
-	 * The date which comes from the command line will be filtered and observed.
-	 * 
-	 * @param optionValue the date string which is filtered
-	 * @return the proper date string when it could be extracted null otherwise
+	 * @return the fullharvest
 	 */
 	
-	private static String filterDate (String optionValue) {
-		
-		if (optionValue.matches ("\\d\\d\\d\\d-\\d\\d-\\d\\d")) {
-			
-			String [ ] today = HelperMethods.today ( ).toString ( ).split ("-");
-			String [ ] dateComponents = optionValue.split ("-");
-			
-			if ( (new Integer (dateComponents [0]) < 1970) || (new Integer (dateComponents [0]) > new Integer (today [0]))) {
-				
-				logger.error ("Year must be between 1970 and " + today [0] + ".\nYou asked for the year " + dateComponents [0]);
-				System.err.println ("Year must be between 1970 and " + today [0] + ".\nYou asked for the year " + dateComponents [0]);
-								
-				System.exit (10);
-				
-			} else if ( (new Integer (dateComponents [1]) < 1) || (new Integer (dateComponents [1]) > 12)) {
-				
-				logger.error ("The year has only 12 months. You asked for month number " + dateComponents [1]);
-				System.err.println ("The year has only 12 months. You asked for month number " + dateComponents [1]);
-				
-				System.exit (10);
-				
-			} else if ( (new Integer (dateComponents [2]) < 1) || (new Integer (dateComponents [2]) > 31)) {
-				
-				logger.error ("Months have the max of 31, 30, 29 or 28 days. You asked for day number " + dateComponents [2]);
-				System.err.println ("Months have the max of 31, 30, 29 or 28 days. You asked for day number " + dateComponents [2]);
-				
-				System.exit (10);
-				
-			} else {
-				
-				java.sql.Date date2test = null;
-				
-				try {
-					
-					date2test = HelperMethods.extract_datestamp (optionValue);
-					
-				} catch (java.text.ParseException ex) {
-					
-					logger.error ("Can't extract Datestamp from parameter 'updateDate'");
-					logger.error (ex.getLocalizedMessage ( ));
-					ex.printStackTrace ( );
-					System.exit (10);
-				}
-				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("filtered Date: " + date2test.toString ( ));
-				
-				return date2test.toString ( );
-			}
-			
-		} else {
-			
-			logger.error ("Date Format wrong! Must be yyyy-mm-dd and not " + optionValue);
-			System.err.println ("Date Format wrong! Must be yyyy-mm-dd and not " + optionValue);
-			
-			System.exit (10);
-		}
-		
-		return null;
+	private final boolean isFullharvest ( ) {
+	
+		return this.fullharvest;
 	}
 	
 	/**
-	 * The option whether a full or only an update harvest will be processed will be discovered.
-	 * If update is specified the date from which on has to be set, otherwise an error occurs.
-	 * 
-	 * @param optionValue should be "full" for a full-harvest or "update".
-	 * @param cmd should has option "updateDate" if "update" is set
-	 * @return true when full harvest is discovered false when update is discovered
-	 * @throws ParseException when update is specified and no date is set
+	 * @param fullharvest the fullharvest to set
 	 */
 	
-	private static boolean filterBool (String optionValue, CommandLine cmd) throws ParseException {
-		
-		if (optionValue.equalsIgnoreCase ("full")) {
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("filteredBool: " + Boolean.TRUE);
-			
-			return true;
-			
-		} else {
-			
-			if (cmd.hasOption ('d') || cmd.hasOption ("updateDate")) {
-				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("filteredBool: " + Boolean.FALSE);
-				
-				return false;
-				
-			} else
-				throw new ParseException ("UpdateHarvest without a Date from which on the harvest shall be start isn't allowed!");
-		}
+	private final void setFullharvest (boolean fullharvest) {
+	
+		this.fullharvest = fullharvest;
 	}
 	
 	/**
-	 * ensures correct values for the repository ID.
-	 * 
-	 * @param optionValue a string representing a number greater or equal zero.
-	 * @return an integer which represents the repository ID
-	 * @throws ParseException when the repository ID is negative
+	 * @return the date
 	 */
 	
-	private static int filterId (String optionValue) throws ParseException {
-		
-		int i = new Integer (optionValue);
-		
-		if (i < 0)
-			throw new ParseException ("RepositoryID must not be negative!");
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("filtered ID: " + i);
-		
-		return i;
+	private final String getDate ( ) {
+	
+		return this.date;
+	}
+	
+	/**
+	 * @param date the date to set
+	 */
+	
+	private final void setDate (String date) {
+	
+		this.date = date;
+	}
+	
+	/**
+	 * @return the amount
+	 */
+	
+	private final int getAmount ( ) {
+	
+		return this.amount;
+	}
+	
+	/**
+	 * @param amount the amount to set
+	 */
+	
+	private final void setAmount (int amount) {
+	
+		this.amount = amount;
+	}
+	
+	/**
+	 * @return the interval
+	 */
+	
+	private final int getInterval ( ) {
+	
+		return this.interval;
+	}
+	
+	/**
+	 * @param interval the interval to set
+	 */
+	
+	private final void setInterval (int interval) {
+	
+		this.interval = interval;
+	}
+	
+	/**
+	 * @return the testData
+	 */
+	
+	private final boolean isTestData ( ) {
+	
+		return this.testData;
+	}
+	
+	/**
+	 * @param testData the testData to set
+	 */
+	
+	private final void setTestData (boolean testData) {
+	
+		this.testData = testData;
 	}
 
-	/**
-	 * ensures that the given string is a correct URL
-	 * @param optionValue the repository URL
-	 * @return filtered URL
-	 */
-	
-	private static String filterUrl (String optionValue) {
-		
-		//TODO: proper implementation
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("filtered URL: " + optionValue);
-		
-		return optionValue;
-	}
-	
 	/**
 	 * This method fetches data from the repository and processes it.
 	 * Firstly the list of supported MetaDataFormats is requested. Secondly the first List of Identifiers is requested.
@@ -294,7 +318,7 @@ public class Harvester {
 	 * @param updateFrom stores the timestamp for the update harvest. 
 	 */
 	
-	private void processIds (boolean fullharvest, String updateFrom) {
+	private void processIds ( ) {
 		
 		String resumptionToken = null;
 		Boolean resumptionSet = true;
@@ -313,8 +337,8 @@ public class Harvester {
 			response = null;
 			
 			// when we only want to get all new rawdata from the given data, we'll end in here 
-			if (!fullharvest)
-				response = listIdentifiers (getRepositoryURL ( ), this.metaDataFormat, updateFrom);
+			if (!this.isFullharvest ( ))
+				response = listIdentifiers (getRepositoryURL ( ), this.metaDataFormat, this.getDate ( ));
 			
 			// if we do a harvest of all rawdata, this will be chosen
 			else
@@ -329,7 +353,7 @@ public class Harvester {
 				 * the response of the harvested repository is taken and the Ids in it will be extracted and we'll have
 				 * returned the resumption Token if it exists
 				 */
-				resumptionToken = extractIdsAndGetResumptionToken (response, getRepositoryID ( ));
+				resumptionToken = extractIdsAndGetResumptionToken (response, this.getRepositoryID ( ));
 				
 				// Now the list of objects will be processed
 				processRecords ( );
@@ -616,10 +640,10 @@ public class Harvester {
 				// when internalOID == -1 than Object is not in the database and we have to create it
 				createObjectEntry (i);
 				
-				if ((i % 20) == 0) try {
+				if ((i % getAmount ( )) == 0) try {
 					
-					logger.debug ("Going to sleep for 5 seconds, letting the repository recover a bit");
-					Thread.sleep (5000);
+					logger.debug ("Going to sleep for " + getInterval ( ) + " milliseconds, letting the repository recover a bit");
+					Thread.sleep (getInterval ( ));
 					logger.debug ("Continuing to ask the repository for some records");
 					
 				} catch (InterruptedException ex) {
@@ -970,19 +994,24 @@ public class Harvester {
 										.withValueSeparator ( )
 										.hasArg ( )
 										.create ('u'));
-		options.addOption (OptionBuilder.withLongOpt ("repositoryId")
+		
+		options.addOption (OptionBuilder.isRequired ( )
+										.withLongOpt ("repositoryId")
 										.withArgName ("ID")
 										.withDescription ("Id for the repositoryURL see database for details")
 										.withValueSeparator ( )
 										.hasArg ( )
 										.create ('i'));
-		options.addOption (OptionBuilder.withType (new String ( ))
+		
+		options.addOption (OptionBuilder.isRequired ( )
+										.withType (new String ( ))
 										.withLongOpt ("harvesttype")
 										.withArgName ("full|update")
 										.withDescription ("harvesting-type can be 'full' for a full harvest or 'update' for an updating harvest")
 										.withValueSeparator ( )
 										.hasArg ( )
 										.create ('t'));
+		
 		options.addOption (OptionBuilder.withType (new String ( ))
 										.withLongOpt ("updateDate")
 										.withArgName ("yyyy-mm-dd")
@@ -991,54 +1020,54 @@ public class Harvester {
 										.hasArg ( )
 										.create ('d'));
 		
+		options.addOption (OptionBuilder.withType (new String ( ))
+										.withLongOpt ("harvestAmount")
+										.withArgName ("amount")
+										.withDescription ("amount of Objects which will be requested at once")
+										.withValueSeparator ( )
+										.hasArg ( )
+										.create ('a'));
+		
+		options.addOption (OptionBuilder.withType (new String ( ))
+										.withLongOpt ("harvestInterval")
+										.withArgName ("milliseconds")
+										.withDescription ("time between the requests")
+										.withValueSeparator ( )
+										.hasArg ( )
+										.create ('I'));
+		
+		options.addOption (OptionBuilder.withType (new String ( ))
+										.withLongOpt ("testData")
+										.withDescription ("URL of the repository which need to be harvested")
+										.create ('T'));
+
 		if (args.length > 0) {	
 			
 			try {
 				
 				CommandLine cmd = new GnuParser ( ).parse (options, args);
 				
-				if (cmd.hasOption ("h")) 				
+				// if -h was chosen, print the help and exit
+				if (cmd.hasOption ("h")) {
+					
 					HelperMethods.printhelp ("java " + Harvester.class.getCanonicalName ( ), options);
+					System.exit (0);
 					
-				else if ((cmd.hasOption ("repositoryUrl") || cmd.hasOption ('u')) && 
-						(cmd.hasOption ("repositoryId") || cmd.hasOption ('i')) &&
+				} else if ((cmd.hasOption ("repositoryId") || cmd.hasOption ('i')) &&
 						(cmd.hasOption ("harvesttype") || cmd.hasOption ('t'))) {
-					
-					String url;
-					int id;
-					boolean fullharvest;
-					String updateDate = "";
-					
-					if (cmd.getOptionValue ('t') == null)
-						fullharvest = filterBool (cmd.getOptionValue ("harvesttype"), cmd);
-					
-					else
-						fullharvest = filterBool (cmd.getOptionValue ('t'), cmd);
-					
-					if (!fullharvest) {
 						
-						if (cmd.getOptionValue ('d') == null)
-							updateDate = filterDate (cmd.getOptionValue ("updateDate"));
-						
-						else
-							updateDate = filterDate (cmd.getOptionValue ('d'));
-					}
-					
-					if (cmd.getOptionValue ('u') == null)
-						url = filterUrl (cmd.getOptionValue ("repositoryUrl"));
-					
-					else
-						url = filterUrl (cmd.getOptionValue ('u'));
-									
-					if (cmd.getOptionValue ('i') == null)
-						id = filterId (cmd.getOptionValue ("repositoryId"));
-					
-					else
-						id = filterId (cmd.getOptionValue ('i'));
+					int id = filterId (cmd.getOptionValue ('i'));
 					
 					// Here we go: create a new instance of the harvester
 					
-					Harvester harvester = new Harvester (url, id);
+					new Harvester (id);
+
+					harvester.filterUrl (cmd.getOptionValue ('u'));
+					harvester.filterBool (cmd.getOptionValue ('t'), cmd);
+					harvester.filterDate (cmd.getOptionValue ('d'));
+					harvester.filterAmount (cmd.getOptionValue ('a'));
+					harvester.filterInterval (cmd.getOptionValue ('I'));
+					harvester.setTestData (cmd.hasOption ('T'));
 					
 					/* 
 					 * firstly we have to collect some data from the repository, which have to be processed
@@ -1047,7 +1076,7 @@ public class Harvester {
 					 * raw datas into the database, if they don't exist or newer than in the database.
 					 */
 					
-					harvester.processIds (fullharvest, updateDate);
+					harvester.processIds ( );
 					
 			} else {
 				
@@ -1068,6 +1097,179 @@ public class Harvester {
 			HelperMethods.printhelp ("java " + Harvester.class.getCanonicalName ( ), options);
 			System.exit (1);
 		}
+	}
+	
+	/**
+	 * @param optionValue
+	 * @return
+	 */
+	
+	private static int filterInterval (String optionValue) {
+		
+		if (optionValue != null) {
+		
+			harvester.setInterval (new Integer (optionValue));
+		}
+		
+		return 0;
+	}
+	
+	/**
+	 * @param optionValue
+	 * @return
+	 */
+	
+	private static int filterAmount (String optionValue) {
+		
+		harvester.setAmount (new Integer (optionValue));
+		
+		return 0;
+	}
+	
+	/**
+	 * The date which comes from the command line will be filtered and observed.
+	 * 
+	 * @param optionValue the date string which is filtered
+	 * @return the proper date string when it could be extracted null otherwise
+	 */
+	
+	private static String filterDate (String optionValue) {
+		
+		if (optionValue.matches ("\\d\\d\\d\\d-\\d\\d-\\d\\d")) {
+			
+			String [ ] today = HelperMethods.today ( ).toString ( ).split ("-");
+			String [ ] dateComponents = optionValue.split ("-");
+			
+			if ( (new Integer (dateComponents [0]) < 1970) || (new Integer (dateComponents [0]) > new Integer (today [0]))) {
+				
+				logger.error ("Year must be between 1970 and " + today [0] + ".\nYou asked for the year " + dateComponents [0]);
+				System.err.println ("Year must be between 1970 and " + today [0] + ".\nYou asked for the year " + dateComponents [0]);
+								
+				System.exit (10);
+				
+			} else if ( (new Integer (dateComponents [1]) < 1) || (new Integer (dateComponents [1]) > 12)) {
+				
+				logger.error ("The year has only 12 months. You asked for month number " + dateComponents [1]);
+				System.err.println ("The year has only 12 months. You asked for month number " + dateComponents [1]);
+				
+				System.exit (10);
+				
+			} else if ( (new Integer (dateComponents [2]) < 1) || (new Integer (dateComponents [2]) > 31)) {
+				
+				logger.error ("Months have the max of 31, 30, 29 or 28 days. You asked for day number " + dateComponents [2]);
+				System.err.println ("Months have the max of 31, 30, 29 or 28 days. You asked for day number " + dateComponents [2]);
+				
+				System.exit (10);
+				
+			} else {
+				
+				java.sql.Date date2test = null;
+				
+				try {
+					
+					date2test = HelperMethods.extract_datestamp (optionValue);
+					
+				} catch (java.text.ParseException ex) {
+					
+					logger.error ("Can't extract Datestamp from parameter 'updateDate'");
+					logger.error (ex.getLocalizedMessage ( ));
+					ex.printStackTrace ( );
+					System.exit (10);
+				}
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("filtered Date: " + date2test.toString ( ));
+				
+				harvester.setDate (date2test.toString ( ));
+				
+				return date2test.toString ( );
+			}
+			
+		} else {
+			
+			logger.error ("Date Format wrong! Must be yyyy-mm-dd and not " + optionValue);
+			System.err.println ("Date Format wrong! Must be yyyy-mm-dd and not " + optionValue);
+			
+			System.exit (10);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * The option whether a full or only an update harvest will be processed will be discovered.
+	 * If update is specified the date from which on has to be set, otherwise an error occurs.
+	 * 
+	 * @param optionValue should be "full" for a full-harvest or "update".
+	 * @param cmd should has option "updateDate" if "update" is set
+	 * @return true when full harvest is discovered false when update is discovered
+	 * @throws ParseException when update is specified and no date is set
+	 */
+	
+	private static boolean filterBool (String optionValue, CommandLine cmd) throws ParseException {
+		
+		if (optionValue.equalsIgnoreCase ("full")) {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("filteredBool: " + Boolean.TRUE);
+			
+			harvester.setFullharvest (true);
+			
+			return true;
+			
+		} else {
+			
+			if (cmd.hasOption ('d') || cmd.hasOption ("updateDate")) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("filteredBool: " + Boolean.FALSE);
+				
+				harvester.setFullharvest (false);
+				
+				return false;
+				
+			} else
+				throw new ParseException ("UpdateHarvest without a Date from which on the harvest shall be start isn't allowed!");
+		}
+	}
+	
+	/**
+	 * ensures correct values for the repository ID.
+	 * 
+	 * @param optionValue a string representing a number greater or equal zero.
+	 * @return an integer which represents the repository ID
+	 * @throws ParseException when the repository ID is negative
+	 */
+	
+	private static int filterId (String optionValue) throws ParseException {
+		
+		int i = new Integer (optionValue);
+		
+		if (i < 0)
+			throw new ParseException ("RepositoryID must not be negative!");
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("filtered ID: " + i);
+		
+		return i;
+	}
+
+	/**
+	 * ensures that the given string is a correct URL
+	 * @param optionValue the repository URL
+	 * @return filtered URL
+	 */
+	
+	private static String filterUrl (String optionValue) {
+		
+		//TODO: proper implementation
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("filtered URL: " + optionValue);
+		
+		harvester.setRepositoryURL (optionValue);
+		
+		return optionValue;
 	}
 }
 
@@ -1149,19 +1351,19 @@ class ObjectIdentifier {
 		this.datestamp = datestamp;
 	}
 
-	
 	/**
 	 * @return the internalOID
 	 */
+	
 	final int getInternalOID ( ) {
 	
 		return this.internalOID;
 	}
-
 	
 	/**
 	 * @param internalOID the internalOID to set
 	 */
+	
 	final void setInternalOID (int internalOID) {
 	
 		this.internalOID = internalOID;

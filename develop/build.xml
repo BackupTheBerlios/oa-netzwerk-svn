@@ -3,6 +3,7 @@
 	<property name="src" value="."/>
 	<property name="build" value="build"/>
 	<property name="build.server" value="build/server"/>
+	<property name="build.harvester" value="build/harvester"/>
 	<property name="archive" value="arch"/>
 	<property name="lib" value="lib"/>
 	
@@ -13,6 +14,7 @@
 	<target name="init">
 		<mkdir dir="${build}"/>
 		<mkdir dir="${build.server}"/>
+		<mkdir dir="${build.harvester}"/>
 	</target>
 	
 	<target name="initArch">
@@ -114,5 +116,29 @@
 				<exclude name="**/technotest/**"/>
 			</classes>
 		</war>
+	</target>
+	
+	<target name="compileHarvester" depends="init">
+		<tstamp/>
+		<javac destdir="${build.harvester}" classpathref="classpath">
+			<src path="${src}/de/dini/oanetzwerk/codec"/>
+			<exclude name="**/TestRestXmlCodec.java"/>
+			<src path="${src}/de/dini/oanetzwerk/servicemodule"/>
+			<exclude name="**/aggregator/**.*"/>
+			<exclude name="**/OAIRecoveryMatcher.java"/>
+			<exclude name="**/TestOAIRecoveryMatcher.java"/>
+			<src path="${src}/de/dini/oanetzwerk/utils"/>
+			<exclude name="**/imf/**"/>
+			<exclude name="**/InspectorServlet.java"/>
+		</javac>
+	</target>
+	
+	<target name="jarHarvester" depends="compileHarvester">
+		<jar destfile="${build}/oa-netzwerk-harvester${DSTAMP}.jar" basedir="${build.harvester}" excludes="**/technotest/**,**/imf/**">
+			<fileset dir="${build}/../lib"/>
+			<manifest>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.Harvester"/>
+			</manifest>
+		</jar>
 	</target>
 </project>
