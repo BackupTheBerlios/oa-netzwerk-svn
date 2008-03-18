@@ -6,15 +6,14 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
+import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
-import de.dini.oanetzwerk.utils.RestXmlCodec;
 
 
 /**
@@ -66,26 +65,36 @@ public class Services extends AbstractKeyWordHandler implements
 		
 		db.closeConnection ( );
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		this.rms = new RestMessage();
+		StringBuffer sbPath = new StringBuffer();
+		for(String s : path) sbPath.append(s + "/");
+		this.rms.setRestURL(sbPath.toString());
+		this.rms.setKeyword(RestKeyword.Services);
+
+		RestEntrySet entrySet = new RestEntrySet();
 		
 		try {
 			
 			if (resultset.next ( )) {
-				
-				mapEntry.put ("service_id", Integer.toString (resultset.getInt (1)));
-				mapEntry.put ("name", resultset.getString (2));
+				entrySet.addEntry("service_id", Integer.toString (resultset.getInt (1)));
+				entrySet.addEntry("name", resultset.getString (2));
 			}
+
+			this.rms.addEntrySet(entrySet);
+			this.rms.setStatus(RestStatusEnum.OK);
 			
 		} catch (SQLException ex) {
 			
 			logger.error ("An error occured while processing Get Service: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+
+			this.rms.setStatus(RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription(ex.toString());
+		
 		}
+				
 		
-		listentries.add (mapEntry);
-		
-		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "Services");
+		return RestXmlCodec.encodeRestMessage(this.rms);
 	}
 
 	/**
@@ -109,26 +118,34 @@ public class Services extends AbstractKeyWordHandler implements
 		int service_id;
 		String name;
 		
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
+		this.rms = RestXmlCodec.decodeRestMessage(data);
+		RestEntrySet entrySet = this.rms.getListEntrySets().get(0);
 		
-		listentries = RestXmlCodec.decodeEntrySet (data);
-		mapEntry = listentries.get (0);
-		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
-		String key = "";
+		this.rms = new RestMessage();
+		StringBuffer sbPath = new StringBuffer();
+		for(String s : path) sbPath.append(s + "/");
+		this.rms.setRestURL(sbPath.toString());
+		this.rms.setKeyword(RestKeyword.Services);
 		
-		while (it.hasNext ( )) {
-			
-			key = it.next ( );
-			
-			if (key.equalsIgnoreCase ("service_id"))
-				service_id = new Integer (mapEntry.get (key));
-			
-			else if (key.equalsIgnoreCase ("name"))
-				name = mapEntry.get (key);
-			
-			else continue;
+		String strSID = entrySet.getValue("service_id");
+		if(strSID != null) {
+			service_id = new Integer (strSID);
+		} else {
+			// SID is missing!
+			this.rms.setStatus(RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
+			this.rms.setStatusDescription("no 'service_id' entry given in request");
+			return RestXmlCodec.encodeRestMessage(this.rms);
 		}
+		
+		name = entrySet.getValue("name");
+		if(name == null) {
+			// name is missing! 
+			this.rms.setStatus(RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
+			this.rms.setStatusDescription("no 'name' entry given in request");
+			return RestXmlCodec.encodeRestMessage(this.rms);
+		} 
+		
+		entrySet = new RestEntrySet();
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
@@ -137,23 +154,9 @@ public class Services extends AbstractKeyWordHandler implements
 		
 		db.closeConnection ( );
 		
-		listentries = new ArrayList <HashMap <String, String>> ( );
-		mapEntry = new HashMap <String ,String> ( );
+		this.rms.setStatus(RestStatusEnum.OK);
 		
-		mapEntry.put ("", "");
-		
-		listentries.add (mapEntry);
-		
-		return RestXmlCodec.encodeEntrySetResponseBody (listentries, "ObjectEntry");
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main (String [ ] args) {
-
-		// TODO Auto-generated method stub
-
+		return RestXmlCodec.encodeRestMessage(this.rms);
 	}
 
 }

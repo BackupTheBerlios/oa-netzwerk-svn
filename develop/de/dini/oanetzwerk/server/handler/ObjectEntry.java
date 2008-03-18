@@ -94,7 +94,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 			} else {
 				
-				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND);
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching ObjectEntry found");
 			}
 			
@@ -193,7 +193,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 			} else {
 				
-				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND);
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching ObjectEntry found");
 			}
 			
@@ -292,7 +292,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 			} else {
 				
-				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND);
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching ObjectEntry found");
 			}
 			

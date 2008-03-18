@@ -93,7 +93,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					logger.debug ("No matching internal objectID found");
 				
 				res.addEntry ("oid", null);
-				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND);
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching internal objectID found");
 			}
 			

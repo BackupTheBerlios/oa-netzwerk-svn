@@ -179,7 +179,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 				
 			} else {
 				
-				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND);
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching WorklflowDB Entry found");
 			}
 			

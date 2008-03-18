@@ -469,21 +469,31 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
 
-		Iterator <String> it = res.getKeyIterator ( );
-		String key = "";
-		InternalMetadata imf = null;
+		// FETCH ENTRY WITH XML
 		
-		while (it.hasNext ( )) {
-			
-			key = it.next ( );
-			
-			if (key.equalsIgnoreCase ("internalmetadata")) {
-				
-				imf = imMarsch.unmarshall (res.getValue (key));
-				
-			} else continue;
+		String strXML = null;
+		strXML = res.getValue ("internalmetadata");
+		
+		if(strXML == null) {			
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+			this.rms.setStatus (RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
+			this.rms.setStatusDescription("received no entry 'internalmetadata' :" + data);
+			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
+		// UNMARSHALL XML
+		
+		InternalMetadata imf = null;		
+		try {		
+			imf = imMarsch.unmarshall (strXML);
+		} catch(Exception ex) {
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+			this.rms.setStatus (RestStatusEnum.REST_XML_DECODING_ERROR);
+			this.rms.setStatusDescription("unable to unmarshall xml " + strXML + " :" + ex);
+			return RestXmlCodec.encodeRestMessage (this.rms);			
+		}
+	
+		// PREPARE SQL STATEMENTS
 		
 		List <Title> titlelist = imf.getTitles ( );
 		//List <Author> authors;
@@ -543,10 +553,16 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 
 		} catch (SQLException sqlex) {
 			db.rollback();
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription("unable to commit: " + sqlex);
+			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
 		
 		db.closeConnection ( );
+		
+		// RESPOND WITH OK
 		
 		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 		res = new RestEntrySet ( );
@@ -558,13 +574,4 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
-	/**
-	 * @param args
-	 */
-	
-	public static void main (String [ ] args) {
-
-		// TODO Auto-generated method stub
-
-	}
 }

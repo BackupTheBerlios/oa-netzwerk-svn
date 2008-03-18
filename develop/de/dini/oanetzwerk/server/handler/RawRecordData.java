@@ -123,7 +123,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			} else {
 				
 				logger.warn ("no results at all. Continueing...");
-				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND);
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching RawRecordData found");
 			}
 			
