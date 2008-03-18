@@ -702,15 +702,16 @@
 </foreign-key-list>
 <index-list/>
 </table>
-<table alias="" name="DCC_Categories" remarks="" uid="4f5403:1161f7e7d4d:-783a">
+<table alias="" name="DDC_Categories" remarks="" uid="4f5403:1161f7e7d4d:-783a">
 <table-description/>
 <table-figure-bounds height="-1" width="-1" x="298" y="857"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DCC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-7836">
+<column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DDC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-7836">
 <column-description/>
 <data-type jdbc-type="1" literal-prefix="'" literal-suffix="'" name="CHAR" selected-variant-pattern="CHAR(%n)">
-<variant precision-max="2000" precision-min="1" precision-variable="%n" type-name-pattern="CHAR(%n)"/>
 <variant type-name-pattern="CHAR"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="CHAR(%n)"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="CHAR(%n) BINARY"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="name" remarks="" uid="4f5403:1161f7e7d4d:-7835">
@@ -720,15 +721,15 @@
 </data-type>
 </column>
 </column-list>
-<primary-key alias="" name="PK_DCC_CATEGORIES" remarks="" uid="4f5403:1161f7e7d4d:-7839">
+<primary-key alias="" name="PK_DDC_CATEGORIES" remarks="" uid="4f5403:1161f7e7d4d:-7839">
 <primary-key-description/>
-<primary-key-column name="DCC_Categorie"/>
+<primary-key-column name="DDC_Categorie"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list/>
 <index-list/>
 </table>
-<table alias="" name="DCC_Classification" remarks="" uid="4f5403:1161f7e7d4d:-7834">
+<table alias="" name="DDC_Classification" remarks="" uid="4f5403:1161f7e7d4d:-7834">
 <table-description/>
 <table-figure-bounds height="-1" width="-1" x="300" y="657"/>
 <column-list>
@@ -746,34 +747,35 @@
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DCC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-782f">
+<column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DDC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-782f">
 <column-description/>
 <data-type jdbc-type="1" literal-prefix="'" literal-suffix="'" name="CHAR" selected-variant-pattern="CHAR(%n)">
-<variant precision-max="2000" precision-min="1" precision-variable="%n" type-name-pattern="CHAR(%n)"/>
 <variant type-name-pattern="CHAR"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="CHAR(%n)"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="CHAR(%n) BINARY"/>
 </data-type>
 </column>
 </column-list>
-<primary-key alias="" name="PK_DCC_CLASSIFICATION" remarks="" uid="4f5403:1161f7e7d4d:-7833">
+<primary-key alias="" name="PK_DDC_CLASSIFICATION" remarks="" uid="4f5403:1161f7e7d4d:-7833">
 <primary-key-description/>
 <primary-key-column name="object_id"/>
-<primary-key-column name="DCC_Categorie"/>
+<primary-key-column name="DDC_Categorie"/>
 </primary-key>
 <unique-key-list/>
 <foreign-key-list>
-<foreign-key alias="" name="FK_DCC_Classification_1" on-delete="" on-update="" referenced-key="PK_DCC_CATEGORIES" referenced-table="DCC_Categories" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-780f">
-<foreign-key-description/>
-<foreign-key-figure>
-<fk-fig-bendpoint-list/>
-</foreign-key-figure>
-<foreign-key-column column-name="DCC_Categorie" referenced-key-column-name="DCC_Categorie"/>
-</foreign-key>
 <foreign-key alias="" name="FK_DCC_Classification_2" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-77cb">
 <foreign-key-description/>
 <foreign-key-figure>
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
 <foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
+</foreign-key>
+<foreign-key alias="" name="FK_DDC_Classification_1" on-delete="" on-update="" referenced-key="PK_DDC_CATEGORIES" referenced-table="DDC_Categories" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="4f5403:1161f7e7d4d:-780f">
+<foreign-key-description/>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="DDC_Categorie" referenced-key-column-name="DDC_Categorie"/>
 </foreign-key>
 </foreign-key-list>
 <index-list/>

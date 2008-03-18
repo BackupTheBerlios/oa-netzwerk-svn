@@ -1459,7 +1459,7 @@ public class DBAccess implements DBAccessInterface {
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("DELETE FROM dbo.Title WHERE object_id = ?");
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.Titles WHERE object_id = ?");
 			pstmt.setBigDecimal (1, object_id);
 			
 			if (logger.isDebugEnabled ( ))
@@ -1890,6 +1890,64 @@ public class DBAccess implements DBAccessInterface {
 			
 			throw sqlex;
 		}	}
+
+	public void insertOtherCategories(String name) throws SQLException {
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Other_Categories (name) VALUES (?)");
+			pstmt.setString(1, name);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+	}
+
+	public void insertOtherClassification(BigDecimal object_id,
+			BigDecimal other_id) throws SQLException {
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Other_Classification (object_id, other_id) VALUES (?, ?)");
+			pstmt.setBigDecimal(1, object_id);
+			pstmt.setBigDecimal(2, other_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+		}
+		
+	}
+	
+	public ResultSet selectLatestOtherCategories(String name) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = conn.prepareStatement ("SELECT MAX(other_id) FROM dbo.Other_Categories WHERE (name = ?)");
+			pstmt.setString (1, name);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			throw ex;
+		}
+	}
+	
 	
 	
 

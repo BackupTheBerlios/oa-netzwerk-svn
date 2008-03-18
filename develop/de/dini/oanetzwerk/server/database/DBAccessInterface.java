@@ -213,8 +213,17 @@ public interface DBAccessInterface {
 	public abstract void insertLanguage(String language) throws SQLException;
 	
 	public abstract void insertObject2Language(BigDecimal object_id, BigDecimal language_id, int number) throws SQLException;
+
+	public abstract void insertOtherCategories(String name) throws SQLException;
+	
+	public abstract void insertOtherClassification(BigDecimal object_id, BigDecimal other_id) throws SQLException;
+	
+	public abstract ResultSet selectLatestOtherCategories(String name) throws SQLException;
+	
+//	public abstract void 
 	
 //	public abstract ResultSet selectDDCClassificationByDecimal(String decimal) throws SQLException;
+	
 	
 	public abstract ResultSet selectTitle(BigDecimal oid);
 	

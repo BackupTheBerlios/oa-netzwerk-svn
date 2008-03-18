@@ -28,10 +28,10 @@ CREATE TABLE dbo.Keywords (
      , PRIMARY KEY (keyword_id)
 );
 
-CREATE TABLE dbo.DCC_Categories (
-       DCC_Categorie CHAR(10) NOT NULL
+CREATE TABLE dbo.DDC_Categories (
+       DDC_Categorie CHAR(10) NOT NULL
      , name VARCHAR(255) NOT NULL
-     , PRIMARY KEY (DCC_Categorie)
+     , PRIMARY KEY (DDC_Categorie)
 );
 
 CREATE TABLE dbo.DNB_Categories (
@@ -131,10 +131,10 @@ CREATE TABLE dbo.Object2Language (
      , PRIMARY KEY (object_id, language_id)
 );
 
-CREATE TABLE dbo.DCC_Classification (
+CREATE TABLE dbo.DDC_Classification (
        object_id NUMERIC(38) NOT NULL
-     , DCC_Categorie CHAR(10) NOT NULL
-     , PRIMARY KEY (object_id, DCC_Categorie)
+     , DDC_Categorie CHAR(10) NOT NULL
+     , PRIMARY KEY (object_id, DDC_Categorie)
 );
 
 CREATE TABLE dbo.DNB_Classification (
@@ -284,13 +284,13 @@ ALTER TABLE dbo.Object2Keywords
       FOREIGN KEY (keyword_id)
       REFERENCES dbo.Keywords (keyword_id);
 
-ALTER TABLE dbo.DCC_Classification
-  ADD CONSTRAINT FK_DCC_Classification_1
-      FOREIGN KEY (DCC_Categorie)
-      REFERENCES dbo.DCC_Categories (DCC_Categorie);
+ALTER TABLE dbo.DDC_Classification
+  ADD CONSTRAINT FK_DDC_Classification_1
+      FOREIGN KEY (DDC_Categorie)
+      REFERENCES dbo.DDC_Categories (DDC_Categorie);
 
-ALTER TABLE dbo.DCC_Classification
-  ADD CONSTRAINT FK_DCC_Classification_2
+ALTER TABLE dbo.DDC_Classification
+  ADD CONSTRAINT FK_DDC_Classification_2
       FOREIGN KEY (object_id)
       REFERENCES dbo.Object (object_id);
 

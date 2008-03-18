@@ -700,6 +700,14 @@ public class InternalMetadata {
 		for(Author author : authors) {
 			sb.append(author+"\n");
 		}
+		sb.append("\n-- editors -- counter " +  editorCounter + " :\n");
+		for(Editor editor : editorList) {
+			sb.append(editor+"\n");
+		}
+		sb.append("\n-- contributor -- counter " +  contributorCounter + " :\n");
+		for(Contributor contributor : contributorList) {
+			sb.append(contributor+"\n");
+		}		
 		sb.append("\n-- keywords:\n");
 		for(Keyword keyword : keywords) {
 			sb.append(keyword+"\n");

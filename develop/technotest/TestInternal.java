@@ -21,6 +21,9 @@ public class TestInternal {
 	
 	
 	public static void delete(BigDecimal object_id) {
+		
+		System.out.println("Beginn Delete");
+		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		db.setAutoCom(false);
@@ -57,6 +60,8 @@ public class TestInternal {
 		}
 		
 		db.closeConnection();
+		
+		System.out.println("Ende Delete");
 	}
 	
 	
@@ -88,7 +93,7 @@ public class TestInternal {
 		List <TypeValue> typeValueList = imf.getTypeValueList ( );
 
 		List <Language> languageList = imf.getLanguageList();
-		//List<Classification> classificationList;
+		List<Classification> classificationList = imf.getClassificationList();
 		
 		//ResultSet resultset;
 
@@ -253,6 +258,39 @@ public class TestInternal {
 				}
 			}
 			
+			if (classificationList != null) {
+				for (Classification classification : classificationList) {
+					if (classification instanceof DDCClassification) {
+											
+					}
+					if (classification instanceof DNBClassification) {
+						
+					}
+					
+					if (classification instanceof DINISetClassification) {
+						
+					}
+					
+					if (classification instanceof OtherClassification) {
+						
+						db.insertOtherCategories(classification.getValue());
+						
+						BigDecimal other_id = null;
+						rs = db.selectLatestOtherCategories(classification.getValue());
+						if (!rs.next()) {
+							// Sprache ist noch nicht vorhanden => einfügen und neue
+							// Sprach-ID auslesen
+						} else {
+							while (rs.next()) {
+								other_id = rs.getBigDecimal(1);
+							}
+						}
+						db.insertOtherClassification(object_id, other_id);
+						
+					}
+				}
+			}
+			
 
 			db.commit();
 			
@@ -286,8 +324,8 @@ public class TestInternal {
 		System.out.println(imf);
 	
 			
-//		put(imf);
-//		delete(new BigDecimal("637"));
+		put(imf);
+		delete(new BigDecimal("637"));
 	}
 	
 	
