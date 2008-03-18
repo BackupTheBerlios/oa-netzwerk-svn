@@ -19,6 +19,47 @@ public class TestInternal {
 	
 	static Logger logger = Logger.getLogger(TestInternal.class);
 	
+	
+	public static void delete(BigDecimal object_id) {
+		DBAccessInterface db = DBAccess.createDBAccess ( );
+		db.createConnection ( );
+		db.setAutoCom(false);
+		
+		try {
+			db.deleteDescription(object_id);
+			db.deleteDateValues(object_id);
+			db.deleteFormats(object_id);
+			db.deleteIdentifiers(object_id);
+			db.deleteTypeValue(object_id);
+			db.deleteTitles(object_id);
+			db.deletePublishers(object_id);
+			
+			db.deleteObject2Author(object_id);
+			db.deleteObject2Editor(object_id);
+			db.deleteObject2Contributor(object_id);
+			db.deleteObject2Language(object_id);
+			db.deleteObject2Keywords(object_id);
+			db.deleteOther_Classification(object_id);
+			db.deleteDDC_Classification(object_id);
+			db.deleteDNB_Classification(object_id);
+			db.deleteDINI_Set_Classification(object_id);
+			
+			db.deletePersonWithoutReference();
+			db.deleteKeywordsWithoutReference();
+			db.deleteOther_Categories();
+		
+			db.commit();
+		} catch (SQLException sqlex) {
+			System.out.println("Exception geworfen");
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			db.rollback();
+		}
+		
+		db.closeConnection();
+	}
+	
+	
 	public static void put(InternalMetadata imf) {
 		
 		BigDecimal object_id = new BigDecimal ("637");
@@ -245,7 +286,8 @@ public class TestInternal {
 		System.out.println(imf);
 	
 			
-		put(imf);
+//		put(imf);
+//		delete(new BigDecimal("637"));
 	}
 	
 	

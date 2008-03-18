@@ -288,11 +288,11 @@ public interface DBAccessInterface {
 	
 	public abstract void deleteObject2Keywords(BigDecimal object_id) throws SQLException;
 	
-	public abstract void deleteKeywordsWithoutReference(BigDecimal object_id) throws SQLException;
+	public abstract void deleteKeywordsWithoutReference() throws SQLException;
 	
 	public abstract void deleteOther_Classification(BigDecimal object_id) throws SQLException;
 	
-	public abstract void deleteOther_Categories(BigDecimal object_id) throws SQLException;
+	public abstract void deleteOther_Categories() throws SQLException;
 
 
 	

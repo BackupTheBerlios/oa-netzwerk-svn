@@ -1801,7 +1801,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	
-	public void deleteKeywordsWithoutReference (BigDecimal object_id) throws SQLException {
+	public void deleteKeywordsWithoutReference () throws SQLException {
 
 		PreparedStatement pstmt = null;
 		
@@ -1849,7 +1849,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	
-	public void deleteOther_Categories (BigDecimal object_id) throws SQLException {
+	public void deleteOther_Categories () throws SQLException {
 
 		PreparedStatement pstmt = null;
 		

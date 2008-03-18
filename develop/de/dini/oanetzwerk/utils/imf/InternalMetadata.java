@@ -78,6 +78,12 @@ public class InternalMetadata {
 		languageCounter = 0;
 
 		classificationList = new LinkedList<Classification>();	
+		
+		contributorList = new LinkedList<Contributor>();
+		contributorCounter = 0;
+		
+		editorList = new LinkedList<Editor>();
+		editorCounter = 0;
 	}
 	
 	public static InternalMetadata createDummy() {
