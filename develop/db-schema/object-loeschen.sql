@@ -20,8 +20,8 @@ DELETE FROM  dbo.Other_Classification WHERE object_id=?
 
 # hier sollten die weiter referenzierten Tabellen nicht gelöscht werden, die Werte können noch genutzt werden
 # bzw. sind wie bei den 
-DELETE FROM  dbo.DDCClassification WHERE object_id=?
-DELETE FROM  dbo.DNBClassification WHERE object_id=?
+DELETE FROM  dbo.DDC_Classification WHERE object_id=?
+DELETE FROM  dbo.DNB_Classification WHERE object_id=?
 DELETE FROM  dbo.DINI_Set_Classification WHERE object_id=?
 
 #Object-Eintrag muss auch geloescht werden

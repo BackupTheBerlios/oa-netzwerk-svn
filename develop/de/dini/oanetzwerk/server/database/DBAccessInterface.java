@@ -249,12 +249,44 @@ public interface DBAccessInterface {
 	public abstract ResultSet selectLanguages(BigDecimal oid);
 	
 	
-//	public abstract void deleteTitles(BigDecimal object_id) throws SQLException;
 	
-//	public abstract void deleteDateValues(BigDecimal object_id) throws SQLException;
 	
-//	public abstract void deleteFormats(BigDecimal object_id) throws SQLException;
 	
-//	public abstract void deletePublishers(BigDecimal object_id) throws SQLException;
+	public abstract void deleteTitles(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteDateValues(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteFormats(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deletePublishers(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteIdentifiers(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteDescription(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteTypeValue(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteObject2Author(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteObject2Editor(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteObject2Contributor(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deletePersonWithoutReference() throws SQLException;
+	
+	public abstract void deleteObject2Language(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteDDC_Classification(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteDNB_Classification(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteDINI_Set_Classification(BigDecimal object_id) throws SQLException;
+	
+	public abstract void deleteRawData(BigDecimal object_id) throws SQLException;
+
+	public abstract void deleteDuplicatePossibilities(BigDecimal object_id) throws SQLException;
+
+
+	
 	
 }

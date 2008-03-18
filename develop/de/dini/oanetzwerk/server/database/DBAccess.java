@@ -1148,6 +1148,334 @@ public class DBAccess implements DBAccessInterface {
 		return null;
 	}
 
+
+	public void deleteObject2Editor (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM  dbo.Object2Editor WHERE object_id=?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	public void deletePersonWithoutReference() throws SQLException {
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn
+					.prepareStatement("DELETE FROM dbo.Person WHERE "
+						+ "(person_id NOT IN (SELECT person_id FROM dbo.Object2Author GROUP BY person_id) "
+						+ "AND person_id NOT IN (SELECT person_id FROM dbo.Object2Editor GROUP BY person_id) "
+						+ "AND person_id NOT IN (SELECT person_id FROM dbo.Object2Contributor GROUP BY person_id))");
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+
+		
+	}
+	
+	public void deleteObject2Contributor (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM  dbo.Object2Contributor WHERE object_id=?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	public void deleteObject2Author (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM  dbo.Object2Author WHERE object_id=?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+
+	public void deleteObject2Language (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM  dbo.Object2Language WHERE object_id=?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	public void deleteDDC_Classification (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM  dbo.DDC_Classification WHERE object_id=?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	public void deleteDNB_Classification (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM  dbo.DNB_Classification WHERE object_id=?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	public void deleteDINI_Set_Classification (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM  dbo.DINI_Set_Classification WHERE object_id=?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	public void deleteTypeValue (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.TypeValue WHERE object_id = ?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+
+	public void deleteDescription (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.Description WHERE object_id = ?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	public void deleteIdentifiers (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.Identifier WHERE object_id = ?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	public void deleteDateValues (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.DateValues WHERE object_id = ?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+
+	public void deleteFormats (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.Format WHERE object_id = ?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
+	public void deleteTitles (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.Title WHERE object_id = ?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+	
 	public void deletePublishers (BigDecimal object_id) throws SQLException {
 
 		PreparedStatement pstmt = null;
@@ -1425,6 +1753,54 @@ public class DBAccess implements DBAccessInterface {
 			throw sqlex;
 		}
 	}	
+
+	public void deleteRawData (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.RawData WHERE object_id = ?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+
+	public void deleteDuplicatePossibilities (BigDecimal object_id) throws SQLException {
+
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("DELETE FROM dbo.DuplicatePossibilities WHERE object_id = ?");
+			pstmt.setBigDecimal (1, object_id);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("execute");
+			
+			pstmt.executeUpdate ( );
+			
+		} catch (SQLException sqlex) {
+			
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+			
+			throw sqlex;
+		}
+	}
+
+	
 	
 	
 } //end of class
