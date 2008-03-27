@@ -4,6 +4,7 @@
 
 package de.dini.oanetzwerk.server.handler;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -86,11 +87,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 							"\n\trepository_identifier = " + this.resultset.getString (5));
 				
 				
-				res.addEntry ("object_id", Integer.toString (this.resultset.getInt (1)));
-				res.addEntry ("repository_id", Integer.toString (this.resultset.getInt (2)));
-				res.addEntry ("harvested", this.resultset.getDate (3).toString ( ));
-				res.addEntry ("repository_datestamp", this.resultset.getDate (4).toString ( ));
-				res.addEntry ("repository_identifier", this.resultset.getString (5));
+				res.addEntry ("object_id", this.resultset.getBigDecimal ("object_id").toPlainString ( ));
+				res.addEntry ("repository_id", this.resultset.getBigDecimal ("repository_id").toPlainString ( ));
+				res.addEntry ("harvested", this.resultset.getDate ("harvested").toString ( ));
+				res.addEntry ("repository_datestamp", this.resultset.getDate ("repository_datestamp").toString ( ));
+				res.addEntry ("repository_identifier", this.resultset.getString ("repository_identifier"));
+				res.addEntry ("testdata", Boolean.toString (this.resultset.getBoolean ("testdata")));
+				res.addEntry ("failure_counter", Integer.toString (this.resultset.getInt ("failure_counter")));
 				
 				this.rms.setStatus (RestStatusEnum.OK);
 				
@@ -124,9 +127,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
 		
-		int repository_id = 0;
+		BigDecimal repository_id = new BigDecimal (0);
 		String repository_identifier = "";
 		Date repository_datestamp = null;
+		boolean testdata = true;
+		int failureCounter = 0;
 		
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
@@ -141,9 +146,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			if (key.equalsIgnoreCase ("repository_id")) {
 				
 				if (res.getValue (key) != null)
-					repository_id = new Integer (res.getValue (key));
+					repository_id = new BigDecimal (res.getValue (key));
 				
-				else repository_id = -1;
+				else repository_id = new BigDecimal (-1);
 				
 			} else if (key.equalsIgnoreCase ("repository_identifier")) {
 				
@@ -168,7 +173,19 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					
 				} else repository_datestamp = null;
 				
-			} else continue;
+			} else if (key.equalsIgnoreCase ("testdata")) {
+				
+				testdata = new Boolean (res.getValue (key));
+				
+			} else if (key.equalsIgnoreCase ("failureCounter")) {
+				
+				failureCounter = new Integer (res.getValue (key));
+				
+			} else {
+				
+				logger.warn ("maybe I read a parameter which is not implemented! But I am continueing");
+				continue;
+			}
 		}
 
 		Date harvested = HelperMethods.today ( );
@@ -176,7 +193,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
-		this.resultset = db.updateObject (repository_id, harvested, repository_datestamp, repository_identifier);
+		this.resultset = db.updateObject (repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter);
 		
 		db.closeConnection ( );
 		
@@ -226,9 +243,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {
 		
-		int repository_id = 0;
+		BigDecimal repository_id = new BigDecimal (0);
 		String repository_identifier = "";
 		Date repository_datestamp = null;
+		boolean testdata = true;
+		int failureCounter = 0;
 		
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
@@ -242,7 +261,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			if (key.equalsIgnoreCase ("repository_id")) {
 				
-				repository_id = new Integer (res.getValue (key));
+				repository_id = new BigDecimal (res.getValue (key));
 				
 			} else if (key.equalsIgnoreCase ("repository_identifier")) {
 				
@@ -260,7 +279,19 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					ex.printStackTrace ( );
 				}
 				
-			} else continue;
+			} else if (key.equalsIgnoreCase ("testdata")) {
+				
+				testdata = new Boolean (res.getValue (key));
+				
+			} else if (key.equalsIgnoreCase ("failureCounter")) {
+				
+				failureCounter = new Integer (res.getValue (key));
+				
+			} else {
+				
+				logger.warn ("maybe I read a parameter which is not implemented! But I am continueing");
+				continue;
+			}
 		}
 
 		Date harvested = HelperMethods.today ( );
@@ -275,7 +306,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					"\n\texternal OID = " + repository_identifier);
 		
 		//resultset = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
-		this.resultset = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
+		this.resultset = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter);
 		
 		db.closeConnection ( );
 		

@@ -8,5 +8,6 @@ public enum RestKeyword {
 	Services,
 	ServiceOrder,
 	WorkflowDB,
+	Repository,
 	UNKNOWN
 }

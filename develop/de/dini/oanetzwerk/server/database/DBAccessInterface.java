@@ -77,11 +77,13 @@ public interface DBAccessInterface {
 	 * @param harvested
 	 * @param repository_datestamp
 	 * @param repository_identifier
+	 * @param failureCounter 
+	 * @param testdata 
 	 * @return
 	 */
 	
-	public abstract ResultSet insertObject (int repository_id, Date harvested,
-			Date repository_datestamp, String repository_identifier);
+	public abstract ResultSet insertObject (BigDecimal repository_id, Date harvested,
+			Date repository_datestamp, String repository_identifier, boolean testdata, int failureCounter);
 
 	/**
 	 * @param string
@@ -97,8 +99,8 @@ public interface DBAccessInterface {
 	 * @return
 	 */
 	
-	public abstract ResultSet updateObject (int repository_id, Date harvested,
-			Date repository_datestamp, String repository_identifier);
+	public abstract ResultSet updateObject (BigDecimal repository_id, Date harvested,
+			Date repository_datestamp, String repository_identifier, boolean testdata, int failureCounter);
 
 	/**
 	 * @return
@@ -269,7 +271,7 @@ public interface DBAccessInterface {
 	
 	public abstract ResultSet selectLanguages(BigDecimal oid);
 	
-	
+	public abstract ResultSet getRepository (BigDecimal repositoryID);
 	
 	
 	
@@ -314,8 +316,4 @@ public interface DBAccessInterface {
 	public abstract void deleteOther_Classification(BigDecimal object_id) throws SQLException;
 	
 	public abstract void deleteOther_Categories() throws SQLException;
-
-
-	
-	
 }

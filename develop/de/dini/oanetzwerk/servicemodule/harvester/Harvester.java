@@ -38,11 +38,13 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
  * creates a connection to a given repository where metadata-objects can be accessed.
  * The Object Manager handles the harvested meta-data objects and ensures the safe storage of these objects
  * in a database if necessary.
+ * This class needs a property-file called harvesterprop.xml where the host to connect to, the username and the matching
+ * password have to be specified. 
  */
 
 public class Harvester {
 	
-	private static Harvester harvester;
+	private static Harvester harvester = new Harvester ( );
 	
 	/**
 	 * This is an ArrayList of ObjectIdentifiers where necessary information about the objects is stored @see de.dini.oanetzwerk.ObjectIdentifier
@@ -78,38 +80,43 @@ public class Harvester {
 	 * This is the corresponding ID to the repository we'll connect to.
 	 */
 	
-	private int repositoryID;
+	private int repositoryID = 0;
 
 	/**
 	 * This is the Base-URL of the repository we have to connect to.
 	 */
 	
-	private String repositoryURL;
+	private String repositoryURL = "";
 	
-	private boolean fullharvest;
+	private boolean fullharvest = false;
 	
-	private String date;
+	private String date = "";
 	
-	private int amount;
+	private int amount = 10;
 	
-	private int interval;
+	private int interval = 5000;
 	
-	private boolean testData;
+	private boolean testData = true;
 	
 	/**
 	 * Standard Constructor which initialises the log4j and loads necessary properties.
 	 */
 	
-	private Harvester (int id) {
+	private Harvester ( ) {
+		
+	}
+	
+	private boolean prepareHarvester (int id) {
 		
 		DOMConfigurator.configure ("log4j.xml");
+		
+		Harvester.harvester.repositoryID = id;
 		
 		try {
 			
 			this.props = HelperMethods.loadPropertiesFromFile ("harvesterprop.xml");
 			
 			getRepositoryDetails (id);
-			
 			
 		} catch (InvalidPropertiesFormatException ex) {
 			
@@ -130,9 +137,7 @@ public class Harvester {
 			System.exit (1);
 		}
 		
-		this.repositoryID = id;
-		
-		return;
+		return true;
 	}
 	
 	/**
@@ -141,7 +146,7 @@ public class Harvester {
 	
 	private void getRepositoryDetails (int id) {
 
-		RestClient restClient = RestClient.createRestClient (this.props.getProperty ("host"), "Repositories/" + id + "/", this.props.getProperty ("username"), this.props.getProperty ("password"));
+		RestClient restClient = RestClient.createRestClient (this.props.getProperty ("host"), "Repository/" + id + "/", this.props.getProperty ("username"), this.props.getProperty ("password"));
 		String result = restClient.GetData ( );
 		
 		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
@@ -169,19 +174,28 @@ public class Harvester {
 				
 			} else if (key.equalsIgnoreCase ("harvest_amount")) {
 				
-				this.setAmount (filterAmount (res.getValue (key)));
+				filterAmount (res.getValue (key));
 				continue;
 				
 			} else if (key.equalsIgnoreCase ("harvest_pause")) {
 				
-				this.setInterval (filterInterval (res.getValue (key)));
+				filterInterval (res.getValue (key));
 				continue;
 				
 			} else continue;
 		}
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Data received from Database:");
+			logger.debug ("oai_url: " + this.getRepositoryURL ( ));
+			logger.debug ("test_data: " + this.isTestData ( ));
+			logger.debug ("harvest_amount: " + this.getAmount ( ));
+			logger.debug ("harvest_pause: " + this.getInterval ( ));
+		}
 	}
-
-	private final Harvester getHarvester ( ) {
+	
+	public final Harvester getHarvester ( ) {
 		
 		return harvester;
 	}
@@ -326,7 +340,7 @@ public class Harvester {
 		
 		try {
 			
-			// this will get all metadataformats, the repository supports 
+			// this will get all metadataformats, the requested repository supports 
 			
 			response = listMetaDataFormats (getRepositoryURL ( ));
 			
@@ -350,10 +364,10 @@ public class Harvester {
 					logger.debug ("resumptionSet = true");
 				
 				/* 
-				 * the response of the harvested repository is taken and the Ids in it will be extracted and we'll have
+				 * the response of the harvested repository is taken and the IDs in it will be extracted and we'll have
 				 * returned the resumption Token if it exists
 				 */
-				resumptionToken = extractIdsAndGetResumptionToken (response, this.getRepositoryID ( ));
+				resumptionToken = extractIdsAndGetResumptionToken (response);
 				
 				// Now the list of objects will be processed
 				processRecords ( );
@@ -514,11 +528,10 @@ public class Harvester {
 
 	/**
 	 * @param responseBody
-	 * @param repositoryId
 	 * @return
 	 */
 	
-	private String extractIdsAndGetResumptionToken (InputStream responseBody, int repositoryId) {
+	private String extractIdsAndGetResumptionToken (InputStream responseBody) {
 		
 		String resumptionToken = null; 
 		
@@ -561,7 +574,7 @@ public class Harvester {
 					logger.debug ("List Record No. " + recordno++ + " " + externalOID  + " " + datestamp);
 				
 				
-				internalOID = objectexists (repositoryId, externalOID);
+				internalOID = objectexists (externalOID);
 				
 				if (internalOID > 0) {
 					
@@ -621,8 +634,7 @@ public class Harvester {
 	}
 
 	/**
-	 * @param url
-	 * @param repositoryID 
+	 * 
 	 */
 	
 	private void processRecords ( ) {
@@ -638,9 +650,14 @@ public class Harvester {
 			if (this.ids.get (i).getInternalOID ( ) == -1) {
 				
 				// when internalOID == -1 than Object is not in the database and we have to create it
-				createObjectEntry (i);
+				this.createObjectEntry (i);
 				
-				if ((i % getAmount ( )) == 0) try {
+				if (logger.isDebugEnabled ( )) {
+					
+					logger.debug ("Amount: " + this.getAmount ( ));
+				}
+				
+				if ((i % this.getAmount ( )) == 0) try {
 					
 					logger.debug ("Going to sleep for " + getInterval ( ) + " milliseconds, letting the repository recover a bit");
 					Thread.sleep (getInterval ( ));
@@ -717,6 +734,8 @@ public class Harvester {
 			res.addEntry ("repository_id", Integer.toString (getRepositoryID ( )));
 			res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
 			res.addEntry ("repository_datestamp", datestamp);
+			res.addEntry ("testdata", Boolean.toString (isTestData ( )));
+			res.addEntry ("failureCounter", "0");
 			
 			rms.addEntrySet (res);
 			
@@ -823,6 +842,8 @@ public class Harvester {
 		res.addEntry ("repository_id", Integer.toString (getRepositoryID ( )));
 		res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
 		res.addEntry ("repository_datestamp", datestamp);
+		res.addEntry ("testdata", Boolean.toString (isTestData ( )));
+		res.addEntry ("failureCounter", "0");
 		
 		rms.addEntrySet (res);
 		
@@ -914,13 +935,16 @@ public class Harvester {
 	 * @throws SAXException 
 	 */
 	
-	private int objectexists (int repositoryId, String externalOID) throws ParserConfigurationException, SAXException, IOException {
+	private int objectexists (String externalOID) throws ParserConfigurationException, SAXException, IOException {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("We are going to have a look if the object with the externalOID " + externalOID + " in repository nr. " +
-					repositoryId + " already exists");
+					this.getRepositoryID ( ) + " already exists");
 		
-		String ressource = "ObjectEntryID/" + repositoryId + "/" + externalOID + "/";
+		String ressource = "ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/";
+		
+		logger.debug ("Properties: " + this.props.getProperty ("host"));
+		
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 		
 		String result = restclient.GetData ( );
@@ -1060,14 +1084,15 @@ public class Harvester {
 					
 					// Here we go: create a new instance of the harvester
 					
-					new Harvester (id);
+					Harvester.harvester.prepareHarvester (id);
 
 					harvester.filterUrl (cmd.getOptionValue ('u'));
 					harvester.filterBool (cmd.getOptionValue ('t'), cmd);
 					harvester.filterDate (cmd.getOptionValue ('d'));
 					harvester.filterAmount (cmd.getOptionValue ('a'));
 					harvester.filterInterval (cmd.getOptionValue ('I'));
-					harvester.setTestData (cmd.hasOption ('T'));
+					if (cmd.hasOption ('T'))
+						harvester.setTestData (cmd.hasOption ('T'));
 					
 					/* 
 					 * firstly we have to collect some data from the repository, which have to be processed
@@ -1075,6 +1100,15 @@ public class Harvester {
 					 * to collect. This is the next step: we catch the records for all the IDs and put the
 					 * raw datas into the database, if they don't exist or newer than in the database.
 					 */
+					
+					if (logger.isDebugEnabled ( )) {
+						
+						logger.debug ("Data after processing the CommandLine:");
+						logger.debug ("oai_url: " + Harvester.harvester.getRepositoryURL ( ));
+						logger.debug ("test_data: " + Harvester.harvester.isTestData ( ));
+						logger.debug ("harvest_amount: " + Harvester.harvester.getAmount ( ));
+						logger.debug ("harvest_pause: " + Harvester.harvester.getInterval ( ));
+					}
 					
 					harvester.processIds ( );
 					
@@ -1108,7 +1142,7 @@ public class Harvester {
 		
 		if (optionValue != null) {
 		
-			harvester.setInterval (new Integer (optionValue));
+			Harvester.harvester.setInterval (new Integer (optionValue));
 		}
 		
 		return 0;
@@ -1121,7 +1155,10 @@ public class Harvester {
 	
 	private static int filterAmount (String optionValue) {
 		
-		harvester.setAmount (new Integer (optionValue));
+		if (optionValue != null) {
+		
+			harvester.setAmount (new Integer (optionValue));
+		}
 		
 		return 0;
 	}
@@ -1211,7 +1248,7 @@ public class Harvester {
 		if (optionValue.equalsIgnoreCase ("full")) {
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("filteredBool: " + Boolean.TRUE);
+				logger.debug ("full harvest: " + Boolean.TRUE);
 			
 			harvester.setFullharvest (true);
 			
@@ -1222,7 +1259,7 @@ public class Harvester {
 			if (cmd.hasOption ('d') || cmd.hasOption ("updateDate")) {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("filteredBool: " + Boolean.FALSE);
+					logger.debug ("full harvest: " + Boolean.FALSE);
 				
 				harvester.setFullharvest (false);
 				
@@ -1262,12 +1299,13 @@ public class Harvester {
 	
 	private static String filterUrl (String optionValue) {
 		
-		//TODO: proper implementation
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("filtered URL: " + optionValue);
-		
-		harvester.setRepositoryURL (optionValue);
+		if (optionValue != null) {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("filtered URL: " + optionValue);
+			
+			harvester.setRepositoryURL (optionValue);
+		}
 		
 		return optionValue;
 	}

@@ -365,20 +365,21 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertObject(int, java.sql.Date, java.sql.Date, java.lang.String)
 	 */
 	
-	public ResultSet insertObject (int repository_id, Date harvested,
-			Date repository_datestamp, String repository_identifier) {
+	public ResultSet insertObject (BigDecimal repository_id, Date harvested,
+			Date repository_datestamp, String repository_identifier, boolean testdata, int failureCounter) {
 				
 		PreparedStatement pstmt = null;
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (repository_id, harvested, repository_datestamp, repository_identifier, testdata) VALUES (?, ?, ?, ?, ?)");
+			pstmt = conn.prepareStatement ("INSERT INTO dbo.Object (repository_id, harvested, repository_datestamp, repository_identifier, testdata, failure_counter) VALUES (?, ?, ?, ?, ?, ?)");
 			
-			pstmt.setInt (1, repository_id);
+			pstmt.setBigDecimal (1, repository_id);
 			pstmt.setDate (2, harvested);
 			pstmt.setDate (3, repository_datestamp);
 			pstmt.setString (4, repository_identifier);
-			pstmt.setBoolean (5, true);
+			pstmt.setBoolean (5, testdata);
+			pstmt.setInt (6, failureCounter);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("execute");
@@ -387,7 +388,7 @@ public class DBAccess implements DBAccessInterface {
 			
 			pstmt = conn.prepareStatement ("SELECT object_id FROM dbo.Object WHERE repository_id = ? AND repository_identifier = ? AND repository_datestamp = ?");
 			
-			pstmt.setInt (1, repository_id);
+			pstmt.setBigDecimal (1, repository_id);
 			pstmt.setString (2, repository_identifier);
 			pstmt.setDate (3, repository_datestamp);
 			
@@ -431,19 +432,20 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#updateObject(int, java.sql.Date, java.sql.Date, java.lang.String)
 	 */
 	
-	public ResultSet updateObject (int repository_id, Date harvested,
-			Date repository_datestamp, String repository_identifier) {
+	public ResultSet updateObject (BigDecimal repository_id, Date harvested,
+			Date repository_datestamp, String repository_identifier, boolean testdata, int failureCounter) {
 
 		PreparedStatement pstmt = null;
 		
 		try {
 			
-			pstmt = conn.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ?, testdata = ? WHERE object_id = ?");
+			pstmt = conn.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ?, testdata = ?, failure_counter = ? WHERE object_id = ?");
 			
 			pstmt.setDate (1, harvested);
 			pstmt.setDate (2, repository_datestamp);
-			pstmt.setBoolean (3, true);
-			pstmt.setInt (4, repository_id);
+			pstmt.setBoolean (3, testdata);
+			pstmt.setInt (4, failureCounter);
+			pstmt.setBigDecimal (5, repository_id);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("execute");
@@ -452,7 +454,7 @@ public class DBAccess implements DBAccessInterface {
 			
 			pstmt = conn.prepareStatement ("SELECT object_id FROM dbo.Object WHERE repository_id = ? AND repository_identifier = ? AND repository_datestamp = ?");
 			
-			pstmt.setInt (1, repository_id);
+			pstmt.setBigDecimal (1, repository_id);
 			pstmt.setString (2, repository_identifier);
 			pstmt.setDate (3, repository_datestamp);
 			
@@ -2066,6 +2068,28 @@ public class DBAccess implements DBAccessInterface {
 		}
 	}
 	
+	/**
+	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getRepository(java.math.BigInteger)
+	 */
 	
-	
+	@Override
+	public ResultSet getRepository (BigDecimal repositoryID) {
+		
+		PreparedStatement pstmt = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement ("SELECT name, url, oai_url, test_data, harvest_amount, harvest_pause FROM dbo.Repositories WHERE (repository_id = ?)");
+			pstmt.setBigDecimal (1, repositoryID);
+			
+			return pstmt.executeQuery ( );
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+		}
+		
+		return null;
+	}
 } //end of class
