@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 package de.dini.oanetzwerk.servicemodule.harvester;
@@ -18,7 +18,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -32,22 +31,27 @@ import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 
 /**
- * @author Michael Kühn
- * 
  * The Harvester consists of two parts: the Harvester itself and the Object Manager. The Harvester
  * creates a connection to a given repository where metadata-objects can be accessed.
  * The Object Manager handles the harvested meta-data objects and ensures the safe storage of these objects
  * in a database if necessary.
  * This class needs a property-file called harvesterprop.xml where the host to connect to, the username and the matching
- * password have to be specified. 
+ * password have to be specified.
+ * 
+ * @author Michael K&uuml;hn
  */
 
 public class Harvester {
 	
+	/**
+	 * The Harvester which will process the data-import and handle the imported objects
+	 */
+	
 	private static Harvester harvester = new Harvester ( );
 	
 	/**
-	 * This is an ArrayList of ObjectIdentifiers where necessary information about the objects is stored @see de.dini.oanetzwerk.ObjectIdentifier
+	 * This is an ArrayList of ObjectIdentifiers where necessary information about the objects is stored
+	 * @see ObjectIdentifier
 	 */
 	
 	private ArrayList <ObjectIdentifier> ids = null;
@@ -65,7 +69,7 @@ public class Harvester {
 	private int recordno = 0;
 	
 	/**
-	 * Properties. 
+	 * The Harvester properties. 
 	 */
 	
 	private Properties props = null;
@@ -88,27 +92,59 @@ public class Harvester {
 	
 	private String repositoryURL = "";
 	
+	/**
+	 * Indicator for full (true) or update harvest (false) 
+	 */
+	
 	private boolean fullharvest = false;
+	
+	/**
+	 * 
+	 */
 	
 	private String date = "";
 	
+	/**
+	 * Amount of Objects which are requested from the repository at once.
+	 */
+	
 	private int amount = 10;
 	
+	/**
+	 * Milliseconds to wait between two amounts of requested data.
+	 */
+	
 	private int interval = 5000;
+	
+	/**
+	 * Indicator if retrieved data are just for testing purposes or not.
+	 * Objects marked as testing will be deleted from the database after a short time.
+	 */
 	
 	private boolean testData = true;
 	
 	/**
-	 * Standard Constructor which initialises the log4j and loads necessary properties.
+	 * Standard Constructor.
+	 * It does nothing beside constructing the object instance.
+	 * To configure the created harvester call {@link #prepareHarvester(int)}
+	 * @see #prepareHarvester(int)
 	 */
 	
 	private Harvester ( ) {
 		
 	}
 	
+	/**
+	 * This method configures the harvester.
+	 * It sets the repository ID and gets all other information from the Database
+	 * 
+	 * @param id the Repository ID
+	 * @return true when the configuration is done otherwise {@linkplain System#exit} is called
+	 * @see #getRepositoryDetails(int)
+	 * @see HelperMethods#loadPropertiesFromFile(String)
+	 */
+	
 	private boolean prepareHarvester (int id) {
-		
-		DOMConfigurator.configure ("log4j.xml");
 		
 		Harvester.harvester.repositoryID = id;
 		
@@ -141,7 +177,12 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param id
+	 * This method fetches all necessary details about the repository from the database.
+	 * It fetches the OAI-URL, if only testdata shall be collected, the harvest amount and the pause between the harvested amounts.
+	 * 
+	 * @param id the Repository ID
+	 * @see RestClient
+	 * @see RestXmlCodec
 	 */
 	
 	private void getRepositoryDetails (int id) {
@@ -195,6 +236,12 @@ public class Harvester {
 		}
 	}
 	
+	/**
+	 * Getter method for the harvester
+	 * 
+	 * @return the Harvester
+	 */
+	
 	public final Harvester getHarvester ( ) {
 		
 		return harvester;
@@ -212,6 +259,8 @@ public class Harvester {
 	}
 		
 	/**
+	 * Setter method for the RepositoryURL
+	 * 
 	 * @param repositoryURL the repositoryURL to set
 	 */
 	
@@ -232,7 +281,9 @@ public class Harvester {
 	}
 
 	/**
-	 * @return the fullharvest
+	 * Getter method for the fullharvest
+	 * 
+	 * @return the fullharvest (true if full, false if update) 
 	 */
 	
 	private final boolean isFullharvest ( ) {
@@ -241,7 +292,9 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param fullharvest the fullharvest to set
+	 * Setter method for the fullharvest
+	 * 
+	 * @param fullharvest the fullharvest to set (true if full, false if update)
 	 */
 	
 	private final void setFullharvest (boolean fullharvest) {
@@ -250,6 +303,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Getter method for the date
+	 * 
 	 * @return the date
 	 */
 	
@@ -259,6 +314,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Setter method for the date
+	 * 
 	 * @param date the date to set
 	 */
 	
@@ -268,6 +325,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Getter method for the amount
+	 * 
 	 * @return the amount
 	 */
 	
@@ -277,6 +336,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Setter method for the amount
+	 * 
 	 * @param amount the amount to set
 	 */
 	
@@ -286,6 +347,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Getter method for the interval
+	 * 
 	 * @return the interval
 	 */
 	
@@ -295,6 +358,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Setter method for the interval
+	 * 
 	 * @param interval the interval to set
 	 */
 	
@@ -304,6 +369,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Getter method for the testdata
+	 * 
 	 * @return the testData
 	 */
 	
@@ -313,6 +380,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Setter method for the testdata
+	 * 
 	 * @param testData the testData to set
 	 */
 	
@@ -327,9 +396,6 @@ public class Harvester {
 	 * The retrieved list is parsed and the resumption Token, if it exists, is extracted. While all Ids are checked.
 	 * The already checked Id are processed and finally if there is a resumptionToken a new List of Ids is requested.
 	 * Then all begins from the very beginning until there are no more Identifiers to request.
-	 * 
-	 * @param fullharvest specifies whether we have a full or update harvest 
-	 * @param updateFrom stores the timestamp for the update harvest. 
 	 */
 	
 	private void processIds ( ) {
@@ -433,6 +499,7 @@ public class Harvester {
 	 * @return the Inputstream which contains the answer from the repository
 	 * @throws IOException 
 	 * @throws HttpException 
+	 * @see #repositoryAnswer(String, String, String)
 	 */
 	
 	private InputStream listMetaDataFormats (String url) throws HttpException, IOException {
@@ -442,12 +509,16 @@ public class Harvester {
 		
 		return repositoryAnswer (url, "listMetaDataFormat", "");
 	}
-
+	
 	/**
-	 * @param url
-	 * @param string
+	 * This method encapsulates the request for a full harvest of Identifiers from the repository
+	 * 
+	 * @param url the OAI-URL to connect to
+	 * @param metaDataFormat the Meta Data Format which shall be requested
+	 * @return the Inputstream from the repository
 	 * @throws IOException 
 	 * @throws HttpException 
+	 * @see #repositoryAnswer(String, String, String)
 	 */
 	
 	private InputStream listIdentifiers (String url, String metaDataFormat) throws HttpException, IOException {
@@ -459,11 +530,15 @@ public class Harvester {
 	}
 
 	/**
-	 * @param url
-	 * @param string
-	 * @param updateFrom
+	 * This method encapsulates the request for an update harvest of Identifiers from the repository or the ResumptionToken Request
+	 * 
+	 * @param url the OAI-URL to connect to
+	 * @param metaDataFormat the Meta Data Format which shall be requested or "resumptionToken" for the resumptionToken use
+	 * @param updateFrom the date from which on the harvest shall start or the resumptionToken for the resumptionToken use
+	 * @return the Inputstream from the repository
 	 * @throws IOException 
 	 * @throws HttpException 
+	 * @see #repositoryAnswer(String, String, String)
 	 */
 	
 	private InputStream listIdentifiers (String url, String metaDataFormat, String updateFrom) throws HttpException, IOException {
@@ -488,12 +563,16 @@ public class Harvester {
 	}
 
 	/**
-	 * @param url
-	 * @param string
-	 * @param string2
-	 * @return
+	 * This method connects to the Repository and gets information from it.
+	 * This information can be the supported Meta Data Formats, the Identifiers or other.
+	 * 
+	 * @param url the OAI-URL to connect to
+	 * @param verb the OAI-PMH-verb to use
+	 * @param parameter the parameters for the request (i.e. from, set, ...)
+	 * @return the Inputstream from the repository
 	 * @throws IOException 
-	 * @throws HttpException 
+	 * @throws HttpException
+	 * @see org.apache.commons.httpclient
 	 */
 	
 	private InputStream repositoryAnswer (String url, String verb,
@@ -527,8 +606,17 @@ public class Harvester {
 	}
 
 	/**
-	 * @param responseBody
-	 * @return
+	 * This method processes the Inputstrean from the repository and extracts the Object IDs and the ResumptionToke if it exists.
+	 * It stores all IDs in a list of ObjectIdentifiers together with its datestamps. The IDs which are extracted in here are
+	 * only the external IDs which means the IDs used by the harvested repository. There's still no relation to IDs in our own
+	 * database.
+	 * This relation is made later in this method {@link #objectexists(String)} 
+	 * 
+	 * @param responseBody the Inputstream from the Repository
+	 * @return the ResumptionToken if any exists, null otherwise
+	 * @see #objectexists(String)
+	 * @see ObjectIdentifier
+	 * @see javax.xml.parsers
 	 */
 	
 	private String extractIdsAndGetResumptionToken (InputStream responseBody) {
@@ -634,7 +722,16 @@ public class Harvester {
 	}
 
 	/**
+	 * This is the heart of the object handler. Here all harvested objects are processed.
+	 * For every object an object entry will be created if this object still not exists in our database.
+	 * Next the rawdata will be collected and put into the database. 
+	 * When the object already exists the object will be checked if there's some newer data. If so the newer data
+	 * will be put in the database otherwise only the datestamp of the last harvest-run is set.
 	 * 
+	 * @see #createObjectEntry(int)
+	 * @see #updateRawData(int)
+	 * @see #checkRawData(int)
+	 * @see #updateHarvestedDatestamp(int)
 	 */
 	
 	private void processRecords ( ) {
@@ -665,6 +762,7 @@ public class Harvester {
 					
 				} catch (InterruptedException ex) {
 					
+					logger.error (ex.getLocalizedMessage ( ));
 					ex.printStackTrace ( );
 				}
 				
@@ -688,6 +786,7 @@ public class Harvester {
 						
 					} catch (InterruptedException ex) {
 						
+						logger.error (ex.getLocalizedMessage ( ));
 						ex.printStackTrace ( );
 					}
 					
@@ -701,7 +800,13 @@ public class Harvester {
 	}
 	
 	/**
+	 * This method created a new object in the database and retrieves the corresponding ID.
+	 * For the object-data it will transmit the repository ID, the external Object Identifier (from the repository),
+	 * the datestamp from the repository, the testdata status and the failure counter for this object.
+	 * The retrieved internal Object Identifier is stored in the list of ObjectIdentifieres.
 	 * 
+	 * @see RestClient
+	 * @see ObjectIdentifier
 	 */
 	
 	private void createObjectEntry (int index) {
@@ -767,7 +872,10 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param i
+	 * This method checks if the rawdata we received is newer than the rawdata in the database or not.
+	 * 
+	 * @param i index of the current ObjectIdentifier
+	 * @return true if received data is newer, false else
 	 */
 	
 	private boolean checkRawData (int i) {
@@ -794,7 +902,7 @@ public class Harvester {
 			if (!repositoryDate.before (this.ids.get (i).getDatestamp ( ))) {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("RepositoryDate is " + repositoryDate + " and before the harvested: " + this.ids.get (i).getDatestamp ( ));
+					logger.debug ("RepositoryDate is " + repositoryDate + " and after the harvested: " + this.ids.get (i).getDatestamp ( ));
 				
 				this.ids.get (i).setDatestamp (repositoryDate);
 				
@@ -804,7 +912,7 @@ public class Harvester {
 				
 				// updated harvesteddatstamp and exit
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("RepositoryDate is " + repositoryDate + " and after the harvested: " + this.ids.get (i).getDatestamp ( ));
+					logger.debug ("RepositoryDate is " + repositoryDate + " and before the harvested: " + this.ids.get (i).getDatestamp ( ));
 				
 				return false;
 				
@@ -819,7 +927,9 @@ public class Harvester {
 	}
 	
 	/**
+	 * This method only sets a new datestamp for the given Object.
 	 * 
+	 * @param index index of the current ObjectIdentifier
 	 */
 	
 	private void updateHarvestedDatestamp (int index) {
@@ -878,9 +988,9 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param data
-	 * @param internalOID
-	 * @param datestamp
+	 * This method puts new rawdata in the Database.
+	 * 
+	 * @param index
 	 * @throws IOException 
 	 * @throws HttpException 
 	 */
@@ -908,28 +1018,77 @@ public class Harvester {
 			GregorianCalendar cal = new GregorianCalendar ( );
 			cal.setTime (ids.get (index).getDatestamp ( ));
 			
-			String resource = "RawRecordData/" + ids.get (index).getInternalOID ( ) + "/" + cal.get (Calendar.YEAR) + "-" + cal.get (Calendar.MONTH + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/" + this.metaDataFormat + "/";
+			String resource = "RawRecordData/" + ids.get (index).getInternalOID ( ) + "/" + cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/" + this.metaDataFormat + "/";
 			
 			RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 			restclient.PutData (new String (Base64.encodeBase64 (HelperMethods.stream2String (method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("uploaded rawdata for Database Object " + ids.get (index).getInternalOID ( ));
-
+			
+			resource = "WorkflowDB/";
+			
+			RestMessage rms = new RestMessage ( );
+			
+			rms.setKeyword (RestKeyword.WorkflowDB);
+			rms.setStatus (RestStatusEnum.OK);
+			
+			RestEntrySet res = new RestEntrySet ( );
+			
+			res.addEntry ("object_id", Integer.toString (ids.get (index).getInternalOID ( )));
+			res.addEntry ("service_id", "1");
+			rms.addEntrySet (res);
+			
+			String requestxml = RestXmlCodec.encodeRestMessage (rms);
+			
+			restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+			
+			String result = "";
+			
+			try {
+				
+				result = restclient.PutData (requestxml);
+				
+			} catch (UnsupportedEncodingException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ));
+				ex.printStackTrace ( );
+			}
+			
+			rms = null;
+			res = null;
+			restclient = null;
+			
+			String value = getValueFromKey (result, "workflow_id");
+			
+			if (value == null) {
+				
+				logger.error ("I can not update the RawData because an error occured. Skipping this object and continue with next.");
+				return;
+			}
+			
+			int workflowid = new Integer (value);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("workflow_id is: " + workflowid);
+			
 		} catch (HttpException ex) {
 			
 			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ));
 			
 		} catch (IOException ex) {
 			
 			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ));
 		}
 	}
 
 	/**
-	 * @param oid
-	 * @param datestamp 
-	 * @return
+	 * This method asks the database whether an Object already exists or not.
+	 * 
+	 * @param externalOID the external ObjectIdentifier received from the repository
+	 * @return the internal Object ID if the Object already exists, -1 else
 	 * @throws ParserConfigurationException 
 	 * @throws IOException 
 	 * @throws SAXException 
@@ -966,14 +1125,29 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param result
-	 * @param keyword
-	 * @return
+	 * This method decodes a RestMessage and extracts the value for a given key. 
+	 * 
+	 * @param result the encoded RestMessage
+	 * @param keyword the key for the value
+	 * @return the extracted value
 	 */
 	
 	private String getValueFromKey (String result, String keyword) {
 		
+		if (result == null || result.equalsIgnoreCase ("")) {
+			
+			logger.error ("received RestMessage empty, skipping, continue with next");
+			return null;
+		}
+		
 		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		
+		if (rms.getStatus ( ) != RestStatusEnum.OK) {
+			
+			logger.error ("RestError occured: " + rms.getStatusDescription ( ));
+			return null;
+		}
+		
 		RestEntrySet res = rms.getListEntrySets ( ).get (0);
 		
 		Iterator <String> it = res.getKeyIterator ( );
@@ -1134,8 +1308,10 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param optionValue
-	 * @return
+	 * This method filters the interval-option and converts it to an integer
+	 * 
+	 * @param optionValue the value of the interval-option
+	 * @return the interval as an integer
 	 */
 	
 	private static int filterInterval (String optionValue) {
@@ -1149,8 +1325,10 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param optionValue
-	 * @return
+	 * This method filters the amount option and converts it to an integer
+	 * 
+	 * @param optionValue the value of the amount-option
+	 * @return the amount as an integer
 	 */
 	
 	private static int filterAmount (String optionValue) {
@@ -1312,17 +1490,36 @@ public class Harvester {
 }
 
 /**
- * @author Michael Kühn
- * 
  * This class represents an Object in which all necessary data for the Object-Manager will be stored.
  * Every field can be accessed via setter and getter methods.
+ * 
+ * @author Michael K&uuml;hn
  */
 
 class ObjectIdentifier {
 	
+	/**
+	 * The external Object ID which is received from the repository 
+	 */
+	
 	private String externalOID;
+	
+	/**
+	 * The datestamp which is received from the repository 
+	 */
+	
 	private Date datestamp;
+	
+	/**
+	 * The matching internal Object ID which is received from our database 
+	 */
+	
 	private int internalOID;
+	
+	/**
+	 * The log4j logger for all logging purposes.
+	 */
+	
 	static Logger logger = Logger.getLogger (ObjectIdentifier.class);
 	
 	/**
@@ -1354,6 +1551,8 @@ class ObjectIdentifier {
 	}
 	
 	/**
+	 * Getter method for the externalOID
+	 * 
 	 * @return the external object ID (comes from the harvested repository)
 	 */
 	
@@ -1363,6 +1562,8 @@ class ObjectIdentifier {
 	}
 
 	/**
+	 * Setter method for the externalOID
+	 * 
 	 * @param id the external object ID to set
 	 */
 	
@@ -1372,6 +1573,8 @@ class ObjectIdentifier {
 	}
 
 	/**
+	 * Getter method for the datestamp
+	 * 
 	 * @return the datestamp
 	 */
 	
@@ -1381,6 +1584,8 @@ class ObjectIdentifier {
 	}
 	
 	/**
+	 * Setter method for the datestamp
+	 * 
 	 * @param datestamp the datestamp to set
 	 */
 	
@@ -1390,6 +1595,8 @@ class ObjectIdentifier {
 	}
 
 	/**
+	 * Getter method for the internalOID
+	 * 
 	 * @return the internalOID
 	 */
 	
@@ -1399,6 +1606,8 @@ class ObjectIdentifier {
 	}
 	
 	/**
+	 * Setter method for the internalOID
+	 * 
 	 * @param internalOID the internalOID to set
 	 */
 	

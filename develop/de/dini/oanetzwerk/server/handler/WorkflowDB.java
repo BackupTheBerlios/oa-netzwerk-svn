@@ -7,7 +7,6 @@ package de.dini.oanetzwerk.server.handler;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Iterator;
 
 import de.dini.oanetzwerk.server.database.DBAccess;
@@ -22,7 +21,7 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
  *
  */
 
@@ -126,11 +125,11 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		
 		BigDecimal object_id = null;
 		BigDecimal service_id = null;
-		Date time = null;
+		Date time = HelperMethods.today ( );
 		
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
-
+		
 		Iterator <String> it = res.getKeyIterator ( );
 		String key = "";
 		
@@ -138,27 +137,19 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 			
 			key = it.next ( );
 			
-			if (key.equalsIgnoreCase ("service_id"))
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("key = " + key);
+			
+			if (key.equalsIgnoreCase ("object_id"))
 				object_id = new BigDecimal (res.getValue (key));
 			
-			else if (key.equalsIgnoreCase ("name")) {
-				
-				try {
-					
-					time = HelperMethods.extract_datestamp (res.getValue (key));
-					
-				} catch (ParseException ex) {
-					
-					logger.error (ex.getLocalizedMessage ( ));
-					ex.printStackTrace ( );
-				}
-				
-			} else if (key.equalsIgnoreCase ("service_id"))
+			else if (key.equalsIgnoreCase ("service_id"))
 				service_id = new BigDecimal (res.getValue (key));
 			
 			else continue;
 		}
-
+		
+		this.rms = new RestMessage (RestKeyword.ObjectEntry);
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
@@ -167,7 +158,6 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		
 		db.closeConnection ( );
 		
-		this.rms = new RestMessage (RestKeyword.ObjectEntry);
 		res = new RestEntrySet ( );
 		
 		try {
@@ -209,5 +199,4 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		// TODO Auto-generated method stub
 
 	}
-
 }

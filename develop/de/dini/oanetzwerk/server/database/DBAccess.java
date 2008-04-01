@@ -238,11 +238,6 @@ public class DBAccess implements DBAccessInterface {
 		return conn;
 	}
 	
-	public static void main (String [ ] args) {
-		
-		//TODO: add testing
-	}
-
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
 	 */
@@ -587,7 +582,7 @@ public class DBAccess implements DBAccessInterface {
 			
 			pstmt.executeUpdate ( );
 			
-			pstmt = conn.prepareStatement ("SELECT workflow_id FROM dbo.WorkflowDB WHERE object_id = ? AND repository_identifier = ? AND time = ? AND service_id = ?");
+			pstmt = conn.prepareStatement ("SELECT workflow_id FROM dbo.WorkflowDB WHERE object_id = ? AND time = ? AND service_id = ?");
 			
 			pstmt.setBigDecimal (1, object_id);
 			pstmt.setDate (2, time);
