@@ -28,17 +28,27 @@ public class SQL2DB {
 	
 	public static void main (String [ ] args) throws Exception {
 		
+		
+		String username = args[0];
+		String pw = args[1];
+		
 		DriverManager.setLogWriter( new PrintWriter (System.out) );
+		
+		
+		
 		
 		DriverManager.registerDriver (new com.sybase.jdbc3.jdbc.SybDriver ( ));
 		
-		Connection con = DriverManager.getConnection ("jdbc:sybase:Tds:themis.rz.hu-berlin.de:2025?ServiceName=oanetztest", "", ""); //TODO: username und passowrd einfügen!!!
+		Connection con = DriverManager.getConnection ("jdbc:sybase:Tds:themis.rz.hu-berlin.de:2025?ServiceName=oanetztest", username, pw); 
+		
+		
 		
 		con.setAutoCommit (false);
 		
 		Statement stmt = con.createStatement ( );
 		
-		for (String filename : args) {
+//		for (String filename : args) {
+		String filename = args[2];
 			
 			BufferedReader br = new BufferedReader (new FileReader (filename));
 			
@@ -65,7 +75,7 @@ public class SQL2DB {
 					con.close ( );
 				throw ex;
 			}
-		}
+//		}
 		
 		if (con != null)
 			con.close ( );

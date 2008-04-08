@@ -329,14 +329,7 @@ public class TestInternal {
 		db.setAutoCom(true);
 		db.closeConnection ( );
 		
-//		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
-//		res = new RestEntrySet ( );
-//		
-//		res.addEntry ("oid", object_id.toPlainString ( ));
-//		this.rms.setStatus (RestStatusEnum.OK);
-//		this.rms.addEntrySet (res);
-//		
-//		return RestXmlCodec.encodeRestMessage (this.rms);	}
+
 
 	}
 	

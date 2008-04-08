@@ -495,71 +495,258 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	
 		// PREPARE SQL STATEMENTS
 		
-		List <Title> titlelist = imf.getTitles ( );
-		//List <Author> authors;
-		//List <Keyword> keywords = imf.getKeywords ( );
-		//List <Publisher> publishers;
-		List <DateValue> dateValues = imf.getDateValues ( );
+		List <Title> titleList = imf.getTitles ( );
+		List <DateValue> dateValueList = imf.getDateValues ( );
 		List <Format> formatList = imf.getFormatList ( );
 		List <Identifier> identifierList = imf.getIdentifierList ( );
 		List <Description> descriptionList = imf.getDescriptions();
+		List <Publisher> publisherList = imf.getPublishers();
+		
+		List <Author> authorList = imf.getAuthors();
+		List <Editor> editorList = imf.getEditorList();
+		List <Contributor> contributorList = imf.getContributorList();
+		
+		List <Keyword> keywordList = imf.getKeywords ( );
 		List <TypeValue> typeValueList = imf.getTypeValueList ( );
-		//List <Language> languageList;
-		//List<Classification> classificationList;
+
+		List <Language> languageList = imf.getLanguageList();
+		List<Classification> classificationList = imf.getClassificationList();
 		
-		//ResultSet resultset;
-		
+		ResultSet rs;
+
+		// Autocommit ausschalten, nur eine vollständige Transaktion darf durchlaufen
 		db.setAutoCom (false);
 		
-		
-		//for (Keyword keyword : keywords)
-		//	db.insertkeyword ( );
-		
-		//for (Description description : descriptions)
-		//	db.insertDescription ( );
-
 		try {
+			// Titel speichern
+			if (titleList != null) {
+				for (Title title : titleList)
+					db.insertTitle(object_id, title.getQualifier(), title
+							.getTitle(), title.getLang());
+			}
 
-			for (Title title : titlelist)			
-				db.insertTitle (object_id, title.getQualifier ( ), title.getTitle ( ), title.getLang ( ));
-			
-			for (DateValue dateValue : dateValues)
-				try {
-					db.insertDateValue(object_id, dateValue.getNumber(),
-							HelperMethods.extract_datestamp(dateValue
-									.getDateValue()));
+			// Datumswerte
+			if (dateValueList != null) {
+				for (DateValue dateValue : dateValueList) {
+					try {
+						db.insertDateValue(object_id, dateValue.getNumber(),
+								HelperMethods.extract_datestamp(dateValue
+										.getDateValue()));
 
-				} catch (ParseException ex) {
-					logger.error("Datestamp with datevalue incorrect");
-					ex.printStackTrace();
+					} catch (ParseException ex) {
+						logger.error("Datestamp with datevalue incorrect");
+						ex.printStackTrace();
+					}
 				}
+			}
 
-			for (Format format : formatList)
-				db.insertFormat(object_id, format.getNumber(), format
-						.getSchema_f());
+			if (formatList != null) {
+				for (Format format : formatList)
+					db.insertFormat(object_id, format.getNumber(), format
+							.getSchema_f());
+			}
 
-			for (Identifier identifier : identifierList)
-				db.insertIdentifier(object_id, identifier.getNumber(),
-						identifier.getIdentifier());
+			if (identifierList != null) {
+				for (Identifier identifier : identifierList)
+					db.insertIdentifier(object_id, identifier.getNumber(),
+							identifier.getIdentifier());
+			}
 
-			for (Description description : descriptionList)
-				db.insertDescription(object_id, description.getNumber(), description.getDescription());
+			if (descriptionList != null) {
+				for (Description description : descriptionList)
+					db.insertDescription(object_id, description.getNumber(),
+							description.getDescription());
+			}
+
+			if (typeValueList != null) {
+				for (TypeValue typeValue : typeValueList)
+					db.insertTypeValue(object_id, typeValue.getTypeValue());
+			}
+
+			if (publisherList != null) {
+				for (Publisher publisher : publisherList)
+					db.insertPublisher(object_id, publisher.getNumber(),
+							publisher.getName());
+			}
+
+			if (authorList != null) {
+				for (Author author : authorList) {
+					BigDecimal person_id = null;
+					db.insertPerson(author.getFirstname(),
+							author.getLastname(), author.getTitle(), author
+									.getInstitution(), author.getEmail());
+					rs = db.selectLatestPerson(author.getFirstname(), author
+							.getLastname());
+					if (rs == null) {
+						System.out.println("Person nicht eingetragen");
+						logger.warn("resultset empty!");
+					} else {
+						while (rs.next()) {
+							person_id = rs.getBigDecimal(1);
+						}
+					}
+					db.insertObject2Author(object_id, person_id, author
+							.getNumber());
+				}
+			}
 			
-//			for (TypeValue typeValue : typeValueList)
-//				db.insertTypeValue ( );
+			if (editorList != null) {
+				for (Editor editor : editorList) {
+					BigDecimal person_id = null;
+					db.insertPerson(editor.getFirstname(),
+							editor.getLastname(), editor.getTitle(), editor
+									.getInstitution(), editor.getEmail());
+					rs = db.selectLatestPerson(editor.getFirstname(), editor
+							.getLastname());
+					if (rs == null) {
+						System.out.println("Person nicht eingetragen");
+						logger.warn("resultset empty!");
+					} else {
+						while (rs.next()) {
+							person_id = rs.getBigDecimal(1);
+						}
+					}
+					db.insertObject2Editor(object_id, person_id, editor
+							.getNumber());
+				}
+			}
 
+			
+			if (contributorList != null) {
+				for (Contributor contributor : contributorList) {
+					BigDecimal person_id = null;
+					db.insertPerson(contributor.getFirstname(), contributor
+							.getLastname(), contributor.getTitle(), contributor
+							.getInstitution(), contributor.getEmail());
+					rs = db.selectLatestPerson(contributor.getFirstname(),
+							contributor.getLastname());
+					if (rs == null) {
+						System.out.println("Person nicht eingetragen");
+						logger.warn("resultset empty!");
+					} else {
+						while (rs.next()) {
+							person_id = rs.getBigDecimal(1);
+						}
+					}
+					db.insertObject2Editor(object_id, person_id, contributor
+							.getNumber());
+				}
+			}
+
+			if (keywordList != null) {
+				for (Keyword keyword : keywordList) {
+					BigDecimal keyword_id = null;
+					db.insertKeyword(keyword.getKeyword(), keyword
+							.getLanguage());
+					rs = db.selectLatestKeyword(keyword.getKeyword(), keyword
+							.getLanguage());
+					if (rs == null) {
+						System.out.println("Keyword nicht eingetragen");
+						logger.warn("resultset empty!");
+					} else {
+						while (rs.next()) {
+							keyword_id = rs.getBigDecimal(1);
+						}
+					}
+					db.insertObject2Keyword(object_id, keyword_id);
+				}
+			}
+			
+			if (languageList != null) {
+				for (Language language : languageList) {
+					BigDecimal language_id = null;
+
+					rs = db.selectLanguageByName(language.getLanguage());
+					if (!rs.next()) {
+						// Sprache ist noch nicht vorhanden => einfügen und neue
+						// Sprach-ID auslesen
+						db.insertLanguage(language.getLanguage());
+					}
+					rs = db.selectLanguageByName(language.getLanguage());
+					if (rs == null) {
+						System.out.println("Sprache nicht eingetragen");
+					} else {
+						while (rs.next()) {
+							language_id = rs.getBigDecimal(1);
+						}
+					}
+					db.insertObject2Language(object_id, language_id, language
+							.getNumber());
+				}
+			}
+			
+			if (classificationList != null) {
+				for (Classification classification : classificationList) {
+					// fuer jeden Klassifikationstypen muessen unterschiedliche Aktionen erfolgen
+					if (classification instanceof DDCClassification) {
+						String ddcValue = null;
+						rs = db.selectDDCCategoriesByCategorie(classification.getValue());
+						while (rs.next()) {
+							ddcValue = rs.getString(1);
+						}
+						if (ddcValue == null) {
+							// Versuch, über den übergebenen Namen den richten DDC-Wert zu bestimmen
+							
+						}
+						// Daten zuordnen
+						db.insertDDCClassification(object_id, ddcValue);
+					}
+					if (classification instanceof DNBClassification) {
+//						BigDecimal DNB_Categorie = null;
+						String DNB_Categorie = null;
+						rs = db.selectDNBCategoriesByCategorie(classification.getValue());
+						while (rs.next()) {
+							DNB_Categorie = rs.getString(1);
+						}
+						// Daten zuordnen
+						db.insertDNBClassification(object_id, DNB_Categorie);
+					}					
+					if (classification instanceof DINISetClassification) {
+						BigDecimal DINI_set_id = null;
+						rs = db.selectDINISetCategoriesByName(classification.getValue());
+						while (rs.next()) {
+							DINI_set_id = rs.getBigDecimal(1);
+						}
+						// Daten zuordnen
+						db.insertDINISetClassification(object_id, DINI_set_id);						
+					}
+					
+					if (classification instanceof OtherClassification) {
+						BigDecimal other_id = null;
+						// ID zum Klassifikationswort aus DB suchen 
+						rs = db.selectLatestOtherCategories(classification.getValue());
+						while (rs.next()) {
+							// Wort wohl vorhanden, sonst keine Rückgabe
+							other_id = rs.getBigDecimal(1);
+						} 
+						if (other_id == null) {
+							// Wort noch nicht vorhanden, neu eintragen
+							// Klassifikation eintragen
+							db.insertOtherCategories(classification.getValue());
+							rs = db.selectLatestOtherCategories(classification.getValue());
+							while (rs.next()) {
+								other_id = rs.getBigDecimal(1);
+							}
+						}
+						// ID dieser Klassifikation bestimmen und zuordnen
+						db.insertOtherClassification(object_id, other_id);
+					}
+				}
+			}
 			db.commit();
-			db.setAutoCom(true);
 
 		} catch (SQLException sqlex) {
 			db.rollback();
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription("unable to commit: " + sqlex);
+			logger.error (sqlex.getLocalizedMessage ( ));
+			sqlex.printStackTrace ( );
+
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		
+		db.setAutoCom(true);
 		db.closeConnection ( );
 		
 		// RESPOND WITH OK
