@@ -125,13 +125,13 @@ public class InternalMetadata {
 		myIM.addTitle(title);	
 		
 		Classification classi = new DNBClassification();
-		classi.setValue("40");
+		classi.setValue("01");
 		myIM.addClassfication(classi);
 		classi = new DDCClassification();
 		classi.setValue("000");
 		myIM.addClassfication(classi);
 		classi = new DINISetClassification();
-		classi.setValue("dissertation");
+		classi.setValue("pub-type:dissertation");
 		myIM.addClassfication(classi);
 		classi = new OtherClassification();
 		classi.setValue("unbekannter Klassifikationswert");

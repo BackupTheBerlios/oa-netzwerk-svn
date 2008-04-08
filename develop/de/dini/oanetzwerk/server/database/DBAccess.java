@@ -1969,7 +1969,7 @@ public class DBAccess implements DBAccessInterface {
 		PreparedStatement pstmt = null;
 		
 		try {
-			pstmt = conn.prepareStatement ("SELECT DNB_Categorie FROM dbo.DNB_Categories WHERE (name = ?)");
+			pstmt = conn.prepareStatement ("SELECT DNB_Categorie FROM dbo.DNB_Categories WHERE (DNB_Categorie = ?)");
 			pstmt.setString (1, name);
 			
 			return pstmt.executeQuery ( );
@@ -2024,13 +2024,14 @@ public class DBAccess implements DBAccessInterface {
 		
 	}
 
-	public void insertDNBClassification(BigDecimal object_id, BigDecimal DNB_Categorie)
+//	public void insertDNBClassification(BigDecimal object_id, BigDecimal DNB_Categorie)
+	public void insertDNBClassification(BigDecimal object_id, String DNB_Categorie)
 			throws SQLException {
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement ("INSERT INTO dbo.DNB_Classification (object_id, DNB_Categorie) VALUES (?, ?)");
 			pstmt.setBigDecimal(1, object_id);
-			pstmt.setBigDecimal(2, DNB_Categorie);
+			pstmt.setString(2, DNB_Categorie);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("execute");
@@ -2067,7 +2068,7 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getRepository(java.math.BigInteger)
 	 */
 	
-	@Override
+//	@Override
 	public ResultSet getRepository (BigDecimal repositoryID) {
 		
 		PreparedStatement pstmt = null;

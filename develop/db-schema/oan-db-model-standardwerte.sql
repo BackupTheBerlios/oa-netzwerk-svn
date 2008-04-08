@@ -6,4 +6,8 @@ insert into dbo.Services (name) values ('Aggregator');
 insert into dbo.ServicesOrder (service_id, predecessor_id) values (1, null);
 insert into dbo.ServicesOrder (service_id, predecessor_id) values (2, 1);
 # insert into dbo.Services (service_id, name) values (1, 'Harvester');
-# insert into dbo.Repositories (repository_id, name, url, oai_url) values (1, 'EDOC HU', 'http://edoc.hu-berlin.de','http://http://edoc.hu-berlin.de/OAI-2.0'); 
+# insert into dbo.Repositories (repository_id, name, url, oai_url) values (1, 'EDOC HU', 'http://edoc.hu-berlin.de','http://http://edoc.hu-berlin.de/OAI-2.0');
+
+
+INSERT INTO DNB_Categories (DNB_Categorie, name) VALUES ('01','Wissenschaft und Kultur allgemein')
+INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:dissertation','Dissertations and Professional Dissertations', 'Dissertationen und Habilitationen')

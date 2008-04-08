@@ -35,14 +35,16 @@ CREATE TABLE dbo.DDC_Categories (
 );
 
 CREATE TABLE dbo.DNB_Categories (
-       DNB_Categorie NUMERIC(38) IDENTITY
-     , name VARCHAR(255)
+       DNB_Categorie VARCHAR(10) NOT NULL
+     , name VARCHAR(255) NOT NULL
      , PRIMARY KEY (DNB_Categorie)
 );
 
 CREATE TABLE dbo.DINI_Set_Categories (
        DINI_set_id NUMERIC(38) IDENTITY
      , name VARCHAR(255) NOT NULL
+	 , setNameEng VARCHAR(255) NULL
+	 , setNameDeu VARCHAR(255) NULL
      , PRIMARY KEY (DINI_set_id)
 );
 
@@ -139,7 +141,7 @@ CREATE TABLE dbo.DDC_Classification (
 
 CREATE TABLE dbo.DNB_Classification (
        object_id NUMERIC(38) NOT NULL
-     , DNB_Categorie NUMERIC(38) NOT NULL
+     , DNB_Categorie VARCHAR(10) NOT NULL
      , PRIMARY KEY (object_id, DNB_Categorie)
 );
 

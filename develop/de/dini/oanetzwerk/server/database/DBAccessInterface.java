@@ -230,7 +230,8 @@ public interface DBAccessInterface {
 	
 	public abstract void insertDDCClassification (BigDecimal object_id, String ddcValue) throws SQLException;
 	
-	public abstract void insertDNBClassification (BigDecimal object_id, BigDecimal DNB_Categorie) throws SQLException;
+//	public abstract void insertDNBClassification (BigDecimal object_id, BigDecimal DNB_Categorie) throws SQLException;
+	public abstract void insertDNBClassification (BigDecimal object_id, String DNB_Categorie) throws SQLException;
 	
 	public abstract void insertDINISetClassification (BigDecimal object_id, BigDecimal DINI_set_id) throws SQLException;
 	

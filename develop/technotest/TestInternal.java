@@ -275,10 +275,11 @@ public class TestInternal {
 						db.insertDDCClassification(object_id, ddcValue);
 					}
 					if (classification instanceof DNBClassification) {
-						BigDecimal DNB_Categorie = null;
+//						BigDecimal DNB_Categorie = null;
+						String DNB_Categorie = null;
 						rs = db.selectDNBCategoriesByCategorie(classification.getValue());
 						while (rs.next()) {
-							DNB_Categorie = rs.getBigDecimal(1);
+							DNB_Categorie = rs.getString(1);
 						}
 						// Daten zuordnen
 						db.insertDNBClassification(object_id, DNB_Categorie);

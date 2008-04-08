@@ -709,8 +709,8 @@
 <column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DDC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-7836">
 <column-description/>
 <data-type jdbc-type="1" literal-prefix="'" literal-suffix="'" name="CHAR" selected-variant-pattern="CHAR(%n)">
-<variant type-name-pattern="CHAR"/>
 <variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="CHAR(%n)"/>
+<variant type-name-pattern="CHAR"/>
 <variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="CHAR(%n) BINARY"/>
 </data-type>
 </column>
@@ -750,8 +750,8 @@
 <column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DDC_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-782f">
 <column-description/>
 <data-type jdbc-type="1" literal-prefix="'" literal-suffix="'" name="CHAR" selected-variant-pattern="CHAR(%n)">
-<variant type-name-pattern="CHAR"/>
 <variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="CHAR(%n)"/>
+<variant type-name-pattern="CHAR"/>
 <variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="CHAR(%n) BINARY"/>
 </data-type>
 </column>
@@ -784,18 +784,11 @@
 <table-description/>
 <table-figure-bounds height="-1" width="-1" x="538" y="860"/>
 <column-list>
-<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="DNB_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-77b5">
+<column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DNB_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-77b5">
 <column-description/>
-<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
-<variant type-name-pattern="NUMERIC"/>
-<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
-<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
-<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
 </data-type>
 </column>
 <column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="name" remarks="" uid="4f5403:1161f7e7d4d:-77b4">
@@ -831,18 +824,11 @@
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="DNB_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-77af">
+<column alias="" auto-increment="false" column-size="10" decimal-digits="0" default-value="" mandatory="true" name="DNB_Categorie" remarks="" uid="4f5403:1161f7e7d4d:-77af">
 <column-description/>
-<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%p, %s)">
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
-<variant type-name-pattern="NUMERIC"/>
-<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
-<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
-<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
 </data-type>
 </column>
 </column-list>
@@ -949,6 +935,20 @@
 <column-description/>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="4000" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="setNameEng" remarks="" uid="87c888:1192e441e8d:-7fbc">
+<column-description/>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="false" name="setNameDeu" remarks="" uid="87c888:1192e441e8d:-7fbb">
+<column-description/>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
 </data-type>
 </column>
 </column-list>
