@@ -340,8 +340,8 @@ public class TestInternal {
 
 		System.out.println(imf);
 	
-		delete(new BigDecimal("638"));			
-		put(imf);
+		delete(new BigDecimal("730"));			
+//		put(imf);
 
 	}
 	

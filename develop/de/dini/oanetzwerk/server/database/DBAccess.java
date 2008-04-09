@@ -1033,7 +1033,7 @@ public class DBAccess implements DBAccessInterface {
 		PreparedStatement pstmt = null;
 		
 		try {
-			pstmt = conn.prepareStatement ("SELECT name, D.DCC_Categorie FROM dbo.DCC_Classification D JOIN dbo.DCC_Categories C ON D.DCC_Categorie = C.DCC_Categorie WHERE D.object_id = ?");
+			pstmt = conn.prepareStatement ("SELECT name, D.DDC_Categorie FROM dbo.DDC_Classification D JOIN dbo.DDC_Categories C ON D.DDC_Categorie = C.DDC_Categorie WHERE D.object_id = ?");
 			pstmt.setBigDecimal (1, oid);
 			
 			return pstmt.executeQuery ( );

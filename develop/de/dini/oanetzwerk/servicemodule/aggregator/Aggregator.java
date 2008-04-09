@@ -44,8 +44,11 @@ import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 import de.dini.oanetzwerk.utils.imf.InternalMetadataJAXBMarshaller;
+import de.dini.oanetzwerk.utils.imf.Title;
 
 /**
  * @author Manuel Klatt-Kafemann
@@ -357,8 +360,9 @@ public class Aggregator {
 	}
 
 	private Object storeMetaData(Object data) {
-		// es wird eine IMF-Objekt erwartet
+		// es wird ein IMF-Objekt erwartet
 		InternalMetadata im = null; 
+		
 		if (! (data instanceof InternalMetadata)) {
 			// wenn kein IMF-Objekt übergeben wurde, darf auch nichts gespeichert werden
 			return null;
@@ -370,12 +374,79 @@ public class Aggregator {
 		xmlData = marshaller.marshall(im);
 		
 		System.out.println("### XMLDATA ###");
-		System.out.println(xmlData);
+//		System.out.println(xmlData);
 		
 		// Rest-Client initialisieren
 		String resource = "InternalMetadataEntry/" + this.currentRecordId;
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 
+		RestMessage response = null;
+		RestEntrySet entrySet = null;
+		String strXML = null;
+		
+		// folgende Funktionsweise wird implementiert
+		// 1. Abfrage mit GET, ob schon Daten vorhanden sind
+		// 2. sind Daten vorhanden, diese mit DELETE löschen
+		// 3. PUT ausführen, um die neuen Daten zu speichern
+	
+//		try {
+			response = restclient.sendGetRestMessage();
+			entrySet = response.getListEntrySets().get(0);
+			strXML = entrySet.getValue ("internalmetadata");
+
+			if(strXML != null) {
+				// es wird ein Rückgabewert geliefert
+				// UNMARSHALL XML
+			
+				System.out.println(response.toString());
+				
+				InternalMetadata imfTemp = null;		
+				try {		
+					imfTemp = marshaller.unmarshall (strXML);
+					
+					List <Title> titleList = imfTemp.getTitles ( );
+					List <Author> authorList = imfTemp.getAuthors();
+					if (!(titleList.isEmpty() && authorList.isEmpty() )) {
+						// apparently some data exists, therefore it has to be deleted first
+						restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+						response = restclient.sendDeleteRestMessage();
+						
+						System.out.println("###RESPONSE###\n\n"+ response);
+						entrySet = response.getListEntrySets().get(0);
+						strXML = entrySet.getValue("oid");
+						
+						System.out.println("oid nach Delete: " + strXML);
+						
+					}
+					
+				} catch(Exception ex) {
+					System.out.println("Exceptioh geworfen");
+//				this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+//				this.rms.setStatus (RestStatusEnum.REST_XML_DECODING_ERROR);
+//				this.rms.setStatusDescription("unable to unmarshall xml " + strXML + " :" + ex);
+//				return RestXmlCodec.encodeRestMessage (this.rms);			
+				}
+
+			
+			
+			
+			
+			}
+//			String result = restclient.GetData ( );
+//			
+//			restclient = null;
+//			String value = getValueFromKey (result, "repository_datestamp");
+			
+//		} catch (IOException ex) {
+//			
+//			logger.error (ex.getLocalizedMessage ( ));
+//			ex.printStackTrace ( );
+//		} catch (RuntimeException ex) {
+			
+//		}
+		
+//		System.exit(-1);
+		
 		try {
 			
 			RestMessage rms = new RestMessage();
@@ -386,8 +457,9 @@ public class Aggregator {
 			
 			res.addEntry ("internalmetadata", xmlData);
 			rms.addEntrySet (res);
-			
-			RestMessage response = restclient.sendPutRestMessage(rms);
+
+			restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+			response = restclient.sendPutRestMessage(rms);
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("RestMessage response: " + response);

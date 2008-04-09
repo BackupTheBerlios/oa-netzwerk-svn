@@ -50,10 +50,62 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	 */
 	
 	@Override
-	protected String deleteKeyWord (String [ ] path) {
+	protected String deleteKeyWord(String[] path) {
 
-		// TODO Auto-generated method stub
-		return null;
+		DBAccessInterface db = DBAccess.createDBAccess();
+		db.createConnection();
+
+		BigDecimal object_id = new BigDecimal(path[2]);
+		db.setAutoCom(false);
+
+		try {
+			db.deleteDescription(object_id);
+			db.deleteDateValues(object_id);
+			db.deleteFormats(object_id);
+			db.deleteIdentifiers(object_id);
+			db.deleteTypeValue(object_id);
+			db.deleteTitles(object_id);
+			db.deletePublishers(object_id);
+
+			db.deleteObject2Author(object_id);
+			db.deleteObject2Editor(object_id);
+			db.deleteObject2Contributor(object_id);
+			db.deleteObject2Language(object_id);
+			db.deleteObject2Keywords(object_id);
+			db.deleteOther_Classification(object_id);
+			db.deleteDDC_Classification(object_id);
+			db.deleteDNB_Classification(object_id);
+			db.deleteDINI_Set_Classification(object_id);
+
+			db.deletePersonWithoutReference();
+			db.deleteKeywordsWithoutReference();
+			db.deleteOther_Categories();
+
+			db.commit();
+		} catch (SQLException sqlex) {
+			db.rollback();
+			this.rms = new RestMessage(RestKeyword.InternalMetadataEntry);
+			this.rms.setStatus(RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription("unable to commit: " + sqlex);
+			logger.error(sqlex.getLocalizedMessage());
+			sqlex.printStackTrace();
+
+			return RestXmlCodec.encodeRestMessage(this.rms);
+		}
+
+		db.setAutoCom(true);
+		db.closeConnection();
+
+		// RESPOND WITH OK
+
+		this.rms = new RestMessage(RestKeyword.InternalMetadataEntry);
+		RestEntrySet res = new RestEntrySet();
+
+		res.addEntry("oid", object_id.toPlainString());
+		this.rms.setStatus(RestStatusEnum.OK);
+		this.rms.addEntrySet(res);
+
+		return RestXmlCodec.encodeRestMessage(this.rms);
 	}
 
 	/**
@@ -397,34 +449,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		
 		
-// Ab hier der bisherige Code	
+		db.closeConnection();
 		
 		
 		
-		
-		
-//		// Auswertung der Titel
-//		this.resultset = db.selectTitle (oid);
-//		
-//		if (this.resultset == null)
-//			logger.warn ("resultset empty!");
-//		
-//		try {
-//			
-//			while (this.resultset.next ( )) {
-//				
-//				Title temp = new Title ( );
-//				temp.setTitle (this.resultset.getString ("title"));
-//				temp.setQualifier (this.resultset.getString ("qualifier"));
-//				temp.setLang (this.resultset.getString ("lang"));
-//				//temp.setNumber (rs.getInt ("number"));
-//				imf.addTitle (temp);
-//			}
-//			
-//		} catch (SQLException ex) {
-//			
-//			ex.printStackTrace ( );
-//		}
 		
 		String xmlData;
 		xmlData = imMarsch.marshall (imf);
