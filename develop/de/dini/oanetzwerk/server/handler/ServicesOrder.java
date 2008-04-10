@@ -5,14 +5,14 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.server.database.DBAccess;
 import de.dini.oanetzwerk.server.database.DBAccessInterface;
 
-
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
  *
  */
 
@@ -44,11 +44,22 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	protected String getKeyWord (String [ ] path) {
 
 		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
 		
-		this.resultset = db.selectServicesOrder (new BigDecimal (path [2]));
-		
-		db.closeConnection ( );
+		try {
+			
+			db.createConnection ( );
+			
+			this.resultset = db.selectServicesOrder (new BigDecimal (path [0]));
+			
+		} catch (SQLException ex) {
+			
+			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} finally {
+			
+			db.closeConnection ( );
+		}
 		return null;
 	}
 
@@ -77,14 +88,4 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 		db.closeConnection ( );
 		return null;
 	}
-
-	/**
-	 * @param args
-	 */
-	public static void main (String [ ] args) {
-
-		// TODO Auto-generated method stub
-
-	}
-
 }

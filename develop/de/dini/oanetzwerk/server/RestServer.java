@@ -21,7 +21,7 @@ import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
  *
  */
 
@@ -33,12 +33,6 @@ public class RestServer extends HttpServlet {
 	
 	public RestServer ( ) {
 		
-	}
-	
-	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws IOException {
-		
-		out = res.getWriter ( );
-		out.write (processRequest (req, 0));
 	}
 	
 	/**
@@ -75,9 +69,12 @@ public class RestServer extends HttpServlet {
 			Object o = c.newInstance ( );
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug (Class.forName (classname) + " is created");			
+				logger.debug (Class.forName (classname) + " is created");
 			
-			return (((KeyWord2DatabaseInterface) o).processRequest (xml, path, i));
+			String [ ] pathwithoutkeyword = new String [path.length - 2];
+			System.arraycopy (path, 2, pathwithoutkeyword, 0, path.length - 2);
+			
+			return (((KeyWord2DatabaseInterface) o).processRequest (xml, pathwithoutkeyword, i));
 			
 		} catch (ClassNotFoundException ex) {
 			
@@ -138,12 +135,27 @@ public class RestServer extends HttpServlet {
 		return RestXmlCodec.encodeRestMessage (rms);
 	}
 
+	/**
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws IOException {
+		
+		out = res.getWriter ( );
+		out.write (processRequest (req, 0));
+	}
+	
+	/**
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		out = res.getWriter ( );
 		out.write (processRequest (req, 2));
 	}
 
+	/**
+	 * @see javax.servlet.http.HttpServlet#doPut(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		out = res.getWriter ( );
@@ -158,15 +170,5 @@ public class RestServer extends HttpServlet {
 		
 		out = res.getWriter ( );
 		out.write (processRequest (req, 1));
-	}
-	
-	/**
-	 * @param args
-	 */
-	
-	public static void main (String [ ] args) {
-
-		// TODO Auto-generated method stub
-
 	}
 }

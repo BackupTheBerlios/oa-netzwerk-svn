@@ -282,7 +282,7 @@ public class TestInternal {
 							DNB_Categorie = rs.getString(1);
 						}
 						// Daten zuordnen
-						db.insertDNBClassification(object_id, DNB_Categorie);
+						db.insertDNBClassification(object_id, DNB_Categorie.toPlainString ( ));
 					}					
 					if (classification instanceof DINISetClassification) {
 						BigDecimal DINI_set_id = null;

@@ -15,13 +15,16 @@ import java.util.Properties;
 
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.log4j.Logger;
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
  *
  */
 
 public class HelperMethods {
+	
+	private static Logger logger = Logger.getLogger (HelperMethods.class);;
 	
 	/**
 	 * This method converts an InputStream into a String.
@@ -78,7 +81,10 @@ public class HelperMethods {
 	public static Properties loadPropertiesFromFile (String file) throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		
 		Properties props = new Properties ( );
-			
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug (new File (file).getAbsoluteFile ( ));
+		
 		props.loadFromXML (new FileInputStream (file));
 		
 		return props;

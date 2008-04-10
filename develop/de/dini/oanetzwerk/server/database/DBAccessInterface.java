@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
  *
  */
 
@@ -46,21 +46,24 @@ public interface DBAccessInterface {
 	 * @param string
 	 * @param string2
 	 * @return
+	 * @throws SQLException 
 	 */
-	public abstract ResultSet selectObjectEntryId (String repositoryID, String externalOID);
+	public abstract ResultSet selectObjectEntryId (BigDecimal repositoryID, String externalOID) throws SQLException;
 
 	/**
 	 * @param string
 	 * @param string2
+	 * @throws SQLException 
 	 */
 	
-	public abstract ResultSet selectRawRecordData (BigDecimal object_id, Date datestamp);
+	public abstract ResultSet selectRawRecordData (BigDecimal object_id, Date datestamp) throws SQLException;
 
 	/**
 	 * @param string
+	 * @throws SQLException 
 	 */
 	
-	public abstract ResultSet selectRawRecordData (BigDecimal object_id);
+	public abstract ResultSet selectRawRecordData (BigDecimal object_id) throws SQLException;
 
 	/**
 	 * @param metaDataFormat 
@@ -86,10 +89,10 @@ public interface DBAccessInterface {
 			Date repository_datestamp, String repository_identifier, boolean testdata, int failureCounter);
 
 	/**
-	 * @param string
+	 * @param oid
 	 * @return
 	 */
-	public abstract ResultSet getObject (int oid);
+	public abstract ResultSet getObject (BigDecimal oid) throws SQLException;
 
 	/**
 	 * @param repository_id
@@ -104,31 +107,35 @@ public interface DBAccessInterface {
 
 	/**
 	 * @return
+	 * @throws SQLException 
 	 */
 	
-	public abstract ResultSet selectService (BigDecimal service_id);
+	public abstract ResultSet selectService (BigDecimal service_id) throws SQLException;
 	
 	/**
 	 * @return
+	 * @throws SQLException 
 	 */
 	
-	public abstract ResultSet selectService (String name);
+	public abstract ResultSet selectService (String name) throws SQLException;
 	
 	/**
 	 * @param bigDecimal
 	 * @return
+	 * @throws SQLException 
 	 */
 	
-	public abstract ResultSet selectServicesOrder (BigDecimal bigDecimal);
+	public abstract ResultSet selectServicesOrder (BigDecimal bigDecimal) throws SQLException;
 	
 	/**
 	 * @param bigDecimal
 	 * @param bigDecimal2
 	 * @return
+	 * @throws SQLException 
 	 */
 	
 	public abstract ResultSet selectWorkflow (BigDecimal bigDecimal,
-			BigDecimal bigDecimal2);
+			BigDecimal bigDecimal2) throws SQLException;
 	
 	/**
 	 * @param object_id
@@ -234,47 +241,40 @@ public interface DBAccessInterface {
 	public abstract void insertDNBClassification (BigDecimal object_id, String DNB_Categorie) throws SQLException;
 	
 	public abstract void insertDINISetClassification (BigDecimal object_id, BigDecimal DINI_set_id) throws SQLException;
+		
+	public abstract ResultSet selectTitle(BigDecimal oid) throws SQLException;
 	
-//	public abstract void 
+	public abstract ResultSet selectAuthors(BigDecimal oid) throws SQLException;
 	
-//	public abstract ResultSet selectDDCClassificationByDecimal(String decimal) throws SQLException;
+	public abstract ResultSet selectEditors(BigDecimal oid) throws SQLException;
 	
+	public abstract ResultSet selectContributors(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectTitle(BigDecimal oid);
+	public abstract ResultSet selectDescription(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectAuthors(BigDecimal oid);
+	public abstract ResultSet selectIdentifier(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectEditors(BigDecimal oid);
+	public abstract ResultSet selectFormat(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectContributors(BigDecimal oid);
+	public abstract ResultSet selectDateValues(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectDescription(BigDecimal oid);
+	public abstract ResultSet selectTypeValue(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectIdentifier(BigDecimal oid);
+	public abstract ResultSet selectPublisher(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectFormat(BigDecimal oid);
+	public abstract ResultSet selectDDCClassification(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectDateValues(BigDecimal oid);
+	public abstract ResultSet selectDNBClassification(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectTypeValue(BigDecimal oid);
+	public abstract ResultSet selectDINISetClassification(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectPublisher(BigDecimal oid);
+	public abstract ResultSet selectOtherClassification(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectDDCClassification(BigDecimal oid);
+	public abstract ResultSet selectKeywords(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectDNBClassification(BigDecimal oid);
+	public abstract ResultSet selectLanguages(BigDecimal oid) throws SQLException;
 	
-	public abstract ResultSet selectDINISetClassification(BigDecimal oid);
-	
-	public abstract ResultSet selectOtherClassification(BigDecimal oid);
-	
-	public abstract ResultSet selectKeywords(BigDecimal oid);
-	
-	public abstract ResultSet selectLanguages(BigDecimal oid);
-	
-	public abstract ResultSet getRepository (BigDecimal repositoryID);
-	
-	
+	public abstract ResultSet getRepository (BigDecimal repositoryID) throws SQLException;
 	
 	public abstract void deleteTitles(BigDecimal object_id) throws SQLException;
 	

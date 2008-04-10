@@ -17,7 +17,8 @@ import de.dini.oanetzwerk.server.database.DBAccessInterface;
 
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
+ * @author Robin Malitz
  *
  */
 
@@ -25,9 +26,9 @@ public class Services extends AbstractKeyWordHandler implements
 		KeyWord2DatabaseInterface {
 	
 	/**
-	 * @param objectName
-	 * @param rkw
+	 *
 	 */
+	
 	public Services ( ) {
 
 		super (Services.class.getName ( ), RestKeyword.Services);
@@ -55,25 +56,24 @@ public class Services extends AbstractKeyWordHandler implements
 	protected String getKeyWord (String [ ] path) {
 
 		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
-		
-		if (path [2].equalsIgnoreCase ("byName"))
-			this.resultset = db.selectService (new String (path [3]));
-		
-		else 
-			this.resultset = db.selectService (new BigDecimal (path [2]));
-		
-		db.closeConnection ( );
-		
-		this.rms = new RestMessage();
-		StringBuffer sbPath = new StringBuffer();
-		for(String s : path) sbPath.append(s + "/");
-		this.rms.setRestURL(sbPath.toString());
-		this.rms.setKeyword(RestKeyword.Services);
 
 		RestEntrySet entrySet = new RestEntrySet();
 		
 		try {
+			
+			db.createConnection ( );
+			
+			if (path [0].equalsIgnoreCase ("byName"))
+				this.resultset = db.selectService (new String (path [1]));
+			
+			else 
+				this.resultset = db.selectService (new BigDecimal (path [0]));
+			
+			this.rms = new RestMessage();
+			StringBuffer sbPath = new StringBuffer();
+			for(String s : path) sbPath.append (s + "/");
+			this.rms.setRestURL(sbPath.toString());
+			this.rms.setKeyword(RestKeyword.Services);
 			
 			if (resultset.next ( )) {
 				entrySet.addEntry("service_id", Integer.toString (resultset.getInt (1)));
@@ -91,8 +91,10 @@ public class Services extends AbstractKeyWordHandler implements
 			this.rms.setStatus(RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription(ex.toString());
 		
+		} finally {
+			
+			db.closeConnection ( );
 		}
-				
 		
 		return RestXmlCodec.encodeRestMessage(this.rms);
 	}
@@ -158,5 +160,4 @@ public class Services extends AbstractKeyWordHandler implements
 		
 		return RestXmlCodec.encodeRestMessage(this.rms);
 	}
-
 }

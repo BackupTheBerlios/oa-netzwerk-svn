@@ -1,7 +1,6 @@
 /**
  * 
  */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
@@ -19,7 +18,7 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
  *
  */
 
@@ -30,7 +29,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	public Repository ( ) {
 		
-		super (Repository.class.getName ( ), RestKeyword.ObjectEntry);
+		super (Repository.class.getName ( ), RestKeyword.Repository);
 	}
 	
 	/**
@@ -55,15 +54,26 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
 		
-		this.resultset = db.getRepository (new BigDecimal (path [2]));
-		
-		db.closeConnection ( );
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("RepositoryID = " + path [0]);
 		
 		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
+			
+			db.createConnection ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("trying to get resultset");
+			
+			this.resultset = db.getRepository (new BigDecimal (path [0]));
+			
+			if (logger.isDebugEnabled ( )) {
+				
+				logger.debug ("Got resultset");
+			}
+			
 			
 			if (this.resultset.next ( )) {
 				
@@ -86,6 +96,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 			} else {
 				
+				logger.warn ("Nothing found!");
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching Repository found");
 			}
@@ -102,6 +113,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			this.rms.addEntrySet (res);
 			this.resultset = null;
 			res = null;
+			db.closeConnection ( );
 		}
 				
 		return RestXmlCodec.encodeRestMessage (this.rms);

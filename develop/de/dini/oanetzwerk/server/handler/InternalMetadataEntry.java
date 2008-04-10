@@ -6,7 +6,6 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.List;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,12 +19,13 @@ import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.imf.*;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
- * @author Michael Kühn
+ * @author Manuel Klatt-Kafemann
+ * @author Robin Malitz
+ * @author Michael K&uuml;hn
  *
  */
 
@@ -55,7 +55,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		DBAccessInterface db = DBAccess.createDBAccess();
 		db.createConnection();
 
-		BigDecimal object_id = new BigDecimal(path[2]);
+		BigDecimal object_id = new BigDecimal(path[0]);
 		db.setAutoCom(false);
 
 		try {
@@ -121,7 +121,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
-		BigDecimal oid = new BigDecimal (path [2]);
+		BigDecimal oid = new BigDecimal (path [0]);
 		ResultSet rs;
 		
 		try {
@@ -468,25 +468,27 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	}
 
 	/**
+	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
 	
 	@Override
-	protected String postKeyWord (String [ ] path, String data) {
+	protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException {
 
 		//NOT IMPLEMENTED
 		logger.warn ("postInternalMetadataEntry is not implemented");
-		throw new NotImplementedException ( );
+		throw new MethodNotImplementedException ( );
 	}
 
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 */
 	
+	@SuppressWarnings("unused")
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {
 		
-		BigDecimal object_id = new BigDecimal (path [2]);
+		BigDecimal object_id = new BigDecimal (path [0]);
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
@@ -505,7 +507,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		if(strXML == null) {			
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
-			this.rms.setStatusDescription("received no entry 'internalmetadata' :" + data);
+			this.rms.setStatusDescription ("received no entry 'internalmetadata' :" + data);
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
@@ -727,7 +729,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 							DNB_Categorie = rs.getString(1);
 						}
 						// Daten zuordnen
-						db.insertDNBClassification(object_id, DNB_Categorie);
+						db.insertDNBClassification (object_id, DNB_Categorie);
 					}					
 					if (classification instanceof DINISetClassification) {
 						BigDecimal DINI_set_id = null;

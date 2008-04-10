@@ -9,7 +9,7 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
  *
  */
 

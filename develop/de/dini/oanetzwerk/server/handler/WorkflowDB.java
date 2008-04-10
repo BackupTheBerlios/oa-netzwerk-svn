@@ -22,6 +22,7 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 /**
  * @author Michael K&uuml;hn
+ * @author Robin Malitz
  *
  */
 
@@ -29,8 +30,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		KeyWord2DatabaseInterface {
 	
 	/**
-	 * @param objectName
-	 * @param rkw
+	 * 
 	 */
 	
 	public WorkflowDB ( ) {
@@ -61,25 +61,23 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
-		if (path.length < 4)
+		if (path.length < 2)
 			throw new NotEnoughParametersException ("This method needs at least 3 parameters");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
-		
-		this.resultset = db.selectWorkflow (new BigDecimal (path [2]), new BigDecimal (path [3]));
-		
-		db.closeConnection ( );
-		
+
 		RestEntrySet res = new RestEntrySet ( );;
 		
 		try {
+			
+			db.createConnection ( );
+			
+			this.resultset = db.selectWorkflow (new BigDecimal (path [0]), new BigDecimal (path [1]));
 			
 			while (this.resultset.next ( )) {
 				
 				//mapEntry.put ("workflow_id", Integer.toString (resultset.getInt (1)));
 				res.addEntry ("object_id", Integer.toString (this.resultset.getInt (1)));
-				
 			}
 			
 			this.rms.addEntrySet (res);
@@ -94,6 +92,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 			
 		} finally {
 			
+			db.closeConnection ( );
 			this.resultset = null;
 			res = null;
 		}
@@ -188,15 +187,5 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		}
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
-	}
-
-	/**
-	 * @param args
-	 */
-	
-	public static void main (String [ ] args) {
-
-		// TODO Auto-generated method stub
-
 	}
 }

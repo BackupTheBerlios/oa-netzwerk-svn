@@ -4,6 +4,7 @@
 
 package de.dini.oanetzwerk.server.handler;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.log4j.Logger;
@@ -14,7 +15,8 @@ import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
+ * @author Robin Malitz
  *
  */
 
@@ -29,15 +31,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		super (ObjectEntryID.class.getName ( ), RestKeyword.ObjectEntryID);
 	}
 	
-	/**
-	 * @param args
-	 */
-	
-	public static void main (String [ ] args) {
-		
-		//TODO: Testing!!!		
-	}
-
 	/**
 	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
@@ -62,22 +55,22 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
-		if (path.length < 4)
-			throw new NotEnoughParametersException ("This method needs at least 3 parameters: the keyword the repository ID and the external Object ID");
-		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+		if (path.length < 2)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword the repository ID and the external Object ID");
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("RepositoryID = " + path [2] + " || externalOID = " + path [3]);
+			logger.debug ("RepositoryID = " + path [0] + " || externalOID = " + path [1]);
 		
-		this.resultset = db.selectObjectEntryId (path [2], path [3]);
-		
-		db.closeConnection ( );
-		
-		RestEntrySet res = new RestEntrySet ( );
+		RestEntrySet res = null;
+		DBAccessInterface db = DBAccess.createDBAccess ( );
 		
 		try {
+			
+			db.createConnection ( );
+			
+			this.resultset = db.selectObjectEntryId (new BigDecimal (path [0]), new String (path [1]));
+			
+			res = new RestEntrySet ( );
 			
 			if (this.resultset.next ( )) {
 				
@@ -101,11 +94,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			db.rollback ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} finally {
 			
+			db.closeConnection ( );
 			this.rms.addEntrySet (res);
 			this.resultset = null;
 			res = null;

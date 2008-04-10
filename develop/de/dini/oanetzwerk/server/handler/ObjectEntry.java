@@ -23,7 +23,8 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
+ * @author Robin Malitz
  *
  */
 
@@ -46,8 +47,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 		this.rms = new RestMessage (RestKeyword.ObjectEntry);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		return RestXmlCodec.encodeRestMessage (this.rms);	
-		
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -60,22 +60,18 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
-		if (path.length < 3)
+		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("internal OID = " + path [2]);
-		
-		this.resultset = db.getObject (Integer.parseInt (path [2]));
-		
-		db.closeConnection ( );
-		
+				
 		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
+			
+			db.createConnection ( );
+			
+			this.resultset = db.getObject (new BigDecimal (path [0]));
 			
 			if (this.resultset.next ( )) {
 				
@@ -112,6 +108,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 		} finally {
 			
+			db.closeConnection ( );
 			this.rms.addEntrySet (res);
 			this.resultset = null;
 			res = null;

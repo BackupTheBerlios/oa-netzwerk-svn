@@ -21,7 +21,9 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.*;
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
+ * @author Manuel Klatt-Kafemann
+ * @author Robin Malitz
  *
  */
 
@@ -65,47 +67,45 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
-		if (path.length < 3)
+		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the object ID");
 		
-		BigDecimal object_id = new BigDecimal (path [2]);
-		
 		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
-		
-		if (path.length > 3) {
-			
-			Date repository_timestamp = null;
-			
-			try {
-				
-				repository_timestamp = HelperMethods.extract_datestamp (path [3]);
-				
-			} catch (ParseException ex) {
-				
-				logger.error (ex.getLocalizedMessage ( ));
-				ex.printStackTrace ( );
-			}
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("internal OID = " + object_id.toPlainString ( ) + " || Repository-Timestamp = " + repository_timestamp.toString ( ));
-			
-			this.resultset = db.selectRawRecordData (object_id, repository_timestamp);
-			
-		} else {
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("internal OID = " + object_id.toPlainString ( ));
-			
-			this.resultset = db.selectRawRecordData (object_id);
-		}
-		
-		db.closeConnection ( );
-		object_id = null;
-		
-		RestEntrySet res = new RestEntrySet ( );
+		RestEntrySet res = null;
 		
 		try {
+			
+			db.createConnection ( );
+			
+			
+			if (path.length > 1) {
+				
+				Date repository_timestamp = null;
+				
+				try {
+					
+					repository_timestamp = HelperMethods.extract_datestamp (path [3]);
+					
+				} catch (ParseException ex) {
+					
+					logger.error (ex.getLocalizedMessage ( ));
+					ex.printStackTrace ( );
+				}
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("internal OID = " + path [0] + " || Repository-Timestamp = " + repository_timestamp.toString ( ));
+				
+				this.resultset = db.selectRawRecordData (new BigDecimal (path [0]), repository_timestamp);
+				
+			} else {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("internal OID = " + path [0]);
+				
+				this.resultset = db.selectRawRecordData (new BigDecimal (path [0]));
+			}
+			
+			res = new RestEntrySet ( );
 			
 			if (this.resultset.next ( )) {
 				
@@ -131,11 +131,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			db.rollback ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} finally {
 			
+			db.closeConnection ( );
 			this.rms.addEntrySet (res);
 			this.resultset = null;
 			res = null;
@@ -166,16 +168,16 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String putKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
 		
-		if (path.length < 5)
+		if (path.length < 3)
 			throw new NotEnoughParametersException ("This method needs 4 parameters: the keyword, the object ID, the repository timestamp and the metadataformat");
 		
-		BigDecimal object_id = new BigDecimal (path [2]);
+		BigDecimal object_id = new BigDecimal (path [0]);
 		Date repository_timestamp = null;
-		String metaDataFormat = path [4];
+		String metaDataFormat = path [2];
 		
 		try {
 			
-			repository_timestamp = HelperMethods.extract_datestamp (path [3]);
+			repository_timestamp = HelperMethods.extract_datestamp (path [1]);
 			
 		} catch (ParseException ex) {
 			
@@ -205,14 +207,5 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		this.rms.addEntrySet (res);
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
-	}
-	
-	/**
-	 * @param args
-	 */
-	
-	public static void main (String [ ] args) {
-		
-		//TODO: Testing stuff
 	}
 }

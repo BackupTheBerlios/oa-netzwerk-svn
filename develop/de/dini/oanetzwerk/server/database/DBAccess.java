@@ -26,10 +26,10 @@ import com.sybase.jdbc3.jdbc.SybDataSource;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
 
-//import junit.framework.Assert;
-
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
+ * @author Manuel Klatt-Kafemann
+ * @author Robin Malitz
  *
  */
 
@@ -37,14 +37,13 @@ public class DBAccess implements DBAccessInterface {
 	
 	static Logger logger = Logger.getLogger (DBAccess.class);
 	
-	/**
-	 * @param args
-	 */
-	
 	static Connection conn = null;
 	private Properties prop;
 	private DataSource ds;
 	private InitialContext ic2;
+	private DBSelectInterface select;
+
+	private String database;
 	
 	private DBAccess ( ) {
 		
@@ -54,8 +53,6 @@ public class DBAccess implements DBAccessInterface {
 		try {
 			
 			this.prop = HelperMethods.loadPropertiesFromFile ("dbprop.xml");
-//			this.prop = HelperMethods.loadPropertiesFromFile ("/home/mkuehn/apache-tomcat-5.5.25/webapps/restserver/WEB-INF/dbprop.xml");
-			//this.prop = HelperMethods.loadPropertiesFromFile ("/usr/local/tomcat/webapps/restserver/WEB-INF/dbprop.xml");
 			ic2 = new InitialContext ( );
 			
 		} catch (InvalidPropertiesFormatException ex) {
@@ -104,6 +101,7 @@ public class DBAccess implements DBAccessInterface {
 			((SybDataSource) source).setDatabaseName (this.prop.getProperty ("dataSourceName")); //oanetztest
 			((SybDataSource) source).setUser (this.prop.getProperty ("user"));
 			((SybDataSource) source).setPassword (this.prop.getProperty ("password"));
+			this.database = "Sybase";
 			
 			try {
 				
@@ -129,6 +127,7 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#createConnection()
 	 */
 	
+	@SuppressWarnings("unchecked")
 	public void createConnection ( ) {
 		
 		try {
@@ -137,8 +136,17 @@ public class DBAccess implements DBAccessInterface {
 				logger.debug ("trying to create a connection");
 			
 			this.ds = (DataSource) this.ic2.lookup (this.prop.getProperty ("dataSourceName"));
-//			Assert.assertNotNull (ds);
 			conn = this.ds.getConnection ( );
+			
+			Class <DBSelectInterface> c = (Class <DBSelectInterface>) Class.forName ("de.dini.oanetzwerk.server.database." + this.database + "DBSelect");
+			this.select = c.newInstance ( );
+			this.select.prepareConnection (this.ds.getConnection ( ));
+			
+			if (logger.isDebugEnabled ( )) {
+				
+				logger.debug (Class.forName ("de.dini.oanetzwerk.server.database." + this.database + "DBSelect") + " is created");
+				logger.debug (this.select.toString ( ));
+			}
 			
 		} catch (NamingException ex) {
 			
@@ -149,6 +157,21 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			
+		} catch (ClassNotFoundException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} catch (InstantiationException ex) {
+			
+			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ));
+			
+		} catch (IllegalAccessException ex) {
+			
+			ex.printStackTrace();
+			logger.error (ex.getLocalizedMessage ( ));
 		}
 		
 		if (logger.isDebugEnabled ( ))
@@ -170,7 +193,7 @@ public class DBAccess implements DBAccessInterface {
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("Could close connection: " + ex.getLocalizedMessage ( ));
+			logger.error ("Could not close connection: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
 		
@@ -227,7 +250,6 @@ public class DBAccess implements DBAccessInterface {
 		
 		return result;
 	}
-
 	
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getConnetion()
@@ -235,96 +257,40 @@ public class DBAccess implements DBAccessInterface {
 	
 	public Connection getConnetion ( ) {
 		
+		if (conn == null)
+			createConnection ( );
+		
 		return conn;
 	}
 	
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
 	 */
 	
-	public ResultSet selectObjectEntryId (String repositoryID, String externalOID) {
+	public ResultSet selectObjectEntryId (BigDecimal repositoryID, String externalOID) throws SQLException {
 		
-		PreparedStatement pstmt = null;
-				
-		try {
-			
-			pstmt = conn.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.repository_identifier = ? and o.repository_id = ?");
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("repositoryID = " + repositoryID + " externalOID = " + externalOID);
-			
-			pstmt.setString (1, externalOID);
-			pstmt.setInt (2, new Integer (repositoryID));
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-		
-		return null;
+		return select.ObjectEntryId (repositoryID, externalOID);
 	}
 
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectRawRecordData(java.lang.String, java.lang.String)
 	 */
 	
-	public ResultSet selectRawRecordData (BigDecimal internalOID, Date datestamp) {
+	public ResultSet selectRawRecordData (BigDecimal internalOID, Date datestamp) throws SQLException {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("entering selectRawRecordData");
-		
-		PreparedStatement pstmt = null;
-		
-		if (logger.isDebugEnabled ( )) {
-			
-			logger.debug ("internalOID: " + internalOID.toPlainString ( ));
-			logger.debug ("datestamp :" + datestamp);
-		}
-		
-		try {
-			
-			if (datestamp == null) {
-				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("1 parameter for select RawRecordData");
-				
-				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND repository_timestamp = (SELECT max(repository_timestamp) FROM dbo.RawData WHERE object_id = ?)");
-				pstmt.setBigDecimal (1, internalOID);
-				pstmt.setBigDecimal (2, internalOID);
-				
-			} else {
-				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("2 parameter for select RawRecordData");
-				
-				pstmt = conn.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ? AND repository_timestamp = ?");
-				pstmt.setBigDecimal (1, internalOID);
-				pstmt.setDate (2, datestamp);
-			}
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException sqlex) {
-			
-			logger.error (sqlex.getLocalizedMessage ( ));
-			sqlex.printStackTrace ( );
-		}
-		
-		return null;
+		return select.RawRecordData (internalOID, datestamp);
 	}
 
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectRawRecordData(java.lang.String)
 	 */
-	public ResultSet selectRawRecordData (BigDecimal internalOID) {
+	
+	public ResultSet selectRawRecordData (BigDecimal internalOID) throws SQLException {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("entering selectRawRecordData with only one parameter");
-		
-		return selectRawRecordData (internalOID, null);
+		return select.RawRecordData (internalOID, null);
 	}
 
 	/**
@@ -402,25 +368,9 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getObject(java.lang.String)
 	 */
 	
-	public ResultSet getObject (int oid) {
+	public ResultSet getObject (BigDecimal oid) throws SQLException {
 		
-		PreparedStatement pstmt = null;
-		
-		try {
-			
-			pstmt = conn.prepareStatement ("SELECT * FROM dbo.Object o WHERE o.object_id = ?");
-			
-			pstmt.setInt (1, oid);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-		
-		return null;
+		return select.Object (oid);
 	}
 
 	/**
@@ -465,100 +415,39 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getService()
 	 */
-	public ResultSet selectService (BigDecimal service_id) {
+	public ResultSet selectService (BigDecimal service_id) throws SQLException {
 		
-		PreparedStatement pstmt = null;
-		
-		try {
-			
-			pstmt = conn.prepareStatement ("SELECT * FROM dbo.Services WHERE service_id = ?");
-			pstmt.setBigDecimal (1, service_id);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-		
-		return null;
+		return select.Service (service_id);
 	}
 	
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getService()
 	 */
-	public ResultSet selectService (String name) {
+	public ResultSet selectService (String name) throws SQLException {
 		
-		PreparedStatement pstmt = null;
-		
-		try {
-			
-			pstmt = conn.prepareStatement ("SELECT * FROM dbo.Services WHERE name = ?");
-			pstmt.setString (1, name);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-		
-		return null;
+		return select.Service (name);
 	}
 
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectServicesOrder(java.math.BigDecimal)
 	 */
-	public ResultSet selectServicesOrder (BigDecimal predecessor_id) {
+	public ResultSet selectServicesOrder (BigDecimal predecessor_id) throws SQLException {
 		
-		PreparedStatement pstmt = null;
-		
-		try {
-			
-			pstmt = conn.prepareStatement ("SELECT predecessor_id FROM dbo.ServicesOrder WHERE service_id = ?");
-			pstmt.setBigDecimal (1, predecessor_id);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.ServicesOrder (predecessor_id);
 	}
 
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
 	 */
-	public ResultSet selectWorkflow (BigDecimal predecessor_id,
-			BigDecimal service_id) {
-
-		PreparedStatement pstmt = null;
+	public ResultSet selectWorkflow (BigDecimal predecessor_id,	BigDecimal service_id) throws SQLException {
 		
-		try {
-			
-			pstmt = conn.prepareStatement ("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? " + 
-											"WHERE (w1.time > (SELECT MAX(time) FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id) " +
-											"OR w1.object_id NOT IN (SELECT object_id FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id)) GROUP BY w1.object_id");
-			
-			//pstmt.setBigDecimal (1, predecessor_id);
-			pstmt.setBigDecimal (1, service_id);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.Workflow (predecessor_id, service_id);
 	}
 
 	/**
@@ -718,135 +607,52 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 		}
 	}
-
-	
-	
-	
 	
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
 	 */
-	public ResultSet selectTitle (BigDecimal object_id) {
-
-		PreparedStatement pstmt = null;
+	
+	public ResultSet selectTitle (BigDecimal object_id) throws SQLException {
 		
-		try {
-			// number ?????
-			pstmt = conn.prepareStatement ("SELECT title, qualifier, lang FROM dbo.Titles WHERE object_id = ?");
-			
-			//pstmt.setBigDecimal (1, predecessor_id);
-			pstmt.setBigDecimal (1, object_id);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.Title (object_id);
 	}
 
 	
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
 	 */
-	public ResultSet selectAuthors (BigDecimal object_id) {
+	public ResultSet selectAuthors (BigDecimal object_id) throws SQLException {
 
-		PreparedStatement pstmt = null;
-		
-		try {
-			// number ?????
-			pstmt = conn.prepareStatement ("SELECT O.number, P.firstname, P.lastname, P.title, P.institution, P.email FROM dbo.Person P JOIN dbo.Object2Author O ON P.person_id = O.person_id WHERE O.object_id = ?");
-			
-			//pstmt.setBigDecimal (1, predecessor_id);
-			pstmt.setBigDecimal (1, object_id);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.Authors (object_id);
 	}
 
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
 	 */
-	public ResultSet selectDescription (BigDecimal object_id) {
-
-		PreparedStatement pstmt = null;
+	public ResultSet selectDescription (BigDecimal object_id) throws SQLException {
 		
-		try {
-			// number ?????
-			pstmt = conn.prepareStatement ("SELECT abstract, lang, number FROM dbo.Description WHERE object_id = ?");
-			
-			//pstmt.setBigDecimal (1, predecessor_id);
-			pstmt.setBigDecimal (1, object_id);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.Description (object_id);
 	}	
 
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
 	 */
-	public ResultSet selectIdentifier (BigDecimal object_id) {
-
-		PreparedStatement pstmt = null;
+	public ResultSet selectIdentifier (BigDecimal object_id) throws SQLException {
 		
-		try {
-			// number ?????
-			pstmt = conn.prepareStatement ("SELECT identifier, number FROM dbo.Identifier WHERE object_id = ?");
-			
-			//pstmt.setBigDecimal (1, predecessor_id);
-			pstmt.setBigDecimal (1, object_id);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.Identifier (object_id);
 	}
 
 	/**
+	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
 	 */
-	public ResultSet selectFormat (BigDecimal object_id) {
-
-		PreparedStatement pstmt = null;
+	public ResultSet selectFormat (BigDecimal object_id) throws SQLException {
 		
-		try {
-			// number ?????
-			pstmt = conn.prepareStatement ("SELECT schema_f, number FROM dbo.Format WHERE object_id = ?");
-			
-			//pstmt.setBigDecimal (1, predecessor_id);
-			pstmt.setBigDecimal (1, object_id);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.Format (object_id);
 	}
 
 	public void insertDescription (BigDecimal object_id, int number,
@@ -928,223 +734,60 @@ public class DBAccess implements DBAccessInterface {
 		}
 	}
 	
-	
-	
-	public ResultSet selectContributors(BigDecimal oid) {
-		PreparedStatement pstmt = null;
+	public ResultSet selectContributors(BigDecimal oid) throws SQLException {
 		
-		try {
-			// number ?????
-			pstmt = conn.prepareStatement ("SELECT O.number, P.firstname, P.lastname, P.title, P.institution, P.email FROM dbo.Person P JOIN dbo.Object2Contributor O ON P.person_id = O.person_id WHERE O.object_id = ?");
-			
-			//pstmt.setBigDecimal (1, predecessor_id);
-			pstmt.setBigDecimal (1, oid);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.Contributors (oid);
 	}
 	
-	public ResultSet selectDateValues(BigDecimal oid) {
-
-		PreparedStatement pstmt = null;
+	public ResultSet selectDateValues(BigDecimal oid) throws SQLException {
 		
-		try {
-			// number ?????
-			pstmt = conn.prepareStatement ("SELECT number, value FROM dbo.DateValues WHERE object_id = ?");
-			pstmt.setBigDecimal (1, oid);
-			return pstmt.executeQuery ( );
-
-		} catch (SQLException ex) {
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
-	}
-
-	
-	
-	public ResultSet selectEditors(BigDecimal oid) {
-
-		PreparedStatement pstmt = null;
-		
-		try {
-			// number ?????
-			pstmt = conn.prepareStatement ("SELECT O.number, P.firstname, P.lastname, P.title, P.institution, P.email FROM dbo.Person P JOIN dbo.Object2Editor O ON P.person_id = O.person_id WHERE O.object_id = ?");
-			pstmt.setBigDecimal (1, oid);
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
-	}
-
-	
-	public ResultSet selectPublisher(BigDecimal oid) {
-
-		PreparedStatement pstmt = null;
-		
-		try {
-			pstmt = conn.prepareStatement ("SELECT name, number FROM dbo.Publisher WHERE object_id = ?");
-			pstmt.setBigDecimal (1, oid);
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
-	}
-
-	public ResultSet selectTypeValue(BigDecimal oid) {
-
-		PreparedStatement pstmt = null;
-		
-		try {
-			// number ?????
-			pstmt = conn.prepareStatement ("SELECT value FROM dbo.TypeValue WHERE object_id = ?");
-			pstmt.setBigDecimal (1, oid);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
-	}
-
-	
-	public ResultSet selectDDCClassification(BigDecimal oid) {
-
-		PreparedStatement pstmt = null;
-		
-		try {
-			pstmt = conn.prepareStatement ("SELECT name, D.DDC_Categorie FROM dbo.DDC_Classification D JOIN dbo.DDC_Categories C ON D.DDC_Categorie = C.DDC_Categorie WHERE D.object_id = ?");
-			pstmt.setBigDecimal (1, oid);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
-	}
-
-	public ResultSet selectDNBClassification(BigDecimal oid) {
-
-		PreparedStatement pstmt = null;
-		
-		try {
-			pstmt = conn.prepareStatement ("SELECT name, D.DNB_Categorie FROM dbo.DNB_Classification D JOIN dbo.DNB_Categories C ON D.DNB_Categorie = C.DNB_Categorie WHERE D.object_id = ?");
-			pstmt.setBigDecimal (1, oid);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.DateValues (oid);
 	}
 	
-
-	public ResultSet selectDINISetClassification(BigDecimal oid) {
-
-		PreparedStatement pstmt = null;
+	public ResultSet selectEditors(BigDecimal oid) throws SQLException {
 		
-		try {
-			pstmt = conn.prepareStatement ("SELECT name, D.DINI_set_id FROM dbo.DINI_Set_Classification D JOIN dbo.DINI_Set_Categories C ON D.DINI_set_id = C.DINI_set_id WHERE D.object_id = ?");
-			pstmt.setBigDecimal (1, oid);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
-	}
-
-	
-	public ResultSet selectOtherClassification(BigDecimal oid) {
-
-		PreparedStatement pstmt = null;
-		
-		try {
-			pstmt = conn.prepareStatement ("SELECT name, D.other_id FROM dbo.Other_Classification D JOIN dbo.Other_Categories C ON D.other_id = C.other_id WHERE D.object_id = ?");
-			pstmt.setBigDecimal (1, oid);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
-	}
-
-	
-	public ResultSet selectKeywords(BigDecimal oid) {
-
-		PreparedStatement pstmt = null;
-		
-		try {
-			pstmt = conn.prepareStatement ("SELECT keyword, lang FROM dbo.Keywords K JOIN dbo.Object2Keywords O ON K.keyword_id = O.keyword_id WHERE O.object_id = ?");
-			pstmt.setBigDecimal (1, oid);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.Editors (oid);
 	}
 	
-	public ResultSet selectLanguages(BigDecimal oid) {
-
-		PreparedStatement pstmt = null;
+	public ResultSet selectPublisher(BigDecimal oid) throws SQLException {
 		
-		try {
-			pstmt = conn.prepareStatement ("SELECT L.language, number FROM dbo.Language L JOIN dbo.Object2Language O ON L.language_id = O.language_id WHERE O.object_id = ?");
-			pstmt.setBigDecimal (1, oid);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-			
-		return null;
+		return select.Publisher (oid);
 	}
 
+	public ResultSet selectTypeValue(BigDecimal oid) throws SQLException {
+		
+		return select.TypeValue (oid);
+	}
+	
+	public ResultSet selectDDCClassification(BigDecimal oid) throws SQLException {
+		
+		return select.DDCClassification (oid);
+	}
+
+	public ResultSet selectDNBClassification(BigDecimal oid) throws SQLException {
+		
+		return select.DNBClassification (oid);
+	}
+	
+	public ResultSet selectDINISetClassification(BigDecimal oid) throws SQLException {
+		
+		return select.DINISetClassification (oid);
+	}
+	
+	public ResultSet selectOtherClassification(BigDecimal oid) throws SQLException {
+		
+		return select.OtherClassification (oid);
+	}
+	
+	public ResultSet selectKeywords(BigDecimal oid) throws SQLException {
+		
+		return select.Keywords (oid);
+	}
+	
+	public ResultSet selectLanguages(BigDecimal oid) throws SQLException {
+		
+		return select.Languages (oid);
+	}
 
 	public void deleteObject2Editor (BigDecimal object_id) throws SQLException {
 
@@ -1523,22 +1166,8 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	public ResultSet selectLatestPerson(String firstname, String lastname) throws SQLException {
-
-		PreparedStatement pstmt = null;
 		
-		try {
-			pstmt = conn.prepareStatement ("SELECT MAX(person_id) FROM dbo.Person WHERE (firstname = ? AND lastname = ?)");
-			pstmt.setString (1, firstname);
-			pstmt.setString (2, lastname);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-			throw ex;
-		}
+		return select.LatestPerson (firstname, lastname);
 	}
 	
 	public void insertObject2Author(BigDecimal object_id, BigDecimal person_id, int number)
@@ -1643,24 +1272,8 @@ public class DBAccess implements DBAccessInterface {
 	
 	
 	public ResultSet selectLatestKeyword(String keyword, String lang) throws SQLException {
-
-		PreparedStatement pstmt = null;
 		
-		try {
-			pstmt = conn.prepareStatement ("SELECT MAX(keyword_id) FROM dbo.Keywords WHERE (keyword = ? AND lang = ?)");
-			pstmt.setString (1, keyword);
-			pstmt.setString (2, lang);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-			throw ex;
-		}
-			
-		
+		return select.LatestKeyword (keyword, lang);
 	}
 	
 	public void insertObject2Keyword(BigDecimal object_id, BigDecimal keyword_id) throws SQLException {
@@ -1687,21 +1300,8 @@ public class DBAccess implements DBAccessInterface {
 	}
 	
 	public ResultSet selectLanguageByName(String language) throws SQLException {
-
-		PreparedStatement pstmt = null;
 		
-		try {
-			pstmt = conn.prepareStatement ("SELECT language_id FROM dbo.Language WHERE (language = ?)");
-			pstmt.setString (1, language);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-			throw ex;
-		}
+		return select.LanguageByName (language);
 	}
 
 	public void insertLanguage(String language) throws SQLException {
@@ -1928,58 +1528,18 @@ public class DBAccess implements DBAccessInterface {
 	}
 	
 	public ResultSet selectLatestOtherCategories(String name) throws SQLException {
-
-		PreparedStatement pstmt = null;
 		
-		try {
-			pstmt = conn.prepareStatement ("SELECT MAX(other_id) FROM dbo.Other_Categories WHERE (name = ?)");
-			pstmt.setString (1, name);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-			throw ex;
-		}
+		return select.LatestOtherCategories (name);
 	}
-	
 	
 	public ResultSet selectDDCCategoriesByCategorie(String categorie) throws SQLException {
 
-		PreparedStatement pstmt = null;
-		
-		try {
-			pstmt = conn.prepareStatement ("SELECT DDC_Categorie FROM dbo.DDC_Categories WHERE (DDC_Categorie = ?)");
-			pstmt.setString (1, categorie);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-			throw ex;
-		}
+		return select.DDCCategoriesByCategorie (categorie);
 	}
 	
 	public ResultSet selectDNBCategoriesByCategorie(String name) throws SQLException {
 
-		PreparedStatement pstmt = null;
-		
-		try {
-			pstmt = conn.prepareStatement ("SELECT DNB_Categorie FROM dbo.DNB_Categories WHERE (DNB_Categorie = ?)");
-			pstmt.setString (1, name);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-			throw ex;
-		}
+		return select.DNBCategoriesByCategorie (name);
 	}
 
 	public void insertDDCClassification(BigDecimal object_id, String ddcValue)
@@ -2068,24 +1628,11 @@ public class DBAccess implements DBAccessInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getRepository(java.math.BigInteger)
 	 */
 	
-//	@Override
-	public ResultSet getRepository (BigDecimal repositoryID) {
+	public ResultSet getRepository (BigDecimal repositoryID) throws SQLException {
 		
-		PreparedStatement pstmt = null;
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("RepositoryID = " + repositoryID.toPlainString ( ));
 		
-		try {
-			
-			pstmt = conn.prepareStatement ("SELECT name, url, oai_url, test_data, harvest_amount, harvest_pause FROM dbo.Repositories WHERE (repository_id = ?)");
-			pstmt.setBigDecimal (1, repositoryID);
-			
-			return pstmt.executeQuery ( );
-			
-		} catch (SQLException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}
-		
-		return null;
+		return select.Repository (repositoryID);
 	}
 } //end of class
