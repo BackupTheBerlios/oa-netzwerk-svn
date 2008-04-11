@@ -25,7 +25,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		connection = conn;
 	}*/
 	
-	@Override
+//	@Override
 	public void prepareConnection (Connection conn) {
 		
 		connection = conn;
@@ -37,7 +37,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		}
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Object (BigDecimal oid) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.Object o WHERE o.object_id = ?");
@@ -47,7 +47,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 
-	@Override
+//	@Override
 	public
 	ResultSet ObjectEntryId (BigDecimal repositoryID, String externalOID) throws SQLException {
 		
@@ -66,7 +66,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet RawRecordData (BigDecimal internalOID, Date datestamp) throws SQLException {
 		
 		if (logger.isDebugEnabled ( )) {
@@ -100,7 +100,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Title (BigDecimal object_id) throws SQLException {
 		
 			// number ?????
@@ -112,7 +112,7 @@ class SybaseDBSelect implements DBSelectInterface {
 			return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Authors (BigDecimal object_id) throws SQLException {
 		
 		// number ?????
@@ -124,7 +124,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Editors (BigDecimal oid) throws SQLException {
 
 		// number ?????
@@ -133,7 +133,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Contributors (BigDecimal oid) throws SQLException {
 		
 		// number ?????
@@ -145,7 +145,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Format (BigDecimal object_id) throws SQLException {
 
 		// number ?????
@@ -160,7 +160,7 @@ class SybaseDBSelect implements DBSelectInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBSelectInterface#identifier(java.math.BigDecimal)
 	 */
-	@Override
+//	@Override
 	public ResultSet Identifier (BigDecimal object_id) throws SQLException {
 
 		this.preparedstmt = connection.prepareStatement ("SELECT identifier, number FROM dbo.Identifier WHERE object_id = ?");
@@ -171,7 +171,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Description (BigDecimal object_id) throws SQLException {
 		
 		// number ?????
@@ -183,7 +183,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet DateValues (BigDecimal oid) throws SQLException {
 		
 		// number ?????
@@ -192,7 +192,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet TypeValue (BigDecimal oid) throws SQLException {
 
 		// number ?????
@@ -202,7 +202,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Publisher (BigDecimal oid) throws SQLException {
 
 		this.preparedstmt = connection.prepareStatement ("SELECT name, number FROM dbo.Publisher WHERE object_id = ?");
@@ -210,7 +210,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet DDCClassification (BigDecimal oid) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT name, D.DDC_Categorie FROM dbo.DDC_Classification D JOIN dbo.DDC_Categories C ON D.DDC_Categorie = C.DDC_Categorie WHERE D.object_id = ?");
@@ -219,7 +219,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet DNBClassification (BigDecimal oid) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT name, D.DNB_Categorie FROM dbo.DNB_Classification D JOIN dbo.DNB_Categories C ON D.DNB_Categorie = C.DNB_Categorie WHERE D.object_id = ?");
@@ -228,7 +228,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet DINISetClassification (BigDecimal oid) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT name, D.DINI_set_id FROM dbo.DINI_Set_Classification D JOIN dbo.DINI_Set_Categories C ON D.DINI_set_id = C.DINI_set_id WHERE D.object_id = ?");
@@ -237,7 +237,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet OtherClassification (BigDecimal oid) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT name, D.other_id FROM dbo.Other_Classification D JOIN dbo.Other_Categories C ON D.other_id = C.other_id WHERE D.object_id = ?");
@@ -246,7 +246,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Keywords (BigDecimal oid) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT keyword, lang FROM dbo.Keywords K JOIN dbo.Object2Keywords O ON K.keyword_id = O.keyword_id WHERE O.object_id = ?");
@@ -255,7 +255,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Languages (BigDecimal oid) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT L.language, number FROM dbo.Language L JOIN dbo.Object2Language O ON L.language_id = O.language_id WHERE O.object_id = ?");
@@ -264,7 +264,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet LatestPerson (String firstname, String lastname) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT MAX(person_id) FROM dbo.Person WHERE (firstname = ? AND lastname = ?)");
@@ -274,7 +274,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet LatestKeyword (String keyword, String lang) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT MAX(keyword_id) FROM dbo.Keywords WHERE (keyword = ? AND lang = ?)");
@@ -284,7 +284,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet LanguageByName (String language) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT language_id FROM dbo.Language WHERE (language = ?)");
@@ -293,7 +293,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet LatestOtherCategories (String name) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT MAX(other_id) FROM dbo.Other_Categories WHERE (name = ?)");
@@ -302,7 +302,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet DDCCategoriesByCategorie (String categorie) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT DDC_Categorie FROM dbo.DDC_Categories WHERE (DDC_Categorie = ?)");
@@ -311,7 +311,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet DNBCategoriesByCategorie (String name) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT DNB_Categorie FROM dbo.DNB_Categories WHERE (DNB_Categorie = ?)");
@@ -320,7 +320,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Repository (BigDecimal repositoryID) throws SQLException {
 		
 		if (logger.isDebugEnabled ( ))
@@ -332,7 +332,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Service (BigDecimal service_id) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.Services WHERE service_id = ?");
@@ -341,7 +341,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Service (String name) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.Services WHERE name = ?");
@@ -350,7 +350,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet ServicesOrder (BigDecimal predecessor_id) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT predecessor_id FROM dbo.ServicesOrder WHERE service_id = ?");
@@ -359,7 +359,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		return this.preparedstmt.executeQuery ( );
 	}
 	
-	@Override
+//	@Override
 	public ResultSet Workflow (BigDecimal predecessor_id,	BigDecimal service_id) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? " + 
