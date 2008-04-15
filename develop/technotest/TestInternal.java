@@ -340,7 +340,8 @@ public class TestInternal {
 
 		System.out.println(imf);
 	
-		delete(new BigDecimal("730"));			
+		get();
+//		delete(new BigDecimal("730"));			
 //		put(imf);
 
 	}
@@ -359,9 +360,10 @@ public class TestInternal {
 		ResultSet rs;
 		DBAccessInterface db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
+		db.setAutoCom(false);
 		
 		// hier die Test-ID
-		BigDecimal oid = new BigDecimal ("633");
+		BigDecimal oid = new BigDecimal ("730");
 		
 		// Auswertung der Title-Informationen
 		

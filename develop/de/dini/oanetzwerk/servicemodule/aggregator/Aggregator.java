@@ -373,7 +373,7 @@ public class Aggregator {
 		String xmlData;
 		xmlData = marshaller.marshall(im);
 		
-		System.out.println("### XMLDATA ###");
+		System.out.println("### XMLDATA GET ###");
 //		System.out.println(xmlData);
 		
 		// Rest-Client initialisieren
@@ -447,6 +447,9 @@ public class Aggregator {
 		
 //		System.exit(-1);
 		
+		System.out.println("### XMLDATA GET ###");
+			
+			
 		try {
 			
 			RestMessage rms = new RestMessage();
