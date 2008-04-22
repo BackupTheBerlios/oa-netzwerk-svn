@@ -12,8 +12,12 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.database.DBAccess;
-import de.dini.oanetzwerk.server.database.DBAccessInterface;
+import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.InsertIntoDB;
+import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
+import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.UpdateInDB;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -21,6 +25,7 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
  * @author Michael K&uuml;hn
@@ -63,33 +68,43 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-				
+		DBAccessNG dbng = new DBAccessNG ( );
+		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			
-			db.createConnection ( );
+			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			this.resultset = db.getObject (new BigDecimal (path [0]));
+			stmtconn.loadStatement (SelectFromDB.Object (stmtconn.connection, new BigDecimal (path [0])));
+			this.result = stmtconn.execute ( );
 			
-			if (this.resultset.next ( )) {
+			if (result.getWarning ( ) != null) {
+				
+				for (Throwable warning : result.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			if (result.getResultSet ( ).next ( )) {
+				
 				
 				if (logger.isDebugEnabled ( )) 
-					logger.debug ("DB returned: \n\tobject_id = " + this.resultset.getInt (1) +
-							"\n\trepository_id = " + this.resultset.getInt (2) +
-							"\n\tharvested = " + this.resultset.getDate (3).toString ( ) +
-							"\n\trepository_datestamp = " + this.resultset.getDate (4).toString ( ) +
-							"\n\trepository_identifier = " + this.resultset.getString (5));
+					logger.debug ("DB returned: \n\tobject_id = " + this.result.getResultSet ( ).getInt (1) +
+							"\n\trepository_id = " + this.result.getResultSet ( ).getInt (2) +
+							"\n\tharvested = " + this.result.getResultSet ( ).getDate (3).toString ( ) +
+							"\n\trepository_datestamp = " + this.result.getResultSet ( ).getDate (4).toString ( ) +
+							"\n\trepository_identifier = " + this.result.getResultSet ( ).getString (5));
 				
 				
-				res.addEntry ("object_id", this.resultset.getBigDecimal ("object_id").toPlainString ( ));
-				res.addEntry ("repository_id", this.resultset.getBigDecimal ("repository_id").toPlainString ( ));
-				res.addEntry ("harvested", this.resultset.getDate ("harvested").toString ( ));
-				res.addEntry ("repository_datestamp", this.resultset.getDate ("repository_datestamp").toString ( ));
-				res.addEntry ("repository_identifier", this.resultset.getString ("repository_identifier"));
-				res.addEntry ("testdata", Boolean.toString (this.resultset.getBoolean ("testdata")));
-				res.addEntry ("failure_counter", Integer.toString (this.resultset.getInt ("failure_counter")));
+				res.addEntry ("object_id", this.result.getResultSet ( ).getBigDecimal ("object_id").toPlainString ( ));
+				res.addEntry ("repository_id", this.result.getResultSet ( ).getBigDecimal ("repository_id").toPlainString ( ));
+				res.addEntry ("harvested", this.result.getResultSet ( ).getDate ("harvested").toString ( ));
+				res.addEntry ("repository_datestamp", this.result.getResultSet ( ).getDate ("repository_datestamp").toString ( ));
+				res.addEntry ("repository_identifier", this.result.getResultSet ( ).getString ("repository_identifier"));
+				res.addEntry ("testdata", Boolean.toString (this.result.getResultSet ( ).getBoolean ("testdata")));
+				res.addEntry ("failure_counter", Integer.toString (this.result.getResultSet ( ).getInt ("failure_counter")));
 				
 				this.rms.setStatus (RestStatusEnum.OK);
 				
@@ -106,12 +121,33 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
+		} catch (WrongStatementException ex) {
+			
+			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WrongStatement);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
 		} finally {
 			
-			db.closeConnection ( );
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
 			this.rms.addEntrySet (res);
-			this.resultset = null;
 			res = null;
+			this.result = null;
+			dbng = null;
 		}
 				
 		return RestXmlCodec.encodeRestMessage (this.rms);
@@ -187,24 +223,41 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 		Date harvested = HelperMethods.today ( );
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
 		
-		this.resultset = db.updateObject (repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter);
+		DBAccessNG dbng = new DBAccessNG ( );		
+		MultipleStatementConnection stmtconn = null;
 		
-		db.closeConnection ( );
+//		DBAccessInterface db = DBAccess.createDBAccess ( );
+//		db.createConnection ( );
+		
+//		this.resultset = db.updateObject (repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter);
 		
 		this.rms = new RestMessage (RestKeyword.ObjectEntry);
 		res = new RestEntrySet ( );
 		
 		try {
 			
-			if (this.resultset.next ( )) {
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			stmtconn.loadStatement (UpdateInDB.Object (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			this.result = stmtconn.execute ( );
+						
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.commit ( );
+			stmtconn.loadStatement (SelectFromDB.Object (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: object_id = " + this.resultset.getInt (1));
+					logger.debug ("DB returned: object_id = " + this.result.getResultSet ( ).getInt (1));
 				
-				res.addEntry ("oid", Integer.toString (this.resultset.getInt (1)));
+				res.addEntry ("oid", Integer.toString (this.result.getResultSet ( ).getInt (1)));
+				stmtconn.commit ( );
 				this.rms.setStatus (RestStatusEnum.OK);
 				
 			} else {
@@ -220,11 +273,33 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WrongStatement);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
 		} finally {
 			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
 			this.rms.addEntrySet (res);
-			this.resultset = null;
 			res = null;
+			this.result = null;
+			dbng = null;
 		}
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
@@ -293,8 +368,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 		Date harvested = HelperMethods.today ( );
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+		DBAccessNG dbng = new DBAccessNG ( );		
+		MultipleStatementConnection stmtconn = null;
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("The following values will be inserted:\n\tRepository ID = " + repository_id +
@@ -302,22 +377,32 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					"\n\tRepository Datestamp = " + repository_datestamp +
 					"\n\texternal OID = " + repository_identifier);
 		
-		//resultset = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier);
-		this.resultset = db.insertObject (repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter);
-		
-		db.closeConnection ( );
-		
 		this.rms = new RestMessage (RestKeyword.ObjectEntry);
 		res = new RestEntrySet ( );
 		
 		try {
 			
-			if (this.resultset.next ( )) {
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			stmtconn.loadStatement (InsertIntoDB.Object (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.commit ( );
+			stmtconn.loadStatement (SelectFromDB.Object (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: object_id = " + this.resultset.getInt (1));
+					logger.debug ("DB returned: object_id = " + this.result.getResultSet ( ).getInt (1));
 				
-				res.addEntry ("oid", Integer.toString (this.resultset.getInt (1)));
+				res.addEntry ("oid", Integer.toString (this.result.getResultSet ( ).getInt (1)));
+				stmtconn.commit ( );
 				this.rms.setStatus (RestStatusEnum.OK);
 				
 			} else {
@@ -333,11 +418,33 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
+		} catch (WrongStatementException ex) {
+
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WrongStatement);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
 		} finally {
 			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
 			this.rms.addEntrySet (res);
-			this.resultset = null;
 			res = null;
+			this.result = null;
+			dbng = null;
 		}
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
