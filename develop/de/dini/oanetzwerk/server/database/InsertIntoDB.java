@@ -46,4 +46,20 @@ public class InsertIntoDB {
 		return preparedstmt;
 	}
 
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @param repository_timestamp
+	 * @param data
+	 * @param metaDataFormat
+	 * @return
+	 */
+	public static PreparedStatement RawRecordData (Connection connection,
+			BigDecimal object_id, Date repository_timestamp, String data,
+			String metaDataFormat) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -68,6 +68,22 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
+		BigDecimal objectEntryID; 
+		
+		try {
+			
+			objectEntryID = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
 		DBAccessNG dbng = new DBAccessNG ( );
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
@@ -76,10 +92,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (SelectFromDB.Object (stmtconn.connection, new BigDecimal (path [0])));
+			stmtconn.loadStatement (SelectFromDB.ObjectEntry (stmtconn.connection, objectEntryID));
 			this.result = stmtconn.execute ( );
 			
-			if (result.getWarning ( ) != null) {
+			if (this.result.getWarning ( ) != null) {
 				
 				for (Throwable warning : result.getWarning ( )) {
 					
@@ -87,7 +103,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			if (result.getResultSet ( ).next ( )) {
+			if (this.result.getResultSet ( ).next ( )) {
 				
 				
 				if (logger.isDebugEnabled ( )) 
@@ -125,7 +141,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			this.rms.setStatus (RestStatusEnum.WrongStatement);
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} finally {
@@ -227,11 +243,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		DBAccessNG dbng = new DBAccessNG ( );		
 		MultipleStatementConnection stmtconn = null;
 		
-//		DBAccessInterface db = DBAccess.createDBAccess ( );
-//		db.createConnection ( );
-		
-//		this.resultset = db.updateObject (repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter);
-		
 		this.rms = new RestMessage (RestKeyword.ObjectEntry);
 		res = new RestEntrySet ( );
 		
@@ -248,7 +259,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			}
 			
 			stmtconn.commit ( );
-			stmtconn.loadStatement (SelectFromDB.Object (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			stmtconn.loadStatement (SelectFromDB.ObjectEntry (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getResultSet ( ).next ( )) {
@@ -277,7 +288,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			this.rms.setStatus (RestStatusEnum.WrongStatement);
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} finally {
@@ -393,7 +404,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			}
 			
 			stmtconn.commit ( );
-			stmtconn.loadStatement (SelectFromDB.Object (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			stmtconn.loadStatement (SelectFromDB.ObjectEntry (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getResultSet ( ).next ( )) {
@@ -422,7 +433,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			this.rms.setStatus (RestStatusEnum.WrongStatement);
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} finally {

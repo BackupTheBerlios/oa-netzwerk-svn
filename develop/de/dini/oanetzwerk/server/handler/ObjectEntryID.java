@@ -5,7 +5,6 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.log4j.Logger;
 
@@ -13,6 +12,7 @@ import de.dini.oanetzwerk.server.database.*;
 import de.dini.oanetzwerk.codec.*;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
  * @author Michael K&uuml;hn
@@ -24,7 +24,6 @@ public class ObjectEntryID extends
 AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	static Logger logger = Logger.getLogger (ObjectEntryID.class);
-	private ResultSet resultset;
 	
 	public ObjectEntryID ( ) {
 		
@@ -40,9 +39,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String deleteKeyWord (String [ ] path) throws MethodNotImplementedException {
 
-		//NOT IMPLEMENTED
-		logger.warn ("deleteObjectEntryID is not implemented");
-		throw new MethodNotImplementedException ( );
+		this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -58,26 +57,49 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (path.length < 2)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword the repository ID and the external Object ID");
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("RepositoryID = " + path [0] + " || externalOID = " + path [1]);
-		
-		RestEntrySet res = null;
-		DBAccessInterface db = DBAccess.createDBAccess ( );
+		BigDecimal repositoryID; 
 		
 		try {
 			
-			db.createConnection ( );
+			repositoryID = new BigDecimal (path [0]);
 			
-			this.resultset = db.selectObjectEntryId (new BigDecimal (path [0]), new String (path [1]));
+		} catch (NumberFormatException ex) {
 			
-			res = new RestEntrySet ( );
+			logger.error (path [0] + " is NOT a number!");
 			
-			if (this.resultset.next ( )) {
+			this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		SingleStatementConnection stmtconn = null;
+		RestEntrySet res = new RestEntrySet ( );
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
+			
+			stmtconn.loadStatement (SelectFromDB.ObjectEntryID (stmtconn.connection, repositoryID, new String (path [1])));
+			
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getWarning ( ) != null) {
+				
+				for (Throwable warning : result.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			if (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: internal objectID = " + resultset.getInt ("object_id"));
+					logger.debug ("DB returned: internal objectID = " + this.result.getResultSet ( ).getInt ("object_id"));
 				
-				res.addEntry ("oid", Integer.toString (resultset.getInt ("object_id")));
+				res.addEntry ("oid", Integer.toString (this.result.getResultSet ( ).getInt ("object_id")));
+				
 				this.rms.setStatus (RestStatusEnum.OK);
 				
 			} else {
@@ -94,16 +116,36 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-			db.rollback ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} finally {
 			
-			db.closeConnection ( );
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
 			this.rms.addEntrySet (res);
-			this.resultset = null;
 			res = null;
+			this.result = null;
+			dbng = null;
 		}
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
@@ -118,9 +160,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException {
 
-		//NOT IMPLEMENTED
-		logger.warn ("postObjectEntryID is not implemented");
-		throw new MethodNotImplementedException ( );
+		this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -132,8 +174,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String putKeyWord (String [ ] path, String data) throws MethodNotImplementedException {
 
-		//NOT IMPLEMENTED
-		logger.warn ("putObjectEntryID is not implemented");
-		throw new MethodNotImplementedException ( );
+		this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 }

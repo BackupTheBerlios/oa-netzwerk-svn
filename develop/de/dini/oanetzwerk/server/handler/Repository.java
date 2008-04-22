@@ -8,14 +8,16 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.database.DBAccess;
-import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
  * @author Michael K&uuml;hn
@@ -53,44 +55,61 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 1 parameter: the Repository ID!");
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("RepositoryID = " + path [0]);
+		BigDecimal repositoryID; 
 		
+		try {
+			
+			repositoryID = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			
-			db.createConnection ( );
+			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("trying to get resultset");
+			stmtconn.loadStatement (SelectFromDB.Repository (stmtconn.connection, repositoryID));
 			
-			this.resultset = db.getRepository (new BigDecimal (path [0]));
+			this.result = stmtconn.execute ( );
 			
-			if (logger.isDebugEnabled ( )) {
+			if (this.result.getWarning ( ) != null) {
 				
-				logger.debug ("Got resultset");
+				for (Throwable warning : result.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
 			}
 			
-			
-			if (this.resultset.next ( )) {
+			if (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: \n\tRepository name = " + this.resultset.getString ("name") +
-							"\n\tRepository URL = " + this.resultset.getString ("url") +
-							"\n\tRepository OAI-URL = " + this.resultset.getString ("oai_url") +
-							"\n\tTest Data = " + this.resultset.getBoolean ("test_data") + 
-							"\n\tAmount = " + this.resultset.getInt ("harvest_amount") +
-							"\n\tSleep = " + this.resultset.getInt ("harvest_pause"));				
+					logger.debug ("DB returned: \n\tRepository name = " + this.result.getResultSet ( ).getString ("name") +
+							"\n\tRepository URL = " + this.result.getResultSet ( ).getString ("url") +
+							"\n\tRepository OAI-URL = " + this.result.getResultSet ( ).getString ("oai_url") +
+							"\n\tTest Data = " + this.result.getResultSet ( ).getBoolean ("test_data") + 
+							"\n\tAmount = " + this.result.getResultSet ( ).getInt ("harvest_amount") +
+							"\n\tSleep = " + this.result.getResultSet ( ).getInt ("harvest_pause"));				
 				
-				res.addEntry ("name", this.resultset.getString ("name"));
-				res.addEntry ("url", this.resultset.getString ("url"));
-				res.addEntry ("oai_url", this.resultset.getString ("oai_url"));
-				res.addEntry ("test_data", new Boolean (this.resultset.getBoolean ("test_data")).toString ( ));
-				res.addEntry ("harvest_amount", Integer.toString (this.resultset.getInt ("harvest_amount")));
-				res.addEntry ("harvest_pause", Integer.toString (this.resultset.getInt ("harvest_pause")));
+				res.addEntry ("name", this.result.getResultSet ( ).getString ("name"));
+				res.addEntry ("url", this.result.getResultSet ( ).getString ("url"));
+				res.addEntry ("oai_url", this.result.getResultSet ( ).getString ("oai_url"));
+				res.addEntry ("test_data", new Boolean (this.result.getResultSet ( ).getBoolean ("test_data")).toString ( ));
+				res.addEntry ("harvest_amount", Integer.toString (this.result.getResultSet ( ).getInt ("harvest_amount")));
+				res.addEntry ("harvest_pause", Integer.toString (this.result.getResultSet ( ).getInt ("harvest_pause")));
 				
 				this.rms.setStatus (RestStatusEnum.OK);
 				
@@ -108,12 +127,33 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
+		} catch (WrongStatementException ex) {
+
+			logger.error ("An error occured while processing Get Repository: " + ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
 		} finally {
 			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
 			this.rms.addEntrySet (res);
-			this.resultset = null;
 			res = null;
-			db.closeConnection ( );
+			this.result = null;
+			dbng = null;
 		}
 				
 		return RestXmlCodec.encodeRestMessage (this.rms);

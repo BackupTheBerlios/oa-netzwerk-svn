@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * @author Michael K&uuml;hn
@@ -16,8 +18,9 @@ import java.sql.SQLException;
 
 public class SingleStatementConnection implements StatementConnection {
 	
+	static Logger logger = Logger.getLogger (SingleStatementConnection.class);
 	public final Connection connection;
-	private PreparedStatement singleStatement;
+	private PreparedStatement singleStatement = null;
 	
 	/**
 	 * @param connection
@@ -25,6 +28,9 @@ public class SingleStatementConnection implements StatementConnection {
 	 */
 	
 	protected SingleStatementConnection (Connection dataSourceConnection) throws SQLException {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("SingleStatementConnection Instance will be prepared");
 		
 		this.connection = dataSourceConnection;
 		this.connection.setAutoCommit (true);
@@ -40,12 +46,20 @@ public class SingleStatementConnection implements StatementConnection {
 		
 		if (this.singleStatement == null) {
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("loading Statement");
+			
 			this.singleStatement = pstmt;
 			
 			return true;
 			
-		} else 
+		} else {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("cannot load Statement");
+			
 			return false;
+		}
 	}
 	
 	/**
@@ -57,11 +71,17 @@ public class SingleStatementConnection implements StatementConnection {
 		
 		QueryResult result = new QueryResult ( );
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("executing Statement");
+		
 		this.singleStatement.execute ( );
 		
 		result.setResultSet (this.singleStatement.getResultSet ( ));
 		result.setUpdateCount (this.singleStatement.getUpdateCount ( ));
 		result.setWarning (this.singleStatement.getWarnings ( ));
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Returning Result");
 		
 		return result;
 	}
@@ -72,6 +92,9 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	@Override
 	public void close ( ) throws SQLException {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("closing Statement and Connection");
 		
 		this.singleStatement.close ( );
 		this.singleStatement = null;
@@ -84,6 +107,9 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	@Override
 	protected void finalize ( ) throws Throwable {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("finalizing SingleStatementConnection");
 		
 		this.connection.setAutoCommit (true);
 		this.singleStatement.close ( );

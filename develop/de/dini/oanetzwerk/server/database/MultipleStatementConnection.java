@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * @author Michael K&uuml;hn
@@ -16,6 +18,7 @@ import java.sql.SQLException;
 
 public class MultipleStatementConnection implements StatementConnection {
 	
+	static Logger logger = Logger.getLogger (MultipleStatementConnection.class);
 	public final Connection connection;
 	private PreparedStatement multipleStatement;
 	
@@ -25,7 +28,10 @@ public class MultipleStatementConnection implements StatementConnection {
 	 */
 	
 	protected MultipleStatementConnection (Connection dataSourceConnection) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("MultipleStatementConnection Instance will be prepared");
+		
 		this.connection = dataSourceConnection;
 		this.connection.setAutoCommit (false);
 		this.multipleStatement = null;

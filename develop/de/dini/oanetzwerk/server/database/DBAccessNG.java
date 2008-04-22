@@ -30,6 +30,9 @@ public class DBAccessNG {
 	
 	public DBAccessNG ( ) {
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("DBAccessNG Instance will be prepared");
+		
 		try {
 			
 			this.statementConnection = null;
@@ -45,24 +48,36 @@ public class DBAccessNG {
 	public StatementConnection getSingleStatementConnection ( ) throws WrongStatementException, SQLException {
 		
 		if (this.statementConnection == null) {
+
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Creating new SingleStatementConnection");
 			
 			this.statementConnection = new SingleStatementConnection (this.ds.getConnection ( ));
 			this.isSingeleStatementConnection = true;
+			
+			return this.statementConnection;
 		}
 		
 		if (isSingeleStatementConnection) {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Connection already exists, getting the existing one");
 			
 			return this.statementConnection;
 			
 		} else {
 			
-			throw new WrongStatementException ("");
+			logger.error ("You can not combine SingleStatementConnections and MultipeStatementConnections!");
+			throw new WrongStatementException ("Please use a MultipleStatementConnection");
 		}
 	}
 	
 	public StatementConnection getMultipleStatementConnection ( ) throws WrongStatementException, SQLException {
 		
 		if (this.statementConnection == null) {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Creating new MultipleStatementConnection");
 			
 			this.statementConnection = new MultipleStatementConnection (this.ds.getConnection ( ));
 			this.isSingeleStatementConnection = false;
@@ -72,10 +87,14 @@ public class DBAccessNG {
 		
 		if (isSingeleStatementConnection) {
 			
-			throw new WrongStatementException ("");
+			logger.error ("You can not combine SingleStatementConnections and MultipeStatementConnections!");
+			throw new WrongStatementException ("Please use a SingleStatementConnection");
 			
 		} else {
-		
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Connection already exists, getting the existing one");
+			
 			return this.statementConnection;
 		}
 	}
