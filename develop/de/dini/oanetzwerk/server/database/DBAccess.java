@@ -4,16 +4,12 @@
 
 package de.dini.oanetzwerk.server.database;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.InvalidPropertiesFormatException;
-import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -22,53 +18,33 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 
-import com.sybase.jdbc3.jdbc.SybDataSource;
-
-import de.dini.oanetzwerk.utils.HelperMethods;
-
 /**
  * @author Michael K&uuml;hn
  * @author Manuel Klatt-Kafemann
  * @author Robin Malitz
- *
  */
 
+@Deprecated
 public class DBAccess implements DBAccessInterface {
 	
 	static Logger logger = Logger.getLogger (DBAccess.class);
 	
 	static Connection conn = null;
-	private Properties prop;
 	private DataSource ds;
-	private InitialContext ic2;
+	private Context initCtx;
+	private Context envCtx;
 	private DBSelectInterface select;
+	private DBInsertInterface insert;
 
-	private String database;
+	private String database = "Sybase";
 	
 	private DBAccess ( ) {
-		
-		System.setProperty (Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-		System.setProperty (Context.PROVIDER_URL, "file:///tmp");
-		
+				
 		try {
 			
-			this.prop = HelperMethods.loadPropertiesFromFile ("dbprop.xml");
-			ic2 = new InitialContext ( );
-			
-		} catch (InvalidPropertiesFormatException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-			
-		} catch (FileNotFoundException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-			
-		} catch (IOException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			initCtx = new InitialContext ( );
+			envCtx = (Context) initCtx.lookup ("java:comp/env");
+			ds = (DataSource) envCtx.lookup ("jdbc/oanetztest");
 			
 		} catch (NamingException ex) {
 			
@@ -79,54 +55,14 @@ public class DBAccess implements DBAccessInterface {
 	
 	public static DBAccessInterface createDBAccess ( ) {
 		
-		DBAccess db = new DBAccess ( );
-		db.setDataSource ( );
-		
+		DBAccess db = new DBAccess ( );		
 		return db;
-	}
-		
-	protected void setDataSource ( ) {
-		
-		DataSource source;
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("trying to set DataSource");
-		
-		if (this.prop.getProperty ("DataBase").equals ("Sybase")) {
-			
-			source = new SybDataSource ( );
-			((SybDataSource) source).setDataSourceName (this.prop.getProperty ("dataSourceName"));
-			((SybDataSource) source).setServerName (this.prop.getProperty ("ServerName")); //themis.rz.hu-berlin.de
-			((SybDataSource) source).setPortNumber (new Integer (this.prop.getProperty ("Port"))); //2025
-			((SybDataSource) source).setDatabaseName (this.prop.getProperty ("dataSourceName")); //oanetztest
-			((SybDataSource) source).setUser (this.prop.getProperty ("user"));
-			((SybDataSource) source).setPassword (this.prop.getProperty ("password"));
-			this.database = "Sybase";
-			
-			try {
-				
-				new InitialContext ( ).rebind (this.prop.getProperty ("dataSourceName"), source);
-				
-			} catch (NamingException ex) {
-				
-				logger.error (ex.getLocalizedMessage ( ));
-				ex.printStackTrace ( );
-			}
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("DataSource successfully set");
-			
-		} else {
-			
-			logger.error ("DataBase not supported");
-			System.out.println ("DataBase not supported");
-		}
 	}
 	
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#createConnection()
 	 */
-	
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public void createConnection ( ) {
 		
@@ -135,23 +71,18 @@ public class DBAccess implements DBAccessInterface {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("trying to create a connection");
 			
-			this.ds = (DataSource) this.ic2.lookup (this.prop.getProperty ("dataSourceName"));
-			conn = this.ds.getConnection ( );
-			
-			Class <DBSelectInterface> c = (Class <DBSelectInterface>) Class.forName ("de.dini.oanetzwerk.server.database." + this.database + "DBSelect");
-			this.select = c.newInstance ( );
+			Class <DBSelectInterface> cs = (Class <DBSelectInterface>) Class.forName ("de.dini.oanetzwerk.server.database." + this.database + "DBSelect");
+			Class <DBInsertInterface> ci = (Class <DBInsertInterface>) Class.forName ("de.dini.oanetzwerk.server.database." + this.database + "DBInsert");
+			this.select = cs.newInstance ( );
+			this.insert = ci.newInstance ( );
 			this.select.prepareConnection (this.ds.getConnection ( ));
+			this.insert.prepareConnection (this.ds.getConnection ( ));
 			
 			if (logger.isDebugEnabled ( )) {
 				
-				logger.debug (Class.forName ("de.dini.oanetzwerk.server.database." + this.database + "DBSelect") + " is created");
+				logger.debug (Class.forName ("de.dini.oanetzwerk.server.database.SybaseDBSelect") + " is created");
 				logger.debug (this.select.toString ( ));
 			}
-			
-		} catch (NamingException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
 			
 		} catch (SQLException ex) {
 			
@@ -178,18 +109,41 @@ public class DBAccess implements DBAccessInterface {
 			logger.debug ("Connection sucessfully created");
 	}
 	
+	@Deprecated
+	public void closeStatement ( ) throws SQLException {
+		
+		select.closeStatement ( );
+	}
+	
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#closeConnection()
 	 */
 	
+	@Deprecated
 	public void closeConnection ( ) {
 		
 		try {
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("Trying to close Connection");
-			
-			conn.close ( );
+			if (!conn.isClosed ( )) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("Trying to close Connection");
+				
+				if (!conn.getAutoCommit ( )) {
+					
+					logger.warn ("AutoCommit not enabled, set to true and roled back any pending transaction");
+					rollback ( );
+					setAutoCom (true);
+				}
+				
+				conn.close ( );
+				conn = null;
+				
+			} else {
+				
+				logger.warn ("Connection already closed!");
+				conn = null;
+			}
 			
 		} catch (SQLException ex) {
 			
@@ -200,7 +154,7 @@ public class DBAccess implements DBAccessInterface {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("Connection successfully closed");
 	}
-	
+	@Deprecated
 	public void setAutoCom (boolean ac) {
 		
 		try {
@@ -216,7 +170,7 @@ public class DBAccess implements DBAccessInterface {
 			ex.printStackTrace ( );
 		}
 	}
-	
+	@Deprecated
 	public boolean commit ( ) {
 		
 		boolean result = true;
@@ -233,7 +187,7 @@ public class DBAccess implements DBAccessInterface {
 		
 		return result;
 	}
-
+	@Deprecated
 	public boolean rollback ( ) {
 		
 		boolean result = true;
@@ -254,7 +208,7 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getConnetion()
 	 */
-	
+	@Deprecated
 	public Connection getConnetion ( ) {
 		
 		if (conn == null)
@@ -267,7 +221,7 @@ public class DBAccess implements DBAccessInterface {
 	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
 	 */
-	
+	@Deprecated
 	public ResultSet selectObjectEntryId (BigDecimal repositoryID, String externalOID) throws SQLException {
 		
 		return select.ObjectEntryId (repositoryID, externalOID);
@@ -277,7 +231,7 @@ public class DBAccess implements DBAccessInterface {
 	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectRawRecordData(java.lang.String, java.lang.String)
 	 */
-	
+	@Deprecated
 	public ResultSet selectRawRecordData (BigDecimal internalOID, Date datestamp) throws SQLException {
 		
 		return select.RawRecordData (internalOID, datestamp);
@@ -287,7 +241,7 @@ public class DBAccess implements DBAccessInterface {
 	 * @throws SQLException 
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectRawRecordData(java.lang.String)
 	 */
-	
+	@Deprecated
 	public ResultSet selectRawRecordData (BigDecimal internalOID) throws SQLException {
 		
 		return select.RawRecordData (internalOID, null);
@@ -296,6 +250,7 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertRawRecordData(java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@Deprecated
 	public String insertRawRecordData (BigDecimal internalOID, Date datestamp,
 			String blobbb, String metaDataFormat) {
 		
@@ -317,6 +272,19 @@ public class DBAccess implements DBAccessInterface {
 			logger.error (sqlex.getLocalizedMessage ( ));
 			
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 		
 		return internalOID.toPlainString ( );
@@ -325,7 +293,7 @@ public class DBAccess implements DBAccessInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertObject(int, java.sql.Date, java.sql.Date, java.lang.String)
 	 */
-	
+	@Deprecated
 	public ResultSet insertObject (BigDecimal repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier, boolean testdata, int failureCounter) {
 				
@@ -359,18 +327,32 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
-		
+		//done
 		return null;
 	}
 
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getObject(java.lang.String)
 	 */
-	
+	@Deprecated	
 	public ResultSet getObject (BigDecimal oid) throws SQLException {
 		
 		return select.Object (oid);
+		//done
 	}
 
 	/**
@@ -409,6 +391,19 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 		
 		return null;
@@ -483,6 +478,19 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 		
 		return null;
@@ -520,6 +528,19 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 		
 		return null;
@@ -550,6 +571,19 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -577,6 +611,19 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -605,6 +652,19 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -678,6 +738,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -705,6 +778,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -731,6 +817,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -809,10 +908,24 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
 	public void deletePersonWithoutReference() throws SQLException {
+		
 		PreparedStatement pstmt = null;
 		
 		try {
@@ -834,9 +947,20 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
-		}
-
-		
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
+		}	
 	}
 	
 	public void deleteObject2Contributor (BigDecimal object_id) throws SQLException {
@@ -859,6 +983,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -882,6 +1019,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -906,6 +1056,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -929,6 +1092,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -952,6 +1128,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -975,6 +1164,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -998,6 +1200,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -1021,6 +1236,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -1044,6 +1272,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -1067,6 +1308,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -1090,6 +1344,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -1113,6 +1380,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -1136,6 +1416,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -1162,6 +1455,19 @@ public class DBAccess implements DBAccessInterface {
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -1191,6 +1497,19 @@ public class DBAccess implements DBAccessInterface {
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}	
 
@@ -1216,6 +1535,19 @@ public class DBAccess implements DBAccessInterface {
 			logger.error(sqlex.getLocalizedMessage());
 			sqlex.printStackTrace();
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -1241,11 +1573,21 @@ public class DBAccess implements DBAccessInterface {
 			logger.error(sqlex.getLocalizedMessage());
 			sqlex.printStackTrace();
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}	
-
-
-	
 
 	public void insertKeyword(String keyword, String lang)
 			throws SQLException {
@@ -1267,6 +1609,19 @@ public class DBAccess implements DBAccessInterface {
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -1296,6 +1651,19 @@ public class DBAccess implements DBAccessInterface {
 			logger.error(sqlex.getLocalizedMessage());
 			sqlex.printStackTrace();
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -1323,6 +1691,19 @@ public class DBAccess implements DBAccessInterface {
 			logger.error(sqlex.getLocalizedMessage());
 			sqlex.printStackTrace();
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -1348,6 +1729,19 @@ public class DBAccess implements DBAccessInterface {
 			logger.error(sqlex.getLocalizedMessage());
 			sqlex.printStackTrace();
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}	
 
@@ -1371,6 +1765,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -1394,6 +1801,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -1418,6 +1838,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
@@ -1442,6 +1875,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -1467,6 +1913,19 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -1486,7 +1945,21 @@ public class DBAccess implements DBAccessInterface {
 			sqlex.printStackTrace ( );
 			
 			throw sqlex;
-		}	}
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
+		}	
+	}
 
 	public void insertOtherCategories(String name) throws SQLException {
 		PreparedStatement pstmt = null;
@@ -1503,6 +1976,19 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 
@@ -1523,8 +2009,20 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
-		
 	}
 	
 	public ResultSet selectLatestOtherCategories(String name) throws SQLException {
@@ -1542,25 +2040,10 @@ public class DBAccess implements DBAccessInterface {
 		return select.DNBCategoriesByCategorie (name);
 	}
 
-	public void insertDDCClassification(BigDecimal object_id, String ddcValue)
+	public int insertDDCClassification(BigDecimal object_id, String ddcValue)
 			throws SQLException {
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement ("INSERT INTO dbo.DDC_Classification (object_id, DDC_Categorie) VALUES (?, ?)");
-			pstmt.setBigDecimal(1, object_id);
-			pstmt.setString(2, ddcValue);
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("execute");
-			
-			pstmt.executeUpdate ( );
-			
-		} catch (SQLException sqlex) {
-			
-			logger.error (sqlex.getLocalizedMessage ( ));
-			sqlex.printStackTrace ( );
-		}
 		
+		return insert.DDCClassification (object_id, ddcValue);
 	}
 
 	public void insertDINISetClassification(BigDecimal object_id,
@@ -1580,8 +2063,20 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
-		
 	}
 
 //	public void insertDNBClassification(BigDecimal object_id, BigDecimal DNB_Categorie)
@@ -1602,8 +2097,20 @@ public class DBAccess implements DBAccessInterface {
 			
 			logger.error (sqlex.getLocalizedMessage ( ));
 			sqlex.printStackTrace ( );
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
-		
 	}
 
 	public ResultSet selectDINISetCategoriesByName(String name)
@@ -1621,6 +2128,19 @@ public class DBAccess implements DBAccessInterface {
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			throw ex;
+			
+		} finally {
+			
+			try {
+				
+				pstmt.close ( );
+				pstmt = null;
+				
+			} catch (SQLException ex) {
+				
+				ex.printStackTrace ( );
+				logger.warn (ex.getLocalizedMessage ( ));
+			}	
 		}
 	}
 	
