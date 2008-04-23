@@ -10,10 +10,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( namespace = "http://oanetzwerk.dini.de/" ) 
 public class InternalMetadata {
 
-	List<Title> titles;
+	List<Title> titleList;
 	int titleCounter = 0;
 
-	List<Author> authors;
+	List<Author> authorList;
 	int authorCounter = 0;
 
 	List<Editor> editorList;
@@ -22,15 +22,15 @@ public class InternalMetadata {
 	List<Contributor> contributorList;
 	int contributorCounter = 0;
 	
-	List<Keyword> keywords;
+	List<Keyword> keywordList;
 	
-	List<Description> descriptions;
+	List<Description> descriptionList;
 	int descriptionCounter = 0;
 	
-	List<Publisher> publishers;
+	List<Publisher> publisherList;
 	int publisherCounter = 0;
 
-	List<DateValue> dateValues;
+	List<DateValue> dateValueList;
 	int dateValueCounter = 0;
 	
 	List<Format> formatList;
@@ -48,21 +48,21 @@ public class InternalMetadata {
 	List<Classification> classificationList;
 	
 	public InternalMetadata() {
-		titles = new LinkedList<Title>();
+		titleList = new LinkedList<Title>();
 		titleCounter = 0;
 		
-		authors = new LinkedList<Author>();
+		authorList = new LinkedList<Author>();
 		authorCounter = 0;
 
-		keywords = new LinkedList<Keyword>();
+		keywordList = new LinkedList<Keyword>();
 		
-		descriptions = new LinkedList<Description>();
+		descriptionList = new LinkedList<Description>();
 		descriptionCounter = 0;
 		
-		publishers = new LinkedList<Publisher>();
+		publisherList = new LinkedList<Publisher>();
 		publisherCounter = 0;
 		
-		dateValues = new LinkedList<DateValue>();
+		dateValueList = new LinkedList<DateValue>();
 		dateValueCounter = 0;
 		
 		formatList = new LinkedList<Format>();
@@ -241,7 +241,7 @@ public class InternalMetadata {
 	public int addKeyword(Keyword value) {
 		int result = 0;
 		if (value != null) {
-			this.keywords.add(value);
+			this.keywordList.add(value);
 		}
 		return result;
 	}
@@ -257,7 +257,7 @@ public class InternalMetadata {
 	public int addKeyword(String keyword, String language) {
 		int result = 0;
 		Keyword temp = new Keyword(keyword, language);
-		this.keywords.add(temp);
+		this.keywordList.add(temp);
 		System.out.println(temp);
 		return result;
 	}
@@ -265,7 +265,7 @@ public class InternalMetadata {
 	public int addPublisher(Publisher value) {
 		int result = 0;
 		if (value != null) {
-			this.publishers.add(value);
+			this.publisherList.add(value);
 		}
 		return result;
 	}
@@ -282,7 +282,7 @@ public class InternalMetadata {
 	public int addPublisher(String name, int number) {
 		int result = 0;
 		Publisher temp = new Publisher(name, number);
-		this.publishers.add(temp);
+		this.publisherList.add(temp);
 		System.out.println(temp);
 		return result;
 	}
@@ -291,7 +291,7 @@ public class InternalMetadata {
 	public int addDateValue(DateValue value) {
 		int result = 0;
 		if (value != null) {
-			this.dateValues.add(value);
+			this.dateValueList.add(value);
 		}
 		return result;
 	}
@@ -311,7 +311,7 @@ public class InternalMetadata {
 	public int addDateValue(String dateValue, int number) {
 		int result = 0;
 		DateValue temp = new DateValue(dateValue, number);
-		this.dateValues.add(temp);
+		this.dateValueList.add(temp);
 		System.out.println(temp);
 		return result;
 	}
@@ -425,7 +425,7 @@ public class InternalMetadata {
 	public int addDescription(Description value) {
 		int result = 0;
 		if (value != null) {
-			this.descriptions.add(value);
+			this.descriptionList.add(value);
 		}
 		return result;
 	}
@@ -442,7 +442,7 @@ public class InternalMetadata {
 	public int addDescription(String description, String language, int number) {
 		int result = 0;
 		Description temp = new Description(description,language, number);
-		this.descriptions.add(temp);
+		this.descriptionList.add(temp);
 		
 		System.out.println(temp);
 		
@@ -453,7 +453,7 @@ public class InternalMetadata {
 	public int addTitle(Title title) {
 		int result = 0;
 		if (title != null) {
-			this.titles.add(title);
+			this.titleList.add(title);
 		}
 		return result;
 	}
@@ -476,7 +476,7 @@ public class InternalMetadata {
 		temp.setTitle(title);
 		temp.setQualifier(qualifier);
 		temp.setNumber(number);
-		this.titles.add(temp);
+		this.titleList.add(temp);
 		
 		System.out.println(temp.toString());
 		
@@ -486,7 +486,7 @@ public class InternalMetadata {
 	public int addAuthor(Author author) {
 		int result = 0;
 		if (author != null) {
-			this.authors.add(author);
+			this.authorList.add(author);
 		}
 		return result;
 	}
@@ -521,7 +521,7 @@ public class InternalMetadata {
 		int result = 0;
 		Author temp = new Author();
 		temp.init(original, number);
-		this.authors.add(temp);
+		this.authorList.add(temp);
 		System.out.println(temp.toString());
 		return result;
 	}
@@ -535,11 +535,11 @@ public class InternalMetadata {
 	}
 
 	public List<Author> getAuthors() {
-		return authors;
+		return authorList;
 	}
 
 	public void setAuthors(List<Author> authors) {
-		this.authors = authors;
+		this.authorList = authors;
 	}
 
 	//@XmlElementWrapper
@@ -561,11 +561,11 @@ public class InternalMetadata {
 	}
 
 	public List<DateValue> getDateValues() {
-		return dateValues;
+		return dateValueList;
 	}
 
 	public void setDateValues(List<DateValue> dateValues) {
-		this.dateValues = dateValues;
+		this.dateValueList = dateValues;
 	}
 
 	public int getDescriptionCounter() {
@@ -577,11 +577,11 @@ public class InternalMetadata {
 	}
 
 	public List<Description> getDescriptions() {
-		return descriptions;
+		return descriptionList;
 	}
 
 	public void setDescriptions(List<Description> descriptions) {
-		this.descriptions = descriptions;
+		this.descriptionList = descriptions;
 	}
 
 	public int getFormatCounter() {
@@ -619,11 +619,11 @@ public class InternalMetadata {
 	@XmlElementWrapper( name = "keywords" )
 	@XmlElement ( name = "keyword" )
 	public List<Keyword> getKeywords() {
-		return keywords;
+		return keywordList;
 	}
 
 	public void setKeywords(List<Keyword> keywords) {
-		this.keywords = keywords;
+		this.keywordList = keywords;
 	}
 
 	public int getLanguageCounter() {
@@ -651,11 +651,11 @@ public class InternalMetadata {
 	}
 
 	public List<Publisher> getPublishers() {
-		return publishers;
+		return publisherList;
 	}
 
 	public void setPublishers(List<Publisher> publishers) {
-		this.publishers = publishers;
+		this.publisherList = publishers;
 	}
 
 	public int getTitleCounter() {
@@ -667,11 +667,11 @@ public class InternalMetadata {
 	}
 
 	public List<Title> getTitles() {
-		return titles;
+		return titleList;
 	}
 
 	public void setTitles(List<Title> titles) {
-		this.titles = titles;
+		this.titleList = titles;
 	}
 
 	public int getTypeValueCounter() {
@@ -693,11 +693,11 @@ public class InternalMetadata {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("\n-- titles -- counter " +  titleCounter + " :\n");
-		for(Title title : titles) {
+		for(Title title : titleList) {
 			sb.append(title+"\n");
 		}
 		sb.append("\n-- authors -- counter " +  authorCounter + " :\n");
-		for(Author author : authors) {
+		for(Author author : authorList) {
 			sb.append(author+"\n");
 		}
 		sb.append("\n-- editors -- counter " +  editorCounter + " :\n");
@@ -709,19 +709,19 @@ public class InternalMetadata {
 			sb.append(contributor+"\n");
 		}		
 		sb.append("\n-- keywords:\n");
-		for(Keyword keyword : keywords) {
+		for(Keyword keyword : keywordList) {
 			sb.append(keyword+"\n");
 		}
 		sb.append("\n-- descriptions -- counter " +  descriptionCounter + " :\n");
-		for(Description desc : descriptions) {
+		for(Description desc : descriptionList) {
 			sb.append(desc+"\n");
 		}
 		sb.append("\n-- publishers -- counter " +  publisherCounter + " :\n");
-		for(Publisher publisher : publishers) {
+		for(Publisher publisher : publisherList) {
 			sb.append(publisher+"\n");
 		}
 		sb.append("\n-- dateValues -- counter " +  dateValueCounter + " :\n");
-		for(DateValue dv : dateValues) {
+		for(DateValue dv : dateValueList) {
 			sb.append(dv+"\n");
 		}
 		sb.append("\n-- formatList -- counter " +  formatCounter + " :\n");
