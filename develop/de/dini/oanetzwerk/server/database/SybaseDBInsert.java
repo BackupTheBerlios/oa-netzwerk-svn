@@ -25,7 +25,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	static Logger logger = Logger.getLogger (SybaseDBInsert.class);
 	private PreparedStatement preparedstmt = null;
 	
-	@Override
+//	@Override
 	public void prepareConnection (Connection conn) {
 		
 		connection = conn;
@@ -42,7 +42,7 @@ class SybaseDBInsert implements DBInsertInterface {
 		}
 	}
 	
-	@Override
+//	@Override
 	public void closeStatement ( ) throws SQLException {
 		
 		if (preparedstmt != null) {
@@ -61,7 +61,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertDDCClassification(java.math.BigDecimal, java.lang.String)
 	 */
 	
-	@Override
+//	@Override
 	public int DDCClassification (BigDecimal object_id, String ddcValue)
 			throws SQLException {
 		
@@ -78,7 +78,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertDINISetClassification(java.math.BigDecimal, java.math.BigDecimal)
 	 */
-	@Override
+//	@Override
 	public void insertDINISetClassification (BigDecimal object_id,
 			BigDecimal DINI_set_id) throws SQLException {
 
@@ -89,7 +89,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertDNBClassification(java.math.BigDecimal, java.lang.String)
 	 */
-	@Override
+//	@Override
 	public void insertDNBClassification (BigDecimal object_id,
 			String DNB_Categorie) throws SQLException {
 
@@ -100,7 +100,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertDateValue(java.math.BigDecimal, int, java.sql.Date)
 	 */
-	@Override
+//	@Override
 	public void insertDateValue (BigDecimal object_id, int number, Date value)
 			throws SQLException {
 
@@ -111,7 +111,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertDescription(java.math.BigDecimal, int, java.lang.String)
 	 */
-	@Override
+//	@Override
 	public void insertDescription (BigDecimal object_id, int number,
 			String description) throws SQLException {
 
@@ -122,7 +122,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertFormat(java.math.BigDecimal, int, java.lang.String)
 	 */
-	@Override
+//	@Override
 	public void insertFormat (BigDecimal object_id, int number, String schema_f)
 			throws SQLException {
 
@@ -133,7 +133,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertIdentifier(java.math.BigDecimal, int, java.lang.String)
 	 */
-	@Override
+//	@Override
 	public void insertIdentifier (BigDecimal object_id, int number,
 			String identifier) throws SQLException {
 
@@ -144,7 +144,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertKeyword(java.lang.String, java.lang.String)
 	 */
-	@Override
+//	@Override
 	public void insertKeyword (String keyword, String lang) throws SQLException {
 
 		// TODO Auto-generated method stub
@@ -154,7 +154,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertLanguage(java.lang.String)
 	 */
-	@Override
+//	@Override
 	public void insertLanguage (String language) throws SQLException {
 
 		// TODO Auto-generated method stub
@@ -164,7 +164,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertObject(java.math.BigDecimal, java.sql.Date, java.sql.Date, java.lang.String, boolean, int)
 	 */
-	@Override
+//	@Override
 	public ResultSet insertObject (BigDecimal repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier,
 			boolean testdata, int failureCounter) throws SQLException {
@@ -176,7 +176,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertObject2Author(java.math.BigDecimal, java.math.BigDecimal, int)
 	 */
-	@Override
+//	@Override
 	public void insertObject2Author (BigDecimal object_id,
 			BigDecimal person_id, int number) throws SQLException {
 
@@ -187,7 +187,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertObject2Contributor(java.math.BigDecimal, java.math.BigDecimal, int)
 	 */
-	@Override
+//	@Override
 	public void insertObject2Contributor (BigDecimal object_id,
 			BigDecimal person_id, int number) throws SQLException {
 
@@ -198,7 +198,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertObject2Editor(java.math.BigDecimal, java.math.BigDecimal, int)
 	 */
-	@Override
+//	@Override
 	public void insertObject2Editor (BigDecimal object_id,
 			BigDecimal person_id, int number) throws SQLException {
 
@@ -209,7 +209,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertObject2Keyword(java.math.BigDecimal, java.math.BigDecimal)
 	 */
-	@Override
+//	@Override
 	public void insertObject2Keyword (BigDecimal object_id,
 			BigDecimal keyword_id) throws SQLException {
 
@@ -220,7 +220,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertObject2Language(java.math.BigDecimal, java.math.BigDecimal, int)
 	 */
-	@Override
+//	@Override
 	public void insertObject2Language (BigDecimal object_id,
 			BigDecimal language_id, int number) throws SQLException {
 
@@ -231,7 +231,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertOtherCategories(java.lang.String)
 	 */
-	@Override
+//	@Override
 	public void insertOtherCategories (String name) throws SQLException {
 
 		// TODO Auto-generated method stub
@@ -241,7 +241,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertOtherClassification(java.math.BigDecimal, java.math.BigDecimal)
 	 */
-	@Override
+//	@Override
 	public void insertOtherClassification (BigDecimal object_id,
 			BigDecimal other_id) throws SQLException {
 
@@ -252,7 +252,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertPerson(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	@Override
+//	@Override
 	public void insertPerson (String firstname, String lastname, String title,
 			String institution, String email) throws SQLException {
 
@@ -263,7 +263,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertPublisher(java.math.BigDecimal, int, java.lang.String)
 	 */
-	@Override
+//	@Override
 	public void insertPublisher (BigDecimal object_id, int number, String name)
 			throws SQLException {
 
@@ -274,7 +274,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertRawRecordData(java.math.BigDecimal, java.sql.Date, java.lang.String, java.lang.String)
 	 */
-	@Override
+//	@Override
 	public String insertRawRecordData (BigDecimal internalOID, Date datestamp,
 			String blobbb, String metaDataFormat) throws SQLException {
 
@@ -285,7 +285,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertTitle(java.math.BigDecimal, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	@Override
+//	@Override
 	public ResultSet insertTitle (BigDecimal object_id, String qualifier,
 			String title, String lang) throws SQLException {
 
@@ -296,7 +296,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertTypeValue(java.math.BigDecimal, java.lang.String)
 	 */
-	@Override
+//	@Override
 	public void insertTypeValue (BigDecimal object_id, String value)
 			throws SQLException {
 
@@ -307,7 +307,7 @@ class SybaseDBInsert implements DBInsertInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBInsertInterface#insertWorkflowDBEntry(java.math.BigDecimal, java.sql.Date, java.math.BigDecimal)
 	 */
-	@Override
+//	@Override
 	public ResultSet insertWorkflowDBEntry (BigDecimal object_id, Date time,
 			BigDecimal service_id) throws SQLException {
 

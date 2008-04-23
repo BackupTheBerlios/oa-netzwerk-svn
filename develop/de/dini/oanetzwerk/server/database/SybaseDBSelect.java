@@ -21,7 +21,7 @@ class SybaseDBSelect implements DBSelectInterface {
 	private PreparedStatement preparedstmt = null;
 	
 	@Deprecated
-	@Override
+//	@Override
 	public void prepareConnection (Connection conn) {
 		
 		connection = conn;
@@ -38,7 +38,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		}
 	}
 	@Deprecated
-	@Override
+//	@Override
 	public void closeStatement ( ) throws SQLException {
 		
 		if (preparedstmt != null) {
@@ -52,7 +52,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		preparedstmt = null;
 	}
 	@Deprecated
-	@Override
+//	@Override
 	public ResultSet Object (BigDecimal oid) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.Object o WHERE o.object_id = ?");

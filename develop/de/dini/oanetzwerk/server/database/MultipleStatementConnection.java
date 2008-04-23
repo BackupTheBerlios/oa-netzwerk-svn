@@ -41,7 +41,7 @@ public class MultipleStatementConnection implements StatementConnection {
 	 * @see de.dini.oanetzwerk.server.database.StatementConnection#close()
 	 */
 	
-	@Override
+//	@Override
 	public void close ( ) throws SQLException {
 
 		this.connection.setAutoCommit (true);
@@ -54,7 +54,7 @@ public class MultipleStatementConnection implements StatementConnection {
 	 * @see de.dini.oanetzwerk.server.database.StatementConnection#execute()
 	 */
 	
-	@Override
+//	@Override
 	public QueryResult execute ( ) throws SQLException {
 		
 		QueryResult result = new QueryResult ( );
@@ -98,7 +98,7 @@ public class MultipleStatementConnection implements StatementConnection {
 	 * @see de.dini.oanetzwerk.server.database.StatementConnection#loadStatement(java.sql.PreparedStatement)
 	 */
 	
-	@Override
+//	@Override
 	public boolean loadStatement (PreparedStatement pstmt) {
 
 		this.multipleStatement = pstmt;
