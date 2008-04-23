@@ -13,40 +13,56 @@ import org.apache.log4j.Logger;
  * @author Michael K&uuml;hn
  *
  */
-
+@Deprecated
 class SybaseDBSelect implements DBSelectInterface {
 	
 	private static Connection connection = null;
 	static Logger logger = Logger.getLogger (SybaseDBSelect.class);
 	private PreparedStatement preparedstmt = null;
 	
-	/*public SybaseDBSelect (Connection conn) {
-		
-		connection = conn;
-	}*/
-	
-//	@Override
+	@Deprecated
+	@Override
 	public void prepareConnection (Connection conn) {
 		
 		connection = conn;
-		if (logger.isDebugEnabled ( )) try {
-			logger.debug ("connection prepared: " + connection.getMetaData ( ));
-		} catch (SQLException ex) {
-			// TODO Auto-generated catch block
+		
+		if (logger.isDebugEnabled ( ))
+			
+			try {
+			
+				logger.debug ("connection prepared: " + connection.getMetaData ( ));
+				
+			} catch (SQLException ex) {
+				
 			ex.printStackTrace();
 		}
 	}
-	
-//	@Override
+	@Deprecated
+	@Override
+	public void closeStatement ( ) throws SQLException {
+		
+		if (preparedstmt != null) {
+			
+			preparedstmt.close ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Statement closed!");
+		}
+		
+		preparedstmt = null;
+	}
+	@Deprecated
+	@Override
 	public ResultSet Object (BigDecimal oid) throws SQLException {
 		
 		this.preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.Object o WHERE o.object_id = ?");
 			
 		this.preparedstmt.setBigDecimal (1, oid);
-			
+		
 		return this.preparedstmt.executeQuery ( );
+		//done
 	}
-
+	@Deprecated
 //	@Override
 	public
 	ResultSet ObjectEntryId (BigDecimal repositoryID, String externalOID) throws SQLException {
@@ -64,8 +80,9 @@ class SybaseDBSelect implements DBSelectInterface {
 		preparedstmt.setString (2, externalOID);
 		
 		return preparedstmt.executeQuery ( );
+		//done
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet RawRecordData (BigDecimal internalOID, Date datestamp) throws SQLException {
 		
@@ -99,7 +116,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Title (BigDecimal object_id) throws SQLException {
 		
@@ -111,7 +128,7 @@ class SybaseDBSelect implements DBSelectInterface {
 			
 			return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Authors (BigDecimal object_id) throws SQLException {
 		
@@ -123,7 +140,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Editors (BigDecimal oid) throws SQLException {
 
@@ -132,7 +149,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		this.preparedstmt.setBigDecimal (1, oid);
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Contributors (BigDecimal oid) throws SQLException {
 		
@@ -144,8 +161,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
-//	@Override
+	@Deprecated
 	public ResultSet Format (BigDecimal object_id) throws SQLException {
 
 		// number ?????
@@ -160,6 +176,7 @@ class SybaseDBSelect implements DBSelectInterface {
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBSelectInterface#identifier(java.math.BigDecimal)
 	 */
+	@Deprecated
 //	@Override
 	public ResultSet Identifier (BigDecimal object_id) throws SQLException {
 
@@ -170,7 +187,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Description (BigDecimal object_id) throws SQLException {
 		
@@ -182,7 +199,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet DateValues (BigDecimal oid) throws SQLException {
 		
@@ -191,7 +208,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		this.preparedstmt.setBigDecimal (1, oid);
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet TypeValue (BigDecimal oid) throws SQLException {
 
@@ -201,7 +218,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Publisher (BigDecimal oid) throws SQLException {
 
@@ -209,7 +226,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		this.preparedstmt.setBigDecimal (1, oid);
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet DDCClassification (BigDecimal oid) throws SQLException {
 		
@@ -218,7 +235,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet DNBClassification (BigDecimal oid) throws SQLException {
 		
@@ -227,7 +244,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet DINISetClassification (BigDecimal oid) throws SQLException {
 		
@@ -236,7 +253,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet OtherClassification (BigDecimal oid) throws SQLException {
 		
@@ -245,7 +262,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Keywords (BigDecimal oid) throws SQLException {
 		
@@ -254,7 +271,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Languages (BigDecimal oid) throws SQLException {
 		
@@ -263,7 +280,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet LatestPerson (String firstname, String lastname) throws SQLException {
 		
@@ -273,7 +290,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet LatestKeyword (String keyword, String lang) throws SQLException {
 		
@@ -283,7 +300,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet LanguageByName (String language) throws SQLException {
 		
@@ -292,7 +309,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet LatestOtherCategories (String name) throws SQLException {
 		
@@ -301,7 +318,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet DDCCategoriesByCategorie (String categorie) throws SQLException {
 		
@@ -310,7 +327,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet DNBCategoriesByCategorie (String name) throws SQLException {
 		
@@ -319,7 +336,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Repository (BigDecimal repositoryID) throws SQLException {
 		
@@ -330,8 +347,9 @@ class SybaseDBSelect implements DBSelectInterface {
 		this.preparedstmt.setBigDecimal (1, repositoryID);
 		
 		return this.preparedstmt.executeQuery ( );
+		//done
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Service (BigDecimal service_id) throws SQLException {
 		
@@ -340,7 +358,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Service (String name) throws SQLException {
 		
@@ -349,7 +367,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet ServicesOrder (BigDecimal predecessor_id) throws SQLException {
 		
@@ -358,7 +376,7 @@ class SybaseDBSelect implements DBSelectInterface {
 		
 		return this.preparedstmt.executeQuery ( );
 	}
-	
+	@Deprecated
 //	@Override
 	public ResultSet Workflow (BigDecimal predecessor_id,	BigDecimal service_id) throws SQLException {
 		
@@ -369,5 +387,16 @@ class SybaseDBSelect implements DBSelectInterface {
 		this.preparedstmt.setBigDecimal (1, service_id);
 		
 		return this.preparedstmt.executeQuery ( );
+	}
+	
+	/**
+	 * @see java.lang.Object#finalize()
+	 */
+	@Deprecated
+	@Override
+	protected void finalize ( ) throws Throwable {
+		
+		closeStatement ( );
+		super.finalize ( );
 	}
 }

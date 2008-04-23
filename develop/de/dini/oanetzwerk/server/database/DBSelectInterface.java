@@ -234,4 +234,9 @@ interface DBSelectInterface {
 	 * @param conn
 	 */
 	void prepareConnection (Connection conn);
+
+	/**
+	 * @throws SQLException
+	 */
+	void closeStatement ( ) throws SQLException;
 }
