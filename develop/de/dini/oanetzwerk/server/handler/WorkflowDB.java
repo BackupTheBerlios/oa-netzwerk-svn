@@ -80,6 +80,8 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 				res.addEntry ("object_id", Integer.toString (this.resultset.getInt (1)));
 			}
 			
+			db.closeStatement ( );
+			
 			this.rms.addEntrySet (res);
 			this.rms.setStatus (RestStatusEnum.OK);
 			
@@ -107,10 +109,10 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
 
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+		//DBAccessInterface db = DBAccess.createDBAccess ( );
+		//db.createConnection ( );
 		
-		db.closeConnection ( );
+		//db.closeConnection ( );
 		this.rms.setStatus (RestStatusEnum.UNKNOWN_ERROR);
 		return RestXmlCodec.encodeRestMessage (rms);
 	}

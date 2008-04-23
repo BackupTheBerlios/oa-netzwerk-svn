@@ -82,8 +82,12 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			db.deleteOther_Categories();
 
 			db.commit();
+			
 		} catch (SQLException sqlex) {
+			
 			db.rollback();
+			db.setAutoCom (true);
+			db.closeConnection ( );
 			this.rms = new RestMessage(RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus(RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription("unable to commit: " + sqlex);
@@ -439,7 +443,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				}
 			}
 			
-			
+			db.closeStatement ( );
 
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -767,6 +771,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 
 		} catch (SQLException sqlex) {
 			db.rollback();
+			db.setAutoCom (true);
+			try {
+				db.closeStatement ( );
+			} catch (SQLException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
+			db.closeConnection ( );
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription("unable to commit: " + sqlex);

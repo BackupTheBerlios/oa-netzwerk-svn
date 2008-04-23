@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
@@ -29,7 +30,9 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 
 	protected static Logger logger = Logger.getLogger (AbstractKeyWordHandler.class);
 	protected RestMessage rms;
+	@Deprecated
 	protected ResultSet resultset;
+	protected QueryResult result;
 
 	/**
 	 * This is the standard constructor which calls the super class. 

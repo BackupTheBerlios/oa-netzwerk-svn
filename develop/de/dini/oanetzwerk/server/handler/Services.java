@@ -40,10 +40,10 @@ public class Services extends AbstractKeyWordHandler implements
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
 
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+		//DBAccessInterface db = DBAccess.createDBAccess ( );
+		//db.createConnection ( );
 		
-		db.closeConnection ( );
+		//db.closeConnection ( );
 		
 		return null;
 	}
@@ -79,7 +79,9 @@ public class Services extends AbstractKeyWordHandler implements
 				entrySet.addEntry("service_id", Integer.toString (resultset.getInt (1)));
 				entrySet.addEntry("name", resultset.getString (2));
 			}
-
+			
+			db.closeStatement ( );
+			
 			this.rms.addEntrySet(entrySet);
 			this.rms.setStatus(RestStatusEnum.OK);
 			
@@ -105,8 +107,8 @@ public class Services extends AbstractKeyWordHandler implements
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
 
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+		//DBAccessInterface db = DBAccess.createDBAccess ( );
+		//db.createConnection ( );
 
 		return null;
 	}
@@ -149,12 +151,12 @@ public class Services extends AbstractKeyWordHandler implements
 		
 		entrySet = new RestEntrySet();
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+		//DBAccessInterface db = DBAccess.createDBAccess ( );
+		//db.createConnection ( );
 		
 		//result = bla
 		
-		db.closeConnection ( );
+		//db.closeConnection ( );
 		
 		this.rms.setStatus(RestStatusEnum.OK);
 		

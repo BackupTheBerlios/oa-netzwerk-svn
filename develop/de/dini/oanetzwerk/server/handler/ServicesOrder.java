@@ -30,10 +30,10 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
 
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+	//	DBAccessInterface db = DBAccess.createDBAccess ( );
+	//	db.createConnection ( );
 		
-		db.closeConnection ( );
+	//	db.closeConnection ( );
 		return null;
 	}
 
@@ -50,6 +50,8 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 			db.createConnection ( );
 			
 			this.resultset = db.selectServicesOrder (new BigDecimal (path [0]));
+			
+			db.closeStatement ( );
 			
 		} catch (SQLException ex) {
 			
@@ -69,10 +71,10 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
 
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+//		DBAccessInterface db = DBAccess.createDBAccess ( );
+//		db.createConnection ( );
 		
-		db.closeConnection ( );
+//		db.closeConnection ( );
 		return null;
 	}
 
@@ -82,10 +84,10 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {
 
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+//		DBAccessInterface db = DBAccess.createDBAccess ( );
+//		db.createConnection ( );
 		
-		db.closeConnection ( );
+//		db.closeConnection ( );
 		return null;
 	}
 }
