@@ -7,13 +7,17 @@ package de.dini.oanetzwerk.server.handler;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
-import de.dini.oanetzwerk.server.database.DBAccess;
-import de.dini.oanetzwerk.server.database.DBAccessInterface;
+import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 
 /**
@@ -22,12 +26,10 @@ import de.dini.oanetzwerk.server.database.DBAccessInterface;
  *
  */
 
-public class Services extends AbstractKeyWordHandler implements
-		KeyWord2DatabaseInterface {
+public class Services extends 
+AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	/**
-	 *
-	 */
+	static Logger logger = Logger.getLogger (Services.class);
 	
 	public Services ( ) {
 
@@ -37,15 +39,13 @@ public class Services extends AbstractKeyWordHandler implements
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
+	
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
 
-		//DBAccessInterface db = DBAccess.createDBAccess ( );
-		//db.createConnection ( );
-		
-		//db.closeConnection ( );
-		
-		return null;
+		this.rms = new RestMessage (RestKeyword.ObjectEntry);
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -54,49 +54,112 @@ public class Services extends AbstractKeyWordHandler implements
 	
 	@Override
 	protected String getKeyWord (String [ ] path) {
-
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-
-		RestEntrySet entrySet = new RestEntrySet();
+		
+		BigDecimal service_id;
+		String name = null;
+		
+		if (path [0].equalsIgnoreCase ("byName") && path.length > 1) {
+			
+			name = new String (path [1]);
+			service_id = null;
+			
+		} else {
+			
+			try {
+				
+				service_id = new BigDecimal (path [0]);
+				
+			} catch (NumberFormatException ex) {
+				
+				logger.error (path [0] + " is NOT a number!");
+				
+				this.rms = new RestMessage (RestKeyword.Services);
+				this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+				this.rms.setStatusDescription (path [0] + " is NOT a number!");
+				
+				return RestXmlCodec.encodeRestMessage (this.rms);
+			}
+		}
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		SingleStatementConnection stmtconn = null;
+		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			
-			db.createConnection ( );
+			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			if (path [0].equalsIgnoreCase ("byName"))
-				this.resultset = db.selectService (new String (path [1]));
+			if (service_id == null) {
 			
-			else 
-				this.resultset = db.selectService (new BigDecimal (path [0]));
-			
-			this.rms = new RestMessage();
-			StringBuffer sbPath = new StringBuffer();
-			for(String s : path) sbPath.append (s + "/");
-			this.rms.setRestURL(sbPath.toString());
-			this.rms.setKeyword(RestKeyword.Services);
-			
-			if (resultset.next ( )) {
-				entrySet.addEntry("service_id", Integer.toString (resultset.getInt (1)));
-				entrySet.addEntry("name", resultset.getString (2));
+				stmtconn.loadStatement (SelectFromDB.Services (stmtconn.connection, name));
+				
+			} else {
+				
+				stmtconn.loadStatement (SelectFromDB.Services (stmtconn.connection, service_id));
 			}
 			
-			db.closeStatement ( );
+			this.result = stmtconn.execute ( );
 			
-			this.rms.addEntrySet(entrySet);
-			this.rms.setStatus(RestStatusEnum.OK);
+			if (this.result.getWarning ( ) != null) {
+				
+				for (Throwable warning : result.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			if (this.result.getResultSet ( ).next ( )) {
+				
+				if (logger.isDebugEnabled ( )) 
+					logger.debug ("DB returned: \n\tservice_id = " + this.result.getResultSet ( ).getInt (1) +
+							"\n\tname = " + this.result.getResultSet ( ).getString (2));
+				
+				res.addEntry ("service_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+				res.addEntry ("name", this.result.getResultSet ( ).getString (2));
+				
+				this.rms.setStatus (RestStatusEnum.OK);
+				
+			} else {
+				
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+				this.rms.setStatusDescription ("No matching Service found");
+			}
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get Service: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get Services: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-
 			this.rms.setStatus(RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription(ex.toString());
 		
+		} catch (WrongStatementException ex) {
+			
+			logger.error ("An error occured while processing Get Services: " + ex.getLocalizedMessage ( ));
+			
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
 		} finally {
 			
-			db.closeConnection ( );
-		}
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
+			this.rms.addEntrySet (res);
+			res = null;
+			this.result = null;
+			dbng = null;		}
 		
 		return RestXmlCodec.encodeRestMessage(this.rms);
 	}
@@ -104,13 +167,13 @@ public class Services extends AbstractKeyWordHandler implements
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
+	
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
 
-		//DBAccessInterface db = DBAccess.createDBAccess ( );
-		//db.createConnection ( );
-
-		return null;
+		this.rms = new RestMessage (RestKeyword.Services);
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -148,17 +211,6 @@ public class Services extends AbstractKeyWordHandler implements
 			this.rms.setStatusDescription("no 'name' entry given in request");
 			return RestXmlCodec.encodeRestMessage(this.rms);
 		} 
-		
-		entrySet = new RestEntrySet();
-		
-		//DBAccessInterface db = DBAccess.createDBAccess ( );
-		//db.createConnection ( );
-		
-		//result = bla
-		
-		//db.closeConnection ( );
-		
-		this.rms.setStatus(RestStatusEnum.OK);
 		
 		return RestXmlCodec.encodeRestMessage(this.rms);
 	}

@@ -53,13 +53,39 @@ public class InsertIntoDB {
 	 * @param data
 	 * @param metaDataFormat
 	 * @return
+	 * @throws SQLException 
 	 */
 	public static PreparedStatement RawRecordData (Connection connection,
 			BigDecimal object_id, Date repository_timestamp, String data,
-			String metaDataFormat) {
+			String metaDataFormat) throws SQLException {
 
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.RawData (object_id, repository_timestamp, data, MetaDataFormat) VALUES (?, ?, ?, ?)");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setDate (2, repository_timestamp);
+		preparedstmt.setString (3, data);
+		preparedstmt.setString (4, metaDataFormat);
+		
+		return preparedstmt;
 	}
 
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @param time
+	 * @param service_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement WorkflowDB (Connection connection,
+			BigDecimal object_id, Date time, BigDecimal service_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.WorkflowDB (object_id, time, service_id) VALUES (?, ?, ?)");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setDate (2, time);
+		preparedstmt.setBigDecimal (3, service_id);
+		
+		return preparedstmt;
+	}
 }

@@ -97,23 +97,113 @@ public class SelectFromDB {
 	 * @param internalOID
 	 * @param repository_timestamp
 	 * @return
+	 * @throws SQLException 
 	 */
 	public static PreparedStatement RawRecordData (Connection connection,
-			BigDecimal internalOID, Date repository_timestamp) {
-
-		// TODO Auto-generated method stub
-		return null;
+			BigDecimal internalOID, Date repository_timestamp) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.RawData rd WHERE rd.object_id = ? AND rd.repository_timestamp = ?");
+		preparedstmt.setBigDecimal (1, internalOID);
+		preparedstmt.setDate (2, repository_timestamp);
+		
+		return preparedstmt;
 	}
 
 	/**
 	 * @param connection
 	 * @param internalOID
 	 * @return
+	 * @throws SQLException 
 	 */
 	public static PreparedStatement RawRecordData (Connection connection,
-			BigDecimal internalOID) {
+			BigDecimal internalOID) throws SQLException {
 
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.RawData rd WHERE rd.object_id = ? AND rd.repository_timestamp = (SELECT max(rdmax.repository_timestamp) FROM dbo.RawData rdmax WHERE rdmax.object_id = ?)");
+		preparedstmt.setBigDecimal (1, internalOID);
+		preparedstmt.setBigDecimal (2, internalOID);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param name
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Services (Connection connection, String name) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.Services WHERE name = ?");
+		preparedstmt.setString (1, name);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param objectEntryID
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Services (Connection connection,
+			BigDecimal service_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.Services WHERE service_id = ?");
+		preparedstmt.setBigDecimal (1, service_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param service_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement ServicesOrder (Connection connection,
+			BigDecimal service_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT predecessor_id FROM dbo.ServicesOrder WHERE service_id = ?");
+		preparedstmt.setBigDecimal (1, service_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param service_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement WorkflowDB (Connection connection,
+			BigDecimal service_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? " + 
+				"WHERE (w1.time > (SELECT MAX(time) FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id) " +
+				"OR w1.object_id NOT IN (SELECT object_id FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id)) GROUP BY w1.object_id");
+
+		preparedstmt.setBigDecimal (1, service_id);
+
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @param time
+	 * @param service_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement WorkflowDB (Connection connection,
+			BigDecimal object_id, Date time, BigDecimal service_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT workflow_id FROM dbo.WorkflowDB WHERE object_id = ? AND time = ? AND service_id = ?");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setDate (2, time);
+		preparedstmt.setBigDecimal (3, service_id);
+		
+		return preparedstmt;
 	}
 }

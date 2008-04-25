@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 
 /**
@@ -26,14 +27,21 @@ public class UpdateInDB {
 	 * @param testdata
 	 * @param failureCounter
 	 * @return
+	 * @throws SQLException 
 	 */
 	public static PreparedStatement Object (Connection connection,
 			BigDecimal repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier,
-			boolean testdata, int failureCounter) {
+			boolean testdata, int failureCounter) throws SQLException {
 
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ?, testdata = ?, failure_counter = ? WHERE object_id = ?");
+		preparedstmt.setDate (1, harvested);
+		preparedstmt.setDate (2, repository_datestamp);
+		preparedstmt.setBoolean (3, testdata);
+		preparedstmt.setInt (4, failureCounter);
+		preparedstmt.setBigDecimal (5, repository_id);
+		
+		return preparedstmt;
 	}
 
 }

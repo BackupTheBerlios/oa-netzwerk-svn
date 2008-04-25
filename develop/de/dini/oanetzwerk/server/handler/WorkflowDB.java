@@ -9,8 +9,11 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import de.dini.oanetzwerk.server.database.DBAccess;
-import de.dini.oanetzwerk.server.database.DBAccessInterface;
+import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.InsertIntoDB;
+import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
+import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -18,6 +21,7 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 
 /**
@@ -45,12 +49,10 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+		this.rms = new RestMessage (RestKeyword.WorkflowDB);
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		
-		db.closeConnection ( );
-		this.rms.setStatus (RestStatusEnum.UNKNOWN_ERROR);
-		return RestXmlCodec.encodeRestMessage (rms);
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -61,42 +63,90 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
-		if (path.length < 2)
-			throw new NotEnoughParametersException ("This method needs at least 3 parameters");
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the Service ID");
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-
-		RestEntrySet res = new RestEntrySet ( );;
+		BigDecimal service_id;
 		
 		try {
 			
-			db.createConnection ( );
+			service_id = new BigDecimal (path [0]);
 			
-			this.resultset = db.selectWorkflow (new BigDecimal (path [0]), new BigDecimal (path [1]));
+		} catch (NumberFormatException ex) {
 			
-			while (this.resultset.next ( )) {
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.ObjectEntry);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		SingleStatementConnection stmtconn = null;
+		RestEntrySet res = new RestEntrySet ( );
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
+			
+			stmtconn.loadStatement (SelectFromDB.WorkflowDB (stmtconn.connection, service_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getWarning ( ) != null) {
 				
-				//mapEntry.put ("workflow_id", Integer.toString (resultset.getInt (1)));
-				res.addEntry ("object_id", Integer.toString (this.resultset.getInt (1)));
+				for (Throwable warning : result.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
 			}
 			
-			db.closeStatement ( );
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				if (logger.isDebugEnabled ( )) 
+					logger.debug ("DB returned: \n\tobject_id = " + this.result.getResultSet ( ).getBigDecimal (1));
+				
+				//mapEntry.put ("workflow_id", Integer.toString (resultset.getInt (1)));
+				res.addEntry ("object_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+			}
 			
-			this.rms.addEntrySet (res);
 			this.rms.setStatus (RestStatusEnum.OK);
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get Service: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get WorklflowDB: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
+		} catch (WrongStatementException ex) {
+			
+			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
 		} finally {
 			
-			db.closeConnection ( );
-			this.resultset = null;
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
+			this.rms.addEntrySet (res);
 			res = null;
+			this.result = null;
+			dbng = null;
 		}
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
@@ -108,13 +158,11 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 	
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
-
-		//DBAccessInterface db = DBAccess.createDBAccess ( );
-		//db.createConnection ( );
 		
-		//db.closeConnection ( );
-		this.rms.setStatus (RestStatusEnum.UNKNOWN_ERROR);
-		return RestXmlCodec.encodeRestMessage (rms);
+		this.rms = new RestMessage (RestKeyword.WorkflowDB);
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -134,38 +182,67 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		Iterator <String> it = res.getKeyIterator ( );
 		String key = "";
 		
-		while (it.hasNext ( )) {
+		try {
 			
-			key = it.next ( );
+			while (it.hasNext ( )) {
+				
+				key = it.next ( );
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("key = " + key);
+				
+				if (key.equalsIgnoreCase ("object_id"))
+					object_id = new BigDecimal (res.getValue (key));
+				
+				else if (key.equalsIgnoreCase ("service_id"))
+					service_id = new BigDecimal (res.getValue (key));
+				
+				else continue;
+			}
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("key = " + key);
+		} catch (NumberFormatException ex) {
 			
-			if (key.equalsIgnoreCase ("object_id"))
-				object_id = new BigDecimal (res.getValue (key));
+			logger.error (res.getValue (key) + " is NOT a number!");
 			
-			else if (key.equalsIgnoreCase ("service_id"))
-				service_id = new BigDecimal (res.getValue (key));
+			this.rms = new RestMessage (RestKeyword.WorkflowDB);
+			this.rms.setStatusDescription (res.getValue (key) + " is NOT a number!");
 			
-			else continue;
+			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		this.rms = new RestMessage (RestKeyword.ObjectEntry);
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+		this.rms = new RestMessage (RestKeyword.WorkflowDB);
 		
-		this.resultset = db.insertWorkflowDBEntry (object_id, time, service_id);
-		
-		db.closeConnection ( );
-		
+		DBAccessNG dbng = new DBAccessNG ( );
+		MultipleStatementConnection stmtconn = null;
 		res = new RestEntrySet ( );
 		
 		try {
 			
-			if (resultset.next ( )) {
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			stmtconn.loadStatement (InsertIntoDB.WorkflowDB (stmtconn.connection, object_id, time, service_id));
+			
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.commit ( );
+			stmtconn.loadStatement (SelectFromDB.WorkflowDB (stmtconn.connection, object_id, time, service_id));
+			
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getResultSet ( ).next ( )) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("DB returned: workflow_id = " + this.result.getResultSet ( ).getBigDecimal (1));
 		
-				res.addEntry ("workflow_id", resultset.getBigDecimal (1).toPlainString ( ));
+				res.addEntry ("workflow_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+				stmtconn.commit ( );
+				
 				this.rms.setStatus (RestStatusEnum.OK);
 				
 			} else {
@@ -181,11 +258,33 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
+		} catch (WrongStatementException ex) {
+
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
 		} finally {
 			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
 			this.rms.addEntrySet (res);
-			this.resultset = null;
 			res = null;
+			this.result = null;
+			dbng = null;
 		}
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);

@@ -25,10 +25,10 @@
     <!--appender-ref ref="MeinAppender" /-->
   </logger>
   <root>
-  <!--
     <priority value="INFO" />
-  -->  
+    <!--
     <priority value="DEBUG" />
+    -->
     <appender-ref ref="MeinAppender" />
     <!-- <appender-ref ref="stdout" /> -->
   </root>

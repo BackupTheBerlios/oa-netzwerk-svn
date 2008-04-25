@@ -213,10 +213,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			throw new NotEnoughParametersException ("This method needs 4 parameters: the keyword, the object ID, the repository timestamp and the metadataformat");
 		
 		BigDecimal object_id;
+		Date repository_timestamp;
+		String metaDataFormat = new String (path [2]);
 		
 		try {
 			
 			object_id = new BigDecimal (path [0]);
+			repository_timestamp = HelperMethods.extract_datestamp (path [1]);
 			
 		} catch (NumberFormatException ex) {
 			
@@ -225,20 +228,17 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			this.rms = new RestMessage (RestKeyword.RawRecordData);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 			this.rms.setStatusDescription (path [0] + " is NOT a number!");
-			return RestXmlCodec.encodeRestMessage (this.rms);
-		}
-		
-		Date repository_timestamp = null;
-		String metaDataFormat = path [2];
-		
-		try {
 			
-			repository_timestamp = HelperMethods.extract_datestamp (path [1]);
+			return RestXmlCodec.encodeRestMessage (this.rms);
 			
 		} catch (ParseException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (path [1] + " is NOT a datestamp!");
+			this.rms = new RestMessage (RestKeyword.RawRecordData);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [1] + " is NOT a datestamp!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
 		DBAccessNG dbng = new DBAccessNG ( );		

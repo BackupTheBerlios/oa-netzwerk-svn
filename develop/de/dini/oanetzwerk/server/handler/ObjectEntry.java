@@ -52,6 +52,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 		this.rms = new RestMessage (RestKeyword.ObjectEntry);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -68,7 +69,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
-		BigDecimal objectEntryID; 
+		BigDecimal objectEntryID;
 		
 		try {
 			
@@ -78,9 +79,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			logger.error (path [0] + " is NOT a number!");
 			
-			this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+			this.rms = new RestMessage (RestKeyword.ObjectEntry);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
@@ -105,14 +107,12 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			if (this.result.getResultSet ( ).next ( )) {
 				
-				
 				if (logger.isDebugEnabled ( )) 
-					logger.debug ("DB returned: \n\tobject_id = " + this.result.getResultSet ( ).getInt (1) +
-							"\n\trepository_id = " + this.result.getResultSet ( ).getInt (2) +
+					logger.debug ("DB returned: \n\tobject_id = " + this.result.getResultSet ( ).getBigDecimal (1) +
+							"\n\trepository_id = " + this.result.getResultSet ( ).getBigDecimal (2) +
 							"\n\tharvested = " + this.result.getResultSet ( ).getDate (3).toString ( ) +
 							"\n\trepository_datestamp = " + this.result.getResultSet ( ).getDate (4).toString ( ) +
 							"\n\trepository_identifier = " + this.result.getResultSet ( ).getString (5));
-				
 				
 				res.addEntry ("object_id", this.result.getResultSet ( ).getBigDecimal ("object_id").toPlainString ( ));
 				res.addEntry ("repository_id", this.result.getResultSet ( ).getBigDecimal ("repository_id").toPlainString ( ));
@@ -239,7 +239,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 		Date harvested = HelperMethods.today ( );
 		
-		
 		DBAccessNG dbng = new DBAccessNG ( );		
 		MultipleStatementConnection stmtconn = null;
 		
@@ -255,7 +254,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 						
 			if (this.result.getUpdateCount ( ) < 1) {
 				
-				//warn, error, rollback, nothing????
+				//TODO:warn, error, rollback, nothing????
 			}
 			
 			stmtconn.commit ( );
@@ -410,10 +409,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			if (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: object_id = " + this.result.getResultSet ( ).getInt (1));
+					logger.debug ("DB returned: object_id = " + this.result.getResultSet ( ).getBigDecimal (1));
 				
-				res.addEntry ("oid", Integer.toString (this.result.getResultSet ( ).getInt (1)));
+				res.addEntry ("oid", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
 				stmtconn.commit ( );
+				
 				this.rms.setStatus (RestStatusEnum.OK);
 				
 			} else {

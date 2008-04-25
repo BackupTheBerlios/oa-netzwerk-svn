@@ -56,7 +56,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 1 parameter: the Repository ID!");
+			throw new NotEnoughParametersException ("This method needs at least 2 parameter: the keyword and the Repository ID!");
 		
 		BigDecimal repositoryID; 
 		
