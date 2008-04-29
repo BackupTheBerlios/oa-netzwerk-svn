@@ -125,9 +125,10 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	 * 
 	 * @return the response which will be sent back to the client
 	 * @throws MethodNotImplementedException 
+	 * @throws NotEnoughParametersException 
 	 */
 	
-	abstract protected String deleteKeyWord (String [ ] path) throws MethodNotImplementedException;
+	abstract protected String deleteKeyWord (String [ ] path) throws MethodNotImplementedException, NotEnoughParametersException;
 
 	/**
 	 * This method handles the HTTP-GET Request which selects data.

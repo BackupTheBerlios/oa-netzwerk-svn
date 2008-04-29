@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
  */
 
 @Deprecated
-public class DBAccess implements DBAccessInterface {
+public class DBAccess {
 	
 	static Logger logger = Logger.getLogger (DBAccess.class);
 	
@@ -53,15 +53,12 @@ public class DBAccess implements DBAccessInterface {
 		}
 	}
 	
-	public static DBAccessInterface createDBAccess ( ) {
+	public static DBAccess createDBAccess ( ) {
 		
 		DBAccess db = new DBAccess ( );		
 		return db;
 	}
 	
-	/**
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#createConnection()
-	 */
 	@Deprecated
 	@SuppressWarnings("unchecked")
 	public void createConnection ( ) {
@@ -114,10 +111,6 @@ public class DBAccess implements DBAccessInterface {
 		
 		select.closeStatement ( );
 	}
-	
-	/**
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#closeConnection()
-	 */
 	
 	@Deprecated
 	public void closeConnection ( ) {
@@ -204,10 +197,7 @@ public class DBAccess implements DBAccessInterface {
 		
 		return result;
 	}
-	
-	/**
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getConnetion()
-	 */
+
 	@Deprecated
 	public Connection getConnetion ( ) {
 		
@@ -217,39 +207,25 @@ public class DBAccess implements DBAccessInterface {
 		return conn;
 	}
 	
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectObjectEntryId(java.lang.String, java.lang.String)
-	 */
+/*
 	@Deprecated
 	public ResultSet selectObjectEntryId (BigDecimal repositoryID, String externalOID) throws SQLException {
 		
 		return select.ObjectEntryId (repositoryID, externalOID);
 	}
 
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectRawRecordData(java.lang.String, java.lang.String)
-	 */
 	@Deprecated
 	public ResultSet selectRawRecordData (BigDecimal internalOID, Date datestamp) throws SQLException {
 		
 		return select.RawRecordData (internalOID, datestamp);
 	}
 
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectRawRecordData(java.lang.String)
-	 */
 	@Deprecated
 	public ResultSet selectRawRecordData (BigDecimal internalOID) throws SQLException {
 		
 		return select.RawRecordData (internalOID, null);
 	}
 
-	/**
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertRawRecordData(java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Deprecated
 	public String insertRawRecordData (BigDecimal internalOID, Date datestamp,
 			String blobbb, String metaDataFormat) {
@@ -291,9 +267,6 @@ public class DBAccess implements DBAccessInterface {
 		//done
 	}
 
-	/**
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertObject(int, java.sql.Date, java.sql.Date, java.lang.String)
-	 */
 	@Deprecated
 	public ResultSet insertObject (BigDecimal repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier, boolean testdata, int failureCounter) {
@@ -346,9 +319,6 @@ public class DBAccess implements DBAccessInterface {
 		return null;
 	}
 
-	/**
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getObject(java.lang.String)
-	 */
 	@Deprecated	
 	public ResultSet getObject (BigDecimal oid) throws SQLException {
 		
@@ -356,9 +326,6 @@ public class DBAccess implements DBAccessInterface {
 		//done
 	}
 
-	/**
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#updateObject(int, java.sql.Date, java.sql.Date, java.lang.String)
-	 */
 	
 	public ResultSet updateObject (BigDecimal repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier, boolean testdata, int failureCounter) {
@@ -410,42 +377,26 @@ public class DBAccess implements DBAccessInterface {
 		return null;
 	}
 
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getService()
-	 */
 	public ResultSet selectService (BigDecimal service_id) throws SQLException {
 		
 		return select.Service (service_id);
 	}
 	
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#getService()
-	 */
 	public ResultSet selectService (String name) throws SQLException {
 		
 		return select.Service (name);
 	}
 
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectServicesOrder(java.math.BigDecimal)
-	 */
 	public ResultSet selectServicesOrder (BigDecimal predecessor_id) throws SQLException {
 		
 		return select.ServicesOrder (predecessor_id);
 	}
 
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
-	 */
 	public ResultSet selectWorkflow (BigDecimal predecessor_id,	BigDecimal service_id) throws SQLException {
 		
 		return select.Workflow (predecessor_id, service_id);
 	}
-
+*/
 	/**
 	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#insertWorkflowDBEntry(java.math.BigDecimal, java.sql.Date, java.math.BigDecimal)
 	 */
@@ -669,48 +620,27 @@ public class DBAccess implements DBAccessInterface {
 		}
 	}
 	
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
-	 */
-	
 	public ResultSet selectTitle (BigDecimal object_id) throws SQLException {
 		
 		return select.Title (object_id);
 	}
 
 	
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
-	 */
 	public ResultSet selectAuthors (BigDecimal object_id) throws SQLException {
 
 		return select.Authors (object_id);
 	}
 
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
-	 */
 	public ResultSet selectDescription (BigDecimal object_id) throws SQLException {
 		
 		return select.Description (object_id);
 	}	
 
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
-	 */
 	public ResultSet selectIdentifier (BigDecimal object_id) throws SQLException {
 		
 		return select.Identifier (object_id);
 	}
 
-	/**
-	 * @throws SQLException 
-	 * @see de.dini.oanetzwerk.server.database.DBAccessInterface#selectWorkflow(java.math.BigDecimal, java.math.BigDecimal)
-	 */
 	public ResultSet selectFormat (BigDecimal object_id) throws SQLException {
 		
 		return select.Format (object_id);
@@ -889,7 +819,7 @@ public class DBAccess implements DBAccessInterface {
 		return select.Languages (oid);
 	}
 
-	public void deleteObject2Editor (BigDecimal object_id) throws SQLException {
+/*	public void deleteObject2Editor (BigDecimal object_id) throws SQLException {
 
 		PreparedStatement pstmt = null;
 		
@@ -923,6 +853,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	public void deletePersonWithoutReference() throws SQLException {
@@ -961,7 +892,8 @@ public class DBAccess implements DBAccessInterface {
 				ex.printStackTrace ( );
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
-		}	
+		}
+		//done
 	}
 	
 	public void deleteObject2Contributor (BigDecimal object_id) throws SQLException {
@@ -998,6 +930,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	public void deleteObject2Author (BigDecimal object_id) throws SQLException {
@@ -1034,9 +967,9 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
-
 	public void deleteObject2Language (BigDecimal object_id) throws SQLException {
 
 		PreparedStatement pstmt = null;
@@ -1071,6 +1004,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	public void deleteDDC_Classification (BigDecimal object_id) throws SQLException {
@@ -1107,6 +1041,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	public void deleteDNB_Classification (BigDecimal object_id) throws SQLException {
@@ -1143,6 +1078,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	public void deleteDINI_Set_Classification (BigDecimal object_id) throws SQLException {
@@ -1179,6 +1115,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	public void deleteTypeValue (BigDecimal object_id) throws SQLException {
@@ -1215,10 +1152,11 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 
 	public void deleteDescription (BigDecimal object_id) throws SQLException {
-
+		
 		PreparedStatement pstmt = null;
 		
 		try {
@@ -1251,6 +1189,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	public void deleteIdentifiers (BigDecimal object_id) throws SQLException {
@@ -1287,6 +1226,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	public void deleteDateValues (BigDecimal object_id) throws SQLException {
@@ -1323,6 +1263,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 
 	public void deleteFormats (BigDecimal object_id) throws SQLException {
@@ -1359,6 +1300,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	public void deleteTitles (BigDecimal object_id) throws SQLException {
@@ -1395,6 +1337,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	public void deletePublishers (BigDecimal object_id) throws SQLException {
@@ -1431,8 +1374,9 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
-
+*/
 	public void insertPerson(String firstname,
 			String lastname, String title, String institution, String email)
 			throws SQLException {
@@ -1819,7 +1763,7 @@ public class DBAccess implements DBAccessInterface {
 	}
 
 	
-	public void deleteKeywordsWithoutReference () throws SQLException {
+/*	public void deleteKeywordsWithoutReference () throws SQLException {
 
 		PreparedStatement pstmt = null;
 		
@@ -1853,6 +1797,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 	
 	
@@ -1890,6 +1835,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 
 	
@@ -1928,6 +1874,7 @@ public class DBAccess implements DBAccessInterface {
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
 		}
+		//done
 	}
 
 	public void deleteObject2Keywords(BigDecimal object_id) throws SQLException {
@@ -1959,9 +1906,10 @@ public class DBAccess implements DBAccessInterface {
 				ex.printStackTrace ( );
 				logger.warn (ex.getLocalizedMessage ( ));
 			}	
-		}	
+		}
+		//done
 	}
-
+*/
 	public void insertOtherCategories(String name) throws SQLException {
 		PreparedStatement pstmt = null;
 		try {

@@ -7,8 +7,6 @@ package de.dini.oanetzwerk;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestKeyword;
-import de.dini.oanetzwerk.server.database.DBAccess;
-import de.dini.oanetzwerk.server.database.DBAccessInterface;
 import de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler;
 import de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface;
 
@@ -55,8 +53,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("getRawRecordData");
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		String result = "";
+		//DBAccessInterface db = DBAccess.createDBAccess ( );
+		//String result = "";
 		
 //		if (path.length > 2)
 //			result = db.selectRawRecordData (path [1], path [2]);
@@ -94,7 +92,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("putRawRecordData");
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
+		//DBAccessInterface db = DBAccess.createDBAccess ( );
 //		db.insertRawRecordData (new Integer (path [2]), path [3], data);
 		
 		// muss noch implementiert werden

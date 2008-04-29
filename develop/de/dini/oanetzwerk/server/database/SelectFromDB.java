@@ -19,16 +19,16 @@ public class SelectFromDB {
 	
 	/**
 	 * @param connection
-	 * @param oid 
+	 * @param object_id 
 	 * @return
 	 * @throws SQLException 
 	 */
 	
-	public static PreparedStatement ObjectEntry (Connection connection, BigDecimal oid) throws SQLException {
+	public static PreparedStatement ObjectEntry (Connection connection, BigDecimal object_id) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.Object o WHERE o.object_id = ?");
 		
-		preparedstmt.setBigDecimal (1, oid);
+		preparedstmt.setBigDecimal (1, object_id);
 		
 		return preparedstmt;
 	}
@@ -205,5 +205,245 @@ public class SelectFromDB {
 		preparedstmt.setBigDecimal (3, service_id);
 		
 		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Title (Connection connection, BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT title, qualifier, lang FROM dbo.Titles WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Authors (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT O.number, P.firstname, P.lastname, P.title, P.institution, P.email FROM dbo.Person P JOIN dbo.Object2Author O ON P.person_id = O.person_id WHERE O.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Editors (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT O.number, P.firstname, P.lastname, P.title, P.institution, P.email FROM dbo.Person P JOIN dbo.Object2Editor O ON P.person_id = O.person_id WHERE O.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Contributors (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT O.number, P.firstname, P.lastname, P.title, P.institution, P.email FROM dbo.Person P JOIN dbo.Object2Contributor O ON P.person_id = O.person_id WHERE O.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Format (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT schema_f, number FROM dbo.Format WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Identifier (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT identifier, number FROM dbo.Identifier WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Description (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT abstract, lang, number FROM dbo.Description WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement DateValues (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT number, value FROM dbo.DateValues WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement TypeValues (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT value FROM dbo.TypeValue WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Publisher (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT name, number FROM dbo.Publisher WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement DDCClassification (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT name, D.DDC_Categorie FROM dbo.DDC_Classification D JOIN dbo.DDC_Categories C ON D.DDC_Categorie = C.DDC_Categorie WHERE D.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement DNBClassification (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT name, D.DNB_Categorie FROM dbo.DNB_Classification D JOIN dbo.DNB_Categories C ON D.DNB_Categorie = C.DNB_Categorie WHERE D.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement DINISetClassification (
+			Connection connection, BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT name, D.DINI_set_id FROM dbo.DINI_Set_Classification D JOIN dbo.DINI_Set_Categories C ON D.DINI_set_id = C.DINI_set_id WHERE D.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement OtherClassification (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT name, D.other_id FROM dbo.Other_Classification D JOIN dbo.Other_Categories C ON D.other_id = C.other_id WHERE D.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Keywords (Connection connection,
+			BigDecimal object_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT keyword, lang FROM dbo.Keywords K JOIN dbo.Object2Keywords O ON K.keyword_id = O.keyword_id WHERE O.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement Languages (Connection connection,
+			BigDecimal object_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT L.language, number FROM dbo.Language L JOIN dbo.Object2Language O ON L.language_id = O.language_id WHERE O.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+		
 	}
 }

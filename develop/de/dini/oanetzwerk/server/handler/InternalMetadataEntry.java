@@ -20,6 +20,8 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
+import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 import de.dini.oanetzwerk.utils.imf.*;
 
 /**
@@ -46,70 +48,301 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	}
 
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
 	
 	@Override
-	protected String deleteKeyWord(String[] path) {
-
-		DBAccessInterface db = DBAccess.createDBAccess();
-		db.createConnection();
-
-		BigDecimal object_id = new BigDecimal(path[0]);
-		db.setAutoCom(false);
-
+	protected String deleteKeyWord (String [ ] path) throws NotEnoughParametersException {
+		
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+				
+//		DBAccessInterface db = DBAccess.createDBAccess();
+//		db.createConnection();
+		
+		BigDecimal object_id;
+		
 		try {
-			db.deleteDescription(object_id);
-			db.deleteDateValues(object_id);
-			db.deleteFormats(object_id);
-			db.deleteIdentifiers(object_id);
-			db.deleteTypeValue(object_id);
-			db.deleteTitles(object_id);
-			db.deletePublishers(object_id);
-
-			db.deleteObject2Author(object_id);
-			db.deleteObject2Editor(object_id);
-			db.deleteObject2Contributor(object_id);
-			db.deleteObject2Language(object_id);
-			db.deleteObject2Keywords(object_id);
-			db.deleteOther_Classification(object_id);
-			db.deleteDDC_Classification(object_id);
-			db.deleteDNB_Classification(object_id);
-			db.deleteDINI_Set_Classification(object_id);
-
-			db.deletePersonWithoutReference();
-			db.deleteKeywordsWithoutReference();
-			db.deleteOther_Categories();
-
-			db.commit();
 			
-		} catch (SQLException sqlex) {
+			object_id = new BigDecimal (path [0]);
 			
-			db.rollback();
-			db.setAutoCom (true);
-			db.closeConnection ( );
-			this.rms = new RestMessage(RestKeyword.InternalMetadataEntry);
-			this.rms.setStatus(RestStatusEnum.SQL_ERROR);
-			this.rms.setStatusDescription("unable to commit: " + sqlex);
-			logger.error(sqlex.getLocalizedMessage());
-			sqlex.printStackTrace();
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		MultipleStatementConnection stmtconn = null;
+		RestEntrySet res = new RestEntrySet ( );
+		
+//		db.setAutoCom(false);
+		
+		try {
+			
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			stmtconn.loadStatement (DeleteFromDB.Description (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteDescription(object_id);
+			
+			stmtconn.loadStatement (DeleteFromDB.DateValues (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteDateValues(object_id);
+			
+			stmtconn.loadStatement (DeleteFromDB.Formats (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
 
-			return RestXmlCodec.encodeRestMessage(this.rms);
+			//db.deleteFormats(object_id);
+			stmtconn.loadStatement (DeleteFromDB.Identifiers (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+
+			//db.deleteIdentifiers(object_id);
+			stmtconn.loadStatement (DeleteFromDB.TypeValue (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+
+			//db.deleteTypeValue(object_id);
+			stmtconn.loadStatement (DeleteFromDB.Titles (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+
+			//db.deleteTitles(object_id);
+			stmtconn.loadStatement (DeleteFromDB.Publishers (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deletePublishers(object_id);
+			stmtconn.loadStatement (DeleteFromDB.Object2Author (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+
+			//db.deleteObject2Author(object_id);
+			stmtconn.loadStatement (DeleteFromDB.Object2Editor (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteObject2Editor(object_id);
+			stmtconn.loadStatement (DeleteFromDB.Object2Contributor (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteObject2Contributor(object_id);
+			stmtconn.loadStatement (DeleteFromDB.Object2Language (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteObject2Language(object_id);
+			stmtconn.loadStatement (DeleteFromDB.Object2Keywords (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteObject2Keywords(object_id);
+			stmtconn.loadStatement (DeleteFromDB.Other_Classification (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteOther_Classification(object_id);
+			stmtconn.loadStatement (DeleteFromDB.DDC_Classification (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteDDC_Classification(object_id);
+			stmtconn.loadStatement (DeleteFromDB.DNB_Classification (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteDNB_Classification(object_id);
+			stmtconn.loadStatement (DeleteFromDB.DINI_Set_Classification (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteDINI_Set_Classification(object_id);
+			stmtconn.loadStatement (DeleteFromDB.PersonWithoutReference (stmtconn.connection));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+
+			//db.deletePersonWithoutReference();
+			stmtconn.loadStatement (DeleteFromDB.KeywordsWithoutReference (stmtconn.connection));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteKeywordsWithoutReference();
+			stmtconn.loadStatement (DeleteFromDB.Other_Categories (stmtconn.connection));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
+			//db.deleteOther_Categories();
+			
+			stmtconn.commit ( );
+			//db.commit();
+			
+			res.addEntry("oid", object_id.toPlainString());
+			this.rms.setStatus(RestStatusEnum.OK);
+			this.rms.addEntrySet(res);
+			
+		} catch (SQLException ex) {
+			
+			try {
+				
+				stmtconn.rollback ( );
+				
+			} catch (SQLException ex1) {
+				
+				
+				ex1.printStackTrace ( );
+			}
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+			//db.rollback();
+			//db.setAutoCom (true);
+			//db.closeConnection ( );
+			//this.rms = new RestMessage(RestKeyword.InternalMetadataEntry);
+			//this.rms.setStatus(RestStatusEnum.SQL_ERROR);
+			//this.rms.setStatusDescription("unable to commit: " + sqlex);
+			//logger.error(sqlex.getLocalizedMessage());
+			//sqlex.printStackTrace();
+
+			//return RestXmlCodec.encodeRestMessage(this.rms);
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
+			this.rms.addEntrySet (res);
+			res = null;
+			this.result = null;
+			dbng = null;
 		}
 
-		db.setAutoCom(true);
-		db.closeConnection();
+		//db.setAutoCom(true);
+		//db.closeConnection();
 
 		// RESPOND WITH OK
 
-		this.rms = new RestMessage(RestKeyword.InternalMetadataEntry);
-		RestEntrySet res = new RestEntrySet();
+//		this.rms = new RestMessage(RestKeyword.InternalMetadataEntry);
+//		RestEntrySet res = new RestEntrySet();
 
-		res.addEntry("oid", object_id.toPlainString());
-		this.rms.setStatus(RestStatusEnum.OK);
-		this.rms.addEntrySet(res);
+//		res.addEntry("oid", object_id.toPlainString());
+//		this.rms.setStatus(RestStatusEnum.OK);
+//		this.rms.addEntrySet(res);
 
-		return RestXmlCodec.encodeRestMessage(this.rms);
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -122,16 +355,48 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		// erzeuge imf-Object, das Schrittweise mit Daten befüllt wird
 		InternalMetadata imf = new InternalMetadata();
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
-		
-		BigDecimal oid = new BigDecimal (path [0]);
-		ResultSet rs;
+		BigDecimal oid;
 		
 		try {
+			
+			oid = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		MultipleStatementConnection stmtconn = null;
+		RestEntrySet res = new RestEntrySet ( );
+		
+		try {
+			
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			stmtconn.loadStatement (SelectFromDB.Title (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
 			// Auswertung der Titel
-			rs = db.selectTitle (oid);
-			if (rs == null) {
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Title temp = new Title ( );
+				temp.setTitle (this.result.getResultSet ( ).getString ("title"));
+				temp.setQualifier (this.result.getResultSet ( ).getString ("qualifier"));
+				temp.setLang (this.result.getResultSet ( ).getString ("lang"));
+//				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addTitle (temp);
+			}
+			
+			// Auswertung der Titel
+			//rs = db.selectTitle (oid);
+/*			if (rs == null) {
 				System.out.println("kein Title vorhanden");
 				// logger.warn ("resultset empty!");
 			} else {
@@ -144,329 +409,533 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //						temp.setNumber (rs.getInt ("number"));
 						imf.addTitle (temp);
 				}
-			}
+			}*/
 
 
 			// Auswertung der Autoren
-			rs = db.selectAuthors(oid);
-			if (rs == null) {
-				System.out.println("kein Author vorhanden");
-			} else {
-				System.out.println("Author vorhanden");
-				try {
-					while (rs.next ( )) {
-						Author temp = new Author ( );
-						temp.setNumber(rs.getInt("number"));
-						temp.setFirstname(rs.getString("firstname"));
-						temp.setLastname(rs.getString("lastname"));
-						temp.setInstitution(rs.getString("institution"));
-						temp.setEmail(rs.getString("email"));
-						temp.setTitle(rs.getString("title"));
-						imf.addAuthor (temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
-			}	
+			stmtconn.loadStatement (SelectFromDB.Authors (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Author temp = new Author ( );
+				temp.setNumber(this.result.getResultSet ( ).getInt("number"));
+				temp.setFirstname(this.result.getResultSet ( ).getString("firstname"));
+				temp.setLastname(this.result.getResultSet ( ).getString("lastname"));
+				temp.setInstitution(this.result.getResultSet ( ).getString("institution"));
+				temp.setEmail(this.result.getResultSet ( ).getString("email"));
+				temp.setTitle(this.result.getResultSet ( ).getString("title"));
+				imf.addAuthor (temp);
+			}
+			
+//			rs = db.selectAuthors(oid);
+//			if (rs == null) {
+//				System.out.println("kein Author vorhanden");
+//			} else {
+//				System.out.println("Author vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Author temp = new Author ( );
+//						temp.setNumber(rs.getInt("number"));
+//						temp.setFirstname(rs.getString("firstname"));
+//						temp.setLastname(rs.getString("lastname"));
+//						temp.setInstitution(rs.getString("institution"));
+//						temp.setEmail(rs.getString("email"));
+//						temp.setTitle(rs.getString("title"));
+//						imf.addAuthor (temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}	
 
 
 			// Auswertung der Editoren
-			rs = db.selectEditors(oid);
-			if (rs == null) {
-				System.out.println("kein Editor vorhanden");
-			} else {
-				System.out.println("Editor vorhanden");
-				try {
-					while (rs.next ( )) {
-						Editor temp = new Editor ( );
-						temp.setNumber(rs.getInt("number"));
-						temp.setFirstname(rs.getString("firstname"));
-						temp.setLastname(rs.getString("lastname"));
-						temp.setInstitution(rs.getString("institution"));
-						temp.setEmail(rs.getString("email"));
-						temp.setTitle(rs.getString("title"));
-						imf.addEditor (temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
-			}	
+			stmtconn.loadStatement (SelectFromDB.Editors (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Editor temp = new Editor ( );
+				temp.setNumber(this.result.getResultSet ( ).getInt("number"));
+				temp.setFirstname(this.result.getResultSet ( ).getString("firstname"));
+				temp.setLastname(this.result.getResultSet ( ).getString("lastname"));
+				temp.setInstitution(this.result.getResultSet ( ).getString("institution"));
+				temp.setEmail(this.result.getResultSet ( ).getString("email"));
+				temp.setTitle(this.result.getResultSet ( ).getString("title"));
+				imf.addEditor (temp);
+			}
+//			
+//			rs = db.selectEditors(oid);
+//			if (rs == null) {
+//				System.out.println("kein Editor vorhanden");
+//			} else {
+//				System.out.println("Editor vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Editor temp = new Editor ( );
+//						temp.setNumber(rs.getInt("number"));
+//						temp.setFirstname(rs.getString("firstname"));
+//						temp.setLastname(rs.getString("lastname"));
+//						temp.setInstitution(rs.getString("institution"));
+//						temp.setEmail(rs.getString("email"));
+//						temp.setTitle(rs.getString("title"));
+//						imf.addEditor (temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}	
 			
 
 
 			// Auswertung der Bearbeiter
-			rs = db.selectContributors(oid);
-			if (rs == null) {
-				System.out.println("kein Contirbutor vorhanden");
-			} else {
-				System.out.println("Contributor vorhanden");
-				try {
-					while (rs.next ( )) {
-						Contributor temp = new Contributor ( );
-						temp.setNumber(rs.getInt("number"));
-						temp.setFirstname(rs.getString("firstname"));
-						temp.setLastname(rs.getString("lastname"));
-						temp.setInstitution(rs.getString("institution"));
-						temp.setEmail(rs.getString("email"));
-						temp.setTitle(rs.getString("title"));
-						imf.addContributor (temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
-			}			
+			stmtconn.loadStatement (SelectFromDB.Contributors (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Contributor temp = new Contributor ( );
+				temp.setNumber(this.result.getResultSet ( ).getInt("number"));
+				temp.setFirstname(this.result.getResultSet ( ).getString("firstname"));
+				temp.setLastname(this.result.getResultSet ( ).getString("lastname"));
+				temp.setInstitution(this.result.getResultSet ( ).getString("institution"));
+				temp.setEmail(this.result.getResultSet ( ).getString("email"));
+				temp.setTitle(this.result.getResultSet ( ).getString("title"));
+				imf.addContributor (temp);
+			}
+
+//			rs = db.selectContributors(oid);
+//			if (rs == null) {
+//				System.out.println("kein Contirbutor vorhanden");
+//			} else {
+//				System.out.println("Contributor vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Contributor temp = new Contributor ( );
+//						temp.setNumber(rs.getInt("number"));
+//						temp.setFirstname(rs.getString("firstname"));
+//						temp.setLastname(rs.getString("lastname"));
+//						temp.setInstitution(rs.getString("institution"));
+//						temp.setEmail(rs.getString("email"));
+//						temp.setTitle(rs.getString("title"));
+//						imf.addContributor (temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}			
 			
 			
 			
 			// Auswertung des Formats
-			rs = db.selectFormat(oid);
-			if (rs == null) {
-				System.out.println("kein Format");
-			} else {
-				System.out.println("Format vorhanden");
-				try {
-					while (rs.next ( )) {
-						Format temp = new Format ( );
-						temp.setSchema_f(rs.getString ("schema_f"));
-						temp.setNumber (rs.getInt ("number"));
-						imf.addFormat (temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
+			stmtconn.loadStatement (SelectFromDB.Format (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Format temp = new Format ( );
+				temp.setSchema_f(this.result.getResultSet ( ).getString ("schema_f"));
+				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addFormat (temp);
 			}
+
+//			rs = db.selectFormat(oid);
+//			if (rs == null) {
+//				System.out.println("kein Format");
+//			} else {
+//				System.out.println("Format vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Format temp = new Format ( );
+//						temp.setSchema_f(rs.getString ("schema_f"));
+//						temp.setNumber (rs.getInt ("number"));
+//						imf.addFormat (temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}
 			
 			
 			// Auswertung des Identifiers
-			rs = db.selectIdentifier(oid);
-			if (rs == null) {
-				System.out.println("kein Identifier");
-			} else {
-				System.out.println("Identifier vorhanden");
-				try {
-					while (rs.next ( )) {
-						Identifier temp = new Identifier ( );
-						temp.setIdentifier(rs.getString ("identifier"));
-//						temp.setLanguage(rs.getString ("lang"));
-						temp.setNumber (rs.getInt ("number"));
-						imf.addIdentifier (temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
+			stmtconn.loadStatement (SelectFromDB.Identifier (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Identifier temp = new Identifier ( );
+				temp.setIdentifier(this.result.getResultSet ( ).getString ("identifier"));
+//				temp.setLanguage(this.result.getResultSet ( ).getString ("lang"));
+				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addIdentifier (temp);
 			}
+//			rs = db.selectIdentifier(oid);
+//			if (rs == null) {
+//				System.out.println("kein Identifier");
+//			} else {
+//				System.out.println("Identifier vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Identifier temp = new Identifier ( );
+//						temp.setIdentifier(rs.getString ("identifier"));
+////						temp.setLanguage(rs.getString ("lang"));
+//						temp.setNumber (rs.getInt ("number"));
+//						imf.addIdentifier (temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}
 
 			
 			// Auswertung der Description
-			rs = db.selectDescription(oid);
-			if (rs == null) {
-				System.out.println("keine Description");
-			} else {
-				System.out.println("Description vorhanden");
-				try {
-					while (rs.next ( )) {
-						Description temp = new Description ( );
-						temp.setDescription(rs.getString ("abstract"));
-						temp.setLanguage(rs.getString ("lang"));
-						temp.setNumber (rs.getInt ("number"));
-						imf.addDescription (temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
+			stmtconn.loadStatement (SelectFromDB.Description (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Description temp = new Description ( );
+				temp.setDescription(this.result.getResultSet ( ).getString ("abstract"));
+				temp.setLanguage(this.result.getResultSet ( ).getString ("lang"));
+				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addDescription (temp);
 			}
+//			rs = db.selectDescription(oid);
+//			if (rs == null) {
+//				System.out.println("keine Description");
+//			} else {
+//				System.out.println("Description vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Description temp = new Description ( );
+//						temp.setDescription(rs.getString ("abstract"));
+//						temp.setLanguage(rs.getString ("lang"));
+//						temp.setNumber (rs.getInt ("number"));
+//						imf.addDescription (temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}
 
 			
 			// Auswertung der DateValue-Werte
-			rs = db.selectDateValues(oid);
-			if (rs == null) {
-				System.out.println("keine Date-Value-Werte vorhanden");
-			} else {
-				System.out.println("DateValue-Wert vorhanden");
-				try {
-					while (rs.next ( )) {
-						DateValue temp = new DateValue ( );
-						temp.setDateValue(rs.getString ("value"));
-						temp.setNumber (rs.getInt ("number"));
-						imf.addDateValue (temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
+			stmtconn.loadStatement (SelectFromDB.DateValues (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				DateValue temp = new DateValue ( );
+				temp.setDateValue(this.result.getResultSet ( ).getString ("value"));
+				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addDateValue (temp);
 			}
+			
+//			rs = db.selectDateValues(oid);
+//			if (rs == null) {
+//				System.out.println("keine Date-Value-Werte vorhanden");
+//			} else {
+//				System.out.println("DateValue-Wert vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						DateValue temp = new DateValue ( );
+//						temp.setDateValue(rs.getString ("value"));
+//						temp.setNumber (rs.getInt ("number"));
+//						imf.addDateValue (temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}
 
 			
 			// Auswertung der TypeValue-Werte
-			rs = db.selectTypeValue(oid);
-			if (rs == null) {
-				System.out.println("keine TypeValue-Werte vorhanden");
-			} else {
-				System.out.println("TypeValue-Wert vorhanden");
-				try {
-					while (rs.next ( )) {
-						TypeValue temp = new TypeValue ( );
-						temp.setTypeValue(rs.getString ("value"));
-//						temp.setNumber (rs.getInt ("number"));
-						imf.addTypeValue (temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
+			stmtconn.loadStatement (SelectFromDB.TypeValues (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				TypeValue temp = new TypeValue ( );
+				temp.setTypeValue(this.result.getResultSet ( ).getString ("value"));
+//				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addTypeValue (temp);
 			}
+//			rs = db.selectTypeValue(oid);
+//			if (rs == null) {
+//				System.out.println("keine TypeValue-Werte vorhanden");
+//			} else {
+//				System.out.println("TypeValue-Wert vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						TypeValue temp = new TypeValue ( );
+//						temp.setTypeValue(rs.getString ("value"));
+////						temp.setNumber (rs.getInt ("number"));
+//						imf.addTypeValue (temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}
 
 			
 			// Auswertung der Publisher-Werte
-			rs = db.selectPublisher(oid);
-			if (rs == null) {
-				System.out.println("keine Publisher-Werte vorhanden");
-			} else {
-				System.out.println("Publisher-Wert vorhanden");
-				try {
-					while (rs.next ( )) {
-						Publisher temp = new Publisher ( );
-						temp.setName(rs.getString ("name"));
-						temp.setNumber (rs.getInt ("number"));
-						imf.addPublisher (temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
-			}			
+			stmtconn.loadStatement (SelectFromDB.Publisher (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Publisher temp = new Publisher ( );
+				temp.setName(this.result.getResultSet ( ).getString ("name"));
+				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addPublisher (temp);
+			}
+			
+//			rs = db.selectPublisher(oid);
+//			if (rs == null) {
+//				System.out.println("keine Publisher-Werte vorhanden");
+//			} else {
+//				System.out.println("Publisher-Wert vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Publisher temp = new Publisher ( );
+//						temp.setName(rs.getString ("name"));
+//						temp.setNumber (rs.getInt ("number"));
+//						imf.addPublisher (temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}			
 
 
 			// Auswertung der DCC-Classifications-Werte
-			rs = db.selectDDCClassification(oid);
-			if (rs == null) {
-				System.out.println("keine DDC-Werte vorhanden");
-			} else {
-				System.out.println("DDC-Wert vorhanden");
-				try {
-					while (rs.next ( )) {
-						Classification cl = new DDCClassification();
-						cl.setValue(rs.getString("D.DCC_Categorie"));
-//						temp.setNumber (rs.getInt ("number"));
-						imf.addClassfication(cl);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
-			}	
+			stmtconn.loadStatement (SelectFromDB.DDCClassification (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Classification cl = new DDCClassification();
+				cl.setValue(this.result.getResultSet ( ).getString("D.DCC_Categorie"));
+//				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addClassfication(cl);
+			}
+//			rs = db.selectDDCClassification(oid);
+//			if (rs == null) {
+//				System.out.println("keine DDC-Werte vorhanden");
+//			} else {
+//				System.out.println("DDC-Wert vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Classification cl = new DDCClassification();
+//						cl.setValue(rs.getString("D.DCC_Categorie"));
+////						temp.setNumber (rs.getInt ("number"));
+//						imf.addClassfication(cl);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}	
 			
 			// Auswertung der DNB-Classifications-Werte
-			rs = db.selectDNBClassification(oid);
-			if (rs == null) {
-				System.out.println("keine DNB-Werte vorhanden");
-			} else {
-				System.out.println("DNB-Wert vorhanden");
-				try {
-					while (rs.next ( )) {
-						Classification cl = new DNBClassification();
-						cl.setValue(rs.getString("D.DNB_Categorie"));
-//						temp.setNumber (rs.getInt ("number"));
-						imf.addClassfication(cl);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
-			}	
+			stmtconn.loadStatement (SelectFromDB.DNBClassification (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Classification cl = new DNBClassification();
+				cl.setValue(this.result.getResultSet ( ).getString("D.DNB_Categorie"));
+//				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addClassfication(cl);
+			}
+//			rs = db.selectDNBClassification(oid);
+//			if (rs == null) {
+//				System.out.println("keine DNB-Werte vorhanden");
+//			} else {
+//				System.out.println("DNB-Wert vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Classification cl = new DNBClassification();
+//						cl.setValue(rs.getString("D.DNB_Categorie"));
+////						temp.setNumber (rs.getInt ("number"));
+//						imf.addClassfication(cl);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}	
 
 			// Auswertung der DINI-Set-Classifications-Werte
-			rs = db.selectDINISetClassification(oid);
-			if (rs == null) {
-				System.out.println("keine DINI-Set-Werte vorhanden");
-			} else {
-				System.out.println("DINI-Set-Wert vorhanden");
-				try {
-					while (rs.next ( )) {
-						Classification cl = new DINISetClassification();
-						cl.setValue(rs.getString("name"));
-//						temp.setNumber (rs.getInt ("number"));
-						imf.addClassfication(cl);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
+			stmtconn.loadStatement (SelectFromDB.DINISetClassification (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Classification cl = new DINISetClassification();
+				cl.setValue(this.result.getResultSet ( ).getString("name"));
+//				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addClassfication(cl);
 			}
+//			rs = db.selectDINISetClassification(oid);
+//			if (rs == null) {
+//				System.out.println("keine DINI-Set-Werte vorhanden");
+//			} else {
+//				System.out.println("DINI-Set-Wert vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Classification cl = new DINISetClassification();
+//						cl.setValue(rs.getString("name"));
+////						temp.setNumber (rs.getInt ("number"));
+//						imf.addClassfication(cl);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}
 
 			// Auswertung der Other-Classifications-Werte
-			rs = db.selectOtherClassification(oid);
-			if (rs == null) {
-				System.out.println("keine Other-Classifiation-Werte vorhanden");
-			} else {
-				System.out.println("Other-Classification-Wert vorhanden");
-				try {
-					while (rs.next ( )) {
-						Classification cl = new OtherClassification();
-						cl.setValue(rs.getString("name"));
-//						temp.setNumber (rs.getInt ("number"));
-						imf.addClassfication(cl);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
+			stmtconn.loadStatement (SelectFromDB.OtherClassification (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Classification cl = new OtherClassification();
+				cl.setValue(this.result.getResultSet ( ).getString("name"));
+//				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addClassfication(cl);
 			}
+//			rs = db.selectOtherClassification(oid);
+//			if (rs == null) {
+//				System.out.println("keine Other-Classifiation-Werte vorhanden");
+//			} else {
+//				System.out.println("Other-Classification-Wert vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Classification cl = new OtherClassification();
+//						cl.setValue(rs.getString("name"));
+////						temp.setNumber (rs.getInt ("number"));
+//						imf.addClassfication(cl);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}
 
 			// Auswertung der Keywords-Werte
-			rs = db.selectKeywords(oid);
-			if (rs == null) {
-				System.out.println("keine Keyword-Werte vorhanden");
-			} else {
-				System.out.println("Keyword vorhanden");
-				try {
-					while (rs.next ( )) {
-						Keyword temp = new Keyword();
-						temp.setKeyword(rs.getString("keyword"));
-						temp.setLanguage(rs.getString("language"));
-//						temp.setNumber (rs.getInt ("number"));
-						imf.addKeyword(temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
+			stmtconn.loadStatement (SelectFromDB.Keywords (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
+			
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Keyword temp = new Keyword();
+				temp.setKeyword(this.result.getResultSet ( ).getString("keyword"));
+				temp.setLanguage(this.result.getResultSet ( ).getString("language"));
+//				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addKeyword(temp);
 			}
+//			rs = db.selectKeywords(oid);
+//			if (rs == null) {
+//				System.out.println("keine Keyword-Werte vorhanden");
+//			} else {
+//				System.out.println("Keyword vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Keyword temp = new Keyword();
+//						temp.setKeyword(rs.getString("keyword"));
+//						temp.setLanguage(rs.getString("language"));
+////						temp.setNumber (rs.getInt ("number"));
+//						imf.addKeyword(temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}
 			
 			// Auswertung der Keywords-Werte
-			rs = db.selectLanguages(oid);
-			if (rs == null) {
-				System.out.println("keine Language-Werte vorhanden");
-			} else {
-				System.out.println("Language vorhanden");
-				try {
-					while (rs.next ( )) {
-						Language temp = new Language();
-						temp.setLanguage(rs.getString("L.language"));
-						temp.setNumber (rs.getInt ("number"));
-						imf.addLanguage(temp);
-					}
-				} catch (SQLException ex) {
-					ex.printStackTrace ( );
-				}
-			}
+			stmtconn.loadStatement (SelectFromDB.Languages (stmtconn.connection, oid));
+			this.result = stmtconn.execute ( );
 			
-			db.closeStatement ( );
+			while (this.result.getResultSet ( ).next ( )) {
+				
+				Language temp = new Language();
+				temp.setLanguage(this.result.getResultSet ( ).getString("L.language"));
+				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
+				imf.addLanguage(temp);
+			}
+//			rs = db.selectLanguages(oid);
+//			if (rs == null) {
+//				System.out.println("keine Language-Werte vorhanden");
+//			} else {
+//				System.out.println("Language vorhanden");
+//				try {
+//					while (rs.next ( )) {
+//						Language temp = new Language();
+//						temp.setLanguage(rs.getString("L.language"));
+//						temp.setNumber (rs.getInt ("number"));
+//						imf.addLanguage(temp);
+//					}
+//				} catch (SQLException ex) {
+//					ex.printStackTrace ( );
+//				}
+//			}
+			
+			stmtconn.commit ( );
+			
+			//db.closeStatement ( );
+			
+			String xmlData;
+			xmlData = imMarsch.marshall (imf);
+			
+//			RestEntrySet res = new RestEntrySet ( );
+			
+			res.addEntry ("internalmetadata", xmlData);
+			this.rms.setStatus (RestStatusEnum.OK);
 
 		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}  catch (RuntimeException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		}  catch (WrongStatementException ex) {
+			
+			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
+			this.rms.addEntrySet (res);
+			res = null;
+			this.result = null;
+			dbng = null;
 		}
-		
-		
-		
-		db.closeConnection();
-		
-		
-		
-		
-		String xmlData;
-		xmlData = imMarsch.marshall (imf);
-		
-		RestEntrySet res = new RestEntrySet ( );
-		
-		res.addEntry ("internalmetadata", xmlData);
-		
-		this.rms.setStatus (RestStatusEnum.OK);
-		this.rms.addEntrySet (res);
+//		
+//		String xmlData;
+//		xmlData = imMarsch.marshall (imf);
+//		
+////		RestEntrySet res = new RestEntrySet ( );
+//		
+//		res.addEntry ("internalmetadata", xmlData);
+//		
+//		this.rms.setStatus (RestStatusEnum.OK);
+//		this.rms.addEntrySet (res);
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
@@ -479,9 +948,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	@Override
 	protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException {
 
-		//NOT IMPLEMENTED
-		logger.warn ("postInternalMetadataEntry is not implemented");
-		throw new MethodNotImplementedException ( );
+		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -494,7 +964,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		BigDecimal object_id = new BigDecimal (path [0]);
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
+		DBAccess db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		
 		if (logger.isDebugEnabled ( ))

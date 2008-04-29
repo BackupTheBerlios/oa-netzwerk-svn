@@ -1,30 +1,27 @@
 package technotest;
 
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.List;
+//import java.math.BigDecimal;
+//import java.sql.ResultSet;
+//import java.sql.SQLException;
+//import java.text.ParseException;
+//import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.database.DBAccess;
-import de.dini.oanetzwerk.server.database.DBAccessInterface;
-
-import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.utils.imf.*;
+//import de.dini.oanetzwerk.utils.HelperMethods;
+//import de.dini.oanetzwerk.utils.imf.*;
 
 public class TestInternal {
 
 	
 	static Logger logger = Logger.getLogger(TestInternal.class);
-	
-	
+	/*
+	@Deprecated
 	public static void delete(BigDecimal object_id) {
 		
 		System.out.println("Beginn Delete");
 		
-		DBAccessInterface db = DBAccess.createDBAccess ( );
+		DBAccess db = DBAccess.createDBAccess ( );
 		db.createConnection ( );
 		db.setAutoCom(false);
 		
@@ -346,11 +343,11 @@ public class TestInternal {
 
 	}
 	
-	
+	*/
 	/**
 	 * @param args
 	 */
-	public static void get() {
+/*	public static void get() {
 		// TODO Auto-generated method stub
 
 		
@@ -725,5 +722,5 @@ public class TestInternal {
 		
 		
 		
-	}
+	}*/
 }
