@@ -138,6 +138,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				res.addEntry ("repository_timestamp", this.result.getResultSet ( ).getDate ("repository_timestamp").toString ( ));
 				//TODO: MetaDataFormat
 				res.addEntry ("data", this.result.getResultSet ( ).getString ("data"));
+				//TODO: precleaned Data
 				
 				this.rms.setStatus (RestStatusEnum.OK);
 				

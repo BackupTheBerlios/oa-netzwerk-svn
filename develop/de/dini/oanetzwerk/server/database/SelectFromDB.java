@@ -446,4 +446,78 @@ public class SelectFromDB {
 		return preparedstmt;
 		
 	}
+
+	/**
+	 * @param firstname
+	 * @param lastname
+	 * @return
+	 */
+	public static PreparedStatement LatestPerson (String firstname,
+			String lastname) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param keyword
+	 * @param language
+	 * @return
+	 */
+	public static PreparedStatement LatestKeyword (String keyword,
+			String language) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param language
+	 * @return
+	 */
+	public static PreparedStatement LanguageByName (String language) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param value
+	 * @return
+	 */
+	public static PreparedStatement DDCCategoriesByCategorie (String value) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param value
+	 * @return
+	 */
+	public static PreparedStatement DNBCategoriesByCategorie (String value) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param value
+	 * @return
+	 */
+	public static PreparedStatement DINISetCategoriesByName (String value) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param value
+	 * @return
+	 */
+	public static PreparedStatement LatestOtherCategories (String value) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

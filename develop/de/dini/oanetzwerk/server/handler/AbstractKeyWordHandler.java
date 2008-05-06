@@ -13,6 +13,7 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 
 /**
@@ -102,6 +103,7 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	 * @return the response which will be sent back to the client
 	 * @throws NotEnoughParametersException 
 	 * @throws MethodNotImplementedException 
+	 * @throws WrongStatementException 
 	 */
 	
 	abstract protected String putKeyWord (String [ ] path, String data) throws NotEnoughParametersException, MethodNotImplementedException;

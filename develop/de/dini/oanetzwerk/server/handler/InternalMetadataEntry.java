@@ -198,7 +198,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				
-				
 			}
 			
 			//db.deleteObject2Keywords(object_id);
@@ -206,7 +205,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getUpdateCount ( ) < 1) {
-				
 				
 			}
 			
@@ -216,7 +214,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				
-				
 			}
 			
 			//db.deleteDDC_Classification(object_id);
@@ -224,7 +221,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getUpdateCount ( ) < 1) {
-				
 				
 			}
 			
@@ -234,7 +230,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				
-				
 			}
 			
 			//db.deleteDINI_Set_Classification(object_id);
@@ -243,16 +238,13 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				
-				
 			}
 			
-
 			//db.deletePersonWithoutReference();
 			stmtconn.loadStatement (DeleteFromDB.KeywordsWithoutReference (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getUpdateCount ( ) < 1) {
-				
 				
 			}
 			
@@ -261,7 +253,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getUpdateCount ( ) < 1) {
-				
 				
 			}
 			
@@ -346,14 +337,18 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	}
 
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
 	
 	@Override
-	protected String getKeyWord (String [ ] path) {
+	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+
 		// erzeuge imf-Object, das Schrittweise mit Daten befüllt wird
-		InternalMetadata imf = new InternalMetadata();
+		InternalMetadata imf = new InternalMetadata ( );
 		
 		BigDecimal oid;
 		
@@ -955,17 +950,39 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	}
 
 	/**
+	 * @throws NotEnoughParametersException  
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 */
 	
 	@SuppressWarnings("unused")
 	@Override
-	protected String putKeyWord (String [ ] path, String data) {
+	protected String putKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
 		
-		BigDecimal object_id = new BigDecimal (path [0]);
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
-		DBAccess db = DBAccess.createDBAccess ( );
-		db.createConnection ( );
+		BigDecimal object_id;
+		
+		try {
+			
+			object_id = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+//		DBAccess db = DBAccess.createDBAccess ( );
+		//db.createConnection ( );
+		
+		DBAccessNG dbng = new DBAccessNG ( );		
+		MultipleStatementConnection stmtconn = null;
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("");
@@ -1019,23 +1036,45 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		ResultSet rs;
 
 		// Autocommit ausschalten, nur eine vollständige Transaktion darf durchlaufen
-		db.setAutoCom (false);
+//		db.setAutoCom (false);
 		
 		try {
+			
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			//TODO: Weitermachen
 			// Titel speichern
 			if (titleList != null) {
-				for (Title title : titleList)
-					db.insertTitle(object_id, title.getQualifier(), title
-							.getTitle(), title.getLang());
+				for (Title title : titleList) {
+					
+					//db.insertTitle(object_id, title.getQualifier(), title
+					//		.getTitle(), title.getLang());
+					
+					stmtconn.loadStatement (InsertIntoDB.Title (object_id, title.getQualifier(), title.getTitle(), title.getLang()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+				}
 			}
 
 			// Datumswerte
 			if (dateValueList != null) {
 				for (DateValue dateValue : dateValueList) {
 					try {
-						db.insertDateValue(object_id, dateValue.getNumber(),
-								HelperMethods.extract_datestamp(dateValue
-										.getDateValue()));
+						
+//						db.insertDateValue(object_id, dateValue.getNumber(),
+//								HelperMethods.extract_datestamp(dateValue
+//										.getDateValue()));
+						stmtconn.loadStatement (InsertIntoDB.DateValue (object_id, dateValue.getNumber(), HelperMethods.extract_datestamp(dateValue.getDateValue())));
+						this.result = stmtconn.execute ( );
+						
+						if (this.result.getUpdateCount ( ) < 1) {
+							
+							//warn, error, rollback, nothing????
+						}
 
 					} catch (ParseException ex) {
 						logger.error("Datestamp with datevalue incorrect");
@@ -1045,137 +1084,328 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			}
 
 			if (formatList != null) {
-				for (Format format : formatList)
-					db.insertFormat(object_id, format.getNumber(), format
-							.getSchema_f());
+				for (Format format : formatList) {
+					
+					stmtconn.loadStatement (InsertIntoDB.Format (object_id, format.getNumber(), format.getSchema_f()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+
+				}
+//					db.insertFormat(object_id, format.getNumber(), format
+//							.getSchema_f());
 			}
 
 			if (identifierList != null) {
-				for (Identifier identifier : identifierList)
-					db.insertIdentifier(object_id, identifier.getNumber(),
-							identifier.getIdentifier());
+				for (Identifier identifier : identifierList) {
+					
+					stmtconn.loadStatement (InsertIntoDB.Identifier (object_id, identifier.getNumber(), identifier.getIdentifier()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+				}
+//					db.insertIdentifier(object_id, identifier.getNumber(),
+//							identifier.getIdentifier());
 			}
 
 			if (descriptionList != null) {
-				for (Description description : descriptionList)
-					db.insertDescription(object_id, description.getNumber(),
-							description.getDescription());
+				for (Description description : descriptionList) {
+					
+					stmtconn.loadStatement (InsertIntoDB.Description (object_id, description.getNumber(), description.getDescription()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+	
+				}
+//					db.insertDescription(object_id, description.getNumber(),
+//							description.getDescription());
 			}
 
 			if (typeValueList != null) {
-				for (TypeValue typeValue : typeValueList)
-					db.insertTypeValue(object_id, typeValue.getTypeValue());
+				for (TypeValue typeValue : typeValueList) {
+					
+					stmtconn.loadStatement (InsertIntoDB.TypeValue (object_id, typeValue.getTypeValue()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+				}
+					
+//					db.insertTypeValue(object_id, typeValue.getTypeValue());
 			}
 
 			if (publisherList != null) {
-				for (Publisher publisher : publisherList)
-					db.insertPublisher(object_id, publisher.getNumber(),
-							publisher.getName());
+				for (Publisher publisher : publisherList) {
+					
+					stmtconn.loadStatement (InsertIntoDB.Publisher (object_id, publisher.getNumber(), publisher.getName()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+				}
+//					db.insertPublisher(object_id, publisher.getNumber(),
+//							publisher.getName());
 			}
 
 			if (authorList != null) {
 				for (Author author : authorList) {
+					
 					BigDecimal person_id = null;
-					db.insertPerson(author.getFirstname(),
+					
+					stmtconn.loadStatement (InsertIntoDB.Person (author.getFirstname(),
 							author.getLastname(), author.getTitle(), author
-									.getInstitution(), author.getEmail());
-					rs = db.selectLatestPerson(author.getFirstname(), author
-							.getLastname());
-					if (rs == null) {
-						System.out.println("Person nicht eingetragen");
-						logger.warn("resultset empty!");
-					} else {
-						while (rs.next()) {
-							person_id = rs.getBigDecimal(1);
-						}
+							.getInstitution(), author.getEmail()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
 					}
-					db.insertObject2Author(object_id, person_id, author
-							.getNumber());
+//					db.insertPerson(author.getFirstname(),
+//							author.getLastname(), author.getTitle(), author
+//									.getInstitution(), author.getEmail());
+					stmtconn.loadStatement (SelectFromDB.LatestPerson (author.getFirstname(), author.getLastname()));
+					this.result = stmtconn.execute ( );
+					
+					while (this.result.getResultSet ( ).next ( )) {
+						
+						person_id = this.result.getResultSet ( ).getBigDecimal(1);
+					}
+					
+//					rs = db.selectLatestPerson(author.getFirstname(), author
+//							.getLastname());
+//					if (rs == null) {
+//						System.out.println("Person nicht eingetragen");
+//						logger.warn("resultset empty!");
+//					} else {
+//						while (rs.next()) {
+//							person_id = rs.getBigDecimal(1);
+//							
+//							//TODO: personid wird immer wieder überschrieben!!! while macht eigentlich keinen sinn!?
+//						}
+//					}
+					
+					stmtconn.loadStatement (InsertIntoDB.Object2Author (object_id, person_id, author.getNumber()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+//					db.insertObject2Author(object_id, person_id, author
+//							.getNumber());
 				}
 			}
 			
 			if (editorList != null) {
 				for (Editor editor : editorList) {
+					
 					BigDecimal person_id = null;
-					db.insertPerson(editor.getFirstname(),
+					
+					stmtconn.loadStatement (InsertIntoDB.Person (editor.getFirstname(),
 							editor.getLastname(), editor.getTitle(), editor
-									.getInstitution(), editor.getEmail());
-					rs = db.selectLatestPerson(editor.getFirstname(), editor
-							.getLastname());
-					if (rs == null) {
-						System.out.println("Person nicht eingetragen");
-						logger.warn("resultset empty!");
-					} else {
-						while (rs.next()) {
-							person_id = rs.getBigDecimal(1);
-						}
+							.getInstitution(), editor.getEmail()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
 					}
-					db.insertObject2Editor(object_id, person_id, editor
-							.getNumber());
+//					db.insertPerson(editor.getFirstname(),
+//							editor.getLastname(), editor.getTitle(), editor
+//									.getInstitution(), editor.getEmail());
+//					rs = db.selectLatestPerson(editor.getFirstname(), editor
+//							.getLastname());
+//					if (rs == null) {
+//						System.out.println("Person nicht eingetragen");
+//						logger.warn("resultset empty!");
+//					} else {
+//						while (rs.next()) {
+//							person_id = rs.getBigDecimal(1);
+//						}
+//					}
+//					
+					stmtconn.loadStatement (SelectFromDB.LatestPerson (editor.getFirstname(), editor.getLastname()));
+					this.result = stmtconn.execute ( );
+					
+					while (this.result.getResultSet ( ).next ( )) {
+						
+						person_id = this.result.getResultSet ( ).getBigDecimal(1);
+					}
+					
+					stmtconn.loadStatement (InsertIntoDB.Object2Editor (object_id, person_id, editor.getNumber()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+//					db.insertObject2Editor(object_id, person_id, editor
+//							.getNumber());
 				}
 			}
 
 			
 			if (contributorList != null) {
 				for (Contributor contributor : contributorList) {
+					
 					BigDecimal person_id = null;
-					db.insertPerson(contributor.getFirstname(), contributor
+					
+					stmtconn.loadStatement (InsertIntoDB.Person (contributor.getFirstname(), contributor
 							.getLastname(), contributor.getTitle(), contributor
-							.getInstitution(), contributor.getEmail());
-					rs = db.selectLatestPerson(contributor.getFirstname(),
-							contributor.getLastname());
-					if (rs == null) {
-						System.out.println("Person nicht eingetragen");
-						logger.warn("resultset empty!");
-					} else {
-						while (rs.next()) {
-							person_id = rs.getBigDecimal(1);
-						}
+							.getInstitution(), contributor.getEmail()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
 					}
-					db.insertObject2Editor(object_id, person_id, contributor
-							.getNumber());
+					
+//					db.insertPerson(contributor.getFirstname(), contributor
+//							.getLastname(), contributor.getTitle(), contributor
+//							.getInstitution(), contributor.getEmail());
+//					rs = db.selectLatestPerson(contributor.getFirstname(),
+//							contributor.getLastname());
+//					if (rs == null) {
+//						System.out.println("Person nicht eingetragen");
+//						logger.warn("resultset empty!");
+//					} else {
+//						while (rs.next()) {
+//							person_id = rs.getBigDecimal(1);
+//						}
+//					}
+//					
+					stmtconn.loadStatement (SelectFromDB.LatestPerson (contributor.getFirstname(), contributor.getLastname()));
+					this.result = stmtconn.execute ( );
+					
+					while (this.result.getResultSet ( ).next ( )) {
+						
+						person_id = this.result.getResultSet ( ).getBigDecimal(1);
+					}
+					
+					stmtconn.loadStatement (InsertIntoDB.Object2Editor (object_id, person_id, contributor.getNumber()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+//					db.insertObject2Editor(object_id, person_id, contributor
+//							.getNumber());
+					//TODO: Object2Editor für contributor???
 				}
 			}
 
 			if (keywordList != null) {
 				for (Keyword keyword : keywordList) {
+					
 					BigDecimal keyword_id = null;
-					db.insertKeyword(keyword.getKeyword(), keyword
-							.getLanguage());
-					rs = db.selectLatestKeyword(keyword.getKeyword(), keyword
-							.getLanguage());
-					if (rs == null) {
-						System.out.println("Keyword nicht eingetragen");
-						logger.warn("resultset empty!");
-					} else {
-						while (rs.next()) {
-							keyword_id = rs.getBigDecimal(1);
-						}
+					
+					stmtconn.loadStatement (InsertIntoDB.Keyword (keyword.getKeyword(), keyword.getLanguage()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
 					}
-					db.insertObject2Keyword(object_id, keyword_id);
+					
+//					db.insertKeyword(keyword.getKeyword(), keyword
+//							.getLanguage());
+//					rs = db.selectLatestKeyword(keyword.getKeyword(), keyword
+//							.getLanguage());
+//					if (rs == null) {
+//						System.out.println("Keyword nicht eingetragen");
+//						logger.warn("resultset empty!");
+//					} else {
+//						while (rs.next()) {
+//							keyword_id = rs.getBigDecimal(1);
+//						}
+//					}
+//					
+					stmtconn.loadStatement (SelectFromDB.LatestKeyword (keyword.getKeyword(), keyword.getLanguage()));
+					this.result = stmtconn.execute ( );
+					
+					while (this.result.getResultSet ( ).next ( )) {
+						
+						keyword_id = this.result.getResultSet ( ).getBigDecimal(1);
+					}
+					
+					stmtconn.loadStatement (InsertIntoDB.Object2Keyword (object_id, keyword_id));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+//					db.insertObject2Keyword(object_id, keyword_id);
 				}
 			}
 			
 			if (languageList != null) {
 				for (Language language : languageList) {
+					
 					BigDecimal language_id = null;
-
-					rs = db.selectLanguageByName(language.getLanguage());
-					if (!rs.next()) {
-						// Sprache ist noch nicht vorhanden => einfügen und neue
-						// Sprach-ID auslesen
-						db.insertLanguage(language.getLanguage());
-					}
-					rs = db.selectLanguageByName(language.getLanguage());
-					if (rs == null) {
-						System.out.println("Sprache nicht eingetragen");
-					} else {
-						while (rs.next()) {
-							language_id = rs.getBigDecimal(1);
+					
+					stmtconn.loadStatement (SelectFromDB.LanguageByName (language.getLanguage()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getResultSet ( ).next ( )) {
+						
+						stmtconn.loadStatement (InsertIntoDB.Language (language.getLanguage()));
+						this.result = stmtconn.execute ( );
+						
+						if (this.result.getUpdateCount ( ) < 1) {
+							
+							//warn, error, rollback, nothing????
 						}
 					}
-					db.insertObject2Language(object_id, language_id, language
-							.getNumber());
+
+					
+//					rs = db.selectLanguageByName(language.getLanguage());
+//					if (!rs.next()) {
+//						// Sprache ist noch nicht vorhanden => einfügen und neue
+//						// Sprach-ID auslesen
+//						db.insertLanguage(language.getLanguage());
+//					}
+//					rs = db.selectLanguageByName(language.getLanguage());
+//					if (rs == null) {
+//						System.out.println("Sprache nicht eingetragen");
+//					} else {
+//						while (rs.next()) {
+//							language_id = rs.getBigDecimal(1);
+//						}
+//					}
+					stmtconn.loadStatement (SelectFromDB.LanguageByName (language.getLanguage()));
+					this.result = stmtconn.execute ( );
+					
+					while (this.result.getResultSet ( ).next ( )) {
+						
+						language_id = this.result.getResultSet ( ).getBigDecimal(1);
+					}
+					
+					stmtconn.loadStatement (InsertIntoDB.Object2Language (object_id, object_id, language_id, language.getNumber()));
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getUpdateCount ( ) < 1) {
+						
+						//warn, error, rollback, nothing????
+					}
+
+//					db.insertObject2Language(object_id, language_id, language
+//							.getNumber());
 				}
 			}
 			
@@ -1184,91 +1414,211 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					// fuer jeden Klassifikationstypen muessen unterschiedliche Aktionen erfolgen
 					if (classification instanceof DDCClassification) {
 						String ddcValue = null;
-						rs = db.selectDDCCategoriesByCategorie(classification.getValue());
-						while (rs.next()) {
-							ddcValue = rs.getString(1);
+						
+						stmtconn.loadStatement (SelectFromDB.DDCCategoriesByCategorie (classification.getValue()));
+						this.result = stmtconn.execute ( );
+						
+						while (this.result.getResultSet ( ).next ( )) {
+							
+							ddcValue = this.result.getResultSet ( ).getString(1);
 						}
+		
+//						rs = db.selectDDCCategoriesByCategorie(classification.getValue());
+//						while (rs.next()) {
+//							ddcValue = rs.getString(1);
+//						}
 						if (ddcValue == null) {
 							// Versuch, über den übergebenen Namen den richten DDC-Wert zu bestimmen
 							
 						}
 						// Daten zuordnen
-						db.insertDDCClassification(object_id, ddcValue);
+						
+						stmtconn.loadStatement (InsertIntoDB.DDCClassification (object_id, ddcValue));
+						this.result = stmtconn.execute ( );
+						
+						if (this.result.getUpdateCount ( ) < 1) {
+							
+							//warn, error, rollback, nothing????
+						}
+//						db.insertDDCClassification(object_id, ddcValue);
 					}
 					if (classification instanceof DNBClassification) {
 //						BigDecimal DNB_Categorie = null;
 						String DNB_Categorie = null;
-						rs = db.selectDNBCategoriesByCategorie(classification.getValue());
-						while (rs.next()) {
-							DNB_Categorie = rs.getString(1);
+						
+						stmtconn.loadStatement (SelectFromDB.DNBCategoriesByCategorie (classification.getValue()));
+						this.result = stmtconn.execute ( );
+						
+						while (this.result.getResultSet ( ).next ( )) {
+							
+							DNB_Categorie = this.result.getResultSet ( ).getString(1);
 						}
+						
+//						rs = db.selectDNBCategoriesByCategorie(classification.getValue());
+//						while (rs.next()) {
+//							DNB_Categorie = rs.getString(1);
+//						}
 						// Daten zuordnen
-						db.insertDNBClassification (object_id, DNB_Categorie);
+						stmtconn.loadStatement (InsertIntoDB.DNBClassification (object_id, DNB_Categorie));
+						this.result = stmtconn.execute ( );
+						
+						if (this.result.getUpdateCount ( ) < 1) {
+							
+							//warn, error, rollback, nothing????
+						}
+//						db.insertDNBClassification (object_id, DNB_Categorie);
 					}					
 					if (classification instanceof DINISetClassification) {
+						
 						BigDecimal DINI_set_id = null;
-						rs = db.selectDINISetCategoriesByName(classification.getValue());
-						while (rs.next()) {
-							DINI_set_id = rs.getBigDecimal(1);
+						
+						stmtconn.loadStatement (SelectFromDB.DINISetCategoriesByName (classification.getValue()));
+						this.result = stmtconn.execute ( );
+						
+						while (this.result.getResultSet ( ).next ( )) {
+							
+							DINI_set_id = this.result.getResultSet ( ).getBigDecimal(1);
 						}
+						
+//						rs = db.selectDINISetCategoriesByName(classification.getValue());
+//						while (rs.next()) {
+//							DINI_set_id = rs.getBigDecimal(1);
+//						}
 						// Daten zuordnen
-						db.insertDINISetClassification(object_id, DINI_set_id);						
+						stmtconn.loadStatement (InsertIntoDB.DINISetClassification (object_id, DINI_set_id));
+						this.result = stmtconn.execute ( );
+						
+						if (this.result.getUpdateCount ( ) < 1) {
+							
+							//warn, error, rollback, nothing????
+						}
+//						db.insertDINISetClassification(object_id, DINI_set_id);						
 					}
 					
 					if (classification instanceof OtherClassification) {
+						
 						BigDecimal other_id = null;
+						
+						stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (classification.getValue()));
+						this.result = stmtconn.execute ( );
+						
+						while (this.result.getResultSet ( ).next ( )) {
+							
+							other_id = this.result.getResultSet ( ).getBigDecimal(1);
+						}
 						// ID zum Klassifikationswort aus DB suchen 
-						rs = db.selectLatestOtherCategories(classification.getValue());
-						while (rs.next()) {
-							// Wort wohl vorhanden, sonst keine Rückgabe
-							other_id = rs.getBigDecimal(1);
-						} 
+//						rs = db.selectLatestOtherCategories(classification.getValue());
+//						while (rs.next()) {
+//							// Wort wohl vorhanden, sonst keine Rückgabe
+//							other_id = rs.getBigDecimal(1);
+//						} 
 						if (other_id == null) {
 							// Wort noch nicht vorhanden, neu eintragen
 							// Klassifikation eintragen
-							db.insertOtherCategories(classification.getValue());
-							rs = db.selectLatestOtherCategories(classification.getValue());
-							while (rs.next()) {
-								other_id = rs.getBigDecimal(1);
+							
+							stmtconn.loadStatement (InsertIntoDB.OtherCategories (classification.getValue()));
+							this.result = stmtconn.execute ( );
+							
+							if (this.result.getUpdateCount ( ) < 1) {
+								
+								//warn, error, rollback, nothing????
 							}
+							stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (classification.getValue()));
+							this.result = stmtconn.execute ( );
+							
+							while (this.result.getResultSet ( ).next ( )) {
+								
+								other_id = this.result.getResultSet ( ).getBigDecimal(1);
+							}
+							
+//							db.insertOtherCategories(classification.getValue());
+//							rs = db.selectLatestOtherCategories(classification.getValue());
+//							while (rs.next()) {
+//								other_id = rs.getBigDecimal(1);
+//							}
 						}
 						// ID dieser Klassifikation bestimmen und zuordnen
-						db.insertOtherClassification(object_id, other_id);
+//						db.insertOtherClassification(object_id, other_id);
+						stmtconn.loadStatement (InsertIntoDB.OtherClassification (object_id, other_id));
+						this.result = stmtconn.execute ( );
+						
+						if (this.result.getUpdateCount ( ) < 1) {
+							
+							//warn, error, rollback, nothing????
+						}
 					}
 				}
 			}
-			db.commit();
-
-		} catch (SQLException sqlex) {
-			db.rollback();
-			db.setAutoCom (true);
-			try {
-				db.closeStatement ( );
-			} catch (SQLException ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
-			}
-			db.closeConnection ( );
-			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+//			db.commit();
+			stmtconn.commit ( );
+			res.addEntry ("oid", object_id.toPlainString ( ));
+			this.rms.setStatus (RestStatusEnum.OK);
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
-			this.rms.setStatusDescription("unable to commit: " + sqlex);
-			logger.error (sqlex.getLocalizedMessage ( ));
-			sqlex.printStackTrace ( );
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} catch (WrongStatementException ex) {
 
-			return RestXmlCodec.encodeRestMessage (this.rms);
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
+			this.rms.addEntrySet (res);
+			res = null;
+			this.result = null;
+			dbng = null;
 		}
+//		catch (SQLException sqlex) {
+////			db.rollback();
+////			db.setAutoCom (true);
+//			try {
+////				db.closeStatement ( );
+//			} catch (SQLException ex) {
+//				// TODO Auto-generated catch block
+//				ex.printStackTrace();
+//			}
+////			db.closeConnection ( );
+//			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+//			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+//			this.rms.setStatusDescription("unable to commit: " + sqlex);
+//			logger.error (sqlex.getLocalizedMessage ( ));
+//			sqlex.printStackTrace ( );
+//
+//			return RestXmlCodec.encodeRestMessage (this.rms);
+//		}
 		
-		db.setAutoCom(true);
-		db.closeConnection ( );
+//		db.setAutoCom(true);
+//		db.closeConnection ( );
 		
 		// RESPOND WITH OK
 		
-		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
-		res = new RestEntrySet ( );
-		
-		res.addEntry ("oid", object_id.toPlainString ( ));
-		this.rms.setStatus (RestStatusEnum.OK);
-		this.rms.addEntrySet (res);
+//		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
+//		res = new RestEntrySet ( );
+//		
+//		res.addEntry ("oid", object_id.toPlainString ( ));
+//		this.rms.setStatus (RestStatusEnum.OK);
+//		this.rms.addEntrySet (res);
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}

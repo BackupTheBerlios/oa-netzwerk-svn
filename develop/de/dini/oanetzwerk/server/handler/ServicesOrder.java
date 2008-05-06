@@ -23,6 +23,7 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  *
  */
 
+@Deprecated
 public class ServicesOrder extends AbstractKeyWordHandler implements
 		KeyWord2DatabaseInterface {
 	
@@ -34,6 +35,8 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
+	
+	@Deprecated
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
 
@@ -46,6 +49,8 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
 	 */
+	
+	@Deprecated
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
@@ -145,6 +150,8 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
+	
+	@Deprecated
 	@Override
 	protected String postKeyWord (String [ ] path, String data) {
 		
@@ -157,6 +164,8 @@ public class ServicesOrder extends AbstractKeyWordHandler implements
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 */
+	
+	@Deprecated
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {
 		
