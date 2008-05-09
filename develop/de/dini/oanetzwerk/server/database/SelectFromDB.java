@@ -96,7 +96,7 @@ public class SelectFromDB {
 	 */
 	public static PreparedStatement AllOIDsMarkAsTest (Connection connection) throws SQLException {
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.testdata = true ");
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.testdata IS TRUE");
 		return preparedstmt;
 	}
 	

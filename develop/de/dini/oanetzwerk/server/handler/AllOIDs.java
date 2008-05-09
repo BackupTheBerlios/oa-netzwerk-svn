@@ -125,7 +125,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			}
 			
 			// extract oids from db response
-			while(this.result.getResultSet ( ).next ( )) {							
+			while(this.result.getResultSet ( ).next ( )) {
+				entrySet = new RestEntrySet();
 				entrySet.addEntry ("oid", Integer.toString (this.result.getResultSet ( ).getInt ("object_id")));	
 				this.rms.addEntrySet (entrySet);								
 			} 
