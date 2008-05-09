@@ -44,6 +44,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+
 	public static PreparedStatement ObjectEntry (Connection connection,
 			BigDecimal repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier,
@@ -65,6 +66,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+
 	public static PreparedStatement ObjectEntryID (Connection connection,
 			BigDecimal repositoryID, String externalOID) throws SQLException {
 		
@@ -91,7 +93,26 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
-
+	
+	/**
+	 * @param connection
+	 * @param predecessor_id
+	 * @param service_id
+	 * @return
+	 * @throws SQLException
+	 */
+	
+	public static PreparedStatement Workflow (Connection connection, BigDecimal predecessor_id, BigDecimal service_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? " + 
+										"WHERE (w1.time > (SELECT MAX(time) FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id) " +
+										"OR w1.object_id NOT IN (SELECT object_id FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id)) GROUP BY w1.object_id");
+		
+		preparedstmt.setBigDecimal (1, service_id);
+		
+		return preparedstmt;
+	}
+	
 	/**
 	 * @param connection
 	 * @param internalOID
@@ -99,6 +120,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement RawRecordData (Connection connection,
 			BigDecimal internalOID, Date repository_timestamp) throws SQLException {
 		
@@ -115,6 +137,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+
 	public static PreparedStatement RawRecordData (Connection connection,
 			BigDecimal internalOID) throws SQLException {
 
@@ -131,6 +154,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Services (Connection connection, String name) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.Services WHERE name = ?");
@@ -145,6 +169,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Services (Connection connection,
 			BigDecimal service_id) throws SQLException {
 
@@ -160,6 +185,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement ServicesOrder (Connection connection,
 			BigDecimal service_id) throws SQLException {
 		
@@ -175,6 +201,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement WorkflowDB (Connection connection,
 			BigDecimal service_id) throws SQLException {
 
@@ -195,6 +222,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement WorkflowDB (Connection connection,
 			BigDecimal object_id, Date time, BigDecimal service_id) throws SQLException {
 
@@ -213,6 +241,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Title (Connection connection, BigDecimal object_id) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT title, qualifier, lang FROM dbo.Titles WHERE object_id = ?");
@@ -227,6 +256,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Authors (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -242,6 +272,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Editors (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -257,6 +288,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Contributors (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -272,6 +304,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Format (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -287,6 +320,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Identifier (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -302,6 +336,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Description (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -317,6 +352,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement DateValues (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -332,6 +368,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement TypeValues (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -347,6 +384,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Publisher (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -362,6 +400,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement DDCClassification (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -377,6 +416,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement DNBClassification (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -392,6 +432,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement DINISetClassification (
 			Connection connection, BigDecimal object_id) throws SQLException {
 
@@ -407,6 +448,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement OtherClassification (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -422,6 +464,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Keywords (Connection connection,
 			BigDecimal object_id) throws SQLException {
 		
@@ -437,6 +480,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Languages (Connection connection,
 			BigDecimal object_id) throws SQLException {
 		
@@ -444,80 +488,109 @@ public class SelectFromDB {
 		preparedstmt.setBigDecimal (1, object_id);
 		
 		return preparedstmt;
-		
 	}
 
 	/**
 	 * @param firstname
 	 * @param lastname
 	 * @return
+	 * @throws SQLException 
 	 */
-	public static PreparedStatement LatestPerson (String firstname,
-			String lastname) {
+	
+	public static PreparedStatement LatestPerson (Connection connection, String firstname,
+			String lastname) throws SQLException {
 
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT MAX(person_id) FROM dbo.Person WHERE (firstname = ? AND lastname = ?)");
+		preparedstmt.setString (1, firstname);
+		preparedstmt.setString (2, lastname);
+		
+		return preparedstmt;
 	}
 
 	/**
 	 * @param keyword
 	 * @param language
 	 * @return
+	 * @throws SQLException 
 	 */
-	public static PreparedStatement LatestKeyword (String keyword,
-			String language) {
+	
+	public static PreparedStatement LatestKeyword (Connection connection, String keyword,
+			String language) throws SQLException {
 
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT MAX(keyword_id) FROM dbo.Keywords WHERE (keyword = ? AND lang = ?)");
+		preparedstmt.setString (1, keyword);
+		preparedstmt.setString (2, language);
+		
+		return preparedstmt;
 	}
 
 	/**
 	 * @param language
 	 * @return
+	 * @throws SQLException 
 	 */
-	public static PreparedStatement LanguageByName (String language) {
+	
+	public static PreparedStatement LanguageByName (Connection connection, String language) throws SQLException {
 
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT language_id FROM dbo.Language WHERE (language = ?)");
+		preparedstmt.setString (1, language);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param categorie
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement DDCCategoriesByCategorie (Connection connection, String category) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT DDC_Categorie FROM dbo.DDC_Categories WHERE (DDC_Categorie = ?)");
+		preparedstmt.setString (1, category);
+		
+		return preparedstmt;
 	}
 
 	/**
 	 * @param value
 	 * @return
+	 * @throws SQLException 
 	 */
-	public static PreparedStatement DDCCategoriesByCategorie (String value) {
+	
+	public static PreparedStatement DNBCategoriesByCategorie (Connection connection, String category) throws SQLException {
 
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT DNB_Categorie FROM dbo.DNB_Categories WHERE (DNB_Categorie = ?)");
+		preparedstmt.setString (1, category);
+		
+		return preparedstmt;
 	}
 
 	/**
 	 * @param value
 	 * @return
+	 * @throws SQLException 
 	 */
-	public static PreparedStatement DNBCategoriesByCategorie (String value) {
+	
+	public static PreparedStatement DINISetCategoriesByName (Connection connection, String category) throws SQLException {
 
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT DINI_set_id FROM dbo.DINI_Set_Categories WHERE (name = ?)");
+		preparedstmt.setString (1, category);
+		
+		return preparedstmt;
 	}
 
 	/**
 	 * @param value
 	 * @return
+	 * @throws SQLException 
 	 */
-	public static PreparedStatement DINISetCategoriesByName (String value) {
+	
+	public static PreparedStatement LatestOtherCategories (Connection connection, String category) throws SQLException {
 
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @param value
-	 * @return
-	 */
-	public static PreparedStatement LatestOtherCategories (String value) {
-
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT MAX(other_id) FROM dbo.Other_Categories WHERE (name = ?)");
+		preparedstmt.setString (1, category);
+		
+		return preparedstmt;
 	}
 }
