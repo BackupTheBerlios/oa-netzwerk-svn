@@ -126,9 +126,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			// extract oids from db response
 			while(this.result.getResultSet ( ).next ( )) {							
-				entrySet.addEntry ("oid", Integer.toString (this.result.getResultSet ( ).getInt ("object_id")));				
-				this.rms.setStatus (RestStatusEnum.OK);				
+				entrySet.addEntry ("oid", Integer.toString (this.result.getResultSet ( ).getInt ("object_id")));	
+				this.rms.addEntrySet (entrySet);								
 			} 
+			this.rms.setStatus (RestStatusEnum.OK);
 			
 			// error if no oids at all
 			if(entrySet.getEntryHashMap().isEmpty()) {				
@@ -170,7 +171,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			this.rms.addEntrySet (entrySet);
+			
 			entrySet = null;
 			this.result = null;
 			dbng = null;
