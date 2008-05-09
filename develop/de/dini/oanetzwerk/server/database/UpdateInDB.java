@@ -10,7 +10,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-
 /**
  * @author Michael K&uuml;hn
  *
@@ -40,6 +39,24 @@ public class UpdateInDB {
 		preparedstmt.setBoolean (3, testdata);
 		preparedstmt.setInt (4, failureCounter);
 		preparedstmt.setBigDecimal (5, repository_id);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @param data
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement PrecleanedData (Connection connection,
+			BigDecimal object_id, String data) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.RawData SET precleaned_data = ? WHERE object_id = ?");
+		preparedstmt.setString (1, data);
+		preparedstmt.setBigDecimal (2, object_id);
 		
 		return preparedstmt;
 	}

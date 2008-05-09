@@ -4,8 +4,6 @@
 
 package de.dini.oanetzwerk.server.handler;
 
-import java.sql.ResultSet;
-
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -31,8 +29,6 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 
 	protected static Logger logger = Logger.getLogger (AbstractKeyWordHandler.class);
 	protected RestMessage rms;
-	@Deprecated
-	protected ResultSet resultset;
 	protected QueryResult result;
 
 	/**
@@ -116,9 +112,10 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	 * 
 	 * @return the response which will be sent back to the client
 	 * @throws MethodNotImplementedException 
+	 * @throws NotEnoughParametersException 
 	 */
 	
-	abstract protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException;
+	abstract protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException, NotEnoughParametersException;
 
 	/**
 	 * This method handles the HTTP-DELETE Request which deletes data.

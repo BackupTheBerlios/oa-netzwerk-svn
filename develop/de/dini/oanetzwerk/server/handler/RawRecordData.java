@@ -15,6 +15,7 @@ import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.UpdateInDB;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -33,15 +34,7 @@ import de.dini.oanetzwerk.utils.exceptions.*;
 public class RawRecordData extends
 AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	/**
-	 * 
-	 */
-	
 	static Logger logger = Logger.getLogger (RawRecordData.class);
-	
-	/**
-	 * 
-	 */
 	
 	public RawRecordData ( ) {
 		
@@ -136,9 +129,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 				res.addEntry ("object_id", Integer.toString (this.result.getResultSet ( ).getInt ("object_id")));
 				res.addEntry ("repository_timestamp", this.result.getResultSet ( ).getDate ("repository_timestamp").toString ( ));
-				//TODO: MetaDataFormat
+				res.addEntry ("metaDataFormat", this.result.getResultSet ( ).getString ("MetaDataFormat"));
 				res.addEntry ("data", this.result.getResultSet ( ).getString ("data"));
-				//TODO: precleaned Data
+				res.addEntry ("precleaned_data", this.result.getResultSet ( ).getString ("precleaned_data"));
 				
 				this.rms.setStatus (RestStatusEnum.OK);
 				
@@ -189,16 +182,95 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 * This method is not implemented because this would be useless request for now.
 	 */
 	
 	@Override
-	protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException {
+	protected String postKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
 		
-		this.rms = new RestMessage (RestKeyword.RawRecordData);
-		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs 2 parameters: the keyword and the object ID");
+		
+		BigDecimal object_id;
+		
+		try {
+			
+			object_id = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.RawRecordData);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		DBAccessNG dbng = new DBAccessNG ( );		
+		SingleStatementConnection stmtconn = null;
+		RestEntrySet res = new RestEntrySet ( );
+
+		try {
+			
+			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
+			
+			stmtconn.loadStatement (UpdateInDB.PrecleanedData (stmtconn.connection, object_id, data));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getWarning ( ) != null) {
+				
+				for (Throwable warning : result.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			res.addEntry ("ObjectID", (object_id.toPlainString ( )));
+			
+			this.rms.setStatus (RestStatusEnum.OK);
+		
+		} catch (SQLException ex) {
+			
+			logger.error ("An error occured while processing Post RawRecordData: " + ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error ("An error occured while processing Post RawRecordData: " + ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ));
+				}
+			}
+			
+			this.rms.addEntrySet (res);
+			res = null;
+			this.result = null;
+			dbng = null;
+		}
+		
+		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -273,14 +345,14 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Put RawRecordData: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Put RawRecordData: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));

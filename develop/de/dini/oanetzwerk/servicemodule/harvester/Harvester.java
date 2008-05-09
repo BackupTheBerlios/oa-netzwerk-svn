@@ -1070,6 +1070,7 @@ public class Harvester {
 			RestEntrySet res = new RestEntrySet ( );
 			
 			res.addEntry ("object_id", Integer.toString (ids.get (index).getInternalOID ( )));
+			//TODO: statt 1 service_id abfragen
 			res.addEntry ("service_id", "1");
 			rms.addEntrySet (res);
 			

@@ -1042,7 +1042,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			//TODO: Weitermachen
 			// Titel speichern
 			if (titleList != null) {
 				for (Title title : titleList) {
@@ -1050,7 +1049,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					//db.insertTitle(object_id, title.getQualifier(), title
 					//		.getTitle(), title.getLang());
 					
-					stmtconn.loadStatement (InsertIntoDB.Title (object_id, title.getQualifier(), title.getTitle(), title.getLang()));
+					stmtconn.loadStatement (InsertIntoDB.Title (stmtconn.connection, object_id, title.getQualifier(), title.getTitle(), title.getLang()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1068,7 +1067,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //						db.insertDateValue(object_id, dateValue.getNumber(),
 //								HelperMethods.extract_datestamp(dateValue
 //										.getDateValue()));
-						stmtconn.loadStatement (InsertIntoDB.DateValue (object_id, dateValue.getNumber(), HelperMethods.extract_datestamp(dateValue.getDateValue())));
+						stmtconn.loadStatement (InsertIntoDB.DateValue (stmtconn.connection, object_id, dateValue.getNumber(), HelperMethods.extract_datestamp(dateValue.getDateValue())));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getUpdateCount ( ) < 1) {
@@ -1086,7 +1085,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			if (formatList != null) {
 				for (Format format : formatList) {
 					
-					stmtconn.loadStatement (InsertIntoDB.Format (object_id, format.getNumber(), format.getSchema_f()));
+					stmtconn.loadStatement (InsertIntoDB.Format (stmtconn.connection, object_id, format.getNumber(), format.getSchema_f()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1102,7 +1101,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			if (identifierList != null) {
 				for (Identifier identifier : identifierList) {
 					
-					stmtconn.loadStatement (InsertIntoDB.Identifier (object_id, identifier.getNumber(), identifier.getIdentifier()));
+					stmtconn.loadStatement (InsertIntoDB.Identifier (stmtconn.connection, object_id, identifier.getNumber(), identifier.getIdentifier()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1117,7 +1116,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			if (descriptionList != null) {
 				for (Description description : descriptionList) {
 					
-					stmtconn.loadStatement (InsertIntoDB.Description (object_id, description.getNumber(), description.getDescription()));
+					stmtconn.loadStatement (InsertIntoDB.Description (stmtconn.connection, object_id, description.getNumber(), description.getDescription()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1133,7 +1132,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			if (typeValueList != null) {
 				for (TypeValue typeValue : typeValueList) {
 					
-					stmtconn.loadStatement (InsertIntoDB.TypeValue (object_id, typeValue.getTypeValue()));
+					stmtconn.loadStatement (InsertIntoDB.TypeValue (stmtconn.connection, object_id, typeValue.getTypeValue()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1148,7 +1147,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			if (publisherList != null) {
 				for (Publisher publisher : publisherList) {
 					
-					stmtconn.loadStatement (InsertIntoDB.Publisher (object_id, publisher.getNumber(), publisher.getName()));
+					stmtconn.loadStatement (InsertIntoDB.Publisher (stmtconn.connection, object_id, publisher.getNumber(), publisher.getName()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1165,7 +1164,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					
 					BigDecimal person_id = null;
 					
-					stmtconn.loadStatement (InsertIntoDB.Person (author.getFirstname(),
+					stmtconn.loadStatement (InsertIntoDB.Person (stmtconn.connection, author.getFirstname(),
 							author.getLastname(), author.getTitle(), author
 							.getInstitution(), author.getEmail()));
 					this.result = stmtconn.execute ( );
@@ -1177,7 +1176,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //					db.insertPerson(author.getFirstname(),
 //							author.getLastname(), author.getTitle(), author
 //									.getInstitution(), author.getEmail());
-					stmtconn.loadStatement (SelectFromDB.LatestPerson (author.getFirstname(), author.getLastname()));
+					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, author.getFirstname(), author.getLastname()));
 					this.result = stmtconn.execute ( );
 					
 					while (this.result.getResultSet ( ).next ( )) {
@@ -1198,7 +1197,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //						}
 //					}
 					
-					stmtconn.loadStatement (InsertIntoDB.Object2Author (object_id, person_id, author.getNumber()));
+					stmtconn.loadStatement (InsertIntoDB.Object2Author (stmtconn.connection, object_id, person_id, author.getNumber()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1215,7 +1214,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					
 					BigDecimal person_id = null;
 					
-					stmtconn.loadStatement (InsertIntoDB.Person (editor.getFirstname(),
+					stmtconn.loadStatement (InsertIntoDB.Person (stmtconn.connection, editor.getFirstname(),
 							editor.getLastname(), editor.getTitle(), editor
 							.getInstitution(), editor.getEmail()));
 					this.result = stmtconn.execute ( );
@@ -1238,7 +1237,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //						}
 //					}
 //					
-					stmtconn.loadStatement (SelectFromDB.LatestPerson (editor.getFirstname(), editor.getLastname()));
+					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, editor.getFirstname(), editor.getLastname()));
 					this.result = stmtconn.execute ( );
 					
 					while (this.result.getResultSet ( ).next ( )) {
@@ -1246,7 +1245,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						person_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
 					
-					stmtconn.loadStatement (InsertIntoDB.Object2Editor (object_id, person_id, editor.getNumber()));
+					stmtconn.loadStatement (InsertIntoDB.Object2Editor (stmtconn.connection, object_id, person_id, editor.getNumber()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1264,7 +1263,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					
 					BigDecimal person_id = null;
 					
-					stmtconn.loadStatement (InsertIntoDB.Person (contributor.getFirstname(), contributor
+					stmtconn.loadStatement (InsertIntoDB.Person (stmtconn.connection, contributor.getFirstname(), contributor
 							.getLastname(), contributor.getTitle(), contributor
 							.getInstitution(), contributor.getEmail()));
 					this.result = stmtconn.execute ( );
@@ -1288,7 +1287,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //						}
 //					}
 //					
-					stmtconn.loadStatement (SelectFromDB.LatestPerson (contributor.getFirstname(), contributor.getLastname()));
+					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, contributor.getFirstname(), contributor.getLastname()));
 					this.result = stmtconn.execute ( );
 					
 					while (this.result.getResultSet ( ).next ( )) {
@@ -1296,7 +1295,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						person_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
 					
-					stmtconn.loadStatement (InsertIntoDB.Object2Editor (object_id, person_id, contributor.getNumber()));
+					stmtconn.loadStatement (InsertIntoDB.Object2Editor (stmtconn.connection, object_id, person_id, contributor.getNumber()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1314,7 +1313,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					
 					BigDecimal keyword_id = null;
 					
-					stmtconn.loadStatement (InsertIntoDB.Keyword (keyword.getKeyword(), keyword.getLanguage()));
+					stmtconn.loadStatement (InsertIntoDB.Keyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1335,7 +1334,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //						}
 //					}
 //					
-					stmtconn.loadStatement (SelectFromDB.LatestKeyword (keyword.getKeyword(), keyword.getLanguage()));
+					stmtconn.loadStatement (SelectFromDB.LatestKeyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
 					while (this.result.getResultSet ( ).next ( )) {
@@ -1343,7 +1342,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						keyword_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
 					
-					stmtconn.loadStatement (InsertIntoDB.Object2Keyword (object_id, keyword_id));
+					stmtconn.loadStatement (InsertIntoDB.Object2Keyword (stmtconn.connection, object_id, keyword_id));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1359,12 +1358,12 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					
 					BigDecimal language_id = null;
 					
-					stmtconn.loadStatement (SelectFromDB.LanguageByName (language.getLanguage()));
+					stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getResultSet ( ).next ( )) {
 						
-						stmtconn.loadStatement (InsertIntoDB.Language (language.getLanguage()));
+						stmtconn.loadStatement (InsertIntoDB.Language (stmtconn.connection, language.getLanguage()));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getUpdateCount ( ) < 1) {
@@ -1388,7 +1387,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //							language_id = rs.getBigDecimal(1);
 //						}
 //					}
-					stmtconn.loadStatement (SelectFromDB.LanguageByName (language.getLanguage()));
+					stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
 					while (this.result.getResultSet ( ).next ( )) {
@@ -1396,7 +1395,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						language_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
 					
-					stmtconn.loadStatement (InsertIntoDB.Object2Language (object_id, object_id, language_id, language.getNumber()));
+					stmtconn.loadStatement (InsertIntoDB.Object2Language (stmtconn.connection, object_id, language_id, language.getNumber()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
@@ -1415,7 +1414,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					if (classification instanceof DDCClassification) {
 						String ddcValue = null;
 						
-						stmtconn.loadStatement (SelectFromDB.DDCCategoriesByCategorie (classification.getValue()));
+						stmtconn.loadStatement (SelectFromDB.DDCCategoriesByCategorie (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
 						while (this.result.getResultSet ( ).next ( )) {
@@ -1433,7 +1432,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						}
 						// Daten zuordnen
 						
-						stmtconn.loadStatement (InsertIntoDB.DDCClassification (object_id, ddcValue));
+						stmtconn.loadStatement (InsertIntoDB.DDCClassification (stmtconn.connection, object_id, ddcValue));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getUpdateCount ( ) < 1) {
@@ -1446,7 +1445,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //						BigDecimal DNB_Categorie = null;
 						String DNB_Categorie = null;
 						
-						stmtconn.loadStatement (SelectFromDB.DNBCategoriesByCategorie (classification.getValue()));
+						stmtconn.loadStatement (SelectFromDB.DNBCategoriesByCategorie (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
 						while (this.result.getResultSet ( ).next ( )) {
@@ -1459,7 +1458,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //							DNB_Categorie = rs.getString(1);
 //						}
 						// Daten zuordnen
-						stmtconn.loadStatement (InsertIntoDB.DNBClassification (object_id, DNB_Categorie));
+						stmtconn.loadStatement (InsertIntoDB.DNBClassification (stmtconn.connection, object_id, DNB_Categorie));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getUpdateCount ( ) < 1) {
@@ -1472,7 +1471,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						
 						BigDecimal DINI_set_id = null;
 						
-						stmtconn.loadStatement (SelectFromDB.DINISetCategoriesByName (classification.getValue()));
+						stmtconn.loadStatement (SelectFromDB.DINISetCategoriesByName (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
 						while (this.result.getResultSet ( ).next ( )) {
@@ -1485,7 +1484,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //							DINI_set_id = rs.getBigDecimal(1);
 //						}
 						// Daten zuordnen
-						stmtconn.loadStatement (InsertIntoDB.DINISetClassification (object_id, DINI_set_id));
+						stmtconn.loadStatement (InsertIntoDB.DINISetClassification (stmtconn.connection, object_id, DINI_set_id));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getUpdateCount ( ) < 1) {
@@ -1499,7 +1498,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						
 						BigDecimal other_id = null;
 						
-						stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (classification.getValue()));
+						stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
 						while (this.result.getResultSet ( ).next ( )) {
@@ -1516,14 +1515,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 							// Wort noch nicht vorhanden, neu eintragen
 							// Klassifikation eintragen
 							
-							stmtconn.loadStatement (InsertIntoDB.OtherCategories (classification.getValue()));
+							stmtconn.loadStatement (InsertIntoDB.OtherCategories (stmtconn.connection, classification.getValue()));
 							this.result = stmtconn.execute ( );
 							
 							if (this.result.getUpdateCount ( ) < 1) {
 								
 								//warn, error, rollback, nothing????
 							}
-							stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (classification.getValue()));
+							stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (stmtconn.connection, classification.getValue()));
 							this.result = stmtconn.execute ( );
 							
 							while (this.result.getResultSet ( ).next ( )) {
@@ -1539,7 +1538,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						}
 						// ID dieser Klassifikation bestimmen und zuordnen
 //						db.insertOtherClassification(object_id, other_id);
-						stmtconn.loadStatement (InsertIntoDB.OtherClassification (object_id, other_id));
+						stmtconn.loadStatement (InsertIntoDB.OtherClassification (stmtconn.connection, object_id, other_id));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getUpdateCount ( ) < 1) {

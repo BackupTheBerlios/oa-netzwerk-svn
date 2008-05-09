@@ -53,6 +53,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("getRawRecordData");
 		
+		
+		
 		//DBAccessInterface db = DBAccess.createDBAccess ( );
 		//String result = "";
 		
