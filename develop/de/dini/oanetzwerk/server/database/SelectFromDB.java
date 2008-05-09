@@ -80,6 +80,28 @@ public class SelectFromDB {
 
 	/**
 	 * @param connection
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement AllOIDs (Connection connection) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o");
+		return preparedstmt;
+	}
+	
+	/**
+	 * @param connection
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement AllOIDsMarkAsTest (Connection connection) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.testdata = true ");
+		return preparedstmt;
+	}
+	
+	/**
+	 * @param connection
 	 * @param repositoryID
 	 * @return
 	 * @throws SQLException 
