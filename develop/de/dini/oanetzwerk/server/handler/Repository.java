@@ -68,7 +68,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			logger.error (path [0] + " is NOT a number!");
 			
-			this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+			this.rms = new RestMessage (RestKeyword.Repository);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 			this.rms.setStatusDescription (path [0] + " is NOT a number!");
 			return RestXmlCodec.encodeRestMessage (this.rms);

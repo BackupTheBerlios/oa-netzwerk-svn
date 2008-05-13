@@ -41,9 +41,11 @@ public class MultipleStatementConnection implements StatementConnection {
 	 * @see de.dini.oanetzwerk.server.database.StatementConnection#close()
 	 */
 	
-//	@Override
 	public void close ( ) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("closing Statement and Connection");
+		
 		this.connection.setAutoCommit (true);
 		this.multipleStatement.close ( );
 		this.multipleStatement = null;
@@ -54,10 +56,12 @@ public class MultipleStatementConnection implements StatementConnection {
 	 * @see de.dini.oanetzwerk.server.database.StatementConnection#execute()
 	 */
 	
-//	@Override
 	public QueryResult execute ( ) throws SQLException {
 		
 		QueryResult result = new QueryResult ( );
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Executing Statement");
 		
 		try {
 			
@@ -65,13 +69,20 @@ public class MultipleStatementConnection implements StatementConnection {
 			
 		} catch (SQLException ex) {
 			
-			rollback ( );
+			logger.warn ("SQLException occured while executing Statement, performing rollback!");
+			logger.error (ex.getLocalizedMessage ( ));
+			
+			this.connection.rollback ( );
+			
 			return result;
 		}
 		
 		result.setResultSet (this.multipleStatement.getResultSet ( ));
 		result.setUpdateCount (this.multipleStatement.getUpdateCount ( ));
 		result.setWarning (this.multipleStatement.getWarnings ( ));
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Returning Result");
 		
 		return result;
 	}
@@ -80,16 +91,25 @@ public class MultipleStatementConnection implements StatementConnection {
 		
 		try {
 			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Committing Transaction");
+			
 			this.connection.commit ( );
 			
 		} catch (SQLException ex) {
 			
+			logger.warn ("SQLException occured while committing Transaction, performing rollback!");
+			logger.error (ex.getLocalizedMessage ( ));
+			
 			this.connection.rollback ( );
+			
 			ex.printStackTrace ( );	
 		}
 	}
 	
 	public void rollback ( ) throws SQLException {
+		
+		logger.info ("Doing rollback!");
 		
 		this.connection.rollback ( );
 	}
@@ -98,9 +118,11 @@ public class MultipleStatementConnection implements StatementConnection {
 	 * @see de.dini.oanetzwerk.server.database.StatementConnection#loadStatement(java.sql.PreparedStatement)
 	 */
 	
-//	@Override
 	public boolean loadStatement (PreparedStatement pstmt) {
-
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("loading Statement");
+		
 		this.multipleStatement = pstmt;
 		
 		return true;
@@ -109,8 +131,12 @@ public class MultipleStatementConnection implements StatementConnection {
 	/**
 	 * @see java.lang.Object#finalize()
 	 */
+	
 	@Override
 	protected void finalize ( ) throws Throwable {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("finalizing MultipleStatementConnection");
 		
 		this.connection.setAutoCommit (true);
 		this.multipleStatement.close ( );

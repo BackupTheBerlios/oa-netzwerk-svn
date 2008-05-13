@@ -76,7 +76,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 			
 			logger.error (path [0] + " is NOT a number!");
 			
-			this.rms = new RestMessage (RestKeyword.ObjectEntry);
+			this.rms = new RestMessage (RestKeyword.WorkflowDB);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 			this.rms.setStatusDescription (path [0] + " is NOT a number!");
 			

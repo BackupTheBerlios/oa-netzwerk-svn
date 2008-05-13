@@ -5,6 +5,7 @@
 package de.dini.oanetzwerk.servicemodule.harvester;
 
 import java.io.*;
+import java.math.BigDecimal;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -189,9 +190,11 @@ public class Harvester {
 	 */
 	
 	private void getRepositoryDetails (int id) {
-
-		RestClient restClient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), "Repository/" + id + "/", this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
-		String result = restClient.GetData ( );
+		
+		String result = prepareRestTransmission ("Repository/" + id + "/").GetData ( );
+		
+		//RestClient restClient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), "Repository/" + id + "/", this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		//String result = restClient.GetData ( );
 		
 		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
 		RestEntrySet res = rms.getListEntrySets ( ).get (0);
@@ -419,6 +422,7 @@ public class Harvester {
 	/**
 	 * @return the props
 	 */
+	
 	public final Properties getProps ( ) {
 	
 		return this.props;
@@ -467,6 +471,7 @@ public class Harvester {
 				 * the response of the harvested repository is taken and the IDs in it will be extracted and we'll have
 				 * returned the resumption Token if it exists
 				 */
+				
 				resumptionToken = extractIdsAndGetResumptionToken (response);
 				
 				// Now the list of objects will be processed
@@ -500,7 +505,7 @@ public class Harvester {
 				} else {
 					
 					if (logger.isDebugEnabled ( ))
-						logger.debug ("no ResumptionToken found, IdentifierList complete");
+						logger.debug ("No ResumptionToken found, IdentifierList complete");
 					
 					resumptionSet = false;
 					break;
@@ -628,6 +633,7 @@ public class Harvester {
 		
 		if (statuscode != HttpStatus.SC_OK) {
 			
+			logger.warn ("HTTP Status Code: " + statuscode);
 		}
 		
 		inst = getmethod.getResponseBodyAsStream ( );
@@ -681,10 +687,8 @@ public class Harvester {
 				
 				logger.debug ("we have " + idNodeList.getLength ( ) + " Ids to extract");
 				logger.debug ("we have " + datestampNodeList.getLength ( ) + " Datestamps to extract");
-			}
-			
-			if (logger.isDebugEnabled ( ))
 				logger.debug ("we have " + idNodeList.getLength ( ) + " ID-Nodes to process");
+			}
 			
 			for (int i = 0; i < idNodeList.getLength ( ); i++) {
 				
@@ -694,7 +698,6 @@ public class Harvester {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("List Record No. " + recordno++ + " " + externalOID  + " " + datestamp);
-				
 				
 				internalOID = objectexists (externalOID);
 				
@@ -770,8 +773,17 @@ public class Harvester {
 	
 	private void processRecords ( ) {
 		
+		if (this.ids.size ( ) < 1) {
+			
+			logger.info ("No Records to process at all");
+			
+			this.ids = null;
+			return;
+		}
+			
+		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("now we process " + this.ids.size ( ) + "Records");
+			logger.debug ("now we process " + this.ids.size ( ) + " Records");
 		
 		for (int i = 0; i < this.ids.size ( ); i++) {
 			
@@ -783,10 +795,8 @@ public class Harvester {
 				// when internalOID == -1 than Object is not in the database and we have to create it
 				this.createObjectEntry (i);
 				
-				if (logger.isDebugEnabled ( )) {
-					
+				if (logger.isDebugEnabled ( )) 
 					logger.debug ("Amount: " + this.getAmount ( ));
-				}
 				
 				if ((i % this.getAmount ( )) == 0) try {
 					
@@ -848,8 +858,8 @@ public class Harvester {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("we have to create a new Object");
 		
-		String ressource = "ObjectEntry/";
-		RestClient restClient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		//String ressource = "ObjectEntry/";
+		//RestClient restClient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
 		
 		GregorianCalendar cal = new GregorianCalendar ( );
 		cal.setTime (this.ids.get (index).getDatestamp ( ));
@@ -883,11 +893,13 @@ public class Harvester {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("xml: " + requestxml);
 			
-			String result = restClient.PutData (requestxml);
+			String result = prepareRestTransmission ("ObjectEntry/").PutData (requestxml);
+			
+			//String result = restClient.PutData (requestxml);
 			
 			rms = null;
 			res = null;
-			restClient = null;
+			//restClient = null;
 			
 			String value = getValueFromKey (result, "oid");
 						
@@ -914,19 +926,22 @@ public class Harvester {
 	
 	private boolean checkRawData (int i) {
 		
-		//first we need the datestamp from the database
+		// first we need the datestamp from the database
+		
 		if (logger.isDebugEnabled ( )) {
 			
 			logger.debug ("We have to check the RawData, whether it is outdated or not");
 			logger.debug ("observing Object No. " + i + ": " + this.ids.get (i).getExternalOID ( ));
 		}
 		
-		String ressource = "ObjectEntry/" + this.ids.get (i).getInternalOID ( ) + "/";
-		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		String result = prepareRestTransmission ("ObjectEntry/" + this.ids.get (i).getInternalOID ( ) + "/").GetData ( );
 		
-		String result = restclient.GetData ( );
+//		String ressource = "ObjectEntry/" + this.ids.get (i).getInternalOID ( ) + "/";
+//		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+//		
+//		String result = restclient.GetData ( );
 		
-		restclient = null;
+//		restclient = null;
 		String value = getValueFromKey (result, "repository_datestamp");
 		
 		try {
@@ -993,15 +1008,16 @@ public class Harvester {
 		
 		String requestxml = RestXmlCodec.encodeRestMessage (rms);
 		
-		String ressource = "ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/";
-		
-		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+//		String ressource = "ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/";
+//		
+//		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
 		
 		String result = "";
 		
 		try {
 			
-			result = restclient.PostData (requestxml);
+			result = prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/").PostData (requestxml);
+//			result = restclient.PostData (requestxml);
 			
 		} catch (UnsupportedEncodingException ex) {
 			
@@ -1010,7 +1026,7 @@ public class Harvester {
 		
 		rms = null;
 		res = null;
-		restclient = null;
+//		restclient = null;
 		
 		String value = getValueFromKey (result, "oid");
 		
@@ -1022,7 +1038,7 @@ public class Harvester {
 	}
 	
 	/**
-	 * This method puts new rawdata in the Database.
+	 * This method puts new RawData in the Database.
 	 * 
 	 * @param index
 	 * @throws IOException 
@@ -1042,47 +1058,109 @@ public class Harvester {
 			
 			int statuscode = client.executeMethod (method);
 			
-			logger.info ("HttpStatusCode: " + statuscode);
+			logger.info ("HTTP Status Code: " + statuscode);
 			
 			if (statuscode != HttpStatus.SC_OK) {
 				
-				;
+				logger.error ("HTTP Status Code: " + statuscode);
 			}
 			
 			GregorianCalendar cal = new GregorianCalendar ( );
 			cal.setTime (ids.get (index).getDatestamp ( ));
 			
-			String resource = "RawRecordData/" + ids.get (index).getInternalOID ( ) + "/" + cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/" + this.metaDataFormat + "/";
+			// Sending RawData to store it in the database
 			
-			RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
-			restclient.PutData (new String (Base64.encodeBase64 (HelperMethods.stream2String (method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));
+			//String resource = "RawRecordData/" + ids.get (index).getInternalOID ( ) + "/" + cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/" + this.metaDataFormat + "/";
+			
+			// First the Keyword plus the 2 Options is generated. Something like RawRecordData/1970-01-01/oai_dc
+			// With this Information a connection to the RestServer is provided, which have to be told what to do: PutData
+			// Put transmits the received data from the Repository, which is a stream, so this stream has to be converted 
+			// to a UTF-8-encoded string. Finally this string has to be encoded with Base64. After that the utf-8-base64-string will be sent.
+			
+			String result = prepareRestTransmission ("RawRecordData/"
+					+ ids.get (index).getInternalOID ( )
+					+ "/" + cal.get (Calendar.YEAR)
+					+ "-" + (cal.get (Calendar.MONTH) + 1)
+					+ "-" + cal.get (Calendar.DAY_OF_MONTH)
+					+ "/" + this.metaDataFormat + "/")
+					.PutData (
+							new String (
+									Base64.encodeBase64 (
+											HelperMethods.stream2String (
+													method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));
+			
+			//RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+			//restclient.PutData (new String (Base64.encodeBase64 (HelperMethods.stream2String (method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("uploaded rawdata for Database Object " + ids.get (index).getInternalOID ( ));
 			
-			resource = "WorkflowDB/";
+			// Retrieving ServiceID
 			
-			RestMessage rms = new RestMessage ( );
+			result = prepareRestTransmission ("Services/byName/Harvester/").GetData ( );
+			
+			//restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+			//result = restclient.GetData ( );
+			
+			RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+			RestEntrySet res = rms.getListEntrySets ( ).get (0);
+			
+			Iterator <String> it = res.getKeyIterator ( );
+			String key = "";
+			
+			BigDecimal thisServiceID = new BigDecimal (0);
+			
+			while (it.hasNext ( )) {
+								
+				key = it.next ( );
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("key: " + key + " value: " + res.getValue (key));
+				
+				if (key.equalsIgnoreCase ("service_id")) {
+					
+					thisServiceID = new BigDecimal (res.getValue (key));
+					continue;
+					
+				} else if (key.equalsIgnoreCase ("name")) {
+					
+					if (!res.getValue (key).equalsIgnoreCase ("Harvester"))
+						logger.warn ("Should read Harvester and read " + res.getValue (key) + " instead!");
+					
+					continue;
+					
+				} else {
+					
+					logger.warn ("Unknown RestMessage key received: " + res.getValue (key));
+					continue;
+				}
+			}
+			
+			// Updating WorkflowDB
+			
+			//resource = "WorkflowDB/";
+			
+			rms = new RestMessage ( );
 			
 			rms.setKeyword (RestKeyword.WorkflowDB);
 			rms.setStatus (RestStatusEnum.OK);
 			
-			RestEntrySet res = new RestEntrySet ( );
+			res = new RestEntrySet ( );
 			
 			res.addEntry ("object_id", Integer.toString (ids.get (index).getInternalOID ( )));
-			//TODO: statt 1 service_id abfragen
-			res.addEntry ("service_id", "1");
+			res.addEntry ("service_id", thisServiceID.toPlainString ( ));
 			rms.addEntrySet (res);
 			
 			String requestxml = RestXmlCodec.encodeRestMessage (rms);
 			
-			restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+			//restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
 			
-			String result = "";
+			result = new String ( );
 			
 			try {
 				
-				result = restclient.PutData (requestxml);
+				result = prepareRestTransmission ("WorkflowDB/").PutData (requestxml);
+				//result = restclient.PutData (requestxml);
 				
 			} catch (UnsupportedEncodingException ex) {
 				
@@ -1092,7 +1170,7 @@ public class Harvester {
 			
 			rms = null;
 			res = null;
-			restclient = null;
+			//restclient = null;
 			
 			String value = getValueFromKey (result, "workflow_id");
 			
@@ -1120,6 +1198,16 @@ public class Harvester {
 	}
 
 	/**
+	 * @param string
+	 * @return
+	 */
+	//TODO: 
+	private RestClient prepareRestTransmission (String resource) {
+		
+		return RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+	}
+
+	/**
 	 * This method asks the database whether an Object already exists or not.
 	 * 
 	 * @param externalOID the external ObjectIdentifier received from the repository
@@ -1135,13 +1223,14 @@ public class Harvester {
 			logger.debug ("We are going to have a look if the object with the externalOID " + externalOID + " in repository nr. " +
 					this.getRepositoryID ( ) + " already exists");
 		
-		String ressource = "ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/";
+//		String resource = "ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/";
 		
 		logger.debug ("Properties: " + this.getProps ( ).getProperty ("host"));
 		
-		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+//		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
 		
-		String result = restclient.GetData ( );
+		String result = prepareRestTransmission ("ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/").GetData ( );
+//		String result = restclient.GetData ( );
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug (result);
@@ -1179,7 +1268,12 @@ public class Harvester {
 		
 		if (rms.getStatus ( ) != RestStatusEnum.OK) {
 			
-			logger.error ("RestError occured: " + rms.getStatusDescription ( ));
+			if (rms.getStatus ( ) == RestStatusEnum.NO_OBJECT_FOUND_ERROR)
+				logger.info ("Object does not exist, we'll care about this");
+			
+			else
+				logger.error ("Rest-Error occured: " + rms.getStatusDescription ( ));
+			
 			return null;
 		}
 		

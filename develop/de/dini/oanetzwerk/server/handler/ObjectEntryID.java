@@ -41,9 +41,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 		this.rms = new RestMessage (RestKeyword.ObjectEntryID);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
-
+	
 	/**
 	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
@@ -105,11 +106,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			} else {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("No matching internal objectID found");
+					logger.debug ("No matching internal Object-ID found");
 				
 				res.addEntry ("oid", null);
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
-				this.rms.setStatusDescription ("No matching internal objectID found");
+				this.rms.setStatusDescription ("No matching internal Object-ID found");
 			}
 			
 		} catch (SQLException ex) {
@@ -150,7 +151,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
-
+	
 	/**
 	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
@@ -164,7 +165,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
-
+	
 	/**
 	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)

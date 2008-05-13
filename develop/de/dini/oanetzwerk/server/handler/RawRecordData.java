@@ -76,7 +76,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			logger.error (path [0] + " is NOT a number!");
 			
-			this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+			this.rms = new RestMessage (RestKeyword.RawRecordData);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 			this.rms.setStatusDescription (path [0] + " is NOT a number!");
 			return RestXmlCodec.encodeRestMessage (this.rms);
@@ -191,6 +191,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String postKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
 		
+		//TODO: zwei weitere Parameter: Repository-Timestamp, MetaDatenformat!!!
+		
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs 2 parameters: the keyword and the object ID");
 		
@@ -282,12 +284,18 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String putKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
 		
-		if (path.length < 3)
+		if (path.length < 2)
 			throw new NotEnoughParametersException ("This method needs 4 parameters: the keyword, the object ID, the repository timestamp and the metadataformat");
 		
 		BigDecimal object_id;
 		Date repository_timestamp;
-		String metaDataFormat = new String (path [2]);
+		String metaDataFormat;
+		
+		if (path.length == 2)
+			metaDataFormat = "oai_dc";
+		
+		else
+			metaDataFormat = new String (path [2]);
 		
 		try {
 			

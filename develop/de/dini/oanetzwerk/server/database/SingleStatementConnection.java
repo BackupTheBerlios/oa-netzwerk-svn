@@ -41,7 +41,6 @@ public class SingleStatementConnection implements StatementConnection {
 	 * @see de.dini.oanetzwerk.server.database.StatementConnection#loadStatement(java.sql.PreparedStatement)
 	 */
 	
-//	@Override
 	public boolean loadStatement (PreparedStatement pstmt) {
 		
 		if (this.singleStatement == null) {
@@ -66,7 +65,6 @@ public class SingleStatementConnection implements StatementConnection {
 	 * @see de.dini.oanetzwerk.server.database.StatementConnection#execute()
 	 */
 	
-//	@Override
 	public QueryResult execute ( ) throws SQLException {
 		
 		QueryResult result = new QueryResult ( );
@@ -90,7 +88,6 @@ public class SingleStatementConnection implements StatementConnection {
 	 * @see de.dini.oanetzwerk.server.database.StatementConnection#close()
 	 */
 	
-//	@Override
 	public void close ( ) throws SQLException {
 		
 		if (logger.isDebugEnabled ( ))

@@ -43,8 +43,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String deleteKeyWord (String [ ] path) {
 
-		this.rms = new RestMessage (RestKeyword.ObjectEntry);
+		this.rms = new RestMessage (RestKeyword.Services);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -173,6 +174,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 		this.rms = new RestMessage (RestKeyword.Services);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
