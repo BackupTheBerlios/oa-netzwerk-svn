@@ -1,58 +1,58 @@
 /**
- * 
+ *
  */
 
 package de.dini.oanetzwerk.servicemodule.harvester;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.math.BigDecimal;
+
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 
 /**
- * @author Michael Kühn
- * 
  * The Harvester consists of two parts: the Harvester itself and the Object Manager. The Harvester
- * makes a connection to a given repository where metadata-objects can be accessed.
+ * creates a connection to a given repository where metadata-objects can be accessed.
  * The Object Manager handles the harvested meta-data objects and ensures the safe storage of these objects
  * in a database if necessary.
+ * This class needs a property-file called harvesterprop.xml where the host to connect to, the username and the matching
+ * password have to be specified.
+ * 
+ * @author Michael K&uuml;hn
  */
 
 public class Harvester {
 	
 	/**
-	 * This is an ArrayList of ObjectIdentifiers where necessary information about the objects is stored @see de.dini.oanetzwerk.ObjectIdentifier
+	 * The Harvester which will process the data-import and handle the imported objects
+	 */
+	
+	private static Harvester harvester;
+	
+	/**
+	 * This is an ArrayList of ObjectIdentifiers where necessary information about the objects is stored
+	 * @see ObjectIdentifier
 	 */
 	
 	private ArrayList <ObjectIdentifier> ids = null;
@@ -61,322 +61,423 @@ public class Harvester {
 	 * The static log4j logger. All logging will be made with this nice static logger.
 	 */
 	
-	static Logger logger = Logger.getLogger (Harvester.class);
+	private static Logger logger = Logger.getLogger (Harvester.class);
 	
 	/**
-	 * Properties. 
+	 * The counter for the Records we are processing.
 	 */
 	
 	private int recordno = 0;
 	
+	/**
+	 * The Harvester properties. 
+	 */
+	
 	private Properties props = null;
 
-	private int errorretry = 0;
-		
 	/**
-	 * Standard Constructor which initialises the log4j and loads necessary properties.
+	 * Here we store the harvested MetaDataFormat.
+	 */
+	
+	private String metaDataFormat ="oai_dc";
+	
+	/**
+	 * This is the corresponding ID to the repository we'll connect to.
+	 */
+	
+	private int repositoryID = 0;
+
+	/**
+	 * This is the Base-URL of the repository we have to connect to.
+	 */
+	
+	private String repositoryURL = "";
+	
+	/**
+	 * Indicator for full (true) or update harvest (false) 
+	 */
+	
+	private boolean fullharvest = false;
+	
+	/**
+	 * 
+	 */
+	
+	private String date = "";
+	
+	/**
+	 * Amount of Objects which are requested from the repository at once.
+	 */
+	
+	private int amount = 10;
+	
+	/**
+	 * Milliseconds to wait between two amounts of requested data.
+	 */
+	
+	private int interval = 5000;
+	
+	/**
+	 * Indicator if retrieved data are just for testing purposes or not.
+	 * Objects marked as testing will be deleted from the database after a short time.
+	 */
+	
+	private boolean testData = true;
+	
+	
+	private String propertyfile = "harvesterprop.xml";
+	
+	/**
+	 * Standard Constructor.
+	 * It does nothing beside constructing the object instance.
+	 * To configure the created harvester call {@link #prepareHarvester(int)}
+	 * @see #prepareHarvester(int)
 	 */
 	
 	public Harvester ( ) {
 		
-		DOMConfigurator.configure ("log4j.xml");
+	}
+	
+	/**
+	 * This method configures the harvester.
+	 * It sets the repository ID and gets all other information from the Database
+	 * 
+	 * @param id the Repository ID
+	 * @return true when the configuration is done otherwise {@linkplain System#exit} is called
+	 * @see #getRepositoryDetails(int)
+	 * @see HelperMethods#loadPropertiesFromFile(String)
+	 */
+	
+	public boolean prepareHarvester (int id) {
+		
+		Harvester.harvester.repositoryID = id;
 		
 		try {
 			
-			this.props = HelperMethods.loadPropertiesFromFile ("harvesterprop.xml");
+			this.props = HelperMethods.loadPropertiesFromFile (this.getPropertyfile ( ));
+			
+			getRepositoryDetails (id);
 			
 		} catch (InvalidPropertiesFormatException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			System.exit (1);
 			
 		} catch (FileNotFoundException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			System.exit (1);
 			
 		} catch (IOException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-		}
-	}
-	
-	/**
-	 * Main class which have to be called.
-	 * 
-	 * @param args
-	 * @throws ParseException
-	 */
-	
-	@SuppressWarnings("static-access")
-	public static void main (String [ ] args) {
-		
-		Options options = new Options ( );
-		
-		options.addOption ("h", false, "show help");
-		options.addOption (OptionBuilder.withType (new String ( ))
-										.withLongOpt ("repositoryUrl")
-										.withArgName ("URL")
-										.withDescription ("URL of the repository which need to be harvested")
-										.withValueSeparator ( )
-										.hasArg ( )
-										.create ('u'));
-		options.addOption (OptionBuilder.withLongOpt ("repositoryId")
-										.withArgName ("ID")
-										.withDescription ("Id for the repositoryURL see database for details")
-										.withValueSeparator ( )
-										.hasArg ( )
-										.create ('i'));
-		options.addOption (OptionBuilder.withType (new String ( ))
-										.withLongOpt ("harvesttype")
-										.withArgName ("full|update")
-										.withDescription ("harvesting-type can be 'full' for a full harvest or 'update' for an updating harvest")
-										.withValueSeparator ( )
-										.hasArg ( )
-										.create ('t'));
-		options.addOption (OptionBuilder.withType (new String ( ))
-										.withLongOpt ("updateDate")
-										.withArgName ("yyyy-mm-dd")
-										.withDescription ("Date from which on the Records are harvested, when update-harvest-type is specified")
-										.withValueSeparator ( )
-										.hasArg ( )
-										.create ('d'));
-		
-		if (args.length > 0) {	
-			
-			try {
-				
-				CommandLine cmd = new GnuParser ( ).parse (options, args);
-				
-				if (cmd.hasOption ("h")) 				
-					HelperMethods.printhelp ("java " + Harvester.class.getCanonicalName ( ), options);
-					
-				else if ((cmd.hasOption ("repositoryUrl") || cmd.hasOption ('u')) && 
-						(cmd.hasOption ("repositoryId") || cmd.hasOption ('i')) &&
-						(cmd.hasOption ("harvesttype") || cmd.hasOption ('t'))) {
-					
-					String url;
-					int id;
-					boolean fullharvest;
-					String updateDate = "";
-					
-					if (cmd.getOptionValue ('t') == null)
-						fullharvest = filterBool (cmd.getOptionValue ("harvesttype"), cmd);
-					
-					else
-						fullharvest = filterBool (cmd.getOptionValue ('t'), cmd);
-					
-					if (!fullharvest) {
-						
-						if (cmd.getOptionValue ('d') == null)
-							updateDate = filterDate (cmd.getOptionValue ("updateDate"));
-						
-						else
-							updateDate = filterDate (cmd.getOptionValue ('d'));
-					}
-					
-					if (cmd.getOptionValue ('u') == null)
-						url = filterUrl (cmd.getOptionValue ("repositoryUrl"));
-					
-					else
-						url = filterUrl (cmd.getOptionValue ('u'));
-									
-					if (cmd.getOptionValue ('i') == null)
-						id = filterId (cmd.getOptionValue ("repositoryId"));
-					
-					else
-						id = filterId (cmd.getOptionValue ('i'));
-					
-					// Here we go: create a new instance of the harvester
-					
-					Harvester harvester = new Harvester ( );
-					
-					/* 
-					 * firstly we have to collect some data from the repository, which have to be processed
-					 * when we finished processing all these data, we have the IDs form all records we have
-					 * to collect. This is the next step: we catch the records for all the IDs and put the
-					 * raw datas into the database, if they don't exist or newer than in the database.
-					 */
-					
-					harvester.processIds (url, fullharvest, updateDate, id);
-					harvester.processRecords (url, id);
-					
-			} else {
-				
-				HelperMethods.printhelp ("java " + Harvester.class.getCanonicalName ( ), options);
-				System.exit (1);
-			}
-				
-		} catch (ParseException parex) {
-			
-			logger.error (parex.getMessage ( ));
-			System.out.println (parex.getMessage ( ));
-			HelperMethods.printhelp ("java " + Harvester.class.getCanonicalName ( ), options);
 			System.exit (1);
 		}
-			
-		} else {
-			
-			HelperMethods.printhelp ("java " + Harvester.class.getCanonicalName ( ), options);
-			System.exit (1);
-		}
+		
+		return true;
 	}
-
+	
 	/**
-	 * The date which comes from the command line will be filtered and observed.
+	 * This method fetches all necessary details about the repository from the database.
+	 * It fetches the OAI-URL, if only testdata shall be collected, the harvest amount and the pause between the harvested amounts.
 	 * 
-	 * @param optionValue the date string which is filtered
-	 * @return the proper date string when it could be extracted null otherwise
+	 * @param id the Repository ID
+	 * @see RestClient
+	 * @see RestXmlCodec
 	 */
 	
-	private static String filterDate (String optionValue) {
+	private void getRepositoryDetails (int id) {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("filtered Date: " + optionValue);
+		String result = prepareRestTransmission ("Repository/" + id + "/").GetData ( );
 		
-		//TODO: proper implementation
+		//RestClient restClient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), "Repository/" + id + "/", this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		//String result = restClient.GetData ( );
 		
-		return optionValue;
-	}
-
-	/**
-	 * The option whether a full or only an update harvest will be processed will be discovered.
-	 * If update is specified the date from which on has to be set, otherwise an error occurs.
-	 * 
-	 * @param optionValue should be "full" for a full-harvest or "update".
-	 * @param cmd should has option "updateDate" if "update" is set
-	 * @return true when full harvest is discovered false when update is discovered
-	 * @throws ParseException when update is specified and no date is set
-	 */
-	
-	private static boolean filterBool (String optionValue, CommandLine cmd) throws ParseException {
+		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		RestEntrySet res = rms.getListEntrySets ( ).get (0);
 		
-		if (optionValue.equalsIgnoreCase ("full")) {
+		Iterator <String> it = res.getKeyIterator ( );
+		String key = "";
+		
+		while (it.hasNext ( )) {
+							
+			key = it.next ( );
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("filteredBool: " + Boolean.TRUE);
+				logger.debug ("key: " + key + " value: " + res.getValue (key));
 			
-			return true;
+			if (key.equalsIgnoreCase ("oai_url")) {
+				
+				this.setRepositoryURL (filterUrl (res.getValue (key)));
+				continue;
+				
+			} else if (key.equalsIgnoreCase ("test_data")) {
+				
+				this.setTestData (new Boolean (res.getValue (key)));
+				continue;
+				
+			} else if (key.equalsIgnoreCase ("harvest_amount")) {
+				
+				filterAmount (res.getValue (key));
+				continue;
+				
+			} else if (key.equalsIgnoreCase ("harvest_pause")) {
+				
+				filterInterval (res.getValue (key));
+				continue;
+				
+			} else continue;
+		}
+		
+		if (logger.isDebugEnabled ( )) {
 			
-		} else {
-			
-			if (cmd.hasOption ('d') || cmd.hasOption ("updateDate")) {
-				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("filteredBool: " + Boolean.FALSE);
-				
-				return false;
-				
-			} else
-				throw new ParseException ("UpdateHarvest without a Date from which on the harvest shall be start isn't allowed!");
+			logger.debug ("Data received from Database:");
+			logger.debug ("oai_url: " + this.getRepositoryURL ( ));
+			logger.debug ("test_data: " + this.isTestData ( ));
+			logger.debug ("harvest_amount: " + this.getAmount ( ));
+			logger.debug ("harvest_pause: " + this.getInterval ( ));
 		}
 	}
 	
 	/**
-	 * ensures the right value for the repository ID.
+	 * Getter method for the harvester
 	 * 
-	 * @param optionValue a string representing a number greater or equal zero.
-	 * @return an integer which represents the repository ID
-	 * @throws ParseException when the repository ID is negative
+	 * @return the Harvester
 	 */
 	
-	private static int filterId (String optionValue) throws ParseException {
+	public static final Harvester getHarvester ( ) {
 		
-		int i = new Integer (optionValue);
+		if (harvester == null) {
+			
+			harvester = new Harvester ( );
+		}
 		
-		if (i < 0)
-			throw new ParseException ("RepositoryID must not be negative!");
+		return harvester;
+	}
+	
+	/**
+	 * Getter method for repositoryURL
+	 * 
+	 * @return the repositoryURL
+	 */
+	
+	public final String getRepositoryURL ( ) {
+	
+		return this.repositoryURL;
+	}
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("filtered ID: " + i);
-		
-		return i;
+	/**
+	 * Setter method for the RepositoryURL
+	 * 
+	 * @param repositoryURL the repositoryURL to set
+	 */
+	
+	public final void setRepositoryURL (String repositoryURL) {
+	
+		this.repositoryURL = repositoryURL;
+	}
+	
+	/**
+	 * Getter method for repositoryID
+	 * 
+	 * @return the repositoryID
+	 */
+	
+	public final int getRepositoryID ( ) {
+	
+		return this.repositoryID;
 	}
 
 	/**
-	 * ensures that the given string is a correct url
-	 * @param optionValue the repository-url
-	 * @return filtered url
+	 * Getter method for the fullharvest
+	 * 
+	 * @return the fullharvest (true if full, false if update) 
 	 */
 	
-	private static String filterUrl (String optionValue) {
-		
-		//TODO: proper implementation
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("filtered URL: " + optionValue);
-		
-		return optionValue;
+	public final boolean isFullharvest ( ) {
+	
+		return this.fullharvest;
 	}
 	
 	/**
-	 * @param url 
-	 * @param fullharvest 
-	 * @param updateFrom 
-	 * @param repositoryId 
+	 * Setter method for the fullharvest
+	 * 
+	 * @param fullharvest the fullharvest to set (true if full, false if update)
 	 */
 	
-	private void processIds (String url, boolean fullharvest, String updateFrom, int repositoryId ) {
+	public final void setFullharvest (boolean fullharvest) {
+	
+		this.fullharvest = fullharvest;
+	}
+	
+	/**
+	 * Getter method for the date
+	 * 
+	 * @return the date
+	 */
+	
+	public final String getDate ( ) {
+	
+		return this.date;
+	}
+	
+	/**
+	 * Setter method for the date
+	 * 
+	 * @param date the date to set
+	 */
+	
+	public final void setDate (String date) {
+	
+		this.date = date;
+	}
+	
+	/**
+	 * Getter method for the amount
+	 * 
+	 * @return the amount
+	 */
+	
+	public final int getAmount ( ) {
+	
+		return this.amount;
+	}
+	
+	/**
+	 * Setter method for the amount
+	 * 
+	 * @param amount the amount to set
+	 */
+	
+	public final void setAmount (int amount) {
+	
+		this.amount = amount;
+	}
+	
+	/**
+	 * Getter method for the interval
+	 * 
+	 * @return the interval
+	 */
+	
+	public final int getInterval ( ) {
+	
+		return this.interval;
+	}
+	
+	/**
+	 * Setter method for the interval
+	 * 
+	 * @param interval the interval to set
+	 */
+	
+	public final void setInterval (int interval) {
+	
+		this.interval = interval;
+	}
+	
+	/**
+	 * Getter method for the testdata
+	 * 
+	 * @return the testData
+	 */
+	
+	public final boolean isTestData ( ) {
+	
+		return this.testData;
+	}
+	
+	/**
+	 * Setter method for the testdata
+	 * 
+	 * @param testData the testData to set
+	 */
+	
+	public final void setTestData (boolean testData) {
+	
+		this.testData = testData;
+	}
+	
+	/**
+	 * @return the propertyfile
+	 */
+	
+	public final String getPropertyfile ( ) {
+	
+		return this.propertyfile;
+	}
+	
+	/**
+	 * @param propertyfile the propertyfile to set
+	 */
+	
+	public final void setPropertyfile (String propertyfile) {
+	
+		this.propertyfile = propertyfile;
+	}
+	
+	/**
+	 * @return the props
+	 */
+	
+	public final Properties getProps ( ) {
+	
+		return this.props;
+	}
+
+	/**
+	 * This method fetches data from the repository and processes it.
+	 * Firstly the list of supported MetaDataFormats is requested. Secondly the first List of Identifiers is requested.
+	 * The retrieved list is parsed and the resumption Token, if it exists, is extracted. While all Ids are checked.
+	 * The already checked Id are processed and finally if there is a resumptionToken a new List of Ids is requested.
+	 * Then all begins from the very beginning until there are no more Identifiers to request.
+	 */
+	
+	public void processIds ( ) {
 		
-		HttpClient client = new HttpClient ( );
-		GetMethod getmethod = null;
 		String resumptionToken = null;
 		Boolean resumptionSet = true;
-		int errorcounter = 0;
+		InputStream response = null;
 		
-		if (!fullharvest) {
+		try {
 			
-			getmethod = new GetMethod (url + "?verb=ListIdentifiers&metadataPrefix=oai_dc&from=" + updateFrom);
+			// this will get all metadataformats, the requested repository supports 
+			
+			response = listMetaDataFormats (getRepositoryURL ( ));
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("Update Harvest: " + url + getmethod.getQueryString ( ));
+				logger.debug ("metaDataFormats found");
 			
-		} else {
+			// here has to be inserted the code which decides which format is chosen for the following harvest
+			response = null;
 			
-			getmethod = new GetMethod (url + "?verb=ListIdentifiers&metadataPrefix=oai_dc");
+			// when we only want to get all new rawdata from the given data, we'll end in here 
+			if (!this.isFullharvest ( ))
+				response = listIdentifiers (getRepositoryURL ( ), this.metaDataFormat, this.getDate ( ));
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("Full Harvest: " + url + getmethod.getQueryString ( ));
-		}
-		
-		while (resumptionSet) {
-		
-			client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
+			// if we do a harvest of all rawdata, this will be chosen
+			else
+				response = listIdentifiers (getRepositoryURL ( ), this.metaDataFormat);
 			
-			try {
+			while (resumptionSet) { // until we have a ResumptionToken to process
 				
-				int statuscode = client.executeMethod (getmethod);
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("resumptionSet = true");
 				
-				logger.info ("ID-List HttpStatusCode: " + statuscode);
+				/* 
+				 * the response of the harvested repository is taken and the IDs in it will be extracted and we'll have
+				 * returned the resumption Token if it exists
+				 */
 				
-				client = null;
+				resumptionToken = extractIdsAndGetResumptionToken (response);
 				
-				if (statuscode != HttpStatus.SC_OK) {
-					
-					logger.error ("A http-error occured while processing the IDs from server " + url);
-					logger.error (getmethod.getStatusText ( ));
-					
-					if (errorcounter++ > 10) {
-						
-						logger.error ("We got a http-error more than 10 times during communication with server " + url + " Now we are aborting communcation and trying to process the collected datas");
-						getmethod = null;
-						resumptionToken = null;
-						return;
-						
-					} else {
-						
-						logger.info (errorcounter + " errors occured. Server: " + url);
-						continue;
-					}
-				}
+				// Now the list of objects will be processed
+				processRecords ( );
 				
-				if (errorcounter > 0)
-					errorcounter--;
-				
-				resumptionToken = extractIds (getmethod.getResponseBodyAsStream ( ), repositoryId);
-				getmethod = null;
-				
+				// if we have resumption token, we have to find out, whether it's the last entryset or not
 				if (resumptionToken != null) {
 					
 					if (logger.isDebugEnabled ( ))
@@ -387,74 +488,185 @@ public class Harvester {
 						
 						if (logger.isDebugEnabled ( ))
 							logger.debug ("ResumptionToken empty, IdentifierList complete");
-						else;
 						
 						resumptionSet = false;
+						break;
 						
 					} else {
+												
+						response = listIdentifiers (getRepositoryURL ( ), "resumptionToken", resumptionToken);
 						
-						getmethod = new GetMethod (url + "?verb=ListIdentifiers&resumptionToken=" + resumptionToken);
-						
-						if (logger.isDebugEnabled ( )) {
-							
+						if (logger.isDebugEnabled ( ))
 							logger.debug ("ResumptionToken: " + resumptionToken);
-							logger.debug ("ResumptionQuery: " + url + getmethod.getQueryString ( ));
-							
-						} else;
+						
+						continue;
 					}
-					
-					resumptionToken = null;
 					
 				} else {
 					
 					if (logger.isDebugEnabled ( ))
-						logger.debug ("no ResumptionToken found, IdentifierList complete");
-					
-					else;
+						logger.debug ("No ResumptionToken found, IdentifierList complete");
 					
 					resumptionSet = false;
+					break;
 				}
+			} 
+		
+		} catch (HttpException ex) {
 			
-			} catch (HttpException ex) {
-				
-				logger.error (ex.getLocalizedMessage ( ));
-				ex.printStackTrace ( );
-				this.errorretry++;
-				
-				if (errorretry > 5) {
-					
-					client = null;
-					getmethod = null;
-					resumptionToken = null;
-					System.exit (5);
-				}
-				
-			} catch (IOException ex) {
-				
-				logger.error (ex.getLocalizedMessage ( ));
-				ex.printStackTrace ( );
-				
-				this.errorretry++;
-				
-				if (errorretry > 5)
-					System.exit (5);
-			}
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} catch (IOException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			
+		} finally {
+			
+			resumptionToken = null;
+			response = null;
+		}
+		
+		return;
+	}
+
+	/**
+	 * This method encapsulates the request to list all Meta Data Formats the repository supports.
+	 * 
+	 * @param url the repositoryURL to connect to
+	 * @return the Inputstream which contains the answer from the repository
+	 * @throws IOException 
+	 * @throws HttpException 
+	 * @see #repositoryAnswer(String, String, String)
+	 */
+	
+	private InputStream listMetaDataFormats (String url) throws HttpException, IOException {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("listMetaDataFormat");
+		
+		return repositoryAnswer (url, "listMetaDataFormat", "");
+	}
+	
+	/**
+	 * This method encapsulates the request for a full harvest of Identifiers from the repository
+	 * 
+	 * @param url the OAI-URL to connect to
+	 * @param metaDataFormat the Meta Data Format which shall be requested
+	 * @return the Inputstream from the repository
+	 * @throws IOException 
+	 * @throws HttpException 
+	 * @see #repositoryAnswer(String, String, String)
+	 */
+	
+	private InputStream listIdentifiers (String url, String metaDataFormat) throws HttpException, IOException {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("ListIdentifiers with MetaDataFormat " + metaDataFormat);
+		
+		return repositoryAnswer (url, "ListIdentifiers", "&metadataPrefix=" + metaDataFormat);
+	}
+
+	/**
+	 * This method encapsulates the request for an update harvest of Identifiers from the repository or the ResumptionToken Request
+	 * 
+	 * @param url the OAI-URL to connect to
+	 * @param metaDataFormat the Meta Data Format which shall be requested or "resumptionToken" for the resumptionToken use
+	 * @param updateFrom the date from which on the harvest shall start or the resumptionToken for the resumptionToken use
+	 * @return the Inputstream from the repository
+	 * @throws IOException 
+	 * @throws HttpException 
+	 * @see #repositoryAnswer(String, String, String)
+	 */
+	
+	private InputStream listIdentifiers (String url, String metaDataFormat, String updateFrom) throws HttpException, IOException {
+		
+		if (metaDataFormat.equalsIgnoreCase ("resumptionToken")) {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("listIdentifiers with ResumptionToken and MetaDataFormat " +
+						 metaDataFormat);
+			
+			String resumptionToken = updateFrom;
+			
+			return repositoryAnswer (url, "ListIdentifiers", "&resumptionToken=" + resumptionToken);
+			
+		} else {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("listIdentifiers with MetaDataFormat " + metaDataFormat + " from " + updateFrom);
+						
+			return repositoryAnswer (url, "ListIdentifiers", "&metadataPrefix=" + metaDataFormat + "&from=" + updateFrom);	
 		}
 	}
 
 	/**
-	 * @param responseBody
-	 * @param repositoryId
-	 * @return
+	 * This method connects to the Repository and gets information from it.
+	 * This information can be the supported Meta Data Formats, the Identifiers or other.
+	 * 
+	 * @param url the OAI-URL to connect to
+	 * @param verb the OAI-PMH-verb to use
+	 * @param parameter the parameters for the request (i.e. from, set, ...)
+	 * @return the Inputstream from the repository
+	 * @throws IOException 
+	 * @throws HttpException
+	 * @see org.apache.commons.httpclient
 	 */
 	
-	private String extractIds (InputStream responseBody, int repositoryId) {
+	private InputStream repositoryAnswer (String url, String verb,
+			String parameter) throws HttpException, IOException {
+		
+		InputStream inst;
+		int statuscode = 0;
+		HttpClient client = new HttpClient ( );
+		GetMethod getmethod = new GetMethod (url + "?verb=" + verb + parameter);
+		
+		client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug (url +  "?" + getmethod.getQueryString ( ));
+		
+		statuscode = client.executeMethod (getmethod);
+		
+		logger.info ("HttpStatusCode: " + statuscode);
+		
+		if (statuscode != HttpStatus.SC_OK) {
+			
+			logger.warn ("HTTP Status Code: " + statuscode);
+		}
+		
+		inst = getmethod.getResponseBodyAsStream ( );
+		
+		if (inst != null)
+			return inst;
+		
+		else
+			throw new HttpException ("ResponseBody is null!");
+	}
+
+	/**
+	 * This method processes the Inputstrean from the repository and extracts the Object IDs and the ResumptionToke if it exists.
+	 * It stores all IDs in a list of ObjectIdentifiers together with its datestamps. The IDs which are extracted in here are
+	 * only the external IDs which means the IDs used by the harvested repository. There's still no relation to IDs in our own
+	 * database.
+	 * This relation is made later in this method {@link #objectexists(String)} 
+	 * 
+	 * @param responseBody the Inputstream from the Repository
+	 * @return the ResumptionToken if any exists, null otherwise
+	 * @see #objectexists(String)
+	 * @see ObjectIdentifier
+	 * @see javax.xml.parsers
+	 */
+	
+	private String extractIdsAndGetResumptionToken (InputStream responseBody) {
 		
 		String resumptionToken = null; 
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("ResponseBody: " + responseBody.toString ( ));
+		
 		try {
-			
-			//TODO: xml-handling has to be rewritten!
 			
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance ( );
 			DocumentBuilder builder = factory.newDocumentBuilder ( );
@@ -463,13 +675,19 @@ public class Harvester {
 			NodeList idNodeList = document.getElementsByTagName ("identifier");
 			NodeList datestampNodeList = document.getElementsByTagName ("datestamp");
 			
-			if (this.ids == null)
+			if (this.ids == null) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("List of ObjectIdentifiers is NULL, so I create a new one");
+							
 				this.ids = new ArrayList <ObjectIdentifier> ( );
+			}
 			
 			if (logger.isDebugEnabled ( )) {
 				
 				logger.debug ("we have " + idNodeList.getLength ( ) + " Ids to extract");
 				logger.debug ("we have " + datestampNodeList.getLength ( ) + " Datestamps to extract");
+				logger.debug ("we have " + idNodeList.getLength ( ) + " ID-Nodes to process");
 			}
 			
 			for (int i = 0; i < idNodeList.getLength ( ); i++) {
@@ -478,12 +696,10 @@ public class Harvester {
 				String externalOID = idNodeList.item (i).getTextContent ( );
 				String datestamp = datestampNodeList.item (i).getTextContent ( );
 				
-				if (logger.isDebugEnabled ( )) {
-					
+				if (logger.isDebugEnabled ( ))
 					logger.debug ("List Record No. " + recordno++ + " " + externalOID  + " " + datestamp);
-				}
 				
-				internalOID = objectexists (repositoryId, externalOID);
+				internalOID = objectexists (externalOID);
 				
 				if (internalOID > 0) {
 					
@@ -543,301 +759,486 @@ public class Harvester {
 	}
 
 	/**
-	 * @param url
-	 * @param repositoryID 
+	 * This is the heart of the object handler. Here all harvested objects are processed.
+	 * For every object an object entry will be created if this object still not exists in our database.
+	 * Next the rawdata will be collected and put into the database. 
+	 * When the object already exists the object will be checked if there's some newer data. If so the newer data
+	 * will be put in the database otherwise only the datestamp of the last harvest-run is set.
+	 * 
+	 * @see #createObjectEntry(int)
+	 * @see #updateRawData(int)
+	 * @see #checkRawData(int)
+	 * @see #updateHarvestedDatestamp(int)
 	 */
 	
-	private void processRecords (String url, int repositoryID) {
+	private void processRecords ( ) {
 		
-		HttpClient client = null;
-		GetMethod method = null;
+		if (this.ids.size ( ) < 1) {
+			
+			logger.info ("No Records to process at all");
+			
+			this.ids = null;
+			return;
+		}
+			
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("now we process " + this.ids.size ( ) + "Records");
+			logger.debug ("now we process " + this.ids.size ( ) + " Records");
 		
 		for (int i = 0; i < this.ids.size ( ); i++) {
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("Object No. " + i + " is processed");
+				logger.debug ("Object No. " + i + " is processed"); 
 			
-			int internalOID = this.ids.get (i).getInternalOID ( );
-			
-			if (internalOID == -1) {
+			if (this.ids.get (i).getInternalOID ( ) == -1) {
 				
 				// when internalOID == -1 than Object is not in the database and we have to create it
+				this.createObjectEntry (i);
 				
-				String ressource = "ObjectEntry/";
-				RestClient restClient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+				if (logger.isDebugEnabled ( )) 
+					logger.debug ("Amount: " + this.getAmount ( ));
 				
-				GregorianCalendar cal = new GregorianCalendar ( );
-				cal.setTime (this.ids.get (i).getDatestamp ( ));
-				
-				String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
-				
-				cal = null;
-				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("creating Object No. " + i + ": " + this.ids.get (i).getExternalOID ( ));
-				
-				try {
+				if ((i % this.getAmount ( )) == 0) try {
 					
-					List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-					HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-					mapEntry.put ("repository_id", Integer.toString (repositoryID));
-					mapEntry.put ("repository_identifier", this.ids.get (i).getExternalOID ( ));
-					mapEntry.put ("repository_datestamp", datestamp);
-					listentries.add (mapEntry);
+					logger.debug ("Going to sleep for " + getInterval ( ) + " milliseconds, letting the repository recover a bit");
+					Thread.sleep (getInterval ( ));
+					logger.debug ("Continuing to ask the repository for some records");
 					
-					String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
-					
-					if (logger.isDebugEnabled ( ))
-						logger.debug ("xml: " + requestxml);
-					
-					String result = restClient.PutData (requestxml);
-					
-					listentries = null;
-					mapEntry = null;
-					restClient = null;
-					
-					listentries = RestXmlCodec.decodeEntrySet (result);
-					mapEntry = listentries.get (0);
-					Iterator <String> it = mapEntry.keySet ( ).iterator ( );
-					String key = "";
-					String value = "";
-					
-					while (it.hasNext ( )) {
-						
-						key = it.next ( );
-						
-						if (key.equalsIgnoreCase ("oid")) {
-							
-							value = mapEntry.get (key);
-							break;
-						}
-					}
-					
-					int intoid = new Integer (value);
-					
-					if (logger.isDebugEnabled ( ))
-						logger.debug ("internalOID: " + intoid);
-					
-					this.ids.get (i).setInternalOID (intoid);
-					
-				} catch (IOException ex) {
+				} catch (InterruptedException ex) {
 					
 					logger.error (ex.getLocalizedMessage ( ));
 					ex.printStackTrace ( );
 				}
+				
+				// after that we have to upload the new rawdata
+				updateRawData (i);
 				
 			} else {
 				
 				// Object exists and we have to look if our Rawdata is newer than the database one
-				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("observing Object No. " + i + ": " + this.ids.get (i).getExternalOID ( ));
-				
-				String ressource = "ObjectEntry/" + internalOID + "/";
-				RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-				
-				String result = restclient.GetData ( );
-				
-				List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-				HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-				
-				restclient = null;
-				
-				listentries = RestXmlCodec.decodeEntrySet (result);
-				mapEntry = listentries.get (0);
-				Iterator <String> it = mapEntry.keySet ( ).iterator ( );
-				String key = "";
-				String value = "";
-				
-				while (it.hasNext ( )) {
-									
-					key = it.next ( );
+				if (checkRawData (i) == true) {
 					
-					if (logger.isDebugEnabled ( ))
-						logger.debug ("key: " + key + " value: " + mapEntry.get (key));
+					updateHarvestedDatestamp (i);
 					
-					if (key.equalsIgnoreCase ("repository_datestamp")) {
-						
-						value = mapEntry.get (key);
-						break;
-					}
-				}
-				
-				try {
+				} else {
 					
-					Date repositoryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (value);	
-					
-					if (repositoryDate.before (this.ids.get (i).getDatestamp ( )) || repositoryDate.equals (this.ids.get (i).getDatestamp ( ))) {
+					if ((i % 20) == 0) try {
 						
-						if (logger.isDebugEnabled ( )) {
-							
-							logger.debug ("RepositoryDate is " + repositoryDate + " and before or equal the harvested: " + this.ids.get (i).getDatestamp ( ));
-						}
+						logger.debug ("Going to sleep for 5 seconds, letting the repository recover a bit");
+						Thread.sleep (5000);
+						logger.debug ("Continuing to ask the repository for some records");
 						
-						listentries = new ArrayList <HashMap <String, String>> ( );
-						mapEntry = new HashMap <String ,String> ( );
+					} catch (InterruptedException ex) {
 						
-						GregorianCalendar cal = new GregorianCalendar ( );
-						cal.setTime (this.ids.get (i).getDatestamp ( ));
-						
-						String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
-						
-						mapEntry.put ("repository_id", Integer.toString (repositoryID));
-						mapEntry.put ("repository_identifier", this.ids.get (i).getExternalOID ( ));
-						mapEntry.put ("repository_datestamp", datestamp);
-						listentries.add (mapEntry);
-						
-						String requestxml = RestXmlCodec.encodeEntrySetRequestBody (listentries);
-						
-						restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-						
-						result = restclient.PostData (requestxml);
-						
-						listentries = null;
-						mapEntry = null;
-						restclient = null;
-						
-						listentries = RestXmlCodec.decodeEntrySet (result);
-						mapEntry = listentries.get (0);
-						it = mapEntry.keySet ( ).iterator ( );
-						key = "";
-						value = "";
-						
-						while (it.hasNext ( )) {
-							
-							key = it.next ( );
-							
-							if (key.equalsIgnoreCase ("oid")) {
-								
-								value = mapEntry.get (key);
-								break;
-							}
-						}
-						
-						int intoid = new Integer (value);
-						
-						if (logger.isDebugEnabled ( ))
-							logger.debug ("internalOID: " + intoid);
-						
-						continue;
+						logger.error (ex.getLocalizedMessage ( ));
+						ex.printStackTrace ( );
 					}
 					
-				} catch (IOException ex) {
-					
-					logger.error (ex.getLocalizedMessage ( ));
-					ex.printStackTrace ( );
-					
-				} catch (java.text.ParseException ex) {
-
-					logger.error (ex.getLocalizedMessage ( ));
-					ex.printStackTrace ( );
+					// if not, upload the new rawdata
+					updateRawData (i);
 				}
-			}
+			} //endelse
+		}
+		
+		this.ids = null;
+	}
+	
+	/**
+	 * This method created a new object in the database and retrieves the corresponding ID.
+	 * For the object-data it will transmit the repository ID, the external Object Identifier (from the repository),
+	 * the datestamp from the repository, the testdata status and the failure counter for this object.
+	 * The retrieved internal Object Identifier is stored in the list of ObjectIdentifieres.
+	 * 
+	 * @see RestClient
+	 * @see ObjectIdentifier
+	 */
+	
+	private void createObjectEntry (int index) {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("we have to create a new Object");
+		
+		//String ressource = "ObjectEntry/";
+		//RestClient restClient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		
+		GregorianCalendar cal = new GregorianCalendar ( );
+		cal.setTime (this.ids.get (index).getDatestamp ( ));
+		
+		String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
+		
+		cal = null;
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("creating Object No. " + index + ": " + this.ids.get (index).getExternalOID ( ));
+		
+		try {
 			
-			client = new HttpClient ( );
-			method = new GetMethod (url + "?verb=GetRecord&metadataPrefix=oai_dc&identifier=" + ids.get (i).getExternalOID ( ));
-			client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
+			RestMessage rms = new RestMessage ( );
 			
-			try {
-				
-				int statuscode = client.executeMethod (method);
-				
-				logger.info ("HttpStatusCode: " + statuscode);
-				
-				if (statuscode != HttpStatus.SC_OK) {
-					
-					;
-				}
-				
-				uploadRawData (HelperMethods.stream2String (method.getResponseBodyAsStream ( )), ids.get (i).getInternalOID ( ), ids.get (i).getDatestamp ( ));
-				
-			} catch (HttpException ex) {
-				
-				ex.printStackTrace ( );
-				
-			} catch (IOException ex) {
-				
-				ex.printStackTrace ( );
-								
-			} finally {
-				
-				method.releaseConnection ( );
-			}
+			rms.setKeyword (RestKeyword.ObjectEntry);
+			rms.setStatus (RestStatusEnum.OK);
 			
-			method = null;
-			client = null;
+			RestEntrySet res = new RestEntrySet ( );
+			
+			res.addEntry ("repository_id", Integer.toString (getRepositoryID ( )));
+			res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
+			res.addEntry ("repository_datestamp", datestamp);
+			res.addEntry ("testdata", Boolean.toString (isTestData ( )));
+			res.addEntry ("failureCounter", "0");
+			
+			rms.addEntrySet (res);
+			
+			String requestxml = RestXmlCodec.encodeRestMessage (rms);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("xml: " + requestxml);
+			
+			String result = prepareRestTransmission ("ObjectEntry/").PutData (requestxml);
+			
+			//String result = restClient.PutData (requestxml);
+			
+			rms = null;
+			res = null;
+			//restClient = null;
+			
+			String value = getValueFromKey (result, "oid");
+						
+			int intoid = new Integer (value);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("The internalOID for " + this.ids.get (index).getExternalOID ( ) + " is " + intoid);
+			
+			this.ids.get (index).setInternalOID (intoid);
+			
+		} catch (IOException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
 		}
 	}
-
+	
 	/**
-	 * @param data
-	 * @param internalOID
-	 * @param datestamp
+	 * This method checks if the rawdata we received is newer than the rawdata in the database or not.
+	 * 
+	 * @param i index of the current ObjectIdentifier
+	 * @return true if received data is newer, false else
+	 */
+	
+	private boolean checkRawData (int i) {
+		
+		// first we need the datestamp from the database
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("We have to check the RawData, whether it is outdated or not");
+			logger.debug ("observing Object No. " + i + ": " + this.ids.get (i).getExternalOID ( ));
+		}
+		
+		String result = prepareRestTransmission ("ObjectEntry/" + this.ids.get (i).getInternalOID ( ) + "/").GetData ( );
+		
+//		String ressource = "ObjectEntry/" + this.ids.get (i).getInternalOID ( ) + "/";
+//		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+//		
+//		String result = restclient.GetData ( );
+		
+//		restclient = null;
+		String value = getValueFromKey (result, "repository_datestamp");
+		
+		try {
+			
+			Date repositoryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (value);	
+			
+			if (!repositoryDate.before (this.ids.get (i).getDatestamp ( ))) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("RepositoryDate is " + repositoryDate + " and after the harvested: " + this.ids.get (i).getDatestamp ( ));
+				
+				this.ids.get (i).setDatestamp (repositoryDate);
+				
+				return true;
+				
+			} else {
+				
+				// updated harvesteddatstamp and exit
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("RepositoryDate is " + repositoryDate + " and before the harvested: " + this.ids.get (i).getDatestamp ( ));
+				
+				return false;
+				
+			}
+			
+		} catch (java.text.ParseException ex) {
+
+			logger.error (ex.getLocalizedMessage ( ));
+			ex.printStackTrace ( );
+			return true;
+		}		
+	}
+	
+	/**
+	 * This method only sets a new datestamp for the given Object.
+	 * 
+	 * @param index index of the current ObjectIdentifier
+	 */
+	
+	private void updateHarvestedDatestamp (int index) {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("We must update the harvested datestamp only"); 
+		
+		GregorianCalendar cal = new GregorianCalendar ( );
+		cal.setTime (this.ids.get (index).getDatestamp ( ));
+		
+		String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
+		
+		RestMessage rms = new RestMessage ( );
+		
+		rms.setKeyword (RestKeyword.ObjectEntry);
+		rms.setStatus (RestStatusEnum.OK);
+		
+		RestEntrySet res = new RestEntrySet ( );
+		
+		res.addEntry ("repository_id", Integer.toString (getRepositoryID ( )));
+		res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
+		res.addEntry ("repository_datestamp", datestamp);
+		res.addEntry ("testdata", Boolean.toString (isTestData ( )));
+		res.addEntry ("failureCounter", "0");
+		
+		rms.addEntrySet (res);
+		
+		String requestxml = RestXmlCodec.encodeRestMessage (rms);
+		
+//		String ressource = "ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/";
+//		
+//		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		
+		String result = "";
+		
+		try {
+			
+			result = prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/").PostData (requestxml);
+//			result = restclient.PostData (requestxml);
+			
+		} catch (UnsupportedEncodingException ex) {
+			
+			ex.printStackTrace ( );
+		}
+		
+		rms = null;
+		res = null;
+//		restclient = null;
+		
+		String value = getValueFromKey (result, "oid");
+		
+		int intoid = new Integer (value);
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("internalOID: " + intoid + " has been successfully updated");
+		
+	}
+	
+	/**
+	 * This method puts new RawData in the Database.
+	 * 
+	 * @param index
 	 * @throws IOException 
 	 * @throws HttpException 
 	 */
 	
-	private void uploadRawData (String data, int internalOID, Date datestamp) throws HttpException, IOException {
-		
-		GregorianCalendar cal = new GregorianCalendar ( );
-		cal.setTime (datestamp);
-		
-		String resource = "RawRecordData/" + internalOID + "/" + cal.get (Calendar.YEAR) + "-" + cal.get (Calendar.MONTH + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/";
-		
-		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-		restclient.PutData (new String (Base64.encodeBase64 (data.getBytes ("UTF-8"))));
+	private void updateRawData (int index) {
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("uploaded rawdata for Database Object " + internalOID);
+			logger.debug ("Now we're going to update the RawData");
+		
+		HttpClient client = new HttpClient ( );
+		HttpMethod method = new GetMethod (getRepositoryURL ( ) + "?verb=GetRecord&metadataPrefix=" + this.metaDataFormat + "&identifier=" + ids.get (index).getExternalOID ( ));
+		client.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
+		
+		try {
+			
+			int statuscode = client.executeMethod (method);
+			
+			logger.info ("HTTP Status Code: " + statuscode);
+			
+			if (statuscode != HttpStatus.SC_OK) {
+				
+				logger.error ("HTTP Status Code: " + statuscode);
+			}
+			
+			GregorianCalendar cal = new GregorianCalendar ( );
+			cal.setTime (ids.get (index).getDatestamp ( ));
+			
+			// Sending RawData to store it in the database
+			
+			//String resource = "RawRecordData/" + ids.get (index).getInternalOID ( ) + "/" + cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH) + "/" + this.metaDataFormat + "/";
+			
+			// First the Keyword plus the 2 Options is generated. Something like RawRecordData/1970-01-01/oai_dc
+			// With this Information a connection to the RestServer is provided, which have to be told what to do: PutData
+			// Put transmits the received data from the Repository, which is a stream, so this stream has to be converted 
+			// to a UTF-8-encoded string. Finally this string has to be encoded with Base64. After that the utf-8-base64-string will be sent.
+			
+			String result = prepareRestTransmission ("RawRecordData/"
+					+ ids.get (index).getInternalOID ( )
+					+ "/" + cal.get (Calendar.YEAR)
+					+ "-" + (cal.get (Calendar.MONTH) + 1)
+					+ "-" + cal.get (Calendar.DAY_OF_MONTH)
+					+ "/" + this.metaDataFormat + "/")
+					.PutData (
+							new String (
+									Base64.encodeBase64 (
+											HelperMethods.stream2String (
+													method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));
+			
+			//RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+			//restclient.PutData (new String (Base64.encodeBase64 (HelperMethods.stream2String (method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("uploaded rawdata for Database Object " + ids.get (index).getInternalOID ( ));
+			
+			// Retrieving ServiceID
+			
+			result = prepareRestTransmission ("Services/byName/Harvester/").GetData ( );
+			
+			//restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+			//result = restclient.GetData ( );
+			
+			RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+			RestEntrySet res = rms.getListEntrySets ( ).get (0);
+			
+			Iterator <String> it = res.getKeyIterator ( );
+			String key = "";
+			
+			BigDecimal thisServiceID = new BigDecimal (0);
+			
+			while (it.hasNext ( )) {
+								
+				key = it.next ( );
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("key: " + key + " value: " + res.getValue (key));
+				
+				if (key.equalsIgnoreCase ("service_id")) {
+					
+					thisServiceID = new BigDecimal (res.getValue (key));
+					continue;
+					
+				} else if (key.equalsIgnoreCase ("name")) {
+					
+					if (!res.getValue (key).equalsIgnoreCase ("Harvester"))
+						logger.warn ("Should read Harvester and read " + res.getValue (key) + " instead!");
+					
+					continue;
+					
+				} else {
+					
+					logger.warn ("Unknown RestMessage key received: " + res.getValue (key));
+					continue;
+				}
+			}
+			
+			// Updating WorkflowDB
+			
+			//resource = "WorkflowDB/";
+			
+			rms = new RestMessage ( );
+			
+			rms.setKeyword (RestKeyword.WorkflowDB);
+			rms.setStatus (RestStatusEnum.OK);
+			
+			res = new RestEntrySet ( );
+			
+			res.addEntry ("object_id", Integer.toString (ids.get (index).getInternalOID ( )));
+			res.addEntry ("service_id", thisServiceID.toPlainString ( ));
+			rms.addEntrySet (res);
+			
+			String requestxml = RestXmlCodec.encodeRestMessage (rms);
+			
+			//restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+			
+			result = new String ( );
+			
+			try {
+				
+				result = prepareRestTransmission ("WorkflowDB/").PutData (requestxml);
+				//result = restclient.PutData (requestxml);
+				
+			} catch (UnsupportedEncodingException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ));
+				ex.printStackTrace ( );
+			}
+			
+			rms = null;
+			res = null;
+			//restclient = null;
+			
+			String value = getValueFromKey (result, "workflow_id");
+			
+			if (value == null) {
+				
+				logger.error ("I can not update the RawData because an error occured. Skipping this object and continue with next.");
+				return;
+			}
+			
+			int workflowid = new Integer (value);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("workflow_id is: " + workflowid);
+			
+		} catch (HttpException ex) {
+			
+			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ));
+			
+		} catch (IOException ex) {
+			
+			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ));
+		}
 	}
-	
 
 	/**
-	 * @param oid
-	 * @param datestamp 
+	 * @param string
 	 * @return
+	 */
+	//TODO: 
+	private RestClient prepareRestTransmission (String resource) {
+		
+		return RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+	}
+
+	/**
+	 * This method asks the database whether an Object already exists or not.
+	 * 
+	 * @param externalOID the external ObjectIdentifier received from the repository
+	 * @return the internal Object ID if the Object already exists, -1 else
 	 * @throws ParserConfigurationException 
 	 * @throws IOException 
 	 * @throws SAXException 
 	 */
 	
-	private int objectexists (int repositoryId, String externalOID) throws ParserConfigurationException, SAXException, IOException {
+	private int objectexists (String externalOID) throws ParserConfigurationException, SAXException, IOException {
 		
-		String ressource = "ObjectEntryID/" + repositoryId + "/" + externalOID + "/";
-		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), ressource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("We are going to have a look if the object with the externalOID " + externalOID + " in repository nr. " +
+					this.getRepositoryID ( ) + " already exists");
 		
-		String result = restclient.GetData ( );
+//		String resource = "ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/";
+		
+		logger.debug ("Properties: " + this.getProps ( ).getProperty ("host"));
+		
+//		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		
+		String result = prepareRestTransmission ("ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/").GetData ( );
+//		String result = restclient.GetData ( );
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug (result);
-				
-		List <HashMap <String, String>> listentries = new ArrayList <HashMap <String, String>> ( );
-		HashMap <String, String> mapEntry = new HashMap <String ,String> ( );
-
-		listentries = RestXmlCodec.decodeEntrySet (result);
-		mapEntry = listentries.get (0);
-		Iterator <String> it = mapEntry.keySet ( ).iterator ( );
-		String key = "";
-		String value = "";
+		
+		String value = getValueFromKey (result, "oid");
+		
 		int intoid = -1;
-		
-		while (it.hasNext ( )) {
-							
-			key = it.next ( );
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("key: " + key + " value: " + mapEntry.get (key));
-			
-			if (key.equalsIgnoreCase ("oid")) {
 				
-				value = mapEntry.get (key);
-				break;
-			}
-		}
-		
 		if (value == null)
 			intoid = -1;
 		
@@ -846,22 +1247,292 @@ public class Harvester {
 		
 		return intoid;
 	}
+	
+	/**
+	 * This method decodes a RestMessage and extracts the value for a given key. 
+	 * 
+	 * @param result the encoded RestMessage
+	 * @param keyword the key for the value
+	 * @return the extracted value
+	 */
+	
+	private String getValueFromKey (String result, String keyword) {
+		
+		if (result == null || result.equalsIgnoreCase ("")) {
+			
+			logger.error ("received RestMessage empty, skipping, continue with next");
+			return null;
+		}
+		
+		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		
+		if (rms.getStatus ( ) != RestStatusEnum.OK) {
+			
+			if (rms.getStatus ( ) == RestStatusEnum.NO_OBJECT_FOUND_ERROR)
+				logger.info ("Object does not exist, we'll care about this");
+			
+			else
+				logger.error ("Rest-Error occured: " + rms.getStatusDescription ( ));
+			
+			return null;
+		}
+		
+		RestEntrySet res = rms.getListEntrySets ( ).get (0);
+		
+		Iterator <String> it = res.getKeyIterator ( );
+		String key = "";
+		String value = null;
+		
+		while (it.hasNext ( )) {
+							
+			key = it.next ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("key: " + key + " value: " + res.getValue (key));
+			
+			if (key.equalsIgnoreCase (keyword)) {
+				
+				value = res.getValue (key);
+				break;
+			}
+		}
+		
+		return value;
+	}
+	
+	/**
+	 * This method filters the interval-option and converts it to an integer
+	 * 
+	 * @param optionValue the value of the interval-option
+	 * @return the interval as an integer
+	 */
+	
+	public static int filterInterval (String optionValue) {
+		
+		if (optionValue != null) {
+		
+			Harvester.harvester.setInterval (new Integer (optionValue));
+		}
+		
+		return 0;
+	}
+	
+	/**
+	 * This method filters the amount option and converts it to an integer
+	 * 
+	 * @param optionValue the value of the amount-option
+	 * @return the amount as an integer
+	 */
+	
+	public static int filterAmount (String optionValue) {
+		
+		int amount = 1;
+		
+		if (optionValue != null) {
+			
+			amount = new Integer (optionValue);
+			
+			if (amount < 1)
+				throw new IllegalArgumentException ("Negative amount!");
+			
+			harvester.setAmount (amount);
+		}
+		
+		return amount;
+	}
+	
+	/**
+	 * The date which comes from the command line will be filtered and observed.
+	 * 
+	 * @param optionValue the date string which is filtered
+	 * @return the proper date string when it could be extracted null otherwise
+	 */
+	
+	public static String filterDate (String optionValue) {
+		
+		if (optionValue.matches ("\\d\\d\\d\\d-\\d\\d-\\d\\d")) {
+			
+			String [ ] today = HelperMethods.today ( ).toString ( ).split ("-");
+			String [ ] dateComponents = optionValue.split ("-");
+			
+			if ( (new Integer (dateComponents [0]) < 1970) || (new Integer (dateComponents [0]) > new Integer (today [0]))) {
+				
+				logger.error ("Year must be between 1970 and " + today [0] + ".\nYou asked for the year " + dateComponents [0]);
+				System.err.println ("Year must be between 1970 and " + today [0] + ".\nYou asked for the year " + dateComponents [0]);
+								
+				System.exit (10);
+				
+			} else if ( (new Integer (dateComponents [1]) < 1) || (new Integer (dateComponents [1]) > 12)) {
+				
+				logger.error ("The year has only 12 months. You asked for month number " + dateComponents [1]);
+				System.err.println ("The year has only 12 months. You asked for month number " + dateComponents [1]);
+				
+				System.exit (10);
+				
+			} else if ( (new Integer (dateComponents [2]) < 1) || (new Integer (dateComponents [2]) > 31)) {
+				
+				logger.error ("Months have the max of 31, 30, 29 or 28 days. You asked for day number " + dateComponents [2]);
+				System.err.println ("Months have the max of 31, 30, 29 or 28 days. You asked for day number " + dateComponents [2]);
+				
+				System.exit (10);
+				
+			} else {
+				
+				java.sql.Date date2test = null;
+				
+				try {
+					
+					date2test = HelperMethods.extract_datestamp (optionValue);
+					
+				} catch (java.text.ParseException ex) {
+					
+					logger.error ("Can't extract Datestamp from parameter 'updateDate'");
+					logger.error (ex.getLocalizedMessage ( ));
+					ex.printStackTrace ( );
+					System.exit (10);
+				}
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("filtered Date: " + date2test.toString ( ));
+				
+				harvester.setDate (date2test.toString ( ));
+				
+				return date2test.toString ( );
+			}
+			
+		} else {
+			
+			logger.error ("Date Format wrong! Must be yyyy-mm-dd and not " + optionValue);
+			System.err.println ("Date Format wrong! Must be yyyy-mm-dd and not " + optionValue);
+			
+			System.exit (10);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * The option whether a full or only an update harvest will be processed will be discovered.
+	 * If update is specified the date from which on has to be set, otherwise an error occurs.
+	 * 
+	 * @param optionValue should be "full" for a full-harvest or "update".
+	 * @param cmd should has option "updateDate" if "update" is set
+	 * @return true when full harvest is discovered false when update is discovered
+	 * @throws ParseException when update is specified and no date is set
+	 */
+	
+	public static boolean filterBool (String optionValue, CommandLine cmd) throws ParseException {
+		
+		if (optionValue.equalsIgnoreCase ("full")) {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("full harvest: " + Boolean.TRUE);
+			
+			harvester.setFullharvest (true);
+			
+			return true;
+			
+		} else {
+			
+			if (cmd.hasOption ('d') || cmd.hasOption ("updateDate")) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("full harvest: " + Boolean.FALSE);
+				
+				harvester.setFullharvest (false);
+				
+				return false;
+				
+			} else
+				throw new ParseException ("UpdateHarvest without a Date from which on the harvest shall be start isn't allowed!");
+		}
+	}
+	
+	/**
+	 * ensures correct values for the repository ID.
+	 * 
+	 * @param optionValue a string representing a number greater or equal zero.
+	 * @return an integer which represents the repository ID
+	 * @throws ParseException when the repository ID is negative
+	 */
+	
+	public static int filterId (String optionValue) throws ParseException {
+		
+		int i = new Integer (optionValue);
+		
+		if (i < 0)
+			throw new ParseException ("RepositoryID must not be negative!");
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("filtered ID: " + i);
+		
+		return i;
+	}
+
+	/**
+	 * ensures that the given string is a correct URL
+	 * @param optionValue the repository URL
+	 * @return filtered URL
+	 */
+	
+	public static String filterUrl (String optionValue) {
+		
+		if (optionValue != null) {
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("filtered URL: " + optionValue);
+			
+			harvester.setRepositoryURL (optionValue);
+		}
+		
+		return optionValue;
+	}
 }
 
 /**
- * @author Michael Kühn
- *
+ * This class represents an Object in which all necessary data for the Object-Manager will be stored.
+ * Every field can be accessed via setter and getter methods.
+ * 
+ * @author Michael K&uuml;hn
  */
 
 class ObjectIdentifier {
 	
+	/**
+	 * The external Object ID which is received from the repository 
+	 */
+	
 	private String externalOID;
+	
+	/**
+	 * The datestamp which is received from the repository 
+	 */
+	
 	private Date datestamp;
+	
+	/**
+	 * The matching internal Object ID which is received from our database 
+	 */
+	
 	private int internalOID;
 	
 	/**
-	 * @param externalOID
-	 * @param datestamp
+	 * The log4j logger for all logging purposes.
+	 */
+	
+	static Logger logger = Logger.getLogger (ObjectIdentifier.class);
+	
+	/**
+	 * This is the standard constructor for ObjectIdentifier.
+	 * It stores the external Object Identifier (from the repository) the datestamp of the last change and
+	 * the internal Object identifier (used within our system)
+	 * These informations are necessary for the identification of a single object. It stores the relation
+	 * between the internal and the external Object Identifier. The Datestamp is used to distinguish the different versions
+	 * of one object harvested at different dates. 
+	 * 
+	 * @param externalOID the Object Identifier which is used in the harvested repository 
+	 * @param datestamp the date of the object's last change
+	 * @param internalOID the Object Identifier which is used in our internal system and database
 	 */
 	
 	public ObjectIdentifier (String externalOID, String datestamp, int internalOID) {
@@ -874,12 +1545,15 @@ class ObjectIdentifier {
 			
 		} catch (java.text.ParseException ex) {
 			
+			logger.error (externalOID + "has no valid Datestamp!\n" + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 		}
 	}
 	
 	/**
-	 * @return the id
+	 * Getter method for the externalOID
+	 * 
+	 * @return the external object ID (comes from the harvested repository)
 	 */
 	
 	final String getExternalOID ( ) {
@@ -888,7 +1562,9 @@ class ObjectIdentifier {
 	}
 
 	/**
-	 * @param id the id to set
+	 * Setter method for the externalOID
+	 * 
+	 * @param id the external object ID to set
 	 */
 	
 	final void setExternalOID (String id) {
@@ -897,6 +1573,8 @@ class ObjectIdentifier {
 	}
 
 	/**
+	 * Getter method for the datestamp
+	 * 
 	 * @return the datestamp
 	 */
 	
@@ -906,6 +1584,8 @@ class ObjectIdentifier {
 	}
 	
 	/**
+	 * Setter method for the datestamp
+	 * 
 	 * @param datestamp the datestamp to set
 	 */
 	
@@ -914,19 +1594,23 @@ class ObjectIdentifier {
 		this.datestamp = datestamp;
 	}
 
-	
 	/**
+	 * Getter method for the internalOID
+	 * 
 	 * @return the internalOID
 	 */
+	
 	final int getInternalOID ( ) {
 	
 		return this.internalOID;
 	}
-
 	
 	/**
+	 * Setter method for the internalOID
+	 * 
 	 * @param internalOID the internalOID to set
 	 */
+	
 	final void setInternalOID (int internalOID) {
 	
 		this.internalOID = internalOID;
