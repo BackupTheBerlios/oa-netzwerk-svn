@@ -1,7 +1,11 @@
 package de.dini.oanetzwerk.server.handler;
 
+import javax.naming.Context;
+
 import junit.framework.Assert;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -9,40 +13,72 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
-public class TestAllOIDs {
 
+/**
+ * 
+ * @author malitzro
+ *
+ */
+public class TestAllOIDs {
+	
+	static int i = 0;
+	
+	@BeforeClass
+	public static void init() throws Exception {
+		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "de.dini.oanetzwerk.server.handler.OneShotInitialContextFactory");
+	}
+	
+	@Before
+	public void count() {
+		System.out.println("\nTEST " + i);
+		i++;
+	}
+	
 	@Test
 	public void testFetchAll() throws Exception{
+		
+		System.out.println("AllOIDs\\");
+		
 		AllOIDs allOIDs = new AllOIDs();
 		String [] path = {};
 
 		String strXML = allOIDs.getKeyWord(path);
-		System.out.println(strXML);
+//		System.out.println(strXML);
 		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
 
-		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
-			System.out.println(entrySet);
-		}
+//		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+//			System.out.println(entrySet);
+//		}
 
+		System.out.println("oids fetched: " + rmsg.getListEntrySets().size());
+		System.out.println("first: " + rmsg.getListEntrySets().get(0));
 	}
 	
 	@Test
 	public void testMarkedAsTest() throws Exception{
+		
+		System.out.println("AllOIDs\\markedAs\\test");
+		
 		AllOIDs allOIDs = new AllOIDs();
 		String [] path = {"markedAs","test"};
 
 		String strXML = allOIDs.getKeyWord(path);
-		System.out.println(strXML);
+//		System.out.println(strXML);
 		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
 
-		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
-			System.out.println(entrySet);
-		}
+//		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+//			System.out.println(entrySet);
+//		}
 
+		System.out.println("oids fetched: " + rmsg.getListEntrySets().size());
+		System.out.println("first: " + rmsg.getListEntrySets().get(0));
 	}
 
 	@Test
 	public void testMarkedAs_Wrong() throws Exception{
+		
+		System.out.println("AllOIDs\\markedAs\\noSuchMark");
+		
 		AllOIDs allOIDs = new AllOIDs();
 		String [] path = {"markedAs","noSuchMark"};
 
@@ -58,6 +94,9 @@ public class TestAllOIDs {
 
 	@Test
 	public void testMarkedAs_Empty() throws Exception{
+
+		System.out.println("AllOIDs\\markedAs\\");
+		
 		AllOIDs allOIDs = new AllOIDs();
 		String [] path = {"markedAs"};
 
@@ -78,6 +117,9 @@ public class TestAllOIDs {
 
 	@Test
 	public void testWrongParameter() throws Exception{
+		
+		System.out.println("AllOIDs\\noSuchParameter\\");
+		
 		AllOIDs allOIDs = new AllOIDs();
 		String [] path = {"noSuchParameter"};
 
