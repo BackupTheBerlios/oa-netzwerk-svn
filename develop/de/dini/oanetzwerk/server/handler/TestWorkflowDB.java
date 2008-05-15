@@ -24,7 +24,7 @@ public class TestWorkflowDB {
 	@Test
 	public void test() throws Exception{
 		WorkflowDB wfdb = new WorkflowDB();
-		String [] path = {"2","2"};
+		String [] path = {"2"};
 		
 			String strXML = wfdb.getKeyWord(path);
 			System.out.println(strXML);
