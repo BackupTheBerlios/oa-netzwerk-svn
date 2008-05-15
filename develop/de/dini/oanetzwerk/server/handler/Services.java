@@ -141,6 +141,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			boolean foundOne = false;			
 			while (this.result.getResultSet ( ).next ( )) {
+				foundOne = true;
 				RestEntrySet entrySet = new RestEntrySet();
 				if (logger.isDebugEnabled ( )) 
 					logger.debug ("DB returned: \n\tservice_id = " + this.result.getResultSet ( ).getInt (1) +
