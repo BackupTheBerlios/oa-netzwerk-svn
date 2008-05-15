@@ -64,7 +64,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the object ID");
+			throw new NotEnoughParametersException ("This method needs the object ID as first parameter");
 		
 		BigDecimal internalOID;
 		
@@ -139,7 +139,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 				logger.warn ("no results at all. Continueing...");
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
-				this.rms.setStatusDescription ("No matching RawRecordData found");
+				this.rms.setStatusDescription ("No matching RawRecordData found for OID " + internalOID);
 			}
 			
 		} catch (SQLException ex) {
