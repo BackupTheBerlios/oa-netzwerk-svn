@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
@@ -35,7 +36,7 @@ public class TestAllOIDs {
 	}
 	
 	@Test
-	public void testFetchAll() throws Exception{
+	public void test_GET_NoParams() throws Exception{
 		
 		System.out.println("AllOIDs\\");
 		
@@ -52,10 +53,12 @@ public class TestAllOIDs {
 
 		System.out.println("oids fetched: " + rmsg.getListEntrySets().size());
 		System.out.println("first: " + rmsg.getListEntrySets().get(0));
+		
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
 	}
 	
 	@Test
-	public void testMarkedAsTest() throws Exception{
+	public void test_GET_markedAs_test() throws Exception{
 		
 		System.out.println("AllOIDs\\markedAs\\test");
 		
@@ -72,10 +75,12 @@ public class TestAllOIDs {
 
 		System.out.println("oids fetched: " + rmsg.getListEntrySets().size());
 		System.out.println("first: " + rmsg.getListEntrySets().get(0));
+		
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
 	}
 
 	@Test
-	public void testMarkedAs_Wrong() throws Exception{
+	public void test_GET_markedAs_noSuchMark() throws Exception{
 		
 		System.out.println("AllOIDs\\markedAs\\noSuchMark");
 		
@@ -89,11 +94,13 @@ public class TestAllOIDs {
 		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
 			System.out.println(entrySet);
 		}
+		
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.WRONG_PARAMETER);
 
 	}
 
 	@Test
-	public void testMarkedAs_Empty() throws Exception{
+	public void test_GET_markedAs_noMarkGiven() throws Exception{
 
 		System.out.println("AllOIDs\\markedAs\\");
 		
@@ -116,7 +123,7 @@ public class TestAllOIDs {
 	}
 
 	@Test
-	public void testWrongParameter() throws Exception{
+	public void test_GET_WrongParam() throws Exception{
 		
 		System.out.println("AllOIDs\\noSuchParameter\\");
 		
@@ -131,6 +138,7 @@ public class TestAllOIDs {
 			System.out.println(entrySet);
 		}
 
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.WRONG_PARAMETER);
 	}
 	
 }

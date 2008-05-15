@@ -85,7 +85,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		SingleStatementConnection stmtconn = null;
-		RestEntrySet res = new RestEntrySet ( );
+//		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			
@@ -107,8 +107,9 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 				if (logger.isDebugEnabled ( )) 
 					logger.debug ("DB returned: \n\tobject_id = " + this.result.getResultSet ( ).getBigDecimal (1));
 				
-				//mapEntry.put ("workflow_id", Integer.toString (resultset.getInt (1)));
-				res.addEntry ("object_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+				RestEntrySet entrySet = new RestEntrySet(); 
+				entrySet.addEntry ("object_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+				this.rms.addEntrySet(entrySet);
 			}
 			
 			this.rms.setStatus (RestStatusEnum.OK);
@@ -143,8 +144,8 @@ public class WorkflowDB extends AbstractKeyWordHandler implements
 				}
 			}
 			
-			this.rms.addEntrySet (res);
-			res = null;
+//			this.rms.addEntrySet (res);
+//			res = null;
 			this.result = null;
 			dbng = null;
 		}

@@ -99,6 +99,7 @@ public class TestWorkflowDB {
 		System.out.println(strXML);
 		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
 
+		System.out.println("items found: " + rmsg.getListEntrySets().size());
 		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
 			System.out.println(entrySet);
 		}
