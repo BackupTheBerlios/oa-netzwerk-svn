@@ -6,9 +6,11 @@
 	<property name="build.harvester" value="build/harvester"/>
 	<property name="archive" value="arch"/>
 	<property name="lib" value="serverlib"/>
+	<property name="buildlib" value="lib"/>
 	
 	<path id="classpath">
 		<fileset dir="${lib}" includes="**/*.jar"/>
+		<fileset dir="${buildlib}" includes="**/*.jar"/>
 	</path>
 	
 	<target name="init">
@@ -111,7 +113,11 @@
 	
 	<target name="warServer" depends="compileServer">
 		<war destfile="${build}/restserver.war" webxml="conf/web.xml">
+		<!--war destfile="${build}/restserver.war"-->
 			<lib dir="${lib}"/>
+			<metainf dir="conf">
+				<include name="context.xml"/>
+			</metainf>
 			<classes dir="${build.server}">
 				<exclude name="**/technotest/**"/>
 			</classes>
