@@ -47,9 +47,9 @@ public class TestAllOIDs {
 //		System.out.println(strXML);
 		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
 
-//		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
-//			System.out.println(entrySet);
-//		}
+		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+			System.out.println(entrySet);
+		}
 
 		System.out.println("oids fetched: " + rmsg.getListEntrySets().size());
 		System.out.println("first: " + rmsg.getListEntrySets().get(0));

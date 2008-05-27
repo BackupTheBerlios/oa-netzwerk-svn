@@ -35,8 +35,10 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class RestClient {
 	
-	private static final int servletContainerPort = 8080;
-	private static final int servletContainerSSLPort = 8443;
+//	private static final int servletContainerPort = 8080;
+	private static final int servletContainerPort = 80;
+//	private static final int servletContainerSSLPort = 8443;
+	private static final int servletContainerSSLPort = 443; // oanet antwortet auf 443
 	private static final String servletPath = "restserver/server/";
 	private boolean nossl;
 	private String url;
@@ -134,7 +136,7 @@ public class RestClient {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("SSL");
 			
-			//return false;
+//			return false;
 			//TODO: if SSL works reenable false!!!!
 			return true;
 		}
