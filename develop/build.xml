@@ -7,6 +7,16 @@
 	<property name="archive" value="arch"/>
 	<property name="lib" value="serverlib"/>
 	<property name="buildlib" value="lib"/>
+	<property name="path" value="/restserver"/>
+	<property name="url" value="http://oanet.cms.hu-berlin.de/manager"/>
+	<property name="username" value=""/>
+	<property name="password" value=""/>
+	
+	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"/>
+	<taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask"/>
+	<taskdef name="start" classname="org.apache.catalina.ant.StartTask"/>
+	<taskdef name="stop" classname="org.apache.catalina.ant.StopTask"/>
+	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"/>
 	
 	<path id="classpath">
 		<fileset dir="${lib}" includes="**/*.jar"/>
@@ -45,23 +55,6 @@
 	<target name="compileAll">
 		<tstamp/>
 		<javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
-	</target>
-	
-	<target name="jarAll" depends="compileAll">
-		<jar destfile="${build}/oa-netzwerk-${DSTAMP}.jar" basedir="${build}" excludes="**/technotest/**">
-			<manifest>
-				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.Harvester"/>
-			</manifest>
-		</jar>
-	</target>
-	
-	<target name="warAll" depends="compileAll">
-			<war destfile="${build}/oa-netzwerk-develop.war" webxml="conf/web.xml">
-				<lib dir="${lib}"/>
-				<classes dir="${build}">
-					<exclude name="**/technotest/**"/>
-				</classes>
-    		</war>
 	</target>
 	
 	<target name="tarSourceServer" depends="initArch">
@@ -124,6 +117,18 @@
 		</war>
 	</target>
 	
+	<target name="deployServer" depends="warServer" description="Install restserver">
+		<deploy url="${url}" username="${username}" password="${password}" path="${path}" war="file:${build}/restserver.war" update="true"/>
+	</target>
+	
+	<target name="reloadServer" description="Reload restserver">
+		<reload url="${url}" username="${username}" password="${password}" path="${path}"/>
+	</target>
+	
+	<target name="undeployServer" description="Undeploy restserver">
+		<undeploy url="${url}" username="${username}" password="${password}" path="${path}"/>
+	</target>
+
 	<target name="compileHarvester" depends="init">
 		<tstamp/>
 		<javac destdir="${build.harvester}" classpathref="classpath">
