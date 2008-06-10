@@ -41,6 +41,7 @@ public class RestEntrySet {
 			sb.append(key);
 			sb.append(" value=");
 			sb.append(this.getValue(key));
+			if(it.hasNext()) sb.append(" | ");
 		}
 		return sb.toString();
 	}
