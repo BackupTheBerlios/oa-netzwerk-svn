@@ -370,6 +370,10 @@ public class Aggregator {
 	}
 
 	private Object storeMetaData(Object data) {
+		
+		System.out.println("### storeMetaData - Begin ###");
+		
+		
 		// es wird ein IMF-Objekt erwartet
 		InternalMetadata im = null; 
 		
@@ -383,7 +387,7 @@ public class Aggregator {
 		String xmlData;
 		xmlData = marshaller.marshall(im);
 		
-		System.out.println("### XMLDATA GET ###");
+//		System.out.println("### XMLDATA GET ###");
 //		System.out.println(xmlData);
 		
 		// Rest-Client initialisieren
@@ -400,6 +404,9 @@ public class Aggregator {
 		// 3. PUT ausführen, um die neuen Daten zu speichern
 	
 //		try {
+
+		System.out.println("# GET ");
+		
 			response = restclient.sendGetRestMessage();
 			entrySet = response.getListEntrySets().get(0);
 			strXML = entrySet.getValue ("internalmetadata");
@@ -408,7 +415,7 @@ public class Aggregator {
 				// es wird ein Rückgabewert geliefert
 				// UNMARSHALL XML
 			
-				System.out.println(response.toString());
+				System.out.println("# GET-Response:\n" + response.toString() + "\n # GET-Response Ende");
 				
 				InternalMetadata imfTemp = null;		
 				try {		
@@ -417,6 +424,9 @@ public class Aggregator {
 					List <Title> titleList = imfTemp.getTitles ( );
 					List <Author> authorList = imfTemp.getAuthors();
 					if (!(titleList.isEmpty() && authorList.isEmpty() )) {
+						
+						System.out.println("# DELETE necessary");
+						
 						// apparently some data exists, therefore it has to be deleted first
 						restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 						response = restclient.sendDeleteRestMessage();
@@ -427,6 +437,8 @@ public class Aggregator {
 						
 						System.out.println("oid nach Delete: " + strXML);
 						
+					} else {
+						System.out.println("# DELETE not necessary");
 					}
 					
 				} catch(Exception ex) {
@@ -457,10 +469,12 @@ public class Aggregator {
 		
 //		System.exit(-1);
 		
-		System.out.println("### XMLDATA GET ###");
+
 			
 			
 		try {
+
+			System.out.println("# PUT");
 			
 			RestMessage rms = new RestMessage();
 			rms.setKeyword (RestKeyword.InternalMetadataEntry);
@@ -471,6 +485,8 @@ public class Aggregator {
 			res.addEntry ("internalmetadata", xmlData);
 			rms.addEntrySet (res);
 
+//			System.out.println(xmlData);
+			
 			restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 			response = restclient.sendPutRestMessage(rms);
 			
