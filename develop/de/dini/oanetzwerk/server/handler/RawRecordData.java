@@ -11,18 +11,20 @@ import java.text.ParseException;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.server.database.UpdateInDB;
 import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.codec.RestEntrySet;
-import de.dini.oanetzwerk.codec.RestKeyword;
-import de.dini.oanetzwerk.codec.RestMessage;
-import de.dini.oanetzwerk.codec.RestStatusEnum;
-import de.dini.oanetzwerk.codec.RestXmlCodec;
-import de.dini.oanetzwerk.utils.exceptions.*;
+import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
+import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
  * @author Michael K&uuml;hn
@@ -100,8 +102,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					
 				} catch (ParseException ex) {
 					
-					logger.error (ex.getLocalizedMessage ( ));
-					ex.printStackTrace ( );
+					logger.error (path [1] + " is NOT a datestamp!");
+					
+					this.rms = new RestMessage (RestKeyword.RawRecordData);
+					this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+					this.rms.setStatusDescription (path [0] + " is NOT a datestamp!");
+					
+					return RestXmlCodec.encodeRestMessage (this.rms);
 				}
 				
 				if (logger.isDebugEnabled ( ))
@@ -193,14 +200,16 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		//TODO: zwei weitere Parameter: Repository-Timestamp, MetaDatenformat!!!
 		
-		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs 2 parameters: the keyword and the object ID");
+		if (path.length < 2)
+			throw new NotEnoughParametersException ("This method needs 3 parameters: the keyword and the Repository-Timestamp");
 		
 		BigDecimal object_id;
+		Date repository_timestamp;
 		
 		try {
-			
+				
 			object_id = new BigDecimal (path [0]);
+			repository_timestamp = HelperMethods.extract_datestamp (path [1]);
 			
 		} catch (NumberFormatException ex) {
 			
@@ -211,17 +220,38 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			this.rms.setStatusDescription (path [0] + " is NOT a number!");
 			
 			return RestXmlCodec.encodeRestMessage (this.rms);
+			
+		} catch (ParseException ex) {
+			
+			logger.error (path [1] + " is NOT a datestamp!");
+			
+			this.rms = new RestMessage (RestKeyword.RawRecordData);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a datestamp!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
-		
+
 		DBAccessNG dbng = new DBAccessNG ( );		
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
-
+		
 		try {
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (UpdateInDB.PrecleanedData (stmtconn.connection, object_id, data));
+			if (path.length > 2) {
+				
+				String metaDataFormat = path [2];
+				stmtconn.loadStatement (UpdateInDB.PrecleanedData (stmtconn.connection, object_id, repository_timestamp, metaDataFormat, data));
+				
+				metaDataFormat = null;
+				
+			} else {
+				
+				stmtconn.loadStatement (UpdateInDB.PrecleanedData (stmtconn.connection, object_id, repository_timestamp, data));
+			}
+				
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) {

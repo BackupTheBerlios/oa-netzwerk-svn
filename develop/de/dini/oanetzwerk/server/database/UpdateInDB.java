@@ -52,13 +52,20 @@ public class UpdateInDB {
 	 */
 	
 	public static PreparedStatement PrecleanedData (Connection connection,
-			BigDecimal object_id, String data) throws SQLException {
-
-		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.RawData SET precleaned_data = ? WHERE object_id = ?");
+			BigDecimal object_id, Date repositoryDateStamp, String data) throws SQLException {
+		
+		return PrecleanedData (connection, object_id, repositoryDateStamp, "oai_dc", data);
+	}
+	
+	public static PreparedStatement PrecleanedData (Connection connection,
+			BigDecimal object_id, Date repositoryDateStamp, String metaDataFormat, String data) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.RawData SET precleaned_data = ? WHERE object_id = ? AND repository_timestamp = ? AND MetaDataFormat = ?");
 		preparedstmt.setString (1, data);
 		preparedstmt.setBigDecimal (2, object_id);
+		preparedstmt.setDate(3, repositoryDateStamp);
+		preparedstmt.setString(4, metaDataFormat);
 		
 		return preparedstmt;
 	}
-
 }
