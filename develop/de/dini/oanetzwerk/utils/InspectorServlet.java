@@ -51,6 +51,12 @@ public class InspectorServlet extends HttpServlet {
 		ObjectEntry,
 		RawRecordData,
 		InternalMetadataEntry,
+		WorkflowDB,
+		ServiceOrder,
+		Services,
+		ObjectEntryID,
+		AllOIDs,
+		DuplicatePossibility,
 		TC_WrongKeyword,
 		TC_WrongParams,
 		TC_WrongUser,
@@ -61,6 +67,7 @@ public class InspectorServlet extends HttpServlet {
 	
 	private String sParamOID;
 	private String sSelfURL;
+	private String sParamMarkedAs;
 	private String sParamShowRestData;
 	private String sParamShowCodecData;
 	private InspectorModeEnum enumParamMode;
@@ -80,7 +87,8 @@ public class InspectorServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		out = res.getWriter();
 		
-		sParamOID = StringUtils.defaultString(req.getParameter("OID"),"633");
+		sParamOID = StringUtils.defaultString(req.getParameter("OID"),"635");
+		sParamMarkedAs = StringUtils.defaultString(req.getParameter("markedAs"),"");
 		sParamShowRestData = StringUtils.defaultString(req.getParameter("ShowRestData"),"true");
 		sParamShowCodecData = StringUtils.defaultString(req.getParameter("ShowCodecData"),"true");
 		
@@ -125,8 +133,11 @@ public class InspectorServlet extends HttpServlet {
 		if(mode != null) {
 
 			sb.append("<br/>\n");
+			sb.append("<table width=\"100%\" border=\"0\"><tr valign=\"top\"><td>\n");
 			sb.append(renderModeForm());		
-			sb.append(renderOIDForm());
+			sb.append("</td><td>\n");
+			sb.append(renderParameterForm(mode));
+			sb.append("</td></tr></table>\n");
 			sb.append("<br/>\n");
 
 			//sb.append("<h3>Parameter der WebApplikation</h3>\n");
@@ -183,6 +194,15 @@ public class InspectorServlet extends HttpServlet {
 					sb.append(renderDecodedData(data));
 				}
 				 
+			} else if (mode == InspectorModeEnum.WorkflowDB) {
+				
+				if(response != null) {
+					sb.append(renderRESTResponse(response));
+
+					String data = decodeRESTResponse(RestXmlCodec.decodeRestMessage(response), InspectorModeEnum.WorkflowDB);
+					sb.append(renderDecodedData(data));
+				}
+				
 			} else if(mode == InspectorModeEnum.TC_WrongUser ||
 					  mode == InspectorModeEnum.TC_WrongPW ||
 					  mode == InspectorModeEnum.TC_WrongKeyword ||
@@ -195,7 +215,16 @@ public class InspectorServlet extends HttpServlet {
 					
 				}
 					
-			} 
+			} else {
+				
+				if(response != null) {
+					sb.append(renderRESTResponse(response));
+
+					String data = decodeRESTResponse(RestXmlCodec.decodeRestMessage(response), mode);
+					sb.append(renderDecodedData(data));
+				}
+				
+			}
 
 		}
 				
@@ -244,9 +273,9 @@ public class InspectorServlet extends HttpServlet {
 	private String renderContentHeader() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<table border=\"0\">\n<tr>\n");
-		sb.append("<td><img src=\"" + sSelfURL + "img/logo_s.PNG\"/></td>\n");
+		sb.append("<td><img src=\"" + sSelfURL + "img/Logo_oan_rgb_micro.PNG\"/></td>\n");
 		sb.append("<td widht=\"20\">&nbsp;</td>\n");
-		sb.append("<td valign=\"center\"><font size=\"+4\"><b>INSPECTOR</b></font><br/>Entwicklungswerkzeug zum &Uuml;berwachen der Infrastruktur</td>\n");
+		sb.append("<td valign=\"center\"><font face=\"Helvetica,Arial\" size=\"+8\"><b>INSPECTOR</b></font><small> (Entwicklungswerkzeug zum &Uuml;berwachen der Infrastruktur)</small></td>\n");
 		sb.append("</tr>\n</table>\n");
 		return sb.toString();
 	}
@@ -278,6 +307,30 @@ public class InspectorServlet extends HttpServlet {
 			case InternalMetadataEntry:
 				ressource = "InternalMetadataEntry/" + sParamOID;
 				restclient = RestClient.createRestClient(sExtURLRestServer, ressource, sExtAggrUser, sExtAggrPass);
+				break;
+			case WorkflowDB: 
+				//TODO: use an own servlet parameter!
+				ressource =  "WorkflowDB/2/2"; //"WorkflowDB/" + sParamOID + "/" + sParamOID;
+				restclient = RestClient.createRestClient(sExtURLRestServer, ressource, sExtAggrUser, sExtAggrPass);				
+				break;
+			case ObjectEntryID:
+				ressource =  "ObjectEntryID/";
+				restclient = RestClient.createRestClient(sExtURLRestServer, ressource, sExtAggrUser, sExtAggrPass);								
+				break;
+			case ServiceOrder:
+				ressource =  "ServiceOrder/";
+				restclient = RestClient.createRestClient(sExtURLRestServer, ressource, sExtAggrUser, sExtAggrPass);								
+				break;
+			case Services:
+				ressource =  "Services/";
+				restclient = RestClient.createRestClient(sExtURLRestServer, ressource, sExtAggrUser, sExtAggrPass);								
+				break;
+			case AllOIDs:
+				ressource = "AllOIDs/";
+				if(sParamMarkedAs.length() > 0) {
+					ressource = "AllOIDs/markedAs/" + sParamMarkedAs;
+				} 
+				restclient = RestClient.createRestClient(sExtURLRestServer, ressource, sExtAggrUser, sExtAggrPass);								
 				break;
 			case TC_WrongUser:
 				ressource = "RawRecordData/" + sParamOID;
@@ -324,6 +377,7 @@ public class InspectorServlet extends HttpServlet {
 		sb.append("<h4>von der Rest-Schnittstelle &uuml;bermittelte Daten:</h4>\n");
 		if(sParamShowRestData.equals("true")) {
 			sb.append("<a href=\"");
+			//Todo: neue Parameter einbinden wie markedAs
 			sb.append(encodeParameterIntoURL(sSelfURL, sParamOID, "false", sParamShowCodecData, enumParamMode.toString()));
 			sb.append("\"><small> (verbergen)</small></a><br/>\n");
 			if(response.indexOf("<html>") != -1) {
@@ -403,7 +457,7 @@ public class InspectorServlet extends HttpServlet {
 					while (it.hasNext()) {
 						key = it.next();
 						value = entrySet2.getValue(key);
-						result.append("  Schlüssel = ");
+						result.append("  Schluessel = ");
 						result.append(key + "\n");
 						result.append("  Wert = ");
 						result.append(value + "\n");
@@ -548,18 +602,30 @@ public class InspectorServlet extends HttpServlet {
 	 * 
 	 * @return
 	 */
-	private String renderOIDForm() {
+	private String renderParameterForm(InspectorModeEnum mode) {
 		StringBuffer sb = new StringBuffer();
 		
+		sb.append("<small>Parameterauswahl: </small><br/>");
 		sb.append("<form action=\"" + sSelfURL + "index.html\" method=\"get\">\n");
 		sb.append("<fieldset>\n");
-//		sb.append("<legend>Welches Objekt soll abgerufen werden?</legend>\n");
-		sb.append("<label for=\"oid_input\">OID: </label>");
-		sb.append("<input id=\"oid_input\" name=\"OID\" type=\"text\" size=\"30\" maxlength=\"30\" value=\"" + sParamOID + "\"/>\n");
-		sb.append("<input type=\"submit\" value=\" Anfrage auf diese OID \">");
-		sb.append("<input type=\"hidden\" name=\"ShowRestData\" value=\"" + sParamShowRestData + "\"/>");
-		sb.append("<input type=\"hidden\" name=\"ShowCodecData\" value=\"" + sParamShowCodecData + "\"/>");
-		sb.append("<input type=\"hidden\" name=\"Mode\" value=\"" + enumParamMode + "\"/>");
+		switch(mode) {
+		  case AllOIDs:
+				sb.append("<label for=\"markedAs\">Markierung: </label>");
+				sb.append("<input id=\"markedAs\" name=\"markedAs\" type=\"text\" size=\"30\" maxlength=\"30\" value=\"" + sParamMarkedAs + "\"/>\n");
+				sb.append("<input type=\"submit\" value=\" Anfrage auf diese Markierung \">");
+				sb.append("<input type=\"hidden\" name=\"ShowRestData\" value=\"" + sParamShowRestData + "\"/>");
+				sb.append("<input type=\"hidden\" name=\"ShowCodecData\" value=\"" + sParamShowCodecData + "\"/>");
+				sb.append("<input type=\"hidden\" name=\"Mode\" value=\"" + enumParamMode + "\"/>");	
+				break;
+		  default:
+//				sb.append("<legend>Welches Objekt soll abgerufen werden?</legend>\n");
+				sb.append("<label for=\"oid_input\">OID: </label>");
+				sb.append("<input id=\"oid_input\" name=\"OID\" type=\"text\" size=\"30\" maxlength=\"30\" value=\"" + sParamOID + "\"/>\n");
+				sb.append("<input type=\"submit\" value=\" Anfrage auf diese OID \">");
+				sb.append("<input type=\"hidden\" name=\"ShowRestData\" value=\"" + sParamShowRestData + "\"/>");
+				sb.append("<input type=\"hidden\" name=\"ShowCodecData\" value=\"" + sParamShowCodecData + "\"/>");
+				sb.append("<input type=\"hidden\" name=\"Mode\" value=\"" + enumParamMode + "\"/>");			  			 
+		}
 		sb.append("</fieldset>\n");
 		sb.append("</form>\n");
 		
@@ -575,21 +641,44 @@ public class InspectorServlet extends HttpServlet {
 	private String renderModeForm() {
 		StringBuffer sb = new StringBuffer();
 		
-		sb.append("<small>Testvarianten: </small>");
+		sb.append("<small>Testvarianten: </small><br/>");
+		
+		sb.append("<table cellspacing=\"1\" cellpadding=\"5\" width=\"100%\" border=\"1\"><tr>");
+		
+		int count = 1;
+		int size = InspectorModeEnum.values().length;
+		int colsPerRow = 3;
 		
 		for(InspectorModeEnum mode : InspectorModeEnum.values()) {
+			String colspan="";
+			//if(count==size) {
+			//	colspan=" colspan=\"" + (colsPerRow - count % colsPerRow + 1) + "\"";
+			//}
 			if(mode == enumParamMode) {
-				sb.append("<b>[");
+				sb.append("<td width=\"150\""+colspan+" bgcolor=\"Goldenrod\"><center>[");
 				sb.append(mode.toString());
-				sb.append("]</b> ");
+				sb.append("]</center></td> ");
 			} else {
-				sb.append("<a href=\"");
+				sb.append("<td width=\"150\""+colspan+" bgcolor=\"#EEEEEE\"><center><a href=\"");
 				sb.append(encodeParameterIntoURL(sSelfURL, sParamOID, sParamShowRestData, sParamShowCodecData, mode.toString()));
 				sb.append("\">[");
 				sb.append(mode.toString());
-				sb.append("]</a> ");
+				sb.append("]</a></center></td> ");
 			}
+			if(count % colsPerRow == 0 && count != size) {
+				//sb.append("<br/>");
+				sb.append("<tr/><tr>");
+			}
+			count++;
 		}
+
+		for(int i = count % colsPerRow; i > 0; i--) {
+			sb.append("<td width=\"150\" bgcolor=\"#EEEEEE\">&nbsp;</td>");
+		}
+		
+		sb.append("</tr></table>");
+
+		
 		return sb.toString();
 	}
 	

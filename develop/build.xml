@@ -4,6 +4,7 @@
 	<property name="build" value="build"/>
 	<property name="build.server" value="build/server"/>
 	<property name="build.harvester" value="build/harvester"/>
+	<property name="build.inspector" value="build/inspector"/>
 	<property name="archive" value="arch"/>
 	<property name="lib" value="serverlib"/>
 	<property name="buildlib" value="lib"/>
@@ -27,6 +28,7 @@
 		<mkdir dir="${build}"/>
 		<mkdir dir="${build.server}"/>
 		<mkdir dir="${build.harvester}"/>
+		<mkdir dir="${build.inspector}"/>
 	</target>
 	
 	<target name="initArch">
@@ -97,8 +99,24 @@
 			<src path="${src}/de/dini/oanetzwerk/server"/>
 			<src path="${src}/de/dini/oanetzwerk/utils"/>
 			<exclude name="**/InspectorServlet.java"/>
+			<exclude name="**/Test*.java"/>
+			<exclude name="**/oai/**/*"/>
 		</javac>
 	</target>
+	
+	<target name="compileInspector" depends="init">
+		<tstamp/>
+		<javac destdir="${build.inspector}" classpathref="classpath">
+			<src path="${src}/de/dini/oanetzwerk/codec"/>
+			<src path="${src}/de/dini/oanetzwerk/utils"/>
+			<src path="${src}/de/dini/oanetzwerk/servicemodule"/>
+			<exclude name="**/servicemodule/harvester/*"/>
+			<exclude name="**/servicemodule/aggregator/*"/>
+			<exclude name="**/Test*.java"/>
+			<exclude name="**/SQL2DB.java"/>
+			<exclude name="**/oai/**/*"/>
+		</javac>
+	</target>	
 	
 	<target name="jarServer" depends="compileServer">
 		<jar destfile="${build}/oa-netzwerk-server-${DSTAMP}.jar" basedir="${build.server}" excludes="**/technotest/**"/>
@@ -114,6 +132,19 @@
 			<classes dir="${build.server}">
 				<exclude name="**/technotest/**"/>
 			</classes>
+		</war>
+	</target>
+	
+	<target name="warInspector" depends="compileInspector">
+		<war destfile="${build}/restinspector.war" webxml="conf_inspector/web.xml">
+			<lib dir="${buildlib}"/>
+<!--			<metainf dir="conf">
+				<include name="context.xml"/>
+			</metainf>-->
+			<classes dir="${build.inspector}">
+				<exclude name="**/technotest/**"/>
+			</classes>
+  		    <zipfileset dir="img_inspector/" prefix="img"/>
 		</war>
 	</target>
 	
