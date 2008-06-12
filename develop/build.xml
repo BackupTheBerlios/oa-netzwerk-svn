@@ -138,9 +138,10 @@
 	<target name="warInspector" depends="compileInspector">
 		<war destfile="${build}/restinspector.war" webxml="conf_inspector/web.xml">
 			<lib dir="${buildlib}"/>
-<!--			<metainf dir="conf">
-				<include name="context.xml"/>
-			</metainf>-->
+			<webinf dir="conf_inspector">
+				<include name="restclientprop.xml"/>
+				<include name="log4j.xml"/>				
+			</webinf>
 			<classes dir="${build.inspector}">
 				<exclude name="**/technotest/**"/>
 			</classes>
