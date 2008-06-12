@@ -40,11 +40,12 @@ public class RestClient {
 //	private static final int servletContainerSSLPort = 8443;
 	private static final int servletContainerSSLPort = 443; // oanet antwortet auf 443
 	private static final String servletPath = "restserver/server/";
+	private int port;
 	private boolean nossl;
 	private String url;
-	private String path;
-	private String username;
-	private String password;
+	private final String path;
+	private final String username;
+	private final String password;
 	private Properties props;
 	static Logger logger = Logger.getLogger (RestClient.class);
 
@@ -71,7 +72,7 @@ public class RestClient {
 		this.password = pwd;
 		
 		try {
-			
+			//TODO: aufräumen (Fehler, Port, ServletPath)
 			this.props = HelperMethods.loadPropertiesFromFile ("restclientprop.xml");
 			
 		} catch (InvalidPropertiesFormatException ex) {
@@ -91,6 +92,7 @@ public class RestClient {
 		}
 		
 		if (!this.nossl) {
+			
 			
 			System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
 			System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));

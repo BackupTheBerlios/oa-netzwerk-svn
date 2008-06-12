@@ -198,8 +198,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String postKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
 		
-		//TODO: zwei weitere Parameter: Repository-Timestamp, MetaDatenformat!!!
-		
 		if (path.length < 2)
 			throw new NotEnoughParametersException ("This method needs 3 parameters: the keyword and the Repository-Timestamp");
 		
