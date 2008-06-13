@@ -12,13 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-//import org.apache.log4j.xml.DOMConfigurator;
 
 import de.dini.oanetzwerk.codec.*;
 import de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+
+//TODO: Comments!!!
 
 /**
  * @author Michael K&uuml;hn
@@ -29,7 +30,11 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 public class RestServer extends HttpServlet {
 	
 	static Logger logger = Logger.getLogger (RestServer.class);
-	PrintWriter out;
+	PrintWriter out = null;
+	
+	/**
+	 * Standard Constructor 
+	 */
 	
 	public RestServer ( ) {
 		
@@ -40,6 +45,8 @@ public class RestServer extends HttpServlet {
 	 * @param i 
 	 * @return
 	 */
+	
+	//TODO: Better name for variable i
 	
 	@SuppressWarnings("unchecked")
 	private String processRequest (HttpServletRequest req, int i) {
@@ -121,6 +128,8 @@ public class RestServer extends HttpServlet {
 			
 			return createErrorResponse (ex, RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		}
+		
+		// This section is unreachable
 	}
 
 	/**
@@ -130,6 +139,18 @@ public class RestServer extends HttpServlet {
 	 */
 	
 	private String createErrorResponse (Exception ex, RestStatusEnum restStatusEnum) {
+		
+		if (ex == null) {
+			
+			ex = new Exception ("Unknown Error occured");
+			logger.warn ("unknown error occured!");
+		}
+		
+		if (restStatusEnum == null) {
+			
+			restStatusEnum = RestStatusEnum.UNKNOWN_ERROR;
+			logger.warn ("unknown error occured!");
+		}
 		
 		RestMessage rms = new RestMessage (RestKeyword.UNKNOWN);
 		rms.setStatus (restStatusEnum);
@@ -141,24 +162,27 @@ public class RestServer extends HttpServlet {
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
-		out = res.getWriter ( );
-		out.write (processRequest (req, 0));
+		this.out = res.getWriter ( );
+		this.out.write (processRequest (req, 0));
 	}
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	
 	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
-		out = res.getWriter ( );
-		out.write (processRequest (req, 2));
+		this.out = res.getWriter ( );
+		this.out.write (processRequest (req, 2));
 	}
 
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPut(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	
 	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		out = res.getWriter ( );
