@@ -46,6 +46,9 @@ public class RestServer extends HttpServlet {
 		
 		String path [ ] = req.getPathInfo ( ).split ("/");
 		
+		if (path.length < 1)
+			return createErrorResponse (new NotEnoughParametersException ("No keyword specified"), RestStatusEnum.NOT_ENOUGH_PARAMETERS_ERROR);
+		
 		if (logger.isDebugEnabled ( )) {
 			
 			logger.debug ("servlet: " + req.getContextPath ( ));
