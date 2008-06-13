@@ -28,7 +28,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	public AllOIDs ( ) {
 		
-		super (AllOIDs.class.getName ( ), RestKeyword.ObjectEntryID);
+		super (AllOIDs.class.getName ( ), RestKeyword.AllOIDs);
 	}	
 
 	/**
