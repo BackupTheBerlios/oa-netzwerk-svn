@@ -5,46 +5,33 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
 import java.io.FileNotFoundException;
-import java.io.IOException; // import java.io.InputStream;
-import java.io.StringReader; // import java.text.SimpleDateFormat;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-
-// import javax.xml.parsers.DocumentBuilder;
-// import javax.xml.parsers.DocumentBuilderFactory;
-// import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.codec.binary.Base64; // import
-												// org.apache.commons.httpclient.HttpClient;
-// import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator; // import
-												// org.w3c.dom.DOMException;
-// import org.w3c.dom.Document;
-// import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource; // import org.xml.sax.SAXException;
-
-// import org.jdom.Content;
-
+import org.apache.log4j.xml.DOMConfigurator;
 import org.jdom.Element;
-import org.jdom.Namespace; // import org.jdom.Text;
+import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
+import org.xml.sax.InputSource;
 
-import de.dini.oanetzwerk.servicemodule.RestClient;
-import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
-import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.servicemodule.RestClient;
+import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 import de.dini.oanetzwerk.utils.imf.InternalMetadataJAXBMarshaller;
@@ -355,7 +342,7 @@ public class Aggregator {
 		System.out.println("## Ende decodierte Informationen\n\n\n");
 		
 		try {
-			return new String(Base64.decodeBase64(((String) data).getBytes()));
+			return new String(Base64.decodeBase64(((String) data).getBytes("UTF-8")));
 		} catch (Exception e) {
 			logger.error("decodeBase64 : ioException\n");
 			e.printStackTrace();
@@ -442,7 +429,7 @@ public class Aggregator {
 					}
 					
 				} catch(Exception ex) {
-					System.out.println("Exceptioh geworfen");
+					System.out.println("Exception geworfen");
 //				this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 //				this.rms.setStatus (RestStatusEnum.REST_XML_DECODING_ERROR);
 //				this.rms.setStatusDescription("unable to unmarshall xml " + strXML + " :" + ex);

@@ -110,7 +110,7 @@ public class RunHarvester {
 					
 					// Here we go: create a new instance of the harvester
 					
-					harvester = Harvester.getHarvester ( ); 
+					harvester = Harvester.getHarvester ( );
 					harvester.prepareHarvester (id);
 
 					harvester.filterUrl (cmd.getOptionValue ('u'));

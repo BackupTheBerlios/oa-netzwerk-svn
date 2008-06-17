@@ -3,7 +3,6 @@ package de.dini.oanetzwerk.utils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -85,6 +84,7 @@ public class InspectorServlet extends HttpServlet {
 	 * Diese Methode muss in jedem Servlet vorhanden sein. In diesem Fall initialisiert sie
 	 * auch Parameter aus dem Request sowie dem Context aus der web.xml.
 	 */
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		out = res.getWriter();
 		
@@ -596,7 +596,7 @@ public class InspectorServlet extends HttpServlet {
 	 */
 	private String decodeBase64(String data) {
 		try {
-			return new String(Base64.decodeBase64(((String) data).getBytes()));
+			return new String(Base64.decodeBase64((data).getBytes("UTF-8")));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

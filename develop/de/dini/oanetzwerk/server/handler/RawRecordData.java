@@ -4,11 +4,13 @@
 
 package de.dini.oanetzwerk.server.handler;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -355,10 +357,16 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		RestEntrySet res = new RestEntrySet ( );
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("The following values will be inserted:\n\tinternal OID = " + object_id +
-					"\n\tRepository Datestamp = " + repository_timestamp +
-					"\n\tData = " + data +
-					"\n\tMetaDataFormat = " + metaDataFormat);
+			try {
+				logger.debug ("The following values will be inserted:\n\tinternal OID = " + object_id +
+						"\n\tRepository Datestamp = " + repository_timestamp +
+						"\n\tData = " + new String (Base64.decodeBase64((data).getBytes ("UTF-8"))) +
+						"\n\tMetaDataFormat = " + metaDataFormat);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.warn (e.getLocalizedMessage());
+			}
 		
 		try {
 			

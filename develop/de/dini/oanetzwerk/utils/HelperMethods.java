@@ -4,7 +4,13 @@
 
 package de.dini.oanetzwerk.utils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,6 +50,7 @@ public class HelperMethods {
 		try {
 			
 			while ((line = in.readLine ( )) != null)				
+				//sb.append (line + "\n");
 				sb.append (line + "\n");
 			
 		} catch (IOException ex) {

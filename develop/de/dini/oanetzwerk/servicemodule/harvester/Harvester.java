@@ -4,32 +4,45 @@
 
 package de.dini.oanetzwerk.servicemodule.harvester;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.InvalidPropertiesFormatException;
+import java.util.Iterator;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.dini.oanetzwerk.servicemodule.RestClient;
-import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.servicemodule.RestClient;
+import de.dini.oanetzwerk.utils.HelperMethods;
 
 /**
  * The Harvester consists of two parts: the Harvester itself and the Object Manager. The Harvester
@@ -79,7 +92,7 @@ public class Harvester {
 	 * Here we store the harvested MetaDataFormat.
 	 */
 	
-	private String metaDataFormat ="oai_dc";
+	private final String metaDataFormat ="oai_dc";
 	
 	/**
 	 * This is the corresponding ID to the repository we'll connect to.
@@ -123,7 +136,6 @@ public class Harvester {
 	 */
 	
 	private boolean testData = true;
-	
 	
 	private String propertyfile = "harvesterprop.xml";
 	
@@ -426,6 +438,16 @@ public class Harvester {
 	public final Properties getProps ( ) {
 	
 		return this.props;
+	}
+	
+	protected ArrayList<ObjectIdentifier> getIds ( ) {
+		
+		return ids;
+	}
+
+	protected void setIds (ArrayList<ObjectIdentifier> ids) {
+		
+		this.ids = ids;
 	}
 
 	/**
@@ -771,7 +793,7 @@ public class Harvester {
 	 * @see #updateHarvestedDatestamp(int)
 	 */
 	
-	private void processRecords ( ) {
+	protected void processRecords ( ) {
 		
 		if (this.ids.size ( ) < 1) {
 			
@@ -781,7 +803,6 @@ public class Harvester {
 			return;
 		}
 			
-		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("now we process " + this.ids.size ( ) + " Records");
 		
@@ -853,7 +874,7 @@ public class Harvester {
 	 * @see ObjectIdentifier
 	 */
 	
-	private void createObjectEntry (int index) {
+	protected void createObjectEntry (int index) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("we have to create a new Object");
@@ -895,11 +916,8 @@ public class Harvester {
 			
 			String result = prepareRestTransmission ("ObjectEntry/").PutData (requestxml);
 			
-			//String result = restClient.PutData (requestxml);
-			
 			rms = null;
 			res = null;
-			//restClient = null;
 			
 			String value = getValueFromKey (result, "oid");
 						
@@ -1036,7 +1054,7 @@ public class Harvester {
 			logger.debug ("internalOID: " + intoid + " has been successfully updated");
 		
 	}
-	
+	//TODO: 
 	/**
 	 * This method puts new RawData in the Database.
 	 * 
@@ -1045,7 +1063,7 @@ public class Harvester {
 	 * @throws HttpException 
 	 */
 	
-	private void updateRawData (int index) {
+	protected void updateRawData (int index) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("Now we're going to update the RawData");
@@ -1077,6 +1095,22 @@ public class Harvester {
 			// Put transmits the received data from the Repository, which is a stream, so this stream has to be converted 
 			// to a UTF-8-encoded string. Finally this string has to be encoded with Base64. After that the utf-8-base64-string will be sent.
 			
+			if (logger.isDebugEnabled ( )) {
+				
+				Header [ ] header = method.getResponseHeaders ( );
+				
+				for (Header header2 : header) {
+					
+					logger.debug ("ResponseHeader: " + header2.getName ( ) + " = " + header2.getValue ( ));
+				}
+				
+				//logger.debug (method.getResponseBodyAsString ( ));
+			}
+			
+			InputStream in = method.getResponseBodyAsStream ( );
+			String instring = HelperMethods.stream2String(in);
+			
+			
 			String result = prepareRestTransmission ("RawRecordData/"
 					+ ids.get (index).getInternalOID ( )
 					+ "/" + cal.get (Calendar.YEAR)
@@ -1086,8 +1120,13 @@ public class Harvester {
 					.PutData (
 							new String (
 									Base64.encodeBase64 (
-											HelperMethods.stream2String (
-													method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));
+											instring.getBytes ("UTF-8"))));
+			
+			if (logger.isDebugEnabled ( )) {
+				
+				String enc = new String (Base64.encodeBase64(instring.getBytes("UTF-8")));
+				logger.debug ("deenc: " + new String (Base64.decodeBase64(enc.getBytes("UTF-8"))));
+			}
 			
 			//RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
 			//restclient.PutData (new String (Base64.encodeBase64 (HelperMethods.stream2String (method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));

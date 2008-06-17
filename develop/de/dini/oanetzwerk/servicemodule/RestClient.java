@@ -42,11 +42,11 @@ public class RestClient {
 	private static final String servletPath = "restserver/server";
 	private int port;
 	private boolean nossl;
-	private String url;
+	private String url = "";
 	private final String path;
 	private final String username;
 	private final String password;
-	private Properties props;
+	private Properties props = new Properties ( );
 	static Logger logger = Logger.getLogger (RestClient.class);
 
 	/**
@@ -93,13 +93,27 @@ public class RestClient {
 		
 		if (!this.nossl) {
 			
-			this.port = new Integer (this.props.getProperty ("SSLPort", "443"));
-			System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
-			System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
+			if (props == null) {
+				
+				this.port = 443;
+				
+			} else {
+				
+				this.port = new Integer (this.props.getProperty ("SSLPort", "443"));
+				System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
+				System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
+			}
 			
 		} else {
 			
-			this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
+			if (props == null) {
+				
+				this.port = 80;
+				
+			} else {
+			
+				this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
+			}
 		}
 	}
 	
@@ -142,9 +156,9 @@ public class RestClient {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("SSL");
 			
-			return false;
+			return true;
 			//TODO: if SSL works reenable false!!!!
-//			return true;
+//			return false;
 		}
 	}
 

@@ -5,15 +5,20 @@
 package de.dini.oanetzwerk.server;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.codec.*;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
@@ -72,8 +77,19 @@ public class RestServer extends HttpServlet {
 			
 		try {
 			
-			if (i > 1)
-				 xml = HelperMethods.stream2String (req.getInputStream ( ));
+			if (i > 1) {
+				
+				InputStream in = req.getInputStream ( );
+				
+				xml = HelperMethods.stream2String (in);
+				
+				//byte[] stringBytesISO = xml.getBytes("ISO-8859-1");
+			    //xml = new String(stringBytesISO, "UTF-8");
+			}
+				// xml = HelperMethods.stream2String (req.getInputStream ( ));
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("XML: " + new String(Base64.decodeBase64(xml.getBytes ("UTF-8"))));
 			
 			Class <KeyWord2DatabaseInterface> c = (Class <KeyWord2DatabaseInterface>) Class.forName (classname);
 			Object o = c.newInstance ( );
@@ -163,6 +179,7 @@ public class RestServer extends HttpServlet {
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	
+	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		this.out = res.getWriter ( );
@@ -173,6 +190,7 @@ public class RestServer extends HttpServlet {
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	
+	@Override
 	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		this.out = res.getWriter ( );
@@ -183,7 +201,15 @@ public class RestServer extends HttpServlet {
 	 * @see javax.servlet.http.HttpServlet#doPut(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	
+	@Override
 	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
+		
+		req.setCharacterEncoding ("UTF-8");
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug("Character Encoding: " + req.getCharacterEncoding ( ));
+		}
 		
 		out = res.getWriter ( );
 		out.write (processRequest (req, 3));
@@ -193,6 +219,7 @@ public class RestServer extends HttpServlet {
 	 * @see javax.servlet.http.HttpServlet#doDelete(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	
+	@Override
 	protected void doDelete (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		out = res.getWriter ( );
