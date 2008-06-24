@@ -109,7 +109,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getUpdateCount ( ) < 1) {
-				
+			//TODO: überall checken, dass wenigstens eien LOG Warnung geworfen wird 	
 				
 			}
 			
@@ -835,14 +835,23 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			//db.closeStatement ( );
 			
-			String xmlData;
-			xmlData = imMarsch.marshall (imf);
-			
-//			RestEntrySet res = new RestEntrySet ( );
-			
-			res.addEntry ("internalmetadata", xmlData);
-			this.rms.setStatus (RestStatusEnum.OK);
+			if(imf.isEmpty()) {
+				// leeres IMF soll Fehler geben
+				
+				logger.info("leeres IMF über Keyword angefragt");
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+				this.rms.setStatusDescription ("Die Anfrage auf OID ("+oid+") liefert ein leeres IMF aus der Datenbank.");
+				
+			} else {
+				// nichtleeres IMF soll auch verschickt werden
 
+				String xmlData;
+				xmlData = imMarsch.marshall (imf);				
+				res.addEntry ("internalmetadata", xmlData);
+				this.rms.setStatus (RestStatusEnum.OK);
+				this.rms.addEntrySet (res);
+			}
+			
 		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
@@ -852,7 +861,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 		}  catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get InternalMetadataEntry: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
@@ -872,8 +881,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					logger.error (ex.getLocalizedMessage ( ));
 				}
 			}
-			
-			this.rms.addEntrySet (res);
+						
 			res = null;
 			this.result = null;
 			dbng = null;
