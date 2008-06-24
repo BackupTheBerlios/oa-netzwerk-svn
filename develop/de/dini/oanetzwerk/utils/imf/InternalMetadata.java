@@ -47,6 +47,24 @@ public class InternalMetadata {
 	
 	List<Classification> classificationList;
 	
+	public boolean isEmpty() {
+		//TODO: stets überprüfen, ob neue Metadatenelemente hinzugekommen sind, die hier nicht überprüft werden
+		if (!titleList.isEmpty()) return false; 
+		if (!authorList.isEmpty()) return false; 
+		if (!editorList.isEmpty()) return false; 
+		if (!contributorList.isEmpty()) return false; 
+		if (!keywordList.isEmpty()) return false; 
+		if (!descriptionList.isEmpty()) return false; 
+		if (!publisherList.isEmpty()) return false; 
+		if (!dateValueList.isEmpty()) return false; 
+		if (!formatList.isEmpty()) return false; 
+		if (!identifierList.isEmpty()) return false; 
+		if (!typeValueList.isEmpty()) return false; 
+		if (!languageList.isEmpty()) return false; 
+		if (!classificationList.isEmpty()) return false; 				
+		return true;
+	}
+	
 	public InternalMetadata() {
 		titleList = new LinkedList<Title>();
 		titleCounter = 0;
