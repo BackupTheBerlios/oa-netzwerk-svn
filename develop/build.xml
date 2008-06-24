@@ -94,7 +94,7 @@
 	
 	<target name="compileServer" depends="init">
 		<tstamp/>
-		<javac destdir="${build.server}" classpathref="classpath">
+		<javac destdir="${build.server}" classpathref="classpath" debug="true" debuglevel="lines,vars,source">
 			<src path="${src}/de/dini/oanetzwerk/codec"/>
 			<src path="${src}/de/dini/oanetzwerk/server"/>
 			<src path="${src}/de/dini/oanetzwerk/utils"/>
@@ -106,7 +106,7 @@
 	
 	<target name="compileInspector" depends="init">
 		<tstamp/>
-		<javac destdir="${build.inspector}" classpathref="classpath">
+		<javac destdir="${build.inspector}" classpathref="classpath" debug="true" debuglevel="lines,vars,source">
 			<src path="${src}/de/dini/oanetzwerk/codec"/>
 			<src path="${src}/de/dini/oanetzwerk/utils"/>
 			<src path="${src}/de/dini/oanetzwerk/servicemodule"/>

@@ -292,10 +292,10 @@ public class RestClient {
 		
 		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 		
-		this.url = buffer.toString ( );
-		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("URL to connect to: " + this.url);
+		
+		this.url = buffer.toString ( );
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("connection prepared");
