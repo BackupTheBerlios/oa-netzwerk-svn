@@ -10,12 +10,18 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
+import de.dini.oanetzwerk.server.RestServer;
+
 /**
  * @author Michael K&uuml;hn
  *
  */
 
 public class SelectFromDB {
+	
+	static Logger logger = Logger.getLogger (SelectFromDB.class);
 	
 	/**
 	 * @param connection
@@ -505,8 +511,8 @@ public class SelectFromDB {
 	
 	public static PreparedStatement Languages (Connection connection,
 			BigDecimal object_id) throws SQLException {
-		
-		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT L.language, number FROM dbo.Language L JOIN dbo.Object2Language O ON L.language_id = O.language_id WHERE O.object_id = ?");
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT language, number FROM dbo.Language L JOIN dbo.Object2Language O ON L.language_id = O.language_id WHERE O.object_id = ?");
 		preparedstmt.setBigDecimal (1, object_id);
 		
 		return preparedstmt;

@@ -661,14 +661,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //				}
 //			}			
 
-			// Auswertung der DCC-Classifications-Werte
+			// Auswertung der DDC-Classifications-Werte
 			stmtconn.loadStatement (SelectFromDB.DDCClassification (stmtconn.connection, oid));
 			this.result = stmtconn.execute ( );
 			
 			while (this.result.getResultSet ( ).next ( )) {
 				
 				Classification cl = new DDCClassification();
-				cl.setValue(this.result.getResultSet ( ).getString("D.DCC_Categorie"));
+				cl.setValue(this.result.getResultSet ( ).getString("DDC_Categorie"));
 //				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
 				imf.addClassfication(cl);
 			}
@@ -696,7 +696,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			while (this.result.getResultSet ( ).next ( )) {
 				
 				Classification cl = new DNBClassification();
-				cl.setValue(this.result.getResultSet ( ).getString("D.DNB_Categorie"));
+				cl.setValue(this.result.getResultSet ( ).getString("DNB_Categorie"));
 //				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
 				imf.addClassfication(cl);
 			}
@@ -781,7 +781,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 				Keyword temp = new Keyword();
 				temp.setKeyword(this.result.getResultSet ( ).getString("keyword"));
-				temp.setLanguage(this.result.getResultSet ( ).getString("language"));
+				temp.setLanguage(this.result.getResultSet ( ).getString("lang"));
 //				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
 				imf.addKeyword(temp);
 			}
@@ -810,7 +810,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			while (this.result.getResultSet ( ).next ( )) {
 				
 				Language temp = new Language();
-				temp.setLanguage(this.result.getResultSet ( ).getString("L.language"));
+				temp.setLanguage(this.result.getResultSet ( ).getString("language"));
 				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
 				imf.addLanguage(temp);
 			}
@@ -946,8 +946,8 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		DBAccessNG dbng = new DBAccessNG ( );		
 		MultipleStatementConnection stmtconn = null;
 		
-		this.rms = RestXmlCodec.decodeRestMessage (data);
-		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
+		RestMessage msgPutRequest = RestXmlCodec.decodeRestMessage (data);
+		RestEntrySet res = msgPutRequest.getListEntrySets ( ).get (0);
 
 		// FETCH ENTRY WITH XML
 		
@@ -980,6 +980,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			return RestXmlCodec.encodeRestMessage (this.rms);			
 		}
 	
+		
 		// PREPARE SQL STATEMENTS
 		
 		List <Title> titleList = imf.getTitles ( );
@@ -1325,7 +1326,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getResultSet ( ).next ( )) {
+					if (!this.result.getResultSet ( ).next ( )) {
 						
 						stmtconn.loadStatement (InsertIntoDB.Language (stmtconn.connection, language.getLanguage()));
 						this.result = stmtconn.execute ( );
@@ -1438,8 +1439,11 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						stmtconn.loadStatement (SelectFromDB.DINISetCategoriesByName (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
+						logger.debug("before result of DINI set id fetch for '"+classification.getValue()+"'");
+						
 						while (this.result.getResultSet ( ).next ( )) {
 							
+							logger.debug("result = " + this.result.getResultSet ( ).getBigDecimal(1));
 							DINI_set_id = this.result.getResultSet ( ).getBigDecimal(1);
 						}
 						
@@ -1512,15 +1516,20 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					}
 				}
 			}
-//			db.commit();
+
 			stmtconn.commit ( );
-			res.addEntry ("oid", object_id.toPlainString ( ));
+			
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.OK);
+			res = new RestEntrySet();
+			res.addEntry ("oid", object_id.toPlainString ( ));
+			this.rms.addEntrySet (res);
 			
 		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -1528,6 +1537,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -1547,41 +1557,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				}
 			}
 			
-			this.rms.addEntrySet (res);
 			res = null;
 			this.result = null;
 			dbng = null;
 		}
-//		catch (SQLException sqlex) {
-////			db.rollback();
-////			db.setAutoCom (true);
-//			try {
-////				db.closeStatement ( );
-//			} catch (SQLException ex) {
-//				// TODO Auto-generated catch block
-//				ex.printStackTrace();
-//			}
-////			db.closeConnection ( );
-//			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
-//			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
-//			this.rms.setStatusDescription("unable to commit: " + sqlex);
-//			logger.error (sqlex.getLocalizedMessage ( ));
-//			sqlex.printStackTrace ( );
-//
-//			return RestXmlCodec.encodeRestMessage (this.rms);
-//		}
-		
-//		db.setAutoCom(true);
-//		db.closeConnection ( );
-		
-		// RESPOND WITH OK
-		
-//		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
-//		res = new RestEntrySet ( );
-//		
-//		res.addEntry ("oid", object_id.toPlainString ( ));
-//		this.rms.setStatus (RestStatusEnum.OK);
-//		this.rms.addEntrySet (res);
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}

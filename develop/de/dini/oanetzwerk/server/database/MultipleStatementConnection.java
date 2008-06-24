@@ -70,11 +70,12 @@ public class MultipleStatementConnection implements StatementConnection {
 		} catch (SQLException ex) {
 			
 			logger.warn ("SQLException occured while executing Statement, performing rollback!");
-			logger.error (ex.getLocalizedMessage ( ));
+			//logger.error (ex.getLocalizedMessage ( ));
 			
 			this.connection.rollback ( );
 			
-			return result;
+			throw ex;
+			//return result;
 		}
 		
 		result.setResultSet (this.multipleStatement.getResultSet ( ));
@@ -99,11 +100,13 @@ public class MultipleStatementConnection implements StatementConnection {
 		} catch (SQLException ex) {
 			
 			logger.warn ("SQLException occured while committing Transaction, performing rollback!");
-			logger.error (ex.getLocalizedMessage ( ));
+			//logger.error (ex.getLocalizedMessage ( ));
 			
 			this.connection.rollback ( );
+						
+			//ex.printStackTrace ( );
 			
-			ex.printStackTrace ( );	
+			throw ex;
 		}
 	}
 	

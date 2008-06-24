@@ -85,11 +85,12 @@ public class RestServer extends HttpServlet {
 				
 				//byte[] stringBytesISO = xml.getBytes("ISO-8859-1");
 			    //xml = new String(stringBytesISO, "UTF-8");
-			}
+			
 				// xml = HelperMethods.stream2String (req.getInputStream ( ));
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("XML: " + new String(Base64.decodeBase64(xml.getBytes ("UTF-8"))));
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("XML: " + new String(Base64.decodeBase64(xml.getBytes ("UTF-8"))));
+			}
 			
 			Class <KeyWord2DatabaseInterface> c = (Class <KeyWord2DatabaseInterface>) Class.forName (classname);
 			Object o = c.newInstance ( );

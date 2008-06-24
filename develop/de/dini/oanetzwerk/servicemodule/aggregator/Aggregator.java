@@ -195,26 +195,29 @@ public class Aggregator {
 	}
 
 	private void startAutoMode() {
-		// TODO Auto-generated method stub
 
 		// zuerst muss die Workflow-DB nach Arbeitsobjekten befragt werden
 		if (logger.isDebugEnabled())
 			logger.debug("Aggregator AutoMode started");
-
-		String ressource = "WorkflowDB/2/2"; // + id;
+		
+		//TODO: hardcoded ServiceID !!!
+		
+		String ressource = "WorkflowDB/2"; // + id;
 		RestClient restclient = RestClient.createRestClient(this.props
 				.getProperty("host"), ressource, this.props
 				.getProperty("username"), this.props.getProperty("password"));
 
-		//String result = restclient.GetData();
 		// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus dem
 		// XML extrahiert werden
-		//RestMessage rms = RestXmlCodec.decodeRestMessage (result);
-		RestMessage rms = restclient.sendGetRestMessage();
+		RestMessage msgGetWFResponse = restclient.sendGetRestMessage();
+		if(msgGetWFResponse.getStatus() != RestStatusEnum.OK) {
+			//TODO: Was nun?
+			logger.error("WorkflowDB response failed: " + msgGetWFResponse.getStatus() + "(" + msgGetWFResponse.getStatusDescription() + ")");
+			return;
+		}
 		
-		//TODO: hier Fehlerbehandlung via rms.getStatus()
 		
-		List<RestEntrySet> listEntrySets = rms.getListEntrySets();
+		List<RestEntrySet> listEntrySets = msgGetWFResponse.getListEntrySets();
 				
 		for (RestEntrySet entrySet : listEntrySets) {
 
@@ -224,29 +227,20 @@ public class Aggregator {
 
 			while (it.hasNext()) {
 				key = it.next();
-				System.out.println("key: " + key);
+				logger.debug("key: " + key);
 				// hier wird die Rueckgabe überprüft, ist es einen object_id,
 				// dann muss diese bearbeitet werden
 				if (key.equalsIgnoreCase("object_id")) {
 					value = entrySet.getValue(key);
 					logger.debug("recognized value: " + value);
-					if (!value.equals(""))
+					if (!value.equals("")) {
 						startSingleRecord((new Integer(value).intValue()));
-					// else
-					// return null;
-
-					// startSingleRecord((new Integer(value).intValue());
-
-					// break;
+					} else {
+						logger.error("OID from Workflow expected, but was: " + value);
+					}
 				}
 			}
 		}
-		// System.out.println("erkannte Werte" + value);
-		// logger.debug("recognized value: " + value);
-		// if (!value.equals("")) return value;
-		// else
-		// return null;
-		//		
 
 	}
 
@@ -257,11 +251,10 @@ public class Aggregator {
 	 * 
 	 */
 	private void startSingleRecord(int id) {
-		// TODO Auto-generated method stub
+
 		this.currentRecordId = id;
 
-		System.out.println("StartSingleRecord:  RecordId="
-				+ this.currentRecordId);
+		logger.debug("StartSingleRecord:  RecordId=" + this.currentRecordId);
 
 		Object data = null;
 
@@ -273,7 +266,7 @@ public class Aggregator {
 			return;
 		}
 		// Auseinandernehmen der Rohdaten
-		System.out.println("Geladene Rohdaten (noch Base64-codiert): " + data);
+		logger.debug("Geladene Rohdaten (noch Base64-codiert): " + data);
 		
 		
 		if (logger.isDebugEnabled()) {
@@ -356,10 +349,20 @@ public class Aggregator {
 
 	}
 
+	/**
+	 * 
+	 * folgende Funktionsweise wird implementiert
+	 * 1. Abfrage mit GET, ob schon Daten vorhanden sind
+	 *    (OK, sonst NO_OBJECT_FOUND_ERROR)
+	 * 2. sind Daten vorhanden, diese mit DELETE löschen
+	 * 3. PUT ausführen, um die neuen Daten zu speichern
+	 * 
+	 * @param data
+	 * @return
+	 */
 	private Object storeMetaData(Object data) {
 		
-		System.out.println("### storeMetaData - Begin ###");
-		
+		logger.debug("### storeMetaData - Begin ###");
 		
 		// es wird ein IMF-Objekt erwartet
 		InternalMetadata im = null; 
@@ -368,169 +371,93 @@ public class Aggregator {
 			// wenn kein IMF-Objekt übergeben wurde, darf auch nichts gespeichert werden
 			return null;
 		}
+				
 		// ansonsten sollte die Verarbeitung beginnen
+		// IMF marschallen, d.h. serialisieren zu XML
 		im = (InternalMetadata) data;
 		InternalMetadataJAXBMarshaller marshaller = InternalMetadataJAXBMarshaller.getInstance ( );
-		String xmlData;
-		xmlData = marshaller.marshall(im);
-		
-//		System.out.println("### XMLDATA GET ###");
-//		System.out.println(xmlData);
-		
-		// Rest-Client initialisieren
+		String xmlInternalMetadata;
+		xmlInternalMetadata = marshaller.marshall(im);
+			
+		// Rest-Client auf InternalMetadataEntry mit aktueller OID initialisieren
 		String resource = "InternalMetadataEntry/" + this.currentRecordId;
 		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 
-		RestMessage response = null;
-		RestEntrySet entrySet = null;
-		String strXML = null;
-		
-		// folgende Funktionsweise wird implementiert
-		// 1. Abfrage mit GET, ob schon Daten vorhanden sind
-		// 2. sind Daten vorhanden, diese mit DELETE löschen
-		// 3. PUT ausführen, um die neuen Daten zu speichern
-	
-//		try {
+		RestMessage msgGetResponse = null;
 
-		System.out.println("# GET ");
+		// -------------------------------------------		
 		
-			response = restclient.sendGetRestMessage();
-			entrySet = response.getListEntrySets().get(0);
-			strXML = entrySet.getValue ("internalmetadata");
-
-			if(strXML != null) {
-				// es wird ein Rückgabewert geliefert
-				// UNMARSHALL XML
+		logger.debug("# GET ");
 			
-				System.out.println("# GET-Response:\n" + response.toString() + "\n # GET-Response Ende");
-				
-				InternalMetadata imfTemp = null;		
-				try {		
-					imfTemp = marshaller.unmarshall (strXML);
-					
-					List <Title> titleList = imfTemp.getTitles ( );
-					List <Author> authorList = imfTemp.getAuthors();
-					if (!(titleList.isEmpty() && authorList.isEmpty() )) {
-						
-						System.out.println("# DELETE necessary");
-						
-						// apparently some data exists, therefore it has to be deleted first
-						restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-						response = restclient.sendDeleteRestMessage();
-						
-						System.out.println("###RESPONSE###\n\n"+ response);
-						entrySet = response.getListEntrySets().get(0);
-						strXML = entrySet.getValue("oid");
-						
-						System.out.println("oid nach Delete: " + strXML);
-						
-					} else {
-						System.out.println("# DELETE not necessary");
-					}
-					
-				} catch(Exception ex) {
-					System.out.println("Exception geworfen");
-//				this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
-//				this.rms.setStatus (RestStatusEnum.REST_XML_DECODING_ERROR);
-//				this.rms.setStatusDescription("unable to unmarshall xml " + strXML + " :" + ex);
-//				return RestXmlCodec.encodeRestMessage (this.rms);			
-				}
-
-			
-			
-			
-			
-			}
-//			String result = restclient.GetData ( );
-//			
-//			restclient = null;
-//			String value = getValueFromKey (result, "repository_datestamp");
-			
-//		} catch (IOException ex) {
-//			
-//			logger.error (ex.getLocalizedMessage ( ));
-//			ex.printStackTrace ( );
-//		} catch (RuntimeException ex) {
-			
-//		}
+		// GET-Anfrage auf "InternalMetadataEntry"
+		msgGetResponse = restclient.sendGetRestMessage();
 		
-//		System.exit(-1);
 		
+		// Gibt es das schon unter der OID?
+		if(msgGetResponse.getStatus() == RestStatusEnum.OK) {
+			
+			// OK = existiert schon
+			logger.debug("# DELETE necessary:" + msgGetResponse);
+			
+			// neue Anfrage auf Delete zum löschen des bereits existierenden Datensatzes
+			restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+			RestMessage msgDeleteResponse = restclient.sendDeleteRestMessage();
+			logger.debug("### RESPONSE ###\n\n"+ msgDeleteResponse);
+			RestEntrySet tmpEntrySet = msgGetResponse.getListEntrySets().get(0);
+			logger.debug("oid nach Delete: " + tmpEntrySet.getValue("oid"));
+			
+		} else if (msgGetResponse.getStatus() == RestStatusEnum.NO_OBJECT_FOUND_ERROR) {
+			
+			//existiert noch nicht - alles ok so!
+			logger.debug("# DELETE not necessary: " + msgGetResponse);
+			
+		} else {
+			
+			logger.error("GET liefert Fehler: " + msgGetResponse);
+			return null;
+			
+		}
 
-			
-			
+		// ----------------------------------------
+		
 		try {
 
-			System.out.println("# PUT");
-			
-			RestMessage rms = new RestMessage();
-			rms.setKeyword (RestKeyword.InternalMetadataEntry);
-			rms.setStatus (RestStatusEnum.OK);
-			
-			RestEntrySet res = new RestEntrySet ( );
-			
-			res.addEntry ("internalmetadata", xmlData);
-			rms.addEntrySet (res);
+			logger.debug("# PUT");
 
-//			System.out.println(xmlData);
-			
-			restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-			response = restclient.sendPutRestMessage(rms);
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("RestMessage response: " + response);
+			RestMessage msgPutRequest = new RestMessage();
+			msgPutRequest.setKeyword (RestKeyword.InternalMetadataEntry);
+			msgPutRequest.setStatus (RestStatusEnum.OK);
+
+			RestEntrySet res = new RestEntrySet ( );
+			res.addEntry ("internalmetadata", xmlInternalMetadata);
+			msgPutRequest.addEntrySet (res);
+
 			// abschicken der Daten	
-			
+			restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+			RestMessage msgPutResponse = restclient.sendPutRestMessage(msgPutRequest);
+
 			// auswerten des Resultats
 			// wenn gar keine Rückmeldung, dann auf jeden Fall ein Fehler
-			if (response == null) {
-				System.out.println("REST-Uebertragung fehlgeschlagen");
+			if (msgPutResponse == null || msgPutRequest.getStatus() != RestStatusEnum.OK) {
+				logger.error("REST-Uebertragung fehlgeschlagen");
 				return null;
 			} else {
-				System.out.println("Resultat der Übertragung: " + response);
+				logger.debug("Resultat der Übertragung: " + msgPutResponse);
 			}
-			
-			
 
-//			restclient = null;
-//						
-//			RestEntrySet resultEntrySet = response.getListEntrySets().get(0);
-//			Iterator <String> it = resultEntrySet.getKeyIterator();
-//			String key = "";
-//			String value = "";
-//			
-//			while (it.hasNext ( )) {
-//				
-//				key = it.next ( );
-//				System.out.println("key = " + key);
-//				
-//				if (key.equalsIgnoreCase ("oid")) {
-//					
-//					
-//					value = resultEntrySet.getValue(key);
-//					System.out.println(value);
-//					break;
-//				}
-//			}
-//			
 		} catch (IOException ex) {
-			
+
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
-		}
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("uploaded rawdata for Database Object " + this.currentRecordId);
-	
-		
-		
+		}		
+
 		return data;
 	}
 
 	@SuppressWarnings("unchecked")
 	private Object extractMetaData(Object data) {
 
-		System.out.println("extractMetadata");
+		logger.debug("extractMetadata");
 
 		InternalMetadata im = new InternalMetadata();
 		org.jdom.Document doc;
@@ -557,7 +484,7 @@ public class Aggregator {
 				Iterator iteratorContent = contentList.iterator();
 				while (iteratorContent.hasNext()) {
 					Element contentEntry = (Element) iteratorContent.next();
-					System.out.println(contentEntry.getName() + "\n");
+					logger.debug(contentEntry.getName() + "\n");
 					if (contentEntry.getName().equals("request")) {
 						if ((contentEntry.getAttribute("metadataPrefix")
 								.getValue()).equals("oai_dc")) {
@@ -581,15 +508,13 @@ public class Aggregator {
 			// if (im != null) return im;
 
 		} catch (Exception e) {
-			System.err.println("Fehler beim Parsen");
-			System.err.println("error while decoding XML String: " + e);
 			logger.error("error while decoding XML String: " + e);
 		}
 
 		// return listEntrySet;
 
 		if (im != null) {
-			System.out.println("## InternalMetadata after Extraction: \n\n" + im.toString());
+			logger.debug("## InternalMetadata after Extraction: \n\n" + im.toString());
 		}
 		
 		return im;

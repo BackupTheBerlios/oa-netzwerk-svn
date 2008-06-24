@@ -54,7 +54,7 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 //			doc = builder.build(is);
 			doc = builder.build(new InputSource (new StringReader((String) data)));
 		
-			// Set-Informationen laden
+			// Set-Informationen laden --> Klassifikationen extrahieren
 			this.addSetInformation(doc);
 			
 			logger.debug("** doc generated");
@@ -63,7 +63,6 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 			ElementFilter filter = new ElementFilter("dc",namespace);
 			Iterator iterator = doc.getDescendants(filter);
 			while (iterator.hasNext()) {
-				System.out.println("** <oai_dc:dc> found");
 				logger.debug("** <oai_dc:dc> found");
 				
 				Element metadataSet = (Element) iterator.next();
@@ -111,9 +110,7 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 				
 			}
 		} catch(Exception e) {
-			System.err.println("Fehler beim Parsen");
-			System.err.println("error while decoding XML String: " + e);
-			logger.error("error while decoding XML String: " + e);
+			logger.error("error while parsing XML String: " + e);
 		}
 
 		return im;

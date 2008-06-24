@@ -301,6 +301,7 @@ abstract class AbstractIMFGenerator {
 	
 	private String removeNoisyWhitespace(String value) {
 		value = StringUtils.trim(value);
+		value = StringUtils.strip(value);
 		value = value.replaceAll("\t", "");
 		value = value.replaceAll("\n", "");
 		value = value.replaceAll("[ ]{2,}+", " ");
