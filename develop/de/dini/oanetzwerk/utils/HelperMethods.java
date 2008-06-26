@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -143,5 +144,13 @@ public class HelperMethods {
 		sdf = null;
 		
 		return date;
+	}
+	
+
+	public static BigDecimal getBigDecimalFromCmdLine (String optionValue) throws NumberFormatException {
+		
+		BigDecimal result = new BigDecimal (optionValue);
+		
+		return result;
 	}
 }
