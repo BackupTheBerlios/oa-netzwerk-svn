@@ -216,4 +216,53 @@ public class TestAllOIDs {
 
 		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 	}
+	
+	@Test
+	public void test_GET_fromRepositoryID_1_markedAs_test() throws Exception{
+
+		System.out.println("AllOIDs\\fromRepositoryID\\1\\markedAs\\test\\");
+
+		AllOIDs allOIDs = new AllOIDs();
+		String [] path = {"fromRepositoryID","1","markedAs","test"};
+
+
+		String strXML = allOIDs.getKeyWord(path);
+		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		System.out.println("oids fetched: " + rmsg.getListEntrySets().size());
+		System.out.println("first: " + rmsg.getListEntrySets().get(0));
+
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
+	}
+	
+	@Test
+	public void test_GET_fromRepositoryID_1_wrongParameter_test() throws Exception{
+
+		System.out.println("AllOIDs\\fromRepositoryID\\1\\wrongParameter\\test\\");
+
+		AllOIDs allOIDs = new AllOIDs();
+		String [] path = {"fromRepositoryID","1","wrongParameter","test"};
+
+		String strXML = allOIDs.getKeyWord(path);
+		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.WRONG_PARAMETER);
+	}
+	
+	@Test
+	public void test_GET_fromRepositoryID_1_markedAs_NoSuchMark() throws Exception{
+
+		System.out.println("AllOIDs\\fromRepositoryID\\1\\markedAs\\NoSuchMark\\");
+
+		AllOIDs allOIDs = new AllOIDs();
+		String [] path = {"fromRepositoryID","1","markedAs","NoSuchMark"};
+
+		String strXML = allOIDs.getKeyWord(path);
+		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.WRONG_PARAMETER);
+	}
 }

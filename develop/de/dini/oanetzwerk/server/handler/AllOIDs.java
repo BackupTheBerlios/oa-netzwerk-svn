@@ -25,10 +25,12 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	static Logger logger = Logger.getLogger (AllOIDs.class);
 	
 	public static final int ALL = 0;
-	public static final int TEST = 1;
+	public static final int FLAG = 1;
 	public static final int FROMREPO = 2;
+	public static final int FROMREPO_AND_FLAG = 3;	
 	
 	private BigDecimal repositoryID = null;
+	private String strFlag = null;
 	
 	public AllOIDs ( ) {
 		
@@ -64,10 +66,14 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			if (path.length < 2)
 				throw new NotEnoughParametersException ("This method used with first parameter \"markedAs\" needs a second parameter to specify the marking flag.");			
 			
-			if ("test".equals(path[1])) {
+			if ("test".equals(path[1]) 
+				/*|| "weitere Markierung".equals(path[1])*/
+			   ) {
 				
-				// return all marked as "test"
-				return RestXmlCodec.encodeRestMessage (getOIDsRestMessage(TEST));
+				strFlag = path[1];
+				
+				// return all marked with a specific flag
+				return RestXmlCodec.encodeRestMessage (getOIDsRestMessage(FLAG));
 				
 			} else {
 				
@@ -82,7 +88,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 		} 
 		
-//		 filter by repository ID -- return all fitting OIDs 
+		// filter by repository ID -- return all fitting OIDs 
 		if("fromRepositoryID".equals(path[0])) {
 
 			if (path.length < 2)
@@ -101,9 +107,53 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 				return RestXmlCodec.encodeRestMessage (this.rms);
 			}
-
-			// return all from a repository ID
-			return RestXmlCodec.encodeRestMessage (getOIDsRestMessage(FROMREPO));
+			
+			if(path.length < 4) {
+							
+				// return all from a repository ID
+			    return RestXmlCodec.encodeRestMessage (getOIDsRestMessage(FROMREPO));
+			    
+			} else {
+				
+				// almost same code as above with markedAs only !!!
+				
+                // filter by marking flag -- return all fitting OIDs
+				if ("markedAs".equals(path[2])) {
+					
+					if (path.length < 2)
+						throw new NotEnoughParametersException ("This method used with first parameter \"markedAs\" needs a second parameter to specify the marking flag.");			
+					
+					if ("test".equals(path[3]) 
+						/*|| "weitere Markierung".equals(path[1])*/
+					   ) {
+						
+						strFlag = path[3];
+						
+						// return all from a repository ID marked with a specific flag
+						return RestXmlCodec.encodeRestMessage (getOIDsRestMessage(FROMREPO_AND_FLAG));
+						
+					} else {
+						
+						logger.warn (path [3] + " is an unknown marking flag!");
+									
+						this.rms = new RestMessage (RestKeyword.AllOIDs);
+						this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+						this.rms.setStatusDescription (path [3] + " is an unknown marking flag!");
+						return RestXmlCodec.encodeRestMessage (this.rms);
+						
+					}
+					
+				} else {
+					
+					logger.warn (path [2] + " is an unknown parameter!");
+					
+					this.rms = new RestMessage (RestKeyword.AllOIDs);
+					this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+					this.rms.setStatusDescription (path [2] + " is an unknown parameter!");
+					return RestXmlCodec.encodeRestMessage (this.rms);
+				}
+				
+			}
 			
 		}
 		
@@ -112,7 +162,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		// return general parameter usage error
 		
-		logger.error (path [0] + " is an unknown parameter!");
+		logger.warn (path [0] + " is an unknown parameter!");
 		
 		this.rms = new RestMessage (RestKeyword.AllOIDs);
 		this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
@@ -138,12 +188,15 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				case ALL:
 					stmtconn.loadStatement (SelectFromDB.AllOIDs(stmtconn.connection));	
 					break;
-				case TEST:
-					stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsTest(stmtconn.connection));	
-					break;
+				case FLAG:
+					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsTest(stmtconn.connection));	
+					break;					
 				case FROMREPO:
 					stmtconn.loadStatement (SelectFromDB.AllOIDsFromRepositoryID(stmtconn.connection, repositoryID));	
 					break;
+				case FROMREPO_AND_FLAG:
+					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsFromRepositoryIDMarkAsTest(stmtconn.connection, repositoryID));	
+					break;										
 			}						
 			this.result = stmtconn.execute ( );
 			
