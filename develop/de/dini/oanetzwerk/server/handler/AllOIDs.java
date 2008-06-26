@@ -4,6 +4,7 @@
 
 package de.dini.oanetzwerk.server.handler;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import org.apache.log4j.Logger;
 
@@ -25,6 +26,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	public static final int ALL = 0;
 	public static final int TEST = 1;
+	public static final int FROMREPO = 2;
+	
+	private BigDecimal repositoryID = null;
 	
 	public AllOIDs ( ) {
 		
@@ -40,15 +44,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
-		
-		
 		// no parameters -- return all existing OIDs
 		if (path.length == 0) {
 			
 			return RestXmlCodec.encodeRestMessage (getOIDsRestMessage(ALL));
 			
 		}
-
+		
 		// filter by marking flag -- return all fitting OIDs
 		if ("markedAs".equals(path[0])) {
 			
@@ -80,8 +82,33 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 		} 
 		
+//		 filter by repository ID -- return all fitting OIDs 
+		if("fromRepositoryID".equals(path[0])) {
+
+			if (path.length < 2)
+				throw new NotEnoughParametersException ("This method used with first parameter \"fromRepositoryID\" needs a second parameter to specify the repository ID.");			
+			
+			
+			try {
+				repositoryID = new BigDecimal (path [1]);
+			} catch (NumberFormatException ex) {
+				
+				logger.error (path [1] + " is NOT a number and cannot be the expected repository ID!");
+				
+				this.rms = new RestMessage (RestKeyword.AllOIDs);
+				this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+				this.rms.setStatusDescription (path [1] + " is NOT a number and cannot be the expected repository ID!");
+
+				return RestXmlCodec.encodeRestMessage (this.rms);
+			}
+
+			// return all from a repository ID
+			return RestXmlCodec.encodeRestMessage (getOIDsRestMessage(FROMREPO));
+			
+		}
+		
 		// other convenience filters go HERE
-		   // by time of creation, by repository...		
+		   // by time of creation, ...		
 		
 		// return general parameter usage error
 		
@@ -113,6 +140,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					break;
 				case TEST:
 					stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsTest(stmtconn.connection));	
+					break;
+				case FROMREPO:
+					stmtconn.loadStatement (SelectFromDB.AllOIDsFromRepositoryID(stmtconn.connection, repositoryID));	
 					break;
 			}						
 			this.result = stmtconn.execute ( );

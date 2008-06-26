@@ -108,6 +108,19 @@ public class SelectFromDB {
 	
 	/**
 	 * @param connection
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement AllOIDsFromRepositoryID (Connection connection, BigDecimal repID) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE (repository_id = ?)");
+		preparedstmt.setBigDecimal (1, repID);
+		return preparedstmt;
+	}
+
+	
+	/**
+	 * @param connection
 	 * @param repositoryID
 	 * @return
 	 * @throws SQLException 

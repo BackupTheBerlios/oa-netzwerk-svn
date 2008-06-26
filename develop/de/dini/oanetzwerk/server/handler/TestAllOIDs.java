@@ -141,4 +141,79 @@ public class TestAllOIDs {
 		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.WRONG_PARAMETER);
 	}
 	
+	@Test
+	public void test_GET_fromRepositoryID_1() throws Exception{
+
+		System.out.println("AllOIDs\\fromRepositoryID\\1\\");
+
+		AllOIDs allOIDs = new AllOIDs();
+		String [] path = {"fromRepositoryID","1"};
+
+
+		String strXML = allOIDs.getKeyWord(path);
+		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		System.out.println("oids fetched: " + rmsg.getListEntrySets().size());
+		System.out.println("first: " + rmsg.getListEntrySets().get(0));
+
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
+	}
+	
+	@Test
+	public void test_GET_fromRepositoryID_NoIdGiven() throws Exception{
+
+		System.out.println("AllOIDs\\fromRepositoryID\\");
+
+		AllOIDs allOIDs = new AllOIDs();
+		String [] path = {"fromRepositoryID"};
+
+		try {
+			String strXML = allOIDs.getKeyWord(path);
+			System.out.println(strXML);
+			RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+			for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+				System.out.println(entrySet);
+			}
+			Assert.fail();
+		} catch (Exception ex) {
+			Assert.assertTrue(ex instanceof NotEnoughParametersException);
+			System.out.println(ex);
+		}
+	}
+	
+	@Test
+	public void test_GET_fromRepositoryID_NoNumberGiven() throws Exception{
+
+		System.out.println("AllOIDs\\fromRepositoryID\\");
+
+		AllOIDs allOIDs = new AllOIDs();
+		String [] path = {"fromRepositoryID","NotANumber"};
+
+		String strXML = allOIDs.getKeyWord(path);
+		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+			System.out.println(entrySet);
+		}
+
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.WRONG_PARAMETER);
+	}
+	
+	@Test
+	public void test_GET_fromRepositoryID_NoSuchID() throws Exception{
+
+		System.out.println("AllOIDs\\fromRepositoryID\\-1\\");
+
+		AllOIDs allOIDs = new AllOIDs();
+		String [] path = {"fromRepositoryID","-1"};
+
+		String strXML = allOIDs.getKeyWord(path);
+		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+	}
 }
