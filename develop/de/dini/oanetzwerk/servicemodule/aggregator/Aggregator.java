@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.text.InternationalFormatter;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.OptionBuilder;
@@ -74,13 +76,11 @@ public class Aggregator {
 	private Properties props; // special aggregator settings like connecting
 								// server
 
-	/**
-	 * Standard Constructor which initialises the log4j and loads necessary
-	 * properties.
-	 */
+	private boolean testing = false; // if et to true, aggregator stores data, but no update to workflow is saved
 
-	public Aggregator() {
+	
 
+	private  void init() {
 		DOMConfigurator.configure("log4j.xml");
 
 		try {
@@ -102,24 +102,34 @@ public class Aggregator {
 
 			logger.error(ex.getLocalizedMessage());
 			ex.printStackTrace();
-		}
+		}		
+	}
+	
+	
+	/**
+	 * Standard Constructor which initialises the log4j and loads necessary
+	 * properties.
+	 */
+	public Aggregator() {
+		this.init();
+
 	}
 
+	
+	public Aggregator(boolean testing) {
+		this.init();
+		this.testing = testing;
+	}
+	
+	
 	/**
 	 * Main class which have to be called.
 	 * 
 	 * @param args
 	 * @throws ParseException
 	 */
-
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
-
-		// Aggregator a = new Aggregator();
-		// a.startAutoMode();
-		// System.exit(0);
-		//		
-
 		Options options = new Options();
 
 		options.addOption("h", false, "show help");
@@ -194,7 +204,7 @@ public class Aggregator {
 		}
 	}
 
-	private void startAutoMode() {
+	public void startAutoMode() {
 
 		// zuerst muss die Workflow-DB nach Arbeitsobjekten befragt werden
 		if (logger.isDebugEnabled())
@@ -247,36 +257,42 @@ public class Aggregator {
 	/*
 	 * implements workflow for a single entry
 	 * 
-	 * 
+	 * @param if
+	 *            object_id that the aggregator is supposed to examine
+	 * @return void
 	 * 
 	 */
-	private void startSingleRecord(int id) {
+	public void startSingleRecord(int id) {
 
 		this.currentRecordId = id;
 
 		logger.debug("StartSingleRecord:  RecordId=" + this.currentRecordId);
 
-		Object data = null;
+//		Object data = null;
 
-		// laden der Rohdaten
+		String data = null;
+		InternalMetadata imf = null;
+
+		// Abfolge
+		// 1. Laden der Rohdaten
 		data = loadRawData(this.currentRecordId);
 		if (data == null) {
 			// Daten für dieses Objekt konnten nicht geladen werden
 			logger.error("loadRawData not successful");
 			return;
 		}
-		// Auseinandernehmen der Rohdaten
-		logger.debug("Geladene Rohdaten (noch Base64-codiert): " + data);
-		
-		
+
+		// 2. Auseinandernehmen der Rohdaten
 		if (logger.isDebugEnabled()) {
-			logger.debug("retrieved data: " + data);
+			logger.debug("retrieved data (Base64-coded): " + data);
+		}
+		data = decodeBase64(data);
+		if (data == null) {
+			// keine decodierten Rohdaten vorhanden, eine weitere Bearbeitung macht keinen Sinn
+			return;
 		}
 
-		// data = decodeBase64(((String) data).getBytes());
-		data = decodeBase64(data);
-
-		// Prüfen der Codierung der Rohdaten
+		// 3. Prüfen der Codierung der Rohdaten
 		data = checkEncoding(data);
 		if (data == null) {
 			// beim Check des Encoding trat ein Fehler auf, keine weitere
@@ -284,14 +300,14 @@ public class Aggregator {
 			return;
 		}
 
-		// XML-Fehler müssen behoben werden
+		// 4. XML-Fehler müssen behoben werden
 		data = checkXML(data);
 		if (data == null) {
 			// beim Prüfen auf XML-Fehler trat ein Fehler auf, keine weitere
 			// Bearbeitung möglich
 			return;
 		}
-		// Schreiben der bereinigten Rohdaten
+		// 5. Schreiben der bereinigten Rohdaten
 		data = storeCleanedRawData(data);
 		if (data == null) {
 			// die bereinigten Rohdaten konnten nicht gespeichert werden, eine
@@ -300,7 +316,7 @@ public class Aggregator {
 		}
 
 		// Auslesen der Metadaten
-		data = extractMetaData(data);
+		imf = extractMetaData(data);
 		if (data == null) {
 			// die Metadaten konnten nicht ausgelesen werden, keine weitere
 			// Bearbeitung sinnvoll
@@ -308,7 +324,7 @@ public class Aggregator {
 		}
 
 		// schreiben der Metadaten
-		data = storeMetaData(data);
+		imf = storeMetaData(imf);
 		if (data == null) {
 			// Schreiben der Metadaten ist fehlgeschlagen, Objekt sollte später
 			// noch einmal prozessiert werden,
@@ -327,26 +343,32 @@ public class Aggregator {
 	 *            sollen
 	 * @return byte[] enthält base64-decodierten String
 	 */
-	private Object decodeBase64(Object data) {
+	private String decodeBase64(String data) {
 		// Daten müssen Base64-decodiert werden
 
-		System.out.println("\n## Decodiert: \n\n" + new String(Base64.decodeBase64(((String) data)
-				.getBytes())));
-		System.out.println("## Ende decodierte Informationen\n\n\n");
+		String result = null;
 		
 		try {
-			return new String(Base64.decodeBase64(((String) data).getBytes("UTF-8")));
+			result = new String(Base64.decodeBase64(((String) data).getBytes("UTF-8")));
+			if (logger.isDebugEnabled()) {
+				logger.debug("Decoded blob begin:\n\n " + result + "\n\nDecoded Blob end");
+			}
 		} catch (Exception e) {
 			logger.error("decodeBase64 : ioException\n");
 			e.printStackTrace();
 
 		}
-		return null;
+		return result;
 	}
 
 	private void setAggregationCompleted(int id) {
 		// TODO Auto-generated method stub
-
+		if (this.testing = true) {
+			// Workflow shall not be updated
+			return;
+		} else {
+			
+		}
 	}
 
 	/**
@@ -360,7 +382,7 @@ public class Aggregator {
 	 * @param data
 	 * @return
 	 */
-	private Object storeMetaData(Object data) {
+	private InternalMetadata storeMetaData(InternalMetadata data) {
 		
 		logger.debug("### storeMetaData - Begin ###");
 		
@@ -455,7 +477,7 @@ public class Aggregator {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Object extractMetaData(Object data) {
+	private InternalMetadata extractMetaData(String data) {
 
 		logger.debug("extractMetadata");
 
@@ -522,24 +544,35 @@ public class Aggregator {
 		// return null;
 	}
 
-	private Object storeCleanedRawData(Object data) {
+	private String storeCleanedRawData(String data) {
 		// TODO Auto-generated method stub
 
 		String result = (String) data;
 		return result;
 	}
-
-	private Object checkXML(Object data) {
+	/**
+	 * This method checks raw data for UTF-8 encoding errors
+	 * 
+	 * @param data
+	 * 				Decoded Rawdata
+	 * @return	
+	 * 			correctly UTF-8-encoded metadatablob
+	 */
+	private String checkXML(String data) {
 		// TODO checkXML not implemented
 		String result = (String) data;
 		return result;
 	}
 
 	/**
+	 * This method checks raw data for UTF-8 encoding errors
+	 * 
 	 * @param data
-	 * @return
+	 * 				Decoded Rawdata
+	 * @return	
+	 * 			correctly UTF-8-encoded metadatablob
 	 */
-	private Object checkEncoding(Object data) {
+	private String checkEncoding(String data) {
 		String result = (String) data;
 
 		// noch zu klären, wie Fehler in der Codierung ausgegeben werden
@@ -557,7 +590,7 @@ public class Aggregator {
 	 *            id of the object that shall be retrieved
 	 * @return data of the object
 	 */
-	private Object loadRawData(int id) {
+	private String loadRawData(int id) {
 		if (logger.isDebugEnabled())
 			logger.debug("loadRawData started");
 
@@ -616,6 +649,4 @@ public class Aggregator {
 
 		return i;
 	}
-
-	
 }
