@@ -39,14 +39,12 @@ public class DeleteFromDB {
 	 * @throws SQLException 
 	 */
 	
-	public static PreparedStatement DateValues (Connection connection,
-			BigDecimal object_id) throws SQLException {
+	public static PreparedStatement DateValues (Connection connection,	BigDecimal object_id) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.DateValues WHERE object_id = ?");
 		preparedstmt.setBigDecimal (1, object_id);
 		
 		return preparedstmt;
-
 	}
 
 	/**
@@ -330,6 +328,31 @@ public class DeleteFromDB {
 	public static PreparedStatement DuplicatePossibilities (Connection connection, BigDecimal object_id) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.DuplicatePossibilities WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+	
+
+	public static PreparedStatement WorkflowDB (Connection connection, BigDecimal object_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.WorkflowDB WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	public static PreparedStatement RawData (Connection connection, BigDecimal object_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.RawData WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	public static PreparedStatement Object (Connection connection, BigDecimal object_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.Object where object_id = ? and testdata = 1");
 		preparedstmt.setBigDecimal (1, object_id);
 		
 		return preparedstmt;

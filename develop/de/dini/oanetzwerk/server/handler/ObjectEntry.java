@@ -12,18 +12,19 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.DeleteFromDB;
 import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.server.database.UpdateInDB;
 import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.codec.RestEntrySet;
-import de.dini.oanetzwerk.codec.RestKeyword;
-import de.dini.oanetzwerk.codec.RestMessage;
-import de.dini.oanetzwerk.codec.RestStatusEnum;
-import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -44,15 +45,248 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 	
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
 	
 	@Override
-	protected String deleteKeyWord (String [ ] path) {
-
-		this.rms = new RestMessage (RestKeyword.ObjectEntry);
-		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+	protected String deleteKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+		
+		BigDecimal object_id;
+		
+		try {
+			
+			object_id = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.ObjectEntry);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		MultipleStatementConnection stmtconn = null;
+		
+		this.rms = new RestMessage (RestKeyword.ObjectEntry);
+		
+		
+		try {
+			
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			stmtconn.loadStatement (DeleteFromDB.DateValues (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.DDC_Classification (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Description (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.DINI_Set_Classification (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.DNB_Classification (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.DuplicatePossibilities (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Formats (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Identifiers (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Object2Author (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Object2Contributor (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Object2Editor (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Object2Keywords (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Object2Language (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Other_Classification (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Publishers (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Titles (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.TypeValue (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.WorkflowDB (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.RawData (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				//warn, error, rollback, nothing????
+			}
+			
+			stmtconn.loadStatement (DeleteFromDB.Object (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				stmtconn.rollback ( );
+				throw new SQLException ("Test Data could not be deleted");
+				
+			} else {
+				
+				stmtconn.commit ( );
+			}
+			
+			RestEntrySet res = new RestEntrySet ( );
+			
+			res.addEntry ("oid", object_id.toPlainString ( ));
+			
+			this.rms.addEntrySet (res);
+			
+		} catch (SQLException ex) {
+			
+			logger.error ("An error occured while processing Delete ObjectEntry: " + ex.getLocalizedMessage ( ), ex);
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error ("An error occured while processing Delete ObjectEntry: " + ex.getLocalizedMessage ( ), ex);
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ), ex);
+				}
+			}
+			
+			this.result = null;
+			dbng = null;
+		}
+				
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -101,7 +335,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 				for (Throwable warning : result.getWarning ( )) {
 					
-					logger.warn (warning.getLocalizedMessage ( ));
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 				}
 			}
 			
@@ -123,6 +357,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				res.addEntry ("failure_counter", Integer.toString (this.result.getResultSet ( ).getInt ("failure_counter")));
 				
 				this.rms.setStatus (RestStatusEnum.OK);
+				this.rms.addEntrySet (res);
 				
 			} else {
 				
@@ -160,7 +395,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			this.rms.addEntrySet (res);
 			res = null;
 			this.result = null;
 			dbng = null;

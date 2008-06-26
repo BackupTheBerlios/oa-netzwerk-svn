@@ -172,7 +172,7 @@ public class Harvester {
 			
 		} catch (InvalidPropertiesFormatException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			ex.printStackTrace ( );
 			System.exit (1);
 			
