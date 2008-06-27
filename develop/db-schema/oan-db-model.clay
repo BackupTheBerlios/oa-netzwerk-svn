@@ -77,6 +77,20 @@
 <variant type-name-pattern="INTEGER ZEROFILL"/>
 </data-type>
 </column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="0" mandatory="true" name="peculiar" remarks="wurde das Dok. mehrfach nicht geharvested ist es auffällig (aber noch nicht als gelöscht anzusehen)" uid="1439515:11ac983d687:-7fdf">
+<column-description/>
+<data-type jdbc-type="-7" name="BIT" selected-variant-pattern="BIT">
+<variant type-name-pattern="BIT"/>
+<variant precision-max="64" precision-min="0" precision-variable="%n" type-name-pattern="BIT(%n)"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="0" mandatory="false" name="outdated" remarks="wurde eine Dok. wiederholt nicht geharvested ist es als nicht mehr vorhanden anzusehen (nachdem es vorher auffällig war)" uid="1439515:11ac983d687:-7fdc">
+<column-description/>
+<data-type jdbc-type="-7" name="BIT" selected-variant-pattern="BIT">
+<variant type-name-pattern="BIT"/>
+<variant precision-max="64" precision-min="0" precision-variable="%n" type-name-pattern="BIT(%n)"/>
+</data-type>
+</column>
 </column-list>
 <primary-key alias="" name="PK_OBJECT" remarks="" uid="4f5403:1161f7e7d4d:-7ffe">
 <primary-key-description/>
@@ -1305,7 +1319,7 @@
 </foreign-key-list>
 <index-list/>
 </table>
-<table alias="" name="DuplicatePossibilties" remarks="" uid="dff6e3:117774ce7b2:-7fe5">
+<table alias="" name="DuplicatePossibilities" remarks="" uid="dff6e3:117774ce7b2:-7fe5">
 <table-description/>
 <table-figure-bounds height="120" width="172" x="-7" y="44"/>
 <column-list>
@@ -1352,7 +1366,7 @@
 </data-type>
 </column>
 </column-list>
-<primary-key alias="" name="PK_DUPLICATEPOSSIBILTIES" remarks="" uid="dff6e3:117774ce7b2:-7fe4">
+<primary-key alias="" name="PK_DUPLICATEPOSSIBILITIES" remarks="" uid="dff6e3:117774ce7b2:-7fe4">
 <primary-key-description/>
 <primary-key-column name="object_id"/>
 </primary-key>

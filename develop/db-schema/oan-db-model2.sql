@@ -86,6 +86,8 @@ CREATE TABLE dbo.Object (
      , repository_identifier VARCHAR(255) NOT NULL
      , testdata BIT DEFAULT 0
      , failure_counter INTEGER DEFAULT 0
+	 , peculiar BIT DEFAULT 0
+	 , outdated BIT DEFAULT 0
      , PRIMARY KEY (object_id)
 );
 
@@ -193,7 +195,7 @@ CREATE TABLE dbo.Identifier (
      , PRIMARY KEY (object_id, number)
 );
 
-CREATE TABLE dbo.DuplicatePossibilties (
+CREATE TABLE dbo.DuplicatePossibilities (
        object_id NUMERIC(38) NOT NULL
      , duplicate_id NUMERIC(38) NOT NULL
      , percentage NUMERIC NOT NULL
@@ -351,13 +353,13 @@ ALTER TABLE dbo.Identifier
       FOREIGN KEY (object_id)
       REFERENCES dbo.Object (object_id);
 
-ALTER TABLE dbo.DuplicatePossibilties
-  ADD CONSTRAINT FK_DuplicatePossibilties_1
+ALTER TABLE dbo.DuplicatePossibilities
+  ADD CONSTRAINT FK_DuplicatePossibilities_1
       FOREIGN KEY (object_id)
       REFERENCES dbo.Object (object_id);
 
-ALTER TABLE dbo.DuplicatePossibilties
-  ADD CONSTRAINT FK_DuplicatePossibilties_2
+ALTER TABLE dbo.DuplicatePossibilities
+  ADD CONSTRAINT FK_DuplicatePossibilities_2
       FOREIGN KEY (duplicate_id)
       REFERENCES dbo.Object (object_id);
 
