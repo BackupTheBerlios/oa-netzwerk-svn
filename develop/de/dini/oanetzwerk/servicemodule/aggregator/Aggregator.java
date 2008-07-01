@@ -7,6 +7,8 @@ package de.dini.oanetzwerk.servicemodule.aggregator;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +22,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.jdom.Element;
@@ -32,8 +35,10 @@ import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.utils.exceptions.AggregationFailedException;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 import de.dini.oanetzwerk.utils.imf.InternalMetadataJAXBMarshaller;
@@ -78,8 +83,21 @@ public class Aggregator {
 
 	private boolean testing = false; // if et to true, aggregator stores data, but no update to workflow is saved
 
+	private BigDecimal serviceID;
 	
-
+	
+	private final Properties getProps ( ) {
+		
+		return this.props;
+	}
+	
+	
+	/**
+	 * 
+	 * Initialisierung-Routine, die von den verschiedenen Konstruktoren aufgerufen wird
+	 * 
+	 * bindet Properties korrekt ein und liest SERVICE-ID aus
+	 */
 	private  void init() {
 		DOMConfigurator.configure("log4j.xml");
 
@@ -103,6 +121,9 @@ public class Aggregator {
 			logger.error(ex.getLocalizedMessage());
 			ex.printStackTrace();
 		}		
+		
+		this.serviceID = getServiceID("Aggregator");
+		
 	}
 	
 	
@@ -115,95 +136,25 @@ public class Aggregator {
 
 	}
 
-	
+	/**
+	 * Special Constructor which initialises the log4j and loads necessary
+	 * properties.
+	 * 
+	 * Sets Testing-Mode.
+	 */	
 	public Aggregator(boolean testing) {
 		this.init();
 		this.testing = testing;
 	}
 	
 	
+	
 	/**
-	 * Main class which have to be called.
+	 * Startes automatic aggregation mode.
 	 * 
-	 * @param args
-	 * @throws ParseException
+	 * Checks in DB, which objects have been harvested and need to be aggregated, then runs
+	 * StartSingleMode using the aquired IDs.
 	 */
-	@SuppressWarnings("static-access")
-	public static void main(String[] args) {
-		Options options = new Options();
-
-		options.addOption("h", false, "show help");
-
-		options
-				.addOption(OptionBuilder
-						.withLongOpt("itemId")
-						.withArgName("ID")
-						.withDescription(
-								"Id of the database object, that shall be extracted and converted")
-						.withValueSeparator().hasArg().create('i'));
-		options.addOption(OptionBuilder.withLongOpt("auto").withDescription(
-				"Automatic mode, no given ID is necessary")
-
-		.create('a'));
-
-		if (args.length > 0) {
-
-			try {
-
-				CommandLine cmd = new GnuParser().parse(options, args);
-
-				if (cmd.hasOption("h"))
-					HelperMethods.printhelp("java "
-							+ Aggregator.class.getCanonicalName(), options);
-
-				else if (cmd.hasOption("itemId") || cmd.hasOption('i')
-						|| cmd.hasOption('a') || cmd.hasOption("auto")) {
-
-					int id = 0;
-
-					// Bestimmen, ob nur eine einzelne ID übergeben wurde oder
-					// der Auto-Modus genutzt werden soll
-					if (cmd.getOptionValue('i') != null)
-						id = filterId(cmd.getOptionValue('i'));
-					if (cmd.getOptionValue("itemId") != null)
-						id = filterId(cmd.getOptionValue("itemId"));
-
-					// Here we go: create a new instance of the aggregator
-
-					Aggregator aggregator = new Aggregator();
-
-					// hier wird entweder die spezifische Objekt-ID übergeben
-					// oder ein Auto-Durchlauf gestartet
-					if (id > 0) {
-						aggregator.startSingleRecord(id);
-					} else {
-						aggregator.startAutoMode();
-					}
-
-				} else {
-
-					HelperMethods.printhelp("java "
-							+ Aggregator.class.getCanonicalName(), options);
-					System.exit(1);
-				}
-
-			} catch (ParseException parex) {
-
-				logger.error(parex.getMessage());
-				System.out.println(parex.getMessage());
-				HelperMethods.printhelp("java "
-						+ Aggregator.class.getCanonicalName(), options);
-				System.exit(1);
-			}
-
-		} else {
-
-			HelperMethods.printhelp("java "
-					+ Aggregator.class.getCanonicalName(), options);
-			System.exit(1);
-		}
-	}
-
 	public void startAutoMode() {
 
 		// zuerst muss die Workflow-DB nach Arbeitsobjekten befragt werden
@@ -268,72 +219,80 @@ public class Aggregator {
 
 		logger.debug("StartSingleRecord:  RecordId=" + this.currentRecordId);
 
-//		Object data = null;
-
 		String data = null;
 		InternalMetadata imf = null;
 
-		// Abfolge
-		// 1. Laden der Rohdaten
-		data = loadRawData(this.currentRecordId);
-		if (data == null) {
-			// Daten für dieses Objekt konnten nicht geladen werden
-			logger.error("loadRawData not successful");
-			return;
-		}
+		try {
 
-		// 2. Auseinandernehmen der Rohdaten
-		if (logger.isDebugEnabled()) {
-			logger.debug("retrieved data (Base64-coded): " + data);
-		}
-		data = decodeBase64(data);
-		if (data == null) {
-			// keine decodierten Rohdaten vorhanden, eine weitere Bearbeitung macht keinen Sinn
-			return;
-		}
+			// Abfolge
+			// 1. Laden der Rohdaten
+			data = loadRawData(this.currentRecordId);
+			if (data == null) {
+				// Daten für dieses Objekt konnten nicht geladen werden
+				logger.error("loadRawData not successful");
+				return;
+			}
 
-		// 3. Prüfen der Codierung der Rohdaten
-		data = checkEncoding(data);
-		if (data == null) {
-			// beim Check des Encoding trat ein Fehler auf, keine weitere
-			// Behandlung möglich
-			return;
-		}
+			// 2. Auseinandernehmen der Rohdaten
+			if (logger.isDebugEnabled()) {
+				logger.debug("retrieved data (Base64-coded): " + data);
+			}
+			data = decodeBase64(data);
+			if (data == null) {
+				// keine decodierten Rohdaten vorhanden, eine weitere
+				// Bearbeitung macht keinen Sinn
+				return;
+			}
 
-		// 4. XML-Fehler müssen behoben werden
-		data = checkXML(data);
-		if (data == null) {
-			// beim Prüfen auf XML-Fehler trat ein Fehler auf, keine weitere
-			// Bearbeitung möglich
-			return;
-		}
-		// 5. Schreiben der bereinigten Rohdaten
-		data = storeCleanedRawData(data);
-		if (data == null) {
-			// die bereinigten Rohdaten konnten nicht gespeichert werden, eine
-			// weitere Bearbeitung sollte nicht erfolgen
-			return;
-		}
+			// 3. Prüfen der Codierung der Rohdaten
+			data = checkEncoding(data);
+			if (data == null) {
+				// beim Check des Encoding trat ein Fehler auf, keine weitere
+				// Behandlung möglich
+				return;
+			}
 
-		// Auslesen der Metadaten
-		imf = extractMetaData(data);
-		if (data == null) {
-			// die Metadaten konnten nicht ausgelesen werden, keine weitere
-			// Bearbeitung sinnvoll
-			return;
-		}
+			// 4. XML-Fehler müssen behoben werden
+			data = checkXML(data);
+			if (data == null) {
+				// beim Prüfen auf XML-Fehler trat ein Fehler auf, keine weitere
+				// Bearbeitung möglich
+				return;
+			}
+			// 5. Schreiben der bereinigten Rohdaten
+			data = storeCleanedRawData(data);
+			if (data == null) {
+				// die bereinigten Rohdaten konnten nicht gespeichert werden,
+				// eine
+				// weitere Bearbeitung sollte nicht erfolgen
+				return;
+			}
 
-		// schreiben der Metadaten
-		imf = storeMetaData(imf);
-		if (data == null) {
-			// Schreiben der Metadaten ist fehlgeschlagen, Objekt sollte später
-			// noch einmal prozessiert werden,
-			// jetzt keine weitere Bearbeitung sinnvoll
-			return;
-		}
+			// Auslesen der Metadaten
+			imf = extractMetaData(data);
+			if (data == null) {
+				// die Metadaten konnten nicht ausgelesen werden, keine weitere
+				// Bearbeitung sinnvoll
+				return;
+			}
 
-		// Zustandsänderung für dieses Objekt speichern
-		setAggregationCompleted(id);
+			// schreiben der Metadaten
+			imf = storeMetaData(imf);
+			if (data == null) {
+				// Schreiben der Metadaten ist fehlgeschlagen, Objekt sollte
+				// später
+				// noch einmal prozessiert werden,
+				// jetzt keine weitere Bearbeitung sinnvoll
+				return;
+			}
+
+			// Zustandsänderung für dieses Objekt speichern, falls es sich nicht
+			// um einen Testdurchlauf handelt
+			setAggregationCompleted(id);
+
+		} catch (AggregationFailedException ex) {
+
+		}
 
 	}
 
@@ -361,12 +320,141 @@ public class Aggregator {
 		return result;
 	}
 
+	
+	/**
+	 * Searches in DB for the service-id
+	 * 
+	 * @param string Name of this Service
+	 * @return BigDecimal ID of the service with the given name
+	 */	
+	private BigDecimal getServiceID(String name) {
+		String result;
+		
+		// Retrieving ServiceID
+		
+		result = (RestClient.createRestClient (this.getProps ( ).getProperty ("host"), "Services/byName/"+name+"/", this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"))).GetData ( );
+		
+		//restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		//result = restclient.GetData ( );
+		
+		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		RestEntrySet res = rms.getListEntrySets ( ).get (0);
+		
+		Iterator <String> it = res.getKeyIterator ( );
+		String key = "";
+		
+		BigDecimal thisServiceID = new BigDecimal (0);
+		
+		while (it.hasNext ( )) {
+							
+			key = it.next ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("key: " + key + " value: " + res.getValue (key));
+			
+			if (key.equalsIgnoreCase ("service_id")) {
+				
+				thisServiceID = new BigDecimal (res.getValue (key));
+				continue;
+				
+			} else if (key.equalsIgnoreCase ("name")) {
+				
+				if (!res.getValue (key).equalsIgnoreCase ("Harvester"))
+					logger.warn ("Should read Harvester and read " + res.getValue (key) + " instead!");
+				
+				continue;
+				
+			} else {
+				
+				logger.warn ("Unknown RestMessage key received: " + res.getValue (key));
+				continue;
+			}
+		}
+		
+		return thisServiceID;
+	}
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	//TODO: 
+	private RestClient prepareRestTransmission (String resource) {
+		
+		return RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+	}
+
+	
+	/**
+	 * 
+	 * fsetzt Eintrag für aktuelles Objekt in der Workflow-DB
+	 * 
+	 * wenn Testing == True ist, wird kein Eintrag eingefügt 
+	 * (entsprechender Konstruktor muss aufgerufen werden)
+	 * @param id ID des zu bearbeitenden Objekts
+	 */	
 	private void setAggregationCompleted(int id) {
-		// TODO Auto-generated method stub
-		if (this.testing = true) {
+		if (this.testing == true) {
 			// Workflow shall not be updated
 			return;
 		} else {
+			// Updating WorkflowDB
+			
+			//resource = "WorkflowDB/";
+			
+			logger.debug("set aggregation completed for " + id);
+			RestMessage rms;
+			RestEntrySet res;
+			String result;
+			
+			rms = new RestMessage ( );
+			
+			rms.setKeyword (RestKeyword.WorkflowDB);
+			rms.setStatus (RestStatusEnum.OK);
+			
+			res = new RestEntrySet ( );
+			
+			res.addEntry ("object_id", Integer.toString (id));
+			res.addEntry ("service_id", this.serviceID.toPlainString ( ));
+			rms.addEntrySet (res);
+			
+			String requestxml = RestXmlCodec.encodeRestMessage (rms);
+			
+			//restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+			
+			result = new String ( );
+			
+			try {
+				
+				result = prepareRestTransmission ("WorkflowDB/").PutData (requestxml);
+				//result = restclient.PutData (requestxml);
+				
+			} catch (UnsupportedEncodingException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ));
+				ex.printStackTrace ( );
+			}
+			
+			rms = null;
+			res = null;
+			//restclient = null;
+			
+			String value = getValueFromKey (result, "workflow_id");
+			
+			if (value == null) {
+				
+				logger.error ("I cannot the WORKFLOW-DB entry for this id, an error has occured. Skipping this object and continue with next.");
+				return;
+			}
+			
+			int workflowid = new Integer (value);
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("workflow_id is: " + workflowid);
+			
+		
+			
+			
 			
 		}
 	}
@@ -382,7 +470,7 @@ public class Aggregator {
 	 * @param data
 	 * @return
 	 */
-	private InternalMetadata storeMetaData(InternalMetadata data) {
+	private InternalMetadata storeMetaData(InternalMetadata data) throws AggregationFailedException {
 		
 		logger.debug("### storeMetaData - Begin ###");
 		
@@ -477,7 +565,7 @@ public class Aggregator {
 	}
 
 	@SuppressWarnings("unchecked")
-	private InternalMetadata extractMetaData(String data) {
+	private InternalMetadata extractMetaData(String data) throws AggregationFailedException {
 
 		logger.debug("extractMetadata");
 
@@ -537,19 +625,29 @@ public class Aggregator {
 
 		if (im != null) {
 			logger.debug("## InternalMetadata after Extraction: \n\n" + im.toString());
-		}
+			return im;
+		} else
+			throw new AggregationFailedException("No IMF-Object was created");
 		
-		return im;
-
-		// return null;
 	}
 
-	private String storeCleanedRawData(String data) {
+	
+	/**
+	 * This method stores cleaned raw data in DB
+	 * 
+	 * @param data
+	 * 				Decoded  and Cleaned Rawdata
+	 * @return	
+	 * 			correctly UTF-8-encoded metadatablob
+	 */
+	private String storeCleanedRawData(String data) throws AggregationFailedException {
 		// TODO Auto-generated method stub
 
 		String result = (String) data;
 		return result;
 	}
+	
+	
 	/**
 	 * This method checks raw data for UTF-8 encoding errors
 	 * 
@@ -558,11 +656,12 @@ public class Aggregator {
 	 * @return	
 	 * 			correctly UTF-8-encoded metadatablob
 	 */
-	private String checkXML(String data) {
+	private String checkXML(String data) throws AggregationFailedException {
 		// TODO checkXML not implemented
 		String result = (String) data;
 		return result;
 	}
+
 
 	/**
 	 * This method checks raw data for UTF-8 encoding errors
@@ -572,7 +671,7 @@ public class Aggregator {
 	 * @return	
 	 * 			correctly UTF-8-encoded metadatablob
 	 */
-	private String checkEncoding(String data) {
+	private String checkEncoding(String data) throws AggregationFailedException {
 		String result = (String) data;
 
 		// noch zu klären, wie Fehler in der Codierung ausgegeben werden
@@ -583,6 +682,7 @@ public class Aggregator {
 		return result;
 	}
 
+	
 	/**
 	 * loadRawData retrieve RawData from the database using Rest
 	 * 
@@ -590,7 +690,7 @@ public class Aggregator {
 	 *            id of the object that shall be retrieved
 	 * @return data of the object
 	 */
-	private String loadRawData(int id) {
+	private String loadRawData(int id) throws AggregationFailedException {
 		if (logger.isDebugEnabled())
 			logger.debug("loadRawData started");
 
@@ -625,28 +725,61 @@ public class Aggregator {
 		if (!value.equals(""))
 			return value;
 		else
-			return null;
+			throw new AggregationFailedException("loadRawData not successful, no DATA-value via REST retrieved");
+//			return null;
 	}
 
 	/**
-	 * ensures the right value for the repository ID.
+	 * This method decodes a RestMessage and extracts the value for a given key. 
 	 * 
-	 * @param optionValue
-	 *            a string representing a number greater or equal zero.
-	 * @return an integer which represents the repository ID
-	 * @throws ParseException
-	 *             when the repository ID is negative
+	 * @param result the encoded RestMessage
+	 * @param keyword the key for the value
+	 * @return the extracted value
 	 */
-	private static int filterId(String optionValue) throws ParseException {
-
-		int i = new Integer(optionValue);
-
-		if (i < 0)
-			throw new ParseException("ItemID must not be negative!");
-
-		if (logger.isDebugEnabled())
-			logger.debug("filtered ItemID: " + i);
-
-		return i;
+	
+	private String getValueFromKey (String result, String keyword) {
+		
+		if (result == null || result.equalsIgnoreCase ("")) {
+			
+			logger.error ("received RestMessage empty, skipping, continue with next");
+			return null;
+		}
+		
+		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		
+		if (rms.getStatus ( ) != RestStatusEnum.OK) {
+			
+			if (rms.getStatus ( ) == RestStatusEnum.NO_OBJECT_FOUND_ERROR)
+				logger.info ("Object does not exist, we'll care about this");
+			
+			else
+				logger.error ("Rest-Error occured: " + rms.getStatusDescription ( ));
+			
+			return null;
+		}
+		
+		RestEntrySet res = rms.getListEntrySets ( ).get (0);
+		
+		Iterator <String> it = res.getKeyIterator ( );
+		String key = "";
+		String value = null;
+		
+		while (it.hasNext ( )) {
+							
+			key = it.next ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("key: " + key + " value: " + res.getValue (key));
+			
+			if (key.equalsIgnoreCase (keyword)) {
+				
+				value = res.getValue (key);
+				break;
+			}
+		}
+		
+		return value;
 	}
+	
+	
 }
