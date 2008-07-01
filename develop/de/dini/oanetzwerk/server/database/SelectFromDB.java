@@ -12,8 +12,6 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.RestServer;
-
 /**
  * @author Michael K&uuml;hn
  *
@@ -89,6 +87,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement AllOIDs (Connection connection) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o");
@@ -100,6 +99,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement AllOIDsMarkAsTest (Connection connection) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.testdata = 1");
@@ -111,6 +111,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement AllOIDsFromRepositoryID (Connection connection, BigDecimal repID) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE (repository_id = ?)");
@@ -123,6 +124,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement AllOIDsFromRepositoryIDMarkAsTest (Connection connection, BigDecimal repID) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE (repository_id = ?) AND o.testdata = 1");
@@ -130,6 +132,12 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	public static PreparedStatement Repository (Connection connection) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT repository_id, name, url FROM dbo.Repositories");
+		
+		return preparedstmt;
+	}
 	
 	/**
 	 * @param connection
@@ -162,6 +170,14 @@ public class SelectFromDB {
 										"OR w1.object_id NOT IN (SELECT object_id FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id)) GROUP BY w1.object_id");
 		
 		preparedstmt.setBigDecimal (1, service_id);
+		
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement RawRecordDataHistory (Connection connection, BigDecimal internalOID) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ?");
+		preparedstmt.setBigDecimal (1, internalOID);
 		
 		return preparedstmt;
 	}
