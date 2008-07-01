@@ -251,7 +251,7 @@ public class InternalMetadata {
 		int result = 0;
 		if (cl != null) {
 			this.classificationList.add(cl);
-			System.out.println(cl);
+//			System.out.println(cl);
 		}
 		return result;
 	}

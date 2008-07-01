@@ -29,7 +29,7 @@ CREATE TABLE dbo.Keywords (
 );
 
 CREATE TABLE dbo.DDC_Categories (
-       DDC_Categorie CHAR(10) NOT NULL
+       DDC_Categorie VARCHAR(10) NOT NULL
      , name VARCHAR(255) NOT NULL
      , PRIMARY KEY (DDC_Categorie)
 );
@@ -137,7 +137,7 @@ CREATE TABLE dbo.Object2Language (
 
 CREATE TABLE dbo.DDC_Classification (
        object_id NUMERIC(38) NOT NULL
-     , DDC_Categorie CHAR(10) NOT NULL
+     , DDC_Categorie VARCHAR(10) NOT NULL
      , PRIMARY KEY (object_id, DDC_Categorie)
 );
 

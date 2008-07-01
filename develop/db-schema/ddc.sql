@@ -1,14 +1,3 @@
-insert into dbo.Repositories (name, url, oai_url) values ('EDOC HU', 'http://edoc.hu-berlin.de','http://http://edoc.hu-berlin.de/OAI-2.0');
-
-insert into dbo.Services (service_id, name) values ('Harvester');
-insert into dbo.Services (name) values ('Aggregator');
-
-insert into dbo.ServicesOrder (service_id, predecessor_id) values (1, null);
-insert into dbo.ServicesOrder (service_id, predecessor_id) values (2, 1);
-# insert into dbo.Services (service_id, name) values (1, 'Harvester');
-# insert into dbo.Repositories (repository_id, name, url, oai_url) values (1, 'EDOC HU', 'http://edoc.hu-berlin.de','http://http://edoc.hu-berlin.de/OAI-2.0');
-
-### DDC-Werte
 insert into dbo.DDC_Categories (DDC_Categorie, name) values('000', 'Allgemeines, Wissenschaft')
 insert into dbo.DDC_Categories (DDC_Categorie, name) values('004', 'Informatik')
 insert into dbo.DDC_Categories (DDC_Categorie, name) values('010', 'Bibliografien')
@@ -102,23 +91,3 @@ insert into dbo.DDC_Categories (DDC_Categorie, name) values('950', 'Geschichte A
 insert into dbo.DDC_Categories (DDC_Categorie, name) values('960', 'Geschichte Afrikas')
 insert into dbo.DDC_Categories (DDC_Categorie, name) values('970', 'Geschichte Nordamerikas')
 insert into dbo.DDC_Categories (DDC_Categorie, name) values('980', 'Geschichte Südamerikas')
-
-### DNB-Werte
-
-INSERT INTO DNB_Categories (DNB_Categorie, name) VALUES ('01','Wissenschaft und Kultur allgemein')
-
-### DINI-Werte
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type','Objects having a formal publication type', 'Objekte mit einem formalen Publikationstyp')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:monograph','Books, Monographs', 'Bücher, Monographien')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:article','Journal Articles', 'Zeitschriftenartikel')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:dissertation','Dissertations and Professional Dissertations', 'Dissertationen und Habilitationen')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:masterthesis','Diploma Theses', 'Diplomarbeiten')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:report','Reports', 'Berichte')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:paper','Papers', 'Papers')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:conf-proceeding','Conference Proceedings', 'Tagungs- und Konferenzbeiträge')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:lecture','Lectures', 'Vorlesungen')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:music','Music', 'Musik')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:program','Programs / Software', 'Programme / Software')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:play','Plays', 'Schauspiele / Theaterstücke')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:news','News', 'Nachrichten')
-INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:standards','Standards', 'Standards')
