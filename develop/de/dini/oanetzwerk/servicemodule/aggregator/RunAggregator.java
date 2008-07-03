@@ -7,7 +7,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.servicemodule.harvester.RunHarvester;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 

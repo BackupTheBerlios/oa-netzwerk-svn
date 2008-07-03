@@ -14,22 +14,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.swing.text.InternationalFormatter;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
-import org.omg.CORBA.UNKNOWN;
 import org.xml.sax.InputSource;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -41,20 +32,14 @@ import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.MetadataFormatType;
 import de.dini.oanetzwerk.utils.exceptions.AggregationFailedException;
-import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 import de.dini.oanetzwerk.utils.imf.InternalMetadataJAXBMarshaller;
-import de.dini.oanetzwerk.utils.imf.Title;
+
 
 /**
  * @author Manuel Klatt-Kafemann
  * 
  * Aggregator: extracts metadata and stores it in the db
- */
-
-/**
- * @author Manuel Klatt-Kafemann
- * 
  */
 public class Aggregator {
 
@@ -572,6 +557,7 @@ public class Aggregator {
 	 * @param xmlRawdata
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private MetadataFormatType getMDFTypeFromRawdata(String xmlRawdata) {
 		MetadataFormatType result = MetadataFormatType.UNKNOWN;
 		
