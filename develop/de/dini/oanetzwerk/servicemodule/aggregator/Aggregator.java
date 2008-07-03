@@ -29,6 +29,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
+import org.omg.CORBA.UNKNOWN;
 import org.xml.sax.InputSource;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -38,6 +39,7 @@ import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.utils.MetadataFormatType;
 import de.dini.oanetzwerk.utils.exceptions.AggregationFailedException;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
@@ -564,30 +566,32 @@ public class Aggregator {
 		return data;
 	}
 
-	@SuppressWarnings("unchecked")
-	private InternalMetadata extractMetaData(String data) throws AggregationFailedException {
-
-		logger.debug("extractMetadata");
-
-		InternalMetadata im = new InternalMetadata();
-		org.jdom.Document doc;
-		SAXBuilder builder = new SAXBuilder();
-
+	/**
+	 * determindes which metadata format is used in rawdata
+	 * 
+	 * @param xmlRawdata
+	 * @return
+	 */
+	private MetadataFormatType getMDFTypeFromRawdata(String xmlRawdata) {
+		MetadataFormatType result = MetadataFormatType.UNKNOWN;
+		
+		//TODO: Wozu ist das gut? -rm
 		@SuppressWarnings("unused")
 		Namespace namespace = Namespace.getNamespace("oai_dc",
 				"http://www.openarchives.org/OAI/2.0/oai_dc/");
+		
 		try {
-			// InputSource is = new InputSource("testdata.xml");
-			// doc = builder.build(is);
-			doc = builder
-					.build(new InputSource(new StringReader((String) data)));
+		
+			org.jdom.Document doc;
+			SAXBuilder builder = new SAXBuilder();
+
+			doc = builder.build(new InputSource(new StringReader(xmlRawdata)));
 
 			logger.debug("** doc generated");
 
 			ElementFilter filter = new ElementFilter("OAI-PMH");
-			String metadataFormat = null;
 			Iterator iterator = doc.getDescendants(filter);
-			// Bestimmung, welches Metadatenformat vorliegt
+
 			while (iterator.hasNext()) {
 				Element contentSet = (Element) iterator.next();
 				List contentList = contentSet.getChildren();
@@ -598,30 +602,49 @@ public class Aggregator {
 					if (contentEntry.getName().equals("request")) {
 						if ((contentEntry.getAttribute("metadataPrefix")
 								.getValue()).equals("oai_dc")) {
-							metadataFormat = "oai_dc";
-							// System.out.println("oai_dc found");
+							result = MetadataFormatType.OAI_DC;
 						}
-						// System.out.println("request found");
 					}
 				}
 
 			}
-
-			// Auswertung des ermittelten Metadatenformats
-
-			if (metadataFormat.equals("oai_dc")) {
-				// System.out.println("IMFGeneratorDCSimple wird gestartet");
-				IMFGeneratorDCSimple imGen = new IMFGeneratorDCSimple();
-				im = imGen.generateIMF((String) data);
-			}
-
-			// if (im != null) return im;
-
-		} catch (Exception e) {
-			logger.error("error while decoding XML String: " + e);
+			
+		} catch(Exception ex) {
+	      logger.error("error finding metadata format type in xml rawdata: " + ex.getLocalizedMessage());
 		}
 
-		// return listEntrySet;
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private InternalMetadata extractMetaData(String xmlRawdata) throws AggregationFailedException {
+
+		logger.debug("extractMetadata");
+
+		InternalMetadata im = new InternalMetadata();
+		
+//		try {
+			// InputSource is = new InputSource("testdata.xml");
+			// doc = builder.build(is);
+
+
+			// Auswertung des ermittelten Metadatenformats
+			MetadataFormatType metadataFormat = getMDFTypeFromRawdata(xmlRawdata);
+			switch(metadataFormat) {
+				case OAI_DC: 
+					IMFGeneratorDCSimple imGen = new IMFGeneratorDCSimple();
+					im = imGen.generateIMF(xmlRawdata);					
+					break;
+				// <--- neue Formate werden hier auf entsprechende Generator-Klassen gemapped
+				case UNKNOWN:
+			    default:
+			    	im = null;
+			    	throw new AggregationFailedException("No IMF-Object can be created, metadata type: " + metadataFormat);
+			}
+			
+//		} catch (Exception e) {
+//			logger.error("error while decoding XML String: " + e);
+//		}
 
 		if (im != null) {
 			logger.debug("## InternalMetadata after Extraction: \n\n" + im.toString());
