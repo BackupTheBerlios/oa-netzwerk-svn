@@ -1719,6 +1719,55 @@
 </foreign-key-list>
 <index-list/>
 </table>
+<table alias="FullTextLinks" name="FullTextLinks" remarks="" uid="174b9f8:11ae8dfe998:-7fe1">
+<table-description/>
+<table-figure-bounds height="-1" width="-1" x="1225" y="910"/>
+<column-list>
+<column alias="" auto-increment="true" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="174b9f8:11ae8dfe998:-7fdd">
+<column-description/>
+<data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%n)">
+<variant type-name-pattern="NUMERIC"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s)"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) UNSIGNED ZEROFILL"/>
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="NUMERIC(%p, %s) ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="application/pdf" mandatory="true" name="mimeformat" remarks="" uid="174b9f8:11ae8dfe998:-7fdc">
+<column-description/>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="255" decimal-digits="0" default-value="" mandatory="true" name="link" remarks="" uid="174b9f8:11ae8dfe998:-7fdb">
+<column-description/>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
+</data-type>
+</column>
+</column-list>
+<primary-key alias="" name="PK_FULLTEXTLINKS" remarks="" uid="174b9f8:11ae8dfe998:-7fe0">
+<primary-key-description/>
+<primary-key-column name="object_id"/>
+</primary-key>
+<unique-key-list/>
+<foreign-key-list>
+<foreign-key alias="" name="FK_FullTextLinks_1" on-delete="" on-update="" referenced-key="PK_OBJECT" referenced-table="Object" referenced-table-schema="dbo" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="174b9f8:11ae8dfe998:-7f81">
+<foreign-key-description/>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="object_id" referenced-key-column-name="object_id"/>
+</foreign-key>
+</foreign-key-list>
+<index-list/>
+</table>
 </table-list>
 </schema>
 </schema-list>

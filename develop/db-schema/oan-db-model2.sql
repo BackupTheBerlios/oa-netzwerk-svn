@@ -229,6 +229,13 @@ CREATE TABLE dbo.TypeValue (
 );
 
 
+CREATE TABLE dbo.FullTextLinks (
+       object_id NUMERIC(38) NOT NULL
+     , mimeformat VARCHAR(255) NOT NULL
+	 , link  VARCHAR(255) NULL
+     , PRIMARY KEY (object_id, mimeformat)
+);
+
 ALTER TABLE dbo.Object
   ADD CONSTRAINT FK_Object_1
       FOREIGN KEY (repository_id)
@@ -404,3 +411,8 @@ ALTER TABLE dbo.ServicesOrder
   ADD CONSTRAINT FK_ServicesOrder_2
       FOREIGN KEY (predecessor_id)
       REFERENCES dbo.Services (service_id);
+
+ALTER TABLE dbo.FullTextLinks
+  ADD CONSTRAINT FK_FullTextLinks_1
+      FOREIGN KEY (object_id)
+      REFERENCES dbo.Object (object_id);

@@ -24,6 +24,11 @@ DELETE FROM  dbo.DDC_Classification WHERE object_id=?
 DELETE FROM  dbo.DNB_Classification WHERE object_id=?
 DELETE FROM  dbo.DINI_Set_Classification WHERE object_id=?
 
+#FullTextLinks löscchen
+DELETE FROM dbo.FullTextLinks WHERE object_id=?
+
+
+
 #Object-Eintrag muss auch geloescht werden
 DELETE FROM  dbo.Object WHERE object_id=?
 

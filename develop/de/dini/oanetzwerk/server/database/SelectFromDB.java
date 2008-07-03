@@ -662,4 +662,20 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
+
+	/**
+	 * @param value
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement FullTextLinks (Connection connection, BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT object_id, mimeformat, link FROM dbo.FullTextLinks WHERE (object_id = ?)");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
+	
 }

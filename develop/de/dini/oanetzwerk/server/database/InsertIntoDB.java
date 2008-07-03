@@ -573,4 +573,30 @@ public class InsertIntoDB {
 		
 		return preparedstmt;
 	}
+
+	/**
+	 * @param object_id
+	 * @param mimeformat
+	 * @param link
+	 * @return
+	 * @throws SQLException 
+	 */	
+	public static PreparedStatement FullTextLinks (Connection connection, BigDecimal object_id, String mimeformat, 
+			String link	) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert FullTextLinks: INSERT INTO dbo.FullTextLinks (object_id, mimeformat, link) VALUES " +
+					"(" + object_id + ", " + mimeformat + ", " + link + ")");
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.FullTextLinks (object_id, mimeformat, link) VALUES (?, ?, ?)");
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setString(2, mimeformat);
+		preparedstmt.setString(3, link);
+		
+		return preparedstmt;
+	}
+
+
 }
