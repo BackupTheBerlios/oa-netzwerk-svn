@@ -88,7 +88,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		SingleStatementConnection stmtconn = null;
-		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			boolean loadhistory = false;
@@ -140,12 +139,16 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			this.result = stmtconn.execute ( );
 			this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 			
+			RestEntrySet res;
+			
 			while (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("DB returned: \n\tobject_id = " + this.result.getResultSet ( ).getInt (1) +
 							"\n\trepository_timestamp = " + this.result.getResultSet ( ).getDate (2).toString ( ) +
 							"\n\tdata = " + this.result.getResultSet ( ).getString (3));
+				
+				res = new RestEntrySet ( );
 				
 				res.addEntry ("object_id", Integer.toString (this.result.getResultSet ( ).getInt ("object_id")));
 				res.addEntry ("repository_timestamp", this.result.getResultSet ( ).getDate ("repository_timestamp").toString ( ));
@@ -195,7 +198,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			res = null;
 			this.result = null;
 			dbng = null;
 		}

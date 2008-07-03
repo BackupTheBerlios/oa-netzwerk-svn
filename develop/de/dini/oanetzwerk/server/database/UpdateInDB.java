@@ -34,7 +34,7 @@ public class UpdateInDB {
 	static Logger logger = Logger.getLogger (UpdateInDB.class);
 	
 	public static PreparedStatement Object (Connection connection,
-			BigDecimal repository_id, Date harvested,
+			BigDecimal object_id, BigDecimal repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier,
 			boolean testdata, int failureCounter) throws SQLException {
 		
@@ -42,15 +42,16 @@ public class UpdateInDB {
 			
 			logger.debug ("Updating Object: UPDATE dbo.Object SET harvested = " + harvested +
 					", repository_datestamp = " + repository_datestamp + ", testdata = " + testdata +
-					", failure_counter = " + failureCounter + " WHERE object_id = " + repository_id);
+					", failure_counter = " + failureCounter + " WHERE object_id = " + object_id);
 		}
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ?, testdata = ?, failure_counter = ? WHERE object_id = ?");
+		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ?, testdata = ?, failure_counter = ? WHERE object_id = ? AND repository_id = ?");
 		preparedstmt.setDate (1, harvested);
 		preparedstmt.setDate (2, repository_datestamp);
 		preparedstmt.setBoolean (3, testdata);
 		preparedstmt.setInt (4, failureCounter);
-		preparedstmt.setBigDecimal (5, repository_id);
+		preparedstmt.setBigDecimal (5, object_id);
+		preparedstmt.setBigDecimal (6, repository_id);
 		
 		return preparedstmt;
 	}

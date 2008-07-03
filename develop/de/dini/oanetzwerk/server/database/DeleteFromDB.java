@@ -327,7 +327,7 @@ public class DeleteFromDB {
 	
 	public static PreparedStatement DuplicatePossibilities (Connection connection, BigDecimal object_id) throws SQLException {
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.DuplicatePossibilties WHERE object_id = ?");
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.DuplicatePossibilities WHERE object_id = ?");
 		preparedstmt.setBigDecimal (1, object_id);
 		
 		return preparedstmt;

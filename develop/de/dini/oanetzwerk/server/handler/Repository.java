@@ -77,7 +77,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		SingleStatementConnection stmtconn = null;
-		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			
@@ -114,6 +113,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 								"\n\tAmount = " + this.result.getResultSet ( ).getInt ("harvest_amount") +
 								"\n\tSleep = " + this.result.getResultSet ( ).getInt ("harvest_pause"));				
 					
+					RestEntrySet res = new RestEntrySet ( );
+					
 					res.addEntry ("name", this.result.getResultSet ( ).getString ("name"));
 					res.addEntry ("url", this.result.getResultSet ( ).getString ("url"));
 					res.addEntry ("oai_url", this.result.getResultSet ( ).getString ("oai_url"));
@@ -134,6 +135,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			} else {
 				
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+				RestEntrySet res;
 				
 				while (this.result.getResultSet ( ).next ( )) {
 					
@@ -143,6 +145,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 						logger.debug ("DB returned: \n\tRepository_ID = " + this.result.getResultSet ( ).getBigDecimal ("repository_id") +
 								"\n\tRepository name = " + this.result.getResultSet ( ).getString ("name") + 
 								"\n\tRepository URL = " + this.result.getResultSet ( ).getString ("url"));
+					
+					res = new RestEntrySet ( );
 					
 					res.addEntry ("repository_id", this.result.getResultSet ( ).getBigDecimal ("repository_id").toPlainString ( ));
 					res.addEntry ("name", this.result.getResultSet ( ).getString ("name"));
@@ -188,7 +192,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			res = null;
 			this.result = null;
 			dbng = null;
 		}

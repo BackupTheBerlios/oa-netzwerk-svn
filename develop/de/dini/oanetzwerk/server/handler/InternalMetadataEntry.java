@@ -109,7 +109,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getUpdateCount ( ) < 1) {
-			//TODO: überall checken, dass wenigstens eien LOG Warnung geworfen wird 	
+			//TODO: überall checken, dass wenigstens eine LOG Warnung geworfen wird 	
 				
 			}
 			

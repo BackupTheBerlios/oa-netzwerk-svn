@@ -173,19 +173,16 @@ public class Harvester {
 		} catch (InvalidPropertiesFormatException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			System.exit (1);
 			
 		} catch (FileNotFoundException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			System.exit (1);
 			
 		} catch (IOException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			System.exit (1);
 		}
 		
@@ -204,9 +201,6 @@ public class Harvester {
 	private void getRepositoryDetails (int id) {
 		
 		String result = prepareRestTransmission ("Repository/" + id + "/").GetData ( );
-		
-		//RestClient restClient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), "Repository/" + id + "/", this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
-		//String result = restClient.GetData ( );
 		
 		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
 		RestEntrySet res = rms.getListEntrySets ( ).get (0);
@@ -440,11 +434,19 @@ public class Harvester {
 		return this.props;
 	}
 	
+	/**
+	 * @return
+	 */
+	
 	protected ArrayList<ObjectIdentifier> getIds ( ) {
 		
 		return ids;
 	}
-
+	
+	/**
+	 * @param ids
+	 */
+	
 	protected void setIds (ArrayList<ObjectIdentifier> ids) {
 		
 		this.ids = ids;
@@ -467,7 +469,6 @@ public class Harvester {
 		try {
 			
 			// this will get all metadataformats, the requested repository supports 
-			
 			response = listMetaDataFormats (getRepositoryURL ( ));
 			
 			if (logger.isDebugEnabled ( ))
@@ -480,7 +481,7 @@ public class Harvester {
 			if (!this.isFullharvest ( ))
 				response = listIdentifiers (getRepositoryURL ( ), this.metaDataFormat, this.getDate ( ));
 			
-			// if we do a harvest of all rawdata, this will be chosen
+			// if we do a harvest all rawdata, this will be chosen
 			else
 				response = listIdentifiers (getRepositoryURL ( ), this.metaDataFormat);
 			
@@ -497,7 +498,7 @@ public class Harvester {
 				resumptionToken = extractIdsAndGetResumptionToken (response);
 				
 				// Now the list of objects will be processed
-				processRecords ( );
+				this.processRecords ( );
 				
 				// if we have resumption token, we have to find out, whether it's the last entryset or not
 				if (resumptionToken != null) {
@@ -536,13 +537,11 @@ public class Harvester {
 		
 		} catch (HttpException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			
 		} catch (IOException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			
 		} finally {
 			
@@ -649,8 +648,16 @@ public class Harvester {
 		if (logger.isDebugEnabled ( ))
 			logger.debug (url +  "?" + getmethod.getQueryString ( ));
 		
-		statuscode = client.executeMethod (getmethod);
-		
+		try {
+			
+			statuscode = client.executeMethod (getmethod);
+			
+		} catch (Exception ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			System.exit (2);
+		}
+			
 		logger.info ("HttpStatusCode: " + statuscode);
 		
 		if (statuscode != HttpStatus.SC_OK) {
@@ -763,18 +770,15 @@ public class Harvester {
 			
 		} catch (ParserConfigurationException pacoex) {
 			
-			logger.error (pacoex.getLocalizedMessage ( ));
-			pacoex.printStackTrace ( );
+			logger.error (pacoex.getLocalizedMessage ( ), pacoex);
 			
 		} catch (SAXException sex) {
 			
-			logger.error (sex.getLocalizedMessage ( ));
-			sex.printStackTrace ( );
+			logger.error (sex.getLocalizedMessage ( ), sex);
 			
 		} catch (IOException ioex) {
 			
-			logger.error (ioex.getLocalizedMessage ( ));
-			ioex.printStackTrace ( );
+			logger.error (ioex.getLocalizedMessage ( ), ioex);
 		}
 		
 		return resumptionToken;
@@ -827,21 +831,16 @@ public class Harvester {
 					
 				} catch (InterruptedException ex) {
 					
-					logger.error (ex.getLocalizedMessage ( ));
-					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 				
 				// after that we have to upload the new rawdata
-				updateRawData (i);
+				this.updateRawData (i);
 				
 			} else {
 				
 				// Object exists and we have to look if our Rawdata is newer than the database one
 				if (checkRawData (i) == true) {
-					
-					updateHarvestedDatestamp (i);
-					
-				} else {
 					
 					if ((i % 20) == 0) try {
 						
@@ -851,18 +850,21 @@ public class Harvester {
 						
 					} catch (InterruptedException ex) {
 						
-						logger.error (ex.getLocalizedMessage ( ));
-						ex.printStackTrace ( );
+						logger.error (ex.getLocalizedMessage ( ), ex);
 					}
 					
 					// if not, upload the new rawdata
-					updateRawData (i);
-				}
+					this.updateRawData (i);
+					
+				} else {
+					
+					this.updateHarvestedDatestamp (i);
+				} //endelse
 			} //endelse
-		}
+		} //endfor
 		
 		this.ids = null;
-	}
+	} //end processRecords
 	
 	/**
 	 * This method created a new object in the database and retrieves the corresponding ID.
@@ -882,42 +884,45 @@ public class Harvester {
 		//String ressource = "ObjectEntry/";
 		//RestClient restClient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
 		
-		GregorianCalendar cal = new GregorianCalendar ( );
-		cal.setTime (this.ids.get (index).getDatestamp ( ));
-		
-		String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
-		
-		cal = null;
+//		GregorianCalendar cal = new GregorianCalendar ( );
+//		cal.setTime (this.ids.get (index).getDatestamp ( ));
+//		
+//		String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
+//		
+//		cal = null;
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("creating Object No. " + index + ": " + this.ids.get (index).getExternalOID ( ));
 		
 		try {
 			
-			RestMessage rms = new RestMessage ( );
+//			RestMessage rms = new RestMessage ( );
+//			
+//			rms.setKeyword (RestKeyword.ObjectEntry);
+//			rms.setStatus (RestStatusEnum.OK);
+//			
+//			RestEntrySet res = new RestEntrySet ( );
+//			
+//			res.addEntry ("repository_id", Integer.toString (this.getRepositoryID ( )));
+//			res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
+//			res.addEntry ("repository_datestamp", datestamp);
+//			res.addEntry ("testdata", Boolean.toString (this.isTestData ( )));
+//			res.addEntry ("failureCounter", "0");
+//			res.addEntry ("peculiar", Boolean.toString (false));
+//			res.addEntry ("outdated", Boolean.toString (false));
+//			
+//			rms.addEntrySet (res);
+//			
+//			String requestxml = RestXmlCodec.encodeRestMessage (rms);
+//			
+//			if (logger.isDebugEnabled ( ))
+//				logger.debug ("xml: " + requestxml);
 			
-			rms.setKeyword (RestKeyword.ObjectEntry);
-			rms.setStatus (RestStatusEnum.OK);
+			String result = prepareRestTransmission ("ObjectEntry/").PutData (this.createObjectEntryRestMessage (index, 0));
+			//String result = prepareRestTransmission ("ObjectEntry/").PutData (requestxml);
 			
-			RestEntrySet res = new RestEntrySet ( );
-			
-			res.addEntry ("repository_id", Integer.toString (getRepositoryID ( )));
-			res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
-			res.addEntry ("repository_datestamp", datestamp);
-			res.addEntry ("testdata", Boolean.toString (isTestData ( )));
-			res.addEntry ("failureCounter", "0");
-			
-			rms.addEntrySet (res);
-			
-			String requestxml = RestXmlCodec.encodeRestMessage (rms);
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("xml: " + requestxml);
-			
-			String result = prepareRestTransmission ("ObjectEntry/").PutData (requestxml);
-			
-			rms = null;
-			res = null;
+//			rms = null;
+//			res = null;
 			
 			String value = getValueFromKey (result, "oid");
 						
@@ -930,11 +935,51 @@ public class Harvester {
 			
 		} catch (IOException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 	}
 	
+	/**
+	 * @param datestamp
+	 * @param i
+	 * @return
+	 */
+	
+	private String createObjectEntryRestMessage (int index, int failurecounter) {
+
+		RestMessage rms = new RestMessage ( );
+		
+		rms.setKeyword (RestKeyword.ObjectEntry);
+		rms.setStatus (RestStatusEnum.OK);
+		
+		GregorianCalendar cal = new GregorianCalendar ( );
+		cal.setTime (this.ids.get (index).getDatestamp ( ));
+		
+		String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
+		
+		RestEntrySet res = new RestEntrySet ( );
+		
+		res.addEntry ("repository_id", Integer.toString (this.getRepositoryID ( )));
+		res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
+		res.addEntry ("repository_datestamp", datestamp);
+		res.addEntry ("testdata", Boolean.toString (this.isTestData ( )));
+		res.addEntry ("failureCounter", Integer.toString (failurecounter));
+		res.addEntry ("peculiar", Boolean.toString (false));
+		res.addEntry ("outdated", Boolean.toString (false));
+		
+		rms.addEntrySet (res);
+		
+		String requestxml = RestXmlCodec.encodeRestMessage (rms);
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("xml: " + requestxml);
+		
+		res = null;
+		rms = null;
+		
+		return requestxml;
+	}
+
 	/**
 	 * This method checks if the rawdata we received is newer than the rawdata in the database or not.
 	 * 
@@ -953,42 +998,35 @@ public class Harvester {
 		}
 		
 		String result = prepareRestTransmission ("ObjectEntry/" + this.ids.get (i).getInternalOID ( ) + "/").GetData ( );
-		
-//		String ressource = "ObjectEntry/" + this.ids.get (i).getInternalOID ( ) + "/";
-//		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), ressource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
-//		
-//		String result = restclient.GetData ( );
-		
-//		restclient = null;
 		String value = getValueFromKey (result, "repository_datestamp");
 		
 		try {
 			
 			Date repositoryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (value);	
 			
-			if (!repositoryDate.before (this.ids.get (i).getDatestamp ( ))) {
+			// is Date in Database earlier than the harvested?
+			if (repositoryDate.before (this.ids.get (i).getDatestamp ( ))) {
 				
+				//if true, harvest data, set harvested in Object-Entry and ID in Workflow-DB
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("RepositoryDate is " + repositoryDate + " and after the harvested: " + this.ids.get (i).getDatestamp ( ));
-				
-				this.ids.get (i).setDatestamp (repositoryDate);
+					logger.debug ("RepositoryDate is " + repositoryDate + " and before the harvested: " + this.ids.get (i).getDatestamp ( ));
 				
 				return true;
 				
 			} else {
 				
-				// updated harvesteddatstamp and exit
+				// if false update harvested datestamp and exit
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("RepositoryDate is " + repositoryDate + " and before the harvested: " + this.ids.get (i).getDatestamp ( ));
+					logger.debug ("RepositoryDate is " + repositoryDate + " and after the harvested: " + this.ids.get (i).getDatestamp ( ));
 				
 				return false;
-				
 			}
 			
 		} catch (java.text.ParseException ex) {
-
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			
+			logger.warn ("Exception occured while checking dates, storeing new dates to prevent future errors");
+			logger.warn (ex.getLocalizedMessage ( ), ex);
+			
 			return true;
 		}		
 	}
@@ -1004,27 +1042,27 @@ public class Harvester {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("We must update the harvested datestamp only"); 
 		
-		GregorianCalendar cal = new GregorianCalendar ( );
-		cal.setTime (this.ids.get (index).getDatestamp ( ));
-		
-		String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
-		
-		RestMessage rms = new RestMessage ( );
-		
-		rms.setKeyword (RestKeyword.ObjectEntry);
-		rms.setStatus (RestStatusEnum.OK);
-		
-		RestEntrySet res = new RestEntrySet ( );
-		
-		res.addEntry ("repository_id", Integer.toString (getRepositoryID ( )));
-		res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
-		res.addEntry ("repository_datestamp", datestamp);
-		res.addEntry ("testdata", Boolean.toString (isTestData ( )));
-		res.addEntry ("failureCounter", "0");
-		
-		rms.addEntrySet (res);
-		
-		String requestxml = RestXmlCodec.encodeRestMessage (rms);
+//		GregorianCalendar cal = new GregorianCalendar ( );
+//		cal.setTime (this.ids.get (index).getDatestamp ( ));
+//		
+//		String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
+//		
+//		RestMessage rms = new RestMessage ( );
+//		
+//		rms.setKeyword (RestKeyword.ObjectEntry);
+//		rms.setStatus (RestStatusEnum.OK);
+//		
+//		RestEntrySet res = new RestEntrySet ( );
+//		
+//		res.addEntry ("repository_id", Integer.toString (getRepositoryID ( )));
+//		res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
+//		res.addEntry ("repository_datestamp", datestamp);
+//		res.addEntry ("testdata", Boolean.toString (isTestData ( )));
+//		res.addEntry ("failureCounter", "0");
+//		
+//		rms.addEntrySet (res);
+//		
+//		String requestxml = RestXmlCodec.encodeRestMessage (rms);
 		
 //		String ressource = "ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/";
 //		
@@ -1034,16 +1072,17 @@ public class Harvester {
 		
 		try {
 			
-			result = prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/").PostData (requestxml);
+			result = prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/")
+					.PostData (this.createObjectEntryRestMessage (index, 0));
 //			result = restclient.PostData (requestxml);
 			
 		} catch (UnsupportedEncodingException ex) {
 			
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 		
-		rms = null;
-		res = null;
+//		rms = null;
+//		res = null;
 //		restclient = null;
 		
 		String value = getValueFromKey (result, "oid");
@@ -1052,7 +1091,6 @@ public class Harvester {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("internalOID: " + intoid + " has been successfully updated");
-		
 	}
 	//TODO: 
 	/**
@@ -1110,7 +1148,6 @@ public class Harvester {
 			InputStream in = method.getResponseBodyAsStream ( );
 			String instring = HelperMethods.stream2String(in);
 			
-			
 			String result = prepareRestTransmission ("RawRecordData/"
 					+ ids.get (index).getInternalOID ( )
 					+ "/" + cal.get (Calendar.YEAR)
@@ -1122,24 +1159,28 @@ public class Harvester {
 									Base64.encodeBase64 (
 											instring.getBytes ("UTF-8"))));
 			
+//			if (logger.isDebugEnabled ( )) {
+//				
+//				String enc = new String (Base64.encodeBase64(instring.getBytes("UTF-8")));
+//				logger.debug ("deenc: " + new String (Base64.decodeBase64(enc.getBytes("UTF-8"))));
+//			}
+			
+			result = prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/")
+					.PostData (createObjectEntryRestMessage (index, 0));
+			
+			//TODO: repsonse decodieren und auswerten (status-value, description, ...)
+//			if (result)
+//			
+//			int intoid = new Integer (getValueFromKey (result, "oid"));
+			
 			if (logger.isDebugEnabled ( )) {
 				
-				String enc = new String (Base64.encodeBase64(instring.getBytes("UTF-8")));
-				logger.debug ("deenc: " + new String (Base64.decodeBase64(enc.getBytes("UTF-8"))));
+				logger.debug ("uploaded rawdata for Database Object " + this.ids.get (index).getInternalOID ( ));
+				logger.debug ("ObjectEntry with internalOID: " + this.ids.get (index).getInternalOID ( ) + " has been successfully updated");
 			}
-			
-			//RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
-			//restclient.PutData (new String (Base64.encodeBase64 (HelperMethods.stream2String (method.getResponseBodyAsStream ( )).getBytes ("UTF-8"))));
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("uploaded rawdata for Database Object " + ids.get (index).getInternalOID ( ));
-			
 			// Retrieving ServiceID
 			
 			result = prepareRestTransmission ("Services/byName/Harvester/").GetData ( );
-			
-			//restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
-			//result = restclient.GetData ( );
 			
 			RestMessage rms = RestXmlCodec.decodeRestMessage (result);
 			RestEntrySet res = rms.getListEntrySets ( ).get (0);
@@ -1203,8 +1244,7 @@ public class Harvester {
 				
 			} catch (UnsupportedEncodingException ex) {
 				
-				logger.error (ex.getLocalizedMessage ( ));
-				ex.printStackTrace ( );
+				logger.error (ex.getLocalizedMessage ( ), ex);
 			}
 			
 			rms = null;
@@ -1222,17 +1262,15 @@ public class Harvester {
 			int workflowid = new Integer (value);
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("workflow_id is: " + workflowid);
+				logger.debug ("workflow_id for OID " + this.ids.get (index).getInternalOID ( ) + " is: " + workflowid);
 			
 		} catch (HttpException ex) {
 			
-			ex.printStackTrace ( );
-			logger.error (ex.getLocalizedMessage ( ));
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			
 		} catch (IOException ex) {
 			
-			ex.printStackTrace ( );
-			logger.error (ex.getLocalizedMessage ( ));
+			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 	}
 
@@ -1262,14 +1300,9 @@ public class Harvester {
 			logger.debug ("We are going to have a look if the object with the externalOID " + externalOID + " in repository nr. " +
 					this.getRepositoryID ( ) + " already exists");
 		
-//		String resource = "ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/";
-		
 		logger.debug ("Properties: " + this.getProps ( ).getProperty ("host"));
 		
-//		RestClient restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
-		
 		String result = prepareRestTransmission ("ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/").GetData ( );
-//		String result = restclient.GetData ( );
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug (result);
@@ -1426,8 +1459,7 @@ public class Harvester {
 				} catch (java.text.ParseException ex) {
 					
 					logger.error ("Can't extract Datestamp from parameter 'updateDate'");
-					logger.error (ex.getLocalizedMessage ( ));
-					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ), ex);
 					System.exit (10);
 				}
 				
@@ -1584,8 +1616,7 @@ class ObjectIdentifier {
 			
 		} catch (java.text.ParseException ex) {
 			
-			logger.error (externalOID + "has no valid Datestamp!\n" + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (externalOID + "has no valid Datestamp!\n" + ex.getLocalizedMessage ( ), ex);
 		}
 	}
 	

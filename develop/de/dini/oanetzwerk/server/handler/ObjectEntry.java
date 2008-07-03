@@ -77,7 +77,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		this.rms = new RestMessage (RestKeyword.ObjectEntry);
 		
-		
 		try {
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
@@ -404,11 +403,32 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
 	
 	@Override
-	protected String postKeyWord (String [ ] path, String data) {
+	protected String postKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
+		
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+		
+		BigDecimal object_id;
+		
+		try {
+			
+			object_id = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.ObjectEntry);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
 		
 		BigDecimal repository_id = new BigDecimal (0);
 		String repository_identifier = "";
@@ -483,7 +503,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (UpdateInDB.Object (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			stmtconn.loadStatement (UpdateInDB.Object (stmtconn.connection, object_id, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
 			this.result = stmtconn.execute ( );
 						
 			if (this.result.getUpdateCount ( ) < 1) {
@@ -504,6 +524,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				stmtconn.commit ( );
 				this.rms.setStatus (RestStatusEnum.OK);
 				
+				this.rms.addEntrySet (res);
+				res = null;
+				
 			} else {
 				
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
@@ -512,15 +535,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 		} catch (SQLException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -540,8 +561,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			this.rms.addEntrySet (res);
-			res = null;
 			this.result = null;
 			dbng = null;
 		}
