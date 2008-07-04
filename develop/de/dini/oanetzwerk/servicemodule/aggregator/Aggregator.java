@@ -535,8 +535,8 @@ public class Aggregator {
 
 			// auswerten des Resultats
 			// wenn gar keine Rückmeldung, dann auf jeden Fall ein Fehler
-			if (msgPutResponse == null || msgPutRequest.getStatus() != RestStatusEnum.OK) {
-				logger.error("REST-Uebertragung fehlgeschlagen");
+			if (msgPutResponse == null || msgPutResponse.getStatus() != RestStatusEnum.OK) {
+				logger.error("REST-Uebertragung fehlgeschlagen: " + msgPutResponse);
 				return null;
 			} else {
 				logger.debug("Resultat der Übertragung: " + msgPutResponse);
