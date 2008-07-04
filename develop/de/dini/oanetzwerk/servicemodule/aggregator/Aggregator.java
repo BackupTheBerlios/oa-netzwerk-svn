@@ -57,7 +57,8 @@ public class Aggregator {
 	 */
 
 	static Logger logger = Logger.getLogger(Aggregator.class);
-
+	static Logger aggrStateLog = Logger.getLogger("AggregationState");
+	
 	/**
 	 * Properties.
 	 */
@@ -68,7 +69,8 @@ public class Aggregator {
 	private Properties props; // special aggregator settings like connecting
 								// server
 
-	private boolean testing = false; // if et to true, aggregator stores data, but no update to workflow is saved
+	// TODO: remember this to set back to false
+	private boolean testing = true; // if et to true, aggregator stores data, but no update to workflow is saved
 
 	private BigDecimal serviceID;
 	
@@ -205,7 +207,8 @@ public class Aggregator {
 		this.currentRecordId = id;
 
 		logger.debug("StartSingleRecord:  RecordId=" + this.currentRecordId);
-
+		//aggrStateLog.info("OID: " + id);
+		
 		String data = null;
 		InternalMetadata imf = null;
 
@@ -276,9 +279,10 @@ public class Aggregator {
 			// Zustandsänderung für dieses Objekt speichern, falls es sich nicht
 			// um einen Testdurchlauf handelt
 			setAggregationCompleted(id);
-
+			aggrStateLog.info("OID " + id + " - OK");
+			
 		} catch (AggregationFailedException ex) {
-
+	      aggrStateLog.fatal("OID " + id + " - Exception: " + ex.getLocalizedMessage());
 		}
 
 	}
@@ -511,13 +515,13 @@ public class Aggregator {
 		} else {
 			
 			logger.error("GET liefert Fehler: " + msgGetResponse);
-			return null;
 			
+			throw new AggregationFailedException("getting old InternalMetadata failed: ");
 		}
 
 		// ----------------------------------------
 		
-		try {
+
 
 			logger.debug("# PUT");
 
@@ -531,22 +535,27 @@ public class Aggregator {
 
 			// abschicken der Daten	
 			restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-			RestMessage msgPutResponse = restclient.sendPutRestMessage(msgPutRequest);
+			
+			RestMessage msgPutResponse = null;
+			try {
+				msgPutResponse = restclient.sendPutRestMessage(msgPutRequest);
+			} catch (IOException ioex) {
+
+				logger.error (ioex.getLocalizedMessage ( ));
+				ioex.printStackTrace ( );
+				
+				throw new AggregationFailedException("putting InternalMetadata failed: ", ioex);
+			}	
 
 			// auswerten des Resultats
 			// wenn gar keine Rückmeldung, dann auf jeden Fall ein Fehler
 			if (msgPutResponse == null || msgPutResponse.getStatus() != RestStatusEnum.OK) {
 				logger.error("REST-Uebertragung fehlgeschlagen: " + msgPutResponse);
-				return null;
+				
+				throw new AggregationFailedException("putting InternalMetadata failed, server responded with error:\n" + msgPutResponse.getStatus() + " - " + msgPutResponse.getStatusDescription());
 			} else {
 				logger.debug("Resultat der Übertragung: " + msgPutResponse);
 			}
-
-		} catch (IOException ex) {
-
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
-		}		
 
 		return data;
 	}
@@ -715,6 +724,10 @@ public class Aggregator {
 		RestMessage response = restclient.sendGetRestMessage();
 		
 		//TODO: hier Fehlerbehandlung via rms.getStatus()
+		
+		if(response.getStatus() != RestStatusEnum.OK) {
+			throw new AggregationFailedException("could not fetch rawdata for OID " + id + ":\n" + response);
+		}
 		
 		RestEntrySet entrySet = response.getListEntrySets().get(0);
 		Iterator<String> it = entrySet.getKeyIterator();
