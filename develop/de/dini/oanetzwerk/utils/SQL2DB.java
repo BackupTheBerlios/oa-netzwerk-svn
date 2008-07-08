@@ -63,12 +63,12 @@ public class SQL2DB {
 			try {
 				
 				while (sql != null) {
-					
+					System.out.println (sql);					
 					stmt.executeUpdate (sql);
 					if (1 == 0)
 						throw new SQLException ( );
 					
-					System.out.println (sql);
+
 					sql = br.readLine ( );
 				}
 				con.commit ( );
