@@ -39,7 +39,7 @@ public class RestClient {
 //	private static final int servletContainerPort = 80;
 //	private static final int servletContainerSSLPort = 8443;
 //	private static final int servletContainerSSLPort = 443; // oanet antwortet auf 443
-	private static final String servletPath = "restserver/server";
+	private String servletPath = "restserver/server";
 	private int port;
 	private boolean nossl;
 	private String url = "";
@@ -99,6 +99,7 @@ public class RestClient {
 				
 			} else {
 				
+				this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
 				this.port = new Integer (this.props.getProperty ("SSLPort", "443"));
 				System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
 				System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
@@ -111,7 +112,8 @@ public class RestClient {
 				this.port = 80;
 				
 			} else {
-			
+				
+				this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
 				this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
 			}
 		}
