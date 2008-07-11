@@ -242,8 +242,8 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 			
 			if (this.result.getResultSet ( ).next ( )) {
 				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: workflow_id = " + this.result.getResultSet ( ).getBigDecimal (1));
+//				if (logger.isDebugEnabled ( ))
+//					logger.debug ("DB returned: workflow_id = " + this.result.getResultSet ( ).getBigDecimal (1));
 		
 				res.addEntry ("object_id", this.result.getResultSet ( ).getBigDecimal ("object_id").toPlainString ( ));
 				stmtconn.commit ( );
