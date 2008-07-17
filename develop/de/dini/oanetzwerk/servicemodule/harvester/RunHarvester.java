@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
 
-
 /**
  * @author Michael Kühn
  *
@@ -90,6 +89,11 @@ public class RunHarvester {
 										.withLongOpt ("testData")
 										.withDescription ("URL of the repository which need to be harvested")
 										.create ('T'));
+		
+		options.addOption (OptionBuilder.withType (new String ( ))
+										.withLongOpt ("listRecords")
+										.withDescription ("listRecods-OAI-Method is used instead of lisIdentifiers + getRecord")
+										.create ('r'));
 		
 		if (args.length > 0) {
 			

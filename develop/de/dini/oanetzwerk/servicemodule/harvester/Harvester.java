@@ -206,6 +206,9 @@ public class Harvester {
 	
 	private void getRepositoryDetails (int id) {
 
+		if (this.getProps ( ).containsKey ("listrecords"))
+			setListRecords (new Boolean (this.getProps ( ).getProperty ("listrecords", "false")));
+		
 		String result = this.prepareRestTransmission ("Repository/" + id + "/").GetData ( );
 		
 		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
@@ -240,7 +243,7 @@ public class Harvester {
 				filterInterval (res.getValue (key));
 				continue;
 				
-			} else if (key.equalsIgnoreCase ("listRecords")) {
+			} else if (key.equalsIgnoreCase ("listrecords")) {
 				
 				this.setListRecords (new Boolean (res.getValue (key)));
 				continue;
