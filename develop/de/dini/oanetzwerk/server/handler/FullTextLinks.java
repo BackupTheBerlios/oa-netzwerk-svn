@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Iterator;
 
 import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.DeleteFromDB;
 import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
@@ -36,25 +37,104 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 	/**
 	 * 
 	 */
-	
 	public FullTextLinks ( ) {
-
 		super (FullTextLinks.class.getName ( ), RestKeyword.FullTextLinks);
 	}
+
 
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
 	 */
-	
 	@Override
-	protected String deleteKeyWord (String [ ] path) {
+	protected String deleteKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
-		this.rms = new RestMessage (RestKeyword.FullTextLinks);
-		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
+		BigDecimal object_id;
+		
+		try {
+			
+			object_id = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.ObjectEntry);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		MultipleStatementConnection stmtconn = null;
+		
+		this.rms = new RestMessage (RestKeyword.ObjectEntry);
+		
+		try {
+			
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			stmtconn.loadStatement (DeleteFromDB.FullTextLinks (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				stmtconn.rollback ( );
+				throw new SQLException ("FullTextLinks entries could not be deleted");
+			} else {
+				stmtconn.commit ( );
+			}
+			
+			RestEntrySet res = new RestEntrySet ( );
+			
+			res.addEntry ("oid", object_id.toPlainString ( ));
+			
+			this.rms.addEntrySet (res);
+			
+		} catch (SQLException ex) {
+			
+			logger.error ("An error occured while processing Delete FullTextLinks: " + ex.getLocalizedMessage ( ), ex);
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error ("An error occured while processing Delete FullTextLinks: " + ex.getLocalizedMessage ( ), ex);
+			ex.printStackTrace ( );
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ), ex);
+				}
+			}
+			
+			this.result = null;
+			dbng = null;
+		}
+				
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
-
+	
+	
+	
+	
+	
+	
 	/**
 	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
@@ -71,6 +151,18 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 		try {
 			
 			object_id = new BigDecimal (path [0]);
+
+			if (object_id.intValue() < 0) {
+				
+				logger.error (path [0] + " is NOT a valid number for this parameter!");
+				
+				this.rms = new RestMessage (RestKeyword.FullTextLinks);
+				this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+				this.rms.setStatusDescription (path [0] + " is NOT a valid number for this parameter!");
+				
+				return RestXmlCodec.encodeRestMessage (this.rms);				
+				
+			}
 			
 		} catch (NumberFormatException ex) {
 			
@@ -102,6 +194,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 			}
 			
 			RestEntrySet entrySet;
+			boolean resultSetWasEmpty = true;
 			while (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( )) 
@@ -112,9 +205,16 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 				entrySet.addEntry("mimeformat", this.result.getResultSet().getString("mimeformat"));
 				entrySet.addEntry("link", this.result.getResultSet().getString("link"));
 				this.rms.addEntrySet(entrySet);
+
+				resultSetWasEmpty = false;
 			}
 			
-			this.rms.setStatus (RestStatusEnum.OK);
+			if (resultSetWasEmpty == true) {
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+				this.rms.setStatusDescription ("No matching ObjectEntry found");
+			} else {
+				this.rms.setStatus (RestStatusEnum.OK);
+			}
 			
 		} catch (SQLException ex) {
 			

@@ -41,10 +41,10 @@ public class TestFullTextLinks {
 	@Test
 	public void test_GET_ObjectID() throws Exception{
 		
-		System.out.println("FullTextLinks\\");
+		System.out.println("FullTextLinks");
 		
 		FullTextLinks fullTextLinks = new FullTextLinks();
-		String [] path = {"2079"};
+		String [] path = {"2078"};
 
 		String strXML = fullTextLinks.getKeyWord(path);
 //		System.out.println(strXML);
@@ -59,6 +59,46 @@ public class TestFullTextLinks {
 		
 		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
 	}
+	
+	@Test
+	public void test_GET_ObjectID_objectIDnegative() throws Exception{
+		
+		System.out.println("FullTextLinks/-2079");
+		
+		FullTextLinks fullTextLinks = new FullTextLinks();
+		String [] path = {"-2079"};
+
+		String strXML = fullTextLinks.getKeyWord(path);
+//		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+			System.out.println(entrySet);
+		}
+
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.WRONG_PARAMETER);
+	}
+
+	
+	@Test
+	public void test_GET_ObjectID_noObjectFound() throws Exception{
+		
+		System.out.println("FullTextLinks/1");
+		
+		FullTextLinks fullTextLinks = new FullTextLinks();
+		String [] path = {"1"};
+
+		String strXML = fullTextLinks.getKeyWord(path);
+//		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+			System.out.println(entrySet);
+		}
+
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+	}
+	
 	
 	@Test
 	public void test_GET_noParam() throws Exception{
@@ -96,7 +136,7 @@ public class TestFullTextLinks {
 		System.out.println("FullTextLinks\\");
 		
 		FullTextLinks fullTextLinks = new FullTextLinks();
-		String oid = "635";
+		String oid = "207";
 		String[] path = {oid};
 		String body = null;
 
@@ -127,6 +167,29 @@ public class TestFullTextLinks {
 			Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
 
 	}
+	
+	
+	@Test
+	public void test_DELETE_ObjectID() throws Exception{
+		
+		System.out.println("FullTextLinks");
+		
+		FullTextLinks fullTextLinks = new FullTextLinks();
+		String [] path = {"635"};
+
+		String strXML = fullTextLinks.deleteKeyWord(path);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+			System.out.println(entrySet);
+		}
+
+		System.out.println("oids fetched: " + rmsg.getListEntrySets().size());
+		System.out.println("first: " + rmsg.getListEntrySets().get(0));
+		
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
+	}
+	
 	
 	
 }
