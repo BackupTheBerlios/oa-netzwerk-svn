@@ -30,7 +30,7 @@ public class TestHarvester {
 		harvester.setTestData (true);
 		
 		ArrayList<ObjectIdentifier> oi = new ArrayList <ObjectIdentifier> ( );
-		oi.add(new ObjectIdentifier ("oai:HUBerlin.de:28411", "2009-01-01", 730));
+		oi.add (new ObjectIdentifier ("oai:HUBerlin.de:28411", "2009-01-01", 730, null));
 		
 		harvester.setIds (oi);
 	}

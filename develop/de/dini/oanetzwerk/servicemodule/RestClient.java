@@ -35,10 +35,6 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class RestClient {
 	
-//	private static final int servletContainerPort = 8080;
-//	private static final int servletContainerPort = 80;
-//	private static final int servletContainerSSLPort = 8443;
-//	private static final int servletContainerSSLPort = 443; // oanet antwortet auf 443
 	private String servletPath = "restserver/server";
 	private int port;
 	private boolean nossl;
@@ -77,17 +73,17 @@ public class RestClient {
 			
 		} catch (InvalidPropertiesFormatException ex) {
 			
-			logger.warn (ex.getLocalizedMessage ( ));
+			logger.warn (ex.getLocalizedMessage ( ), ex);
 			logger.warn ("SSL-Conections might be impossible");
 			
 		} catch (FileNotFoundException ex) {
 			
-			logger.warn (ex.getLocalizedMessage ( ));
+			logger.warn (ex.getLocalizedMessage ( ), ex);
 			logger.warn ("SSL-Conections might be impossible");
 			
 		} catch (IOException ex) {
 			
-			logger.warn (ex.getLocalizedMessage ( ));
+			logger.warn (ex.getLocalizedMessage ( ), ex);
 			logger.warn ("SSL-Conections might be impossible");
 		}
 		
@@ -173,7 +169,7 @@ public class RestClient {
 		
 		//TODO: filter URL!
 		
-		String filteredUrl = url;
+		String filteredUrl = url.trim ( ).replaceAll ("\\s", "");
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("filtered URL: " + filteredUrl);

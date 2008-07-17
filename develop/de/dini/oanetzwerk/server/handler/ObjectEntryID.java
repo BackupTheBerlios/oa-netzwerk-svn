@@ -6,10 +6,17 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.database.*;
-import de.dini.oanetzwerk.codec.*;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -101,6 +108,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 				res.addEntry ("oid", Integer.toString (this.result.getResultSet ( ).getInt ("object_id")));
 				
+				this.rms.addEntrySet (res);
 				this.rms.setStatus (RestStatusEnum.OK);
 				
 			} else {
@@ -108,7 +116,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("No matching internal Object-ID found");
 				
-				res.addEntry ("oid", null);
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching internal Object-ID found");
 			}
@@ -143,7 +150,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			this.rms.addEntrySet (res);
 			res = null;
 			this.result = null;
 			dbng = null;
