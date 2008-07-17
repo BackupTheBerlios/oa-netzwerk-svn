@@ -4,6 +4,7 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
@@ -16,6 +17,7 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -73,7 +75,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				return RestXmlCodec.encodeRestMessage (this.rms);
 			}
 		}
-		
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		SingleStatementConnection stmtconn = null;
@@ -200,14 +201,36 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	}
 
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
 	 */
 	
 	@Override
-	protected String postKeyWord (String [ ] path, String data) {
+	protected String postKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
 		
-		this.rms = new RestMessage (RestKeyword.Repository);
-		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+		
+		BigDecimal object_id;
+		
+		try {
+			
+			object_id = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.Repository);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		//TODO: /harvestedtoday/ überprüfen, body muß leer sein.
+		BigDecimal repository_id = new BigDecimal (0);
+		Date harvested = HelperMethods.today ( );
+		//TODO: Connection, Update
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 

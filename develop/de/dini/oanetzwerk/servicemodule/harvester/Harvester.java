@@ -968,7 +968,6 @@ public class Harvester {
 				"&metadataPrefix=" + metaDataFormat);
 	}
 	
-	
 	/**
 	 * This method encapsulates the request for an update harvest of Identifiers
 	 * from the repository or the ResumptionToken Request
@@ -1006,7 +1005,6 @@ public class Harvester {
 			return this.repositoryAnswer (url, "ListIdentifiers", "&metadataPrefix=" + metaDataFormat + "&from=" + updateFrom);
 		}
 	}
-	
 	
 	/**
 	 * This method connects to the Repository and gets information from it. This
@@ -1101,92 +1099,6 @@ public class Harvester {
 			
 			resumptionToken = searchFirstChild (root.getChildren ( ), "resumptionToken");
 			doc = null;
-			// try {
-			//			
-			// DocumentBuilderFactory factory =
-			// DocumentBuilderFactory.newInstance ( );
-			// DocumentBuilder builder = factory.newDocumentBuilder ( );
-			// Document document = builder.parse (responseBody);
-			//			
-			// NodeList idNodeList = document.getElementsByTagName
-			// ("identifier");
-			// NodeList datestampNodeList = document.getElementsByTagName
-			// ("datestamp");
-			//			
-			// if (this.ids == null) {
-			//				
-			// if (logger.isDebugEnabled ( ))
-			// logger.debug ("List of ObjectIdentifiers is NULL, so I create a
-			// new one");
-			//							
-			// this.ids = new ArrayList <ObjectIdentifier> ( );
-			// }
-			//			
-			// if (logger.isDebugEnabled ( )) {
-			//				
-			// logger.debug ("we have " + idNodeList.getLength ( ) + " Ids to
-			// extract");
-			// logger.debug ("we have " + datestampNodeList.getLength ( ) + "
-			// Datestamps to extract");
-			// logger.debug ("we have " + idNodeList.getLength ( ) + " ID-Nodes
-			// to process");
-			// }
-			//			
-			// for (int i = 0; i < idNodeList.getLength ( ); i++) {
-			//				
-			// int internalOID;
-			// String externalOID = idNodeList.item (i).getTextContent ( );
-			// String datestamp = datestampNodeList.item (i).getTextContent ( );
-			//				
-			// if (logger.isDebugEnabled ( ))
-			// logger.debug ("List Record No. " + recordno++ + " " + externalOID
-			// + " " + datestamp);
-			//				
-			// internalOID = objectexists (externalOID);
-			//				
-			// if (internalOID > 0) {
-			//					
-			// // we found this object in the database
-			//					
-			// if (logger.isDebugEnabled ( ))
-			// logger.debug (externalOID + " is " + internalOID + " in our
-			// database");
-			//					
-			// ids.add (new ObjectIdentifier (externalOID, datestamp,
-			// internalOID));
-			//					
-			// } else if (internalOID == -1) {
-			//					
-			// // we found no object in the database
-			//					
-			// if (logger.isDebugEnabled ( ))
-			// logger.debug (externalOID + " is not in the database. so we have
-			// to create a new object");
-			//					
-			// ids.add (new ObjectIdentifier (externalOID, datestamp, -1));
-			//					
-			// } else {
-			//					
-			// logger.error ("Error with number " + internalOID + "occured while
-			// processing Object " + externalOID);
-			// logger.info ("Skipping object " + externalOID + " and continue
-			// with the next one");
-			// }
-			// }
-			//			
-			// NodeList rsList = document.getElementsByTagName
-			// ("resumptionToken");
-			//			
-			// if (rsList.getLength ( ) > 0)
-			// resumptionToken = rsList.item (0).getTextContent ( );
-			//			
-			// rsList = null;
-			// factory = null;
-			// builder = null;
-			// document = null;
-			//			
-			// idNodeList = null;
-			// datestampNodeList = null;
 			
 		} catch (ParserConfigurationException pacoex) {
 			
@@ -1242,7 +1154,6 @@ public class Harvester {
 			this.processHeader (header);
 		}
 	}
-	
 	
 	/**
 	 * @param element
@@ -1322,7 +1233,6 @@ public class Harvester {
 		headerDatestamp = null;
 	}
 	
-	
 	/**
 	 * @param headerIdentifier
 	 * @param headerDatestamp
@@ -1400,7 +1310,6 @@ public class Harvester {
 		return null;
 	}
 	
-	
 	/**
 	 * This is the heart of the object handler. Here all harvested objects are
 	 * processed. For every object an object entry will be created if this
@@ -1409,6 +1318,7 @@ public class Harvester {
 	 * object will be checked if there's some newer data. If so the newer data
 	 * will be put in the database otherwise only the datestamp of the last
 	 * harvest-run is set.
+	 * @throws UnsupportedEncodingException 
 	 * 
 	 * @see #createObjectEntry(int)
 	 * @see #updateRawData(int)
@@ -1416,7 +1326,7 @@ public class Harvester {
 	 * @see #updateHarvestedDatestamp(int)
 	 */
 	
-	protected void processRecords ( ) {
+	protected void processRecords ( ) throws UnsupportedEncodingException {
 
 		if (this.ids.size ( ) < 1) {
 			
@@ -1428,6 +1338,9 @@ public class Harvester {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("now we process " + this.ids.size ( ) + " Records");
+		
+		if (this.isFullharvest ( ))
+			this.setFullHarvestDateStamp ( );
 		
 		for (int objectcounter = 0; objectcounter < this.ids.size ( ); objectcounter++) {
 			
@@ -1467,6 +1380,17 @@ public class Harvester {
 		this.ids = null;
 	} // end processRecords
 	
+	/**
+	 * @throws UnsupportedEncodingException 
+	 * 
+	 */
+	
+	private void setFullHarvestDateStamp ( ) throws UnsupportedEncodingException {
+		
+		String result = prepareRestTransmission ("Repositories/" + this.getRepositoryID ( ) + "/harvestedtoday/").PostData ("");
+		//TODO: result auswerten
+	}
+
 	/**
 	 * This method created a new object in the database and retrieves the
 	 * corresponding ID. For the object-data it will transmit the repository ID,
@@ -1548,62 +1472,6 @@ public class Harvester {
 		return requestxml;
 	}
 	
-	/*
-	 * This method checks if the rawdata we received is newer than the rawdata
-	 * in the database or not. @param index index of the current
-	 * ObjectIdentifier @return true if received data is newer, false else
-	 */
-
-	// private boolean checkRawData (int index) {
-	//		
-	// // first we need the datestamp from the database
-	// if (logger.isDebugEnabled ( )) {
-	//			
-	// logger.debug ("We have to check the RawData, whether it is outdated or
-	// not");
-	// logger.debug ("observing Object No. " + index + ": " + this.ids.get
-	// (index).getExternalOID ( ));
-	// }
-	//		
-	// String result = prepareRestTransmission ("ObjectEntry/" + this.ids.get
-	// (index).getInternalOID ( ) + "/").GetData ( );
-	// String value = getValueFromKey (result, "repository_datestamp");
-	//		
-	// try {
-	//			
-	// Date repositoryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (value);
-	//			
-	// // is Date in Database earlier than the harvested?
-	// if (repositoryDate.before (this.ids.get (index).getDatestamp ( ))) {
-	//				
-	// //if true, harvest data, set harvested in Object-Entry and ID in
-	// Workflow-DB
-	// if (logger.isDebugEnabled ( ))
-	// logger.debug ("RepositoryDate is " + repositoryDate + " and before the
-	// harvested: " + this.ids.get (index).getDatestamp ( ));
-	//				
-	// return true;
-	//				
-	// } else {
-	//				
-	// // if false update harvested datestamp and exit
-	// if (logger.isDebugEnabled ( ))
-	// logger.debug ("RepositoryDate is " + repositoryDate + " and after the
-	// harvested: " + this.ids.get (index).getDatestamp ( ));
-	//				
-	// return false;
-	// }
-	//			
-	// } catch (java.text.ParseException ex) {
-	//			
-	// logger.warn ("Exception occured while checking dates, storeing new dates
-	// to prevent future errors");
-	// logger.warn (ex.getLocalizedMessage ( ), ex);
-	//			
-	// return true;
-	
-	// }
-	// }
 	/**
 	 * This method only sets a new datestamp for the given Object.
 	 * 
@@ -1637,7 +1505,6 @@ public class Harvester {
 		postObjectEntryResult = null;
 	}
 	
-	
 	/**
 	 * This method puts new RawData in the Database.
 	 * 
@@ -1666,21 +1533,7 @@ public class Harvester {
 			// stream, so this stream has to be converted
 			// to a UTF-8-encoded string. Finally this string has to be encoded
 			// with Base64. After that the utf-8-base64-string will be sent.
-			
-			// if (logger.isDebugEnabled ( )) {
-			//				
-			// Header [ ] header = method.getResponseHeaders ( );
-			//				
-			// for (Header header2 : header) {
-			//					
-			// logger.debug ("ResponseHeader: " + header2.getName ( ) + " = " +
-			// header2.getValue ( ));
-			// }
-			// }
-			//			
-			// InputStream in = method.getResponseBodyAsStream ( );
-			// String instring = HelperMethods.stream2String(in);
-			
+						
 			String putRawRecordDataResult = prepareRestTransmission (
 					"RawRecordData/" + currentObject.getInternalOID ( ) + "/"
 							+ cal.get (Calendar.YEAR) + "-"
