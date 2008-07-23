@@ -124,7 +124,7 @@
 </table>
 <table alias="Repositories" name="Repositories" remarks="" uid="4f5403:1161f7e7d4d:-7ff4">
 <table-description/>
-<table-figure-bounds height="-1" width="-1" x="7" y="-141"/>
+<table-figure-bounds height="-1" width="-1" x="-3" y="-167"/>
 <column-list>
 <column alias="" auto-increment="false" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="repository_id" remarks="OAI-Schittstelle des Servers, z.B. (edoc.hu-berlin.de/OAI-2.0/)" uid="4f5403:1161f7e7d4d:-7fee">
 <column-description/>
@@ -191,6 +191,19 @@
 <variant type-name-pattern="INT UNSIGNED"/>
 <variant type-name-pattern="INT UNSIGNED ZEROFILL"/>
 <variant type-name-pattern="INT ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="last_full_harvest_begin" remarks="" uid="1888b1f:11b313cf1d1:-7fde">
+<column-description/>
+<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
+<variant type-name-pattern="DATETIME"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="false" name="listrecords" remarks="" uid="1888b1f:11b313cf1d1:-7fdb">
+<column-description/>
+<data-type jdbc-type="-7" name="BIT" selected-variant-pattern="BIT">
+<variant type-name-pattern="BIT"/>
+<variant precision-max="64" precision-min="0" precision-variable="%n" type-name-pattern="BIT(%n)"/>
 </data-type>
 </column>
 </column-list>
@@ -1726,8 +1739,8 @@
 <column alias="" auto-increment="true" column-size="38" decimal-digits="0" default-value="" mandatory="true" name="object_id" remarks="" uid="174b9f8:11ae8dfe998:-7fdd">
 <column-description/>
 <data-type jdbc-type="3" name="NUMERIC" selected-variant-pattern="NUMERIC(%n)">
-<variant type-name-pattern="NUMERIC"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n)"/>
+<variant type-name-pattern="NUMERIC"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="NUMERIC(%n) ZEROFILL"/>

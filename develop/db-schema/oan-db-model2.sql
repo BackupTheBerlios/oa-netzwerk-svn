@@ -74,7 +74,8 @@ CREATE TABLE dbo.Repositories (
 	 , test_data BIT default 1
 	 , harvest_amount INT default 10
 	 , harvest_pause INT default 5000
-		
+     , last_full_harvest_begin DATETIME NULL
+	 , listrecords BIT default 0
      , PRIMARY KEY (repository_id)
 );
 
