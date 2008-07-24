@@ -36,7 +36,7 @@ public class DBAccessNG {
 		try {
 			
 			this.statementConnection = null;
-			this.ds = (DataSource) ((Context) new InitialContext ( ).lookup ("java:comp/env")).lookup ("jdbc/oanetztest");
+			this.ds = (DataSource) ((Context) new InitialContext ( ).lookup ("java:comp/env")).lookup ("jdbc/oanetzwerk");
 			
 		} catch (NamingException ex) {
 			
