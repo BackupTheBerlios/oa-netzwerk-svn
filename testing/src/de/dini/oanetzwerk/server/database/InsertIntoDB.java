@@ -10,6 +10,8 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * @author Michael K&uuml;hn
@@ -18,22 +20,34 @@ import java.sql.SQLException;
 
 public class InsertIntoDB {
 
+	static Logger logger = Logger.getLogger (InsertIntoDB.class);
+	
 	/**
-	 * @param connection
-	 * @param repository_id
-	 * @param harvested
-	 * @param repository_datestamp
-	 * @param repository_identifier
-	 * @param testdata
-	 * @param failureCounter
-	 * @return
+	 * This creates the Prepared Statement for inserting a new Object into the Database.
+	 * 
+	 * @param connection the connection instance
+	 * @param repository_id the Identifier of the repository, which have to exist in Table Repositories
+	 * @param harvested the Date when the Object was harvested
+	 * @param repository_datestamp the timestamp when the record has been changed or created in the repository
+	 * @param repository_identifier the record irdentifier within the reposititory
+	 * @param testdata whether this is just a test record or not 
+	 * @param failureCounter how many failures already occured while harvesting this record
+	 * @return the Prepared Statment to insert a new Object into the Database
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Object (Connection connection,
 			BigDecimal repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier,
 			boolean testdata, int failureCounter) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Object: INSERT INTO dbo.Object (repository_id, harvested, repository_datestamp, repository_identifier, testdata, failure_counter)" +
+					" VALUES (" + repository_id + ", " + harvested + ", " + repository_datestamp + ", " + repository_identifier +
+					", " + testdata + ", " + failureCounter + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Object (repository_id, harvested, repository_datestamp, repository_identifier, testdata, failure_counter) VALUES (?, ?, ?, ?, ?, ?)");
 		
 		preparedstmt.setBigDecimal (1, repository_id);
@@ -55,10 +69,17 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement RawRecordData (Connection connection,
 			BigDecimal object_id, Date repository_timestamp, String data,
 			String metaDataFormat) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert RawData: INSERT INTO dbo.RawData (object_id, repository_timestamp, data, MetaDataFormat)" +
+					" VALUES (" + object_id + ", " + repository_timestamp + ", <data>, " + metaDataFormat + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.RawData (object_id, repository_timestamp, data, MetaDataFormat) VALUES (?, ?, ?, ?)");
 		
 		preparedstmt.setBigDecimal (1, object_id);
@@ -77,9 +98,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement WorkflowDB (Connection connection,
 			BigDecimal object_id, Date time, BigDecimal service_id) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert WorkflowDB: INSERT INTO dbo.WorkflowDB (object_id, time, service_id) " +
+					"VALUES (" + object_id + ", " + time + ", " + service_id + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.WorkflowDB (object_id, time, service_id) VALUES (?, ?, ?)");
 		
 		preparedstmt.setBigDecimal (1, object_id);
@@ -97,8 +125,15 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Title (Connection connection, BigDecimal object_id,
 			String qualifier, String title, String lang) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Title: INSERT INTO dbo.Titles (object_id, qualifier, title, lang) " +
+					"VALUES (" + object_id + ", " + qualifier + "," + title + ", " + lang + ")");
+		}
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Titles (object_id, qualifier, title, lang) VALUES (?,?,?,?)");
 		preparedstmt.setBigDecimal (1, object_id);
@@ -116,9 +151,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement DateValue (Connection connection, BigDecimal object_id,
 			int number, Date extract_datestamp) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert DateValues: INSERT INTO dbo.DateValues (object_id, number, value) " +
+					"VALUES (" + object_id + ", " + number + ", " + extract_datestamp + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.DateValues (object_id, number, value) VALUES (?,?,?)");
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setInt (2, number);
@@ -134,9 +176,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Format (Connection connection, BigDecimal object_id, int number,
 			String schema_f) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Format: INSERT INTO dbo.Format (object_id, number, schema_f) " +
+					"VALUES (" + object_id + ", " + number + ", " + schema_f + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Format (object_id, number, schema_f) VALUES (?,?,?)");
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setInt (2, number);
@@ -152,9 +201,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Identifier (Connection connection, BigDecimal object_id,
 			int number, String identifier) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Identifier: INSERT INTO dbo.Identifier (object_id, number, identifier) " +
+					"VALUES (" + object_id + ", " + number + ", " + identifier + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Identifier (object_id, number, identifier) VALUES (?,?,?)");
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setInt (2, number);
@@ -170,9 +226,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Description (Connection connection, BigDecimal object_id,
 			int number, String description) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Description: INSERT INTO dbo.Description (object_id, number, abstract) " +
+					"VALUES (" + object_id + ", " + number + ", " + description + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Description (object_id, number, abstract) VALUES (?,?,?)");
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setInt (2, number);
@@ -187,9 +250,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement TypeValue (Connection connection, BigDecimal object_id,
 			String typeValue) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert TypeValue: INSERT INTO dbo.TypeValue (object_id, value) " +
+					"VALUES (" + object_id + ", " + typeValue + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.TypeValue (object_id, value) VALUES (?,?)");
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setString (2, typeValue);
@@ -204,9 +274,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Publisher (Connection connection, BigDecimal object_id,
 			int number, String name) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Publisher: INSERT INTO dbo.Publisher (object_id, number, name) " +
+					"VALUES (" + object_id + ", " + number +", " + name + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Publisher (object_id, number, name) VALUES (?,?,?)");
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setInt (2, number);
@@ -224,9 +301,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Person (Connection connection, String firstname, String lastname,
 			String title, String institution, String email) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Person: INSERT INTO dbo.Person (firstname, lastname, title, institution, email) " +
+					"VALUES (" + firstname + ", " + lastname + ", " + title + ", " + institution + ", " + email + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Person (firstname, lastname, title, institution, email) VALUES (?,?,?,?,?)");
 		preparedstmt.setString (1, firstname);
 		preparedstmt.setString (2, lastname);
@@ -244,9 +328,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Object2Author (Connection connection, BigDecimal object_id,
 			BigDecimal person_id, int number) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Object2Author: INSERT INTO dbo.Object2Author (object_id, person_id, number) " +
+					"VALUES (" + object_id + ", " + person_id + ", " + number + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Object2Author (object_id, person_id, number) VALUES (?,?,?)");
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setBigDecimal (2, person_id);
@@ -262,9 +353,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Object2Editor (Connection connection, BigDecimal object_id,
 			BigDecimal person_id, int number) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Object2Editor: INSERT INTO dbo.Object2Editor (object_id, person_id, number) " +
+					"VALUES (" +object_id + ", " + person_id + ", " + number +")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement("INSERT INTO dbo.Object2Editor (object_id, person_id, number) VALUES (?,?,?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setBigDecimal(2, person_id);
@@ -279,7 +377,14 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Keyword (Connection connection, String keyword, String language) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Keyword: INSERT INTO dbo.Keywords (keyword, lang) " +
+					"VALUES (" + keyword + ", " + language + ")");
+		}
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Keywords (keyword, lang) VALUES (?,?)");
 		preparedstmt.setString (1, keyword);
@@ -294,9 +399,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Object2Keyword (Connection connection, BigDecimal object_id,
 			BigDecimal keyword_id) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Object2Keyword: INSERT INTO dbo.Object2Keywords (object_id, keyword_id) " +
+					"VALUES (" + object_id + ", " + keyword_id + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement("INSERT INTO dbo.Object2Keywords (object_id, keyword_id) VALUES (?,?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setBigDecimal(2, keyword_id);
@@ -304,14 +416,20 @@ public class InsertIntoDB {
 		
 		return preparedstmt;
 	}
-
+	
 	/**
 	 * @param language
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Language (Connection connection, String language) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Language: INSERT INTO dbo.Language (language) VALUES (" + language + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement("INSERT INTO dbo.Language (language) VALUES (?)");
 		preparedstmt.setString(1, language);
 		
@@ -319,17 +437,24 @@ public class InsertIntoDB {
 	}
 
 	/**
+	 * @param connection
 	 * @param object_id
-	 * @param object_id2
 	 * @param language_id
 	 * @param number
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement Object2Language (Connection connection, BigDecimal object_id,
 			BigDecimal language_id, int number) throws SQLException {
-
-		PreparedStatement preparedstmt = connection.prepareStatement("INSERT INTO dbo.Object2Language (object_id, language_id, number) VALUES (?,?,?)");
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Object2Language: INSERT INTO dbo.Object2Language (object_id, language_id, number) " +
+					"VALUES (" + object_id + ", " + language_id + ", " + number + ")");
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Object2Language (object_id, language_id, number) VALUES (?,?,?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setBigDecimal(2, language_id);
 		preparedstmt.setInt(3, number);
@@ -343,9 +468,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement DDCClassification (Connection connection, BigDecimal object_id,
 			String ddcValue) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert DDCClassification: INSERT INTO dbo.DDC_Classification (object_id, DDC_Categorie) " +
+					"VALUES (" + object_id + ", " + ddcValue + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.DDC_Classification (object_id, DDC_Categorie) VALUES (?, ?)");
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setString (2, ddcValue);
@@ -359,9 +491,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement DNBClassification (Connection connection, BigDecimal object_id,
 			String category) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert DNBClassification: INSERT INTO dbo.DNB_Classification (object_id, DNB_Categorie) " +
+					"VALUES (" + object_id + ", " + category + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.DNB_Classification (object_id, DNB_Categorie) VALUES (?, ?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setString(2, category);
@@ -375,9 +514,16 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement DINISetClassification (Connection connection, BigDecimal object_id,
 			BigDecimal dini_set_id) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert DINISetClassification: INSERT INTO dbo.DINI_Set_Classification (object_id, DINI_set_id) " +
+					"VALUES (" + object_id + ", " + dini_set_id + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.DINI_Set_Classification (object_id, DINI_set_id) VALUES (?, ?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setBigDecimal(2, dini_set_id);
@@ -390,7 +536,14 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement OtherCategories (Connection connection, String category) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert OtherCategories: INSERT INTO dbo.Other_Categories (name) " +
+					"VALUES (" + category + ")");
+		}
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Other_Categories (name) VALUES (?)");
 		preparedstmt.setString(1, category);
@@ -404,13 +557,46 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement OtherClassification (Connection connection, BigDecimal object_id,
 			BigDecimal other_id) throws SQLException {
-
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert OtherClassification: INSERT INTO dbo.Other_Classification (object_id, other_id) " +
+					"VALUES (" + object_id + ", " + other_id + ")");
+		}
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Other_Classification (object_id, other_id) VALUES (?, ?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setBigDecimal(2, other_id);
 		
 		return preparedstmt;
 	}
+
+	/**
+	 * @param object_id
+	 * @param mimeformat
+	 * @param link
+	 * @return
+	 * @throws SQLException 
+	 */	
+	public static PreparedStatement FullTextLinks (Connection connection, BigDecimal object_id, String mimeformat, 
+			String link	) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert FullTextLinks: INSERT INTO dbo.FullTextLinks (object_id, mimeformat, link) VALUES " +
+					"(" + object_id + ", " + mimeformat + ", " + link + ")");
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.FullTextLinks (object_id, mimeformat, link) VALUES (?, ?, ?)");
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setString(2, mimeformat);
+		preparedstmt.setString(3, link);
+		
+		return preparedstmt;
+	}
+
+
 }
