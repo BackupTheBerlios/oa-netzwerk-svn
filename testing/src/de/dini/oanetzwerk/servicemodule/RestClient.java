@@ -29,21 +29,20 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 /**
- * @author Michael Kühn
- * foobarharharhar
+ * @author Michael K&uuml;hn
+ * 
  */
 
 public class RestClient {
 	
-	private static final int servletContainerPort = 8080;
-	private static final int servletContainerSSLPort = 8443;
-	private static final String servletPath = "restserver/server/";
+	private String servletPath = "restserver/server";
+	private int port;
 	private boolean nossl;
-	private String url;
-	private String path;
-	private String username;
-	private String password;
-	private Properties props;
+	private String url = "";
+	private final String path;
+	private final String username;
+	private final String password;
+	private Properties props = new Properties ( );
 	static Logger logger = Logger.getLogger (RestClient.class);
 
 	/**
@@ -74,24 +73,45 @@ public class RestClient {
 			
 		} catch (InvalidPropertiesFormatException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.warn (ex.getLocalizedMessage ( ), ex);
+			logger.warn ("SSL-Conections might be impossible");
 			
 		} catch (FileNotFoundException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.warn (ex.getLocalizedMessage ( ), ex);
+			logger.warn ("SSL-Conections might be impossible");
 			
 		} catch (IOException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.warn (ex.getLocalizedMessage ( ), ex);
+			logger.warn ("SSL-Conections might be impossible");
 		}
 		
 		if (!this.nossl) {
 			
-			System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
-			System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
+			if (props == null) {
+				
+				this.port = 443;
+				
+			} else {
+				
+				this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+				this.port = new Integer (this.props.getProperty ("SSLPort", "443"));
+				System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
+				System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
+			}
+			
+		} else {
+			
+			if (props == null) {
+				
+				this.port = 80;
+				
+			} else {
+				
+				this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+				this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
+			}
 		}
 	}
 	
@@ -121,7 +141,7 @@ public class RestClient {
 	
 	private boolean setSSL (String url) {
 		
-		if (url.equalsIgnoreCase ("localhost") || url.equalsIgnoreCase ("127.0.0.1")) {
+		if (url.equalsIgnoreCase ("localhost") || url.equalsIgnoreCase ("127.0.0.1") || url.equalsIgnoreCase ("oanet")) {
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("noSSL");
@@ -134,9 +154,9 @@ public class RestClient {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("SSL");
 			
-			//return false;
-			//TODO: if SSL works reenable false!!!!
 			return true;
+			//TODO: if SSL works reenable false!!!!
+//			return false;
 		}
 	}
 
@@ -149,7 +169,7 @@ public class RestClient {
 		
 		//TODO: filter URL!
 		
-		String filteredUrl = url;
+		String filteredUrl = url.trim ( ).replaceAll ("\\s", "");
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("filtered URL: " + filteredUrl);
@@ -257,23 +277,23 @@ public class RestClient {
 		
 		if (this.nossl) {
 			
-			newclient.getState ( ).setCredentials (new AuthScope (this.url, servletContainerPort, AuthScope.ANY_REALM), defaultcreds);
+			newclient.getState ( ).setCredentials (new AuthScope (this.url, this.port, AuthScope.ANY_REALM), defaultcreds);
 			buffer.append ("http://");
-			buffer.append (this.url).append (":").append (servletContainerPort) .append ("/").append (servletPath) .append ("/") .append (path);
+			buffer.append (this.url).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (path);
 			
 		} else {
 			
-			newclient.getState ( ).setCredentials (new AuthScope (this.url, servletContainerSSLPort, AuthScope.ANY_REALM), defaultcreds);
+			newclient.getState ( ).setCredentials (new AuthScope (this.url, this.port, AuthScope.ANY_REALM), defaultcreds);
 			buffer.append ("https://");
-			buffer.append (this.url).append (":").append (servletContainerSSLPort) .append ("/").append (servletPath) .append ("/") .append (path);
+			buffer.append (this.url).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (path);
 		}
 		
 		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 		
-		this.url = buffer.toString ( );
-		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("URL to connect to: " + this.url);
+		
+		this.url = buffer.toString ( );
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("connection prepared");
@@ -359,7 +379,6 @@ public class RestClient {
 		return sendrequest (client, method);
 	}
 	
-	
 	public RestMessage sendGetRestMessage() {
 		String response = GetData(); 		
 		return RestXmlCodec.decodeRestMessage(response);
@@ -380,14 +399,5 @@ public class RestClient {
 	public RestMessage sendDeleteRestMessage() {
 		String response = DeleteData(); 		
 		return RestXmlCodec.decodeRestMessage(response);
-	}
-	
-	/**
-	 * @param args
-	 */
-	
-	public static void main (String [ ] args) {
-
-		// TODO: Testing stuff!
 	}
 }

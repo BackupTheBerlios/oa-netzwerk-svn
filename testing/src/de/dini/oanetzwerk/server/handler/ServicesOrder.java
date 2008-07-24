@@ -7,8 +7,6 @@ package de.dini.oanetzwerk.server.handler;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
-
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -17,67 +15,62 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
-import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
  * @author Michael K&uuml;hn
- * @author Robin Malitz
  *
  */
 
-public class ObjectEntryID extends 
-AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+@Deprecated
+public class ServicesOrder extends AbstractKeyWordHandler implements
+		KeyWord2DatabaseInterface {
 	
-	static Logger logger = Logger.getLogger (ObjectEntryID.class);
-	
-	public ObjectEntryID ( ) {
-		
-		super (ObjectEntryID.class.getName ( ), RestKeyword.ObjectEntryID);
+	public ServicesOrder ( ) {
+
+		super (ServicesOrder.class.getName ( ), RestKeyword.ServiceOrder);
 	}
 	
 	/**
-	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
-	 * This method is not implemented because this would be useless request for now.
 	 */
 	
+	@Deprecated
 	@Override
-	protected String deleteKeyWord (String [ ] path) throws MethodNotImplementedException {
+	protected String deleteKeyWord (String [ ] path) {
 
-		this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+		this.rms = new RestMessage (RestKeyword.ServiceOrder);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
-	
+
 	/**
 	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
-	 * This method returns for a given RepositoryID and a given external ObjectID an
-	 * internal ObjectID is it exists. When it does not exist "null" will be returned.
 	 */
 	
+	@Deprecated
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
-		if (path.length < 2)
-			throw new NotEnoughParametersException ("This method needs at least 3 parameters: the keyword, the repository ID and the external Object ID");
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the service ID");
 		
-		BigDecimal repositoryID; 
+		BigDecimal service_id;
 		
 		try {
 			
-			repositoryID = new BigDecimal (path [0]);
+			service_id = new BigDecimal (path [0]);
 			
 		} catch (NumberFormatException ex) {
 			
 			logger.error (path [0] + " is NOT a number!");
 			
-			this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+			this.rms = new RestMessage (RestKeyword.ServiceOrder);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
@@ -89,8 +82,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (SelectFromDB.ObjectEntryID (stmtconn.connection, repositoryID, new String (path [1])));
-			
+			stmtconn.loadStatement (SelectFromDB.ServicesOrder (stmtconn.connection, service_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) {
@@ -103,33 +95,29 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			if (this.result.getResultSet ( ).next ( )) {
 				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: internal objectID = " + this.result.getResultSet ( ).getInt ("object_id"));
+				if (logger.isDebugEnabled ( )) 
+					logger.debug ("DB returned: \n\tobject_id = " + this.result.getResultSet ( ).getBigDecimal (1));
 				
-				res.addEntry ("oid", Integer.toString (this.result.getResultSet ( ).getInt ("object_id")));
+				res.addEntry ("service_id", this.result.getResultSet ( ).getBigDecimal ("service_id").toPlainString ( ));
 				
-				this.rms.addEntrySet (res);
 				this.rms.setStatus (RestStatusEnum.OK);
 				
 			} else {
 				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("No matching internal Object-ID found");
-				
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
-				this.rms.setStatusDescription ("No matching internal Object-ID found");
+				this.rms.setStatusDescription ("No matching ServicesOrder Object found");
 			}
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get ServicesOrder: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
@@ -150,39 +138,40 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
+			this.rms.addEntrySet (res);
 			res = null;
 			this.result = null;
 			dbng = null;
 		}
+				
+		return RestXmlCodec.encodeRestMessage (this.rms);
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 */
+	
+	@Deprecated
+	@Override
+	protected String postKeyWord (String [ ] path, String data) {
+		
+		this.rms = new RestMessage (RestKeyword.ServiceOrder);
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
-	
-	/**
-	 * @throws MethodNotImplementedException 
-	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
-	 * This method is not implemented because this would be useless request for now. 
-	 */
-	
-	@Override
-	protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException {
 
-		this.rms = new RestMessage (RestKeyword.ObjectEntryID);
-		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		return RestXmlCodec.encodeRestMessage (this.rms);
-	}
-	
 	/**
-	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
-	 * This method is not implemented because this would be useless request for now.
 	 */
 	
+	@Deprecated
 	@Override
-	protected String putKeyWord (String [ ] path, String data) throws MethodNotImplementedException {
-
-		this.rms = new RestMessage (RestKeyword.ObjectEntryID);
+	protected String putKeyWord (String [ ] path, String data) {
+		
+		this.rms = new RestMessage (RestKeyword.ServiceOrder);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 }

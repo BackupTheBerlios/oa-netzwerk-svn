@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
 
-
 /**
  * @author Michael Kühn
  *
@@ -90,8 +89,13 @@ public class RunHarvester {
 										.withLongOpt ("testData")
 										.withDescription ("URL of the repository which need to be harvested")
 										.create ('T'));
-
-		if (args.length > 0) {	
+		
+		options.addOption (OptionBuilder.withType (new String ( ))
+										.withLongOpt ("listRecords")
+										.withDescription ("listRecods-OAI-Method is used instead of lisIdentifiers + getRecord")
+										.create ('r'));
+		
+		if (args.length > 0) {
 			
 			try {
 				
@@ -109,18 +113,23 @@ public class RunHarvester {
 					int id = Harvester.filterId (cmd.getOptionValue ('i'));
 					
 					// Here we go: create a new instance of the harvester
-					
-					harvester = Harvester.getHarvester ( ); 
+					harvester = Harvester.getHarvester ( );
 					harvester.prepareHarvester (id);
-
+					
 					harvester.filterUrl (cmd.getOptionValue ('u'));
 					harvester.filterBool (cmd.getOptionValue ('t'), cmd);
-					harvester.filterDate (cmd.getOptionValue ('d'));
+					
+					if (!harvester.isFullharvest ( ))
+						harvester.filterDate (cmd.getOptionValue ('d'));
+					
 					harvester.filterAmount (cmd.getOptionValue ('a'));
 					harvester.filterInterval (cmd.getOptionValue ('I'));
 					
 					if (cmd.hasOption ('T'))
 						harvester.setTestData (cmd.hasOption ('T'));
+					
+					if (cmd.hasOption ('r'))
+						harvester.setListRecords (true);
 					
 					/* 
 					 * firstly we have to collect some data from the repository, which have to be processed
@@ -138,7 +147,7 @@ public class RunHarvester {
 						logger.debug ("harvest_pause: " + harvester.getInterval ( ));
 					}
 					
-					harvester.processIds ( );
+					harvester.processRepository ( );
 					
 				} else {
 				

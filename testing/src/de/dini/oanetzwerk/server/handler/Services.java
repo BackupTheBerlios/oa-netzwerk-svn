@@ -56,10 +56,15 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String getKeyWord (String [ ] path) {
 		
-		BigDecimal service_id;
+		BigDecimal service_id = null;
 		String name = null;
+		boolean bGetAll = false;
 		
-		if (path [0].equalsIgnoreCase ("byName") && path.length > 1) {
+		if (path.length == 0) {
+		
+			bGetAll = true;
+			
+		} else if (path.length > 1 && path [0].equalsIgnoreCase ("byName")) {
 			
 			name = new String (path [1]);
 			service_id = null;
@@ -84,19 +89,27 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		SingleStatementConnection stmtconn = null;
-		RestEntrySet res = new RestEntrySet ( );
+//		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			if (service_id == null) {
-			
-				stmtconn.loadStatement (SelectFromDB.Services (stmtconn.connection, name));
+			if (bGetAll) {
+				
+				stmtconn.loadStatement (stmtconn.connection.prepareStatement("SELECT * FROM dbo.Services"));
 				
 			} else {
 				
-				stmtconn.loadStatement (SelectFromDB.Services (stmtconn.connection, service_id));
+				if (service_id == null) {
+			
+					stmtconn.loadStatement (SelectFromDB.Services (stmtconn.connection, name));
+				
+				} else {
+				
+					stmtconn.loadStatement (SelectFromDB.Services (stmtconn.connection, service_id));
+				}
+				
 			}
 			
 			this.result = stmtconn.execute ( );
@@ -109,7 +122,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			if (this.result.getResultSet ( ).next ( )) {
+			/*if (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( )) 
 					logger.debug ("DB returned: \n\tservice_id = " + this.result.getResultSet ( ).getInt (1) +
@@ -122,6 +135,25 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 			} else {
 				
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+				this.rms.setStatusDescription ("No matching Service found");
+			}*/
+			
+			boolean foundOne = false;			
+			while (this.result.getResultSet ( ).next ( )) {
+				foundOne = true;
+				RestEntrySet entrySet = new RestEntrySet();
+				if (logger.isDebugEnabled ( )) 
+					logger.debug ("DB returned: \n\tservice_id = " + this.result.getResultSet ( ).getInt (1) +
+							"\n\tname = " + this.result.getResultSet ( ).getString (2));
+				
+				entrySet.addEntry ("service_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+				entrySet.addEntry ("name", this.result.getResultSet ( ).getString (2));
+				
+				this.rms.setStatus (RestStatusEnum.OK);
+				this.rms.addEntrySet (entrySet);
+			}
+			if(!foundOne) {
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching Service found");
 			}
@@ -157,8 +189,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			this.rms.addEntrySet (res);
-			res = null;
+//			this.rms.addEntrySet (res);
+//			res = null;
 			this.result = null;
 			dbng = null;		}
 		

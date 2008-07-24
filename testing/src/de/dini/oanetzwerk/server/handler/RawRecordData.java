@@ -4,25 +4,29 @@
 
 package de.dini.oanetzwerk.server.handler;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.server.database.UpdateInDB;
 import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.codec.RestEntrySet;
-import de.dini.oanetzwerk.codec.RestKeyword;
-import de.dini.oanetzwerk.codec.RestMessage;
-import de.dini.oanetzwerk.codec.RestStatusEnum;
-import de.dini.oanetzwerk.codec.RestXmlCodec;
-import de.dini.oanetzwerk.utils.exceptions.*;
+import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
+import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
  * @author Michael K&uuml;hn
@@ -64,7 +68,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the object ID");
+			throw new NotEnoughParametersException ("This method needs the object ID as first parameter");
 		
 		BigDecimal internalOID;
 		
@@ -84,31 +88,45 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		SingleStatementConnection stmtconn = null;
-		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
-			
+			boolean loadhistory = false;
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
 			if (path.length > 1) {
 				
 				Date repository_timestamp = null;
 				
-				try {
+				if (path [1].equalsIgnoreCase ("history"))
+					loadhistory = true;
+				
+				else {
 					
-					repository_timestamp = HelperMethods.extract_datestamp (path [1]);
+					try {
+						
+						repository_timestamp = HelperMethods.extract_datestamp (path [1]);
+						
+					} catch (ParseException ex) {
+						
+						logger.error (path [1] + " is NOT a datestamp!");
+						
+						this.rms = new RestMessage (RestKeyword.RawRecordData);
+						this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+						this.rms.setStatusDescription (path [0] + " is NOT a datestamp!");
+						
+						return RestXmlCodec.encodeRestMessage (this.rms);
+					}
+				
+					if (logger.isDebugEnabled ( ))
+						logger.debug ("internal OID = " + internalOID + " || Repository-Timestamp = " + repository_timestamp.toString ( ));
 					
-				} catch (ParseException ex) {
-					
-					logger.error (ex.getLocalizedMessage ( ));
-					ex.printStackTrace ( );
 				}
 				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("internal OID = " + internalOID + " || Repository-Timestamp = " + repository_timestamp.toString ( ));
+				if (loadhistory)
+					stmtconn.loadStatement (SelectFromDB.RawRecordDataHistory (stmtconn.connection, internalOID));
 				
-				
-				stmtconn.loadStatement (SelectFromDB.RawRecordData (stmtconn.connection, internalOID, repository_timestamp));
+				else
+					stmtconn.loadStatement (SelectFromDB.RawRecordData (stmtconn.connection, internalOID, repository_timestamp));
 				
 			} else {
 				
@@ -119,40 +137,48 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			}
 			
 			this.result = stmtconn.execute ( );
+			this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 			
-			if (this.result.getResultSet ( ).next ( )) {
+			RestEntrySet res;
+			
+			while (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("DB returned: \n\tobject_id = " + this.result.getResultSet ( ).getInt (1) +
 							"\n\trepository_timestamp = " + this.result.getResultSet ( ).getDate (2).toString ( ) +
 							"\n\tdata = " + this.result.getResultSet ( ).getString (3));
 				
+				res = new RestEntrySet ( );
+				
 				res.addEntry ("object_id", Integer.toString (this.result.getResultSet ( ).getInt ("object_id")));
 				res.addEntry ("repository_timestamp", this.result.getResultSet ( ).getDate ("repository_timestamp").toString ( ));
 				res.addEntry ("metaDataFormat", this.result.getResultSet ( ).getString ("MetaDataFormat"));
-				res.addEntry ("data", this.result.getResultSet ( ).getString ("data"));
-				res.addEntry ("precleaned_data", this.result.getResultSet ( ).getString ("precleaned_data"));
+				
+				if (!loadhistory) {
+					
+					res.addEntry ("data", this.result.getResultSet ( ).getString ("data"));
+					res.addEntry ("precleaned_data", this.result.getResultSet ( ).getString ("precleaned_data"));
+				}
 				
 				this.rms.setStatus (RestStatusEnum.OK);
-				
-			} else {
+				this.rms.addEntrySet (res);
+			} 
+			
+			if (this.rms.getStatus ( ).equals (RestStatusEnum.NO_OBJECT_FOUND_ERROR)) {
 				
 				logger.warn ("no results at all. Continueing...");
-				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
-				this.rms.setStatusDescription ("No matching RawRecordData found");
+				this.rms.setStatusDescription ("No matching RawRecordData found for OID " + internalOID);
 			}
 			
 		} catch (SQLException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -172,8 +198,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			this.rms.addEntrySet (res);
-			res = null;
 			this.result = null;
 			dbng = null;
 		}
@@ -191,16 +215,16 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String postKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
 		
-		//TODO: zwei weitere Parameter: Repository-Timestamp, MetaDatenformat!!!
-		
-		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs 2 parameters: the keyword and the object ID");
+		if (path.length < 2)
+			throw new NotEnoughParametersException ("This method needs 3 parameters: the keyword and the Repository-Timestamp");
 		
 		BigDecimal object_id;
+		Date repository_timestamp;
 		
 		try {
-			
+				
 			object_id = new BigDecimal (path [0]);
+			repository_timestamp = HelperMethods.extract_datestamp (path [1]);
 			
 		} catch (NumberFormatException ex) {
 			
@@ -211,17 +235,38 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			this.rms.setStatusDescription (path [0] + " is NOT a number!");
 			
 			return RestXmlCodec.encodeRestMessage (this.rms);
+			
+		} catch (ParseException ex) {
+			
+			logger.error (path [1] + " is NOT a datestamp!");
+			
+			this.rms = new RestMessage (RestKeyword.RawRecordData);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a datestamp!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
-		
+
 		DBAccessNG dbng = new DBAccessNG ( );		
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
-
+		
 		try {
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (UpdateInDB.PrecleanedData (stmtconn.connection, object_id, data));
+			if (path.length > 2) {
+				
+				String metaDataFormat = path [2];
+				stmtconn.loadStatement (UpdateInDB.PrecleanedData (stmtconn.connection, object_id, repository_timestamp, metaDataFormat, data));
+				
+				metaDataFormat = null;
+				
+			} else {
+				
+				stmtconn.loadStatement (UpdateInDB.PrecleanedData (stmtconn.connection, object_id, repository_timestamp, data));
+			}
+				
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) {
@@ -327,10 +372,16 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		RestEntrySet res = new RestEntrySet ( );
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("The following values will be inserted:\n\tinternal OID = " + object_id +
-					"\n\tRepository Datestamp = " + repository_timestamp +
-					"\n\tData = " + data +
-					"\n\tMetaDataFormat = " + metaDataFormat);
+			try {
+				logger.debug ("The following values will be inserted:\n\tinternal OID = " + object_id +
+						"\n\tRepository Datestamp = " + repository_timestamp +
+						"\n\tData = " + new String (Base64.decodeBase64((data).getBytes ("UTF-8"))) +
+						"\n\tMetaDataFormat = " + metaDataFormat);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.warn (e.getLocalizedMessage());
+			}
 		
 		try {
 			

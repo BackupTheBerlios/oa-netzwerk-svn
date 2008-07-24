@@ -5,12 +5,14 @@
 package de.dini.oanetzwerk.server;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -22,6 +24,8 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
+//TODO: Comments!!!
+
 /**
  * @author Michael K&uuml;hn
  *
@@ -31,7 +35,11 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 public class RestServer extends HttpServlet {
 	
 	static Logger logger = Logger.getLogger (RestServer.class);
-	PrintWriter out;
+	PrintWriter out = null;
+	
+	/**
+	 * Standard Constructor 
+	 */
 	
 	public RestServer ( ) {
 		
@@ -43,10 +51,15 @@ public class RestServer extends HttpServlet {
 	 * @return
 	 */
 	
+	//TODO: Better name for variable i
+	
 	@SuppressWarnings("unchecked")
 	private String processRequest (HttpServletRequest req, int i) {
 		
 		String path [ ] = req.getPathInfo ( ).split ("/");
+		
+		if (path.length < 1)
+			return createErrorResponse (new NotEnoughParametersException ("No keyword specified"), RestStatusEnum.NOT_ENOUGH_PARAMETERS_ERROR);
 		
 		if (logger.isDebugEnabled ( )) {
 			
@@ -64,8 +77,20 @@ public class RestServer extends HttpServlet {
 			
 		try {
 			
-			if (i > 1)
-				 xml = HelperMethods.stream2String (req.getInputStream ( ));
+			if (i > 1) {
+				
+				InputStream in = req.getInputStream ( );
+				
+				xml = HelperMethods.stream2String (in);
+				
+				//byte[] stringBytesISO = xml.getBytes("ISO-8859-1");
+			    //xml = new String(stringBytesISO, "UTF-8");
+			
+				// xml = HelperMethods.stream2String (req.getInputStream ( ));
+			
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("XML: " + new String(Base64.decodeBase64(xml.getBytes ("UTF-8"))));
+			}
 			
 			Class <KeyWord2DatabaseInterface> c = (Class <KeyWord2DatabaseInterface>) Class.forName (classname);
 			Object o = c.newInstance ( );
@@ -120,6 +145,8 @@ public class RestServer extends HttpServlet {
 			
 			return createErrorResponse (ex, RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		}
+		
+		// This section is unreachable
 	}
 
 	/**
@@ -129,6 +156,18 @@ public class RestServer extends HttpServlet {
 	 */
 	
 	private String createErrorResponse (Exception ex, RestStatusEnum restStatusEnum) {
+		
+		if (ex == null) {
+			
+			ex = new Exception ("Unknown Error occured");
+			logger.warn ("unknown error occured!");
+		}
+		
+		if (restStatusEnum == null) {
+			
+			restStatusEnum = RestStatusEnum.UNKNOWN_ERROR;
+			logger.warn ("unknown error occured!");
+		}
 		
 		RestMessage rms = new RestMessage (RestKeyword.UNKNOWN);
 		rms.setStatus (restStatusEnum);
@@ -140,28 +179,38 @@ public class RestServer extends HttpServlet {
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	
 	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
-		out = res.getWriter ( );
-		out.write (processRequest (req, 0));
+		this.out = res.getWriter ( );
+		this.out.write (processRequest (req, 0));
 	}
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	
 	@Override
 	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
-		out = res.getWriter ( );
-		out.write (processRequest (req, 2));
+		this.out = res.getWriter ( );
+		this.out.write (processRequest (req, 2));
 	}
 
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPut(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	
 	@Override
 	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
+		
+		req.setCharacterEncoding ("UTF-8");
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug("Character Encoding: " + req.getCharacterEncoding ( ));
+		}
 		
 		out = res.getWriter ( );
 		out.write (processRequest (req, 3));

@@ -1,7 +1,6 @@
 package de.dini.oanetzwerk.utils.imf;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 @XmlRootElement
 public class OtherClassification extends Classification implements ClassificationInterface {

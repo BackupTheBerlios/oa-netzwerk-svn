@@ -5,24 +5,46 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.List;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.database.*;
-import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.DeleteFromDB;
+import de.dini.oanetzwerk.server.database.InsertIntoDB;
+import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
+import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
-import de.dini.oanetzwerk.utils.imf.*;
+import de.dini.oanetzwerk.utils.imf.Author;
+import de.dini.oanetzwerk.utils.imf.Classification;
+import de.dini.oanetzwerk.utils.imf.Contributor;
+import de.dini.oanetzwerk.utils.imf.DDCClassification;
+import de.dini.oanetzwerk.utils.imf.DINISetClassification;
+import de.dini.oanetzwerk.utils.imf.DNBClassification;
+import de.dini.oanetzwerk.utils.imf.DateValue;
+import de.dini.oanetzwerk.utils.imf.Description;
+import de.dini.oanetzwerk.utils.imf.Editor;
+import de.dini.oanetzwerk.utils.imf.Format;
+import de.dini.oanetzwerk.utils.imf.Identifier;
+import de.dini.oanetzwerk.utils.imf.InternalMetadata;
+import de.dini.oanetzwerk.utils.imf.InternalMetadataJAXBMarshaller;
+import de.dini.oanetzwerk.utils.imf.Keyword;
+import de.dini.oanetzwerk.utils.imf.Language;
+import de.dini.oanetzwerk.utils.imf.OtherClassification;
+import de.dini.oanetzwerk.utils.imf.Publisher;
+import de.dini.oanetzwerk.utils.imf.Title;
+import de.dini.oanetzwerk.utils.imf.TypeValue;
 
 /**
  * @author Manuel Klatt-Kafemann
@@ -35,7 +57,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		KeyWord2DatabaseInterface {
 	
 	static Logger logger = Logger.getLogger (InternalMetadataEntry.class);
-	private InternalMetadataJAXBMarshaller imMarsch;
+	private final InternalMetadataJAXBMarshaller imMarsch;
 	
 	/**
 	 * 
@@ -44,7 +66,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	public InternalMetadataEntry ( ) {
 		
 		super (InternalMetadataEntry.class.getName ( ), RestKeyword.InternalMetadataEntry);
-		imMarsch = InternalMetadataJAXBMarshaller.getInstance ( );
+		this.imMarsch = InternalMetadataJAXBMarshaller.getInstance ( );
 	}
 
 	/**
@@ -57,9 +79,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
-				
-//		DBAccessInterface db = DBAccess.createDBAccess();
-//		db.createConnection();
 		
 		BigDecimal object_id;
 		
@@ -82,8 +101,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		MultipleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
-//		db.setAutoCom(false);
-		
 		try {
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
@@ -92,11 +109,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getUpdateCount ( ) < 1) {
-				
+			//TODO: überall checken, dass wenigstens eine LOG Warnung geworfen wird 	
 				
 			}
-			
-			//db.deleteDescription(object_id);
 			
 			stmtconn.loadStatement (DeleteFromDB.DateValues (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
@@ -106,8 +121,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteDateValues(object_id);
-			
 			stmtconn.loadStatement (DeleteFromDB.Formats (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -116,7 +129,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 
-			//db.deleteFormats(object_id);
 			stmtconn.loadStatement (DeleteFromDB.Identifiers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -125,8 +137,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-
-			//db.deleteIdentifiers(object_id);
 			stmtconn.loadStatement (DeleteFromDB.TypeValue (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -135,8 +145,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-
-			//db.deleteTypeValue(object_id);
 			stmtconn.loadStatement (DeleteFromDB.Titles (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -145,8 +153,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-
-			//db.deleteTitles(object_id);
 			stmtconn.loadStatement (DeleteFromDB.Publishers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -155,7 +161,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deletePublishers(object_id);
 			stmtconn.loadStatement (DeleteFromDB.Object2Author (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -164,8 +169,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-
-			//db.deleteObject2Author(object_id);
 			stmtconn.loadStatement (DeleteFromDB.Object2Editor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -174,7 +177,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteObject2Editor(object_id);
 			stmtconn.loadStatement (DeleteFromDB.Object2Contributor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -183,7 +185,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteObject2Contributor(object_id);
 			stmtconn.loadStatement (DeleteFromDB.Object2Language (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -192,7 +193,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteObject2Language(object_id);
 			stmtconn.loadStatement (DeleteFromDB.Object2Keywords (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -200,7 +200,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteObject2Keywords(object_id);
 			stmtconn.loadStatement (DeleteFromDB.Other_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -208,7 +207,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteOther_Classification(object_id);
 			stmtconn.loadStatement (DeleteFromDB.DDC_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -216,7 +214,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteDDC_Classification(object_id);
 			stmtconn.loadStatement (DeleteFromDB.DNB_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -224,7 +221,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteDNB_Classification(object_id);
 			stmtconn.loadStatement (DeleteFromDB.DINI_Set_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -232,7 +228,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteDINI_Set_Classification(object_id);
 			stmtconn.loadStatement (DeleteFromDB.PersonWithoutReference (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
@@ -240,7 +235,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deletePersonWithoutReference();
 			stmtconn.loadStatement (DeleteFromDB.KeywordsWithoutReference (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
@@ -248,7 +242,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteKeywordsWithoutReference();
 			stmtconn.loadStatement (DeleteFromDB.Other_Categories (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
@@ -256,10 +249,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			}
 			
-			//db.deleteOther_Categories();
-			
 			stmtconn.commit ( );
-			//db.commit();
 			
 			res.addEntry("oid", object_id.toPlainString());
 			this.rms.setStatus(RestStatusEnum.OK);
@@ -282,16 +272,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
-			//db.rollback();
-			//db.setAutoCom (true);
-			//db.closeConnection ( );
-			//this.rms = new RestMessage(RestKeyword.InternalMetadataEntry);
-			//this.rms.setStatus(RestStatusEnum.SQL_ERROR);
-			//this.rms.setStatusDescription("unable to commit: " + sqlex);
-			//logger.error(sqlex.getLocalizedMessage());
-			//sqlex.printStackTrace();
-
-			//return RestXmlCodec.encodeRestMessage(this.rms);
 		} catch (WrongStatementException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
@@ -320,18 +300,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			this.result = null;
 			dbng = null;
 		}
-
-		//db.setAutoCom(true);
-		//db.closeConnection();
-
-		// RESPOND WITH OK
-
-//		this.rms = new RestMessage(RestKeyword.InternalMetadataEntry);
-//		RestEntrySet res = new RestEntrySet();
-
-//		res.addEntry("oid", object_id.toPlainString());
-//		this.rms.setStatus(RestStatusEnum.OK);
-//		this.rms.addEntrySet(res);
 
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
@@ -405,7 +373,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						imf.addTitle (temp);
 				}
 			}*/
-
 
 			// Auswertung der Autoren
 			stmtconn.loadStatement (SelectFromDB.Authors (stmtconn.connection, oid));
@@ -482,8 +449,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //				}
 //			}	
 			
-
-
 			// Auswertung der Bearbeiter
 			stmtconn.loadStatement (SelectFromDB.Contributors (stmtconn.connection, oid));
 			this.result = stmtconn.execute ( );
@@ -521,8 +486,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //				}
 //			}			
 			
-			
-			
 			// Auswertung des Formats
 			stmtconn.loadStatement (SelectFromDB.Format (stmtconn.connection, oid));
 			this.result = stmtconn.execute ( );
@@ -551,7 +514,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //					ex.printStackTrace ( );
 //				}
 //			}
-			
 			
 			// Auswertung des Identifiers
 			stmtconn.loadStatement (SelectFromDB.Identifier (stmtconn.connection, oid));
@@ -582,7 +544,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //					ex.printStackTrace ( );
 //				}
 //			}
-
 			
 			// Auswertung der Description
 			stmtconn.loadStatement (SelectFromDB.Description (stmtconn.connection, oid));
@@ -614,7 +575,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //				}
 //			}
 
-			
 			// Auswertung der DateValue-Werte
 			stmtconn.loadStatement (SelectFromDB.DateValues (stmtconn.connection, oid));
 			this.result = stmtconn.execute ( );
@@ -643,7 +603,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //					ex.printStackTrace ( );
 //				}
 //			}
-
 			
 			// Auswertung der TypeValue-Werte
 			stmtconn.loadStatement (SelectFromDB.TypeValues (stmtconn.connection, oid));
@@ -673,7 +632,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //				}
 //			}
 
-			
 			// Auswertung der Publisher-Werte
 			stmtconn.loadStatement (SelectFromDB.Publisher (stmtconn.connection, oid));
 			this.result = stmtconn.execute ( );
@@ -703,15 +661,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 //				}
 //			}			
 
-
-			// Auswertung der DCC-Classifications-Werte
+			// Auswertung der DDC-Classifications-Werte
 			stmtconn.loadStatement (SelectFromDB.DDCClassification (stmtconn.connection, oid));
 			this.result = stmtconn.execute ( );
 			
 			while (this.result.getResultSet ( ).next ( )) {
 				
 				Classification cl = new DDCClassification();
-				cl.setValue(this.result.getResultSet ( ).getString("D.DCC_Categorie"));
+				cl.setValue(this.result.getResultSet ( ).getString("DDC_Categorie"));
 //				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
 				imf.addClassfication(cl);
 			}
@@ -739,7 +696,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			while (this.result.getResultSet ( ).next ( )) {
 				
 				Classification cl = new DNBClassification();
-				cl.setValue(this.result.getResultSet ( ).getString("D.DNB_Categorie"));
+				cl.setValue(this.result.getResultSet ( ).getString("DNB_Categorie"));
 //				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
 				imf.addClassfication(cl);
 			}
@@ -824,7 +781,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 				Keyword temp = new Keyword();
 				temp.setKeyword(this.result.getResultSet ( ).getString("keyword"));
-				temp.setLanguage(this.result.getResultSet ( ).getString("language"));
+				temp.setLanguage(this.result.getResultSet ( ).getString("lang"));
 //				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
 				imf.addKeyword(temp);
 			}
@@ -853,7 +810,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			while (this.result.getResultSet ( ).next ( )) {
 				
 				Language temp = new Language();
-				temp.setLanguage(this.result.getResultSet ( ).getString("L.language"));
+				temp.setLanguage(this.result.getResultSet ( ).getString("language"));
 				temp.setNumber (this.result.getResultSet ( ).getInt ("number"));
 				imf.addLanguage(temp);
 			}
@@ -878,14 +835,23 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			//db.closeStatement ( );
 			
-			String xmlData;
-			xmlData = imMarsch.marshall (imf);
-			
-//			RestEntrySet res = new RestEntrySet ( );
-			
-			res.addEntry ("internalmetadata", xmlData);
-			this.rms.setStatus (RestStatusEnum.OK);
+			if(imf.isEmpty()) {
+				// leeres IMF soll Fehler geben
+				
+				logger.info("leeres IMF über Keyword angefragt");
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+				this.rms.setStatusDescription ("Die Anfrage auf OID ("+oid+") liefert ein leeres IMF aus der Datenbank.");
+				
+			} else {
+				// nichtleeres IMF soll auch verschickt werden
 
+				String xmlData;
+				xmlData = imMarsch.marshall (imf);				
+				res.addEntry ("internalmetadata", xmlData);
+				this.rms.setStatus (RestStatusEnum.OK);
+				this.rms.addEntrySet (res);
+			}
+			
 		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
@@ -895,7 +861,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 		}  catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get InternalMetadataEntry: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
@@ -915,8 +881,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					logger.error (ex.getLocalizedMessage ( ));
 				}
 			}
-			
-			this.rms.addEntrySet (res);
+						
 			res = null;
 			this.result = null;
 			dbng = null;
@@ -978,42 +943,44 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-//		DBAccess db = DBAccess.createDBAccess ( );
-		//db.createConnection ( );
-		
 		DBAccessNG dbng = new DBAccessNG ( );		
 		MultipleStatementConnection stmtconn = null;
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("");
-		
-		this.rms = RestXmlCodec.decodeRestMessage (data);
-		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
+		RestMessage msgPutRequest = RestXmlCodec.decodeRestMessage (data);
+		RestEntrySet res = msgPutRequest.getListEntrySets ( ).get (0);
 
 		// FETCH ENTRY WITH XML
 		
 		String strXML = null;
 		strXML = res.getValue ("internalmetadata");
 		
-		if(strXML == null) {			
+		if (strXML == null) {
+			
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
 			this.rms.setStatusDescription ("received no entry 'internalmetadata' :" + data);
+			
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
 		// UNMARSHALL XML
 		
-		InternalMetadata imf = null;		
-		try {		
+		InternalMetadata imf = null;	
+		
+		try {
+			
 			imf = imMarsch.unmarshall (strXML);
-		} catch(Exception ex) {
+			
+		} catch (Exception ex) {
+			
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.REST_XML_DECODING_ERROR);
 			this.rms.setStatusDescription("unable to unmarshall xml " + strXML + " :" + ex);
+			
 			return RestXmlCodec.encodeRestMessage (this.rms);			
 		}
 	
+		
 		// PREPARE SQL STATEMENTS
 		
 		List <Title> titleList = imf.getTitles ( );
@@ -1035,15 +1002,13 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		ResultSet rs;
 
-		// Autocommit ausschalten, nur eine vollständige Transaktion darf durchlaufen
-//		db.setAutoCom (false);
-		
 		try {
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
 			// Titel speichern
 			if (titleList != null) {
+				
 				for (Title title : titleList) {
 					
 					//db.insertTitle(object_id, title.getQualifier(), title
@@ -1361,7 +1326,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getResultSet ( ).next ( )) {
+					if (!this.result.getResultSet ( ).next ( )) {
 						
 						stmtconn.loadStatement (InsertIntoDB.Language (stmtconn.connection, language.getLanguage()));
 						this.result = stmtconn.execute ( );
@@ -1474,8 +1439,11 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						stmtconn.loadStatement (SelectFromDB.DINISetCategoriesByName (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
+						logger.debug("before result of DINI set id fetch for '"+classification.getValue()+"'");
+						
 						while (this.result.getResultSet ( ).next ( )) {
 							
+							logger.debug("result = " + this.result.getResultSet ( ).getBigDecimal(1));
 							DINI_set_id = this.result.getResultSet ( ).getBigDecimal(1);
 						}
 						
@@ -1548,15 +1516,20 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					}
 				}
 			}
-//			db.commit();
+
 			stmtconn.commit ( );
-			res.addEntry ("oid", object_id.toPlainString ( ));
+			
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.OK);
+			res = new RestEntrySet();
+			res.addEntry ("oid", object_id.toPlainString ( ));
+			this.rms.addEntrySet (res);
 			
 		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -1564,6 +1537,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 
 			logger.error (ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
+			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -1583,41 +1557,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				}
 			}
 			
-			this.rms.addEntrySet (res);
 			res = null;
 			this.result = null;
 			dbng = null;
 		}
-//		catch (SQLException sqlex) {
-////			db.rollback();
-////			db.setAutoCom (true);
-//			try {
-////				db.closeStatement ( );
-//			} catch (SQLException ex) {
-//				// TODO Auto-generated catch block
-//				ex.printStackTrace();
-//			}
-////			db.closeConnection ( );
-//			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
-//			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
-//			this.rms.setStatusDescription("unable to commit: " + sqlex);
-//			logger.error (sqlex.getLocalizedMessage ( ));
-//			sqlex.printStackTrace ( );
-//
-//			return RestXmlCodec.encodeRestMessage (this.rms);
-//		}
-		
-//		db.setAutoCom(true);
-//		db.closeConnection ( );
-		
-		// RESPOND WITH OK
-		
-//		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
-//		res = new RestEntrySet ( );
-//		
-//		res.addEntry ("oid", object_id.toPlainString ( ));
-//		this.rms.setStatus (RestStatusEnum.OK);
-//		this.rms.addEntrySet (res);
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
