@@ -7,56 +7,56 @@ CREATE TABLE dbo.AggregatorMetadata (
 
 CREATE TABLE dbo.Person (
        person_id NUMERIC(38) IDENTITY
-     , firstname VARCHAR(255) NULL
-     , lastname VARCHAR(255)
-     , title VARCHAR(255) NULL
-     , institution VARCHAR(255) NULL
-     , email VARCHAR(255) NULL
+     , firstname UNIVARCHAR(100) NULL
+     , lastname UNIVARCHAR(100)
+     , title UNIVARCHAR(100) NULL
+     , institution UNIVARCHAR(255) NULL
+     , email UNIVARCHAR(150) NULL
      , PRIMARY KEY (person_id)
 );
 
 CREATE TABLE dbo.Language (
        language_id NUMERIC(38) IDENTITY
-     , language VARCHAR(255) NOT NULL
+     , language UNIVARCHAR(255) NOT NULL
      , PRIMARY KEY (language_id)
 );
 
 CREATE TABLE dbo.Keywords (
        keyword_id NUMERIC(38) IDENTITY
-     , keyword VARCHAR(255) NOT NULL
-     , lang CHAR(3) NULL
+     , keyword UNIVARCHAR(255) NOT NULL
+     , lang UNICHAR(3) NULL
      , PRIMARY KEY (keyword_id)
 );
 
 CREATE TABLE dbo.DDC_Categories (
-       DDC_Categorie VARCHAR(10) NOT NULL
-     , name VARCHAR(255) NOT NULL
+       DDC_Categorie UNIVARCHAR(10) NOT NULL
+     , name UNIVARCHAR(255) NOT NULL
      , PRIMARY KEY (DDC_Categorie)
 );
 
 CREATE TABLE dbo.DNB_Categories (
-       DNB_Categorie VARCHAR(10) NOT NULL
-     , name VARCHAR(255) NOT NULL
+       DNB_Categorie UNIVARCHAR(10) NOT NULL
+     , name UNIVARCHAR(255) NOT NULL
      , PRIMARY KEY (DNB_Categorie)
 );
 
 CREATE TABLE dbo.DINI_Set_Categories (
        DINI_set_id NUMERIC(38) IDENTITY
-     , name VARCHAR(255) NOT NULL
-	 , setNameEng VARCHAR(255) NULL
-	 , setNameDeu VARCHAR(255) NULL
+     , name UNIVARCHAR(255) NOT NULL
+	 , setNameEng UNIVARCHAR(255) NULL
+	 , setNameDeu UNIVARCHAR(255) NULL
      , PRIMARY KEY (DINI_set_id)
 );
 
 CREATE TABLE dbo.Other_Categories (
        other_id NUMERIC(38) IDENTITY
-     , name VARCHAR(255) NOT NULL
+     , name UNIVARCHAR(255) NOT NULL
      , PRIMARY KEY (other_id)
 );
 
 CREATE TABLE dbo.Services (
        service_id NUMERIC(38) IDENTITY
-     , name VARCHAR(255) NOT NULL
+     , name UNIVARCHAR(255) NOT NULL
      , PRIMARY KEY (service_id)
 );
 
@@ -68,9 +68,9 @@ CREATE TABLE dbo.ServicesOrder (
 
 CREATE TABLE dbo.Repositories (
        repository_id NUMERIC(38) IDENTITY
-     , name VARCHAR(255) NOT NULL
-     , url VARCHAR(255)
-     , oai_url VARCHAR(255)
+     , name UNIVARCHAR(255) NOT NULL
+     , url UNIVARCHAR(255)
+     , oai_url UNIVARCHAR(255)
 	 , test_data BIT default 1
 	 , harvest_amount INT default 10
 	 , harvest_pause INT default 5000
@@ -84,7 +84,7 @@ CREATE TABLE dbo.Object (
      , repository_id NUMERIC(38) NOT NULL
      , harvested DATETIME NOT NULL
      , repository_datestamp DATETIME NOT NULL
-     , repository_identifier VARCHAR(255) NOT NULL
+     , repository_identifier UNIVARCHAR(255) NOT NULL
      , testdata BIT DEFAULT 0
      , failure_counter INTEGER DEFAULT 0
 	 , peculiar BIT DEFAULT 0
@@ -94,9 +94,9 @@ CREATE TABLE dbo.Object (
 
 CREATE TABLE dbo.Titles (
        object_id NUMERIC(38) NOT NULL
-     , title VARCHAR(255) NOT NULL
-     , qualifier VARCHAR(50) NOT NULL
-     , lang VARCHAR(3) NULL
+     , title UNIVARCHAR(255) NOT NULL
+     , qualifier UNIVARCHAR(50) NOT NULL
+     , lang UNIVARCHAR(3) NULL
      , PRIMARY KEY (object_id, qualifier)
 );
 
@@ -138,13 +138,13 @@ CREATE TABLE dbo.Object2Language (
 
 CREATE TABLE dbo.DDC_Classification (
        object_id NUMERIC(38) NOT NULL
-     , DDC_Categorie VARCHAR(10) NOT NULL
+     , DDC_Categorie UNIVARCHAR(10) NOT NULL
      , PRIMARY KEY (object_id, DDC_Categorie)
 );
 
 CREATE TABLE dbo.DNB_Classification (
        object_id NUMERIC(38) NOT NULL
-     , DNB_Categorie VARCHAR(10) NOT NULL
+     , DNB_Categorie UNIVARCHAR(10) NOT NULL
      , PRIMARY KEY (object_id, DNB_Categorie)
 );
 
@@ -170,29 +170,29 @@ CREATE TABLE dbo.DateValues (
 CREATE TABLE dbo.Description (
        object_id NUMERIC(38) NOT NULL
      , number INTEGER NOT NULL
-     , abstract TEXT
-     , lang VARCHAR(3) NULL
+     , abstract UNITEXT
+     , lang UNIVARCHAR(3) NULL
      , PRIMARY KEY (object_id, number)
 );
 
 CREATE TABLE dbo.Publisher (
        object_id NUMERIC(38) NOT NULL
      , number INTEGER NOT NULL
-     , name VARCHAR(255) NOT NULL
+     , name UNIVARCHAR(255) NOT NULL
      , PRIMARY KEY (object_id, number)
 );
 
 CREATE TABLE dbo.Format (
        object_id NUMERIC(38) NOT NULL
      , number INTEGER NOT NULL
-     , schema_f VARCHAR(255) NOT NULL
+     , schema_f UNIVARCHAR(255) NOT NULL
      , PRIMARY KEY (object_id, number)
 );
 
 CREATE TABLE dbo.Identifier (
        object_id NUMERIC(38) NOT NULL
      , number INTEGER NOT NULL
-     , identifier VARCHAR(255) NOT NULL
+     , identifier UNIVARCHAR(255) NOT NULL
      , PRIMARY KEY (object_id, number)
 );
 
@@ -216,24 +216,24 @@ CREATE TABLE dbo.WorkflowDB (
 CREATE TABLE dbo.RawData (
        object_id NUMERIC(38) NOT NULL
      , repository_timestamp DATETIME NOT NULL
-     , MetaDataFormat VARCHAR(255) NOT NULL
-     , data TEXT
-     , precleaned_data TEXT NULL
+     , MetaDataFormat UNIVARCHAR(255) NOT NULL
+     , data UNITEXT
+     , precleaned_data UNITEXT NULL
      , PRIMARY KEY (object_id, repository_timestamp, MetaDataFormat)
 )
 
 CREATE TABLE dbo.TypeValue (
        type_id NUMERIC(38) IDENTITY
      , object_id NUMERIC(38) NOT NULL
-     , value VARCHAR(255) NOT NULL
+     , value UNIVARCHAR(255) NOT NULL
      , PRIMARY KEY (type_id)
 );
 
 
 CREATE TABLE dbo.FullTextLinks (
        object_id NUMERIC(38) NOT NULL
-     , mimeformat VARCHAR(255) NOT NULL
-	 , link  VARCHAR(255) NULL
+     , mimeformat UNIVARCHAR(255) NOT NULL
+	 , link  UNIVARCHAR(255) NULL
      , PRIMARY KEY (object_id, mimeformat)
 );
 

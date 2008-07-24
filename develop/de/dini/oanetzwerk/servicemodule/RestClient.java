@@ -62,7 +62,8 @@ public class RestClient {
 		
 		DOMConfigurator.configure ("log4j.xml");
 		this.url = filterurl (url);
-		this.nossl = setSSL (url);
+		this.nossl = true;
+//		this.nossl = setSSL (url);
 		this.path = filterpath (path);
 		this.username = user;
 		this.password = pwd;

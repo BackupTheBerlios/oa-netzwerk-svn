@@ -5,9 +5,11 @@
 package de.dini.oanetzwerk;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.Date;
@@ -244,7 +246,12 @@ public class DBCreate {
 					sql.append (line.replace (';', ' '));
 					sql.trimToSize ( );
 					System.out.println (sql.toString ( ));
-					stmt.addBatch (sql.toString ( ));
+					try {
+						stmt.execute(sql.toString());
+					} catch (SQLException ex) {
+						System.err.println("Fehler: "+ ex.getLocalizedMessage());
+					}
+//					stmt.addBatch (sql.toString ( ));
 					sql = new StringBuffer ("");
 					
 				} else
@@ -334,17 +341,25 @@ public class DBCreate {
 					sql.append (line.replace (';', ' '));
 					sql.trimToSize ( );
 					System.out.println (sql.toString ( ));
-					stmt.addBatch (sql.toString ( ));
+					try {
+						stmt.execute(sql.toString());
+					} catch (SQLException ex) {
+						System.err.println("Fehler : " + ex.getLocalizedMessage());
+					}
+//					stmt.addBatch (sql.toString ( ));
 					sql = new StringBuffer ("");
 					
 				} else
 					sql.append (line);
 			}
 			
-			updateCounts = stmt.executeBatch ( );
 			
-			for (int i = 0; i < updateCounts.length; i++)
-				System.out.println ("UpdateCount: " + updateCounts);
+			
+			
+//			updateCounts = stmt.executeBatch ( );
+			
+//			for (int i = 0; i < updateCounts.length; i++)
+//				System.out.println ("UpdateCount: " + updateCounts);
 					
 		} catch (BatchUpdateException buex) {
 			
@@ -404,7 +419,9 @@ public class DBCreate {
 		BufferedReader file = null;
 		
 		try {
-			file = new BufferedReader (new FileReader ("c:/eclipse/workspace/oan develop/db-schema/oan-db-model-standardwerte.sql"));
+			FileInputStream fis = new FileInputStream("c:/eclipse/workspace/oan develop/db-schema/oan-db-model-standardwerte.sql");
+			InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+			file = new BufferedReader (isr);
 //			file = new BufferedReader (new FileReader ("/home/mkuehn/workspace/oa-netzwerk-develop/db-schema/oan-db-model.sql"));
 			StringBuffer sql = new StringBuffer ("");
 			db.createConnection ( );
@@ -418,17 +435,23 @@ public class DBCreate {
 					sql.append (line.replace (';', ' '));
 					sql.trimToSize ( );
 					System.out.println (sql.toString ( ));
-					stmt.addBatch (sql.toString ( ));
+					try {
+						stmt.execute(sql.toString());
+					} catch (SQLException ex) {
+						System.err.println("Fehler: " + ex.getLocalizedMessage());
+					}
+					
+//					stmt.addBatch (sql.toString ( ));
 					sql = new StringBuffer ("");
 					
 				} else
 					sql.append (line);
 			}
 			
-			updateCounts = stmt.executeBatch ( );
+//			updateCounts = stmt.executeBatch ( );
 			
-			for (int i = 0; i < updateCounts.length; i++)
-				System.out.println ("UpdateCount: " + updateCounts);
+//			for (int i = 0; i < updateCounts.length; i++)
+//				System.out.println ("UpdateCount: " + updateCounts);
 					
 		} catch (BatchUpdateException buex) {
 			
