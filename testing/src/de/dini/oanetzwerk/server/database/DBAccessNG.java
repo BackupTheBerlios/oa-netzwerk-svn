@@ -11,6 +11,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -29,7 +30,7 @@ public class DBAccessNG {
 	private boolean isSingeleStatementConnection;
 	
 	public DBAccessNG ( ) {
-		
+		logger.setLevel (Level.INFO);
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("DBAccessNG Instance will be prepared");
 		

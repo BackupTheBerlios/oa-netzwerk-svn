@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 
@@ -28,6 +29,8 @@ public class SingleStatementConnection implements StatementConnection {
 	 */
 	
 	protected SingleStatementConnection (Connection dataSourceConnection) throws SQLException {
+		
+		logger.setLevel (Level.INFO);
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("SingleStatementConnection Instance will be prepared");

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -35,6 +36,7 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 public class RestServer extends HttpServlet {
 	
 	static Logger logger = Logger.getLogger (RestServer.class);
+	
 	PrintWriter out = null;
 	
 	/**
@@ -55,6 +57,8 @@ public class RestServer extends HttpServlet {
 	
 	@SuppressWarnings("unchecked")
 	private String processRequest (HttpServletRequest req, int i) {
+		
+		logger.setLevel (Level.INFO);
 		
 		String path [ ] = req.getPathInfo ( ).split ("/");
 		
