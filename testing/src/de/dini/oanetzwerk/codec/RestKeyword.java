@@ -10,5 +10,6 @@ public enum RestKeyword {
 	ServiceOrder,
 	WorkflowDB,
 	Repository,
+	FullTextLinks,
 	UNKNOWN
 }
