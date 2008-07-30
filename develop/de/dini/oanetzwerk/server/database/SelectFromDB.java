@@ -677,5 +677,30 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	/**
+	 * @param value
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement ObjectServiceStatusAll (Connection connection) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("select object_id, time, service_id from dbo.WorkflowDB GROUP BY object_id, service_id, time ORDER BY object_id, time DESC");
+		
+		return preparedstmt;
+	}
+	
+	/**
+	 * @param value
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement ObjectServiceStatusID (Connection connection, BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT object_id, time, service_id FROM dbo.WorkflowDB WHERE (object_id = ?) GROUP BY object_id, service_id, time ORDER BY object_id, time DESC ");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+	
 	
 }

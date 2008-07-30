@@ -11,5 +11,6 @@ public enum RestKeyword {
 	WorkflowDB,
 	Repository,
 	FullTextLinks,
+	ObjectServiceStatus,
 	UNKNOWN
 }
