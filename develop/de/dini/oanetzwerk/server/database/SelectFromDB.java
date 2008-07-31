@@ -726,5 +726,18 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	/**
+	 * @param value
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement ServiceNotify (Connection connection, BigDecimal service_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT service_id, inserttime, finishtime, urgent FROM dbo.ServiceNotify WHERE (service_id = ?)");
+		preparedstmt.setBigDecimal (1, service_id);
+		
+		return preparedstmt;
+	}
+
 	
 }

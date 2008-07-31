@@ -66,7 +66,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 				logger.error (path [0] + " is NOT a valid number for this parameter!");
 				
-				this.rms = new RestMessage (RestKeyword.FullTextLinks);
+				this.rms = new RestMessage (RestKeyword.ObjectServiceStatus);
 				this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 				this.rms.setStatusDescription (path [0] + " is NOT a valid number for this parameter!");
 				
@@ -79,7 +79,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			logger.error (path [0] + " is NOT a number!");
 			
-			this.rms = new RestMessage (RestKeyword.ObjectEntry);
+			this.rms = new RestMessage (RestKeyword.ObjectServiceStatus);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 			this.rms.setStatusDescription (path [0] + " is NOT a number!");
 			

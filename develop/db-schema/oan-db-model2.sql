@@ -1,3 +1,12 @@
+CREATE TABLE dbo.ServiceNotify (
+       service_id NUMERIC(38) NOT NULL
+	 , inserttime DATETIME NOT NULL
+	 , finishtime DATETIME NULL
+     , urgent BIT NOT NULL
+     , PRIMARY KEY (service_id, inserttime)
+);
+
+
 CREATE TABLE dbo.AggregatorMetadata (
        object_id NUMERIC(38) NOT NULL
      , harvested DATETIME NOT NULL
@@ -370,6 +379,12 @@ ALTER TABLE dbo.DuplicatePossibilities
   ADD CONSTRAINT FK_DuplicatePossibilities_2
       FOREIGN KEY (duplicate_id)
       REFERENCES dbo.Object (object_id);
+
+
+ALTER TABLE dbo.ServiceNotify
+  ADD CONSTRAINT FK_ServiceNotify_1
+      FOREIGN KEY (service_id)
+      REFERENCES dbo.Services (service_id);
 
 
 ALTER TABLE dbo.WorkflowDB

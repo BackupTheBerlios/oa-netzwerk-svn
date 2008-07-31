@@ -12,5 +12,6 @@ public enum RestKeyword {
 	Repository,
 	FullTextLinks,
 	ObjectServiceStatus,
+	ServiceNotifier,
 	UNKNOWN
 }

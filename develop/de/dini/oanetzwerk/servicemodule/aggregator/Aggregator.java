@@ -584,7 +584,8 @@ public class Aggregator {
 
 			logger.debug("** doc generated");
 
-			ElementFilter filter = new ElementFilter("OAI-PMH");
+//			ElementFilter filter = new ElementFilter("OAI-PMH");
+			ElementFilter filter = new ElementFilter("metadata");
 			Iterator iterator = doc.getDescendants(filter);
 
 			while (iterator.hasNext()) {
@@ -594,15 +595,32 @@ public class Aggregator {
 				while (iteratorContent.hasNext()) {
 					Element contentEntry = (Element) iteratorContent.next();
 					logger.debug(contentEntry.getName() + "\n");
-					if (contentEntry.getName().equals("request")) {
-						if ((contentEntry.getAttribute("metadataPrefix")
-								.getValue()).equals("oai_dc")) {
+					if (contentEntry.getName().equals("oai_dc:dc")) {
+//						if ((contentEntry.getAttribute("metadataPrefix")
+//								.getValue()).equals("oai_dc")) {
 							result = MetadataFormatType.OAI_DC;
-						}
+//						}
 					}
 				}
 
 			}
+			
+//			while (iterator.hasNext()) {
+//				Element contentSet = (Element) iterator.next();
+//				List contentList = contentSet.getChildren();
+//				Iterator iteratorContent = contentList.iterator();
+//				while (iteratorContent.hasNext()) {
+//					Element contentEntry = (Element) iteratorContent.next();
+//					logger.debug(contentEntry.getName() + "\n");
+//					if (contentEntry.getName().equals("request")) {
+//						if ((contentEntry.getAttribute("metadataPrefix")
+//								.getValue()).equals("oai_dc")) {
+//							result = MetadataFormatType.OAI_DC;
+//						}
+//					}
+//				}
+//
+//			}
 			
 		} catch(Exception ex) {
 	      logger.error("error finding metadata format type in xml rawdata: " + ex.getLocalizedMessage());
