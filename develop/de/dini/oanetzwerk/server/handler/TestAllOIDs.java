@@ -265,4 +265,50 @@ public class TestAllOIDs {
 
 		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.WRONG_PARAMETER);
 	}
+	
+	@Test
+	public void test_GET_markedAs_notTest() throws Exception{
+		
+		System.out.println("AllOIDs\\markedAs\\productive");
+		
+		AllOIDs allOIDs = new AllOIDs();
+		String [] path = {"markedAs","productive"};
+
+		String strXML = allOIDs.getKeyWord(path);
+//		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+//		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+//			System.out.println(entrySet);
+//		}
+
+		System.out.println("oids fetched: " + rmsg.getListEntrySets().size());
+		//System.out.println("first: " + rmsg.getListEntrySets().get(0));
+		
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
+		
+	}
+	
+	@Test
+	public void test_GET_markedAs_hasFulltextlink() throws Exception{
+		
+		System.out.println("AllOIDs\\markedAs\\hasFulltextlink");
+		
+		AllOIDs allOIDs = new AllOIDs();
+		String [] path = {"markedAs","hasFulltextlink"};
+
+		String strXML = allOIDs.getKeyWord(path);
+//		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+//		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+//			System.out.println(entrySet);
+//		}
+
+		System.out.println("oids fetched: " + rmsg.getListEntrySets().size());
+		System.out.println("first: " + rmsg.getListEntrySets().get(0));
+		
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
+		
+	}
 }

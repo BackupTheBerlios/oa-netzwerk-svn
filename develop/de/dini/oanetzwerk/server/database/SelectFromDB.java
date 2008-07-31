@@ -112,6 +112,30 @@ public class SelectFromDB {
 	 * @throws SQLException 
 	 */
 	
+	public static PreparedStatement AllOIDsMarkAsNotTest (Connection connection) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.testdata = 0");
+		return preparedstmt;
+	}
+	
+	/**
+	 * @param connection
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement AllOIDsMarkAsHasFulltextlink (Connection connection) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT DISTINCT object_id FROM dbo.FullTextLinks");
+		return preparedstmt;
+	}
+
+	/**
+	 * @param connection
+	 * @return
+	 * @throws SQLException 
+	 */
+	
 	public static PreparedStatement AllOIDsFromRepositoryID (Connection connection, BigDecimal repID) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE (repository_id = ?)");

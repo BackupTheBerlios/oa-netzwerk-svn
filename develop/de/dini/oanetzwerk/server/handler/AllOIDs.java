@@ -67,6 +67,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				throw new NotEnoughParametersException ("This method used with first parameter \"markedAs\" needs a second parameter to specify the marking flag.");			
 			
 			if ("test".equals(path[1]) 
+			    || "notTest".equals(path[1])
+			    || "productive".equals(path[1])
+			    || "hasFulltextlink".equals(path[1])
 				/*|| "weitere Markierung".equals(path[1])*/
 			   ) {
 				
@@ -124,7 +127,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 						throw new NotEnoughParametersException ("This method used with first parameter \"markedAs\" needs a second parameter to specify the marking flag.");			
 					
 					if ("test".equals(path[3]) 
-						/*|| "weitere Markierung".equals(path[1])*/
+						//|| "notTest".equals(path[3])
+						//|| "productive".equals(path[3])
+						/*|| "weitere Markierung".equals(path[3])*/
 					   ) {
 						
 						strFlag = path[3];
@@ -190,6 +195,8 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					break;
 				case FLAG:
 					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsTest(stmtconn.connection));	
+					if("notTest".equals(strFlag) || "productive".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsNotTest(stmtconn.connection));
+					if("hasFulltextlink".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsHasFulltextlink(stmtconn.connection));
 					break;					
 				case FROMREPO:
 					stmtconn.loadStatement (SelectFromDB.AllOIDsFromRepositoryID(stmtconn.connection, repositoryID));	
