@@ -7,7 +7,7 @@ public class DINISetClassification extends Classification  implements Classifica
 	
 	public DINISetClassification(String value) {
 		super(value);
-		setSplitValue();
+//		setSplitValue();
 	}
 	
 	public String toString() {

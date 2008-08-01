@@ -69,8 +69,7 @@ public class Aggregator {
 	private Properties props; // special aggregator settings like connecting
 								// server
 
-	// TODO: remember this to set back to false
-	private boolean testing = true; // if et to true, aggregator stores data, but no update to workflow is saved
+	private boolean testing = false; // if et to true, aggregator stores data, but no update to workflow is saved
 
 	private BigDecimal serviceID;
 	
@@ -472,10 +471,11 @@ public class Aggregator {
 			// wenn kein IMF-Objekt übergeben wurde, darf auch nichts gespeichert werden
 			return null;
 		}
-				
+
 		// ansonsten sollte die Verarbeitung beginnen
 		// IMF marschallen, d.h. serialisieren zu XML
 		im = (InternalMetadata) data;
+		
 		InternalMetadataJAXBMarshaller marshaller = InternalMetadataJAXBMarshaller.getInstance ( );
 		String xmlInternalMetadata;
 		xmlInternalMetadata = marshaller.marshall(im);
@@ -570,11 +570,6 @@ public class Aggregator {
 	private MetadataFormatType getMDFTypeFromRawdata(String xmlRawdata) {
 		MetadataFormatType result = MetadataFormatType.UNKNOWN;
 		
-		//TODO: Wozu ist das gut? -rm
-		@SuppressWarnings("unused")
-		Namespace namespace = Namespace.getNamespace("oai_dc",
-				"http://www.openarchives.org/OAI/2.0/oai_dc/");
-		
 		try {
 		
 			org.jdom.Document doc;
@@ -584,7 +579,6 @@ public class Aggregator {
 
 			logger.debug("** doc generated");
 
-//			ElementFilter filter = new ElementFilter("OAI-PMH");
 			ElementFilter filter = new ElementFilter("metadata");
 			Iterator iterator = doc.getDescendants(filter);
 
@@ -595,33 +589,12 @@ public class Aggregator {
 				while (iteratorContent.hasNext()) {
 					Element contentEntry = (Element) iteratorContent.next();
 					logger.debug(contentEntry.getName() + "\n");
-					if (contentEntry.getName().equals("oai_dc:dc")) {
-//						if ((contentEntry.getAttribute("metadataPrefix")
-//								.getValue()).equals("oai_dc")) {
+					if ((contentEntry.getNamespacePrefix() +":"+ contentEntry.getName()).equals("oai_dc:dc")) {
 							result = MetadataFormatType.OAI_DC;
-//						}
 					}
 				}
 
 			}
-			
-//			while (iterator.hasNext()) {
-//				Element contentSet = (Element) iterator.next();
-//				List contentList = contentSet.getChildren();
-//				Iterator iteratorContent = contentList.iterator();
-//				while (iteratorContent.hasNext()) {
-//					Element contentEntry = (Element) iteratorContent.next();
-//					logger.debug(contentEntry.getName() + "\n");
-//					if (contentEntry.getName().equals("request")) {
-//						if ((contentEntry.getAttribute("metadataPrefix")
-//								.getValue()).equals("oai_dc")) {
-//							result = MetadataFormatType.OAI_DC;
-//						}
-//					}
-//				}
-//
-//			}
-			
 		} catch(Exception ex) {
 	      logger.error("error finding metadata format type in xml rawdata: " + ex.getLocalizedMessage());
 		}
@@ -636,11 +609,6 @@ public class Aggregator {
 
 		InternalMetadata im = new InternalMetadata();
 		
-//		try {
-			// InputSource is = new InputSource("testdata.xml");
-			// doc = builder.build(is);
-
-
 			// Auswertung des ermittelten Metadatenformats
 			MetadataFormatType metadataFormat = getMDFTypeFromRawdata(xmlRawdata);
 			switch(metadataFormat) {
@@ -655,10 +623,6 @@ public class Aggregator {
 			    	throw new AggregationFailedException("No IMF-Object can be created, metadata type: " + metadataFormat);
 			}
 			
-//		} catch (Exception e) {
-//			logger.error("error while decoding XML String: " + e);
-//		}
-
 		if (im != null) {
 			logger.debug("## InternalMetadata after Extraction: \n\n" + im.toString());
 			return im;
