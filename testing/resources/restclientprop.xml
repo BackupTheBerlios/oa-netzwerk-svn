@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
+<properties> 
+	<comment>All connection things which are necessary for connecting the REST-server should be entered here</comment>
+	<!-- enter the port number for non-sercure transmission, where the REST-server is listening at -->
+	<entry key="NonSSLPort">80</entry>
+	<!-- enter the port number for the SSL-transmission here -->
+	<entry key="SSLPort">443</entry>
+	<!-- -->
+	<entry key="trustStore"></entry>
+	<!-- -->
+	<entry key="keystorepassword"></entry>
+	<!-- -->
+        <entry key="serverURL"></entry>
+	<!-- enter the path of the REST-server-servlet -->
+	<entry key="servletPath"></entry>
+</properties>
