@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
-<project name="OA-Netzwerk" default="warServer" basedir=".">
+<project name="OA-Netzwerk" default="warServer">
 	<property name="src" value="."/>
+	<property name="ress" value="resources"/>
 	<property name="build" value="build"/>
-	<property name="build.server" value="build/server"/>
-	<property name="build.harvester" value="build/harvester"/>
-	<property name="build.inspector" value="build/inspector"/>
-	<property name="archive" value="arch"/>
-	<property name="lib" value="serverlib"/>
-	<property name="buildlib" value="lib"/>
+        <property name="build.server" value="build/server"/>
+        <property name="build.harvester" value="build/harvester"/>
+        <property name="build.inspector" value="build/inspector"/>
+	<property name="build.aggregator" value="build/aggregator"/>
+	<property name="lib" value="lib"/>
+        <property name="archive" value="arch"/>
 	<property name="path" value="/restserver"/>
 	<property name="url" value="http://oanet.cms.hu-berlin.de/manager"/>
 	<property name="username" value=""/>
@@ -18,16 +19,31 @@
 	<taskdef name="start" classname="org.apache.catalina.ant.StartTask"/>
 	<taskdef name="stop" classname="org.apache.catalina.ant.StopTask"/>
 	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"/>
-	
-	<path id="classpath">
-		<fileset dir="${lib}" includes="**/*.jar"/>
-		<fileset dir="${buildlib}" includes="**/*.jar"/>
+
+	<path id="classpath.harvester">
+		<pathelement location="${lib}/commons-cli-1.1.jar"/>
+		<pathelement location="${lib}/commons-codec-1.3.jar"/>
+		<pathelement location="${lib}/commons-httpclient-3.1.jar"/>
+		<pathelement location="${lib}/commons-logging-1.1.jar"/>
+		<pathelement location="${lib}/jdom.jar"/>
+		<pathelement location="${lib}/log4j-1.2.15.jar"/>
 	</path>
-	
+
+	<path id="classpath.aggregator">
+		<pathelement location="${lib}/commons-cli-1.1.jar"/>
+		<pathelement location="${lib}/commons-codec-1.3.jar"/>
+		<pathelement location="${lib}/commons-httpclient-3.1.jar"/>
+		<pathelement location="${lib}/commons-lang-2.3.jar"/>
+		<pathelement location="${lib}/commons-logging-1.1.jar"/>
+		<pathelement location="${lib}/jdom.jar"/>
+		<pathelement location="${lib}/log4j-1.2.15.jar"/>
+	</path>
+
 	<target name="init">
 		<mkdir dir="${build}"/>
 		<mkdir dir="${build.server}"/>
 		<mkdir dir="${build.harvester}"/>
+		<mkdir dir="${build.aggregator}"/>
 		<mkdir dir="${build.inspector}"/>
 	</target>
 	
@@ -50,51 +66,17 @@
 		</tar>
 	</target>
 	
-	<target name="tarbz2SourceAll" depends="initArch,tarSourceAll">
-		<bzip2 src="${archive}/oa-netzwerk-${DSTAMP}.tar" destfile="${archive}/oa-netzwerk-${DSTAMP}.tar.bz2"/>
-	</target>
-	
-	<target name="compileAll">
+	<target name="compileAll" depends="compileHarvester,compileAggregator,compileServer">
 		<tstamp/>
-		<javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
-	</target>
-	
-	<target name="tarSourceServer" depends="initArch">
-		<tar destfile="${archive}/oa-netzwerk-server-${DSTAMP}.tar">
-			<tarfileset dir="${src}/de/dini/oanetzwerk/codec" prefix="de/dini/oanetzwerk/codec">
-				<include name="**/*.java"/>
-				<include name="**/*.xsd"/>
-				<exclude name="**/*.properties"/>
-				<exclude name="**/*.class"/>
-				<exclude name="**/*.html"/>
-				<exclude name="**/*.txt"/>
-			</tarfileset>
-			<tarfileset dir="${src}/de/dini/oanetzwerk/server" prefix="de/dini/oanetzwerk/server">
-				<include name="**/*.java"/>
-				<include name="**/*.xsd"/>
-				<exclude name="**/*.properties"/>
-				<exclude name="**/*.class"/>
-				<exclude name="**/*.html"/>
-				<exclude name="**/*.txt"/>
-			</tarfileset>
-			<tarfileset dir="${src}/de/dini/oanetzwerk/utils" prefix="de/dini/oanetzwerk/utils">
-				<include name="**/*.java"/>
-				<include name="**/*.xsd"/>
-				<exclude name="**/*.properties"/>
-				<exclude name="**/*.class"/>
-				<exclude name="**/*.html"/>
-				<exclude name="**/*.txt"/>
-			</tarfileset>
-		</tar>
-	</target>
-	
-	<target name="tarbz2SourceServer" depends="initArch,tarSourceServer">
-		<bzip2 src="${archive}/oa-netzwerk-server-${DSTAMP}.tar" destfile="${archive}/oa-netzwerk-server-${DSTAMP}.tar.bz2"/>
+		<javac srcdir="${src}" destdir="${build}">
+			<classpath refid="classpath" />
+		</javac>
 	</target>
 	
 	<target name="compileServer" depends="init">
 		<tstamp/>
-		<javac destdir="${build.server}" classpathref="classpath" debug="true" debuglevel="lines,vars,source">
+		<javac destdir="${build.server}" debug="true" debuglevel="lines,vars,source">
+			<classpath refid="classpath.server" />
 			<src path="${src}/de/dini/oanetzwerk/codec"/>
 			<src path="${src}/de/dini/oanetzwerk/server"/>
 			<src path="${src}/de/dini/oanetzwerk/utils"/>
@@ -106,7 +88,8 @@
 	
 	<target name="compileInspector" depends="init">
 		<tstamp/>
-		<javac destdir="${build.inspector}" classpathref="classpath" debug="true" debuglevel="lines,vars,source">
+		<javac destdir="${build.inspector}" debug="true" debuglevel="lines,vars,source">
+			<classpath refid="classpath.inspector"/>
 			<src path="${src}/de/dini/oanetzwerk/codec"/>
 			<src path="${src}/de/dini/oanetzwerk/utils"/>
 			<src path="${src}/de/dini/oanetzwerk/servicemodule"/>
@@ -116,14 +99,78 @@
 			<exclude name="**/SQL2DB.java"/>
 			<exclude name="**/oai/**/*"/>
 		</javac>
-	</target>	
-	
-	<target name="jarServer" depends="compileServer">
-		<jar destfile="${build}/oa-netzwerk-server-${DSTAMP}.jar" basedir="${build.server}" excludes="**/technotest/**"/>
+	</target>
+
+	<target name="compileHarvester" depends="init">
+		<javac destdir="${build.harvester}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.harvester"/>
+			<include name="**/harvester/*.java"/>
+			<include name="**/codec/*.java"/>
+			<include name="**/RestClient.java"/>
+			<include name="**/exceptions/*.java"/>
+			<include name="**/HelpMethods.java"/>
+			<exclude name="**/server/"/>
+			<exclude name="**/Test*"/>
+		</javac>
 	</target>
 	
+	<target name="jarHarvester" depends="compileHarvester">
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ."/>
+		<jar jarfile="Harvester.jar">
+			<fileset dir="${build.harvester}"/>
+			<manifest>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.RunHarvester"/>
+				<attribute name="Class-Path" value="${cp}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="distHarvester" depends="jarHarvester">
+		<tar destfile="Harvester.tar">
+			<tarfileset dir="." prefix="harvester" includes="lib/**">
+				<include name="Harvester.jar"/>
+			</tarfileset>
+			<tarfileset dir="${ress}" prefix="harvester">
+				<include name="log4j.xml"/>
+				<include name="harvesterprop.xml"/>
+				<include name="restclientprop.xml"/>
+			</tarfileset>
+		</tar>
+	</target>
+
+	<target name="compileAggregator" depends="init">
+		<javac destdir="${build.aggregator}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.aggregator"/>
+	                <include name="**/aggregator/*.java"/>
+			<include name="**/codec/*.java"/>
+			<include name="**/RestClient.java"/>
+			<include name="**/exceptions/*.java"/>
+			<include name="**/imf/*.java"/>
+			<exclude name="**/Test*"/>
+		</javac>
+	</target>
+	
+	<target name="jarAggregator" depends="compileAggregator">
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar ."/>
+		<jar jarfile="Aggregator.jar">
+			<fileset dir="${build.aggregator}"/>
+			<manifest>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.aggregator.RunAggregator"/>
+				<attribute name="Class-Path" value="${cp}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="distAggregator" depends="jarAggregator">
+		<tar destfile="Aggregator.tar">
+			<tarfileset dir="." prefix="aggregator" includes="lib/**">
+				<include name="Aggregator.jar"/>
+			</tarfileset>
+		</tar>
+	</target>
+
 	<target name="warServer" depends="compileServer">
-		<war destfile="${build}/restserver.war" webxml="conf/web.xml">
+		<war destfile="${build}/restserver-testing.war" webxml="conf/web.xml">
 		<!--war destfile="${build}/restserver.war"-->
 			<lib dir="${lib}"/>
 			<metainf dir="conf">
@@ -161,27 +208,11 @@
 		<undeploy url="${url}" username="${username}" password="${password}" path="${path}"/>
 	</target>
 
-	<target name="compileHarvester" depends="init">
-		<tstamp/>
-		<javac destdir="${build.harvester}" classpathref="classpath">
-			<src path="${src}/de/dini/oanetzwerk/codec"/>
-			<exclude name="**/TestRestXmlCodec.java"/>
-			<src path="${src}/de/dini/oanetzwerk/servicemodule"/>
-			<exclude name="**/aggregator/**.*"/>
-			<exclude name="**/OAIRecoveryMatcher.java"/>
-			<exclude name="**/TestOAIRecoveryMatcher.java"/>
-			<src path="${src}/de/dini/oanetzwerk/utils"/>
-			<exclude name="**/imf/**"/>
-			<exclude name="**/InspectorServlet.java"/>
-		</javac>
+	<target name="clean">
+		<delete dir="${build.harvester}"/>
+		<delete dir="${build.inspector}"/>
+		<delete dir="${build.aggregator}"/>
+		<delete dir="${build.server}"/>
 	</target>
-	
-	<target name="jarHarvester" depends="compileHarvester">
-		<jar destfile="${build}/oa-netzwerk-harvester${DSTAMP}.jar" basedir="${build.harvester}" excludes="**/technotest/**,**/imf/**">
-			<fileset dir="${build}/../lib"/>
-			<manifest>
-				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.Harvester"/>
-			</manifest>
-		</jar>
-	</target>
+
 </project>
