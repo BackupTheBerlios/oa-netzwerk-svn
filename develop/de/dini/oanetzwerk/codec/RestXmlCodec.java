@@ -12,7 +12,6 @@ import org.jdom.Element;
 import org.jdom.Text;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
-
 import org.xml.sax.InputSource;
 
 public class RestXmlCodec {
@@ -31,7 +30,7 @@ public class RestXmlCodec {
 		try {
 			return new String (Base64.encodeBase64 (data.getBytes()));
 		} catch(Exception ex) {
-			logger.error(ex);
+			logger.error(ex.getLocalizedMessage ( ), ex);
 			return null;
 		}
 	}
@@ -40,7 +39,7 @@ public class RestXmlCodec {
 		try {
 			return new String(Base64.decodeBase64(data.getBytes()));
 		} catch(Exception ex) {
-			logger.error(ex);
+			logger.error(ex.getLocalizedMessage ( ), ex);
 			return null;
 		}
 	}
@@ -122,7 +121,10 @@ public class RestXmlCodec {
 		Iterator <?> iterator;
 		SAXBuilder builder = new SAXBuilder();
 		
-		try {		
+		if (strXML == null)
+			return null;
+		
+		try {
 			doc = builder.build(new InputSource (new StringReader(strXML)));
 			
 			logger.debug("** doc generated");
@@ -205,7 +207,7 @@ public class RestXmlCodec {
 			msg.setListEntrySets(listEntrySets);
 			
 		} catch(Exception e) {
-			logger.error("error while decoding XML String: " + e);
+			logger.error("error while decoding XML String: " + e, e);
 			
 			msg.setStatus(RestStatusEnum.REST_XML_DECODING_ERROR);
 			msg.setStatusDescription("error while decoding XML String: " + e + e.getCause());

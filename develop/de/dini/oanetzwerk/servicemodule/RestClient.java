@@ -7,6 +7,7 @@ package de.dini.oanetzwerk.servicemodule;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
@@ -22,7 +23,6 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
@@ -43,8 +43,34 @@ public class RestClient {
 	private final String username;
 	private final String password;
 	private Properties props = new Properties ( );
-	static Logger logger = Logger.getLogger (RestClient.class);
+	private static Logger logger = Logger.getLogger (RestClient.class);
 
+	/**
+	 * Creates a new client and initialises this client.
+	 * The log4j is configured, the path is filtered and SSL, username and password are set.
+	 * This Constructor is private due to our factory method which will call this constructor and return an
+	 * instance of RestClient.
+	 * @see RestClient#createRestClient(String path, String userName, String passWord)
+	 * 
+	 * @param path the path for the REST query
+	 * @param user username for the authentication at the REST server
+	 * @param pwd password for the authentication at the REST server
+	 */
+	
+	private RestClient (String path, String user, String pwd) {
+		
+		this ("", path, user, pwd);
+		
+		if (this.props != null) {
+			
+			this.url = new String (this.props.getProperty ("serverURL", "localhost"));
+			
+		} else {
+			
+			logger.warn ("no ServerURL found. Trying localhost!");
+		}
+	}
+	
 	/**
 	 * Creates a new client and initialises this client.
 	 * The log4j is configured, the URL and the path are filtered and SSL, username and password are set.
@@ -60,7 +86,7 @@ public class RestClient {
 	
 	private RestClient (String url, String path, String user, String pwd) {
 		
-		DOMConfigurator.configure ("log4j.xml");
+//		DOMConfigurator.configure ("log4j.xml");
 		this.url = filterurl (url);
 		this.nossl = true;
 //		this.nossl = setSSL (url);
@@ -90,7 +116,7 @@ public class RestClient {
 		
 		if (!this.nossl) {
 			
-			if (props == null) {
+			if (this.props == null) {
 				
 				this.port = 443;
 				
@@ -104,7 +130,7 @@ public class RestClient {
 			
 		} else {
 			
-			if (props == null) {
+			if (this.props == null) {
 				
 				this.port = 80;
 				
@@ -198,6 +224,25 @@ public class RestClient {
 	}
 	
 	/**
+	 * Creates a {@link RestClient} and calls the {@link RestClient} Constructor. 
+	 * @see RestClient#RestClient(String url, String path, String user, String pwd)
+	 * 
+	 * @param incomming_url the name of the REST server: i.e. foo.bar, localhost, 0.0.0.0.
+	 * @param path the path for the REST query
+	 * @return an instance of RestClient
+	 */
+	
+	public static RestClient createRestClient (String path, String userName, String passWord) {
+		
+		RestClient restclient = new RestClient (path, userName, passWord);
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("new restclient created");
+		
+		return restclient;
+	}
+	
+	/**
 	 * Sends the assembled request to the REST server.
 	 * 
 	 * @param client the {@link HttpClient} Object which handles the connection to the REST server
@@ -216,14 +261,23 @@ public class RestClient {
 			do {
 			
 				int statusCode = client.executeMethod (method);
-				logger.info ("HttpStatusCode: " + statusCode);
 				
 				if (statusCode != HttpStatus.SC_OK) {
 					
-					logger.error ("A http-error occured while processing the IDs from server " + url);
-					logger.error (method.getStatusText ( ));
-	
-					if (errorcounter++ > 10) {
+					if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+						
+						logger.info ("HttpStatusCode: " + statusCode);
+						logger.error (method.getStatusText ( ));
+						logger.error ("Wrong username and/or password");
+						
+					} else {
+						
+						logger.info ("HttpStatusCode: " + statusCode);
+						logger.error ("A http-error occured while processing the IDs from server " + this.url);
+						logger.error (method.getStatusText ( ));
+					}
+					
+					if (errorcounter++ >= 10) {
 						
 						logger.error ("We got a http-error more than 10 times during communication with server " + url + " Now we are aborting communcation and trying to process the collected datas");
 						method = null;
@@ -232,26 +286,40 @@ public class RestClient {
 						
 					} else {
 						
-						logger.info (errorcounter + " errors occured. Server: " + url);
+						logger.info (errorcounter + " errors occured. Server: " + this.url);
+						cont = true;
 						continue;
 					}
+					
+				} else {
+					
+					responseBody = method.getResponseBody ( );
+					cont = false;
 				}
 				
 			} while (cont);
+		
+		} catch (ConnectException ex) {
 			
-			responseBody = method.getResponseBody ( );
-
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
 		} catch (IOException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			
 		} finally {
-		
-			method.releaseConnection ( );
+			
+			if (method != null)
+					method.releaseConnection ( );
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("Connection closed");
+			
+			if (responseBody == null) {
+				
+				logger.error ("we did not receive any data at all");
+				responseBody = new byte [0];
+			}
 		}
 		
 		if (logger.isDebugEnabled ( ))
@@ -380,25 +448,53 @@ public class RestClient {
 		return sendrequest (client, method);
 	}
 	
-	public RestMessage sendGetRestMessage() {
-		String response = GetData(); 		
+	/**
+	 * @return
+	 */
+	
+	public RestMessage sendGetRestMessage ( ) {
+		
+		String response = this.GetData ( );
+		
+		return RestXmlCodec.decodeRestMessage (response);
+	}
+	
+	/**
+	 * @param msg
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	
+	public RestMessage sendPostRestMessage (RestMessage msg) throws UnsupportedEncodingException {
+		
+		String request = RestXmlCodec.encodeRestMessage (msg);
+		String response = this.PostData (request);
+		
 		return RestXmlCodec.decodeRestMessage(response);
 	}
 	
-	public RestMessage sendPostRestMessage(RestMessage msg) throws UnsupportedEncodingException {
-		String request = RestXmlCodec.encodeRestMessage(msg);
-		String response = PostData(request); 		
-		return RestXmlCodec.decodeRestMessage(response);
+	/**
+	 * @param msg
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	
+	public RestMessage sendPutRestMessage (RestMessage msg) throws UnsupportedEncodingException {
+		
+		String request = RestXmlCodec.encodeRestMessage (msg);
+		String response = this.PutData (request);
+		
+		return RestXmlCodec.decodeRestMessage (response);
 	}
 	
-	public RestMessage sendPutRestMessage(RestMessage msg) throws UnsupportedEncodingException {
-		String request = RestXmlCodec.encodeRestMessage(msg);
-		String response = PutData(request); 		
-		return RestXmlCodec.decodeRestMessage(response);
-	}
+	/**
+	 * @return
+	 */
 	
-	public RestMessage sendDeleteRestMessage() {
-		String response = DeleteData(); 		
-		return RestXmlCodec.decodeRestMessage(response);
+	public RestMessage sendDeleteRestMessage ( ) {
+		
+		String response = this.DeleteData ( );
+		
+		return RestXmlCodec.decodeRestMessage (response);
 	}
 }

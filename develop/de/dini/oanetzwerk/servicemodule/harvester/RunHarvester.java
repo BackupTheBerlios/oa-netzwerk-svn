@@ -6,6 +6,8 @@ package de.dini.oanetzwerk.servicemodule.harvester;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.MissingArgumentException;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -14,7 +16,7 @@ import org.apache.log4j.Logger;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
  *
  */
 
@@ -33,67 +35,58 @@ public class RunHarvester {
 	public static void main (String [ ] args) {
 		
 		Harvester harvester;
+		
+		Option help = new Option ("help", "print this message");
+		Option repositoryURL = OptionBuilder.withType (new String ( ))
+											.withLongOpt ("repositoryUrl")
+											.withArgName ("URL")
+											.withDescription ("URL of the repository which need to be harvested")
+											.hasArg ( )
+											.create ('u');
+		Option repositoryID = OptionBuilder	.withType (new Integer (0))
+											.withLongOpt ("repositoryID")
+											.withArgName ("ID")
+											.withDescription ("ID for the repositoryURL see database for details")
+											.hasArg ( )
+											.create ('i');
+		Option harvesttype = OptionBuilder	.withType (new String ( ))
+											.withLongOpt ("harvesttype")
+											.withArgName ("full|update")
+											.withDescription ("harvesting-type MUST be 'full' for a full harvest or 'update' for an updating harvest")
+											.hasArg ( )
+											.create ('t');
+		Option updateDate = OptionBuilder	.withType (new String ( ))
+											.withLongOpt ("updateDate")
+											.withArgName ("yyyy-mm-dd")
+											.withDescription ("Date from which on the Records are harvested. Works only when harvest-type 'update' is set")
+											.hasArg ( )
+											.create ('d');
+		Option harvestAmount = OptionBuilder.withType (new String ( ))
+											.withLongOpt ("harvestAmount")
+											.withArgName ("amount")
+											.withDescription ("amount of Objects which will be requested at once")
+											.hasArg ( )
+											.create ('a');
+		Option harvestInt = OptionBuilder	.withType (new String ( ))
+											.withLongOpt ("harvestInterval")
+											.withArgName ("milliseconds")
+											.withDescription ("time between the requests")
+											.hasArg ( )
+											.create ('I');
+		Option testData = new Option ("testData", "harvested Data will be marked as 'test' and not used for productional use");
+		Option listRecords = new Option ("listRecords", "listRecods-OAI-Method is used instead of listIdentifiers + getRecord");
+		
 		Options options = new Options ( );
 		
-		options.addOption ("h", false, "show help");
-		options.addOption (OptionBuilder.withType (new String ( ))
-										.withLongOpt ("repositoryUrl")
-										.withArgName ("URL")
-										.withDescription ("URL of the repository which need to be harvested")
-										.withValueSeparator ( )
-										.hasArg ( )
-										.create ('u'));
-		
-		options.addOption (OptionBuilder.isRequired ( )
-										.withLongOpt ("repositoryId")
-										.withArgName ("ID")
-										.withDescription ("Id for the repositoryURL see database for details")
-										.withValueSeparator ( )
-										.hasArg ( )
-										.create ('i'));
-		
-		options.addOption (OptionBuilder.isRequired ( )
-										.withType (new String ( ))
-										.withLongOpt ("harvesttype")
-										.withArgName ("full|update")
-										.withDescription ("harvesting-type can be 'full' for a full harvest or 'update' for an updating harvest")
-										.withValueSeparator ( )
-										.hasArg ( )
-										.create ('t'));
-		
-		options.addOption (OptionBuilder.withType (new String ( ))
-										.withLongOpt ("updateDate")
-										.withArgName ("yyyy-mm-dd")
-										.withDescription ("Date from which on the Records are harvested, when update-harvest-type is specified")
-										.withValueSeparator ( )
-										.hasArg ( )
-										.create ('d'));
-		
-		options.addOption (OptionBuilder.withType (new String ( ))
-										.withLongOpt ("harvestAmount")
-										.withArgName ("amount")
-										.withDescription ("amount of Objects which will be requested at once")
-										.withValueSeparator ( )
-										.hasArg ( )
-										.create ('a'));
-		
-		options.addOption (OptionBuilder.withType (new String ( ))
-										.withLongOpt ("harvestInterval")
-										.withArgName ("milliseconds")
-										.withDescription ("time between the requests")
-										.withValueSeparator ( )
-										.hasArg ( )
-										.create ('I'));
-		
-		options.addOption (OptionBuilder.withType (new String ( ))
-										.withLongOpt ("testData")
-										.withDescription ("URL of the repository which need to be harvested")
-										.create ('T'));
-		
-		options.addOption (OptionBuilder.withType (new String ( ))
-										.withLongOpt ("listRecords")
-										.withDescription ("listRecods-OAI-Method is used instead of lisIdentifiers + getRecord")
-										.create ('r'));
+		options.addOption (help);
+		options.addOption (repositoryURL);
+		options.addOption (repositoryID);
+		options.addOption (harvesttype);
+		options.addOption (updateDate);
+		options.addOption (harvestAmount);
+		options.addOption (harvestInt);
+		options.addOption (testData);
+		options.addOption (listRecords);
 		
 		if (args.length > 0) {
 			
@@ -102,13 +95,12 @@ public class RunHarvester {
 				CommandLine cmd = new GnuParser ( ).parse (options, args);
 				
 				// if -h was chosen, print the help and exit
-				if (cmd.hasOption ("h")) {
+				if (cmd.hasOption ("help")) {
 					
 					HelperMethods.printhelp ("java " + RunHarvester.class.getCanonicalName ( ), options);
 					System.exit (0);
 					
-				} else if ((cmd.hasOption ("repositoryId") || cmd.hasOption ('i')) &&
-						(cmd.hasOption ("harvesttype") || cmd.hasOption ('t'))) {
+				} else if (cmd.hasOption ('i') && cmd.hasOption ('t')) {
 					
 					int id = Harvester.filterId (cmd.getOptionValue ('i'));
 					
@@ -125,10 +117,10 @@ public class RunHarvester {
 					harvester.filterAmount (cmd.getOptionValue ('a'));
 					harvester.filterInterval (cmd.getOptionValue ('I'));
 					
-					if (cmd.hasOption ('T'))
-						harvester.setTestData (cmd.hasOption ('T'));
+					if (cmd.hasOption ("testData"))
+						harvester.setTestData (true);
 					
-					if (cmd.hasOption ('r'))
+					if (cmd.hasOption ("listRecords"))
 						harvester.setListRecords (true);
 					
 					/* 
@@ -156,11 +148,16 @@ public class RunHarvester {
 					System.exit (1);
 				}
 				
+			} catch (MissingArgumentException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+				HelperMethods.printhelp ("java " + RunHarvester.class.getCanonicalName ( ), options);
+				System.exit (1);
+				
 			} catch (ParseException parex) {
 				
-				logger.error (parex.getLocalizedMessage ( ));
+				logger.error (parex.getLocalizedMessage ( ), parex);
 				HelperMethods.printhelp ("java " + RunHarvester.class.getCanonicalName ( ), options);
-				parex.printStackTrace ( );
 				System.exit (1);
 				
 			} finally {
