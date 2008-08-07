@@ -127,8 +127,17 @@
 
 	<target name="distHarvester" depends="jarHarvester">
 		<tar destfile="Harvester.tar">
-			<tarfileset dir="." prefix="harvester" includes="lib/**">
+			<!--tarfileset dir="." prefix="harvester" includes="lib/**"-->
+			<tarfileset dir="." prefix="harvester">
 				<include name="Harvester.jar"/>
+			</tarfileset>
+			<tarfileset dir="${lib}" prefix="harvester/lib">
+				<include name="commons-cli-1.1.jar"/>
+				<include name="log4j-1.2.15.jar"/>
+				<include name="commons-httpclient-3.1.jar"/>
+				<include name="jdom.jar"/>
+				<include name="commons-logging-1.1.jar"/>
+				<include name="commons-codec-1.3.jar"/>
 			</tarfileset>
 			<tarfileset dir="${ress}" prefix="harvester">
 				<include name="log4j.xml"/>
