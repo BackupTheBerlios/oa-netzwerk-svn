@@ -7,6 +7,7 @@
         <property name="build.harvester" value="build/harvester"/>
         <property name="build.inspector" value="build/inspector"/>
 	<property name="build.aggregator" value="build/aggregator"/>
+	<property name="build.markereraser" value="build/markereraser"/>
 	<property name="lib" value="lib"/>
         <property name="archive" value="arch"/>
 	<property name="path" value="/restserver"/>
@@ -39,12 +40,21 @@
 		<pathelement location="${lib}/log4j-1.2.15.jar"/>
 	</path>
 
+	<path id="classpath.markereraser">
+		<pathelement location="${lib}/log4j-1.2.15.jar"/>
+		<pathelement location="${lib}/commons-cli-1.1.jar"/>
+		<pathelement location="${lib}/commons-codec-1.3.jar"/>
+		<pathelement location="${lib}/commons-httpclient-3.1.jar"/>
+		<pathelement location="${lib}/jdom.jar"/>
+	</path>
+
 	<target name="init">
 		<mkdir dir="${build}"/>
 		<mkdir dir="${build.server}"/>
 		<mkdir dir="${build.harvester}"/>
 		<mkdir dir="${build.aggregator}"/>
 		<mkdir dir="${build.inspector}"/>
+		<mkdir dir="${build.markereraser}"/>
 	</target>
 	
 	<target name="initArch">
@@ -108,7 +118,7 @@
 			<include name="**/codec/*.java"/>
 			<include name="**/RestClient.java"/>
 			<include name="**/exceptions/*.java"/>
-			<include name="**/HelpMethods.java"/>
+			<include name="**/HelperMethods.java"/>
 			<exclude name="**/server/"/>
 			<exclude name="**/Test*"/>
 		</javac>
@@ -177,6 +187,50 @@
 			</tarfileset>
 		</tar>
 	</target>
+	
+       <target name="compileMarkerAndEraser" depends="init">
+		<javac destdir="${build.markereraser}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.markereraser"/>
+			<include name="**/markerAndEraser/*.java"/>
+			<include name="**/codec/*.java"/>
+			<include name="**/RestClient.java"/>
+			<include name="**/HelperMethods.java"/>
+			<exclude name="**/server/**"/>
+			<exclude name="**/Test*"/>
+		</javac>
+	</target>
+
+	<target name="jarMarkerAndEraser" depends="compileMarkerAndEraser">
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ."/>
+		<jar jarfile="MarkerAndEraser.jar">
+			<fileset dir="${build.markereraser}"/>
+			<manifest>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.markerAndEraser.RunMarkerAndEraser"/>
+				<attribute name="Class-Path" value="${cp}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="distMarkerAndEraser" depends="jarMarkerAndEraser">
+		<tar destfile="MarkerAndEraser.tar">
+			<tarfileset dir="." prefix="markereraser">
+				<include name="MarkerAndEraser.jar"/>
+			</tarfileset>
+			<tarfileset dir="${lib}" prefix="markereraser/lib">
+				<include name="commons-cli-1.1.jar"/>
+				<include name="log4j-1.2.15.jar"/>
+				<include name="commons-httpclient-3.1.jar"/>
+				<include name="jdom.jar"/>
+				<include name="commons-logging-1.1.jar"/>
+				<include name="commons-codec-1.3.jar"/>
+			</tarfileset>
+			<tarfileset dir="${ress}" prefix="markereraser">
+				<include name="log4j.xml"/>
+				<include name="restclientprop.xml"/>
+				<include name="markereraserprop.xml"/>
+			</tarfileset>
+		</tar>
+	</target>
 
 	<target name="warServer" depends="compileServer">
 		<war destfile="${build}/restserver-testing.war" webxml="conf/web.xml">
@@ -222,6 +276,6 @@
 		<delete dir="${build.inspector}"/>
 		<delete dir="${build.aggregator}"/>
 		<delete dir="${build.server}"/>
+		<delete dir="${build.markereraser}"/>
 	</target>
-
 </project>

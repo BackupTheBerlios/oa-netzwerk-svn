@@ -7,7 +7,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.servicemodule.harvester.RunHarvester;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class RunMarkerAndEraser {
@@ -66,21 +65,21 @@ public class RunMarkerAndEraser {
 			} catch (ParseException parex) {
 				
 				logger.error (parex.getLocalizedMessage ( ), parex);
-				HelperMethods.printhelp ("java " + RunHarvester.class.getCanonicalName ( ), options);
+				HelperMethods.printhelp ("java " + RunMarkerAndEraser.class.getCanonicalName ( ), options);
 				parex.printStackTrace ( );
 				System.exit (1);
 				
 			} catch (NumberFormatException nufoex) {
 				
 				logger.error (nufoex.getLocalizedMessage ( ), nufoex);
-				HelperMethods.printhelp ("java " + RunHarvester.class.getCanonicalName ( ), options);
+				HelperMethods.printhelp ("java " + RunMarkerAndEraser.class.getCanonicalName ( ), options);
 				nufoex.printStackTrace ( );
 				System.exit (1);
 			}
 			
 		} else {
 			
-			HelperMethods.printhelp ("java " + RunHarvester.class.getCanonicalName ( ), options);
+			HelperMethods.printhelp ("java " + RunMarkerAndEraser.class.getCanonicalName ( ), options);
 			System.exit (1);
 		}
 	}

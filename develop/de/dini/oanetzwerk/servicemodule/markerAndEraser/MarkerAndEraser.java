@@ -19,7 +19,7 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class MarkerAndEraser {
 	
-	static Logger logger = Logger.getLogger (MarkerAndEraser.class); 
+	private static Logger logger = Logger.getLogger (MarkerAndEraser.class); 
 	
 	private final BigDecimal repositoryID;
 	private Date LatestRepositoryHarvest;
@@ -28,6 +28,10 @@ public class MarkerAndEraser {
 	private Properties props = new Properties ( );
 
 	private String propertyfile = "markereraserprop.xml";
+	
+	/**
+	 * @param repositoryID
+	 */
 	
 	public MarkerAndEraser (BigDecimal repositoryID) {
 		
@@ -57,22 +61,38 @@ public class MarkerAndEraser {
 		}
 	}
 	
+	/**
+	 * 
+	 */
+	
 	public void markAndErase ( ) {
 		
 		this.getTestData ( );
 	}
+	
+	/**
+	 * 
+	 */
 	
 	public void eraseTestOnlyData ( ) {
 		
 		this.getTestData ( );
 	}
 	
+	/**
+	 * 
+	 */
+	
 	protected void getLatestHarvestTimeStampforRepository ( ) {
 		
 		this.LatestRepositoryHarvest = null; //From DB
 	}
 	
-	protected void getAllObjectsFromCurrentRepoitory ( ) {
+	/**
+	 * 
+	 */
+	
+	protected void getAllObjectsFromCurrentRepository ( ) {
 		
 		//get all Objects
 		
@@ -90,6 +110,10 @@ public class MarkerAndEraser {
 		}
 	}
 		
+	/**
+	 * 
+	 */
+	
 	protected void findPeculiarObjects ( ) {
 		
 		for (ObjectEntry objectEntry : this.objects) {
@@ -102,6 +126,10 @@ public class MarkerAndEraser {
 		}
 	}
 	
+	/**
+	 * @param objectEntry
+	 */
+	
 	protected void markAsPeculiar (ObjectEntry objectEntry) {
 		
 		// increase pecliarCounter
@@ -110,10 +138,18 @@ public class MarkerAndEraser {
 		// if object has been marked more than 6 times, mark it official as outdated and remove peculiar mark
 	}
 	
+	/**
+	 * 
+	 */
+	
 	protected void markAsOutdated ( ) {
 		
 		
 	}
+	
+	/**
+	 * 
+	 */
 	
 	protected void getTestData ( ) {
 		
@@ -139,35 +175,57 @@ public class MarkerAndEraser {
 			// if harvested older than config-weeks
 			try {
 				
-				deleteTestData (new BigDecimal (key.getValue ("oid")));
+				this.deleteTestData (new BigDecimal (key.getValue ("oid")));
 				
 			} catch (NumberFormatException ex) {
 				
 				logger.error (ex.getLocalizedMessage ( ), ex);
-				ex.printStackTrace ( );
 			}
 		}
 	}
 	
+	/**
+	 * @param oid
+	 */
+	
 	protected void deleteTestData (BigDecimal oid) {
+		
+		logger.info ("Deleting object " + oid.toPlainString ( ) + " marked as test data");
 		
 		String result = prepareRestTransmission ("ObjectEntry/" + oid.toPlainString ( )).DeleteData ( );
 	}
+	
+	/**
+	 * @return
+	 */
 	
 	public final Properties getProps ( ) {
 		
 		return this.props;
 	}
 	
+	/**
+	 * @return
+	 */
+	
 	public final String getPropertyfile ( ) {
 		
 		return this.propertyfile ;
 	}
 	
+	/**
+	 * @param propertyfile
+	 */
+	
 	public final void setPropertyfile (String propertyfile) {
 		
 		this.propertyfile = propertyfile;
 	}
+	
+	/**
+	 * @param resource
+	 * @return
+	 */
 	
 	private RestClient prepareRestTransmission (String resource) {
 		
