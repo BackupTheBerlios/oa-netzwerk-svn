@@ -18,7 +18,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.jdom.Element;
-import org.jdom.Namespace;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
@@ -328,6 +327,13 @@ public class Aggregator {
 		//result = restclient.GetData ( );
 		
 		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		
+		if (rms == null || rms.getListEntrySets ( ).isEmpty ( )) {
+			
+			logger.error ("received no ServiceIDs at all from the server");
+			System.exit (1);
+		}
+		
 		RestEntrySet res = rms.getListEntrySets ( ).get (0);
 		
 		Iterator <String> it = res.getKeyIterator ( );
@@ -349,8 +355,8 @@ public class Aggregator {
 				
 			} else if (key.equalsIgnoreCase ("name")) {
 				
-				if (!res.getValue (key).equalsIgnoreCase ("Harvester"))
-					logger.warn ("Should read Harvester and read " + res.getValue (key) + " instead!");
+				if (!res.getValue (key).equalsIgnoreCase ("Aggregator"))
+					logger.warn ("Should read Aggregator and read " + res.getValue (key) + " instead!");
 				
 				continue;
 				
