@@ -61,7 +61,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 			
 			logger.error (path [0] + " is NOT a number!");
 			
-			this.rms = new RestMessage (RestKeyword.ObjectEntry);
+			this.rms = new RestMessage (RestKeyword.FullTextLinks);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 			this.rms.setStatusDescription (path [0] + " is NOT a number!");
 			
@@ -71,7 +71,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 		DBAccessNG dbng = new DBAccessNG ( );
 		MultipleStatementConnection stmtconn = null;
 		
-		this.rms = new RestMessage (RestKeyword.ObjectEntry);
+		this.rms = new RestMessage (RestKeyword.FullTextLinks);
 		
 		try {
 			

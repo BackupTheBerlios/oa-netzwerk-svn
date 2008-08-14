@@ -18,14 +18,21 @@ public class ReadUTF {
 		DBAccessNG db = new DBAccessNG();
 		
 		SingleStatementConnection stmt = (SingleStatementConnection) db.getSingleStatementConnection();
-		PreparedStatement pstmt = stmt.connection.prepareStatement("SELECT * FROM dbo.test");
+//		PreparedStatement pstmt = stmt.connection.prepareStatement("SELECT * FROM dbo.test2");
+		PreparedStatement pstmt = stmt.connection.prepareStatement("INSERT INTO dbo.test2 (name) values (?)");
+		pstmt.setString(1, "Каталог");
 		
 		stmt.loadStatement(pstmt);
 		QueryResult result = stmt.execute();
 		
-		while (result.getResultSet().next()) {
-			System.out.println("name=" + result.getResultSet().getString("name"));
-		}
+		
+//		pstmt = stmt.connection.prepareStatement("SELECT * FROM dbo.test");
+//		stmt.loadStatement(pstmt);
+//		result = stmt.execute();
+//		
+//		while (result.getResultSet().next()) {
+//			System.out.println("name=" + result.getResultSet().getString("name"));
+//		}
 		
 	}
 }

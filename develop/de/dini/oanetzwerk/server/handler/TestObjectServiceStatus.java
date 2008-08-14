@@ -45,7 +45,7 @@ public class TestObjectServiceStatus {
 		System.out.println("ObjectServiceStatus");
 		
 		ObjectServiceStatus objectServiceStatus = new ObjectServiceStatus();
-		String [] path = {"633"};
+		String [] path = {"2081"};
 
 		String strXML = objectServiceStatus.getKeyWord(path);
 //		System.out.println(strXML);
@@ -86,7 +86,7 @@ public class TestObjectServiceStatus {
 	@Test
 	public void test_GET_ObjectID_objectIDnegative() throws Exception{
 		
-		System.out.println("FullTextLinks/-2079");
+		System.out.println("ObjectServiceStatus/-2079");
 		
 		ObjectServiceStatus objectServiceStatus = new ObjectServiceStatus();
 		String [] path = {"-2079"};

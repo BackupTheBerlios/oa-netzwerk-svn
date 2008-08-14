@@ -597,6 +597,33 @@ public class InsertIntoDB {
 		
 		return preparedstmt;
 	}
+	
+	
+	/**
+	 * @param service_id
+	 * @param inserttime
+	 * @param urgent
+	 * @return
+	 * @throws SQLException 
+	 */	
+	public static PreparedStatement ServiceNotify (Connection connection, BigDecimal service_id, String inserttime, 
+			boolean urgent	) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert ServiceNotify: INSERT INTO dbo.ServiceNotify (service_id, inserttime, urgent) VALUES " +
+					"(" + service_id + ", " + inserttime + ", " + urgent + ")");
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.ServiceNotify (service_id, inserttime, urgent) VALUES (?, ?, ?)");
+		preparedstmt.setBigDecimal(1, service_id);
+		preparedstmt.setString(2, inserttime);
+		preparedstmt.setBoolean(3, urgent);
+		
+		return preparedstmt;
+	}
+
+	
 
 
 }

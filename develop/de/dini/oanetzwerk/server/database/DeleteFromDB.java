@@ -368,4 +368,14 @@ public class DeleteFromDB {
 		return preparedstmt;
 	}
 
+	
+	public static PreparedStatement ServiceNotify (Connection connection, BigDecimal service_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.ServiceNotify WHERE service_id = ?");
+		preparedstmt.setBigDecimal (1, service_id);
+		
+		return preparedstmt;
+	}
+
+	
 }
