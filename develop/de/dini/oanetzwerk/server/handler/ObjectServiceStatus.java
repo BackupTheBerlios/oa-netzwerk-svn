@@ -15,7 +15,7 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
- * @author Robin Malitz
+ * @author Manuel Klatt-Kafemann
  *
  */
 

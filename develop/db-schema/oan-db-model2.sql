@@ -1,8 +1,9 @@
 CREATE TABLE dbo.LoginData (
 	name UNIVARCHAR(50) NOT NULL UNIQUE,
 	email UNIVARCHAR(100) NOT NULL,
-	password UNIVARCHAR(255) NOT NULL
-)
+	password UNIVARCHAR(255) NOT NULL,
+	superuser BIT DEFAULT 0
+);
 
 CREATE TABLE dbo.ServiceNotify (
        service_id NUMERIC(38) NOT NULL

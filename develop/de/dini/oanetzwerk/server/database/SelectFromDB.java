@@ -739,5 +739,33 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+
+	/**
+	 * @param name
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement LoginData (Connection connection, String name) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT name, password, email, superuser FROM dbo.LoginData WHERE (name = ?)");
+		preparedstmt.setString (1, name);
+		
+		return preparedstmt;
+	}
+
+	/**
+	 * @param name in lower cases
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement LoginDataLowerCase (Connection connection, String name) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT LOWER(name), password, email, superuser FROM dbo.LoginData WHERE (name = ?)");
+		preparedstmt.setString (1, name.toLowerCase());
+		
+		return preparedstmt;
+	}
+
+	
 	
 }

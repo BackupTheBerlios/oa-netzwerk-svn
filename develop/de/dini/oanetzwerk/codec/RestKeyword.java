@@ -13,5 +13,6 @@ public enum RestKeyword {
 	FullTextLinks,
 	ObjectServiceStatus,
 	ServiceNotifier,
+	LoginData,
 	UNKNOWN
 }

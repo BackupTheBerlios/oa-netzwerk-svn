@@ -88,4 +88,25 @@ public class UpdateInDB {
 		
 		return preparedstmt;
 	}
+	
+	
+	public static PreparedStatement LoginData (Connection connection,
+			String name, String password, String email) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Updating PrecleanedData: UPDATE dbo.LoginData SET password = " + password + 
+					" WHERE name = " + name + " AND email = " + email);
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.LoginData SET password = ? WHERE name = ? AND email = ?");
+
+		preparedstmt.setString (1, password);
+		preparedstmt.setString (2, name);
+		preparedstmt.setString (3, email);
+		
+		return preparedstmt;
+	}
+	
+	
 }

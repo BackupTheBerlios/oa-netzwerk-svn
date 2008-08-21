@@ -377,5 +377,11 @@ public class DeleteFromDB {
 		return preparedstmt;
 	}
 
-	
+	public static PreparedStatement LoginData (Connection connection, String name) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.LoginData WHERE name = ?");
+		preparedstmt.setString (1, name);
+		
+		return preparedstmt;
+	}	
 }

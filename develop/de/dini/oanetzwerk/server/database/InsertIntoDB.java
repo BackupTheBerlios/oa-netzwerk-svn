@@ -623,7 +623,31 @@ public class InsertIntoDB {
 		return preparedstmt;
 	}
 
-	
+
+	/**
+	 * @param name
+	 * @param password
+	 * @param email
+	 * @param superuser
+	 * @return
+	 * @throws SQLException 
+	 */	
+	public static PreparedStatement LoginData (Connection connection, String name, String password, 
+			String email) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert LoginData: INSERT INTO dbo.LoginData (name, password, email) VALUES  " +
+					"(" + name + ", " + password + ", " + email + ")");
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.LoginData (name, password, email) VALUES (?, ?, ?)");
+		preparedstmt.setString(1, name);
+		preparedstmt.setString(2, password);
+		preparedstmt.setString(3, email);
+		
+		return preparedstmt;
+	}
 
 
 }

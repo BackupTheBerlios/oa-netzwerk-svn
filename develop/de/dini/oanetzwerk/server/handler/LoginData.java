@@ -4,7 +4,6 @@
 
 package de.dini.oanetzwerk.server.handler;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Iterator;
 
@@ -21,15 +20,15 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  *
  */
 
-public class ServiceNotifier extends 
+public class LoginData extends 
 AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	static Logger logger = Logger.getLogger (ServiceNotifier.class);
+	static Logger logger = Logger.getLogger (LoginData.class);
 	
 	
-	public ServiceNotifier ( ) {
+	public LoginData ( ) {
 		
-		super (ServiceNotifier.class.getName ( ), RestKeyword.ServiceNotifier);
+		super (LoginData.class.getName ( ), RestKeyword.LoginData);
 	}	
 
 	/**
@@ -43,43 +42,20 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		// no parameters -- return ERROR
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+			throw new NotEnoughParametersException(
+					"This method needs at least 2 parameters: the keyword and the string containing the name");
 
 		// specific service_id -- return notifier status of that service
-		try {
-			BigDecimal service_id = null;		
-			service_id = new BigDecimal (path [0]);
+		String name = null;
+		name = new String(path[0]);
+		return RestXmlCodec.encodeRestMessage(getRestMessage(name));
 			
-			if (service_id.intValue() < 0) {
-				
-				logger.error (path [0] + " is NOT a valid number for this parameter!");
-				
-				this.rms = new RestMessage (RestKeyword.ServiceNotifier);
-				this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
-				this.rms.setStatusDescription (path [0] + " is NOT a valid number for this parameter!");
-				
-				return RestXmlCodec.encodeRestMessage (this.rms);				
-				
-			}
-			return RestXmlCodec.encodeRestMessage (getRestMessage(service_id));
-			
-		} catch (NumberFormatException ex) {
-			
-			logger.error (path [0] + " is NOT a number!");
-			
-			this.rms = new RestMessage (RestKeyword.ServiceNotifier);
-			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
-			this.rms.setStatusDescription (path [0] + " is NOT a number!");
-			
-			return RestXmlCodec.encodeRestMessage (this.rms);
-		}
-		
 	}
 
 	
-	protected RestMessage getRestMessage(BigDecimal service_id) {
+	protected RestMessage getRestMessage(String name) {
 		
-		this.rms = new RestMessage (RestKeyword.ServiceNotifier);
+		this.rms = new RestMessage (RestKeyword.LoginData);
 		RestEntrySet entrySet = new RestEntrySet ( );
 
 		DBAccessNG dbng = new DBAccessNG ( );
@@ -89,7 +65,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			// fetch and execute specific statement 
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );						
-			stmtconn.loadStatement (SelectFromDB.ServiceNotify(stmtconn.connection, service_id));	
+			stmtconn.loadStatement (SelectFromDB.LoginData(stmtconn.connection, name));	
 			this.result = stmtconn.execute ( );
 			
 			// log warnings
@@ -102,10 +78,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			// extract oids from db response
 			while(this.result.getResultSet ( ).next ( )) {
 				entrySet = new RestEntrySet();
-				entrySet.addEntry ("service_id", Integer.toString (this.result.getResultSet ( ).getInt ("service_id")));	
-				entrySet.addEntry ("inserttime", (this.result.getResultSet ( ).getTimestamp("inserttime")).toString());
-//				entrySet.addEntry ("finishtime", (this.result.getResultSet ( ).getTimestamp("finishtime")).toString());
-				entrySet.addEntry ("urgent", Boolean.toString (this.result.getResultSet ( ).getBoolean("urgent")));
+				entrySet.addEntry("name", this.result.getResultSet().getString("password"));
+				entrySet.addEntry("password", this.result.getResultSet().getString("password"));
+				entrySet.addEntry("email", this.result.getResultSet().getString("email"));
+				entrySet.addEntry("superuser", Boolean.toString(this.result.getResultSet().getBoolean("superuser")));
+
 				this.rms.addEntrySet (entrySet);				
 			} 
 			this.rms.setStatus (RestStatusEnum.OK);
@@ -113,23 +90,23 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			// error if no service_ids at all
 			if(entrySet.getEntryHashMap().isEmpty()) {				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("No matching service_id found");
+					logger.debug ("No matching name found");
 				
-				entrySet.addEntry ("service_id", null);
+				entrySet.addEntry ("name", null);
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching service_id found");
 			}
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get ServiceNotifier: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get LoginData: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ServiceNotifier: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get LoginData: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
@@ -169,7 +146,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException {
 
-		this.rms = new RestMessage (RestKeyword.ServiceNotifier);
+		this.rms = new RestMessage (RestKeyword.LoginData);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
@@ -181,9 +158,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String putKeyWord (String [ ] path, String data) throws MethodNotImplementedException {
 
-		BigDecimal service_id = null;
-		String inserttime = null;
-		boolean urgent = false;
+		String name = null;
+		String email = null;
+		String password = null;
+		@SuppressWarnings("unused")
+		boolean superuser = false;
 		
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
@@ -194,39 +173,44 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		try {
 			
 			while (it.hasNext ( )) {
-				
 				key = it.next ( );
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("key = " + key);
 				
-				if (key.equalsIgnoreCase ("service_id"))
-					service_id = new BigDecimal (res.getValue (key));
-				
-				else if (key.equalsIgnoreCase ("inserttime"))
-					inserttime = new String (res.getValue (key));
-				else if (key.equalsIgnoreCase ("urgent")) {
+				if (key.equalsIgnoreCase ("name"))
+					name = new String (res.getValue (key));
+				else if (key.equalsIgnoreCase ("email"))
+					email = new String (res.getValue (key));
+				else if (key.equalsIgnoreCase ("password"))
+					password = new String (res.getValue (key));
+				else if (key.equalsIgnoreCase ("superuser")) {
 					String temp = new String (res.getValue (key));
 					if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("0"))
-							urgent = false;
+							superuser = false;
 					if (temp.equalsIgnoreCase("true") || temp.equalsIgnoreCase("1"))
-						urgent = true;
+						superuser = true;
 				}
-				else continue;
+				else {
+					// andere Keys werden nicht erwartet
+					// soll hier ein Eintrag im Logfile auftauchen
+					
+					continue;
+				}
 			}
 			
 		} catch (NumberFormatException ex) {
 			
 			logger.error (res.getValue (key) + " is NOT a number!");
 			
-			this.rms = new RestMessage (RestKeyword.ServiceNotifier);
+			this.rms = new RestMessage (RestKeyword.LoginData);
 			this.rms.setStatusDescription (res.getValue (key) + " is NOT a number!");
 			
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
 		
-		this.rms = new RestMessage (RestKeyword.ServiceNotifier);
+		this.rms = new RestMessage (RestKeyword.LoginData);
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		MultipleStatementConnection stmtconn = null;
@@ -234,33 +218,58 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		try {
 			
-			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );			
 			
-			stmtconn.loadStatement (InsertIntoDB.ServiceNotify(stmtconn.connection, service_id, inserttime, urgent));
-			
+			// 1. Prüfen, ob gewählter Nutzername in anderer Schreibweise schon im System vorhanden ist
+			stmtconn.loadStatement (SelectFromDB.LoginDataLowerCase(stmtconn.connection, name));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
-			
-			stmtconn.commit ( );
-			stmtconn.loadStatement (SelectFromDB.ServiceNotify(stmtconn.connection, service_id));
-			
-			this.result = stmtconn.execute ( );
-			
-			if (this.result.getResultSet ( ).next ( )) {
+			if (this.result.getResultSet().next()) {
+				// Name schon vorhanden, muss mit Fehler reagiert werden
+				this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+				this.rms.setStatusDescription ("UserName not allowed or already exists.");
 
-				res.addEntry ("service_id", this.result.getResultSet ( ).getBigDecimal ("service_id").toPlainString ( ));
-				stmtconn.commit ( );
-				
-				this.rms.setStatus (RestStatusEnum.OK);
-				
 			} else {
-				
-				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
-				this.rms.setStatusDescription ("No matching ServiceNotify Entry found");
+			
+				// 2. Speichern der neuen Nutzerdaten
+				stmtconn.loadStatement(InsertIntoDB.LoginData(
+						stmtconn.connection, name, password, email));
+				this.result = stmtconn.execute();
+
+				if (this.result.getUpdateCount() < 1) {
+
+					// warn, error, rollback, nothing????
+				}
+				stmtconn.commit();
+
+				// 3. Prüfen, ob korrekt gespeichert wurde
+				stmtconn.loadStatement(SelectFromDB.LoginData(
+						stmtconn.connection, name));
+
+				this.result = stmtconn.execute();
+
+				if (this.result.getResultSet().next()) {
+
+					res.addEntry("name", this.result.getResultSet().getString(
+							"password"));
+					res.addEntry("password", this.result.getResultSet()
+							.getString("password"));
+					res.addEntry("email", this.result.getResultSet().getString(
+							"email"));
+					res
+							.addEntry("superuser", new Boolean(this.result
+									.getResultSet().getBoolean("superuser"))
+									.toString());
+					stmtconn.commit();
+
+					this.rms.setStatus(RestStatusEnum.OK);
+
+				} else {
+
+					this.rms.setStatus(RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+					this.rms
+							.setStatusDescription("No matching LoginData Entry found");
+				}
 			}
 			
 		} catch (SQLException ex) {
@@ -315,24 +324,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the service ID");
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the name");
 		
-		BigDecimal service_id;
-		
-		try {
-			
-			service_id = new BigDecimal (path [0]);
-			
-		} catch (NumberFormatException ex) {
-			
-			logger.error (path [0] + " is NOT a number!");
-			
-			this.rms = new RestMessage (RestKeyword.ServiceNotifier);
-			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
-			this.rms.setStatusDescription (path [0] + " is NOT a number!");
-			
-			return RestXmlCodec.encodeRestMessage (this.rms);
-		}
+		String name = new String (path[0]);
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		MultipleStatementConnection stmtconn = null;
@@ -343,25 +337,25 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDB.ServiceNotify(stmtconn.connection, service_id));
+			stmtconn.loadStatement (DeleteFromDB.LoginData(stmtconn.connection, name));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				stmtconn.rollback ( );
-				throw new SQLException ("ServiceNotify entries could not be deleted");
+				throw new SQLException ("LoginData entries could not be deleted");
 			} else {
 				stmtconn.commit ( );
 			}
 			
 			RestEntrySet res = new RestEntrySet ( );
 			
-			res.addEntry ("service_id", service_id.toPlainString ( ));
+			res.addEntry ("name", name);
 			
 			this.rms.addEntrySet (res);
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Delete ServiceNotifier: " + ex.getLocalizedMessage ( ), ex);
+			logger.error ("An error occured while processing Delete LoginData: " + ex.getLocalizedMessage ( ), ex);
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
