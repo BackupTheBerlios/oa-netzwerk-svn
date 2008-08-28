@@ -75,10 +75,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				}
 			}
 			
-			// extract oids from db response
+			// extract data from db response
 			while(this.result.getResultSet ( ).next ( )) {
 				entrySet = new RestEntrySet();
-				entrySet.addEntry("name", this.result.getResultSet().getString("password"));
+				entrySet.addEntry("name", this.result.getResultSet().getString("name"));
 				entrySet.addEntry("password", this.result.getResultSet().getString("password"));
 				entrySet.addEntry("email", this.result.getResultSet().getString("email"));
 				entrySet.addEntry("superuser", Boolean.toString(this.result.getResultSet().getBoolean("superuser")));
@@ -362,7 +362,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Delete ServiceNotifier: " + ex.getLocalizedMessage ( ), ex);
+			logger.error ("An error occured while processing Delete LoginData: " + ex.getLocalizedMessage ( ), ex);
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));

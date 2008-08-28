@@ -23,6 +23,7 @@ public class ReadUTF {
 		pstmt.setString(1, "Каталог");
 		
 		stmt.loadStatement(pstmt);
+		@SuppressWarnings("unused")
 		QueryResult result = stmt.execute();
 		
 		
