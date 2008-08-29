@@ -10,6 +10,7 @@ CREATE TABLE dbo.ServiceNotify (
 	 , inserttime DATETIME NOT NULL
 	 , finishtime DATETIME NULL
      , urgent BIT NOT NULL
+	 , complete BIT DEFAULT 0
      , PRIMARY KEY (service_id, inserttime)
 );
 

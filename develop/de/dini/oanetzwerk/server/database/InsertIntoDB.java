@@ -607,15 +607,15 @@ public class InsertIntoDB {
 	 * @throws SQLException 
 	 */	
 	public static PreparedStatement ServiceNotify (Connection connection, BigDecimal service_id, String inserttime, 
-			boolean urgent	) throws SQLException {
+			boolean urgent, boolean complete	) throws SQLException {
 		
 		if (logger.isDebugEnabled ( )) {
 			
-			logger.debug ("Insert ServiceNotify: INSERT INTO dbo.ServiceNotify (service_id, inserttime, urgent) VALUES " +
-					"(" + service_id + ", " + inserttime + ", " + urgent + ")");
+			logger.debug ("Insert ServiceNotify: INSERT INTO dbo.ServiceNotify (service_id, inserttime, urgent, complete) VALUES " +
+					"(" + service_id + ", " + inserttime + ", " + urgent + ", " + complete + ")");
 		}
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.ServiceNotify (service_id, inserttime, urgent) VALUES (?, ?, ?)");
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.ServiceNotify (service_id, inserttime, urgent, complete) VALUES (?, ?, ?, ?)");
 		preparedstmt.setBigDecimal(1, service_id);
 		preparedstmt.setString(2, inserttime);
 		preparedstmt.setBoolean(3, urgent);

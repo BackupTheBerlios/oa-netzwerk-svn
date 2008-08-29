@@ -106,6 +106,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				entrySet.addEntry ("inserttime", (this.result.getResultSet ( ).getTimestamp("inserttime")).toString());
 //				entrySet.addEntry ("finishtime", (this.result.getResultSet ( ).getTimestamp("finishtime")).toString());
 				entrySet.addEntry ("urgent", Boolean.toString (this.result.getResultSet ( ).getBoolean("urgent")));
+				entrySet.addEntry ("complete", Boolean.toString (this.result.getResultSet ( ).getBoolean("complete")));
 				this.rms.addEntrySet (entrySet);				
 			} 
 			this.rms.setStatus (RestStatusEnum.OK);
@@ -184,6 +185,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		BigDecimal service_id = null;
 		String inserttime = null;
 		boolean urgent = false;
+		boolean complete = false;
 		
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
@@ -212,6 +214,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					if (temp.equalsIgnoreCase("true") || temp.equalsIgnoreCase("1"))
 						urgent = true;
 				}
+				else if (key.equalsIgnoreCase ("complete")) {
+					String temp = new String (res.getValue (key));
+					if (temp.equalsIgnoreCase("false") || temp.equalsIgnoreCase("0"))
+							complete = false;
+					if (temp.equalsIgnoreCase("true") || temp.equalsIgnoreCase("1"))
+						complete = true;
+				}
 				else continue;
 			}
 			
@@ -236,7 +245,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (InsertIntoDB.ServiceNotify(stmtconn.connection, service_id, inserttime, urgent));
+			stmtconn.loadStatement (InsertIntoDB.ServiceNotify(stmtconn.connection, service_id, inserttime, urgent, complete));
 			
 			this.result = stmtconn.execute ( );
 			
