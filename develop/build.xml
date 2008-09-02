@@ -3,13 +3,14 @@
 	<property name="src" value="."/>
 	<property name="ress" value="resources"/>
 	<property name="build" value="build"/>
-        <property name="build.server" value="build/server"/>
-        <property name="build.harvester" value="build/harvester"/>
-        <property name="build.inspector" value="build/inspector"/>
+    <property name="build.server" value="build/server"/>
+    <property name="build.harvester" value="build/harvester"/>
+    <property name="build.inspector" value="build/inspector"/>
 	<property name="build.aggregator" value="build/aggregator"/>
 	<property name="build.markereraser" value="build/markereraser"/>
+	<property name="build.adminservlet" value="build/adminservlet"/>
 	<property name="lib" value="lib"/>
-        <property name="archive" value="arch"/>
+    <property name="archive" value="arch"/>
 	<property name="path" value="/restserver"/>
 	<property name="url" value="http://oanet.cms.hu-berlin.de/manager"/>
 	<property name="username" value=""/>
@@ -20,7 +21,18 @@
 	<taskdef name="start" classname="org.apache.catalina.ant.StartTask"/>
 	<taskdef name="stop" classname="org.apache.catalina.ant.StopTask"/>
 	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"/>
-
+	
+	<path id="classpath.server">
+		<pathelement location="${lib}/log4j-1.2.15.jar"/>
+		<pathelement location="${lib}/jconn3.jar"/>
+		<pathelement location="${lib}/commons-codec-1.3.jar"/>
+		<pathelement location="${lib}/jdom.jar"/>
+		<pathelement location="${lib}/commons-httpclient-3.1.jar"/>
+		<pathelement location="${lib}/servlet-api.jar"/>
+		<pathelement location="${lib}/commons-lang-2.3.jar"/>
+		<pathelement location="${lib}/commons-cli-1.1.jar"/>
+	</path>
+	
 	<path id="classpath.harvester">
 		<pathelement location="${lib}/commons-cli-1.1.jar"/>
 		<pathelement location="${lib}/commons-codec-1.3.jar"/>
@@ -48,6 +60,13 @@
 		<pathelement location="${lib}/jdom.jar"/>
 	</path>
 
+	<path id="classpath.adminservlet">
+		<pathelement location="${lib}/servlet-api.jar"/>
+		<pathelement location="${lib}/myfaces-api-1.2.3.jar"/>
+		<pathelement location="${lib}/log4j-1.2.15.jar"/>
+		<pathelement location="${lib}/catalina.jar"/>
+	</path>
+
 	<target name="init">
 		<mkdir dir="${build}"/>
 		<mkdir dir="${build.server}"/>
@@ -55,6 +74,7 @@
 		<mkdir dir="${build.aggregator}"/>
 		<mkdir dir="${build.inspector}"/>
 		<mkdir dir="${build.markereraser}"/>
+		<mkdir dir="${build.adminservlet}"/>
 	</target>
 	
 	<target name="initArch">
@@ -170,7 +190,7 @@
 	</target>
 	
 	<target name="jarAggregator" depends="compileAggregator">
-		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar ."/>
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/jdom.jar lib/commons-httpclient-3.1.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar lib/commons-lang-2.3.jar ."/>
 		<jar jarfile="Aggregator.jar">
 			<fileset dir="${build.aggregator}"/>
 			<manifest>
@@ -182,8 +202,22 @@
 
 	<target name="distAggregator" depends="jarAggregator">
 		<tar destfile="Aggregator.tar">
-			<tarfileset dir="." prefix="aggregator" includes="lib/**">
+			<tarfileset dir="." prefix="aggregator">
 				<include name="Aggregator.jar"/>
+			</tarfileset>
+			<tarfileset dir="${lib}" prefix="aggregator/lib">
+				<include name="commons-cli-1.1.jar"/>
+				<include name="log4j-1.2.15.jar"/>
+				<include name="commons-httpclient-3.1.jar"/>
+				<include name="jdom.jar"/>
+				<include name="commons-logging-1.1.jar"/>
+				<include name="commons-lang-2.3.jar"/>
+				<include name="commons-codec-1.3.jar"/>
+			</tarfileset>
+			<tarfileset dir="${ress}" prefix="aggregator">
+				<include name="log4j.xml"/>
+				<include name="aggregatorprop.xml"/>
+				<include name="restclientprop.xml"/>
 			</tarfileset>
 		</tar>
 	</target>
@@ -233,9 +267,15 @@
 	</target>
 
 	<target name="warServer" depends="compileServer">
-		<war destfile="${build}/restserver-testing.war" webxml="conf/web.xml">
+		<war destfile="${build}/restserver.war" webxml="conf/web.xml">
 		<!--war destfile="${build}/restserver.war"-->
-			<lib dir="${lib}"/>
+			<lib dir="${lib}">
+				<include name="commons-cli-1.1.jar"/>
+				<include name="commons-httpclient-3.1.jar"/>
+				<include name="jdom.jar"/>
+				<include name="commons-codec-1.3.jar"/>
+				<include name="commons-lang-2.3.jar"/>
+			</lib>
 			<metainf dir="conf">
 				<include name="context.xml"/>
 			</metainf>
@@ -258,7 +298,63 @@
   		    <zipfileset dir="img_inspector/" prefix="img"/>
 		</war>
 	</target>
+
+	<target name="compileAdminServlet" depends="init">
+		<javac destdir="${build.adminservlet}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.adminservlet"/>
+			<include name="**/admin/**"/>
+			<!--include name="**/codec/*.java"/>
+			<include name="**/RestClient.java"/>
+			<include name="**/HelperMethods.java"/-->
+			<exclude name="**/server/**"/>
+			<exclude name="**/Test*"/>
+		</javac>
+	</target>
 	
+	<target name="jarRealm" depends="compileAdminServlet">
+		<property name="cp" value="catalina.jar log4j-1.2.15.jar" />
+		<jar jarfile="${lib}/oadminrealm.jar">
+			<fileset dir="${build.adminservlet}">
+				<include name="**/OAdmiNRealm*"/>
+			</fileset>
+			<manifest>
+				<attribute name="Class-Path" value="${cp}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="warAdminServlet" depends="jarRealm">
+		<war destfile="${build}/adminservlet.war" webxml="myfaces-root/admin-gui/WEB-INF/web.xml">
+			<lib dir="${lib}">
+				<include name="myfaces-api-1.2.3.jar"/>
+				<include name="myfaces-impl-1.2.3.jar"/>
+				<include name="commons-beanutils-1.7.0.jar"/>
+				<include name="commons-codec-1.3.jar"/>
+				<include name="commons-collections-3.2.jar"/>
+				<include name="commons-digester-1.8.jar"/>
+				<include name="commons-discovery-0.4.jar"/>
+				<include name="commons-logging-1.1.jar"/>
+				<include name="jstl.jar"/>
+				<include name="standard.jar"/>
+				<include name="log4j-1.2.15.jar"/>
+				<include name="oadminrealm.jar"/>
+			</lib>
+			<metainf dir="myfaces-root/admin-gui/META-INF/">
+				<include name="context.xml"/>
+			</metainf>
+			<webinf dir="myfaces-root/admin-gui/WEB-INF/">
+				<include name="faces-config.xml"/>
+			</webinf>
+			<classes dir="${build.adminservlet}"/>
+			<zipfileset dir="myfaces-root/admin-gui/">
+				<include name="*.jsp"/>
+			</zipfileset>
+			<zipfileset dir="myfaces-root/admin-gui/messages/" prefix="WEB-INF/classes/admin/"/>
+			<!--zipfileset dir="css/" prefix="css/"/-->
+			<zipfileset dir="myfaces-root/admin-gui/pages/" prefix="pages/"/>
+		</war>
+	</target>
+
 	<target name="deployServer" depends="warServer" description="Install restserver">
 		<deploy url="${url}" username="${username}" password="${password}" path="${path}" war="file:${build}/restserver.war" update="true"/>
 	</target>
@@ -277,5 +373,6 @@
 		<delete dir="${build.aggregator}"/>
 		<delete dir="${build.server}"/>
 		<delete dir="${build.markereraser}"/>
+		<delete dir="${build.adminservlet}"/>
 	</target>
 </project>
