@@ -86,7 +86,6 @@ public class RestClient {
 	
 	private RestClient (String url, String path, String user, String pwd) {
 		
-//		DOMConfigurator.configure ("log4j.xml");
 		this.url = filterurl (url);
 		this.nossl = true;
 //		this.nossl = setSSL (url);
@@ -174,9 +173,8 @@ public class RestClient {
 				logger.debug ("noSSL");
 			
 			return true;
-		}
-		
-		else {
+			
+		} else {
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("SSL");
