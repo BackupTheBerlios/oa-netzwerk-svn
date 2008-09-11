@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
 
-<f:loadBundle basename="admin.datas" var="msg"/>
+<f:loadBundle basename="admin.manager" var="msg"/>
 
 <html>
 	<f:view>
@@ -17,3 +17,4 @@
 		</body>
 	</f:view>
 </html>
+

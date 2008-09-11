@@ -29,7 +29,6 @@ public class MainView implements Serializable {
 		
 		logger.setLevel (Level.DEBUG);
 		logger.addAppender (new FileAppender (new PatternLayout ("%d{ISO8601} %-5p [%t] %c: %m%n"), "/usr/local/www/logs/tomcat/adminservlet.log"));
-		logger.info ("MainView created");
 	}
 	
 	public String jump2Repos ( ) {
@@ -65,6 +64,11 @@ public class MainView implements Serializable {
 	public String jump2Eraser ( ) {
 		
 		return "go2markeras";
+	}
+	
+	public String jump2Manager ( ) {
+		
+		return "go2manag";
 	}
 	
 	public String jump2Logout ( ) {

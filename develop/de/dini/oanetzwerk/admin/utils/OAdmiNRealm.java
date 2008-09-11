@@ -8,8 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
@@ -44,7 +42,7 @@ public class OAdmiNRealm extends RealmBase {
 	
 	private static Logger logger = Logger.getLogger (OAdmiNRealm.class);
 	private String pathname = "conf/db-users.conf";
-	private static StringManager sm = StringManager.getManager(Constants.Package);
+	private static StringManager sm = StringManager.getManager (Constants.Package);
 	private Properties props = new Properties ( );
 	
 	/**
@@ -130,16 +128,24 @@ public class OAdmiNRealm extends RealmBase {
 			return null;
 		}
 		
+		logger.debug ("user: " + this.props.getProperty ("username"));
+		logger.debug ("pw: " + this.props.getProperty ("password"));
+		logger.debug ("truststore: " + System.getProperty ("catalina.base") + this.props.getProperty ("trustStore"));
+		System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
+		System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
 		newclient.getParams ( ).setAuthenticationPreemptive (true);
-		Credentials defaultcreds = new UsernamePasswordCredentials (this.props.getProperty ("user"), this.props.getProperty ("password"));
+		Credentials defaultcreds = new UsernamePasswordCredentials (this.props.getProperty ("username"), this.props.getProperty ("password"));
 		newclient.getState ( ).setCredentials (new AuthScope (this.props.getProperty ("url"), new Integer (this.props.getProperty ("port")), AuthScope.ANY_REALM), defaultcreds);
 		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
-		GetMethod method = new GetMethod ("https://" + this.props.getProperty ("url") + ":" + this.props.getProperty ("port") + "/" + this.props.getProperty ("servletPath") + "/LoginData/" + username);
+		String url = "https://" + this.props.getProperty ("url") + ":" + this.props.getProperty ("port") + "/" + this.props.getProperty ("servletPath") + "/LoginData/" + username;
+		logger.debug ("URL: " + url);
+		GetMethod method = new GetMethod (url);
 		int statusCode = 403;
 		
 		try {
 			
 			statusCode = newclient.executeMethod (method);
+			logger.debug ("StatusCode: " + statusCode);
 			
 		} catch (HttpException ex) {
 			
@@ -175,6 +181,9 @@ public class OAdmiNRealm extends RealmBase {
 					while (it.hasNext ( )) {
 						
 						key = it.next ( );
+						logger.debug ("Key: " + key);
+						logger.debug ("Value: " + res.getValue (key));
+						
 						
 						if (key.equalsIgnoreCase ("name"))
 							userData [0] = res.getValue (key);
@@ -191,6 +200,8 @@ public class OAdmiNRealm extends RealmBase {
 				
 					rms = null;
 					res = null;
+					
+					logger.debug (userData [0] + " : " + userData [1] + " : " + userData [2] + " : " + userData [3]);
 					
 					return userData;
 				}
@@ -237,7 +248,8 @@ public class OAdmiNRealm extends RealmBase {
 			return null;
 		}
 		
-		boolean validated = this.checkPassword (credentials, restcredentials);
+//		boolean validated = this.checkPassword (credentials, restcredentials);
+		boolean validated = this.checkPassword (credentials, getPassword (username));
 		
 		if (validated)
 			return new GenericPrincipal (this, username, credentials, this.getRoles (username));
@@ -277,46 +289,51 @@ public class OAdmiNRealm extends RealmBase {
 	 * @return
 	 */
 	
-	private final boolean checkPassword (String credentials, byte [ ] restcredentials) {
+	private final boolean checkPassword (String credentials, String restcredentials) {
 		
-		MessageDigest sha = null;
-		byte credByte [ ] = null;
-		String encoding = this.getDigestEncoding ( );
+//		MessageDigest sha = null;
+//		byte credByte [ ] = null;
+//		String encoding = this.getDigestEncoding ( );
 		
-		try {
-			
-			sha = MessageDigest.getInstance (this.getDigest ( ));
-			
-			if (encoding != null)
-				credByte = credentials.getBytes (encoding);
-			
-			else
-				credByte = credentials.getBytes ( );
-			
-		} catch (NoSuchAlgorithmException ex) {
-			
-			logger.fatal (ex.getLocalizedMessage ( ), ex);
+//		try {
+//			
+//			sha = MessageDigest.getInstance (this.getDigest ( ));
+//			
+//			if (encoding != null)
+//				credByte = credentials.getBytes (encoding);
+//			
+//			else
+//				credByte = credentials.getBytes ( );
+//			
+//		} catch (NoSuchAlgorithmException ex) {
+//			
+//			logger.fatal (ex.getLocalizedMessage ( ), ex);
+//			return false;
+//			
+//		} catch (UnsupportedEncodingException ex) {
+//			
+//			logger.fatal (ex.getLocalizedMessage ( ), ex);
+//			return false;
+//		}
+		
+//		byte shacred [ ] = sha.digest (credByte);
+		logger.debug ("entered pw: " + credentials);
+		logger.debug ("restpw: " + restcredentials);
+//		credByte = "There is no password!!!".getBytes ( );
+		
+//		if (credByte.length != restcredentials.length)
+		if (credentials.length ( ) != restcredentials.length ( ))
 			return false;
-			
-		} catch (UnsupportedEncodingException ex) {
-			
-			logger.fatal (ex.getLocalizedMessage ( ), ex);
+		
+		if (!credentials.equalsIgnoreCase (restcredentials))
 			return false;
-		}
+//		for (int i = 0; i < restcredentials.length; i++) {
+//			
+//			if (restcredentials [i] != credByte [i])
+//				return false;
+//		}
 		
-		byte shacred [ ] = sha.digest (credByte);
-		credByte = "There is no password!!!".getBytes ( );
-		
-		if (shacred.length != restcredentials.length)
-			return false;
-		
-		for (int i = 0; i < restcredentials.length; i++) {
-			
-			if (restcredentials [i] != credByte [i])
-				return false;
-		}
-		
-		shacred = "There is no password!!!".getBytes ( );
+//		credByte = "There is no password!!!".getBytes ( );
 		
 		return true;
 	}

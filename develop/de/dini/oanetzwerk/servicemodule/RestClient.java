@@ -4,6 +4,7 @@
 
 package de.dini.oanetzwerk.servicemodule;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -39,7 +40,7 @@ public class RestClient {
 	private int port;
 	private boolean nossl;
 	private String url = "";
-	private final String path;
+	private String querryPath;
 	private final String username;
 	private final String password;
 	private Properties props = new Properties ( );
@@ -89,7 +90,7 @@ public class RestClient {
 		this.url = filterurl (url);
 		this.nossl = true;
 //		this.nossl = setSSL (url);
-		this.path = filterpath (path);
+		this.querryPath = filterpath (path);
 		this.username = user;
 		this.password = pwd;
 		
@@ -138,6 +139,60 @@ public class RestClient {
 				this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
 				this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
 			}
+		}
+	}
+	
+	private RestClient (File propFile, String restQueryPath, String user, String pwd) {
+		
+		this.querryPath = filterpath (restQueryPath);
+		this.username = user;
+		this.password = pwd;
+		
+		try {
+			
+			this.props = HelperMethods.loadPropertiesFromFile (propFile.getAbsolutePath ( ));
+			
+		} catch (InvalidPropertiesFormatException ex) {
+			
+			logger.warn (ex.getLocalizedMessage ( ), ex);
+			logger.warn ("SSL-Conections might be impossible");
+			
+		} catch (FileNotFoundException ex) {
+			
+			logger.warn (ex.getLocalizedMessage ( ), ex);
+			logger.warn ("SSL-Conections might be impossible");
+			
+		} catch (IOException ex) {
+			
+			logger.warn (ex.getLocalizedMessage ( ), ex);
+			logger.warn ("SSL-Conections might be impossible");
+		}
+		
+		if (this.props == null) {
+			
+			this.port = 443;
+			this.url = "oanet.cms.hu-berlin.de";
+			this.servletPath = "restserver/server";
+			logger.warn ("No Property File found, trying default settings!");
+			
+		} else {
+			
+			this.nossl = setSSL (url);
+		}
+		
+		if (!this.nossl && this.props != null) {
+			
+			this.url = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
+			this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+			this.port = new Integer (this.props.getProperty ("SSLPort", "443"));
+			System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
+			System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
+			
+		} else if (this.props != null) {
+			
+			this.url = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
+			this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+			this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
 		}
 	}
 	
@@ -225,14 +280,36 @@ public class RestClient {
 	 * Creates a {@link RestClient} and calls the {@link RestClient} Constructor. 
 	 * @see RestClient#RestClient(String url, String path, String user, String pwd)
 	 * 
-	 * @param incomming_url the name of the REST server: i.e. foo.bar, localhost, 0.0.0.0.
 	 * @param path the path for the REST query
+	 * @param userName
+	 * @param passWord
 	 * @return an instance of RestClient
 	 */
 	
 	public static RestClient createRestClient (String path, String userName, String passWord) {
 		
 		RestClient restclient = new RestClient (path, userName, passWord);
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("new restclient created");
+		
+		return restclient;
+	}
+	
+	/**
+	 * Creates a {@link RestClient} and calls the {@link RestClient} Constructor. 
+	 * @see RestClient#RestClient(String url, String path, String user, String pwd)
+	 * 
+	 * @param restclientPropFile the Propertyfile for the restclient
+	 * @param restQueryPath the path for the REST query
+	 * @param userName
+	 * @param passWord
+	 * @return
+	 */
+	
+	public static RestClient createRestClient (File restclientPropFile, String restQueryPath, String userName, String passWord) {
+		
+		RestClient restclient = new RestClient (restclientPropFile, restQueryPath, userName, passWord);
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("new restclient created");
@@ -346,13 +423,13 @@ public class RestClient {
 			
 			newclient.getState ( ).setCredentials (new AuthScope (this.url, this.port, AuthScope.ANY_REALM), defaultcreds);
 			buffer.append ("http://");
-			buffer.append (this.url).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (path);
+			buffer.append (this.url).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (querryPath);
 			
 		} else {
 			
 			newclient.getState ( ).setCredentials (new AuthScope (this.url, this.port, AuthScope.ANY_REALM), defaultcreds);
 			buffer.append ("https://");
-			buffer.append (this.url).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (path);
+			buffer.append (this.url).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (querryPath);
 		}
 		
 		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");

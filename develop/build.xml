@@ -3,14 +3,16 @@
 	<property name="src" value="."/>
 	<property name="ress" value="resources"/>
 	<property name="build" value="build"/>
-    <property name="build.server" value="build/server"/>
-    <property name="build.harvester" value="build/harvester"/>
-    <property name="build.inspector" value="build/inspector"/>
+	<property name="build.server" value="build/server"/>
+	<property name="build.harvester" value="build/harvester"/>
+	<property name="build.inspector" value="build/inspector"/>
 	<property name="build.aggregator" value="build/aggregator"/>
 	<property name="build.markereraser" value="build/markereraser"/>
 	<property name="build.adminservlet" value="build/adminservlet"/>
+	<property name="build.findnbrowse" value="build/findnbrowse"/>
+	<property name="build.oadminrealm" value="build/oadminrealm"/>
 	<property name="lib" value="lib"/>
-    <property name="archive" value="arch"/>
+	<property name="archive" value="arch"/>
 	<property name="path" value="/restserver"/>
 	<property name="url" value="http://oanet.cms.hu-berlin.de/manager"/>
 	<property name="username" value=""/>
@@ -59,12 +61,30 @@
 		<pathelement location="${lib}/commons-httpclient-3.1.jar"/>
 		<pathelement location="${lib}/jdom.jar"/>
 	</path>
-
+	
 	<path id="classpath.adminservlet">
 		<pathelement location="${lib}/servlet-api.jar"/>
 		<pathelement location="${lib}/myfaces-api-1.2.3.jar"/>
 		<pathelement location="${lib}/log4j-1.2.15.jar"/>
 		<pathelement location="${lib}/catalina.jar"/>
+		<pathelement location="${lib}/commons-httpclient-3.1.jar"/>
+		<pathelement location="${lib}/commons-cli-1.1.jar"/>
+		<pathelement location="${lib}/commons-codec-1.3.jar"/>
+		<pathelement location="${lib}/jdom.jar"/>
+	</path>
+	
+	<path id="classpath.findnbrowse">
+		<pathelement location="${lib}/servlet-api.jar"/>
+		<pathelement location="${lib}/myfaces-api-1.2.3.jar"/>
+		<pathelement location="${lib}/log4j-1.2.15.jar"/>
+	</path>
+
+	<path id="classpath.oadminrealm">
+		<pathelement location="${lib}/catalina.jar"/>
+		<pathelement location="${lib}/log4j-1.2.15.jar"/>
+		<pathelement location="${lib}/commons-httpclient-3.1.jar"/>
+		<pathelement location="${lib}/commons-codec-1.3.jar"/>
+		<pathelement location="${lib}/jdom.jar"/>
 	</path>
 
 	<target name="init">
@@ -75,6 +95,8 @@
 		<mkdir dir="${build.inspector}"/>
 		<mkdir dir="${build.markereraser}"/>
 		<mkdir dir="${build.adminservlet}"/>
+		<mkdir dir="${build.oadminrealm}"/>
+		<mkdir dir="${build.findnbrowse}"/>
 	</target>
 	
 	<target name="initArch">
@@ -303,19 +325,35 @@
 		<javac destdir="${build.adminservlet}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
 			<classpath refid="classpath.adminservlet"/>
 			<include name="**/admin/**"/>
-			<!--include name="**/codec/*.java"/>
+			<include name="**/codec/*.java"/>
 			<include name="**/RestClient.java"/>
-			<include name="**/HelperMethods.java"/-->
+			<include name="**/HelperMethods.java"/>
+			<exclude name="**/technotest*"/>
+			<exclude name="**/OAdmiNRealm.java"/>
 			<exclude name="**/server/**"/>
 			<exclude name="**/Test*"/>
 		</javac>
 	</target>
-	
-	<target name="jarRealm" depends="compileAdminServlet">
-		<property name="cp" value="catalina.jar log4j-1.2.15.jar" />
+
+	<target name="compileRealm" depends="init">
+		<javac destdir="${build.oadminrealm}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.oadminrealm"/>
+			<include name="**/OAdmiNRealm.java"/>
+			<include name="**/codec/*.java"/>
+			<exclude name="**/server/**"/>
+			<exclude name="**/Test*"/>
+			<exclude name="**/technotest/**"/>
+		</javac>
+	</target>
+
+	<target name="jarRealm" depends="compileRealm">
+		<property name="cp" value="catalina.jar log4j-1.2.15.jar commons-httpclient-3.1.jar commons-codec-1.3.jar jdom.jar" />
 		<jar jarfile="${lib}/oadminrealm.jar">
-			<fileset dir="${build.adminservlet}">
+			<fileset dir="${build.oadminrealm}">
 				<include name="**/OAdmiNRealm*"/>
+				<include name="**/codec/**"/>
+				<!--include name="**/RestMessage*"/>
+				<include name="**/RestXmlCodec*"/-->
 			</fileset>
 			<manifest>
 				<attribute name="Class-Path" value="${cp}"/>
@@ -323,7 +361,7 @@
 		</jar>
 	</target>
 
-	<target name="warAdminServlet" depends="jarRealm">
+	<target name="warAdminServlet" depends="compileAdminServlet">
 		<war destfile="${build}/adminservlet.war" webxml="myfaces-root/admin-gui/WEB-INF/web.xml">
 			<lib dir="${lib}">
 				<include name="myfaces-api-1.2.3.jar"/>
@@ -337,21 +375,71 @@
 				<include name="jstl.jar"/>
 				<include name="standard.jar"/>
 				<include name="log4j-1.2.15.jar"/>
-				<include name="oadminrealm.jar"/>
 			</lib>
 			<metainf dir="myfaces-root/admin-gui/META-INF/">
 				<include name="context.xml"/>
 			</metainf>
 			<webinf dir="myfaces-root/admin-gui/WEB-INF/">
 				<include name="faces-config.xml"/>
+				<include name="admingui.xml"/>
+				<include name="restclientprop.xml"/>
 			</webinf>
 			<classes dir="${build.adminservlet}"/>
 			<zipfileset dir="myfaces-root/admin-gui/">
 				<include name="*.jsp"/>
 			</zipfileset>
 			<zipfileset dir="myfaces-root/admin-gui/messages/" prefix="WEB-INF/classes/admin/"/>
-			<!--zipfileset dir="css/" prefix="css/"/-->
+			<zipfileset dir="myfaces-root/admin-gui/css/" prefix="css/"/>
 			<zipfileset dir="myfaces-root/admin-gui/pages/" prefix="pages/"/>
+		</war>
+	</target>
+	
+	<target name="compileFindnBrowse" depends="init">
+		<javac destdir="${build.findnbrowse}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.findnbrowse"/>
+			<include name="**/finddummy/**"/>
+			<include name="**/RedirectionFilter.java"/>
+			<!--include name="**/codec/*.java"/>
+			<include name="**/RestClient.java"/>
+			<include name="**/HelperMethods.java"/-->
+			<exclude name="**/technotest*"/>
+			<exclude name="**/OAdmiNRealm.java"/>
+			<exclude name="**/server/**"/>
+			<exclude name="**/Test*"/>
+		</javac>
+	</target>
+
+	<target name="warFindnBrowse" depends="compileFindnBrowse">
+		<war destfile="${build}/findnbrowse.war" webxml="myfaces-root/find-dummy/WEB-INF/web.xml">
+			<lib dir="${lib}">
+				<include name="myfaces-api-1.2.3.jar"/>
+				<include name="myfaces-impl-1.2.3.jar"/>
+				<include name="commons-beanutils-1.7.0.jar"/>
+				<include name="commons-codec-1.3.jar"/>
+				<include name="commons-collections-3.2.jar"/>
+				<include name="commons-digester-1.8.jar"/>
+				<include name="commons-discovery-0.4.jar"/>
+				<include name="commons-logging-1.1.jar"/>
+				<include name="jstl.jar"/>
+				<include name="standard.jar"/>
+				<include name="log4j-1.2.15.jar"/>
+				<!--include name="oadminrealm.jar"/-->
+			</lib>
+			<!--metainf dir="myfaces-root/admin-gui/META-INF/">
+				<include name="context.xml"/>
+			</metainf-->
+			<webinf dir="myfaces-root/find-dummy/WEB-INF/">
+				<include name="faces-config.xml"/>
+				<!--include name="admingui.xml"/>
+				<include name="restclientprop.xml"/-->
+			</webinf>
+			<classes dir="${build.findnbrowse}"/>
+			<zipfileset dir="myfaces-root/find-dummy/">
+				<include name="*.jsp"/>
+			</zipfileset>
+			<zipfileset dir="myfaces-root/find-dummy/messages/" prefix="WEB-INF/classes/finddummy/"/>
+			<!--zipfileset dir="css/" prefix="css/"/-->
+			<zipfileset dir="myfaces-root/find-dummy/pages/" prefix="pages/"/>
 		</war>
 	</target>
 
@@ -374,5 +462,7 @@
 		<delete dir="${build.server}"/>
 		<delete dir="${build.markereraser}"/>
 		<delete dir="${build.adminservlet}"/>
+		<delete dir="${build.oadminrealm}"/>
+		<delete dir="${build.findnbrowse}"/>
 	</target>
 </project>

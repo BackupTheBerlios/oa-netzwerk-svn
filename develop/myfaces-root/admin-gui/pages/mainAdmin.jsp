@@ -13,7 +13,7 @@
 		<body>
 			<h1 align="center"><h:outputText value="#{msg.mainPageTitle}"/></h1>
 			<div class="nav">
-				<h:form>
+				<h:form styleClass="NAVIGATION">
 					<h:commandLink action="#{mainView.jump2Repos}" value="#{msg.repositories}"/><br/>
 					<h:commandLink action="#{mainView.jump2Proc}" value="#{msg.procs}"/><br/>
 					<h:commandLink action="#{mainView.jump2Serv}" value="#{msg.services}"/><br/>
@@ -30,9 +30,6 @@
 			<h:form>
 				<h:outputText value="#{msg.footer}"/><br/>
 				<h:commandLink action="#{mainView.jump2Logout}" value="#{msg.logout}"/><br/>
-				<!--
-				<a href="logout.jsp">logout</a>
-				 -->
 			</h:form>
 			</div>
 		</body>
