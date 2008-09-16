@@ -11,7 +11,10 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
@@ -30,6 +33,7 @@ public class RepositoryView implements Serializable {
 	
 	private Properties props = null;
 	private static Logger logger = Logger.getLogger (RepositoryView.class);
+	private int detail = 0;
 	
 	/**
 	 * @throws IOException 
@@ -91,6 +95,11 @@ public class RepositoryView implements Serializable {
 	
 	public String showDetails ( ) {
 		
+		FacesContext context = FacesContext.getCurrentInstance(); 
+		Map map = context.getExternalContext().getRequestParameterMap();
+		
+		logger.debug ("detail: " + (String) map.get ("id"));
+		
 		return "";
 	}
 	
@@ -102,5 +111,23 @@ public class RepositoryView implements Serializable {
 	private RestClient prepareRestTransmission (String resource) {
 		
 		return RestClient.createRestClient (new File (System.getProperty ("catalina.base") + this.props.getProperty ("restclientpropfile")), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+	}
+	
+	/**
+	 * @return the detail
+	 */
+	
+	public final int getDetail ( ) {
+		
+		return this.detail;
+	}
+	
+	/**
+	 * @param detail the detail to set
+	 */
+	
+	public final void setDetail (int detail) {
+		
+		this.detail = detail;
 	}
 }

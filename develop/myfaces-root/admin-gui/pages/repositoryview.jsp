@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
+<%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="t" %>
 
 <f:loadBundle basename="admin.repositories" var="msg"/>
 <f:view>
@@ -18,8 +19,8 @@
 						<h:outputText value="#{msg.name}"/>
 					</f:facet>
 					<h:form>
-						<h:inputHidden value="#{row.id}"/>
-						<h:commandLink action="#{repoview.showdetails}" value="#{row.name}"/>
+						<t:saveState id="id" value="#{row.id}"></t:saveState>
+						<h:commandLink action="#{repoView.showDetails}" value="#{row.name}"/>
 					</h:form>
 				</h:column>
 				<h:column>
