@@ -6,6 +6,8 @@ public enum RestKeyword {
 	AllOIDs,
 	RawRecordData,
 	InternalMetadataEntry,
+	CompleteMetadataEntry,
+	HitlistMetadataEntry,
 	Services,
 	ServiceOrder,
 	WorkflowDB,

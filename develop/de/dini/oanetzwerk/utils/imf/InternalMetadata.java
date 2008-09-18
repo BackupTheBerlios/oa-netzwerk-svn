@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.utils.imf;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement( namespace = "http://oanetzwerk.dini.de/" ) 
 public class InternalMetadata {
 
+	BigDecimal oid;
+	
 	List<Title> titleList;
 	int titleCounter = 0;
 
@@ -66,6 +69,8 @@ public class InternalMetadata {
 	}
 	
 	public InternalMetadata() {
+		oid = new BigDecimal(-1);
+		
 		titleList = new LinkedList<Title>();
 		titleCounter = 0;
 		
@@ -334,7 +339,7 @@ public class InternalMetadata {
 		return result;
 	}
 	
-	
+
 	public int addIdentifier(Identifier value) {
 		int result = 0;
 		if (value != null) {
@@ -710,6 +715,9 @@ public class InternalMetadata {
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
+		
+		sb.append("\nOID: " + oid);
+				
 		sb.append("\n-- titles -- counter " +  titleCounter + " :\n");
 		for(Title title : titleList) {
 			sb.append(title+"\n");
@@ -797,6 +805,16 @@ public class InternalMetadata {
 		this.contributorCounter = contributorCounter;
 	}
 
+	public BigDecimal getOid() {
+		return oid;
+	}
+
+	public void setOid(BigDecimal oid) {
+		this.oid = oid;
+	}
+
+	
+	
 }
 
 

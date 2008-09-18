@@ -10,28 +10,30 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
 
-public class InternalMetadataJAXBMarshaller {
+import de.dini.oanetzwerk.server.handler.CompleteMetadataEntry;
 
-	private static Logger logger = Logger.getLogger (InternalMetadataJAXBMarshaller.class);
+public class CompleteMetadataJAXBMarshaller {
+
+	private static Logger logger = Logger.getLogger (CompleteMetadataJAXBMarshaller.class);
 	private static JAXBContext context;
-	private static InternalMetadataJAXBMarshaller instance;
+	private static CompleteMetadataJAXBMarshaller instance;
 		
-	private InternalMetadataJAXBMarshaller() {
+	private CompleteMetadataJAXBMarshaller() {
 		try {
-			context = JAXBContext.newInstance( InternalMetadata.class, OtherClassification.class, DINISetClassification.class, DNBClassification.class, DDCClassification.class ); 
+			context = JAXBContext.newInstance( CompleteMetadata.class, InternalMetadata.class, OtherClassification.class, DINISetClassification.class, DNBClassification.class, DDCClassification.class ); 
 		} catch(JAXBException jex) {
 			logger.error(jex);
 		}
 	}
 	
-	public static InternalMetadataJAXBMarshaller getInstance() {
+	public static CompleteMetadataJAXBMarshaller getInstance() {
 		if(instance == null) {
-			instance = new InternalMetadataJAXBMarshaller();
+			instance = new CompleteMetadataJAXBMarshaller();
 		}
 		return instance;
 	}
 	
-	public String marshall(InternalMetadata imf) {
+	public String marshall(CompleteMetadata cmf) {
 		String result = null;	
 		StringWriter sw = new StringWriter();
 
@@ -40,7 +42,7 @@ public class InternalMetadataJAXBMarshaller {
 			m.setEventHandler(new javax.xml.bind.helpers.DefaultValidationEventHandler());
 			m.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE ); 
 			m.setProperty( Marshaller.JAXB_FRAGMENT, Boolean.TRUE );
-			m.marshal( imf, sw);
+			m.marshal( cmf, sw);
 			result = sw.toString();
 		} catch(JAXBException jex) {
 			logger.error(jex);
@@ -48,14 +50,14 @@ public class InternalMetadataJAXBMarshaller {
 		return result;
 	}
 	
-	public InternalMetadata unmarshall (String xmldata) {
-		InternalMetadata result = null;
+	public CompleteMetadata unmarshall (String xmldata) {
+		CompleteMetadata result = null;
 		
 		try {
 			
 			Unmarshaller um = context.createUnmarshaller ( ); 
 			um.setEventHandler (new javax.xml.bind.helpers.DefaultValidationEventHandler ( ));
-			result = (InternalMetadata) um.unmarshal (new StringReader (xmldata));
+			result = (CompleteMetadata) um.unmarshal (new StringReader (xmldata));
 			
 		} catch (JAXBException ex) {
 			

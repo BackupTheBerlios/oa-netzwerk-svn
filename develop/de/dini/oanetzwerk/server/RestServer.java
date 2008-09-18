@@ -58,8 +58,21 @@ public class RestServer extends HttpServlet {
 		
 		String path [ ] = req.getPathInfo ( ).split ("/");
 		
-		if (path.length < 1)
-			return createErrorResponse (new NotEnoughParametersException ("No keyword specified"), RestStatusEnum.NOT_ENOUGH_PARAMETERS_ERROR);
+		if (path.length < 1) {
+			RestMessage rms = new RestMessage (RestKeyword.UNKNOWN);
+			rms.setStatus (RestStatusEnum.NOT_ENOUGH_PARAMETERS_ERROR);
+			StringBuffer sbDesc = new StringBuffer();
+			sbDesc.append("Sie haben in der URL keine Ressource benannt. Folgende Schlüsselworte sind momentan über die REST-Schnittstelle verfügbar: ");
+			for(RestKeyword name : RestKeyword.values()) {
+				if(name != RestKeyword.UNKNOWN) {
+					sbDesc.append(name.toString()+ " ");
+				}
+			}
+			rms.setStatusDescription (sbDesc.toString());
+			
+			return RestXmlCodec.encodeRestMessage (rms);
+		}
+		
 		
 		if (logger.isDebugEnabled ( )) {
 			
