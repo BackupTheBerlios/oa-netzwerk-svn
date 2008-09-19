@@ -72,8 +72,6 @@ public class MetadataDBMapper {
 			hmf.addIdentifier (temp);
 		}
 		
-		stmtconn.commit ( );
-
 	}
 	
 	public static void fillInternalMetadataFromDB(InternalMetadata hmf, MultipleStatementConnection stmtconn) throws SQLException, WrongStatementException {
@@ -289,7 +287,5 @@ public class MetadataDBMapper {
 			hmf.addLanguage(temp);
 		}
 		
-		stmtconn.commit ( );
-
 	}
 }

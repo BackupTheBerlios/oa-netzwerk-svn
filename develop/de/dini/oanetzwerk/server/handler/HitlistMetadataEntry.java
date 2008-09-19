@@ -22,6 +22,7 @@ import de.dini.oanetzwerk.server.database.DeleteFromDB;
 import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
+import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
@@ -127,10 +128,27 @@ public class HitlistMetadataEntry extends AbstractKeyWordHandler implements
 			// ausgelagert in separate Klasse, um den Code für andere Metadatenviews nachzunutzen
 			MetadataDBMapper.fillHitlistMetadataFromDB(hmf, stmtconn);
 			
-			FullTextLink ftl = new FullTextLink("foo.url.de", "text/pdf", "de", 0);					
-			hmf.addFullTextLink(ftl);
 			DuplicateProbability dupPro = new DuplicateProbability(new BigDecimal(815), 99.9, 0);
 			hmf.addDuplicateProbability(dupPro);
+
+			// FulltextlinkAbfrage
+			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, hmf.getOid()));
+			QueryResult ftlResult = stmtconn.execute ( );
+			
+			if (ftlResult.getWarning ( ) != null) {
+				for (Throwable warning : ftlResult.getWarning ( )) {
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (ftlResult.getResultSet ( ).next ( )) {				
+				FullTextLink ftl = new FullTextLink();					
+				ftl.setUrl(ftlResult.getResultSet().getString("link"));
+				ftl.setMimeformat(ftlResult.getResultSet().getString("mimeformat"));
+				hmf.addFullTextLink(ftl);				
+			}
+			
+			stmtconn.commit ( );
 			
 			//logger.debug("hmf (toString) >>>>>> " + hmf);
 			
