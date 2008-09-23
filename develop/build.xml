@@ -438,7 +438,7 @@
 				<include name="*.jsp"/>
 			</zipfileset>
 			<zipfileset dir="myfaces-root/find-dummy/messages/" prefix="WEB-INF/classes/finddummy/"/>
-			<!--zipfileset dir="css/" prefix="css/"/-->
+			<zipfileset dir="myfaces-root/find-dummy/css/" prefix="css/"/>
 			<zipfileset dir="myfaces-root/find-dummy/pages/" prefix="pages/"/>
 		</war>
 	</target>
