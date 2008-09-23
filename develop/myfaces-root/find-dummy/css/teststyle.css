@@ -1,33 +1,65 @@
 @CHARSET "UTF-8";
-.HEADING {
-	font-family: Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	font-size: 14px;
-	color: black;
-	background-color: silver;
-	text-align: center;
+
+/* erstmal alles nullen */
+
+html, body, div, p, h1, h2, h3, ul, ol, 
+span, a, table, td, form, img, li {
+   margin: 0;
+   padding: 0;
+   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
-.COL1 {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	color: blue;
-	background-color: white;
-	text-indent: 10px;
-	text-align: left;
+
+/*allgemeines*/
+
+a:link {
+   color: #666;
+   text-decoration: underline;
 }
-.COL2 {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	color: black;
-	background-color: white;
-	text-indent: 10px;
-	text-align: center;
+
+a:visited {
+   color: #333;
+   text-decoration: underline;
 }
-.COL3 {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	color: red;
-	background-color: white;
-	text-indent: 10px;
-	text-align: right;
+
+a:hover {
+   color: #f60;
+   text-decoration: underline;
+}
+
+a:active {
+   color: #f60;
+   text-decoration: underline;
+}
+
+/* spezielles*/
+
+dt {
+  font-size:18px;
+  color:#0000ff;
+}
+.list-dubpro {
+  font-size:8px;
+  color:#ff0000;	
+}
+#main_search {
+  width: 500px;
+  margin: 0 auto;
+  margin-top: 150px;
+  border: 1px solid #f00;
+}
+#flat_search {
+  margin-top: 10px;
+  margin-left: 10px;
+}
+#general_links {
+  font-size: 11px;
+  color: silver;
+  margin: 0 auto;
+  padding: 5px;
+  border-bottom: 1px solid silver;	
+}
+
+
+.center {
+  text-align: center;
 }

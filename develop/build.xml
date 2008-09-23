@@ -398,6 +398,7 @@
 		<javac destdir="${build.findnbrowse}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
 			<classpath refid="classpath.findnbrowse"/>
 			<include name="**/finddummy/**"/>
+			<include name="**/userfrontend/**"/>
 			<include name="**/RedirectionFilter.java"/>
 			<!--include name="**/codec/*.java"/>
 			<include name="**/RestClient.java"/>
@@ -439,6 +440,7 @@
 			</zipfileset>
 			<zipfileset dir="myfaces-root/find-dummy/messages/" prefix="WEB-INF/classes/finddummy/"/>
 			<zipfileset dir="myfaces-root/find-dummy/css/" prefix="css/"/>
+			<zipfileset dir="myfaces-root/find-dummy/img/" prefix="img/"/>
 			<zipfileset dir="myfaces-root/find-dummy/pages/" prefix="pages/"/>
 		</war>
 	</target>
