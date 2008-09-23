@@ -71,7 +71,6 @@
 		<pathelement location="${lib}/commons-cli-1.1.jar"/>
 		<pathelement location="${lib}/commons-codec-1.3.jar"/>
 		<pathelement location="${lib}/jdom.jar"/>
-		<pathelement location="${lib}/tomahawk-1.1.7.jar"/>
 	</path>
 	
 	<path id="classpath.findnbrowse">
@@ -376,7 +375,6 @@
 				<include name="jstl.jar"/>
 				<include name="standard.jar"/>
 				<include name="log4j-1.2.15.jar"/>
-				<include name="tomahawk-1.1.7.jar"/>
 			</lib>
 			<metainf dir="myfaces-root/admin-gui/META-INF/">
 				<include name="context.xml"/>
