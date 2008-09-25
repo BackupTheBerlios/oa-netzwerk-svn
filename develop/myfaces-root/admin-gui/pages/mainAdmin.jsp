@@ -12,26 +12,17 @@
 		</head>
 		<body>
 			<h1 align="center"><h:outputText value="#{msg.mainPageTitle}"/></h1>
-			<div class="nav">
-				<h:form styleClass="NAVIGATION">
-					<h:commandLink action="#{mainView.jump2Repos}" value="#{msg.repositories}"/><br/>
-					<h:commandLink action="#{mainView.jump2Proc}" value="#{msg.procs}"/><br/>
-					<h:commandLink action="#{mainView.jump2Serv}" value="#{msg.services}"/><br/>
-					<h:commandLink action="#{mainView.jump2Dat}" value="#{msg.datas}"/><br/>
-					<% if (request.isUserInRole ("oasysop")) { %>
-					<h:commandLink action="#{mainView.jump2Manager}" value="#{msg.manager}"/><br/>
-					<% } %>
-				</h:form>
-			</div>
+			<f:subview id="nav">
+				<jsp:include page="navigation.jsp"/>
+			</f:subview>
 			<div class="body">
 				<h:outputText value="#{msg.blindText}"/>
 			</div>
-			<div class="footer">
-			<h:form>
-				<h:outputText value="#{msg.footer}"/><br/>
-				<h:commandLink action="#{mainView.jump2Logout}" value="#{msg.logout}"/><br/>
-			</h:form>
-			</div>
+			<f:facet name="footer">
+				<f:subview id="footer">
+					<jsp:include page="footer.jsp"/>
+				</f:subview>
+			</f:facet>
 		</body>
 	</f:view>
 </html>

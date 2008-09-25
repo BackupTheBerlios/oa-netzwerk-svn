@@ -7,14 +7,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -31,9 +32,10 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class RepositoryView implements Serializable {
 	
+	FacesContext ctx = FacesContext.getCurrentInstance ( );
+	HttpSession session = (HttpSession) ctx.getExternalContext ( ).getSession (false);
 	private Properties props = null;
 	private static Logger logger = Logger.getLogger (RepositoryView.class);
-	private int detail = 0;
 	
 	/**
 	 * @throws IOException 
@@ -47,23 +49,55 @@ public class RepositoryView implements Serializable {
 		this.props = HelperMethods.loadPropertiesFromFile ("webapps/adminservlet/WEB-INF/admingui.xml");
 	}
 	
-	public List <RepositoriesBean> getRepositories ( ) {
+	public HashMap <String, String> getDetail ( ) {
 		
-		String result = this.prepareRestTransmission ("Repository/").GetData ( );
-		List <RepositoriesBean> repoList = new LinkedList <RepositoriesBean> ( );
+		String result = this.prepareRestTransmission ("Repository/" + Long.toString ((Long) this.session.getAttribute ("repositoryItem"))).GetData ( );
+		
+		HashMap <String, String> details = new HashMap <String, String> ( );
 		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
 		
 		if (rms == null || rms.getListEntrySets ( ).isEmpty ( )) {
 			
 			logger.error ("received no Repository Details at all from the server");
-			System.exit (1);
+			return null;
+		}
+		
+		RestEntrySet res = rms.getListEntrySets ( ).get (0);
+		Iterator <String> it = res.getKeyIterator ( );
+		String key = "";
+		
+		while (it.hasNext ( )) {
+			
+			key = it.next ( );
+			details.put (key, res.getValue (key));			
+		}
+		
+		details.put ("ID", Long.toString ((Long) this.session.getAttribute ("repositoryItem")));
+		
+		return details;
+	}
+	
+	/**
+	 * @return
+	 */
+	
+	public List <RepositoryItem> getRepositories ( ) {
+		
+		String result = this.prepareRestTransmission ("Repository/").GetData ( );
+		List <RepositoryItem> repoList = new ArrayList <RepositoryItem> ( );
+		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		
+		if (rms == null || rms.getListEntrySets ( ).isEmpty ( )) {
+			
+			logger.error ("received no Repository Details at all from the server");
+			return null;
 		}
 		
 		for (RestEntrySet res : rms.getListEntrySets ( )) {
 			
 			Iterator <String> it = res.getKeyIterator ( );
 			String key = "";
-			RepositoriesBean repo = new RepositoriesBean ( );
+			RepositoryItem repo = new RepositoryItem ( );
 			
 			while (it.hasNext ( )) {
 				
@@ -82,7 +116,7 @@ public class RepositoryView implements Serializable {
 					
 				} else if (key.equalsIgnoreCase ("repository_id")) {
 					
-					repo.setId (new Integer (res.getValue (key)));
+					repo.setId (new Long (res.getValue (key)));
 					
 				} else
 					continue;
@@ -90,17 +124,13 @@ public class RepositoryView implements Serializable {
 			
 			repoList.add (repo);
 		}
+		
 		return repoList;
 	}
 	
-	public String showDetails ( ) {
+	public String g2p ( ) {
 		
-		FacesContext context = FacesContext.getCurrentInstance(); 
-		Map map = context.getExternalContext().getRequestParameterMap();
-		
-		logger.debug ("detail: " + (String) map.get ("id"));
-		
-		return "";
+		return "ID";
 	}
 	
 	/**
@@ -111,23 +141,5 @@ public class RepositoryView implements Serializable {
 	private RestClient prepareRestTransmission (String resource) {
 		
 		return RestClient.createRestClient (new File (System.getProperty ("catalina.base") + this.props.getProperty ("restclientpropfile")), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-	}
-	
-	/**
-	 * @return the detail
-	 */
-	
-	public final int getDetail ( ) {
-		
-		return this.detail;
-	}
-	
-	/**
-	 * @param detail the detail to set
-	 */
-	
-	public final void setDetail (int detail) {
-		
-		this.detail = detail;
 	}
 }

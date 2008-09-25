@@ -13,6 +13,9 @@
 		</head>
 		<body>
 			<h1 align="center"><h:outputText value="#{msg.title}"/></h1>
+			<f:subview id="nav">
+				<jsp:include page="navigation.jsp"/>
+			</f:subview>
 			<h:dataTable value="#{repoView.repositories}" var="row" border="1" headerClass="HEADING" columnClasses="COL1, COL2, COL3">
 				<h:column>
 					<f:facet name="header">
@@ -20,7 +23,6 @@
 					</f:facet>
 					<h:form>
 						<h:commandLink action="#{row.detail}" value="#{row.name}"/>
-						<h:commandLink action="#{repoView.g2p}" value="#{row.name}"/>
 					</h:form>
 				</h:column>
 				<h:column>
@@ -36,9 +38,9 @@
 					<h:outputText value="#{row.id}"/>
 				</h:column>
 			</h:dataTable>
-			<h:form>
-				<h:commandLink action="#{mainView.jump2Logout}" value="#{msg.logout}"/><br/>
-			</h:form>
+			<f:subview id="footer">
+				<jsp:include page="footer.jsp"/>
+			</f:subview>
 		</body>
 	</html>
 </f:view>

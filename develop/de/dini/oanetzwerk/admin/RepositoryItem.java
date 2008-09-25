@@ -3,21 +3,30 @@
  */
 package de.dini.oanetzwerk.admin;
 
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+
+
 /**
  * @author Michael K&uuml;hn
  *
  */
 
-public class RepositoriesBean {
+public class RepositoryItem {
 	
+	FacesContext ctx = FacesContext.getCurrentInstance ( );
+	HttpSession session = (HttpSession) ctx.getExternalContext ( ).getSession (false);
+	private static Logger logger = Logger.getLogger (RepositoryItem.class);
 	private String name = "", url = "";
-	private int id = 0;
+	private Long id = new Long (0);
 	
 	/**
 	 * 
 	 */
 	
-	public RepositoriesBean ( ) { }
+	public RepositoryItem ( ) { }
 	
 	/**
 	 * @param name
@@ -25,11 +34,19 @@ public class RepositoriesBean {
 	 * @param id
 	 */
 	
-	public RepositoriesBean (String name, String url, int id) {
+	public RepositoryItem (String name, String url, Long id) {
 		
 		this.setName (name);
 		this.setUrl (url);
 		this.setId (id);
+	}
+	
+	public String detail ( ) {
+		
+		logger.debug ("repoID: " + Long.toString (id));
+		this.session.setAttribute ("repositoryItem", getId ( ));
+		
+		return "ID";
 	}
 	
 	/**
@@ -72,7 +89,7 @@ public class RepositoriesBean {
 	 * @return the id
 	 */
 	
-	public int getId ( ) {
+	public Long getId ( ) {
 	
 		return this.id;
 	}
@@ -81,7 +98,7 @@ public class RepositoriesBean {
 	 * @param id the id to set
 	 */
 	
-	public void setId (int id) {
+	public void setId (Long id) {
 	
 		this.id = id;
 	}

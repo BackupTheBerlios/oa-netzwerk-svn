@@ -10,7 +10,7 @@ if (session.isNew ( )) {
 	
 	if (referer == null) {
 	
-		response.sendRedirect ("pages/mainAdmin.faces");
+		response.sendRedirect ("mainAdmin.faces");
 		
 	} else {
 	

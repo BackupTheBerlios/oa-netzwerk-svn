@@ -11,9 +11,13 @@
 			<title><h:outputText value="#{msg.title}"/></title>
 		</head>
 		<body>
+			<f:subview id="nav">
+				<jsp:include page="navigation.jsp"/>
+			</f:subview>
 			<h1 align="center"><h:outputText value="#{msg.title}"/></h1>
-			<h:form>
-			</h:form>
+			<f:subview id="footer">
+				<jsp:include page="footer.jsp"/>
+			</f:subview>
 		</body>
 	</f:view>
 </html>
