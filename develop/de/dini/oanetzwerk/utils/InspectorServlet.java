@@ -935,15 +935,15 @@ public class InspectorServlet extends HttpServlet {
 		sb.append("<td colspan=\"2\" bgcolor=\"" + COLOR_TABLE_TOP + "\" valign=\"top\"><b><big>OID: " + sParamOID + "</big></b></td>\n");
 		sb.append("</tr>\n");
 		
-		sb.append(renderWrappedIMElement("Titel", renderTitles(im.getTitles())));
+		sb.append(renderWrappedIMElement("Titel", renderTitles(im.getTitleList())));
 		sb.append(renderWrappedIMElement("Typen", renderTypes(im.getTypeValueList())));
-		sb.append(renderWrappedIMElement("Autoren", renderAuthors(im.getAuthors())));
-		sb.append(renderWrappedIMElement("Herausgeber", renderPublishers(im.getPublishers())));
-		sb.append(renderWrappedIMElement("Datum", renderDateValues(im.getDateValues())));
+		sb.append(renderWrappedIMElement("Autoren", renderAuthors(im.getAuthorList())));
+		sb.append(renderWrappedIMElement("Herausgeber", renderPublishers(im.getPublisherList())));
+		sb.append(renderWrappedIMElement("Datum", renderDateValues(im.getDateValueList())));
 		sb.append(renderWrappedIMElement("Formate", renderFormats(im.getFormatList())));
 		sb.append(renderWrappedIMElement("Sprachen", renderLanguages(im.getLanguageList())));
-		sb.append(renderWrappedIMElement("Schlagworte", renderKeywords(im.getKeywords())));
-		sb.append(renderWrappedIMElement("Beschreibungen", renderDescriptions(im.getDescriptions())));
+		sb.append(renderWrappedIMElement("Schlagworte", renderKeywords(im.getKeywordList())));
+		sb.append(renderWrappedIMElement("Beschreibungen", renderDescriptions(im.getDescriptionList())));
 		sb.append(renderWrappedIMElement("Identifier", renderIdentifiers(im.getIdentifierList())));
 		sb.append(renderWrappedIMElement("Klassifikation", renderClassifications(im.getClassificationList())));
 		

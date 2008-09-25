@@ -17,7 +17,17 @@ public class CompleteMetadata extends InternalMetadata {
 		fullTextLinkList = new LinkedList<FullTextLink>();
 		duplicateProbabilityList = new LinkedList<DuplicateProbability>();
 	}
-			
+
+	public static CompleteMetadata createDummy() {
+		InternalMetadata dummy = InternalMetadata.createDummy();
+		CompleteMetadata instance = new CompleteMetadata();
+		instance.setAuthorList(dummy.getAuthorList());
+		instance.setTitleList(dummy.getTitleList());
+		instance.setFormatList(dummy.getFormatList());
+		return instance;
+	}	
+	
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(super.toString());
@@ -32,6 +42,7 @@ public class CompleteMetadata extends InternalMetadata {
 		return sb.toString();
 	}
 	
+	@Override
 	public boolean isEmpty() {
 		boolean result = super.isEmpty();
 		if(!fullTextLinkList.isEmpty()) return false;

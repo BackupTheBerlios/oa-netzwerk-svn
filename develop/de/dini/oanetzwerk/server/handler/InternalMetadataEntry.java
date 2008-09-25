@@ -493,18 +493,18 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		// PREPARE SQL STATEMENTS
 		
-		List <Title> titleList = imf.getTitles ( );
-		List <DateValue> dateValueList = imf.getDateValues ( );
+		List <Title> titleList = imf.getTitleList ( );
+		List <DateValue> dateValueList = imf.getDateValueList ( );
 		List <Format> formatList = imf.getFormatList ( );
 		List <Identifier> identifierList = imf.getIdentifierList ( );
-		List <Description> descriptionList = imf.getDescriptions();
-		List <Publisher> publisherList = imf.getPublishers();
+		List <Description> descriptionList = imf.getDescriptionList();
+		List <Publisher> publisherList = imf.getPublisherList();
 		
-		List <Author> authorList = imf.getAuthors();
+		List <Author> authorList = imf.getAuthorList();
 		List <Editor> editorList = imf.getEditorList();
 		List <Contributor> contributorList = imf.getContributorList();
 		
-		List <Keyword> keywordList = imf.getKeywords ( );
+		List <Keyword> keywordList = imf.getKeywordList ( );
 		List <TypeValue> typeValueList = imf.getTypeValueList ( );
 
 		List <Language> languageList = imf.getLanguageList();

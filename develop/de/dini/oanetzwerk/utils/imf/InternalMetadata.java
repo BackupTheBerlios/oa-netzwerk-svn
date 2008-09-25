@@ -557,11 +557,11 @@ public class InternalMetadata {
 		this.authorCounter = authorCounter;
 	}
 
-	public List<Author> getAuthors() {
+	public List<Author> getAuthorList() {
 		return authorList;
 	}
 
-	public void setAuthors(List<Author> authors) {
+	public void setAuthorList(List<Author> authors) {
 		this.authorList = authors;
 	}
 
@@ -583,11 +583,11 @@ public class InternalMetadata {
 		this.dateValueCounter = dateValueCounter;
 	}
 
-	public List<DateValue> getDateValues() {
+	public List<DateValue> getDateValueList() {
 		return dateValueList;
 	}
 
-	public void setDateValues(List<DateValue> dateValues) {
+	public void setDateValueList(List<DateValue> dateValues) {
 		this.dateValueList = dateValues;
 	}
 
@@ -599,11 +599,11 @@ public class InternalMetadata {
 		this.descriptionCounter = descriptionCounter;
 	}
 
-	public List<Description> getDescriptions() {
+	public List<Description> getDescriptionList() {
 		return descriptionList;
 	}
 
-	public void setDescriptions(List<Description> descriptions) {
+	public void setDescriptionList(List<Description> descriptions) {
 		this.descriptionList = descriptions;
 	}
 
@@ -641,11 +641,11 @@ public class InternalMetadata {
 
 	@XmlElementWrapper( name = "keywords" )
 	@XmlElement ( name = "keyword" )
-	public List<Keyword> getKeywords() {
+	public List<Keyword> getKeywordList() {
 		return keywordList;
 	}
 
-	public void setKeywords(List<Keyword> keywords) {
+	public void setKeywordList(List<Keyword> keywords) {
 		this.keywordList = keywords;
 	}
 
@@ -673,11 +673,11 @@ public class InternalMetadata {
 		this.publisherCounter = publisherCounter;
 	}
 
-	public List<Publisher> getPublishers() {
+	public List<Publisher> getPublisherList() {
 		return publisherList;
 	}
 
-	public void setPublishers(List<Publisher> publishers) {
+	public void setPublisherList(List<Publisher> publishers) {
 		this.publisherList = publishers;
 	}
 
@@ -689,11 +689,11 @@ public class InternalMetadata {
 		this.titleCounter = titleCounter;
 	}
 
-	public List<Title> getTitles() {
+	public List<Title> getTitleList() {
 		return titleList;
 	}
 
-	public void setTitles(List<Title> titles) {
+	public void setTitleList(List<Title> titles) {
 		this.titleList = titles;
 	}
 

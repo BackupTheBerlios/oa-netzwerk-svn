@@ -12,17 +12,17 @@ span, a, table, td, form, img, li {
 /*allgemeines*/
 
 a:link {
-   color: #666;
+   color: #0000AA;
    text-decoration: underline;
 }
 
 a:visited {
-   color: #333;
+   color: #3300AA;
    text-decoration: underline;
 }
 
 a:hover {
-   color: #f60;
+   color: #6666BB;
    text-decoration: underline;
 }
 
@@ -41,25 +41,43 @@ dt {
   font-size:8px;
   color:#ff0000;	
 }
-#main_search {
+#div_main_search {
   width: 500px;
   margin: 0 auto;
   margin-top: 150px;
-  border: 1px solid #f00;
+  text-align: center;
+  /*border: 1px solid #f00;*/
 }
-#flat_search {
+#div_main_search img {
+  margin-bottom: 25;
+}
+#div_flat_search {
   margin-top: 10px;
   margin-left: 10px;
 }
-#general_links {
+#div_general_links {
   font-size: 11px;
   color: silver;
   margin: 0 auto;
   padding: 5px;
   border-bottom: 1px solid silver;	
 }
-
+#div_hitlist {
+  margin-left: 10px;
+  margin-top: 30px;
+}
+.colHit {
+  padding: 10px;
+  margin-top: 10px;
+  border-left: 5px solid silver;	
+  border-bottom: 1px solid silver;	
+  
+}
 
 .center {
   text-align: center;
+}
+.internal_identifier {
+	font-size: 10px;
+	color: silver; 
 }
