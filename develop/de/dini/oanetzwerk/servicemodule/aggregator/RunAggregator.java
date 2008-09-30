@@ -63,6 +63,9 @@ public class RunAggregator {
 				"Automatic mode, no given ID is necessary")
 
 		.create('a'));
+		
+		options.addOption(OptionBuilder.withLongOpt("testing").withDescription(
+		"Test mode - state in workflow db does not change").create('t'));
 
 		if (args.length > 0) {
 
@@ -87,8 +90,14 @@ public class RunAggregator {
 						id = filterId(cmd.getOptionValue("itemId"));
 
 					// Here we go: create a new instance of the aggregator
-
-					Aggregator aggregator = new Aggregator();
+					Aggregator aggregator;
+					// im Testfall wird ein anderer Constructor aufgerufen
+					if ((cmd.getOptionValue('t') != null) || (cmd.getOptionValue("testing") != null)) {
+						aggregator = new Aggregator(true); }
+					else {
+						// Standardfall ohne Testing
+						aggregator = new Aggregator();
+					}
 
 					// hier wird entweder die spezifische Objekt-ID übergeben
 					// oder ein Auto-Durchlauf gestartet
