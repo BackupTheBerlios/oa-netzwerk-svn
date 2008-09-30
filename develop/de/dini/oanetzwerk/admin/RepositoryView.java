@@ -49,6 +49,10 @@ public class RepositoryView implements Serializable {
 		this.props = HelperMethods.loadPropertiesFromFile ("webapps/adminservlet/WEB-INF/admingui.xml");
 	}
 	
+	/**
+	 * @return
+	 */
+	
 	public HashMap <String, String> getDetail ( ) {
 		
 		String result = this.prepareRestTransmission ("Repository/" + Long.toString ((Long) this.session.getAttribute ("repositoryItem"))).GetData ( );
@@ -127,6 +131,15 @@ public class RepositoryView implements Serializable {
 		
 		return repoList;
 	}
+	
+	public String data4repo ( ) {
+		
+		return "go2data";
+	}
+	
+	/**
+	 * @return
+	 */
 	
 	public String g2p ( ) {
 		

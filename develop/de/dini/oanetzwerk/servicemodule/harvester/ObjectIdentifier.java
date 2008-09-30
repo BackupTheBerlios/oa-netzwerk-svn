@@ -18,7 +18,7 @@ import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 
 /**
- * @author kuehnmic
+ * @author Michael K&uuml;hn
  *
  */
 
@@ -75,6 +75,7 @@ public class ObjectIdentifier {
 
 		return new String (Base64.decodeBase64 ((encodedrawdata).getBytes ("UTF-8")));
 	}
+	
 	/**
 	 * This is the standard constructor for ObjectIdentifier. It stores the
 	 * external Object Identifier (from the repository) the datestamp of the
@@ -84,21 +85,9 @@ public class ObjectIdentifier {
 	 * Object Identifier. The Datestamp is used to distinguish the different
 	 * versions of one object harvested at different dates.
 	 * 
-	 * @param externalOID
-	 *            the Object Identifier which is used in the harvested
-	 *            repository
-	 * @param datestamp
-	 *            the date of the object's last change
-	 * @param internalOID
-	 *            the Object Identifier which is used in our internal system and
-	 *            database
-	 */
-	
-	/**
-	 * @param externalOID
-	 * @param datestamp
-	 * @param internalOID
-	 * @param record
+	 * @param externalOID the Object Identifier which is used in the harvested repository
+	 * @param datestamp the date of the object's last change
+	 * @param internalOID the Object Identifier which is used in our internal system and database
 	 */
 	
 	public ObjectIdentifier (String externalOID, String datestamp, int internalOID, Element record) {
@@ -120,9 +109,6 @@ public class ObjectIdentifier {
 	 * Getter method for the externalOID
 	 * 
 	 * @return the external object ID (comes from the harvested repository)
-	 */
-	/**
-	 * @return
 	 */
 	
 	final String getExternalOID ( ) {
@@ -152,15 +138,11 @@ public class ObjectIdentifier {
 
 		return this.datestamp;
 	}
+	
 	/**
 	 * Setter method for the datestamp
 	 * 
-	 * @param datestamp
-	 *            the datestamp to set
-	 */
-	
-	/**
-	 * @param datestamp
+	 * @param datestamp the datestamp to set
 	 */
 	
 	final void setDatestamp (Date datestamp) {
@@ -173,23 +155,16 @@ public class ObjectIdentifier {
 	 * 
 	 * @return the internalOID
 	 */
-	/**
-	 * @return
-	 */
 	
 	final int getInternalOID ( ) {
 
 		return this.internalOID;
 	}
+	
 	/**
 	 * Setter method for the internalOID
 	 * 
-	 * @param internalOID
-	 *            the internalOID to set
-	 */
-	
-	/**
-	 * @param internalOID
+	 * @param internalOID the internalOID to set
 	 */
 	
 	final void setInternalOID (int internalOID) {

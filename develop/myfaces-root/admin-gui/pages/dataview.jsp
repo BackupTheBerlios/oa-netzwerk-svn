@@ -15,6 +15,7 @@
 				<jsp:include page="navigation.jsp"/>
 			</f:subview>
 			<h1 align="center"><h:outputText value="#{msg.title}"/></h1>
+			
 			<f:subview id="footer">
 				<jsp:include page="footer.jsp"/>
 			</f:subview>

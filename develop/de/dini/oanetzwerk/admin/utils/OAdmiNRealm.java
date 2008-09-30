@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
@@ -236,17 +235,17 @@ public class OAdmiNRealm extends RealmBase {
 			return null;
 		}
 		
-		byte [ ] restcredentials;
+		//byte [ ] restcredentials;
 		
-		try {
-			
-			restcredentials = getPassword (username).getBytes ("UTF-8");
-			
-		} catch (UnsupportedEncodingException ex) {
-			
-			logger.fatal (ex.getLocalizedMessage ( ), ex);
-			return null;
-		}
+//		try {
+//			
+//			restcredentials = getPassword (username).getBytes ("UTF-8");
+//			
+//		} catch (UnsupportedEncodingException ex) {
+//			
+//			logger.fatal (ex.getLocalizedMessage ( ), ex);
+//			return null;
+//		}
 		
 //		boolean validated = this.checkPassword (credentials, restcredentials);
 		boolean validated = this.checkPassword (credentials, getPassword (username));

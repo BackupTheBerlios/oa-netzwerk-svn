@@ -142,6 +142,13 @@ public class RestClient {
 		}
 	}
 	
+	/**
+	 * @param propFile
+	 * @param restQueryPath
+	 * @param user
+	 * @param pwd
+	 */
+	
 	private RestClient (File propFile, String restQueryPath, String user, String pwd) {
 		
 		this.querryPath = filterpath (restQueryPath);
@@ -461,7 +468,7 @@ public class RestClient {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("getRequest will be used");
 		
-		return sendrequest (client, method);
+		return this.sendrequest (client, method);
 	}
 	
 	/**
@@ -482,7 +489,7 @@ public class RestClient {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("postRequest will be used");
 		
-		return sendrequest (client, method);
+		return this.sendrequest (client, method);
 	}
 	
 	/**
@@ -503,7 +510,7 @@ public class RestClient {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("putRequest will be used");
 		
-		return sendrequest (client, method);
+		return this.sendrequest (client, method);
 	}
 	
 	/**
@@ -520,7 +527,7 @@ public class RestClient {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("deleteRequest will be used");
 		
-		return sendrequest (client, method);
+		return this.sendrequest (client, method);
 	}
 	
 	/**
@@ -545,7 +552,7 @@ public class RestClient {
 		String request = RestXmlCodec.encodeRestMessage (msg);
 		String response = this.PostData (request);
 		
-		return RestXmlCodec.decodeRestMessage(response);
+		return RestXmlCodec.decodeRestMessage (response);
 	}
 	
 	/**

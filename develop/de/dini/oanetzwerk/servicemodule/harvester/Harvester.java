@@ -7,6 +7,7 @@ package de.dini.oanetzwerk.servicemodule.harvester;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -140,6 +141,8 @@ public class Harvester {
 	private boolean listrecords = false;
 	
 	private int getRecordCounter = 1;
+	
+	private String httpResponseCharSet = "UTF-8";
 	
 	/**
 	 * Standard Constructor. It does nothing beside constructing the object
@@ -527,7 +530,7 @@ public class Harvester {
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("processing retrieved RecordList and retreiving Resumption Token");
 					
-					resumptionToken = this.processListedRecordsAndGetResumptionToken (responseStream);
+					resumptionToken = this.processListedRecordsAndGetResumptionToken (this.checkCharset (responseStream));
 					
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("processing extracted Records");
@@ -592,7 +595,7 @@ public class Harvester {
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("extracting Ids and Resumption Token from retrieved Identifier List");
 					
-					resumptionToken = this.extractIdsAndGetResumptionToken (responseStream);
+					resumptionToken = this.extractIdsAndGetResumptionToken (this.checkCharset (responseStream));
 					
 					// Now the list of objects will be processed
 					if (logger.isDebugEnabled ( ))
@@ -659,13 +662,33 @@ public class Harvester {
 	}
 	
 	/**
+	 * @param responseStream
+	 * @return
+	 */
+	
+	private InputStreamReader checkCharset (InputStream responseStream) {
+
+		try {
+			
+			String charset = this.httpResponseCharSet;
+			InputStreamReader isr = new InputStreamReader (responseStream, charset);
+			logger.info ("Charset of read Inputstream from " + this.repositoryURL + " is " + charset);
+			return isr;
+			
+		} catch (UnsupportedEncodingException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			return null;
+		}
+	}
+
+	/**
 	 * @param response
 	 * @return the resumption token
 	 */
 	
 	@SuppressWarnings ("unchecked")
-	private Element processListedRecordsAndGetResumptionToken (
-			InputStream responseBody) {
+	private Element processListedRecordsAndGetResumptionToken (InputStreamReader responseBodyAsReader) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("processListedRecordsAndGetResumptionToken");
@@ -675,7 +698,7 @@ public class Harvester {
 		
 		try {
 			
-			Document doc = builder.build (responseBody);
+			Document doc = builder.build (responseBodyAsReader);
 			Element root = doc.getRootElement ( );
 			
 			if (logger.isDebugEnabled ( ))
@@ -1056,6 +1079,7 @@ public class Harvester {
 			logger.warn ("HTTP Status Code: " + statuscode);
 		}
 		
+		this.httpResponseCharSet = getmethod.getResponseCharSet ( );
 		inst = getmethod.getResponseBodyAsStream ( );
 		client = null;
 		
@@ -1083,17 +1107,19 @@ public class Harvester {
 	 */
 	
 	@SuppressWarnings ("unchecked")
-	private Element extractIdsAndGetResumptionToken (InputStream responseBody) {
+	private Element extractIdsAndGetResumptionToken (InputStreamReader responseBodyAsReader) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("extractIdsAndGetResumptionToken");
+		
 		
 		Element resumptionToken = null;
 		SAXBuilder builder = new SAXBuilder ( );
 		
 		try {
 			
-			Document doc = builder.build (responseBody);
+			Document doc = builder.build (responseBodyAsReader);
+			
 			Element root = doc.getRootElement ( );
 			
 			if (logger.isDebugEnabled ( ))
