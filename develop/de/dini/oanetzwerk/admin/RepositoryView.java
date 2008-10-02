@@ -107,8 +107,8 @@ public class RepositoryView implements Serializable {
 				
 				key = it.next ( );
 				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("key: " + key + " value: " + res.getValue (key));
+//				if (logger.isDebugEnabled ( ))
+//					logger.debug ("key: " + key + " value: " + res.getValue (key));
 				
 				if (key.equalsIgnoreCase ("name")) {
 					
@@ -132,18 +132,13 @@ public class RepositoryView implements Serializable {
 		return repoList;
 	}
 	
-	public String data4repo ( ) {
-		
-		return "go2data";
-	}
-	
 	/**
 	 * @return
 	 */
 	
-	public String g2p ( ) {
+	public String data4repo ( ) {
 		
-		return "ID";
+		return "go2dat";
 	}
 	
 	/**

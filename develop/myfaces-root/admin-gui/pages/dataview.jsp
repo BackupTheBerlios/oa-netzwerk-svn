@@ -16,6 +16,20 @@
 			</f:subview>
 			<h1 align="center"><h:outputText value="#{msg.title}"/></h1>
 			
+			<h:dataTable value="#{dataview.shortRepoData}" var="row" border="0">
+				<h:column>
+					<h:outputText value="Object ID "/>
+				</h:column>
+				<h:column>
+					<h:outputText value="#{row.oid}"/>
+				</h:column>
+				<h:column>
+					<h:form>
+						<h:commandLink action="#{row.detail}" value="details"/>
+					</h:form>
+				</h:column>
+			</h:dataTable>
+			
 			<f:subview id="footer">
 				<jsp:include page="footer.jsp"/>
 			</f:subview>

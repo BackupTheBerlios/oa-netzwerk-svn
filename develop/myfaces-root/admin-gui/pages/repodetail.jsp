@@ -38,7 +38,6 @@
 				<h:outputText value="#{repoView.detail.harvest_amount}"/>
 			</h:panelGrid>
 			<h:form>
-				<h:inputHidden value="#{repoView.detail.ID}"/>
 				<h:commandButton action="#{repoView.data4repo}" value="Daten des Repositoriums"/>
 			</h:form>
 			

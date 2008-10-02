@@ -43,7 +43,7 @@ public class RepositoryItem {
 	
 	public String detail ( ) {
 		
-		logger.debug ("repoID: " + Long.toString (id));
+//		logger.debug ("repoID: " + Long.toString (id));
 		this.session.setAttribute ("repositoryItem", getId ( ));
 		
 		return "ID";
