@@ -30,9 +30,11 @@ public class OIDItem {
 	 * 
 	 */
 	
-	public void detail ( ) {
+	public String detail ( ) {
 		
 		this.session.setAttribute ("OIDItem", getLongOid ( ));
+		
+		return "go2dat";
 	}
 	
 	/**
@@ -60,5 +62,24 @@ public class OIDItem {
 	public final void setOid (Long oid) {
 		
 		this.oid = oid;
+	}
+	
+	/**
+	 * @return
+	 */
+	
+	public final String getObjectdetail ( ) {
+		
+		if (this.session.getAttribute ("OIDItem") == null)
+			return "details";
+		
+		if (this.oid.equals ((Long) this.session.getAttribute ("OIDItem"))) {
+			
+//			String result = this.prepareRestTransmission ("
+			
+			return "DETAIL";
+			
+		} else
+			return "details";
 	}
 }
