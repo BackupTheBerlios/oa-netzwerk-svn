@@ -75,11 +75,16 @@ public class Harvester {
 	private ArrayList <ObjectIdentifier> ids = null;
 	
 	/**
-	 * The static log4j logger. All logging will be made with this nice static
-	 * logger.
+	 * The static log4j logger. All debug logging will be made with this nice static logger.
 	 */
 	
 	private static Logger logger = Logger.getLogger (Harvester.class);
+	
+	/**
+	 * This logger is needed for logging the harvesting process. PLEASE DO NOT use this logger for debugging stuff! 
+	 */
+	
+	private static Logger harvStateLog = Logger.getLogger ("HarvesterState");
 	
 	/**
 	 * The Harvester properties.
@@ -146,8 +151,7 @@ public class Harvester {
 	
 	/**
 	 * Standard Constructor. It does nothing beside constructing the object
-	 * instance. To configure the created harvester call
-	 * {@link #prepareHarvester(int)}
+	 * instance. To configure the created harvester call  {@link #prepareHarvester(int)}
 	 * 
 	 * @see #prepareHarvester(int)
 	 */
@@ -176,18 +180,23 @@ public class Harvester {
 		} catch (InvalidPropertiesFormatException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
+			harvStateLog.error ("Property file format incorrect. Shutting down Harvesting for ID " + id);
 			System.exit (1);
 			
 		} catch (FileNotFoundException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
+			harvStateLog.error ("Property file not found. Shutting down Harvesting for ID " + id);
 			System.exit (1);
 			
 		} catch (IOException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
+			harvStateLog.error ("I/O Error occured while loading Property file. Shutting down Harvesting for ID " + id);
 			System.exit (1);
 		}
+		
+		harvStateLog.info ("Harvesting for Repository No " + id + "prepared");
 		
 		return true;
 	}
@@ -213,7 +222,8 @@ public class Harvester {
 		
 		if (rms == null || rms.getListEntrySets ( ).isEmpty ( )) {
 			
-			logger.error ("received no Repository Details at all from the server");
+			logger.error ("Received no Repository Details at all from the server");
+			harvStateLog.error ("Server has no Data about requested Repository with ID " + id);
 			System.exit (1);
 		}
 		
@@ -294,8 +304,7 @@ public class Harvester {
 	/**
 	 * Setter method for the RepositoryURL
 	 * 
-	 * @param repositoryURL
-	 *            the repositoryURL to set
+	 * @param repositoryURL the repositoryURL to set
 	 */
 	
 	public final void setRepositoryURL (String repositoryURL) {
@@ -328,8 +337,7 @@ public class Harvester {
 	/**
 	 * Setter method for the fullharvest
 	 * 
-	 * @param fullharvest
-	 *            the fullharvest to set (true if full, false if update)
+	 * @param fullharvest the fullharvest to set (true if full, false if update)
 	 */
 	
 	public final void setFullharvest (boolean fullharvest) {
@@ -373,8 +381,7 @@ public class Harvester {
 	/**
 	 * Setter method for the amount
 	 * 
-	 * @param amount
-	 *            the amount to set
+	 * @param amount the amount to set
 	 */
 	
 	public final void setAmount (int amount) {
@@ -416,7 +423,7 @@ public class Harvester {
 	}
 	
 	/**
-	 * Setter method for the testdata
+	 * Setter method for the testdata-parameter
 	 * 
 	 * @param testData the testData to set
 	 */
@@ -427,6 +434,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Getter method for the propertyfile
+	 *
 	 * @return the propertyfile
 	 */
 	
@@ -436,6 +445,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Setter method for the propertyfile
+	 * 
 	 * @param propertyfile the propertyfile to set
 	 */
 	
@@ -445,7 +456,9 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param listrecords
+	 * Setter method for listRecords-switch 
+	 * 
+	 * @param listrecords if true listReords-OAI-Request will be used, listIdentifiers- and getRecord-OIA-Requests else
 	 */
 	
 	public final void setListRecords (boolean listrecords) {
@@ -454,6 +467,8 @@ public class Harvester {
 	}
 	
 	/**
+	 * Getter Method for HarvesterProperties
+	 * 
 	 * @return the props
 	 */
 	
@@ -463,7 +478,9 @@ public class Harvester {
 	}
 	
 	/**
-	 * @return
+	 * Getter Method for ObjectIdentifier List
+	 * 
+	 * @return ids ArrayList of ObjectIdentifiers
 	 */
 	
 	protected ArrayList <ObjectIdentifier> getIds ( ) {
@@ -475,7 +492,9 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param ids
+	 * Setter Method for ObjectIdentifier List
+	 * 
+	 * @param ids ArrayList of ObjectIdentifiers
 	 */
 	
 	protected void setIds (ArrayList <ObjectIdentifier> ids) {
@@ -498,15 +517,18 @@ public class Harvester {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("process Repository");
 		
+		int resumptionTokenCount = 0;
 		Element resumptionToken = null;
 		Boolean isResumptionSet = true;
 		InputStream responseStream = null;
 		
 		try {
 			
+			harvStateLog.info ("Fetching supported MetaDataFormats from Repository No " + this.getRepositoryID ( ) + " with URL " + this.getRepositoryURL ( ));
+			
 			// this will get all metadataformats, the requested repository
 			// supports
-			responseStream = this.listMetaDataFormats (getRepositoryURL ( ));
+			responseStream = this.listMetaDataFormats (this.getRepositoryURL ( ));
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("metaDataFormats found");
@@ -517,7 +539,7 @@ public class Harvester {
 			
 			if (this.listrecords) {
 				
-				logger.info ("using listRecord-Method for retreiving data from Repository No " + getRepositoryID ( ));
+				harvStateLog.info ("Using listRecord-Method for retreiving data from Repository No " + this.getRepositoryID ( ));
 				
 				if (!this.isFullharvest ( ))
 					responseStream = this.listRecords (this.getRepositoryURL ( ), this.metaDataFormat, this.getDate ( ));
@@ -539,7 +561,7 @@ public class Harvester {
 					
 					if (resumptionToken != null) {
 						
-						logger.info ("ResumptionToken received from Repository No " + this.getRepositoryID ( ));
+						harvStateLog.info ("ResumptionToken No " + ++resumptionTokenCount + " received from Repository No " + this.getRepositoryID ( ));
 						
 						if (logger.isDebugEnabled ( ))
 							logger.debug ("ResumptionToken: " + resumptionToken.getText ( )); else;
@@ -574,7 +596,7 @@ public class Harvester {
 				
 			} else {
 				
-				logger.info ("using listIdentifiers- and getRecord-Methods for retreiving data from Repository No " + getRepositoryID ( ));
+				harvStateLog.info ("Using listIdentifiers- and getRecord-Methods for retreiving data from Repository No " + getRepositoryID ( ));
 				
 				// when we only want to get all new rawdata from the given data,
 				// we'll end in here
@@ -582,7 +604,8 @@ public class Harvester {
 					responseStream = this.listIdentifiers (this.getRepositoryURL ( ), this.metaDataFormat, this.getDate ( ));
 				
 				// if we do a harvest of all rawdata, this will be chosen
-				else responseStream = this.listIdentifiers (this.getRepositoryURL ( ), this.metaDataFormat);
+				else
+					responseStream = this.listIdentifiers (this.getRepositoryURL ( ), this.metaDataFormat);
 				
 				while (isResumptionSet) { // until we have a ResumptionToken to process
 					
@@ -607,7 +630,7 @@ public class Harvester {
 					// it's the last entryset or not
 					if (resumptionToken != null) {
 						
-						logger.info ("ResumptionToken received from Repository No " + this.getRepositoryID ( ));
+						harvStateLog.info ("ResumptionToken No " + ++resumptionTokenCount + " received from Repository No " + this.getRepositoryID ( ));
 						
 						if (logger.isDebugEnabled ( ))
 							logger.debug ("ResumptionToken: " + resumptionToken.getText ( )); else ;
@@ -644,10 +667,12 @@ public class Harvester {
 		} catch (HttpException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
+			harvStateLog.error ("An HTTP-Exception occured, please contact other logfiles for details");
 			
 		} catch (IOException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
+			harvStateLog.error ("An I/O-Error occured, please contact other logfiles for details");
 			
 		} finally {
 			
@@ -662,8 +687,10 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param responseStream
-	 * @return
+	 * Checks and sets the InputStream Charset according to the HTTP-Response of the OAI-Request.
+	 * 
+	 * @param responseStream the response Inputstream of the OAI-Request
+	 * @return the inputsreamreader with the correct charset. 
 	 */
 	
 	private InputStreamReader checkCharset (InputStream responseStream) {
@@ -672,18 +699,22 @@ public class Harvester {
 			
 			String charset = this.httpResponseCharSet;
 			InputStreamReader isr = new InputStreamReader (responseStream, charset);
-			logger.info ("Charset of read Inputstream from " + this.repositoryURL + " is " + charset);
+			harvStateLog.info ("Charset of read Inputstream from " + this.repositoryURL + " is " + charset);
 			return isr;
 			
 		} catch (UnsupportedEncodingException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
+			harvStateLog.warn ("Unsopported Charset in HTTP-Response from Repository No " + this.getRepositoryID ( ));
+			
 			return null;
 		}
 	}
 
 	/**
-	 * @param response
+	 * Processes and parses the XML and retrieves the resumption token.
+	 * 
+	 * @param responseBodyAsReader the InputStreamReader which represents the OAI-Response
 	 * @return the resumption token
 	 */
 	
@@ -716,26 +747,31 @@ public class Harvester {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
 			logger.error ("Trying to process what I have, but major processing problem occured!");
+			harvStateLog.error ("An I/O-error occured while parsing the XML-Structure of the OAI-Response from Respoitory No " + this.getRepositoryID ( ));
 			
 		} catch (JDOMException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
 			logger.error ("Trying to process what I have, but major processing problem occured!");
+			harvStateLog.error ("A JDOM error occured while parsing the XML-Structure of the OAI-Response from Respoitory No " + this.getRepositoryID ( ));
 			
 		} catch (ParserConfigurationException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
 			logger.error ("Trying to process what I have, but major processing problem occured!");
+			harvStateLog.error ("A parser configuration error occured while parsing the XML-Structure of the OAI-Response from Respoitory No " + this.getRepositoryID ( ));
 			
 		} catch (SAXException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
 			logger.error ("Trying to process what I have, but major processing problem occured!");
+			harvStateLog.error ("A SAX error occured while parsing the XML-Structure of the OAI-Response from Respoitory No " + this.getRepositoryID ( ));
 			
 		} catch (java.text.ParseException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
 			logger.error ("Trying to process what I have, but major processing problem occured!");
+			harvStateLog.error ("An unexpected Parsing error occured while parsing the XML-Structure of the OAI-Response from Respoitory No " + this.getRepositoryID ( ));
 		}
 		
 		builder = null;
@@ -743,7 +779,9 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param elements
+	 * Parses the record-elements and separates the single record-elements.
+	 * 
+	 * @param element element which contains record-elements
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
@@ -771,9 +809,11 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param elements
-	 * @param string
-	 * @return
+	 * Parses a list of elements and retrieves the first element with the given name.
+	 * 
+	 * @param elements list of elements
+	 * @param name element name to search for
+	 * @return the element with the given name
 	 * @throws IOException
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
@@ -804,9 +844,11 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param elements
-	 * @param name
-	 * @return
+	 * Parses a list of elements and retrieves all elements with the given name.
+	 * 
+	 * @param elements list of elements
+	 * @param name element name to search for
+	 * @return a list of all elements with the given name
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
@@ -833,7 +875,10 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param record
+	 * Stores a data record for future processing in the ObjectIdentifierList.
+	 * If this data record already exists in the database the corresponding ID is retrieved and stored as well.
+	 * 
+	 * @param record recored with elements 'header', 'identifier' and 'datestamp'
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
@@ -878,10 +923,14 @@ public class Harvester {
 			Date objectEntryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (objectEntryDatestamp);
 			Date headerDate = new SimpleDateFormat ("yyyy-MM-dd").parse (dateStamp);
 			
+			harvStateLog.info ("Object with ID " + recordHeaderIdentifier + " found in database with corresponding ID " + oid);
+			
 			if (objectEntryDate.before (headerDate)) {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("new rawdata is available, so we'll store her");
+				
+				harvStateLog.info ("Object with IDs " + recordHeaderIdentifier + " / " + oid + " has changed since last harvest, new data will be stored");
 				
 				this.getIds ( ).add (new ObjectIdentifier (recordHeaderIdentifier, dateStamp, oid, record));
 				
@@ -903,12 +952,15 @@ public class Harvester {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("object does not exits, so we have to fetch all data");
 			
+			harvStateLog.info ("Object with ID " + recordHeaderIdentifier + " not found in database, new Object will be created");
+			
 			this.getIds ( ).add (new ObjectIdentifier (recordHeaderIdentifier, dateStamp, oid, record));
 			
 		} else {
 			
-			logger.error ("Error with number " + oid + "occured while processing Object " + recordHeaderIdentifier);
+			logger.error ("Error with number " + oid + " occured while processing Object " + recordHeaderIdentifier);
 			logger.info ("Skipping object " + recordHeaderIdentifier + " and continue with the next one");
+			harvStateLog.warn ("Error occured for Object with Id " + recordHeaderIdentifier + " skipping object and trying the next one");
 		}
 		
 		recordHeaderIdentifier = null;
@@ -916,10 +968,12 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param url
-	 * @param metaDataFormat
-	 * @param updateFrom
-	 * @return
+	 * Decides whether normal listRecord call or listRecord call with resumption Token shall be used.  
+	 * 
+	 * @param url URL of the repository to connect to
+	 * @param metaDataFormat whether the MetaDataFormat which shall be harvested or 'resumptionToken'
+	 * @param updateFrom the from-parameter for normal use or the resumptionToken
+	 * @return the InputStream received from the Repository
 	 * @throws HttpException
 	 * @throws IOException
 	 */
@@ -948,9 +1002,11 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param url
-	 * @param metaDataFormat
-	 * @return
+	 * Wrapper method for listRecords-request.
+	 * 
+	 * @param url URL of the repository to connect to
+	 * @param metaDataFormat MetaDataFormat which shall be harvested
+	 * @return the InputStream received from the Repository
 	 * @throws HttpException
 	 * @throws IOException
 	 */
@@ -967,8 +1023,8 @@ public class Harvester {
 	 * This method encapsulates the request to list all Meta Data Formats the
 	 * repository supports.
 	 * 
-	 * @param url the repositoryURL to connect to
-	 * @return the Inputstream which contains the answer from the repository
+	 * @param url the repository URL to connect to
+	 * @return the InputStream which contains the answer from the repository
 	 * @throws IOException
 	 * @throws HttpException
 	 * @see #repositoryAnswer(String, String, String)
@@ -1006,7 +1062,7 @@ public class Harvester {
 	 * @param url the OAI-URL to connect to
 	 * @param metaDataFormat the Meta Data Format which shall be requested or "resumptionToken" for the resumptionToken use
 	 * @param updateFrom the date from which on the harvest shall start or the resumptionToken for the resumptionToken use
-	 * @return the Inputstream from the repository
+	 * @return the InputStream from the repository
 	 * @throws IOException
 	 * @throws HttpException
 	 * @see #repositoryAnswer(String, String, String)
@@ -1043,7 +1099,7 @@ public class Harvester {
 	 * @param url the OAI-URL to connect to
 	 * @param verb the OAI-PMH-verb to use
 	 * @param parameter the parameters for the request (i.e. from, set, ...)
-	 * @return the Inputstream from the repository
+	 * @return the InputStream from the repository
 	 * @throws IOException
 	 * @throws HttpException
 	 * @see org.apache.commons.httpclient
@@ -1077,6 +1133,7 @@ public class Harvester {
 		if (statuscode != HttpStatus.SC_OK) {
 			
 			logger.warn ("HTTP Status Code: " + statuscode);
+			harvStateLog.warn ("HTTP Status Code for Request to Repository No " + this.getRepositoryID ( ) + " : " + statuscode);
 		}
 		
 		this.httpResponseCharSet = getmethod.getResponseCharSet ( );
@@ -1137,26 +1194,31 @@ public class Harvester {
 			
 			logger.error (pacoex.getLocalizedMessage ( ), pacoex);
 			logger.error ("Trying to process what I have, but major processing problem occured!");
+			harvStateLog.error ("A parser configuration error occured while parsing the XML-Structure of the OAI-Response from Respoitory No " + this.getRepositoryID ( ));
 			
 		} catch (SAXException sex) {
 			
 			logger.error (sex.getLocalizedMessage ( ), sex);
 			logger.error ("Trying to process what I have, but major processing problem occured!");
+			harvStateLog.error ("A SAX error occured while parsing the XML-Structure of the OAI-Response from Respoitory No " + this.getRepositoryID ( ));
 			
 		} catch (IOException ioex) {
 			
 			logger.error (ioex.getLocalizedMessage ( ), ioex);
 			logger.error ("Trying to process what I have, but major processing problem occured!");
+			harvStateLog.error ("An I/O-error occured while parsing the XML-Structure of the OAI-Response from Respoitory No " + this.getRepositoryID ( ));
 			
 		} catch (JDOMException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
 			logger.error ("Trying to process what I have, but major processing problem occured!");
+			harvStateLog.error ("A JDOM error occured while parsing the XML-Structure of the OAI-Response from Respoitory No " + this.getRepositoryID ( ));
 			
 		} catch (java.text.ParseException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
 			logger.error ("Trying to process what I have, but major processing problem occured!");
+			harvStateLog.error ("An unexpected Parsing error occured while parsing the XML-Structure of the OAI-Response from Respoitory No " + this.getRepositoryID ( ));
 		}
 		
 		builder = null;
@@ -1164,7 +1226,9 @@ public class Harvester {
 	}
 	
 	/**
-	 * @param children
+	 * Parses the given XML-Element and retrieves all header-elements. 
+	 * 
+	 * @param element the XML-Element which contains the header-elements
 	 * @throws IOException
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
@@ -1187,9 +1251,11 @@ public class Harvester {
 			this.processHeader (header);
 		}
 	}
-	
+	//TODO: weiteremachen
 	/**
-	 * @param element
+	 * Parses a header-element and retrieves identifier and datestamp, and searches comparing oid in database. 
+	 * 
+	 * @param element header-element to parse
 	 * @throws IOException
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
@@ -1275,7 +1341,7 @@ public class Harvester {
 	
 	private void storeHeaderData (String headerIdentifier, String headerDatestamp, int oid) {
 		
-		logger.info ("got Header Data for " + headerIdentifier);
+		logger.info ("Got Header Data for " + headerIdentifier);
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("storing header data (external id, datestamp and internal ID), but nothing more 'cause there no new data");
@@ -1453,10 +1519,12 @@ public class Harvester {
 			logger.debug ("creating Object No. " + index + ": " + this.ids.get (index).getExternalOID ( ));
 		}
 		
+		String value = "";
+		
 		try {
 			
 			String result = prepareRestTransmission ("ObjectEntry/").PutData (this.createObjectEntryRestMessage (index, 0));
-			String value = getValueFromKey (result, "oid");
+			value = getValueFromKey (result, "oid");
 			
 			int intoid = new Integer (value);
 			
@@ -1471,6 +1539,10 @@ public class Harvester {
 		} catch (IOException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (NumberFormatException numfoex) {
+			
+			logger.error ("The HTTP-Request 'Put ObjectEntry' returned an invalid integer value: " + value, numfoex);
 		}
 	}
 	
@@ -1545,10 +1617,18 @@ public class Harvester {
 		
 		String value = getValueFromKey (postObjectEntryResult, "oid");
 		
-		int intoid = new Integer (value);
+		try {
+			
+			int intoid = new Integer (value);
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("internalOID: " + intoid + " has been successfully updated");
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("internalOID: " + intoid + " has been successfully updated");
+			
+		} catch (NumberFormatException numfoex) {
+			
+			logger.error ("The HTTP-Request 'Post ObjectEntry' returned an invalid integer value: " + value, numfoex);
+			logger.warn ("Current internalOID has NOT been successfully updated");
+		}
 		
 		postObjectEntryResult = null;
 	}

@@ -41,9 +41,7 @@ public class RestServer extends HttpServlet {
 	 * Standard Constructor 
 	 */
 	
-	public RestServer ( ) {
-		
-	}
+	public RestServer ( ) { }
 	
 	/**
 	 * @param req

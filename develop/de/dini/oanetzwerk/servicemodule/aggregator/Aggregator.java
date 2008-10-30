@@ -608,7 +608,6 @@ public class Aggregator {
 		return result;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private InternalMetadata extractMetaData(String xmlRawdata) throws AggregationFailedException {
 
 		logger.debug("extractMetadata");
