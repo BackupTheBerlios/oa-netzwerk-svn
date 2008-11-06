@@ -514,6 +514,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 
 		try {
 			
+			// 2 Werte, die eventuell auftretende Warnungen speichern können
+			boolean aggregationWarning = false;
+			String aggregationWarningDescription = "";
+			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
 			// Titel speichern
@@ -885,6 +889,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			if (classificationList != null) {
 				for (Classification classification : classificationList) {
+					boolean useAsOtherClassification = false;
 					// fuer jeden Klassifikationstypen muessen unterschiedliche Aktionen erfolgen
 					if (classification instanceof DDCClassification) {
 						String ddcValue = null;
@@ -897,10 +902,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 							ddcValue = this.result.getResultSet ( ).getString(1);
 						}
 		
-//						rs = db.selectDDCCategoriesByCategorie(classification.getValue());
-//						while (rs.next()) {
-//							ddcValue = rs.getString(1);
-//						}
+
 						if (ddcValue == null) {
 							// Versuch, über den übergebenen Namen den richten DDC-Wert zu bestimmen
 							
@@ -952,30 +954,36 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						logger.debug("before result of DINI set id fetch for '"+classification.getValue()+"'");
 						
 						while (this.result.getResultSet ( ).next ( )) {
-							
 							logger.debug("result = " + this.result.getResultSet ( ).getBigDecimal(1));
 							DINI_set_id = this.result.getResultSet ( ).getBigDecimal(1);
 						}
 						
-//						rs = db.selectDINISetCategoriesByName(classification.getValue());
-//						while (rs.next()) {
-//							DINI_set_id = rs.getBigDecimal(1);
-//						}
-						// Daten zuordnen
-						stmtconn.loadStatement (InsertIntoDB.DINISetClassification (stmtconn.connection, object_id, DINI_set_id));
-						this.result = stmtconn.execute ( );
-						
-						if (this.result.getUpdateCount ( ) < 1) {
+						if (DINI_set_id == null) {
+							// wenn kein Wert in der DB gefunden werden konnte, soll
+							// 1. eine Warnung geworfen werden und 
+							// 2. der Eintrag in eine OtherClassification umgebogen wird
+							logger.warn("Could not find a DINI_Set_id for '" + classification.getValue() + "', will be stored as OtherClassification");
+							useAsOtherClassification = true;
+							aggregationWarning = true;
+							aggregationWarningDescription = aggregationWarningDescription + "\nCould not find a DINI_Set_id for '" + classification.getValue() + "', will be stored as OtherClassification";
 							
-							//warn, error, rollback, nothing????
+						} else {
+						
+							// Daten zuordnen
+							stmtconn.loadStatement (InsertIntoDB.DINISetClassification (stmtconn.connection, object_id, DINI_set_id));
+							this.result = stmtconn.execute ( );
+						
+							if (this.result.getUpdateCount ( ) < 1) {
+								//warn, error, rollback, nothing????
+							}
 						}
-//						db.insertDINISetClassification(object_id, DINI_set_id);						
 					}
 					
-					if (classification instanceof OtherClassification) {
+					if ((classification instanceof OtherClassification) | (useAsOtherClassification = true)) {
 						
 						BigDecimal other_id = null;
-						
+
+						// ID zum Klassifikationswort aus DB suchen 						
 						stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
@@ -983,12 +991,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 							
 							other_id = this.result.getResultSet ( ).getBigDecimal(1);
 						}
-						// ID zum Klassifikationswort aus DB suchen 
-//						rs = db.selectLatestOtherCategories(classification.getValue());
-//						while (rs.next()) {
-//							// Wort wohl vorhanden, sonst keine Rückgabe
-//							other_id = rs.getBigDecimal(1);
-//						} 
+
 						if (other_id == null) {
 							// Wort noch nicht vorhanden, neu eintragen
 							// Klassifikation eintragen
@@ -1008,14 +1011,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 								other_id = this.result.getResultSet ( ).getBigDecimal(1);
 							}
 							
-//							db.insertOtherCategories(classification.getValue());
-//							rs = db.selectLatestOtherCategories(classification.getValue());
-//							while (rs.next()) {
-//								other_id = rs.getBigDecimal(1);
-//							}
+
 						}
 						// ID dieser Klassifikation bestimmen und zuordnen
-//						db.insertOtherClassification(object_id, other_id);
 						stmtconn.loadStatement (InsertIntoDB.OtherClassification (stmtconn.connection, object_id, other_id));
 						this.result = stmtconn.execute ( );
 						
@@ -1031,6 +1029,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.OK);
+			if (aggregationWarning) {
+				this.rms.setStatus(RestStatusEnum.AGGREGATION_WARNING);
+				this.rms.setStatusDescription(aggregationWarningDescription);
+			}
 			res = new RestEntrySet();
 			res.addEntry ("oid", object_id.toPlainString ( ));
 			this.rms.addEntrySet (res);

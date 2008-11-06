@@ -19,9 +19,28 @@ public abstract class Classification implements ClassificationInterface {
 	}
 	
 	public static boolean isDINISet(String testvalue) {
-		if (testvalue.toLowerCase().startsWith("pub-type:")) return true;
-		else 
-			return false;
+		String lower = testvalue.toLowerCase();
+		if (lower.startsWith("pub-type:")) {
+			// bisland hier nur "true"
+			return true;
+			
+			// alternativ könnte hier auch geprüft werden, welche DINI-Sets es wirklich gibt
+//			if (lower.equals("pub-type:monograph")) return true; 
+//			if (lower.equals("pub-type:article")) return true; 
+//			if (lower.equals("pub-type:dissertation")) return true; 
+//			if (lower.equals("pub-type:masterthesis")) return true; 
+//			if (lower.equals("pub-type:report")) return true; 
+//			if (lower.equals("pub-type:paper")) return true; 
+//			if (lower.equals("pub-type:conf-proceeding")) return true; 
+//			if (lower.equals("pub-type:lecture")) return true; 
+//			if (lower.equals("pub-type:music")) return true; 
+//			if (lower.equals("pub-type:program")) return true; 
+//			if (lower.equals("pub-type:play")) return true; 
+//			if (lower.equals("pub-type:news")) return true; 
+//			if (lower.equals("pub-type:standards")) return true; 
+		}	
+		
+		return false;
 	}
 	
 	public static boolean isOther(String testvalue) {

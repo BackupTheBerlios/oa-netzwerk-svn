@@ -31,6 +31,7 @@ import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.MetadataFormatType;
 import de.dini.oanetzwerk.utils.exceptions.AggregationFailedException;
+import de.dini.oanetzwerk.utils.exceptions.AggregationWarningException;
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 import de.dini.oanetzwerk.utils.imf.InternalMetadataJAXBMarshaller;
 
@@ -265,13 +266,10 @@ public class Aggregator {
 			}
 
 			// schreiben der Metadaten
-			imf = storeMetaData(imf);
-			if (data == null) {
-				// Schreiben der Metadaten ist fehlgeschlagen, Objekt sollte
-				// später
-				// noch einmal prozessiert werden,
-				// jetzt keine weitere Bearbeitung sinnvoll
-				return;
+			try {
+				imf = storeMetaData(imf);
+			} catch (AggregationWarningException aggw) {
+				aggrStateLog.error("OID " + id + " - WARNING:" + aggw.getLocalizedMessage());
 			}
 
 			// Zustandsänderung für dieses Objekt speichern, falls es sich nicht
@@ -466,7 +464,7 @@ public class Aggregator {
 	 * @param data
 	 * @return
 	 */
-	private InternalMetadata storeMetaData(InternalMetadata data) throws AggregationFailedException {
+	private InternalMetadata storeMetaData(InternalMetadata data) throws AggregationFailedException, AggregationWarningException {
 		
 		logger.debug("### storeMetaData - Begin ###");
 		
@@ -553,12 +551,17 @@ public class Aggregator {
 				throw new AggregationFailedException("putting InternalMetadata failed: ", ioex);
 			}	
 
+			
 			// auswerten des Resultats
 			// wenn gar keine Rückmeldung, dann auf jeden Fall ein Fehler
 			if (msgPutResponse == null || msgPutResponse.getStatus() != RestStatusEnum.OK) {
-				logger.error("REST-Uebertragung fehlgeschlagen: " + msgPutResponse);
-				
-				throw new AggregationFailedException("putting InternalMetadata failed, server responded with error:\n" + msgPutResponse.getStatus() + " - " + msgPutResponse.getStatusDescription());
+				if (msgPutResponse.getStatus() == RestStatusEnum.AGGREGATION_WARNING) {
+					logger.error(msgPutResponse.getStatusDescription());
+					throw new AggregationWarningException(msgPutResponse.getStatusDescription());
+				} else {
+					logger.error("REST-Uebertragung fehlgeschlagen: " + msgPutResponse);
+					throw new AggregationFailedException("putting InternalMetadata failed, server responded with error:\n" + msgPutResponse.getStatus() + " - " + msgPutResponse.getStatusDescription());
+				}
 			} else {
 				logger.debug("Resultat der Übertragung: " + msgPutResponse);
 			}
