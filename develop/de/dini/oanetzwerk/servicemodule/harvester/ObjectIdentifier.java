@@ -43,10 +43,16 @@ public class ObjectIdentifier {
 	private Element rawdata;
 
 	/**
-	 * 
+	 * internal Object ID 
 	 */
 	
-	private int internalOID;
+	private long internalOID;
+	
+	/**
+	 * FailureCounter of this Object 
+	 */
+	
+	private int failureCounter;
 	
 	/**
 	 * The log4j logger for all logging purposes.
@@ -88,9 +94,11 @@ public class ObjectIdentifier {
 	 * @param externalOID the Object Identifier which is used in the harvested repository
 	 * @param datestamp the date of the object's last change
 	 * @param internalOID the Object Identifier which is used in our internal system and database
+	 * @param record the rawdata of the Object
+	 * @param failurecounter the failure counter of the object 
 	 */
 	
-	public ObjectIdentifier (String externalOID, String datestamp, int internalOID, Element record) {
+	public ObjectIdentifier (String externalOID, String datestamp, long internalOID, Element record, int failurecounter) {
 
 		try {
 			
@@ -98,6 +106,7 @@ public class ObjectIdentifier {
 			this.datestamp = new SimpleDateFormat ("yyyy-MM-dd").parse (datestamp);
 			this.internalOID = internalOID;
 			this.rawdata = record;
+			this.failureCounter = failurecounter;
 			
 		} catch (java.text.ParseException ex) {
 			
@@ -156,7 +165,7 @@ public class ObjectIdentifier {
 	 * @return the internalOID
 	 */
 	
-	final int getInternalOID ( ) {
+	final long getInternalOID ( ) {
 
 		return this.internalOID;
 	}
@@ -167,11 +176,37 @@ public class ObjectIdentifier {
 	 * @param internalOID the internalOID to set
 	 */
 	
-	final void setInternalOID (int internalOID) {
+	final void setInternalOID (long internalOID) {
 
 		this.internalOID = internalOID;
 	}
 	
+	
+	/**
+	 * Getter method for the failureCounter
+	 * 
+	 * @return the failureCounter
+	 */
+	
+	final int getFailureCounter ( ) {
+	
+		return this.failureCounter;
+	}
+	
+
+	
+	/**
+	 * Setter method for the failureCounter
+	 * 
+	 * @param failureCounter the failureCounter to set
+	 */
+	
+	final void setFailureCounter (int failureCounter) {
+	
+		this.failureCounter = failureCounter;
+	}
+	
+
 	/**
 	 * @return
 	 */

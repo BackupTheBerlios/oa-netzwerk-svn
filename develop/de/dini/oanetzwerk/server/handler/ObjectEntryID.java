@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
@@ -27,10 +23,9 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  *
  */
 
-public class ObjectEntryID extends 
-AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	static Logger logger = Logger.getLogger (ObjectEntryID.class);
+	private static Logger logger = Logger.getLogger (ObjectEntryID.class);
 	
 	public ObjectEntryID ( ) {
 		
@@ -97,19 +92,49 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 				for (Throwable warning : result.getWarning ( )) {
 					
+					this.rms.setStatusDescription (this.rms.getStatusDescription ( ) + "\n" + warning.getLocalizedMessage ( ));
 					logger.warn (warning.getLocalizedMessage ( ));
 				}
+				
+				this.rms.setStatus (RestStatusEnum.SQL_WARNING);
 			}
 			
 			if (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: internal objectID = " + this.result.getResultSet ( ).getInt ("object_id"));
+					logger.debug ("DB returned: internal objectID = " + this.result.getResultSet ( ).getBigDecimal ("object_id"));
 				
-				res.addEntry ("oid", Integer.toString (this.result.getResultSet ( ).getInt ("object_id")));
+				res.addEntry ("oid", this.result.getResultSet ( ).getBigDecimal ("object_id").toPlainString ( ));
 				
 				this.rms.addEntrySet (res);
-				this.rms.setStatus (RestStatusEnum.OK);
+				
+				if (path.length == 3) {
+					
+					stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
+					
+					stmtconn.loadStatement (SelectFromDB.RawRecordData (stmtconn.connection, this.result.getResultSet ( ).getBigDecimal ("object_id")));
+					
+					this.result = stmtconn.execute ( );
+					
+					if (this.result.getWarning ( ) != null) {
+						
+						for (Throwable warning : result.getWarning ( )) {
+							
+							logger.warn (warning.getLocalizedMessage ( ));
+							this.rms.setStatusDescription (this.rms.getStatusDescription ( ) + "\n" + warning.getLocalizedMessage ( ));
+						}
+						
+						this.rms.setStatus (RestStatusEnum.SQL_WARNING);
+					}
+					
+					if (this.result.getResultSet ( ).getString ("data") == null || (this.result.getResultSet ( ).getString ("data").equals (""))) {
+						
+						this.rms.setStatus (RestStatusEnum.NO_RAWDATA_FOUND);
+						this.rms.setStatusDescription (this.rms.getStatusDescription ( ) + "\nNo RawData found");
+					}
+					
+				} else
+					this.rms.setStatus (RestStatusEnum.OK);
 				
 			} else {
 				

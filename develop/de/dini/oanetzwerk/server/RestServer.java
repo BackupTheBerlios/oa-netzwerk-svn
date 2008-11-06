@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server;
 
 import java.io.IOException;
@@ -100,7 +96,7 @@ public class RestServer extends HttpServlet {
 				// xml = HelperMethods.stream2String (req.getInputStream ( ));
 			
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("XML: " + new String(Base64.decodeBase64(xml.getBytes ("UTF-8"))));
+					logger.debug ("XML: " + new String (Base64.decodeBase64 (xml.getBytes ("UTF-8"))));
 			}
 			
 			Class <KeyWord2DatabaseInterface> c = (Class <KeyWord2DatabaseInterface>) Class.forName (classname);
@@ -159,7 +155,7 @@ public class RestServer extends HttpServlet {
 		
 		// This section is unreachable
 	}
-
+	
 	/**
 	 * @param ex
 	 * @param restStatusEnum 

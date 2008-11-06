@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package de.dini.oanetzwerk.servicemodule.harvester;
 
 import java.io.FileNotFoundException;
@@ -216,18 +212,23 @@ public class Harvester {
 		if (this.getProps ( ).containsKey ("listrecords"))
 			setListRecords (new Boolean (this.getProps ( ).getProperty ("listrecords", "false")));
 		
-		String result = this.prepareRestTransmission ("Repository/" + id + "/").GetData ( );
+		RestMessage response = this.prepareRestTransmission ("Repository/" + id + "/").sendGetRestMessage ( );
 		
-		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
-		
-		if (rms == null || rms.getListEntrySets ( ).isEmpty ( )) {
+		if (response == null || response.getStatus ( ) != RestStatusEnum.OK || response.getListEntrySets ( ).isEmpty ( )) {
 			
-			logger.error ("Received no Repository Details at all from the server");
-			harvStateLog.error ("Server has no Data about requested Repository with ID " + id);
+			String statusdescription = RestStatusEnum.UNKNOWN_ERROR.toString ( );
+			
+			if (response != null) {
+				
+				statusdescription = response.getStatusDescription ( );
+			}
+			
+			logger.error ("Received no Repository Details at all from the server: " + statusdescription);
+			harvStateLog.error ("Server has no Data about requested Repository with ID " + id + "! Cause: " + statusdescription);
 			System.exit (1);
 		}
 		
-		RestEntrySet res = rms.getListEntrySets ( ).get (0);
+		RestEntrySet res = response.getListEntrySets ( ).get (0);
 		Iterator <String> it = res.getKeyIterator ( );
 		String key = "";
 		
@@ -705,7 +706,7 @@ public class Harvester {
 		} catch (UnsupportedEncodingException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
-			harvStateLog.warn ("Unsopported Charset in HTTP-Response from Repository No " + this.getRepositoryID ( ));
+			harvStateLog.warn ("Unsupported Charset in HTTP-Response from Repository No " + this.getRepositoryID ( ));
 			
 			return null;
 		}
@@ -904,7 +905,17 @@ public class Harvester {
 			logger.debug ("dateStamp: " + dateStamp);
 		}
 		
-		int oid = this.objectexists (recordHeaderIdentifier);
+		RestMessage objectExistsResponse = this.objectexists (recordHeaderIdentifier);
+		
+		String value = this.getValueFromKey (objectExistsResponse, "oid");
+		
+		long oid = -1;
+		
+		if (value == null)
+			oid = -1;
+			
+		else
+			oid = new Long (value);
 		
 		if (logger.isDebugEnabled ( )) {
 			
@@ -917,29 +928,30 @@ public class Harvester {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("object exists, so we have to look new rawdata exists");
 			
-			String objectEntryResponse = prepareRestTransmission ("ObjectEntry/" + oid + "/").GetData ( );
+			RestMessage objectEntryResponse = prepareRestTransmission ("ObjectEntry/" + oid + "/").sendGetRestMessage ( );
 			String objectEntryDatestamp = getValueFromKey (objectEntryResponse, "repository_datestamp");
+			int failureCounter = new Integer (getValueFromKey (objectEntryResponse, "failureCounter"));
 			
 			Date objectEntryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (objectEntryDatestamp);
 			Date headerDate = new SimpleDateFormat ("yyyy-MM-dd").parse (dateStamp);
 			
 			harvStateLog.info ("Object with ID " + recordHeaderIdentifier + " found in database with corresponding ID " + oid);
 			
-			if (objectEntryDate.before (headerDate)) {
+			if (objectEntryDate.before (headerDate) || objectExistsResponse.getStatus ( ) == RestStatusEnum.NO_RAWDATA_FOUND) {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("new rawdata is available, so we'll store her");
 				
 				harvStateLog.info ("Object with IDs " + recordHeaderIdentifier + " / " + oid + " has changed since last harvest, new data will be stored");
 				
-				this.getIds ( ).add (new ObjectIdentifier (recordHeaderIdentifier, dateStamp, oid, record));
+				this.getIds ( ).add (new ObjectIdentifier (recordHeaderIdentifier, dateStamp, oid, record, failureCounter));
 				
 			} else {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("no new rawdata. We must only update the datestamps. Rawdata won't be stored");
 				
-				this.getIds ( ).add (new ObjectIdentifier (recordHeaderIdentifier, dateStamp, oid, null));
+				this.getIds ( ).add (new ObjectIdentifier (recordHeaderIdentifier, dateStamp, oid, null, failureCounter));
 			}
 			
 			objectEntryResponse = null;
@@ -954,7 +966,7 @@ public class Harvester {
 			
 			harvStateLog.info ("Object with ID " + recordHeaderIdentifier + " not found in database, new Object will be created");
 			
-			this.getIds ( ).add (new ObjectIdentifier (recordHeaderIdentifier, dateStamp, oid, record));
+			this.getIds ( ).add (new ObjectIdentifier (recordHeaderIdentifier, dateStamp, oid, record, 0));
 			
 		} else {
 			
@@ -1148,7 +1160,7 @@ public class Harvester {
 	}
 	
 	/**
-	 * This method processes the Inputstrean from the repository and extracts
+	 * This method processes the Inputstream from the repository and extracts
 	 * the Object IDs and the ResumptionToke if it exists. It stores all IDs in
 	 * a list of ObjectIdentifiers together with its datestamps. The IDs which
 	 * are extracted in here are only the external IDs which means the IDs used
@@ -1251,9 +1263,9 @@ public class Harvester {
 			this.processHeader (header);
 		}
 	}
-	//TODO: weiteremachen
+	
 	/**
-	 * Parses a header-element and retrieves identifier and datestamp, and searches comparing oid in database. 
+	 * Parses a header-element and retrieves identifier and datestamp, and searches the comparing Object ID in the database. 
 	 * 
 	 * @param element header-element to parse
 	 * @throws IOException
@@ -1277,7 +1289,16 @@ public class Harvester {
 			logger.debug ("headerDatestamp = " + headerDatestamp);
 		}
 		
-		int oid = this.objectexists (headerIdentifier);
+		RestMessage objectExistsResponse = this.objectexists (headerIdentifier);
+		String value = this.getValueFromKey (objectExistsResponse, "oid");
+		
+		long oid = -1;
+		
+		if (value == null)
+			oid = -1;
+			
+		else
+			oid = new Long (value);
 		
 		if (logger.isDebugEnabled ( )) {
 			
@@ -1290,13 +1311,14 @@ public class Harvester {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("object exists, so we have to look new rawdata exists");
 			
-			String objectEntryResponse = prepareRestTransmission ("ObjectEntry/" + oid + "/").GetData ( );
-			String objectEntryDatestamp = getValueFromKey (objectEntryResponse, "repository_datestamp");
+			RestMessage objectEntryResponse = this.prepareRestTransmission ("ObjectEntry/" + oid + "/").sendGetRestMessage ( );
+			String objectEntryDatestamp = this.getValueFromKey (objectEntryResponse, "repository_datestamp");
+			int failureCounter = new Integer (getValueFromKey (objectEntryResponse, "failureCounter"));
 			
 			Date objectEntryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (objectEntryDatestamp);
 			Date headerDate = new SimpleDateFormat ("yyyy-MM-dd").parse (headerDatestamp);
 			
-			if (objectEntryDate.before (headerDate)) {
+			if (objectEntryDate.before (headerDate) || objectExistsResponse.getStatus ( ) == RestStatusEnum.NO_RAWDATA_FOUND) {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("new rawdata is available, so we'll fetch her");
@@ -1308,7 +1330,7 @@ public class Harvester {
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("no new rawdata. We must only update the datestamps");
 				
-				this.storeHeaderData (headerIdentifier, headerDatestamp, oid);
+				this.storeHeaderData (headerIdentifier, headerDatestamp, oid, failureCounter);
 			}
 			
 			objectEntryResponse = null;
@@ -1337,16 +1359,17 @@ public class Harvester {
 	 * @param headerIdentifier
 	 * @param headerDatestamp
 	 * @param oid
+	 * @param failureCounter
 	 */
 	
-	private void storeHeaderData (String headerIdentifier, String headerDatestamp, int oid) {
+	private void storeHeaderData (String headerIdentifier, String headerDatestamp, long oid, int failureCounter) {
 		
 		logger.info ("Got Header Data for " + headerIdentifier);
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("storing header data (external id, datestamp and internal ID), but nothing more 'cause there no new data");
 		
-		this.getIds ( ).add (new ObjectIdentifier (headerIdentifier, headerDatestamp, oid, null));
+		this.getIds ( ).add (new ObjectIdentifier (headerIdentifier, headerDatestamp, oid, null, failureCounter));
 	}
 	
 	/**
@@ -1494,8 +1517,35 @@ public class Harvester {
 	
 	private void setFullHarvestDateStamp ( ) throws UnsupportedEncodingException {
 		
-		String result = prepareRestTransmission ("Repositories/" + this.getRepositoryID ( ) + "/harvestedtoday/").PostData ("");
-		//TODO: result auswerten
+		String postRepositories = prepareRestTransmission ("Repositories/" + this.getRepositoryID ( ) + "/harvestedtoday/").PostData ("");
+		
+		RestMessage postRepositoriesmsg = RestXmlCodec.decodeRestMessage (postRepositories);
+		
+		if (postRepositoriesmsg == null || postRepositoriesmsg.getStatus ( ) != RestStatusEnum.OK) {
+			
+			String description = RestStatusEnum.UNKNOWN_ERROR.toString ( );
+			
+			if (postRepositoriesmsg != null) {
+				
+				description = postRepositoriesmsg.getStatusDescription ( );
+			
+				if (postRepositoriesmsg.getStatus ( ) == RestStatusEnum.SQL_WARNING) {
+					
+					logger.warn ("SQL_WARNING: " + description);
+					harvStateLog.warn ("SQL_WARNING: " + description);
+					
+					return;
+					
+				} else;
+				
+			} else {
+				
+				logger.error ("Could NOT post Repositories FullHarvest-DateStamp into the database for repository No " + this.getRepositoryID ( ) + "! " + description);
+				harvStateLog.error ("Could NOT post Repositories FullHarvest-DateStamp into the database for repository No " + this.getRepositoryID ( ) + "! Cause: " + description);
+				
+				return;
+			}
+		}
 	}
 
 	/**
@@ -1522,9 +1572,32 @@ public class Harvester {
 		String value = "";
 		
 		try {
+			//TODO:
+			RestMessage response = this.prepareRestTransmission ("ObjectEntry/").sendPutRestMessage (this.createObjectEntryRestMessage (this.ids.get (index), 0));
 			
-			String result = prepareRestTransmission ("ObjectEntry/").PutData (this.createObjectEntryRestMessage (index, 0));
-			value = getValueFromKey (result, "oid");
+			if (response == null || response.getStatus ( ) != RestStatusEnum.OK) {
+				
+				String description = RestStatusEnum.UNKNOWN_ERROR.toString ( );
+				
+				if (response != null)
+					description = response.getStatusDescription ( );
+				
+				if (response == null || response.getStatus ( ) != RestStatusEnum.SQL_WARNING) {
+					
+					logger.error ("Could NOT put ObjectEntry into the database for id " + this.ids.get (index).getInternalOID ( ) + "! " + description);
+					harvStateLog.error ("Could NOT put ObjectEntry into the database for id " + this.ids.get (index).getInternalOID ( ) + "! Cause: " + description);
+					
+					this.increaseFailureCounter (this.ids.get (index));
+					return;
+					
+				} else {
+					
+					logger.warn ("SQL_WARNING: " + description);
+					harvStateLog.warn ("SQL_WARNING: " + description);
+				}
+			}
+			
+			value = this.getValueFromKey (response, "oid");
 			
 			int intoid = new Integer (value);
 			
@@ -1533,7 +1606,7 @@ public class Harvester {
 			
 			this.ids.get (index).setInternalOID (intoid);
 			
-			result = null;
+			response = null;
 			value = null;
 			
 		} catch (IOException ex) {
@@ -1552,7 +1625,7 @@ public class Harvester {
 	 * @return
 	 */
 	
-	private String createObjectEntryRestMessage (int index, int failurecounter) {
+	private RestMessage createObjectEntryRestMessage (ObjectIdentifier obj, int failurecounter) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("createObjectEntryRestMessage");
@@ -1563,14 +1636,14 @@ public class Harvester {
 		rms.setStatus (RestStatusEnum.OK);
 		
 		GregorianCalendar cal = new GregorianCalendar ( );
-		cal.setTime (this.ids.get (index).getDatestamp ( ));
+		cal.setTime (obj.getDatestamp ( ));
 		
 		String datestamp = cal.get (Calendar.YEAR) + "-" + (cal.get (Calendar.MONTH) + 1) + "-" + cal.get (Calendar.DAY_OF_MONTH);
 		
 		RestEntrySet res = new RestEntrySet ( );
 		
 		res.addEntry ("repository_id", Integer.toString (this.getRepositoryID ( )));
-		res.addEntry ("repository_identifier", this.ids.get (index).getExternalOID ( ));
+		res.addEntry ("repository_identifier", obj.getExternalOID ( ));
 		res.addEntry ("repository_datestamp", datestamp);
 		res.addEntry ("testdata", Boolean.toString (this.isTestData ( )));
 		res.addEntry ("failureCounter", Integer.toString (failurecounter));
@@ -1579,15 +1652,7 @@ public class Harvester {
 		
 		rms.addEntrySet (res);
 		
-		String requestxml = RestXmlCodec.encodeRestMessage (rms);
-		
-		if (logger.isDebugEnabled ( )) 
-			logger.debug ("xml: " + requestxml);
-		
-		res = null;
-		rms = null;
-		
-		return requestxml;
+		return rms;
 	}
 	
 	/**
@@ -1604,22 +1669,22 @@ public class Harvester {
 			logger.debug ("We must update the harvested datestamp only");
 		}
 		
-		String postObjectEntryResult = "";
+		RestMessage postObjectEntryResponse = null;
 		
 		try {
 			
-			postObjectEntryResult = prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/").PostData (this.createObjectEntryRestMessage (index, 0));
+			postObjectEntryResponse = prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/").sendPostRestMessage (this.createObjectEntryRestMessage (this.ids.get (index), this.ids.get (index).getFailureCounter ( )));
 			
 		} catch (UnsupportedEncodingException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 		
-		String value = getValueFromKey (postObjectEntryResult, "oid");
+		String value = getValueFromKey (postObjectEntryResponse, "oid");
 		
 		try {
 			
-			int intoid = new Integer (value);
+			long intoid = new Long (value);
 		
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("internalOID: " + intoid + " has been successfully updated");
@@ -1630,7 +1695,7 @@ public class Harvester {
 			logger.warn ("Current internalOID has NOT been successfully updated");
 		}
 		
-		postObjectEntryResult = null;
+		postObjectEntryResponse = null;
 	}
 	
 	/**
@@ -1642,7 +1707,7 @@ public class Harvester {
 	 */
 	
 	protected void updateRawData (int index) {
-
+		
 		if (logger.isDebugEnabled ( )) {
 			
 			logger.debug ("updateRawData");
@@ -1677,17 +1742,58 @@ public class Harvester {
 									ObjectIdentifier.encodeRawData (currentObject
 									.getRawDataAsString ( )));
 			
-			// TODO: putRawRecordDataResult auswerten und bei Fehler nicht weitermachen, sondern FailureCounter hochsetzen
+			RestMessage putRawDataResult = RestXmlCodec.decodeRestMessage (putRawRecordDataResult);
+			
+			if (putRawDataResult == null || putRawDataResult.getStatus ( ) != RestStatusEnum.OK) {
+				
+				String description = RestStatusEnum.UNKNOWN_ERROR.toString ( );
+				
+				if (putRawDataResult != null)
+					description = putRawDataResult.getStatusDescription ( );
+				
+				if (putRawDataResult == null || putRawDataResult.getStatus ( ) != RestStatusEnum.SQL_WARNING) {
+					
+					logger.error ("Could NOT put RawRecordData into the database for id " + currentObject.getInternalOID ( ) + "! " + description);
+					harvStateLog.error ("Could NOT put RawRecordData into the database for id " + currentObject.getInternalOID ( ) + "! Cause: " + description);
+					
+					this.increaseFailureCounter (currentObject);
+					return;
+					
+				} else {
+					
+					logger.warn ("SQL_WARNING: " + description);
+					harvStateLog.warn ("SQL_WARNING: " + description);
+				}
+			}
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("postObjectEntryResult");
 			
-			String postObjectEntryResult = prepareRestTransmission (
+			RestMessage postObjectEntryResponse = prepareRestTransmission (
 					"ObjectEntry/" + currentObject.getInternalOID ( ) + "/")
-					.PostData (createObjectEntryRestMessage (index, 0));
+					.sendPostRestMessage (this.createObjectEntryRestMessage (currentObject, currentObject.getFailureCounter ( )));
 			
-			// TODO: repsonse decodieren und auswerten (status-value,
-			// description, ...)
+			if (postObjectEntryResponse == null || postObjectEntryResponse.getStatus ( ) != RestStatusEnum.OK) {
+				
+				String description = RestStatusEnum.UNKNOWN_ERROR.toString ( );
+				
+				if (postObjectEntryResponse != null)
+					description = postObjectEntryResponse.getStatusDescription ( );
+				
+				if (putRawDataResult == null || putRawDataResult.getStatus ( ) != RestStatusEnum.SQL_WARNING) {
+					
+					logger.error ("Could NOT post ObjectEntry into the database for id " + currentObject.getInternalOID ( ) + "! " + description);
+					harvStateLog.error ("Could NOT put ObjectEntry into the database for id " + currentObject.getInternalOID ( ) + "! Cause: " + description);
+					
+					this.increaseFailureCounter (currentObject);
+					return;
+					
+				} else {
+					
+					logger.warn ("SQL_WARNING: " + description);
+					harvStateLog.warn ("SQL_WARNING: " + description);
+				}
+			}
 			
 			if (logger.isDebugEnabled ( )) {
 				
@@ -1696,11 +1802,31 @@ public class Harvester {
 			}
 			
 			// Retrieving ServiceID
-			String getServicesResult = prepareRestTransmission (
-					"Services/byName/Harvester/").GetData ( );
+			RestMessage getServicesResponse = prepareRestTransmission ("Services/byName/Harvester/").sendGetRestMessage ( );
 			
-			RestMessage rms = RestXmlCodec.decodeRestMessage (getServicesResult);
-			RestEntrySet res = rms.getListEntrySets ( ).get (0);
+			if (getServicesResponse == null || getServicesResponse.getListEntrySets ( ).isEmpty ( ) || getServicesResponse.getStatus ( ) != RestStatusEnum.OK) {
+				
+				String description = RestStatusEnum.UNKNOWN_ERROR.toString ( );
+				
+				if (getServicesResponse != null)
+					description = getServicesResponse.getStatusDescription ( );
+				
+				if (putRawDataResult == null || putRawDataResult.getStatus ( ) != RestStatusEnum.SQL_WARNING) {
+					
+					logger.error ("Could NOT get Harvester-Service-ID from database for id " + currentObject.getInternalOID ( ) + "! " + description);
+					harvStateLog.error ("Could NOT get Harvester-Service-ID from database for id " + currentObject.getInternalOID ( ) + "! Cause: " + description);
+					
+					this.increaseFailureCounter (currentObject);
+					return;
+					
+				} else {
+					
+					logger.warn ("SQL_WARNING: " + description);
+					harvStateLog.warn ("SQL_WARNING: " + description);
+				}
+			}
+			
+			RestEntrySet res = getServicesResponse.getListEntrySets ( ).get (0);
 			
 			Iterator <String> it = res.getKeyIterator ( );
 			String key = "";
@@ -1735,27 +1861,25 @@ public class Harvester {
 			}
 			
 			// Updating WorkflowDB
-			rms = new RestMessage ( );
+			RestMessage rms = new RestMessage ( );
 			
 			rms.setKeyword (RestKeyword.WorkflowDB);
 			rms.setStatus (RestStatusEnum.OK);
 			
 			res = new RestEntrySet ( );
 			
-			res.addEntry ("object_id", Integer.toString (this.ids.get (index).getInternalOID ( )));
+			res.addEntry ("object_id", Long.toString (currentObject.getInternalOID ( )));
 			res.addEntry ("service_id", thisServiceID.toPlainString ( ));
 			rms.addEntrySet (res);
 			
-			String requestxml = RestXmlCodec.encodeRestMessage (rms);
-			
-			String putWorkflowDBResult = new String ( );
+			RestMessage putWorkflowDBResponse = null;
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("putWorkflowDBResult");
 			
 			try {
 				
-				putWorkflowDBResult = prepareRestTransmission ("WorkflowDB/").PutData (requestxml);
+				putWorkflowDBResponse = prepareRestTransmission ("WorkflowDB/").sendPutRestMessage (rms);
 				
 			} catch (UnsupportedEncodingException ex) {
 				
@@ -1765,28 +1889,62 @@ public class Harvester {
 			rms = null;
 			res = null;
 			
-			String value = getValueFromKey (putWorkflowDBResult, "workflow_id");
-			
-			if (value == null) {
+			if (putWorkflowDBResponse == null || putWorkflowDBResponse.getListEntrySets ( ).isEmpty ( ) || putWorkflowDBResponse.getStatus ( ) != RestStatusEnum.OK) {
 				
-				logger.error ("I can not update the RawData because an error occured. Skipping this object and continue with next.");
+				String description = RestStatusEnum.UNKNOWN_ERROR.toString ( );
 				
-				return;
+				if (putWorkflowDBResponse != null)
+					description = putWorkflowDBResponse.getStatusDescription ( );
+				
+				if (putRawDataResult == null || putRawDataResult.getStatus ( ) != RestStatusEnum.SQL_WARNING) {
+					
+					logger.error ("Can NOT update the WorkflowDB for ID " + currentObject.getInternalOID ( ) + "! " + description);
+					harvStateLog.error ("Can NOT update the WorkflowDB for ID " + currentObject.getInternalOID ( ) + "! Cause: " + description);
+					
+					this.increaseFailureCounter (currentObject);
+					return;
+					
+				} else {
+					
+					logger.warn ("SQL_WARNING: " + description);
+					harvStateLog.warn ("SQL_WARNING: " + description);
+				}
 			}
 			
-			int workflowid = new Integer (value);
+			long workflowid = new Long (getValueFromKey (putWorkflowDBResponse, "workflow_id"));
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("workflow_id for OID " + this.ids.get (index).getInternalOID ( ) + " is: " + workflowid);
+				logger.debug ("workflow_id for OID " + currentObject.getInternalOID ( ) + " is: " + workflowid);
 			
 		} catch (IOException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 		
-		logger.info ("stored Data for object " + this.ids.get (index).getExternalOID ( ) + " --> " + this.ids.get (index).getInternalOID ( ));
+		harvStateLog.info ("Stored Data for object " + currentObject.getExternalOID ( ) + " --> " + currentObject.getInternalOID ( ));
 	}
 	
+	/**
+	 * @param currentObject
+	 */
+	
+	private void increaseFailureCounter (ObjectIdentifier currentObject) {
+
+		currentObject.setFailureCounter (currentObject.getFailureCounter ( ) + 1);
+		
+		try {
+			
+			prepareRestTransmission (
+					"ObjectEntry/" + currentObject.getInternalOID ( ) + "/")
+					.sendPostRestMessage (this.createObjectEntryRestMessage (currentObject, currentObject.getFailureCounter ( )));
+			
+		} catch (UnsupportedEncodingException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+		}
+	}
+	
+
 	/**
 	 * @param string
 	 * @return
@@ -1810,7 +1968,7 @@ public class Harvester {
 	 * @throws SAXException
 	 */
 	
-	private int objectexists (String externalOID) throws ParserConfigurationException, SAXException, IOException {
+	private RestMessage objectexists (String externalOID) throws ParserConfigurationException, SAXException, IOException {
 
 		if (logger.isDebugEnabled ( )) {
 			
@@ -1819,21 +1977,7 @@ public class Harvester {
 			logger.debug ("Properties: " + this.getProps ( ).getProperty ("host"));
 		}
 		
-		String result = this.prepareRestTransmission ("ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/").GetData ( );
-		
-		if (logger.isDebugEnabled ( ))
-			logger.debug (result);
-		
-		String value = this.getValueFromKey (result, "oid");
-		
-		int intoid = -1;
-		
-		if (value == null)
-			intoid = -1;
-		
-		else intoid = new Integer (value);
-		
-		return intoid;
+		return this.prepareRestTransmission ("ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/").sendGetRestMessage ( );
 	}
 	
 	
@@ -1845,28 +1989,32 @@ public class Harvester {
 	 * @return the extracted value
 	 */
 	
-	private String getValueFromKey (String result, String keyword) {
+	private String getValueFromKey (RestMessage response, String keyword) {
 
-		if (result == null || result.equalsIgnoreCase ("")) {
+		if (response == null || response.getListEntrySets ( ).isEmpty ( )) {
 			
-			logger.error ("received RestMessage empty, skipping, continue with next");
-			
+			logger.error ("Received RestMessage empty");
+			harvStateLog.error ("Received RestMessage empty");
 			return null;
 		}
 		
-		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
-		
-		if (rms.getStatus ( ) != RestStatusEnum.OK) {
+		if (response.getStatus ( ) != RestStatusEnum.OK) {
 			
-			if (rms.getStatus ( ) == RestStatusEnum.NO_OBJECT_FOUND_ERROR)
+			if (response.getStatus ( ) == RestStatusEnum.NO_OBJECT_FOUND_ERROR) {
+				
 				logger.info ("Object does not exist, we'll care about this");
-			
-			else logger.error ("Rest-Error occured: " + rms.getStatusDescription ( ));
+				harvStateLog.info ("Object does not exist, we'll care about this");
+				
+			} else {
+				
+				logger.error ("Rest-Error occured: " + response.getStatusDescription ( ));
+				harvStateLog.error ("Rest-Error occured: " + response.getStatusDescription ( ));
+			}
 			
 			return null;
 		}
 		
-		RestEntrySet res = rms.getListEntrySets ( ).get (0);
+		RestEntrySet res = response.getListEntrySets ( ).get (0);
 		
 		Iterator <String> it = res.getKeyIterator ( );
 		String key = "";

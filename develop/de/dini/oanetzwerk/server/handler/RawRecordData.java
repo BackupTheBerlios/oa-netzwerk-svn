@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.io.UnsupportedEncodingException;
@@ -35,10 +31,13 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  *
  */
 
-public class RawRecordData extends
-AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	static Logger logger = Logger.getLogger (RawRecordData.class);
+	private static Logger logger = Logger.getLogger (RawRecordData.class);
+	
+	/**
+	 * 
+	 */
 	
 	public RawRecordData ( ) {
 		
