@@ -1991,7 +1991,7 @@ public class Harvester {
 	
 	private String getValueFromKey (RestMessage response, String keyword) {
 
-		if (response == null || response.getListEntrySets ( ).isEmpty ( )) {
+		if (response == null) {
 			
 			logger.error ("Received RestMessage empty");
 			harvStateLog.error ("Received RestMessage empty");
@@ -2012,6 +2012,15 @@ public class Harvester {
 			}
 			
 			return null;
+			
+		} else /*status ok*/ {
+			
+		   if(response.getListEntrySets ( ).isEmpty ( )) {
+				logger.error ("Received RestMessage with RestStatusEnum.OK and no entryset to evaluate");
+				harvStateLog.error ("Received RestMessage with RestStatusEnum.OK and no entryset to evaluate");
+				return null;			   
+		   }
+			
 		}
 		
 		RestEntrySet res = response.getListEntrySets ( ).get (0);
