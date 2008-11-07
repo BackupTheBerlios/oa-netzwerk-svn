@@ -558,7 +558,7 @@ public class Harvester {
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("processing extracted Records");
 					
-					this.processRecords ( );
+					this.processRecords (resumptionToken.getText ( ));
 					
 					if (resumptionToken != null) {
 						
@@ -625,7 +625,7 @@ public class Harvester {
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("Processing extracted Records");
 					
-					this.processRecords ( );
+					this.processRecords (resumptionToken.getText ( ));
 					
 					// if we have resumption token, we have to find out, whether
 					// it's the last entryset or not
@@ -929,8 +929,8 @@ public class Harvester {
 				logger.debug ("object exists, so we have to look new rawdata exists");
 			
 			RestMessage objectEntryResponse = prepareRestTransmission ("ObjectEntry/" + oid + "/").sendGetRestMessage ( );
-			String objectEntryDatestamp = getValueFromKey (objectEntryResponse, "repository_datestamp");
-			int failureCounter = new Integer (getValueFromKey (objectEntryResponse, "failureCounter"));
+			String objectEntryDatestamp = this.getValueFromKey (objectEntryResponse, "repository_datestamp");
+			int failureCounter = new Integer (this.getValueFromKey (objectEntryResponse, "failure_counter"));
 			
 			Date objectEntryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (objectEntryDatestamp);
 			Date headerDate = new SimpleDateFormat ("yyyy-MM-dd").parse (dateStamp);
@@ -1453,14 +1453,23 @@ public class Harvester {
 	 * @see #updateHarvestedDatestamp(int)
 	 */
 	
-	protected void processRecords ( ) throws UnsupportedEncodingException {
+	protected void processRecords (String resumptionToken) throws UnsupportedEncodingException {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("processRecords");
 		
-		if (this.ids.size ( ) < 1) {
+		if (this.ids == null || this.ids.size ( ) < 1) {
 			
-			logger.info ("No Records to process at all");
+			if (resumptionToken != null && !resumptionToken.equals ("")) {
+				
+				logger.warn ("No more Records harvested but Resumption Token found. Something went wrong!\\nFinishing Harvesting.");
+				harvStateLog.warn ("No more Records harvested but Resumption Token found for Repository No " + this.getRepositoryID ( ) + ". Something went wrong!\nFinishing Harvesting.");
+				
+			} else {
+			
+				logger.info ("No Records to process at all");
+				harvStateLog.info ("No more Records to process. Finished Repository No " + this.getRepositoryID ( ));
+			}
 			
 			this.ids = null;
 			return;
