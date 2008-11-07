@@ -558,7 +558,7 @@ public class Harvester {
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("processing extracted Records");
 					
-					this.processRecords (resumptionToken.getText ( ));
+					this.processRecords ( );
 					
 					if (resumptionToken != null) {
 						
@@ -625,7 +625,7 @@ public class Harvester {
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("Processing extracted Records");
 					
-					this.processRecords (resumptionToken.getText ( ));
+					this.processRecords ( );
 					
 					// if we have resumption token, we have to find out, whether
 					// it's the last entryset or not
@@ -797,15 +797,33 @@ public class Harvester {
 		
 		List <Element> recordlist = searchAllChildren (element.getChildren ( ), "record");
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("Storing extracted records");
+		if (recordlist.isEmpty ( )) {
 		
-		for (Element record : recordlist) {
+			Element error = searchFirstChild (element.getChildren ( ), "error");
+			
+			if (error != null) {
+				
+				logger.error ("Error returned from Repository No " + this.getRepositoryID ( ) + ": " + error.getText ( ));
+				harvStateLog.error ("Error returned from Repository No " + this.getRepositoryID ( ) + ": " + error.getText ( ));
+				
+			} else {
+				
+				logger.warn ("Some strange error occured. No data has been collected, but there was no error reposrted from repository");
+				harvStateLog.error ("Some strange error occured. No data has been collected, but there was no error reposrted from repository");
+			}
+			
+		} else {
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug (element.getName ( ) + " is stored with value: " + element.getText ( ));
+				logger.debug ("Storing extracted records");
 			
-			this.storeSingleRecord (record);
+			for (Element record : recordlist) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug (element.getName ( ) + " is stored with value: " + element.getText ( ));
+				
+				this.storeSingleRecord (record);
+			}
 		}
 	}
 	
@@ -892,6 +910,14 @@ public class Harvester {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("storeSingleRecord");
 		
+		if (record == null) {
+			
+			logger.error ("One Record not found in Repository No " + this.getRepositoryID ( ) + ", trying next record");
+			harvStateLog.error ("One Record not found in Repository No " + this.getRepositoryID ( ) + ", trying next record");
+			
+			return;
+		}
+		
 		Element header = searchFirstChild (record.getChildren ( ), "header");
 		
 		Element identifier = searchFirstChild (header.getChildren ( ), "identifier");
@@ -926,7 +952,7 @@ public class Harvester {
 		if (oid > 0) {
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("object exists, so we have to look new rawdata exists");
+				logger.debug ("object exists, so we'll have to look if new rawdata exists");
 			
 			RestMessage objectEntryResponse = prepareRestTransmission ("ObjectEntry/" + oid + "/").sendGetRestMessage ( );
 			String objectEntryDatestamp = this.getValueFromKey (objectEntryResponse, "repository_datestamp");
@@ -1139,6 +1165,7 @@ public class Harvester {
 		} catch (Exception ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
+			harvStateLog.error (ex.getLocalizedMessage ( ) + " while trying to receive data from repository No " + this.getRepositoryID ( ));
 			System.exit (2);
 		}
 		
@@ -1181,7 +1208,6 @@ public class Harvester {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("extractIdsAndGetResumptionToken");
 		
-		
 		Element resumptionToken = null;
 		SAXBuilder builder = new SAXBuilder ( );
 		
@@ -1200,6 +1226,28 @@ public class Harvester {
 				logger.debug ("retrieving Resumption Token");
 			
 			resumptionToken = searchFirstChild (root.getChildren ( ), "resumptionToken");
+			
+			if (resumptionToken == null) {
+				
+				Element error = searchFirstChild (root.getChildren ( ), "error");
+				
+				if (error != null) {
+					
+					logger.error ("Error occured while retrieving resumption token from Repository No " + this.getRepositoryID ( ) + ": " + error.getText ( ));
+					harvStateLog.error ("Error occured while retrieving resumption token from Repository No " + this.getRepositoryID ( ) + ": " + error.getText ( ));
+					
+				} else {
+					
+					logger.warn ("No Resumption Token found but no error reported by Repository");
+					harvStateLog.warn ("No Resumption Token found but no error reported by Repository");
+				}
+				
+				return null;
+			}
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Resumption Token: " + resumptionToken.getText ( ));
+			
 			doc = null;
 			
 		} catch (ParserConfigurationException pacoex) {
@@ -1255,12 +1303,30 @@ public class Harvester {
 		
 		List <Element> headerlist = searchAllChildren (element.getChildren ( ), "header");
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("storing extracted headers");
-		
-		for (Element header : headerlist) {
+		if (headerlist.isEmpty ( )) {
 			
-			this.processHeader (header);
+			Element error = searchFirstChild (element.getChildren ( ), "error");
+			
+			if (error != null) {
+				
+				logger.error ("Error returned from Repository No " + this.getRepositoryID ( ) + ": " + error.getText ( ));
+				harvStateLog.error ("Error returned from Repository No " + this.getRepositoryID ( ) + ": " + error.getText ( ));
+			
+			} else {
+				
+				logger.warn ("Some strange error occured. No data has been collected, but there was no error reposrted from repository");
+				harvStateLog.error ("Some strange error occured. No data has been collected, but there was no error reposrted from repository");
+			}
+			
+		} else {
+				
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("storing extracted headers");
+			
+			for (Element header : headerlist) {
+				
+				this.processHeader (header);
+			}
 		}
 	}
 	
@@ -1411,11 +1477,18 @@ public class Harvester {
 			if (statuscode != HttpStatus.SC_OK) {
 				
 				logger.error ("HTTP Status Code: " + statuscode);
+				harvStateLog.error ("HTTP Status Code: " + statuscode);
 			}
 			
 			Document doc = new SAXBuilder ( ).build (method.getResponseBodyAsStream ( ));
 			
-			return searchFirstChild (doc.getRootElement ( ).getChildren ( ), "record");
+			if (searchFirstChild (doc.getRootElement ( ).getChildren ( ), "error") != null) {
+				
+				logger.error ("Error occured while processing answer from Repository No " + this.getRepositoryID ( ) + ": " + searchFirstChild (doc.getRootElement ( ).getChildren ( ), "error").getText ( ));
+				harvStateLog.error ("Error occured while processing answer from Repository No " + this.getRepositoryID ( ) + ": " + searchFirstChild (doc.getRootElement ( ).getChildren ( ), "error").getText ( ));
+				
+			} else 
+				return searchFirstChild (doc.getRootElement ( ).getChildren ( ), "record");
 			
 		} catch (HttpException ex) {
 			
@@ -1453,23 +1526,15 @@ public class Harvester {
 	 * @see #updateHarvestedDatestamp(int)
 	 */
 	
-	protected void processRecords (String resumptionToken) throws UnsupportedEncodingException {
+	protected void processRecords ( ) throws UnsupportedEncodingException {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("processRecords");
 		
 		if (this.ids == null || this.ids.size ( ) < 1) {
 			
-			if (resumptionToken != null && !resumptionToken.equals ("")) {
-				
-				logger.warn ("No more Records harvested but Resumption Token found. Something went wrong!\\nFinishing Harvesting.");
-				harvStateLog.warn ("No more Records harvested but Resumption Token found for Repository No " + this.getRepositoryID ( ) + ". Something went wrong!\nFinishing Harvesting.");
-				
-			} else {
-			
-				logger.info ("No Records to process at all");
+			logger.info ("No Records to process at all");
 				harvStateLog.info ("No more Records to process. Finished Repository No " + this.getRepositoryID ( ));
-			}
 			
 			this.ids = null;
 			return;

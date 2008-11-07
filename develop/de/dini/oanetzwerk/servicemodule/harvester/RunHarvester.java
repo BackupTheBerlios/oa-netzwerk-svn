@@ -75,6 +75,7 @@ public class RunHarvester {
 											.create ('I');
 		Option testData = new Option ("testData", "harvested Data will be marked as 'test' and not used for productional use");
 		Option listRecords = new Option ("listRecords", "listRecods-OAI-Method is used instead of listIdentifiers + getRecord");
+		Option listIdentifiers = new Option ("listIdentifiers", "");
 		
 		Options options = new Options ( );
 		
@@ -87,6 +88,7 @@ public class RunHarvester {
 		options.addOption (harvestInt);
 		options.addOption (testData);
 		options.addOption (listRecords);
+		options.addOption (listIdentifiers);
 		
 		if (args.length > 0) {
 			
@@ -122,6 +124,9 @@ public class RunHarvester {
 					
 					if (cmd.hasOption ("listRecords"))
 						harvester.setListRecords (true);
+					
+					if (cmd.hasOption ("listIdentifiers"))
+						harvester.setListRecords (false);
 					
 					/* 
 					 * firstly we have to collect some data from the repository, which have to be processed
