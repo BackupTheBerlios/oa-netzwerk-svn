@@ -1313,7 +1313,7 @@ public class Harvester {
 			
 			RestMessage objectEntryResponse = this.prepareRestTransmission ("ObjectEntry/" + oid + "/").sendGetRestMessage ( );
 			String objectEntryDatestamp = this.getValueFromKey (objectEntryResponse, "repository_datestamp");
-			int failureCounter = new Integer (getValueFromKey (objectEntryResponse, "failureCounter"));
+			int failureCounter = new Integer (getValueFromKey (objectEntryResponse, "failure_counter"));
 			
 			Date objectEntryDate = new SimpleDateFormat ("yyyy-MM-dd").parse (objectEntryDatestamp);
 			Date headerDate = new SimpleDateFormat ("yyyy-MM-dd").parse (headerDatestamp);
