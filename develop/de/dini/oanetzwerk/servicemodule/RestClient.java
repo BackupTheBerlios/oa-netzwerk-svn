@@ -89,7 +89,7 @@ public class RestClient {
 		
 		this.url = filterurl (url);
 		this.nossl = true;
-//		this.nossl = setSSL (url);
+		this.nossl = setSSL (url);
 		this.querryPath = filterpath (path);
 		this.username = user;
 		this.password = pwd;
@@ -241,7 +241,7 @@ public class RestClient {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("SSL");
 			
-			return true;
+			return false;
 			//TODO: if SSL works reenable false!!!!
 //			return false;
 		}

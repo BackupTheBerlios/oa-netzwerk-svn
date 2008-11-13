@@ -30,8 +30,8 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 @SuppressWarnings("serial")
 public class RestServer extends HttpServlet {
 	
-	static Logger logger = Logger.getLogger (RestServer.class);
-	PrintWriter out = null;
+	private static Logger logger = Logger.getLogger (RestServer.class);
+	private PrintWriter out = null;
 	
 	/**
 	 * Standard Constructor 
@@ -53,20 +53,22 @@ public class RestServer extends HttpServlet {
 		String path [ ] = req.getPathInfo ( ).split ("/");
 		
 		if (path.length < 1) {
+			
 			RestMessage rms = new RestMessage (RestKeyword.UNKNOWN);
 			rms.setStatus (RestStatusEnum.NOT_ENOUGH_PARAMETERS_ERROR);
-			StringBuffer sbDesc = new StringBuffer();
-			sbDesc.append("Sie haben in der URL keine Ressource benannt. Folgende Schlüsselworte sind momentan über die REST-Schnittstelle verfügbar: ");
-			for(RestKeyword name : RestKeyword.values()) {
-				if(name != RestKeyword.UNKNOWN) {
-					sbDesc.append(name.toString()+ " ");
-				}
+			StringBuffer sbDesc = new StringBuffer ( );
+			sbDesc.append ("Sie haben in der URL keine Ressource benannt. Folgende Schlüsselworte sind momentan über die REST-Schnittstelle verfügbar: ");
+			
+			for (RestKeyword name : RestKeyword.values ( )) {
+				
+				if (name != RestKeyword.UNKNOWN)
+					sbDesc.append (name.toString ( ) + " ");
 			}
-			rms.setStatusDescription (sbDesc.toString());
+			
+			rms.setStatusDescription (sbDesc.toString ( ));
 			
 			return RestXmlCodec.encodeRestMessage (rms);
 		}
-		
 		
 		if (logger.isDebugEnabled ( )) {
 			
@@ -90,11 +92,6 @@ public class RestServer extends HttpServlet {
 				
 				xml = HelperMethods.stream2String (in);
 				
-				//byte[] stringBytesISO = xml.getBytes("ISO-8859-1");
-			    //xml = new String(stringBytesISO, "UTF-8");
-			
-				// xml = HelperMethods.stream2String (req.getInputStream ( ));
-			
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("XML: " + new String (Base64.decodeBase64 (xml.getBytes ("UTF-8"))));
 			}
@@ -219,8 +216,8 @@ public class RestServer extends HttpServlet {
 			logger.debug("Character Encoding: " + req.getCharacterEncoding ( ));
 		}
 		
-		out = res.getWriter ( );
-		out.write (processRequest (req, 3));
+		this.out = res.getWriter ( );
+		this.out.write (processRequest (req, 3));
 	}
 
 	/**
@@ -230,7 +227,7 @@ public class RestServer extends HttpServlet {
 	@Override
 	protected void doDelete (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
-		out = res.getWriter ( );
-		out.write (processRequest (req, 1));
+		this.out = res.getWriter ( );
+		this.out.write (processRequest (req, 1));
 	}
 }

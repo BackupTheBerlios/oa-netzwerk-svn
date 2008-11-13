@@ -11,6 +11,7 @@
 	<property name="build.adminservlet" value="build/adminservlet"/>
 	<property name="build.findnbrowse" value="build/findnbrowse"/>
 	<property name="build.oadminrealm" value="build/oadminrealm"/>
+	<property name="build.resourcerealm" value="build/resourcerealm"/>
 	<property name="lib" value="lib"/>
 	<property name="archive" value="arch"/>
 	<property name="path" value="/restserver"/>
@@ -91,6 +92,11 @@
 		<pathelement location="${lib}/commons-codec-1.3.jar"/>
 		<pathelement location="${lib}/jdom.jar"/>
 	</path>
+	
+	<path id="classpath.resourcerealm">
+		<pathelement location="${lib}/catalina.jar"/>
+		<pathelement location="${lib}/log4j-1.2.15.jar"/>
+	</path>
 
 	<target name="init">
 		<mkdir dir="${build}"/>
@@ -101,6 +107,7 @@
 		<mkdir dir="${build.markereraser}"/>
 		<mkdir dir="${build.adminservlet}"/>
 		<mkdir dir="${build.oadminrealm}"/>
+		<mkdir dir="${build.resourcerealm}"/>
 		<mkdir dir="${build.findnbrowse}"/>
 	</target>
 	
@@ -137,6 +144,7 @@
 			<src path="${src}/de/dini/oanetzwerk/codec"/>
 			<src path="${src}/de/dini/oanetzwerk/server"/>
 			<src path="${src}/de/dini/oanetzwerk/utils"/>
+			<exclude name="**/ResourceRealm.java"/>
 			<exclude name="**/InspectorServlet.java"/>
 			<exclude name="**/Test*.java"/>
 			<exclude name="**/oai/**/*"/>
@@ -340,7 +348,7 @@
 		</javac>
 	</target>
 
-	<target name="compileRealm" depends="init">
+	<target name="compileOAdminRealm" depends="init">
 		<javac destdir="${build.oadminrealm}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
 			<classpath refid="classpath.oadminrealm"/>
 			<include name="**/OAdmiNRealm.java"/>
@@ -351,14 +359,35 @@
 		</javac>
 	</target>
 
-	<target name="jarRealm" depends="compileRealm">
+	<target name="jarOAdminRealm" depends="compileOAdminRealm">
 		<property name="cp" value="catalina.jar log4j-1.2.15.jar commons-httpclient-3.1.jar commons-codec-1.3.jar jdom.jar" />
 		<jar jarfile="${lib}/oadminrealm.jar">
 			<fileset dir="${build.oadminrealm}">
 				<include name="**/OAdmiNRealm*"/>
 				<include name="**/codec/**"/>
-				<!--include name="**/RestMessage*"/>
-				<include name="**/RestXmlCodec*"/-->
+			</fileset>
+			<manifest>
+				<attribute name="Class-Path" value="${cp}"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="compileResourceRealm" depends="init">
+		<javac destdir="${build.resourcerealm}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.resourcerealm"/>
+			<include name="**/ResourceRealm.java"/>
+			<exclude name="**/codec/**"/>
+			<!--exclude name="**/server/**"/-->
+			<exclude name="**/Test*"/>
+			<exclude name="**/technotest/**"/>
+		</javac>
+	</target>
+
+	<target name="jarResourceRealm" depends="compileResourceRealm">
+		<property name="cp" value="catalina.jar log4j-1.2.15.jar" />
+		<jar jarfile="${lib}/resourcerealm.jar">
+			<fileset dir="${build.resourcerealm}">
+				<include name="**/ResourceRealm*"/>
 			</fileset>
 			<manifest>
 				<attribute name="Class-Path" value="${cp}"/>
