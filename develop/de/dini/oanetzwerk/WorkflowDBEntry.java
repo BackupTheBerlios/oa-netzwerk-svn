@@ -11,12 +11,11 @@ import de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler;
 import de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface;
 
 /**
- * @author Michael Kühn
+ * @author Michael K&uuml;hn
  *
  */
 
-public class WorkflowDBEntry extends
-AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+public class WorkflowDBEntry extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	static Logger logger = Logger.getLogger (WorkflowDBEntry.class);
 	
@@ -29,10 +28,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		super ("", RestKeyword.UNKNOWN);
 	}
 	
-	public static void main (String [ ] args) {
-		
-		
-	}
+	public static void main (String [ ] args) { }
 	
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])

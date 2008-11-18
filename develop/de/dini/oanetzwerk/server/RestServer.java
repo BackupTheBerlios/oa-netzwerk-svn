@@ -15,6 +15,7 @@ import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.server.handler.HttpVerbEnum;
 import de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
@@ -48,7 +49,7 @@ public class RestServer extends HttpServlet {
 	//TODO: Better name for variable i
 	
 	@SuppressWarnings("unchecked")
-	private String processRequest (HttpServletRequest req, int i) {
+	private String processRequest (HttpServletRequest req, HttpVerbEnum verb) {
 		
 		String path [ ] = req.getPathInfo ( ).split ("/");
 		
@@ -86,7 +87,7 @@ public class RestServer extends HttpServlet {
 			
 		try {
 			
-			if (i > 1) {
+			if (verb == HttpVerbEnum.POST || verb == HttpVerbEnum.PUT) {
 				
 				InputStream in = req.getInputStream ( );
 				
@@ -105,7 +106,7 @@ public class RestServer extends HttpServlet {
 			String [ ] pathwithoutkeyword = new String [path.length - 2];
 			System.arraycopy (path, 2, pathwithoutkeyword, 0, path.length - 2);
 			
-			return (((KeyWord2DatabaseInterface) o).processRequest (xml, pathwithoutkeyword, i));
+			return (((KeyWord2DatabaseInterface) o).processRequest (xml, pathwithoutkeyword, verb));
 			
 		} catch (ClassNotFoundException ex) {
 			
@@ -187,8 +188,11 @@ public class RestServer extends HttpServlet {
 	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
+		req.setCharacterEncoding ("UTF-8");
+		res.setCharacterEncoding ("UTF-8");
+		
 		this.out = res.getWriter ( );
-		this.out.write (processRequest (req, 0));
+		this.out.write (processRequest (req, HttpVerbEnum.GET));
 	}
 	
 	/**
@@ -198,8 +202,11 @@ public class RestServer extends HttpServlet {
 	@Override
 	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
+		req.setCharacterEncoding ("UTF-8");
+		res.setCharacterEncoding ("UTF-8");
+		
 		this.out = res.getWriter ( );
-		this.out.write (processRequest (req, 2));
+		this.out.write (processRequest (req, HttpVerbEnum.POST));
 	}
 
 	/**
@@ -210,6 +217,7 @@ public class RestServer extends HttpServlet {
 	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		req.setCharacterEncoding ("UTF-8");
+		res.setCharacterEncoding ("UTF-8");
 		
 		if (logger.isDebugEnabled ( )) {
 			
@@ -217,7 +225,7 @@ public class RestServer extends HttpServlet {
 		}
 		
 		this.out = res.getWriter ( );
-		this.out.write (processRequest (req, 3));
+		this.out.write (processRequest (req, HttpVerbEnum.PUT));
 	}
 
 	/**
@@ -227,7 +235,10 @@ public class RestServer extends HttpServlet {
 	@Override
 	protected void doDelete (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
+		req.setCharacterEncoding ("UTF-8");
+		res.setCharacterEncoding ("UTF-8");
+		
 		this.out = res.getWriter ( );
-		this.out.write (processRequest (req, 1));
+		this.out.write (processRequest (req, HttpVerbEnum.DELETE));
 	}
 }

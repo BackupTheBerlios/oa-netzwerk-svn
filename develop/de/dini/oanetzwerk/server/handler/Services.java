@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
@@ -19,17 +15,23 @@ import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
-
 /**
  * @author Michael K&uuml;hn
  * @author Robin Malitz
  *
  */
 
-public class Services extends 
-AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+public class Services extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	static Logger logger = Logger.getLogger (Services.class);
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (Services.class);
+	
+	/**
+	 * 
+	 */
 	
 	public Services ( ) {
 
@@ -216,7 +218,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	@Override
 	protected String putKeyWord (String [ ] path, String data) {
 		
-		int service_id;
 		String name;
 		
 		this.rms = RestXmlCodec.decodeRestMessage(data);
@@ -229,9 +230,12 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		this.rms.setKeyword(RestKeyword.Services);
 		
 		String strSID = entrySet.getValue("service_id");
-		if(strSID != null) {
-			service_id = new Integer (strSID);
-		} else {
+		
+		if (strSID != null)
+			new Integer (strSID);
+		
+		else {
+			
 			// SID is missing!
 			this.rms.setStatus(RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
 			this.rms.setStatusDescription("no 'service_id' entry given in request");
@@ -240,6 +244,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 		name = entrySet.getValue("name");
 		if(name == null) {
+			
 			// name is missing! 
 			this.rms.setStatus(RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
 			this.rms.setStatusDescription("no 'name' entry given in request");

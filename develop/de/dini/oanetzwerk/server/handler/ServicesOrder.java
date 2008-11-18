@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
@@ -24,8 +20,7 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  */
 
 @Deprecated
-public class ServicesOrder extends AbstractKeyWordHandler implements
-		KeyWord2DatabaseInterface {
+public class ServicesOrder extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	public ServicesOrder ( ) {
 

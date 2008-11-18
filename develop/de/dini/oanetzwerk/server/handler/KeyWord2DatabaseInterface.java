@@ -26,5 +26,5 @@ public interface KeyWord2DatabaseInterface {
 	 * @throws MethodNotImplementedException 
 	 */
 	
-	public String processRequest (String data, String [ ] path, int i) throws NotEnoughParametersException, MethodNotImplementedException;
+	public String processRequest (String data, String [ ] path, HttpVerbEnum verb) throws NotEnoughParametersException, MethodNotImplementedException;
 }

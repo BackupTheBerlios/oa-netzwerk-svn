@@ -52,31 +52,31 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	 * @see de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface#processRequest(java.lang.String, java.lang.String[], int)
 	 */
 	
-	final public String processRequest (String data, String [ ] path, int i) throws NotEnoughParametersException, MethodNotImplementedException {
+	final public String processRequest (String data, String [ ] path, HttpVerbEnum verb) throws NotEnoughParametersException, MethodNotImplementedException {
 			
-		switch (i) {
-		case 0:
+		switch (verb) {
+		case GET:
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("GET case chosen");
 			
 			return getKeyWord (path);
 			
-		case 1:
+		case DELETE:
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("DELTE case chosen");
+				logger.debug ("DELETE case chosen");
 						
 			return deleteKeyWord (path);
 			
-		case 2:
+		case POST:
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("POST case chosen");
 			
 			return postKeyWord (path, data);
 			
-		case 3:
+		case PUT:
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("PUT case chosen");
