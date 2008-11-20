@@ -65,6 +65,7 @@ public class Aggregator {
 
 	private int currentRecordId = 0; // stores object_id which is currently
 										// being worked on
+	private String time = null; // stores timestamp of this object
 
 	private Properties props; // special aggregator settings like connecting
 								// server

@@ -179,7 +179,12 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 		BigDecimal object_id = null;
 		BigDecimal service_id = null;
 		String time = null;
+		boolean newObject = false;
 		
+		if (path.length == 1) {
+			if (path[0].equals("newObject")) newObject = true;
+		}
+			
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
 		
@@ -221,7 +226,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 		this.rms = new RestMessage (RestKeyword.WorkflowDB);
 
 		// Prüfen, ob überhaupt Daten übergeben wurden
-		if ((object_id == null) | (service_id == null) | (time == null)) {
+		if ((object_id == null) | (service_id == null) | ((newObject == false && time == null))) {
 			// Fehlermeldung generieren und abbrechen
 			this.rms = new RestMessage (RestKeyword.WorkflowDB);
 			this.rms.setStatus (RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
@@ -261,17 +266,18 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				stmtconn.commit ( );
 
 				
-				// 4. Löschen der alten Daten
-				stmtconn.loadStatement (DeleteFromDB.WorkflowDB (stmtconn.connection, object_id, time, service_id));
-				this.result = stmtconn.execute();
-				if (this.result.getUpdateCount ( ) < 1) {
-//					stmtconn.rollback ( );
-//					throw new SQLException ("WorkflowDB entries ");
-				} else {
-//					stmtconn.commit ( );
+				// 3. Löschen der alten Daten
+				if (newObject == false) {
+					stmtconn.loadStatement (DeleteFromDB.WorkflowDB (stmtconn.connection, object_id, time, service_id));
+					this.result = stmtconn.execute();
+					if (this.result.getUpdateCount ( ) < 1) {
+//						stmtconn.rollback ( );
+//						throw new SQLException ("WorkflowDB entries ");
+					} else {
+//						stmtconn.commit ( );
+					}
 				}
 				
-//				res.addEntry ("workflow_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
 				stmtconn.commit ( );
 				
 				this.rms.setStatus (RestStatusEnum.OK);

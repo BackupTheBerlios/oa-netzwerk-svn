@@ -20,11 +20,27 @@
     </layout>
   </appender-->
 
+  <appender name="AggregationStateFileAppender" class="org.apache.log4j.RollingFileAppender">
+    <param name="file" value="AggregationState.log" />
+    <param name="MaxFileSize" value="10MB" />
+    <param name="Append" value="true" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern"
+             value="%-5p %m%n" />
+    </layout>
+  </appender>
+
   <logger name="de.dini.oanetzwerk">
     <!--level value="DEBUG" /-->
     <level value="INFO" />
     <!--appender-ref ref="MeinAppender" /-->
   </logger>
+
+  <logger name="AggregationState" additivity="false">
+    <level value="INFO" />
+    <appender-ref ref="AggregationStateFileAppender" />
+  </logger>
+
   <root>
     <priority value="INFO" />
     <!--
