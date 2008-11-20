@@ -241,7 +241,7 @@ public class RestClient {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("SSL");
 			
-			return false;
+			return true;
 			//TODO: if SSL works reenable false!!!!
 //			return false;
 		}

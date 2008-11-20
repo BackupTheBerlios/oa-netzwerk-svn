@@ -1,11 +1,6 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
@@ -23,7 +18,6 @@ import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
-
 
 /**
  * @author Michael K&uuml;hn

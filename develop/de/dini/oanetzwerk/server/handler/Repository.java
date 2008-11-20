@@ -211,11 +211,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
-		BigDecimal object_id;
-		
 		try {
 			
-			object_id = new BigDecimal (path [0]);
+			new BigDecimal (path [0]);
 			
 		} catch (NumberFormatException ex) {
 			
