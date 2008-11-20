@@ -1953,7 +1953,7 @@ public class Harvester {
 			
 			try {
 				
-				putWorkflowDBResponse = prepareRestTransmission ("WorkflowDB/").sendPutRestMessage (rms);
+				putWorkflowDBResponse = prepareRestTransmission ("WorkflowDB/newObject/").sendPutRestMessage (rms);
 				
 			} catch (UnsupportedEncodingException ex) {
 				
