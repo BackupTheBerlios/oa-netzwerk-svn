@@ -90,6 +90,33 @@ public class InsertIntoDB {
 		return preparedstmt;
 	}
 
+//	/**
+//	 * @param connection
+//	 * @param object_id
+//	 * @param time
+//	 * @param service_id
+//	 * @return
+//	 * @throws SQLException 
+//	 */
+//	public static PreparedStatement WorkflowDB (Connection connection,
+//			BigDecimal object_id, Date time, BigDecimal service_id) throws SQLException {
+//		
+//		if (logger.isDebugEnabled ( )) {
+//			
+//			logger.debug ("Insert WorkflowDB: INSERT INTO dbo.WorkflowDB (object_id, time, service_id) " +
+//					"VALUES (" + object_id + ", " + time + ", " + service_id + ")");
+//		}
+//		
+//		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.WorkflowDB (object_id, time, service_id) VALUES (?, ?, ?)");
+//		
+//		preparedstmt.setBigDecimal (1, object_id);
+//		preparedstmt.setDate (2, time);
+//		preparedstmt.setBigDecimal (3, service_id);
+//		
+//		return preparedstmt;
+//	}
+
+	
 	/**
 	 * @param connection
 	 * @param object_id
@@ -98,25 +125,53 @@ public class InsertIntoDB {
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement WorkflowDB (Connection connection,
-			BigDecimal object_id, Date time, BigDecimal service_id) throws SQLException {
+			BigDecimal object_id, BigDecimal service_id) throws SQLException {
 		
 		if (logger.isDebugEnabled ( )) {
 			
 			logger.debug ("Insert WorkflowDB: INSERT INTO dbo.WorkflowDB (object_id, time, service_id) " +
-					"VALUES (" + object_id + ", " + time + ", " + service_id + ")");
+					"VALUES (" + object_id + ",  time  set by db " + service_id + ")");
 		}
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.WorkflowDB (object_id, time, service_id) VALUES (?, ?, ?)");
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.WorkflowDB (object_id, time, service_id) VALUES (?, GetDate(), ?)");
 		
 		preparedstmt.setBigDecimal (1, object_id);
-		preparedstmt.setDate (2, time);
-		preparedstmt.setBigDecimal (3, service_id);
+		preparedstmt.setBigDecimal (2, service_id);
 		
 		return preparedstmt;
 	}
 
+
+//	/**
+//	 * @param connection
+//	 * @param object_id
+//	 * @param time
+//	 * @param service_id
+//	 * @return
+//	 * @throws SQLException 
+//	 */
+//	public static PreparedStatement Worklist (Connection connection,
+//			BigDecimal object_id, Date time, BigDecimal service_id) throws SQLException {
+//		
+//		if (logger.isDebugEnabled ( )) {
+//			
+//			logger.debug ("Insert WorkflowDB: INSERT INTO dbo.Worklist (object_id, time, service_id) " +
+//					"VALUES (" + object_id + ", " + time + ", " + service_id + ")");
+//		}
+//		
+//		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Worklist (object_id, time, service_id) VALUES (?, ?, ?)");
+//		
+//		preparedstmt.setBigDecimal (1, object_id);
+//		preparedstmt.setDate (2, time);
+//		preparedstmt.setBigDecimal (3, service_id);
+//		
+//		return preparedstmt;
+//	}
+	
+	
+	
+	
 	/**
 	 * @param object_id
 	 * @param qualifier

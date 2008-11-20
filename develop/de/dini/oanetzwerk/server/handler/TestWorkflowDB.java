@@ -106,4 +106,142 @@ public class TestWorkflowDB {
 
 		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
 	}
+
+	
+	@Test
+	public void test_PUT_notEnoughInBody() throws Exception{
+		
+		String object_id = "19000";
+		String time = "2008-11-20 14:49:21.273";
+		String service_id = "2";
+		WorkflowDB wfdb = new WorkflowDB();
+		String [] path = {};
+
+		
+//		System.out.println("ServiceNotify/");
+		
+//		ServiceNotifier serviceNotifier = new ServiceNotifier();
+		
+//		String[] path = {service_id};
+		String body = null;
+
+		RestMessage rms = new RestMessage();
+		RestEntrySet entrySet1;
+		entrySet1 = new RestEntrySet(); 
+		entrySet1.addEntry ("service_id", service_id);
+//		entrySet1.addEntry("time", time);
+		entrySet1.addEntry("object_id", object_id);
+		rms.addEntrySet(entrySet1);
+		
+		
+		
+		body = RestXmlCodec.encodeRestMessage(rms);
+		
+
+			
+			String strXML = wfdb.putKeyWord(path, body);
+			// System.out.println(strXML);
+			RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+			for (RestEntrySet entrySet : rmsg.getListEntrySets()) {
+				System.out.println(entrySet);
+			}
+
+			Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
+
+			
+//			System.out.println("workflowdb ids fetched: "
+//					+ rmsg.getListEntrySets().size());
+//			System.out.println("first: " + rmsg.getListEntrySets().get(0));
+
+		
+		
+		
+//		try {
+//			
+//		
+//		String strXML = wfdb.getKeyWord(path);
+//		System.out.println(strXML);
+//		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+//
+//		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+//			System.out.println(entrySet);
+//		}
+//
+//		Assert.fail();
+//		
+//		} catch(NotEnoughParametersException ex) {
+//			System.out.println(ex);
+//		}
+		
+	}
+	
+	
+	@Test
+	public void test_PUT_noParams() throws Exception{
+		
+		String object_id = "19000";
+		String time = "2008-11-20 14:49:21.273";
+		String service_id = "2";
+		WorkflowDB wfdb = new WorkflowDB();
+		String [] path = {};
+
+		
+//		System.out.println("ServiceNotify/");
+		
+//		ServiceNotifier serviceNotifier = new ServiceNotifier();
+		
+//		String[] path = {service_id};
+		String body = null;
+
+		RestMessage rms = new RestMessage();
+		RestEntrySet entrySet1;
+		entrySet1 = new RestEntrySet(); 
+		entrySet1.addEntry ("service_id", service_id);
+		entrySet1.addEntry("time", time);
+		entrySet1.addEntry("object_id", object_id);
+		rms.addEntrySet(entrySet1);
+		
+		
+		
+		body = RestXmlCodec.encodeRestMessage(rms);
+		
+
+			
+			String strXML = wfdb.putKeyWord(path, body);
+			// System.out.println(strXML);
+			RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+			for (RestEntrySet entrySet : rmsg.getListEntrySets()) {
+				System.out.println(entrySet);
+			}
+
+			System.out.println("workflowdb ids fetched: "
+					+ rmsg.getListEntrySets().size());
+			System.out.println("first: " + rmsg.getListEntrySets().get(0));
+
+			Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
+		
+		
+		
+//		try {
+//			
+//		
+//		String strXML = wfdb.getKeyWord(path);
+//		System.out.println(strXML);
+//		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+//
+//		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+//			System.out.println(entrySet);
+//		}
+//
+//		Assert.fail();
+//		
+//		} catch(NotEnoughParametersException ex) {
+//			System.out.println(ex);
+//		}
+		
+	}
+	
+	
 }

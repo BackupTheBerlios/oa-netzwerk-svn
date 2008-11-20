@@ -5,8 +5,9 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -15,11 +16,11 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.DeleteFromDB;
 import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
-import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -100,7 +101,9 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 					logger.warn (warning.getLocalizedMessage ( ));
 				}
 			}
-			
+
+			// Datumsformat wie in DB
+			SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
 			while (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( )) 
@@ -108,6 +111,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				
 				RestEntrySet entrySet = new RestEntrySet(); 
 				entrySet.addEntry ("object_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+				entrySet.addEntry ("time", formater.format(this.result.getResultSet ( ).getDate (2)));
 				this.rms.addEntrySet(entrySet);
 			}
 			
@@ -174,7 +178,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 		
 		BigDecimal object_id = null;
 		BigDecimal service_id = null;
-		Date time = HelperMethods.today ( );
+		String time = null;
 		
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
@@ -197,6 +201,9 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				else if (key.equalsIgnoreCase ("service_id"))
 					service_id = new BigDecimal (res.getValue (key));
 				
+				else if (key.equalsIgnoreCase ("time"))
+					time = new String (res.getValue (key));
+				
 				else continue;
 			}
 			
@@ -212,26 +219,72 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 		
 		
 		this.rms = new RestMessage (RestKeyword.WorkflowDB);
+
+		// Prüfen, ob überhaupt Daten übergeben wurden
+		if ((object_id == null) | (service_id == null) | (time == null)) {
+			// Fehlermeldung generieren und abbrechen
+			this.rms = new RestMessage (RestKeyword.WorkflowDB);
+			this.rms.setStatus (RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
+			this.rms.setStatusDescription ("PUT /WorkflowDB/ needs 3 entries in body: object_id, service_id and time");
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		MultipleStatementConnection stmtconn = null;
 		res = new RestEntrySet ( );
 		
 		try {
-			
+			// 1. neuer Eintrag in WorkflowDB  , automatisch wird in Worklist ein Eintrag über Trigger angelegt
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
-			
-			stmtconn.loadStatement (InsertIntoDB.WorkflowDB (stmtconn.connection, object_id, time, service_id));
-			
+
+			stmtconn.loadStatement (InsertIntoDB.WorkflowDB (stmtconn.connection, object_id, service_id));
 			this.result = stmtconn.execute ( );
-			
+
 			if (this.result.getUpdateCount ( ) < 1) {
-				
 				//warn, error, rollback, nothing????
 			}
 			
 			stmtconn.commit ( );
-			stmtconn.loadStatement (SelectFromDB.WorkflowDB (stmtconn.connection, object_id, time, service_id));
+
+			// 2. eingetragenen Zeitwert auslesen
+			stmtconn.loadStatement (SelectFromDB.WorkflowDBInserted(stmtconn.connection, object_id, service_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getResultSet ( ).next ( )) {
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("DB returned: workflow_id = " + this.result.getResultSet ( ).getBigDecimal (1));
+
+				res.addEntry ("workflow_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+				stmtconn.commit ( );
+
+				
+				// 4. Löschen der alten Daten
+				stmtconn.loadStatement (DeleteFromDB.WorkflowDB (stmtconn.connection, object_id, time, service_id));
+				this.result = stmtconn.execute();
+				if (this.result.getUpdateCount ( ) < 1) {
+//					stmtconn.rollback ( );
+//					throw new SQLException ("WorkflowDB entries ");
+				} else {
+//					stmtconn.commit ( );
+				}
+				
+//				res.addEntry ("workflow_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+				stmtconn.commit ( );
+				
+				this.rms.setStatus (RestStatusEnum.OK);
+				
+			} else {
+				
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+				this.rms.setStatusDescription ("No matching WorklflowDB Entry found");
+			}
+			
+				
+			
+			stmtconn.loadStatement (SelectFromDB.WorkflowDBInserted(stmtconn.connection, object_id, service_id));
 			
 			this.result = stmtconn.execute ( );
 			

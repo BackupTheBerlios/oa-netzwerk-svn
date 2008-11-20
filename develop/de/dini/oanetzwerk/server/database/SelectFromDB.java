@@ -186,7 +186,6 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException
 	 */
-	
 	public static PreparedStatement Workflow (Connection connection, BigDecimal predecessor_id, BigDecimal service_id) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? " + 
@@ -197,6 +196,27 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
+	
+
+//	/**
+//	 * @param connection
+//	 * @param predecessor_id
+//	 * @param service_id
+//	 * @return
+//	 * @throws SQLException
+//	 */
+//	public static PreparedStatement Workflow (Connection connection, BigDecimal predecessor_id, BigDecimal service_id) throws SQLException {
+//		
+//		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id, max(w1.time) FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id");
+//		
+//		preparedstmt.setBigDecimal (1, service_id);
+//		
+//		return preparedstmt;
+//	}
+
+	
+	
+	
 	
 	public static PreparedStatement RawRecordDataHistory (Connection connection, BigDecimal internalOID) throws SQLException {
 		
@@ -288,25 +308,80 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+//	/**
+//	 * @param connection
+//	 * @param service_id
+//	 * @return
+//	 * @throws SQLException 
+//	 */
+//	
+//	public static PreparedStatement WorkflowDB (Connection connection,
+//			BigDecimal service_id) throws SQLException {
+//
+//		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? " + 
+//				"WHERE (w1.time > (SELECT MAX(time) FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id) " +
+//				"OR w1.object_id NOT IN (SELECT object_id FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id)) GROUP BY w1.object_id");
+//
+//		preparedstmt.setBigDecimal (1, service_id);
+//
+//		return preparedstmt;
+//	}
+
+	
 	/**
 	 * @param connection
 	 * @param service_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
-	public static PreparedStatement WorkflowDB (Connection connection,
-			BigDecimal service_id) throws SQLException {
-
-		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? " + 
-				"WHERE (w1.time > (SELECT MAX(time) FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id) " +
-				"OR w1.object_id NOT IN (SELECT object_id FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id)) GROUP BY w1.object_id");
-
+	public static PreparedStatement WorkflowDBTimeAsString (Connection connection, BigDecimal service_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id, CAST(max(w1.time) FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id");
+		
 		preparedstmt.setBigDecimal (1, service_id);
-
+		
+		return preparedstmt;
+	}
+	
+	
+	/**
+	 * @param connection
+	 * @param service_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement WorkflowDB (Connection connection, BigDecimal service_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id, max(w1.time) FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id");
+		
+		preparedstmt.setBigDecimal (1, service_id);
+		
 		return preparedstmt;
 	}
 
+	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @param time
+	 * @param service_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement WorkflowDBInserted (Connection connection,
+			BigDecimal object_id, BigDecimal service_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT workflow_id  FROM dbo.WorkflowDB WHERE (object_id = ? AND service_id = ?) GROUP BY object_id, time, service_id HAVING time=max(time)");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setBigDecimal (2, service_id);
+		
+		return preparedstmt;
+	}
+	
+	
+	
 	/**
 	 * @param connection
 	 * @param object_id

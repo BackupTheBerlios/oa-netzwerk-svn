@@ -229,6 +229,15 @@ CREATE TABLE dbo.WorkflowDB (
 );
 
 
+CREATE TABLE dbo.Worklist (
+       worklist_id NUMERIC(38) IDENTITY
+     , object_id NUMERIC(38) NOT NULL
+     , time DATETIME
+     , service_id NUMERIC(38) NOT NULL
+     , PRIMARY KEY (worklist_id)
+);
+
+
 
 CREATE TABLE dbo.RawData (
        object_id NUMERIC(38) NOT NULL
@@ -405,6 +414,18 @@ ALTER TABLE dbo.WorkflowDB
       FOREIGN KEY (object_id)
       REFERENCES dbo.Object (object_id);
 
+ALTER TABLE dbo.Worklist
+  ADD CONSTRAINT FK_Worklist_1
+      FOREIGN KEY (service_id)
+      REFERENCES dbo.Services (service_id);
+
+ALTER TABLE dbo.Worklist
+  ADD CONSTRAINT FK_Worklist_2
+      FOREIGN KEY (object_id)
+      REFERENCES dbo.Object (object_id);
+
+
+
 ALTER TABLE dbo.RawData
   ADD CONSTRAINT FK_RawData_1
       FOREIGN KEY (object_id)
@@ -440,3 +461,20 @@ ALTER TABLE dbo.FullTextLinks
   ADD CONSTRAINT FK_FullTextLinks_1
       FOREIGN KEY (object_id)
       REFERENCES dbo.Object (object_id);
+
+
+create trigger worklisttest
+on dbo.WorkflowDB
+for insert as
+declare @object_id NUMERIC(38) 
+declare @service_id NUMERIC(38)
+declare @zeit DATETIME
+
+select @object_id = object_id from inserted 
+select @service_id = service_id from inserted
+select @zeit = time from inserted
+begin 
+   insert into dbo.Worklist (object_id, time, service_id) values (@object_id, @zeit, @service_id)
+ 
+    
+end

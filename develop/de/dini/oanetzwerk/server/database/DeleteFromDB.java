@@ -341,6 +341,17 @@ public class DeleteFromDB {
 		
 		return preparedstmt;
 	}
+	
+	public static PreparedStatement WorkflowDB (Connection connection, BigDecimal object_id, String time, BigDecimal service_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.WorkflowDB FROM dbo.WorkflowDB w JOIN dbo.ServicesOrder s ON w.service_id = s.predecessor_id WHERE w.object_id = ? and w.time <=? and w.service_id=?");
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setString (2, time);
+		preparedstmt.setBigDecimal (3, service_id);
+		
+		return preparedstmt;
+	}
+
 
 	public static PreparedStatement RawData (Connection connection, BigDecimal object_id) throws SQLException {
 		
