@@ -59,6 +59,16 @@ public class RunAggregator {
 						.withDescription(
 								"Id of the database object, that shall be extracted and converted")
 						.withValueSeparator().hasArg().create('i'));
+		
+		options
+		.addOption(OptionBuilder
+				.withLongOpt("timestamp")
+				.withArgName("time")
+				.withDescription(
+						"time of the object read from workflowdb")
+				.withValueSeparator().hasArg().create('d'));
+
+		
 		options.addOption(OptionBuilder.withLongOpt("auto").withDescription(
 				"Automatic mode, no given ID is necessary")
 
@@ -81,6 +91,7 @@ public class RunAggregator {
 						|| cmd.hasOption('a') || cmd.hasOption("auto")) {
 
 					int id = 0;
+					String time = null;
 
 					// Bestimmen, ob nur eine einzelne ID übergeben wurde oder
 					// der Auto-Modus genutzt werden soll
@@ -89,6 +100,12 @@ public class RunAggregator {
 					if (cmd.getOptionValue("itemId") != null)
 						id = filterId(cmd.getOptionValue("itemId"));
 
+					if (cmd.getOptionValue('d') != null)
+						time = cmd.getOptionValue('d');
+					if (cmd.getOptionValue("timestamp") != null)
+						time = cmd.getOptionValue("timestamp");
+
+					
 					// Here we go: create a new instance of the aggregator
 					Aggregator aggregator;
 					// im Testfall wird ein anderer Constructor aufgerufen
@@ -102,7 +119,7 @@ public class RunAggregator {
 					// hier wird entweder die spezifische Objekt-ID übergeben
 					// oder ein Auto-Durchlauf gestartet
 					if (id > 0) {
-						aggregator.startSingleRecord(id);
+						aggregator.startSingleRecord(id, time);
 					} else {
 						aggregator.startAutoMode();
 					}

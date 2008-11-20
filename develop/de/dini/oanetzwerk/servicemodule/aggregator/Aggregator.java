@@ -174,6 +174,9 @@ public class Aggregator {
 			Iterator<String> it = entrySet.getKeyIterator();
 			String key = "";
 			String value = "";
+			
+			String id = null;
+			String time = null;
 
 			while (it.hasNext()) {
 				key = it.next();
@@ -181,14 +184,23 @@ public class Aggregator {
 				// hier wird die Rueckgabe überprüft, ist es einen object_id,
 				// dann muss diese bearbeitet werden
 				if (key.equalsIgnoreCase("object_id")) {
-					value = entrySet.getValue(key);
-					logger.debug("recognized value: " + value);
-					if (!value.equals("")) {
-						startSingleRecord((new Integer(value).intValue()));
-					} else {
+					id = entrySet.getValue(key);
+					logger.debug("recognized value: " + id);
+					if (id.equals("")) {
 						logger.error("OID from Workflow expected, but was: " + value);
 					}
 				}
+				if (key.equalsIgnoreCase("time")) {
+					time = entrySet.getValue(key);
+					logger.debug("recognized value: " + time);
+					if (time.equals("")) {
+						logger.error("time-value from Workflow expected, but was: " + value);
+					}
+				}
+				if (!id.equals("") && !time.equals("") && id != null && time != null) {
+					startSingleRecord((new Integer(id).intValue()), time);
+				}
+
 			}
 		}
 
@@ -202,9 +214,10 @@ public class Aggregator {
 	 * @return void
 	 * 
 	 */
-	public void startSingleRecord(int id) {
+	public void startSingleRecord(int id, String time) {
 
 		this.currentRecordId = id;
+		this.time = time;
 
 		logger.debug("StartSingleRecord:  RecordId=" + this.currentRecordId);
 		//aggrStateLog.info("OID: " + id);
@@ -281,6 +294,9 @@ public class Aggregator {
 		} catch (AggregationFailedException ex) {
 	      aggrStateLog.fatal("OID " + id + " - Exception: " + ex.getLocalizedMessage());
 		}
+		this.time = null;
+		this.currentRecordId = 0;
+		
 
 	}
 
@@ -411,6 +427,7 @@ public class Aggregator {
 			
 			res.addEntry ("object_id", Integer.toString (id));
 			res.addEntry ("service_id", this.serviceID.toPlainString ( ));
+			res.addEntry ("time", this.time);
 			rms.addEntrySet (res);
 			
 			String requestxml = RestXmlCodec.encodeRestMessage (rms);
