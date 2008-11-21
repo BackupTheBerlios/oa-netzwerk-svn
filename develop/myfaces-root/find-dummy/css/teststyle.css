@@ -54,6 +54,7 @@ dt {
 #div_flat_search {
   margin-top: 10px;
   margin-left: 10px;
+  margin-right: 10px;
 }
 #div_general_links {
   font-size: 11px;
@@ -64,20 +65,175 @@ dt {
 }
 #div_hitlist {
   margin-left: 10px;
+  margin-top: 10px;
+  margin-right: 10px;	  
+}
+#div_hitlist table {
+  width: 100%;
+}
+#div_hitlist_scroller {
+  margin-left: 10px;
   margin-top: 30px;
+  margin-right: 10px;	  		
+}
+#div_hitlist_scroller table {
+  width: auto;
 }
 .colHit {
-  padding: 10px;
+  padding: 15px;
   margin-top: 10px;
   border-left: 5px solid silver;	
   border-bottom: 1px solid silver;	
   
 }
-
-.center {
-  text-align: center;
+#div_hit_overview {
+  margin-top: 5px;	
+  font-size: 10px;
+}
+.details_link {
+  font-size: 11px;
+  font-weight: bold;	
+}
+#div_hitlist ul {
+  font-size: 10px;
+}
+#div_hitlist ul li {
+  float: left;
+  list-style: none;	
+}
+.hit-url {
+  font-size: 10px;
+  color: #008800;
+}
+.hit-creators {
+  font-size: 10px;
+  color: #880000;
+}
+.hit-keywords {
+  font-size: 10px;
+  color: #888800;
 }
 .internal_identifier {
 	font-size: 10px;
 	color: silver; 
 }
+
+#div_hitdetails_navi {
+  margin-left: 10px;
+  margin-top: 30px;
+  margin-right: 10px;	  				
+}
+.backlink {
+	font-size: 11px;
+	font-weight: bold;
+}
+#div_hitdetails {
+  margin-left: 10px;
+  margin-top: 30px;
+  margin-right: 10px;	  				
+}
+#div_hitdetails table {
+	border: thin;
+	border-color: black;
+	width: 100%;	
+}
+#div_hitdetails td {
+	padding: 5px;	
+}
+.hitlist_head {
+	background-color: #DDDDEE;	
+	font-weight: bold;
+	font-size: 13px;	
+}
+.hitlist_content {
+	background-color: #EEEEFF;
+	font-size: 11px;	
+}
+#div_hitdetails ul li {
+  float: left;
+  list-style: none;
+  	
+}
+.center {
+  text-align: center;
+}
+/* BEGIN tabbedpane */
+table.tabbedPane {
+    width: 100% !important;
+    vertical-align: top !important;
+    border-collapse: separate !important;
+    border-spacing: 0px !important;
+    background-color: #FFFFFF !important;
+}
+
+td.activeTab {
+    width: 150px !important;
+    font-size: 100% !important;
+    background-color: #FFFFFF !important;
+    border-top: 2px solid #91A0CA !important;
+    border-left: 2px solid #91A0CA !important;
+    border-right: 2px solid #91A0CA !important;
+    border-bottom: 1px none !important;
+    padding: 2px !important;
+    text-align: center !important;
+    font-weight: bold !important;
+}
+td.activeTab input {
+    background-color: #FFFFFF !important;
+    font-size: 100% !important;
+    text-align: center !important;
+    font-weight: bold !important;
+}
+
+td.inactiveTab {
+    width: 150px !important;
+    font-size: 100% !important;
+    background-color: #EBEEF8 !important;
+    border-top: 2px solid #91A0CA !important;
+    border-left: 2px solid #91A0CA !important;
+    border-right: 2px solid #91A0CA !important;
+    border-bottom: 2px solid #91A0CA !important;
+    padding: 2px !important;
+    text-align: center !important;
+    font-weight: bold !important;
+}
+td.inactiveTab input {
+    background-color: #EBEEF8 !important;
+    font-size: 100% !important;
+    text-align:center !important;
+    font-weight: bold !important;
+}
+td.activeSub {
+    background-color: #FFFFFF !important;
+    padding: 0px !important;
+    border: 1px solid #FFFFFF !important;
+}
+td.inactiveSub {
+    background-color: #FFFFFF !important;
+    padding: 0px !important;
+    border: 1px solid #FFFFFF !important;
+}
+td.myFaces_panelTabbedPane_emptyHeaderCell {
+    background-color: #FFFFFF !important;
+}
+
+.myFaces_panelTabbedPane_activeHeaderCell input:hover,
+.myFaces_panelTabbedPane_inactiveHeaderCell input:hover{
+  color:#fff !important;
+  background:#08c !important;
+}
+
+td.tabContent {
+    background-color: #FFFFFF !important;
+    border-left: 2px solid #91A0CA !important;
+    border-right: 2px solid #91A0CA !important;
+    border-bottom: 2px solid #91A0CA !important;
+    vertical-align: top !important;
+    padding-top: 5px !important;
+    padding-left: 5px !important;
+    height: 100% !important;
+    text-align:left !important;
+    width:765px;
+}
+
+/* END tabbedpane */

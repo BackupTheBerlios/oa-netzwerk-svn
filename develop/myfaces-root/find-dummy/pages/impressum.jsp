@@ -23,27 +23,7 @@
 			</h:form>
             </div>
 			
-			<div id="div_main_search">
-
-   			    <h:form>
-				<span class="center">
-                <img src="../img/Logo_oan_rgb_micro.PNG" />
-				<h:inputText maxlength="2048" size="55" title="OAN-Suche"
-					         value="#{searchBean.strOneSlot}" />
-			    <h:commandButton value="#{index.find}"
-			                     action="#{searchBean.actionSearchButton}" />
-				<t:div rendered='#{searchBean.strRepositoryFilterRID != ""}'>
-					<small>Die Suchmaske wurde eingeschr&auml;nkt auf folgende Quelle:</small><br />
-					<h:outputLink value="#{searchBean.strRepositoryFilterURL}">
-						<h:outputText value="#{searchBean.strRepositoryFilterName}" />
-						<small>(<h:outputText value="#{searchBean.strRepositoryFilterURL}" />)</small>
-					</h:outputLink>
-				</t:div> 
-				</span>
-				</h:form>
-	
-			</div>
-
+			<h1>Impressum</h1>
 		</body>
 	</f:view>
 </html>
