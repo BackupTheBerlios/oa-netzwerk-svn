@@ -2,7 +2,9 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.util.Iterator;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -20,6 +22,7 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
+ * @author Manuel Klatt-Kafemann
  * @author Michael K&uuml;hn
  * @author Robin Malitz
  *
@@ -172,7 +175,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 		
 		BigDecimal object_id = null;
 		BigDecimal service_id = null;
-		String time = null;
+		java.util.Date time = null;
 		boolean newObject = false;
 		
 		if (path.length == 1) {
@@ -200,8 +203,17 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				else if (key.equalsIgnoreCase ("service_id"))
 					service_id = new BigDecimal (res.getValue (key));
 				
-				else if (key.equalsIgnoreCase ("time"))
-					time = new String (res.getValue (key));
+				else if (key.equalsIgnoreCase ("time")) {
+//					SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
+					
+					try {
+						time = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss.S").parse (new String (res.getValue (key)));
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+//					time = new String (res.getValue (key));
 				
 				else continue;
 			}
@@ -259,10 +271,11 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				res.addEntry ("workflow_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
 				stmtconn.commit ( );
 
+				logger.debug("newObject = " + newObject);
 				
 				// 3. Löschen der alten Daten
 				if (newObject == false) {
-					stmtconn.loadStatement (DeleteFromDB.WorkflowDB (stmtconn.connection, object_id, time, service_id));
+					stmtconn.loadStatement (DeleteFromDB.WorkflowDB (stmtconn.connection, object_id, new java.sql.Date(time.getTime()), service_id));
 					this.result = stmtconn.execute();
 					if (this.result.getUpdateCount ( ) < 1) {
 //						stmtconn.rollback ( );

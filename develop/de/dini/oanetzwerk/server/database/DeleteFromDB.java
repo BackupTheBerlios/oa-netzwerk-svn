@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Date;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Michael K&uuml;hn
@@ -16,6 +19,11 @@ import java.sql.SQLException;
 
 public class DeleteFromDB {
 
+	
+	static Logger logger = Logger.getLogger (DeleteFromDB.class);
+	
+	
+	
 	/**
 	 * @param connection
 	 * @param object_id
@@ -342,12 +350,19 @@ public class DeleteFromDB {
 		return preparedstmt;
 	}
 	
-	public static PreparedStatement WorkflowDB (Connection connection, BigDecimal object_id, String time, BigDecimal service_id) throws SQLException {
+	public static PreparedStatement WorkflowDB (Connection connection, BigDecimal object_id, Date time, BigDecimal service_id) throws SQLException {
+
+		if (logger.isDebugEnabled ( )) {
+			logger.debug ("DELETE FROM dbo.WorkflowDB FROM dbo.WorkflowDB w JOIN dbo.ServicesOrder s ON w.service_id = s.predecessor_id WHERE w.object_id = " + object_id +
+					" and w.time <= " + time + " and s.service_id= " + service_id);
+		}
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.WorkflowDB FROM dbo.WorkflowDB w JOIN dbo.ServicesOrder s ON w.service_id = s.predecessor_id WHERE w.object_id = ? and w.time <=? and w.service_id=?");
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.WorkflowDB FROM dbo.WorkflowDB w JOIN dbo.ServicesOrder s ON w.service_id = s.predecessor_id WHERE w.object_id = ? and w.time <=? and s.service_id=?");
 		preparedstmt.setBigDecimal (1, object_id);
-		preparedstmt.setString (2, time);
+		preparedstmt.setDate(2, time);
 		preparedstmt.setBigDecimal (3, service_id);
+		
+		logger.debug("DELTE-Statement: " + preparedstmt.toString());
 		
 		return preparedstmt;
 	}

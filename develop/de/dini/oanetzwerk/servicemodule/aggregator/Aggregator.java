@@ -197,7 +197,7 @@ public class Aggregator {
 						logger.error("time-value from Workflow expected, but was: " + value);
 					}
 				}
-				if (!id.equals("") && !time.equals("") && id != null && time != null) {
+				if (id != null && time != null && !id.equals("") && !time.equals("")) {
 					startSingleRecord((new Integer(id).intValue()), time);
 				}
 
