@@ -1,8 +1,12 @@
+DROP TABLE dbo.LoginData;
+
 DROP TABLE  dbo.FullTextLinks;
 DROP TABLE  dbo.TypeValue;
 DROP TABLE  dbo.Object2Language;
 DROP TABLE  dbo.ServicesOrder;
 DROP TABLE  dbo.WorkflowDB;
+DROP TABLE  dbo.Worklist;
+
 DROP TABLE  dbo.DuplicatePossibilities;
 DROP TABLE  dbo.Identifier;
 DROP TABLE  dbo.Format;
@@ -20,7 +24,7 @@ DROP TABLE  dbo.Object2Author;
 DROP TABLE  dbo.Titles;
 DROP TABLE  dbo.RawData;
 DROP TABLE  dbo.AggregatorMetadata;
-
+DROP TABLE  dbo.ServiceNotify;
 
 DROP TABLE  dbo.Object;
 DROP TABLE  dbo.Repositories;

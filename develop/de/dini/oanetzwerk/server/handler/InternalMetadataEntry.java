@@ -525,8 +525,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 				for (Title title : titleList) {
 					
-					//db.insertTitle(object_id, title.getQualifier(), title
-					//		.getTitle(), title.getLang());
+					if (logger.isDebugEnabled()) {
+						logger.debug("Title-Informationen hinzufügen" + title.toString());
+					}
 					
 					stmtconn.loadStatement (InsertIntoDB.Title (stmtconn.connection, object_id, title.getQualifier(), title.getTitle(), title.getLang()));
 					this.result = stmtconn.execute ( );
@@ -542,10 +543,11 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			if (dateValueList != null) {
 				for (DateValue dateValue : dateValueList) {
 					try {
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("dateValue hinzufügen" + dateValue.toString());
+						}
 						
-//						db.insertDateValue(object_id, dateValue.getNumber(),
-//								HelperMethods.extract_datestamp(dateValue
-//										.getDateValue()));
 						stmtconn.loadStatement (InsertIntoDB.DateValue (stmtconn.connection, object_id, dateValue.getNumber(), HelperMethods.extract_datestamp(dateValue.getDateValue())));
 						this.result = stmtconn.execute ( );
 						
@@ -555,7 +557,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						}
 
 					} catch (ParseException ex) {
-						logger.error("Datestamp with datevalue incorrect");
+						logger.error("Datestamp with datevalue incorrect:  dateValue=" + dateValue.toString());
 						ex.printStackTrace();
 					}
 				}
@@ -564,6 +566,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			if (formatList != null) {
 				for (Format format : formatList) {
 					
+					if (logger.isDebugEnabled()) {
+						logger.debug("format-Informationen hinzufügen" + format.toString());
+					}
 					stmtconn.loadStatement (InsertIntoDB.Format (stmtconn.connection, object_id, format.getNumber(), format.getSchema_f()));
 					this.result = stmtconn.execute ( );
 					
@@ -573,13 +578,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					}
 
 				}
-//					db.insertFormat(object_id, format.getNumber(), format
-//							.getSchema_f());
 			}
 
 			if (identifierList != null) {
 				for (Identifier identifier : identifierList) {
 					
+					if (logger.isDebugEnabled()) {
+						logger.debug("identifier-Informationen hinzufügen" + identifier.toString());
+					}
 					stmtconn.loadStatement (InsertIntoDB.Identifier (stmtconn.connection, object_id, identifier.getNumber(), identifier.getIdentifier()));
 					this.result = stmtconn.execute ( );
 					
@@ -588,13 +594,13 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						//warn, error, rollback, nothing????
 					}
 				}
-//					db.insertIdentifier(object_id, identifier.getNumber(),
-//							identifier.getIdentifier());
 			}
 
 			if (descriptionList != null) {
 				for (Description description : descriptionList) {
-					
+					if (logger.isDebugEnabled()) {
+						logger.debug("Description-Informationen hinzufügen" + description.toString());
+					}				
 					stmtconn.loadStatement (InsertIntoDB.Description (stmtconn.connection, object_id, description.getNumber(), description.getDescription()));
 					this.result = stmtconn.execute ( );
 					
@@ -604,13 +610,13 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					}
 	
 				}
-//					db.insertDescription(object_id, description.getNumber(),
-//							description.getDescription());
 			}
 
 			if (typeValueList != null) {
 				for (TypeValue typeValue : typeValueList) {
-					
+					if (logger.isDebugEnabled()) {
+						logger.debug("TypeValue-Informationen hinzufügen" + typeValue.toString());
+					}
 					stmtconn.loadStatement (InsertIntoDB.TypeValue (stmtconn.connection, object_id, typeValue.getTypeValue()));
 					this.result = stmtconn.execute ( );
 					
@@ -619,13 +625,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						//warn, error, rollback, nothing????
 					}
 				}
-					
-//					db.insertTypeValue(object_id, typeValue.getTypeValue());
 			}
 
 			if (publisherList != null) {
 				for (Publisher publisher : publisherList) {
 					
+					if (logger.isDebugEnabled()) {
+						logger.debug("Publisher-Informationen hinzufügen" + publisher.toString());
+					}
 					stmtconn.loadStatement (InsertIntoDB.Publisher (stmtconn.connection, object_id, publisher.getNumber(), publisher.getName()));
 					this.result = stmtconn.execute ( );
 					
@@ -634,12 +641,15 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						//warn, error, rollback, nothing????
 					}
 				}
-//					db.insertPublisher(object_id, publisher.getNumber(),
-//							publisher.getName());
 			}
 
 			if (authorList != null) {
 				for (Author author : authorList) {
+					
+					
+					if (logger.isDebugEnabled()) {
+						logger.debug("Autoren-Informationen hinzufügen" + author.toString());
+					}
 					
 					BigDecimal person_id = null;
 					
@@ -652,9 +662,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						
 						//warn, error, rollback, nothing????
 					}
-//					db.insertPerson(author.getFirstname(),
-//							author.getLastname(), author.getTitle(), author
-//									.getInstitution(), author.getEmail());
 					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, author.getFirstname(), author.getLastname()));
 					this.result = stmtconn.execute ( );
 					
@@ -663,19 +670,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						person_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
 					
-//					rs = db.selectLatestPerson(author.getFirstname(), author
-//							.getLastname());
-//					if (rs == null) {
-//						System.out.println("Person nicht eingetragen");
-//						logger.warn("resultset empty!");
-//					} else {
-//						while (rs.next()) {
-//							person_id = rs.getBigDecimal(1);
-//							
-//							//TODO: personid wird immer wieder überschrieben!!! while macht eigentlich keinen sinn!?
-//						}
-//					}
-					
 					stmtconn.loadStatement (InsertIntoDB.Object2Author (stmtconn.connection, object_id, person_id, author.getNumber()));
 					this.result = stmtconn.execute ( );
 					
@@ -683,13 +677,15 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						
 						//warn, error, rollback, nothing????
 					}
-//					db.insertObject2Author(object_id, person_id, author
-//							.getNumber());
 				}
 			}
 			
 			if (editorList != null) {
 				for (Editor editor : editorList) {
+					
+					if (logger.isDebugEnabled()) {
+						logger.debug("Editor-Informationen hinzufügen" + editor.toString());
+					}
 					
 					BigDecimal person_id = null;
 					
@@ -702,20 +698,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						
 						//warn, error, rollback, nothing????
 					}
-//					db.insertPerson(editor.getFirstname(),
-//							editor.getLastname(), editor.getTitle(), editor
-//									.getInstitution(), editor.getEmail());
-//					rs = db.selectLatestPerson(editor.getFirstname(), editor
-//							.getLastname());
-//					if (rs == null) {
-//						System.out.println("Person nicht eingetragen");
-//						logger.warn("resultset empty!");
-//					} else {
-//						while (rs.next()) {
-//							person_id = rs.getBigDecimal(1);
-//						}
-//					}
-//					
+
 					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, editor.getFirstname(), editor.getLastname()));
 					this.result = stmtconn.execute ( );
 					
@@ -731,15 +714,16 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						
 						//warn, error, rollback, nothing????
 					}
-//					db.insertObject2Editor(object_id, person_id, editor
-//							.getNumber());
 				}
 			}
 
 			
 			if (contributorList != null) {
 				for (Contributor contributor : contributorList) {
-					
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Contributor-Informationen hinzufügen" + contributor.toString());
+					}
 					BigDecimal person_id = null;
 					
 					stmtconn.loadStatement (InsertIntoDB.Person (stmtconn.connection, contributor.getFirstname(), contributor
@@ -752,20 +736,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						//warn, error, rollback, nothing????
 					}
 					
-//					db.insertPerson(contributor.getFirstname(), contributor
-//							.getLastname(), contributor.getTitle(), contributor
-//							.getInstitution(), contributor.getEmail());
-//					rs = db.selectLatestPerson(contributor.getFirstname(),
-//							contributor.getLastname());
-//					if (rs == null) {
-//						System.out.println("Person nicht eingetragen");
-//						logger.warn("resultset empty!");
-//					} else {
-//						while (rs.next()) {
-//							person_id = rs.getBigDecimal(1);
-//						}
-//					}
-//					
 					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, contributor.getFirstname(), contributor.getLastname()));
 					this.result = stmtconn.execute ( );
 					
@@ -781,8 +751,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						
 						//warn, error, rollback, nothing????
 					}
-//					db.insertObject2Editor(object_id, person_id, contributor
-//							.getNumber());
 					//TODO: Object2Editor für contributor???
 				}
 			}
@@ -790,6 +758,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			if (keywordList != null) {
 				for (Keyword keyword : keywordList) {
 					
+					if (logger.isDebugEnabled()) {
+						logger.debug("Keyword-Informationen hinzufügen" + keyword.toString());
+					}
 					BigDecimal keyword_id = null;
 					
 					stmtconn.loadStatement (InsertIntoDB.Keyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
@@ -800,24 +771,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						//warn, error, rollback, nothing????
 					}
 					
-//					db.insertKeyword(keyword.getKeyword(), keyword
-//							.getLanguage());
-//					rs = db.selectLatestKeyword(keyword.getKeyword(), keyword
-//							.getLanguage());
-//					if (rs == null) {
-//						System.out.println("Keyword nicht eingetragen");
-//						logger.warn("resultset empty!");
-//					} else {
-//						while (rs.next()) {
-//							keyword_id = rs.getBigDecimal(1);
-//						}
-//					}
-//					
 					stmtconn.loadStatement (SelectFromDB.LatestKeyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
 					while (this.result.getResultSet ( ).next ( )) {
-						
 						keyword_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
 					
@@ -828,12 +785,15 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						
 						//warn, error, rollback, nothing????
 					}
-//					db.insertObject2Keyword(object_id, keyword_id);
 				}
 			}
 			
 			if (languageList != null) {
 				for (Language language : languageList) {
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Langauge-Informationen hinzufügen" + language.toString());
+					}
 					
 					BigDecimal language_id = null;
 					
@@ -851,21 +811,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						}
 					}
 
-					
-//					rs = db.selectLanguageByName(language.getLanguage());
-//					if (!rs.next()) {
-//						// Sprache ist noch nicht vorhanden => einfügen und neue
-//						// Sprach-ID auslesen
-//						db.insertLanguage(language.getLanguage());
-//					}
-//					rs = db.selectLanguageByName(language.getLanguage());
-//					if (rs == null) {
-//						System.out.println("Sprache nicht eingetragen");
-//					} else {
-//						while (rs.next()) {
-//							language_id = rs.getBigDecimal(1);
-//						}
-//					}
 					stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
@@ -882,8 +827,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						//warn, error, rollback, nothing????
 					}
 
-//					db.insertObject2Language(object_id, language_id, language
-//							.getNumber());
 				}
 			}
 			

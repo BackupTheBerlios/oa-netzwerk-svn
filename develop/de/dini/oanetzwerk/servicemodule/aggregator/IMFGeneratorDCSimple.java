@@ -1,6 +1,7 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,6 +37,13 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 	}
 	
 	
+	public IMFGeneratorDCSimple(BigDecimal object_id) {
+		this();
+		if (object_id != null)
+			im.setOid(object_id);
+		
+		
+	}
 
 	
 	@SuppressWarnings("unchecked")

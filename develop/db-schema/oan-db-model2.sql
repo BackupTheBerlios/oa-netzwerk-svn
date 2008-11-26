@@ -463,18 +463,15 @@ ALTER TABLE dbo.FullTextLinks
       REFERENCES dbo.Object (object_id);
 
 
-create trigger worklisttest
-on dbo.WorkflowDB
-for insert as
-declare @object_id NUMERIC(38) 
-declare @service_id NUMERIC(38)
-declare @zeit DATETIME
-
-select @object_id = object_id from inserted 
-select @service_id = service_id from inserted
-select @zeit = time from inserted
-begin 
-   insert into dbo.Worklist (object_id, time, service_id) values (@object_id, @zeit, @service_id)
- 
-    
-end
+CREATE TRIGGER worklisttest
+ON dbo.WorkflowDB
+FOR INSERT AS
+DECLARE @object_id NUMERIC(38) 
+DECLARE @service_id NUMERIC(38)
+DECLARE @zeit DATETIME
+SELECT @object_id = object_id FROM inserted 
+SELECT @service_id = service_id FROM inserted
+SELECT @zeit = time FROM inserted
+BEGIN 
+   INSERT INTO dbo.Worklist (object_id, time, service_id) values (@object_id, @zeit, @service_id)
+END;

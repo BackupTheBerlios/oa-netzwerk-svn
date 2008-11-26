@@ -25,17 +25,7 @@ insert into dbo.Repositories (name, url, oai_url) values ('Duet Duisburg', 'http
 insert into dbo.Repositories (name, url, oai_url) values ('OPUS Hohenheim', 'http://www.ub.uni-hohenheim.de/opus/index.html','')
 insert into dbo.Repositories (name, url, oai_url) values ('Volltextserver Ulm', 'http://vts.uni-ulm.de','http://vts.uni-ulm.de/oai/oai.asp')
 
-insert into dbo.Services (name) values ('Harvester');
-insert into dbo.Services (name) values ('Aggregator');
-insert into dbo.Services (name) values ('MarkAndErase');
-insert into dbo.Services (name) values ('Fulltextlink');
-insert into dbo.Services (name) values ('Duplicatecheck');
 
-insert into dbo.ServicesOrder (service_id, predecessor_id) values (1, null);
-insert into dbo.ServicesOrder (service_id, predecessor_id) values (2, 1);
-insert into dbo.ServicesOrder (service_id, predecessor_id) values (9, 2);
-insert into dbo.ServicesOrder (service_id, predecessor_id) values (10, 9);
-insert into dbo.ServicesOrder (service_id, predecessor_id) values (11, 10);
 
 insert into dbo.DDC_Categories (DDC_Categorie, name) values('000', 'Allgemeines, Wissenschaft');
 insert into dbo.DDC_Categories (DDC_Categorie, name) values('004', 'Informatik');
@@ -217,3 +207,17 @@ INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type
 INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:play','Plays', 'Schauspiele / Theaterstücke');
 INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:news','News', 'Nachrichten');
 INSERT INTO DINI_Set_Categories (name, setNameEng, setNameDeu) VALUES ('pub-type:standards','Standards', 'Standards');
+
+
+
+insert into dbo.Services (name) values ('Harvester');
+insert into dbo.Services (name) values ('Aggregator');
+insert into dbo.Services (name) values ('MarkAndErase');
+insert into dbo.Services (name) values ('Fulltextlink');
+insert into dbo.Services (name) values ('Duplicatecheck');
+
+insert into dbo.ServicesOrder (service_id, predecessor_id) values (1, null);
+insert into dbo.ServicesOrder (service_id, predecessor_id) values (2, 1);
+insert into dbo.ServicesOrder (service_id, predecessor_id) values (3, 2);
+insert into dbo.ServicesOrder (service_id, predecessor_id) values (4, 3);
+insert into dbo.ServicesOrder (service_id, predecessor_id) values (5, 4);

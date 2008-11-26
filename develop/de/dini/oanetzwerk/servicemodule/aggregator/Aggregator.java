@@ -214,7 +214,7 @@ public class Aggregator {
 	 * @return void
 	 * 
 	 */
-	public void startSingleRecord(int id, String time) {
+	public void startSingleRecord(int id , String time) {
 
 		this.currentRecordId = id;
 		this.time = time;
@@ -639,7 +639,7 @@ public class Aggregator {
 			MetadataFormatType metadataFormat = getMDFTypeFromRawdata(xmlRawdata);
 			switch(metadataFormat) {
 				case OAI_DC: 
-					IMFGeneratorDCSimple imGen = new IMFGeneratorDCSimple();
+					IMFGeneratorDCSimple imGen = new IMFGeneratorDCSimple(new BigDecimal(this.currentRecordId));
 					im = imGen.generateIMF(xmlRawdata);					
 					break;
 				// <--- neue Formate werden hier auf entsprechende Generator-Klassen gemapped

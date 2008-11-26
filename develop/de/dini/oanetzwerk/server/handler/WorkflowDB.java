@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.sql.Date;
 import java.util.Iterator;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -60,8 +59,14 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
+		boolean complete = false;
+		
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the Service ID");
+		
+//		if (path.length >= 2) {
+//			if (path[1].equals("completeRebuild))
+//		}
 		
 		BigDecimal service_id;
 		
@@ -144,8 +149,6 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				}
 			}
 			
-//			this.rms.addEntrySet (res);
-//			res = null;
 			this.result = null;
 			dbng = null;
 		}

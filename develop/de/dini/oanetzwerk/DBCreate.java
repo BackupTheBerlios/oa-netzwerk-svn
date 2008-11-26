@@ -504,49 +504,5 @@ public class DBCreate {
 			}
 		}
 	}
-	public ResultSet getObject(int oid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public ResultSet insertObject(int repository_id, Date harvested,
-			Date repository_datestamp, String repository_identifier) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String insertRawRecordData(int internalOID, String datestamp,
-			String blobbb) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public ResultSet selectObjectEntryId(String repositoryID, String externalOID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public ResultSet selectRawRecordData(String internalOID, String datestamp) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public ResultSet selectRawRecordData(String internalOID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String updateObject(int repository_id, Date harvested,
-			Date repository_datestamp, String repository_identifier) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
-	
-
-
-
-
 
 } //end of class
