@@ -48,6 +48,7 @@ public class HitBean implements Serializable {
 	//////////////////////////////////////////////////////////////////////////////
 	
 	public String getTrimmedTitle() {
+		logger.debug("getTrimmedTitle() for oid " + completeMetadata.getOid());
 		Title title = completeMetadata.getTitleList().get(0);
 		String s = title.getTitle();
 		if(s.length() > FrontentConstants.INT_TITLE_TRIMSIZE) s = s.substring(0, FrontentConstants.INT_TITLE_TRIMSIZE-4) + "...";

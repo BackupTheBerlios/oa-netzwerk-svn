@@ -138,6 +138,11 @@ public class SearchBean implements Serializable {
 
 	private void setupRepositoryFilterByRID(String strRID) {
 						
+		if(strRepositoryFilterRID != null) {
+			this.strRepositoryFilterRID = "";
+			return;
+		}
+		
 		RestMessage rms = this.prepareRestTransmission ("Repository/" + strRID).sendGetRestMessage();	
 		if (rms == null || rms.getListEntrySets().isEmpty() || rms.getStatus() != RestStatusEnum.OK) {			
 			logger.warn ("received norepository data entry for rid " + strRID + ", status: " + rms.getStatus() + " : " + rms.getStatusDescription());

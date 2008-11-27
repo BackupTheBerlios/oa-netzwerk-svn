@@ -16,10 +16,14 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
 import de.dini.oanetzwerk.utils.imf.CompleteMetadataJAXBMarshaller;
+import de.dini.oanetzwerk.utils.imf.DuplicateProbability;
+import de.dini.oanetzwerk.utils.imf.FullTextLink;
+import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 
 public class HitlistBean implements Serializable {
 	
@@ -91,10 +95,7 @@ public class HitlistBean implements Serializable {
 	public void fakefillListHitOID() {
 		listHitOID = new ArrayList<BigDecimal>();
 		
-		listHitOID.add(new BigDecimal("1609"));
-//		listHitOID.add(new BigDecimal("2063"));
-//		listHitOID.add(new BigDecimal("2083"));
-//		listHitOID.add(new BigDecimal("11000"));
+/*		listHitOID.add(new BigDecimal("1609"));
 		listHitOID.add(new BigDecimal("11100"));
 		listHitOID.add(new BigDecimal("11200"));
 		listHitOID.add(new BigDecimal("11300"));
@@ -113,7 +114,21 @@ public class HitlistBean implements Serializable {
 		listHitOID.add(new BigDecimal("12600"));
 		listHitOID.add(new BigDecimal("12700"));
 		listHitOID.add(new BigDecimal("12800"));
-		listHitOID.add(new BigDecimal("12900"));
+		listHitOID.add(new BigDecimal("12900"));*/
+		
+		listHitOID.add(new BigDecimal("2569"));
+		listHitOID.add(new BigDecimal("2143"));
+		listHitOID.add(new BigDecimal("1402"));
+		listHitOID.add(new BigDecimal("879"));
+		listHitOID.add(new BigDecimal("16"));
+		listHitOID.add(new BigDecimal("5175"));
+		listHitOID.add(new BigDecimal("4786"));
+		listHitOID.add(new BigDecimal("3892"));
+		listHitOID.add(new BigDecimal("3664"));
+		listHitOID.add(new BigDecimal("3161"));
+		listHitOID.add(new BigDecimal("570"));
+		listHitOID.add(new BigDecimal("4654"));
+
 	}
 	
 	public void updateHitlistMetadata() {
@@ -121,15 +136,34 @@ public class HitlistBean implements Serializable {
 		for(BigDecimal oid : listHitOID) {
 			//CompleteMetadata cm = CompleteMetadata.createDummy();
 			CompleteMetadata cm = fetchCompleteMetadataByOID(oid);
-			if (cm == null) {
-				cm = CompleteMetadata.createDummy();
-				cm.setOid(oid);
-			}
+			logger.debug("fetched cm for oid " + oid);
+			//if (cm == null) {
+			//	cm = CompleteMetadata.createDummy();
+			//	cm.setOid(oid);
+			//}
 			HitBean hb = new HitBean();
 			hb.setParentHitlistBean(this);
+			//TODO: dont do this in productive ^^ ---->
+			cm.setDuplicateProbabilityList(new ArrayList<DuplicateProbability>());
+			cm.setFullTextLinkList(new ArrayList<FullTextLink>());			
+			//<----
 			hb.setCompleteMetadata(cm);
 			mapHitBean.put(oid, hb);
 		}
+		
+		// delete all oid from list (and hash) that have no real metadata
+		List<BigDecimal> cleanedListHitOID = new ArrayList<BigDecimal>();
+		for(int i = 0; i < listHitOID.size(); i++) {
+			BigDecimal oid = listHitOID.get(i);
+			logger.debug("check cm for oid " + oid);
+			CompleteMetadata cmCheck = mapHitBean.get(oid).getCompleteMetadata();
+			if(cmCheck != null && !cmCheck.isEmpty()) {
+				cleanedListHitOID.add(oid);
+				logger.debug("keep cm for oid " + oid);
+			}
+		}
+		listHitOID = cleanedListHitOID;
+		
 	}
 	
 	private RestClient prepareRestTransmission (String resource) {
@@ -146,6 +180,12 @@ public class HitlistBean implements Serializable {
 		if (rms == null || rms.getListEntrySets ( ).isEmpty ( )) {
 			
 			logger.error ("received no complete metadata entry for oid " + oid);
+			return null;
+		}
+		
+		if (rms.getStatus() != RestStatusEnum.OK) {
+			
+			logger.error ("received status " + rms.getStatus() + " (" + rms.getStatusDescription() + ") for complete metadata entry for oid " + oid);
 			return null;
 		}
 		
