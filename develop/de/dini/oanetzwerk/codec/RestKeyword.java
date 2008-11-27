@@ -16,5 +16,6 @@ public enum RestKeyword {
 	ObjectServiceStatus,
 	ServiceNotifier,
 	LoginData,
+	DDCCategories,
 	UNKNOWN
 }
