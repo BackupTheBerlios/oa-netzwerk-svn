@@ -3,6 +3,7 @@ package de.dini.oanetzwerk.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -66,7 +67,14 @@ public class RestServer extends HttpServlet {
 					sbDesc.append (name.toString ( ) + " ");
 			}
 			
-			rms.setStatusDescription (sbDesc.toString ( ));
+			try {
+				
+				rms.setStatusDescription (new String ((sbDesc.toString ( )).getBytes ( ), "UTF8"));
+				
+			} catch (UnsupportedEncodingException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
 			
 			return RestXmlCodec.encodeRestMessage (rms);
 		}
