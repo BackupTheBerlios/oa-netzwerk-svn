@@ -597,7 +597,7 @@ public class Harvester {
 				
 			} else {
 				
-				harvStateLog.info ("Using listIdentifiers- and getRecord-Methods for retreiving data from Repository No " + getRepositoryID ( ));
+				harvStateLog.info ("Using listIdentifiers- and getRecord-Methods for retrieving data from Repository No " + getRepositoryID ( ));
 				
 				// when we only want to get all new rawdata from the given data,
 				// we'll end in here

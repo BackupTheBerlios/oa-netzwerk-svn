@@ -17,16 +17,47 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
+/**
+ * @author Michael K&uuml;hn
+ *
+ */
+
 public class MarkerAndEraser {
+	
+	/**
+	 * 
+	 */
 	
 	private static Logger logger = Logger.getLogger (MarkerAndEraser.class); 
 	
+	/**
+	 * 
+	 */
+	
 	private final BigDecimal repositoryID;
+	
+	/**
+	 * 
+	 */
+	
 	private Date LatestRepositoryHarvest;
+	
+	/**
+	 * 
+	 */
+	
 	private final LinkedList <ObjectEntry> objects = new LinkedList <ObjectEntry> ( );
-
+	
+	/**
+	 * 
+	 */
+	
 	private Properties props = new Properties ( );
-
+	
+	/**
+	 * 
+	 */
+	
 	private String propertyfile = "markereraserprop.xml";
 	
 	/**
@@ -163,7 +194,7 @@ public class MarkerAndEraser {
 		RestEntrySet key = null;
 		
 		if (!it.hasNext ( ))
-			;//TODO: Meckern!!!
+			logger.warn ("No OIDs marked as test found!");//TODO: Meckern!!!
 		
 		while (it.hasNext ( )) { //next
 			

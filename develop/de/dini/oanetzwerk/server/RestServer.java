@@ -69,7 +69,7 @@ public class RestServer extends HttpServlet {
 			
 			try {
 				
-				rms.setStatusDescription (new String ((sbDesc.toString ( )).getBytes ( ), "UTF8"));
+				rms.setStatusDescription (new String ((sbDesc.toString ( )).getBytes ( ), "UTF-8"));
 				
 			} catch (UnsupportedEncodingException ex) {
 				

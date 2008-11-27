@@ -9,10 +9,19 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
 
+/**
+ * @author MIchael K&uuml;hn
+ *
+ */
+
 public class RunMarkerAndEraser {
 
+	/**
+	 * 
+	 */
+	
 	private static Logger logger = Logger.getLogger (RunMarkerAndEraser.class);
-
+	
 	/**
 	 * @param args
 	 */

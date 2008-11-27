@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="OA-Netzwerk" default="warServer">
 	<property name="src" value="."/>
 	<property name="ress" value="resources"/>
@@ -12,6 +12,7 @@
 	<property name="build.findnbrowse" value="build/findnbrowse"/>
 	<property name="build.oadminrealm" value="build/oadminrealm"/>
 	<property name="build.resourcerealm" value="build/resourcerealm"/>
+	<property name="build.oaipmh" value="build/oaipmh"/>
 	<property name="lib" value="lib"/>
 	<property name="archive" value="arch"/>
 	<property name="path" value="/restserver"/>
@@ -84,7 +85,15 @@
 		<pathelement location="${lib}/commons-lang-2.3.jar"/>
 		<pathelement location="${lib}/jdom.jar"/>
 	</path>
-
+	
+	<path id="classpath.oaipmh">
+			<pathelement location="${lib}/servlet-api.jar"/>
+			<pathelement location="${lib}/log4j-1.2.15.jar"/>
+			<pathelement location="${lib}/commons-httpclient-3.1.jar"/>
+			<pathelement location="${lib}/commons-codec-1.3.jar"/>
+			<pathelement location="${lib}/commons-lang-2.3.jar"/>
+	</path>
+	
 	<path id="classpath.oadminrealm">
 		<pathelement location="${lib}/catalina.jar"/>
 		<pathelement location="${lib}/log4j-1.2.15.jar"/>
@@ -109,6 +118,7 @@
 		<mkdir dir="${build.oadminrealm}"/>
 		<mkdir dir="${build.resourcerealm}"/>
 		<mkdir dir="${build.findnbrowse}"/>
+		<mkdir dir="${build.oaipmh}"/>
 	</target>
 	
 	<target name="initArch">
@@ -476,6 +486,27 @@
 			<zipfileset dir="myfaces-root/find-dummy/css/" prefix="css/"/>
 			<zipfileset dir="myfaces-root/find-dummy/img/" prefix="img/"/>
 			<zipfileset dir="myfaces-root/find-dummy/pages/" prefix="pages/"/>
+		</war>
+	</target>
+	
+	<target name="compileOAIPMH" depends="init">
+		<javac destdir="${build.oaipmh}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.oaipmh"/>
+			<include name="**/_2/*.java"/>
+			<include name="**/oaipmh/*.java"/>
+			<exclude name="**/technotest*"/>
+			<exclude name="**/OAdmiNRealm.java"/>
+			<exclude name="**/server/**"/>
+			<exclude name="**/Test*"/>
+		</javac>
+	</target>
+
+	<target name="warOAIPMH" depends="compileOAIPMH">
+		<war destfile="${build}/oaipmh.war" webxml="conf_oaipmh/web.xml">
+			<lib dir="${lib}">
+				<include name="log4j-1.2.15.jar"/>
+			</lib>
+			<classes dir="${build.oaipmh}"/>
 		</war>
 	</target>
 
