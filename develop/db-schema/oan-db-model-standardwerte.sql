@@ -121,7 +121,7 @@ insert into dbo.DDC_Categories (DDC_Categorie, name) values('960', 'Geschichte A
 insert into dbo.DDC_Categories (DDC_Categorie, name) values('970', 'Geschichte Nordamerikas');
 insert into dbo.DDC_Categories (DDC_Categorie, name) values('980', 'Geschichte Südamerikas');
 
--- DNB-Werte
+-- DNB-Werte;
 
 INSERT INTO DNB_Categories (DNB_Categorie, name) VALUES ('01','Wissenschaft und Kultur allgemein');
 INSERT INTO DNB_Categories (DNB_Categorie, name) VALUES ('02','Schrift, Buch, Bibliothek, Information und Dokumentation');

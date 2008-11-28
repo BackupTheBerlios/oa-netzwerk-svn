@@ -145,62 +145,83 @@ public class Aggregator {
 	 * StartSingleMode using the aquired IDs.
 	 */
 	public void startAutoMode() {
-
-		// zuerst muss die Workflow-DB nach Arbeitsobjekten befragt werden
-		if (logger.isDebugEnabled())
-			logger.debug("Aggregator AutoMode started");
 		
-		//TODO: hardcoded ServiceID !!!
-		
-		String ressource = "WorkflowDB/2"; // + id;
-		RestClient restclient = RestClient.createRestClient(this.props
-				.getProperty("host"), ressource, this.props
-				.getProperty("username"), this.props.getProperty("password"));
+		boolean newObjects = true;
 
-		// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus dem
-		// XML extrahiert werden
-		RestMessage msgGetWFResponse = restclient.sendGetRestMessage();
-		if(msgGetWFResponse.getStatus() != RestStatusEnum.OK) {
-			//TODO: Was nun?
-			logger.error("WorkflowDB response failed: " + msgGetWFResponse.getStatus() + "(" + msgGetWFResponse.getStatusDescription() + ")");
-			return;
-		}
-		
-		
-		List<RestEntrySet> listEntrySets = msgGetWFResponse.getListEntrySets();
-				
-		for (RestEntrySet entrySet : listEntrySets) {
+		while (newObjects == true) {
 
-			Iterator<String> it = entrySet.getKeyIterator();
-			String key = "";
-			String value = "";
-			
-			String id = null;
-			String time = null;
+			// newObjects auf false setzen, damit es zu keiner Endlosschleife
+			// kommt
+			newObjects = false;
 
-			while (it.hasNext()) {
-				key = it.next();
-				logger.debug("key: " + key);
-				// hier wird die Rueckgabe überprüft, ist es einen object_id,
-				// dann muss diese bearbeitet werden
-				if (key.equalsIgnoreCase("object_id")) {
-					id = entrySet.getValue(key);
-					logger.debug("recognized value: " + id);
-					if (id.equals("")) {
-						logger.error("OID from Workflow expected, but was: " + value);
+			// zuerst muss die Workflow-DB nach Arbeitsobjekten befragt werden
+			if (logger.isDebugEnabled())
+				logger.debug("Aggregator AutoMode cycle started");
+
+			// TODO: hardcoded ServiceID !!!
+
+			String ressource = "WorkflowDB/2"; // + id;
+			RestClient restclient = RestClient.createRestClient(this.props
+					.getProperty("host"), ressource, this.props
+					.getProperty("username"), this.props
+					.getProperty("password"));
+
+			// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus
+			// dem
+			// XML extrahiert werden
+			RestMessage msgGetWFResponse = restclient.sendGetRestMessage();
+			if (msgGetWFResponse.getStatus() != RestStatusEnum.OK) {
+				// TODO: Was nun?
+				logger.error("WorkflowDB response failed: "
+						+ msgGetWFResponse.getStatus() + "("
+						+ msgGetWFResponse.getStatusDescription() + ")");
+				return;
+			}
+
+			List<RestEntrySet> listEntrySets = msgGetWFResponse
+					.getListEntrySets();
+
+			for (RestEntrySet entrySet : listEntrySets) {
+
+				Iterator<String> it = entrySet.getKeyIterator();
+				String key = "";
+				String value = "";
+
+				String id = null;
+				String time = null;
+
+				while (it.hasNext()) {
+
+					key = it.next();
+					logger.debug("key: " + key);
+					// hier wird die Rueckgabe überprüft, ist es eine object_id,
+					// dann muss diese bearbeitet werden
+					if (key.equalsIgnoreCase("object_id")) {
+
+						newObjects = true;
+						id = entrySet.getValue(key);
+						logger.debug("recognized value: " + id);
+						if (id.equals("")) {
+							logger
+									.error("OID from Workflow expected, but was: "
+											+ value);
+						}
 					}
-				}
-				if (key.equalsIgnoreCase("time")) {
-					time = entrySet.getValue(key);
-					logger.debug("recognized value: " + time);
-					if (time.equals("")) {
-						logger.error("time-value from Workflow expected, but was: " + value);
+					if (key.equalsIgnoreCase("time")) {
+						time = entrySet.getValue(key);
+						logger.debug("recognized value: " + time);
+						if (time.equals("")) {
+							logger
+									.error("time-value from Workflow expected, but was: "
+											+ value);
+						}
 					}
-				}
-				if (id != null && time != null && !id.equals("") && !time.equals("")) {
-					startSingleRecord((new Integer(id).intValue()), time);
-				}
+					if (id != null && time != null && !id.equals("")
+							&& !time.equals("")) {
+						startSingleRecord((new Integer(id).intValue()), time);
+					}
 
+				}
 			}
 		}
 
@@ -219,7 +240,7 @@ public class Aggregator {
 		this.currentRecordId = id;
 		this.time = time;
 
-		logger.debug("StartSingleRecord:  RecordId=" + this.currentRecordId);
+		logger.debug("StartSingleRecord:  RecordId=" + this.currentRecordId + "\ttime="+time);
 		//aggrStateLog.info("OID: " + id);
 		
 		String data = null;
