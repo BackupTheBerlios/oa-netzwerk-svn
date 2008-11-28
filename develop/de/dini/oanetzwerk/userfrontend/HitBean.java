@@ -123,6 +123,12 @@ public class HitBean implements Serializable {
 		return strFTL;
 	}
 	
+	public String getMetadatastring() {
+		String s = this.completeMetadata.toString();
+		s = s.replaceAll("\n", "<br/>");
+		return s;
+	}
+	
 	/////////////////////// action method //////////////////////////////
 
 	public String actionDetailsLink() {

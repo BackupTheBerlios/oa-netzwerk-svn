@@ -28,10 +28,38 @@
 			</h:form>
 			</div>
 	
-<!-- test  -->
 <h:form>
+
 		<div id="div_simplebrowselist">
 			<h3>Einfache DDC-Liste</h3>
+
+            <t:dataList id="ddcnavilist_lvl1" value="#{searchBean.browse.listDDCNaviNodes}" var="node_lvl1" layout="unorderedList">
+				<div class="div_simplebrowselist_lvl1_outer">
+				<div class="div_simplebrowselist_lvl1_inner">
+				<span class="span_ddc_num"><t:outputText value="#{node_lvl1.strDDCValue}"/></span>&nbsp;
+				<span class="span_ddc_name"><t:outputText value="#{node_lvl1.strNameDE}"/></span>&nbsp;
+				(<t:outputText value="#{node_lvl1.longItemCount}"/>)
+				</div>
+	            <t:dataList id="ddcnavilist_lvl2" value="#{node_lvl1.listSubnodes}" var="node_lvl2" layout="unorderedList">
+					<div class="div_simplebrowselist_lvl2_outer">
+					<div class="div_simplebrowselist_lvl2_inner">
+					<span class="span_ddc_num"><t:outputText value="#{node_lvl2.strDDCValue}"/></span>&nbsp;
+					<span class="span_ddc_name"><t:outputText value="#{node_lvl2.strNameDE}"/></span>&nbsp;
+					(<t:outputText value="#{node_lvl2.longItemCount}"/>)
+					</div>
+  	 	            <t:dataList id="ddcnavilist_lvl3" value="#{node_lvl2.listSubnodes}" var="node_lvl3" layout="unorderedList">
+						<t:outputText value="#{node_lvl3.strDDCValue}"/>&nbsp;<t:outputText value="#{node_lvl3.strNameDE}"/>&nbsp;(<t:outputText value="#{node_lvl3.longItemCount}"/>)
+	            		<t:dataList id="ddcnavilist_lvl4" value="#{node_lvl1.listSubnodes}" var="node_lvl4" layout="unorderedList">
+							<t:outputText value="#{node_lvl4.strDDCValue}"/>&nbsp;<t:outputText value="#{node_lvl4.strNameDE}"/>&nbsp;(<t:outputText value="#{node_lvl4.longItemCount}"/>)
+						</t:dataList>
+					</t:dataList>
+					</div>
+				</t:dataList>
+				</div>
+			</t:dataList>
+
+			<hr/>
+
             <h:dataTable id="browselist" value="#{searchBean.browse.simpleDDCCategorySums}" var="entry" columnClasses="colCategory">
 				<h:column>
 					<f:facet name="header">
@@ -52,7 +80,9 @@
 					<t:outputText value="#{entry[1]}"/>
 				</h:column>
 			</h:dataTable>
+
 			<hr/>
+
             <h:dataTable id="browselist2" value="#{searchBean.browse.directDDCCategorySums}" var="entry" columnClasses="colCategory">
 				<h:column>
 					<f:facet name="header">

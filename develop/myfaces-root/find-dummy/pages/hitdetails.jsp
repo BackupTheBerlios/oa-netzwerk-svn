@@ -64,7 +64,7 @@
 				</td>
 				</tr>
 				<tr>
-				<td class="hitlist_head">Co-Autoren:</td>
+				<td class="hitlist_head">Mitwirkende:</td>
 				<td class="hitlist_content">			
 
 							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.contributorList}" 
@@ -77,19 +77,19 @@
 				<td class="hitlist_head">Herausgeber:</td>
 				<td class="hitlist_content">			
 
-							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.publisherList}" 
-			                            var="publisher" layout="unorderedList" first="0"	dir="LTR">
-								<t:outputText value="#{publisher.name}"></t:outputText>&nbsp;
+							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.editorList}" 
+			                            var="editor" layout="unorderedList" first="0"	dir="LTR">
+								<t:outputText value="#{editor.firstname}"></t:outputText>&nbsp;<t:outputText value="#{editor.lastname}"></t:outputText>&nbsp;
 							</t:dataList>
 				</td>
 				</tr>
 				<tr>
-				<td class="hitlist_head">Editor:</td>
+				<td class="hitlist_head">Verlag/Institution:</td>
 				<td class="hitlist_content">			
 
-							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.editorList}" 
-			                            var="editor" layout="unorderedList" first="0"	dir="LTR">
-								<t:outputText value="#{editor.firstname}"></t:outputText>&nbsp;<t:outputText value="#{editor.lastname}"></t:outputText>&nbsp;
+							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.publisherList}" 
+			                            var="publisher" layout="unorderedList" first="0"	dir="LTR">
+								<t:outputText value="#{publisher.name}"></t:outputText>&nbsp;
 							</t:dataList>
 				</td>
 				</tr>
@@ -177,7 +177,7 @@
 				<tr>
 				<td class="hitlist_head">Metadatensatz:</td>
 				<td class="hitlist_content">			
-					<h:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata}"/>
+					<h:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].metadatastring}"/>
 				</td>
 				</tr>
 			</table>

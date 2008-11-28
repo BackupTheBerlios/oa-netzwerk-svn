@@ -139,6 +139,7 @@ dt {
 }
 #div_hitdetails td {
 	padding: 5px;	
+	vertical-align: top;
 }
 .hitlist_head {
 	background-color: #DDDDEE;	
@@ -151,8 +152,9 @@ dt {
 }
 #div_hitdetails ul li {
   float: left;
-  list-style: none;
-  	
+  /*list-style: none;*/
+  margin-left: 15px;
+  margin-right: 5px;	
 }
 /* BROWSING ------------------------------------------------------------------------------------ */
 #div_simplebrowselist {
@@ -160,8 +162,40 @@ dt {
   margin-top: 30px;
   margin-right: 10px;
 }
-#div_simplebrowselist table tr td{
+#div_simplebrowselist li {
+  margin-left: 10px;
+  font-size: 10px;
+  list-style: none;
+}
+#div_simplebrowselist li li {
+  margin-left: 20px;
+  font-size: 9px;
+  list-style: none;
+}
+#div_simplebrowselist table tr td {
   background-color: #EEEEFF;
+}
+/*
+.div_simplebrowselist_lvl1_outer {
+	border-left: 2px solid grey;	
+}
+.div_simplebrowselist_lvl1_inner {
+	border-bottom: 1px solid grey;	
+}
+.div_simplebrowselist_lvl2_outer {
+	border-left: 2px solid grey;
+}
+.div_simplebrowselist_lvl2_inner {
+	border-bottom: 1px solid grey;	
+}
+*/
+.span_ddc_num {
+  font-size: 10px;
+  color: silver;   
+}
+.span_ddc_name {
+  font-size: 12px;
+  font-weight: bold;	  
 }
 .center {
   text-align: center;
