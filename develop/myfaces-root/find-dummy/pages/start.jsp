@@ -18,8 +18,8 @@
 			<div id="div_general_links">
 			<h:form>
 				<h:commandLink value="#{index.linkname_start}" action="start"/>&nbsp;
-                <h:commandLink value="#{index.linkname_projekt}" action="test1"/>&nbsp;
-                <h:commandLink value="#{index.linkname_impressum}" action="test2"/>&nbsp; 
+                <h:commandLink value="#{index.linkname_projekt}" action="projekt"/>&nbsp;
+                <h:commandLink value="#{index.linkname_impressum}" action="impressum"/>&nbsp; 
 			</h:form>
             </div>
 			
@@ -28,6 +28,10 @@
    			    <h:form>
 				<span class="center">
                 <img src="../img/Logo_oan_rgb_micro.PNG" />
+				<br/>
+				<h:outputText value="#{index.linkname_search}" />&nbsp;
+				<h:commandLink value="#{index.linkname_browse_ddc}" action="browse_ddc"/>
+				<br/>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche"
 					         value="#{searchBean.strOneSlot}" />
 			    <h:commandButton value="#{index.find}"

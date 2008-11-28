@@ -16,8 +16,8 @@
 			<div id="div_general_links">
 			<h:form>
 				<h:commandLink value="#{index.linkname_start}" action="start"/>&nbsp;
-                <h:commandLink value="#{index.linkname_projekt}" action="test1"/>&nbsp;
-                <h:commandLink value="#{index.linkname_impressum}" action="test2"/>&nbsp; 
+                <h:commandLink value="#{index.linkname_projekt}" action="projekt"/>&nbsp;
+                <h:commandLink value="#{index.linkname_impressum}" action="impressum"/>&nbsp; 
 			</h:form>
             </div>
 	
