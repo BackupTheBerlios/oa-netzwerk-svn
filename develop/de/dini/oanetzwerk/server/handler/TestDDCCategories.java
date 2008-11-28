@@ -62,31 +62,6 @@ public class TestDDCCategories {
 	}
 	
 	@Test
-	public void test_GET_WildcardCategory() throws Exception{
-		
-		System.out.println("DDCCategories\\0%");
-		
-		DDCCategories ddcCategories = new DDCCategories();
-		String [] path = {"0%"};
-
-		String strXML = ddcCategories.getKeyWord(path);
-//		System.out.println(strXML);
-		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
-
-		System.out.println("categories fetched: " + rmsg.getListEntrySets().size());
-		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
-			Iterator<String> it = entrySet.getKeyIterator();
-			while(it.hasNext()) {
-				String key = it.next();
-				String value = entrySet.getValue(key);
-				System.out.println(key + "|" + value);
-			}
-		}
-				
-		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
-	}
-	
-	@Test
 	public void test_GET_WildcardCategory_Nonsense() throws Exception{
 		
 		System.out.println("DDCCategories\\foobar*");
@@ -97,18 +72,8 @@ public class TestDDCCategories {
 		String strXML = ddcCategories.getKeyWord(path);
 //		System.out.println(strXML);
 		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
-
-		System.out.println("categories fetched: " + rmsg.getListEntrySets().size());
-		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
-			Iterator<String> it = entrySet.getKeyIterator();
-			while(it.hasNext()) {
-				String key = it.next();
-				String value = entrySet.getValue(key);
-				System.out.println(key + "|" + value);
-			}
-		}
 				
-		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.WRONG_PARAMETER);
 	}
 	
 	@Test
@@ -124,5 +89,30 @@ public class TestDDCCategories {
 		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
 				
 		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.WRONG_PARAMETER);
+	}
+	
+	@Test
+	public void test_GET_WildcardCategory_X() throws Exception{
+		
+		System.out.println("DDCCategories\\5x");
+		
+		DDCCategories ddcCategories = new DDCCategories();
+		String [] path = {"5x"};
+
+		String strXML = ddcCategories.getKeyWord(path);
+		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		System.out.println("categories fetched: " + rmsg.getListEntrySets().size());
+		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+			Iterator<String> it = entrySet.getKeyIterator();
+			while(it.hasNext()) {
+				String key = it.next();
+				String value = entrySet.getValue(key);
+				System.out.println(key + "|" + value);
+			}
+		}		
+		
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
 	}
 }

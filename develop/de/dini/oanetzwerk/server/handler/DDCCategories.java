@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -62,14 +64,15 @@ public class DDCCategories extends AbstractKeyWordHandler implements
 		KeyWord2DatabaseInterface {
 	
 	static Logger logger = Logger.getLogger (DDCCategories.class);
+	private static Pattern patternWildcardCategory = null; 
 	
 	/**
 	 * 
 	 */
 	
 	public DDCCategories ( ) {
-		
 		super (DDCCategories.class.getName ( ), RestKeyword.DDCCategories);
+		patternWildcardCategory = Pattern.compile( "[0-9](x|[0-9]x|[0-9]{2}|[0-9]{2}.[0-9])"); 
 	}
 
 	/**
@@ -129,11 +132,21 @@ public class DDCCategories extends AbstractKeyWordHandler implements
 				String wildcardCategory = path[0];
 				
 				if(wildcardCategory == null || wildcardCategory.length() == 0) {
-					logger.error ("wildcard category is " + wildcardCategory);
+					logger.error ("empty wildcard category, value = '" + wildcardCategory + "'");
 					this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
-					this.rms.setStatusDescription ("wildcard category parameter is '" + wildcardCategory +"'");
+					this.rms.setStatusDescription ("empty wildcard category, value = '" + wildcardCategory + "'");
 					return RestXmlCodec.encodeRestMessage (this.rms);
 				}
+				
+				Matcher m = patternWildcardCategory.matcher(wildcardCategory); 
+				if(!m.matches()) {
+					logger.error ("malformed wildcard category, value = '" + wildcardCategory + "'");
+					this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+					this.rms.setStatusDescription ("Malformed wildcard category, value = '" + wildcardCategory + "', use 'x' for wildcard please!");
+					return RestXmlCodec.encodeRestMessage (this.rms);					
+				}
+				// transform to SQL LIKE string
+				wildcardCategory = wildcardCategory.replaceAll("x", "%");
 				
 				stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 				stmtconn.loadStatement (SelectFromDB.DDCCategoryWildcard(stmtconn.connection, wildcardCategory));
