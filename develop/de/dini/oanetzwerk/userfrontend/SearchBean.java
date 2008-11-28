@@ -34,6 +34,7 @@ public class SearchBean implements Serializable {
 	private String strRepositoryFilterURL = null;
 	
     private HitlistBean hitlist = null;
+    private BrowseBean browse = null;
     
     public SearchBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException  {
     	    	
@@ -41,6 +42,9 @@ public class SearchBean implements Serializable {
     	
     	hitlist = new HitlistBean();
     	hitlist.setParentSearchBean(this);
+    	
+    	browse = new BrowseBean();
+    	browse.setParentSearchBean(this);
     	
     	FacesContext context = FacesContext.getCurrentInstance();
     	HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
@@ -89,6 +93,14 @@ public class SearchBean implements Serializable {
 
 	public void setStrRepositoryFilterURL(String strRepositoryFilterURL) {
 		this.strRepositoryFilterURL = strRepositoryFilterURL;
+	}
+	
+	public BrowseBean getBrowse() {
+		return browse;
+	}
+
+	public void setBrowse(BrowseBean browse) {
+		this.browse = browse;
 	}
 
 	public HitlistBean getHitlist() {
