@@ -8,6 +8,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.openarchives.oai._2.DeletedRecordType;
+import org.openarchives.oai._2.DescriptionType;
 import org.openarchives.oai._2.GranularityType;
 import org.openarchives.oai._2.IdentifyType;
 import org.openarchives.oai._2.OAIPMHtype;
@@ -38,10 +40,21 @@ public class Identify implements OAIPMHVerbs {
 		identify.setGranularity (GranularityType.YYYY_MM_DD);
 		identify.setProtocolVersion ("2.0");
 		identify.setRepositoryName ("OA Netzwerk OAI-PMH Export Interface");
-		identify.getAdminEmail ( ).add ("oanet@oanet");
-//		DescriptionType descr = obfac.createDescriptionType ( );
-//		descr.setAny (this.getDescription ( ));
-//		identify.getDescription ( ).add (descr);
+		identify.getAdminEmail ( ).add ("oanet@oanet.cms.hu-berlin.de");
+		identify.setDeletedRecord (DeletedRecordType.NO);
+		DescriptionType descr = obfac.createDescriptionType ( );
+		OaiIdentifierType oaiIdent = new OaiIdentifierType ( );
+		oaiIdent.setDelimiter (":");
+		oaiIdent.setRepositoryIdentifier ("oanet");
+		oaiIdent.setSampleIdentifier ("oai:oanet:152");
+		oaiIdent.setScheme ("oai");
+		
+//		descr.setAny (new JAXBElement <OaiIdentifierType> (new QName (
+//				"http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd", "oai-identifier"
+//				), OaiIdentifierType.class, new OAI_Identifier ( ).getDescription ( )));
+		descr.setAny (oaiIdent);
+		
+		identify.getDescription ( ).add (descr);
 		OAIPMHtype oaipmhMsg = obfac.createOAIPMHtype ( );
 		oaipmhMsg.setResponseDate (new XMLGregorianCalendarImpl (new GregorianCalendar ( )));
 		RequestType reqType = obfac.createRequestType ( );
@@ -51,13 +64,13 @@ public class Identify implements OAIPMHVerbs {
 		oaipmhMsg.setIdentify (identify);
 		
 		Writer w = new StringWriter ( );
-		
 		try {
 			
-			JAXBContext context = JAXBContext.newInstance (OAIPMHtype.class);
+			JAXBContext context = JAXBContext.newInstance (OaiIdentifierType.class, OAIPMHtype.class);
 			Marshaller m = context.createMarshaller ( );
 			m.setProperty (Marshaller.JAXB_ENCODING, "UTF-8");
 			m.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			m.setProperty (Marshaller.JAXB_SCHEMA_LOCATION, "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd");
 			m.marshal (obfac.createOAIPMH (oaipmhMsg), w);
 			
 		} catch (JAXBException ex) {
@@ -67,22 +80,4 @@ public class Identify implements OAIPMHVerbs {
 		
 		return w.toString ( );
 	}
-
-	/**
-	 * @return
-	 */
-	
-	private Object getDescription ( ) {
-
-		org.openarchives.oai._2_0.oai_identifier.ObjectFactory obfac = new org.openarchives.oai._2_0.oai_identifier.ObjectFactory ( );
-		
-		OaiIdentifierType oaiIdentType =  obfac.createOaiIdentifierType ( );
-		oaiIdentType.setDelimiter (":");
-		oaiIdentType.setRepositoryIdentifier ("oanet");
-		oaiIdentType.setSampleIdentifier ("oai:oanet:152");
-		oaiIdentType.setScheme ("oai");
-		
-		return obfac.createOaiIdentifier (oaiIdentType);
-	}
-
 }
