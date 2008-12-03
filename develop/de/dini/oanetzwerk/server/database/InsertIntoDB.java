@@ -705,4 +705,33 @@ public class InsertIntoDB {
 	}
 
 
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @param duplicate_id
+	 * @param percentage
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement DuplicatePossibilities (Connection connection,
+			BigDecimal object_id, BigDecimal duplicate_id, BigDecimal percentage) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("IINSERT INTO dbo.DuplicatePossibilities (object_id, duplicate_id, percentage) " +
+					"VALUES (" + object_id + ",  " + duplicate_id + ", " + percentage + ")");
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.DuplicatePossibilities (object_id, duplicate_id, percentage) VALUES (?, ?, ?)");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setBigDecimal (2, duplicate_id);
+		preparedstmt.setBigDecimal (3, percentage);
+		
+		return preparedstmt;
+	}
+
+	
+	
+	
 }

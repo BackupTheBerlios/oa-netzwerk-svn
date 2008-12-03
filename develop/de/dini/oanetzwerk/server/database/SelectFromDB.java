@@ -864,4 +864,24 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @param time
+	 * @param service_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement DuplicateProbabilities (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT object_id, duplicate_id, percentage FROM dbo.DuplicatePossibilities WHERE object_id = ?");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+	
 }

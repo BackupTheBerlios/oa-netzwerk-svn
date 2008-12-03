@@ -409,5 +409,7 @@ public class DeleteFromDB {
 		preparedstmt.setString (1, name);
 		
 		return preparedstmt;
-	}	
+	}
+	
+	
 }

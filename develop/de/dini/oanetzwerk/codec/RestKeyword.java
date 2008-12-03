@@ -17,5 +17,6 @@ public enum RestKeyword {
 	ServiceNotifier,
 	LoginData,
 	DDCCategories,
+	DuplicateProbabilities,
 	UNKNOWN
 }
