@@ -140,7 +140,18 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 		try {
 			
 			object_id = new BigDecimal (path [0]);
-			
+			if (object_id.intValue() < 0) {
+				
+				logger.error (path [0] + " is NOT a valid number for this parameter!");
+				
+				this.rms = new RestMessage (RestKeyword.DuplicateProbabilities);
+				this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+				this.rms.setStatusDescription (path [0] + " is NOT a valid number for this parameter!");
+				
+				return RestXmlCodec.encodeRestMessage (this.rms);				
+				
+			}
+
 		} catch (NumberFormatException ex) {
 			
 			logger.error (path [0] + " is NOT a number!");
@@ -277,6 +288,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 		String key = "";
 
 		try {
+			boolean errorHappended = false; 
 			stmtconn = (MultipleStatementConnection) dbng
 					.getMultipleStatementConnection();
 
@@ -330,11 +342,20 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 				this.result = stmtconn.execute();
 
 				if (this.result.getUpdateCount() < 1) {
+					errorHappended = true;
+				
 					// warn, error, rollback, nothing????
 				}
+//				logger.debug("GetWarnings: " + stmtconn.connection.getWarnings().getNextWarning());
 
 			}
-			stmtconn.commit();
+			if (errorHappended == false) 
+				stmtconn.commit();
+			else {
+				stmtconn.rollback();
+				this.rms.setStatus(RestStatusEnum.SQL_ERROR);
+				this.rms.setStatusDescription("could not be inserted");
+			}
 			this.rms.setStatus (RestStatusEnum.OK);
 			
 		} catch (NumberFormatException ex) {
@@ -348,6 +369,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 
 		} catch (SQLException ex) {
 
+			stmt
 			logger.error(ex.getLocalizedMessage());
 			ex.printStackTrace();
 			this.rms.setStatus(RestStatusEnum.SQL_ERROR);

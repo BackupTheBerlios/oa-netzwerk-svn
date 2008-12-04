@@ -718,7 +718,7 @@ public class InsertIntoDB {
 		
 		if (logger.isDebugEnabled ( )) {
 			
-			logger.debug ("IINSERT INTO dbo.DuplicatePossibilities (object_id, duplicate_id, percentage) " +
+			logger.debug ("INSERT INTO dbo.DuplicatePossibilities (object_id, duplicate_id, percentage) " +
 					"VALUES (" + object_id + ",  " + duplicate_id + ", " + percentage + ")");
 		}
 		
