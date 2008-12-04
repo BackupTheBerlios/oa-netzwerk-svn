@@ -2,8 +2,6 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -181,8 +179,8 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 					logger.debug ("DB returned: \n\tobject_id = " + this.result.getResultSet ( ).getBigDecimal (1));
 				
 				RestEntrySet entrySet = new RestEntrySet(); 
-				entrySet.addEntry ("duplicate_id", this.result.getResultSet ( ).getBigDecimal (2).toPlainString ( ));
-				entrySet.addEntry ("percentage", this.result.getResultSet ( ).getBigDecimal (3).toPlainString ( ));
+				entrySet.addEntry ("referToOID", this.result.getResultSet ( ).getBigDecimal (2).toPlainString ( ));
+				entrySet.addEntry ("probability", this.result.getResultSet ( ).getBigDecimal (3).toPlainString ( ));
 				entrySet.addEntry ("number", (new Integer(counter)).toString());
 				this.rms.addEntrySet(entrySet);
 			}

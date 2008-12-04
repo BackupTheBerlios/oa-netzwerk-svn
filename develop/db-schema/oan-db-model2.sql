@@ -217,7 +217,7 @@ CREATE TABLE dbo.DuplicatePossibilities (
        object_id NUMERIC(38) NOT NULL
      , duplicate_id NUMERIC(38) NOT NULL
      , percentage NUMERIC NOT NULL
-     , PRIMARY KEY (object_id)
+     , PRIMARY KEY (object_id, duplicate_id)
 );
 
 CREATE TABLE dbo.WorkflowDB (

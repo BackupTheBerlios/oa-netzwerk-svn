@@ -884,4 +884,29 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	
+	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @param time
+	 * @param service_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement OAIListSets (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT d.name, d.setNameEng as \"setName\" FROM dbo.DINI_Set_Categories d JOIN dbo.DINI_Set_Classification dsc ON d.DINI_set_id = dsc.DINI_set_id GROUP BY d.name" +
+				" UNION " +
+				" SELECT 'ddc:' + d.DDC_Categorie as \"Name\", d.name as \"setName\" FROM dbo.DDC_Categories d JOIN dbo.DDC_Classification dc ON d.DDC_Categorie = dc.DDC_Categorie GROUP BY d.name" +
+				" UNION " +
+				" SELECT 'dnb:' + d.DNB_Categorie as \"Name\",  d.name as \"setName\"  FROM dbo.DNB_Categories d JOIN dbo.DNB_Classification dc ON d.DNB_Categorie = dc.DNB_Categorie GROUP BY d.name" +
+				" ORDER BY d.name");
+		
+		return preparedstmt;
+	}
+	
+	
 }
