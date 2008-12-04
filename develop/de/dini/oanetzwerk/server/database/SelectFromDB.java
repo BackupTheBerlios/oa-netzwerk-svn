@@ -888,15 +888,11 @@ public class SelectFromDB {
 	
 	/**
 	 * @param connection
-	 * @param object_id
-	 * @param time
-	 * @param service_id
 	 * @return
 	 * @throws SQLException 
 	 */
 	
-	public static PreparedStatement OAIListSets (Connection connection,
-			BigDecimal object_id) throws SQLException {
+	public static PreparedStatement OAIListSets (Connection connection) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT d.name, d.setNameEng as \"setName\" FROM dbo.DINI_Set_Categories d JOIN dbo.DINI_Set_Classification dsc ON d.DINI_set_id = dsc.DINI_set_id GROUP BY d.name" +
 				" UNION " +
@@ -907,6 +903,21 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
+	
+	/**
+	 * @param connection
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement OAIGetOldestDate (Connection connection) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("select MIN(repository_datestamp) from dbo.Object ");
+		
+		return preparedstmt;
+	}
+	
+	
 	
 	
 }

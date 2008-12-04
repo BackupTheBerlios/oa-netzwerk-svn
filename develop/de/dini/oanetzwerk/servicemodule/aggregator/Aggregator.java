@@ -198,7 +198,9 @@ public class Aggregator {
 					// dann muss diese bearbeitet werden
 					if (key.equalsIgnoreCase("object_id")) {
 
-						newObjects = true;
+						// der Aggregator sollte sich nciht automatisch wieder erneut aufrufen, da er sonst bei Fehlern
+						// in einer Endlosschleife verharrt
+//						newObjects = true;
 						id = entrySet.getValue(key);
 						logger.debug("recognized value: " + id);
 						if (id.equals("")) {

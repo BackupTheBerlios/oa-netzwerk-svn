@@ -22,7 +22,7 @@ insert into dbo.Repositories (name, url, oai_url) values ('PsyDok Saarbruecken',
 insert into dbo.Repositories (name, url, oai_url) values ('OPUS Stuttgart', 'http://elib.uni-stuttgart.de/opus','http://elib.uni-stuttgart.de/opus/oai2/oai2.php')
 insert into dbo.Repositories (name, url, oai_url) values ('TOBIAS-lib Tuebingen', 'http://w210.ub.uni-tuebingen.de','http://w210.ub.uni-tuebingen.de/dbt/oai/oai2.php')
 insert into dbo.Repositories (name, url, oai_url) values ('Duet Duisburg', 'http://www.ub.uni-duisburg.de/ETD-db','http://www.ub.uni-duisburg.de:8080/cgi-oai2/2/OAI-XMLFile-2.1/XMLFile/DuetT/oai.pl')
-insert into dbo.Repositories (name, url, oai_url) values ('OPUS Hohenheim', 'http://www.ub.uni-hohenheim.de/opus/index.html','')
+insert into dbo.Repositories (name, url, oai_url) values ('OPUS Hohenheim', 'http://www.ub.uni-hohenheim.de/opus/index.html','http://opus.ub.uni-hohenheim.de/oai2/oai2.php')
 insert into dbo.Repositories (name, url, oai_url) values ('Volltextserver Ulm', 'http://vts.uni-ulm.de','http://vts.uni-ulm.de/oai/oai.asp')
 
 
