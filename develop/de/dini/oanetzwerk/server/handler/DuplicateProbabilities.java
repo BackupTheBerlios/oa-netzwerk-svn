@@ -369,7 +369,6 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 
 		} catch (SQLException ex) {
 
-			stmt
 			logger.error(ex.getLocalizedMessage());
 			ex.printStackTrace();
 			this.rms.setStatus(RestStatusEnum.SQL_ERROR);
