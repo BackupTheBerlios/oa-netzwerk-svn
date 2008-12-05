@@ -136,7 +136,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements
 					this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 					this.rms.setStatusDescription ("empty wildcard category, value = '" + wildcardCategory + "'");
 					return RestXmlCodec.encodeRestMessage (this.rms);
-				}
+				} 
 				
 				Matcher m = patternWildcardCategory.matcher(wildcardCategory); 
 				if(!m.matches()) {
@@ -157,6 +157,8 @@ public class DDCCategories extends AbstractKeyWordHandler implements
 						logger.warn (warning.getLocalizedMessage ( ));
 					}
 				}
+				
+				logger.debug("wildcardDDCResult = " + wildcardDDCResult);
 
 				while (wildcardDDCResult.getResultSet ( ).next ( )) {		
 					res.addEntry("wildcardCategory",wildcardCategory);
