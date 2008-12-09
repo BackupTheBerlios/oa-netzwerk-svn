@@ -47,8 +47,6 @@ public class RestServer extends HttpServlet {
 	 * @return
 	 */
 	
-	//TODO: Better name for variable i
-	
 	@SuppressWarnings("unchecked")
 	private String processRequest (HttpServletRequest req, HttpVerbEnum verb) {
 		

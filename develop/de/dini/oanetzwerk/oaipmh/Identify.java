@@ -3,15 +3,18 @@ package de.dini.oanetzwerk.oaipmh;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.GregorianCalendar;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.apache.log4j.Logger;
 import org.openarchives.oai._2.DeletedRecordType;
 import org.openarchives.oai._2.DescriptionType;
 import org.openarchives.oai._2.GranularityType;
 import org.openarchives.oai._2.IdentifyType;
+import org.openarchives.oai._2.OAIPMHerrorcodeType;
 import org.openarchives.oai._2.OAIPMHtype;
 import org.openarchives.oai._2.ObjectFactory;
 import org.openarchives.oai._2.RequestType;
@@ -26,16 +29,21 @@ import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
  */
 
 public class Identify implements OAIPMHVerbs {
-
+	
+	private static Logger logger = Logger.getLogger (Identify.class);
+	
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.OAIPMHVerbs#processRequest()
 	 */
 	@Override
-	public String processRequest ( ) {
-
+	public String processRequest (Map <String, String [ ]> parameter) {
+		
+		if (parameter.size ( ) > 1)
+			return new OAIPMHError (OAIPMHerrorcodeType.BAD_ARGUMENT).toString ( );
+		
 		ObjectFactory obfac = new ObjectFactory ( );
 		IdentifyType identify = obfac.createIdentifyType ( );
-		identify.setBaseURL ("http://oanet/oaipmh/oaipmh");
+		identify.setBaseURL ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
 		identify.setEarliestDatestamp ("1970-01-01"); //TODO: get earliest datestamp from database
 		identify.setGranularity (GranularityType.YYYY_MM_DD);
 		identify.setProtocolVersion ("2.0");
@@ -48,10 +56,6 @@ public class Identify implements OAIPMHVerbs {
 		oaiIdent.setRepositoryIdentifier ("oanet");
 		oaiIdent.setSampleIdentifier ("oai:oanet:152");
 		oaiIdent.setScheme ("oai");
-		
-//		descr.setAny (new JAXBElement <OaiIdentifierType> (new QName (
-//				"http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd", "oai-identifier"
-//				), OaiIdentifierType.class, new OAI_Identifier ( ).getDescription ( )));
 		descr.setAny (oaiIdent);
 		
 		identify.getDescription ( ).add (descr);
@@ -64,6 +68,7 @@ public class Identify implements OAIPMHVerbs {
 		oaipmhMsg.setIdentify (identify);
 		
 		Writer w = new StringWriter ( );
+		
 		try {
 			
 			JAXBContext context = JAXBContext.newInstance (OaiIdentifierType.class, OAIPMHtype.class);
@@ -75,7 +80,7 @@ public class Identify implements OAIPMHVerbs {
 			
 		} catch (JAXBException ex) {
 			
-			ex.printStackTrace();
+			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 		
 		return w.toString ( );

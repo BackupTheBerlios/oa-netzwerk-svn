@@ -11,6 +11,7 @@ package org.openarchives.oai._2_0.oai_identifier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(namespace = "http://www.openarchives.org/OAI/2.0/oai-identifier", name = "oai-identifier")
 @XmlType(name = "oai-identifierType", propOrder = {
     "scheme",
     "repositoryIdentifier",

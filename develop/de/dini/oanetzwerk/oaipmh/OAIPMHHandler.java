@@ -1,6 +1,7 @@
 package de.dini.oanetzwerk.oaipmh;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
+import org.openarchives.oai._2.OAIPMHerrorcodeType;
 
 /**
  * @author Michael K&uuml;hn
@@ -44,7 +46,7 @@ public class OAIPMHHandler extends HttpServlet {
 		
 		super.init (config);
 		
-		logger.debug ("INIT");
+//		logger.debug ("INIT");
 	}
 	
 	/**
@@ -53,7 +55,7 @@ public class OAIPMHHandler extends HttpServlet {
 	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		logger.debug ("doGet");
+//		logger.debug ("doGet");
 		
 		req.setCharacterEncoding ("UTF-8");
 		resp.setCharacterEncoding ("UTF-8");
@@ -68,7 +70,8 @@ public class OAIPMHHandler extends HttpServlet {
 			
 		}
 		
-		resp.getWriter ( ).write (getResponse (req, resp));
+		resp.setContentType ("text/xml");	
+		resp.getWriter ( ).write (this.getResponse (req, resp));
 	}
 	
 	/**
@@ -84,6 +87,8 @@ public class OAIPMHHandler extends HttpServlet {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("Verb: " + verb);
 		
+		Map parameterMap = req.getParameterMap ( );
+		
 		String classname = "de.dini.oanetzwerk.oaipmh." + verb;
 		
 		try {
@@ -91,7 +96,7 @@ public class OAIPMHHandler extends HttpServlet {
 			Class <OAIPMHVerbs> c = (Class <OAIPMHVerbs>) Class.forName (classname);
 			Object o = c.newInstance ( );
 			
-			return ((OAIPMHVerbs) o).processRequest ( );
+			return ((OAIPMHVerbs) o).processRequest (parameterMap);
 			
 		} catch (ClassNotFoundException ex) {
 			
@@ -118,9 +123,7 @@ public class OAIPMHHandler extends HttpServlet {
 	
 	private String getErrorMessage (Exception exception, int httpStatus) {
 		
-		HttpError error = new HttpError (exception, httpStatus);
-		
-		return error.getOAIPMHError ( );
+		return new OAIPMHError (OAIPMHerrorcodeType.BAD_VERB).toString ( );
 	}
 
 	/**

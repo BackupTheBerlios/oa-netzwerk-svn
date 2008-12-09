@@ -1534,7 +1534,7 @@ public class Harvester {
 		if (this.ids == null || this.ids.size ( ) < 1) {
 			
 			logger.info ("No Records to process at all");
-				harvStateLog.info ("No more Records to process. Finished Repository No " + this.getRepositoryID ( ));
+			harvStateLog.info ("No more Records to process. Finished Repository No " + this.getRepositoryID ( ));
 			
 			this.ids = null;
 			return;
