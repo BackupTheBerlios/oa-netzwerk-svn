@@ -137,11 +137,27 @@ public class Harvester {
 	
 	private boolean testData = true;
 	
+	/**
+	 * 
+	 */
+	
 	private String propertyfile = "harvesterprop.xml";
+	
+	/**
+	 * 
+	 */
 	
 	private boolean listrecords = false;
 	
+	/**
+	 * 
+	 */
+	
 	private int getRecordCounter = 1;
+	
+	/**
+	 * 
+	 */
 	
 	private String httpResponseCharSet = "UTF-8";
 	
@@ -1375,7 +1391,7 @@ public class Harvester {
 		if (oid > 0) {
 			
 			if (logger.isDebugEnabled ( ))
-				logger.debug ("object exists, so we have to look new rawdata exists");
+				logger.debug ("object exists, so we have to look if new rawdata exists");
 			
 			RestMessage objectEntryResponse = this.prepareRestTransmission ("ObjectEntry/" + oid + "/").sendGetRestMessage ( );
 			String objectEntryDatestamp = this.getValueFromKey (objectEntryResponse, "repository_datestamp");
@@ -2017,7 +2033,6 @@ public class Harvester {
 			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 	}
-	
 
 	/**
 	 * @param string
@@ -2043,7 +2058,7 @@ public class Harvester {
 	 */
 	
 	private RestMessage objectexists (String externalOID) throws ParserConfigurationException, SAXException, IOException {
-
+		
 		if (logger.isDebugEnabled ( )) {
 			
 			logger.debug ("objectexists?");
@@ -2051,9 +2066,8 @@ public class Harvester {
 			logger.debug ("Properties: " + this.getProps ( ).getProperty ("host"));
 		}
 		
-		return this.prepareRestTransmission ("ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/").sendGetRestMessage ( );
+		return this.prepareRestTransmission ("ObjectEntryID/" + this.getRepositoryID ( ) + "/" + externalOID + "/existsRawData").sendGetRestMessage ( );
 	}
-	
 	
 	/**
 	 * This method decodes a RestMessage and extracts the value for a given key.
@@ -2090,11 +2104,11 @@ public class Harvester {
 		} else /*status ok*/ {
 			
 		   if(response.getListEntrySets ( ).isEmpty ( )) {
+			   
 				logger.error ("Received RestMessage with RestStatusEnum.OK and no entryset to evaluate");
 				harvStateLog.error ("Received RestMessage with RestStatusEnum.OK and no entryset to evaluate");
 				return null;			   
 		   }
-			
 		}
 		
 		RestEntrySet res = response.getListEntrySets ( ).get (0);

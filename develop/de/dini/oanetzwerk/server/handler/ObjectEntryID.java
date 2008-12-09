@@ -81,19 +81,31 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 		RestEntrySet res = new RestEntrySet ( );
 		
 		StringBuffer externalOID = new StringBuffer ( );
+		boolean checkRawData = false;
 		
-		if (path.length > 2);
+		if (path.length > 2 ) {
 		
-		for (String string : path) {
+			for (String string : path) {
+				
+				if (string.equalsIgnoreCase ("existsRawData")) {
+					
+					checkRawData = true;
+					break;
+					
+				} else {
+				
+					externalOID.append (string);
+					externalOID.append ('/');
+				}
+			}
 			
-			externalOID.append (string);
-		}
+		} else
+			externalOID.append (path [1]);
 		
 		try {
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
-			
-			stmtconn.loadStatement (SelectFromDB.ObjectEntryID (stmtconn.connection, repositoryID, new String (path [1])));
+			stmtconn.loadStatement (SelectFromDB.ObjectEntryID (stmtconn.connection, repositoryID, externalOID.toString ( )));
 			
 			this.result = stmtconn.execute ( );
 			
@@ -117,10 +129,9 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 				
 				this.rms.addEntrySet (res);
 				
-				if (path.length == 3) {
+				if (checkRawData) {
 					
 					stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
-					
 					stmtconn.loadStatement (SelectFromDB.RawRecordData (stmtconn.connection, this.result.getResultSet ( ).getBigDecimal ("object_id")));
 					
 					this.result = stmtconn.execute ( );
