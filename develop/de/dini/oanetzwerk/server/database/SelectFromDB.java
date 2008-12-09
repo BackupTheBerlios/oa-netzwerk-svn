@@ -253,7 +253,9 @@ public class SelectFromDB {
 
 	public static PreparedStatement RawRecordData (Connection connection,
 			BigDecimal internalOID) throws SQLException {
-
+		
+		logger.debug ("SELECT * FROM dbo.RawData");
+		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.RawData rd WHERE rd.object_id = ? AND rd.repository_timestamp = (SELECT max(rdmax.repository_timestamp) FROM dbo.RawData rdmax WHERE rdmax.object_id = ?)");
 		preparedstmt.setBigDecimal (1, internalOID);
 		preparedstmt.setBigDecimal (2, internalOID);

@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.database;
 
 import java.sql.Connection;
@@ -10,7 +6,6 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * @author Michael K&uuml;hn
  *
@@ -18,7 +13,7 @@ import org.apache.log4j.Logger;
 
 public class SingleStatementConnection implements StatementConnection {
 	
-	static Logger logger = Logger.getLogger (SingleStatementConnection.class);
+	private static Logger logger = Logger.getLogger (SingleStatementConnection.class);
 	public final Connection connection;
 	private PreparedStatement singleStatement = null;
 	
@@ -93,9 +88,18 @@ public class SingleStatementConnection implements StatementConnection {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("closing Statement and Connection");
 		
-		this.singleStatement.close ( );
-		this.singleStatement = null;
-		this.connection.close ( );
+		if (!this.connection.isClosed ( )) {
+	
+			this.connection.setAutoCommit (true);
+			
+			if (this.singleStatement != null) {
+				
+				this.singleStatement.close ( );
+				this.singleStatement = null;
+			}
+			
+			this.connection.close ( );
+		}
 	}
 	
 	/**
@@ -108,10 +112,18 @@ public class SingleStatementConnection implements StatementConnection {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("finalizing SingleStatementConnection");
 		
-		this.connection.setAutoCommit (true);
-		this.singleStatement.close ( );
-		this.singleStatement = null;
-		this.connection.close ( );
+		if (!this.connection.isClosed ( )) {
+		
+			this.connection.setAutoCommit (true);
+			
+			if (this.singleStatement != null) {
+				
+				this.singleStatement.close ( );
+				this.singleStatement = null;
+			}
+			
+			this.connection.close ( );
+		}
 		
 		super.finalize ( );
 	}

@@ -46,10 +46,18 @@ public class MultipleStatementConnection implements StatementConnection {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("closing Statement and Connection");
 		
-		this.connection.setAutoCommit (true);
-		this.multipleStatement.close ( );
-		this.multipleStatement = null;
-		this.connection.close ( );
+		if (!this.connection.isClosed ( )) {
+		
+			this.connection.setAutoCommit (true);
+			
+			if (this.multipleStatement != null) {
+				
+				this.multipleStatement.close ( );
+				this.multipleStatement = null;
+			}
+			
+			this.connection.close ( );
+		}
 	}
 
 	/**
@@ -88,6 +96,10 @@ public class MultipleStatementConnection implements StatementConnection {
 		return result;
 	}
 	
+	/**
+	 * @throws SQLException
+	 */
+	
 	public void commit ( ) throws SQLException {
 		
 		try {
@@ -109,6 +121,10 @@ public class MultipleStatementConnection implements StatementConnection {
 			throw ex;
 		}
 	}
+	
+	/**
+	 * @throws SQLException
+	 */
 	
 	public void rollback ( ) throws SQLException {
 		
@@ -141,10 +157,18 @@ public class MultipleStatementConnection implements StatementConnection {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("finalizing MultipleStatementConnection");
 		
-		this.connection.setAutoCommit (true);
-		this.multipleStatement.close ( );
-		this.multipleStatement = null;
-		this.connection.close ( );
+		if (!this.connection.isClosed ( )) {
+			
+			this.connection.setAutoCommit (true);
+			
+			if (this.multipleStatement != null) {
+				
+				this.multipleStatement.close ( );
+				this.multipleStatement = null;
+			}
+			
+			this.connection.close ( );
+		}
 		
 		super.finalize ( );
 	}

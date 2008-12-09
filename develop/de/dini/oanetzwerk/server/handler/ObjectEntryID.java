@@ -83,24 +83,21 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 		StringBuffer externalOID = new StringBuffer ( );
 		boolean checkRawData = false;
 		
-		if (path.length > 2 ) {
+		externalOID.append (path [1]);
 		
-			for (String string : path) {
+		if (path.length > 2) {
+		
+			for (int i = 2; i < path.length; i++) {
 				
-				if (string.equalsIgnoreCase ("existsRawData")) {
+				if (path [i].equalsIgnoreCase ("existsRawData")) {
 					
 					checkRawData = true;
 					break;
 					
-				} else {
-				
-					externalOID.append (string);
-					externalOID.append ('/');
-				}
+				} else
+					externalOID.append ("/" + path [i]);
 			}
-			
-		} else
-			externalOID.append (path [1]);
+		}
 		
 		try {
 			
@@ -111,7 +108,7 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			if (this.result.getWarning ( ) != null) {
 				
-				for (Throwable warning : result.getWarning ( )) {
+				for (Throwable warning : this.result.getWarning ( )) {
 					
 					this.rms.setStatusDescription (this.rms.getStatusDescription ( ) + "\n" + warning.getLocalizedMessage ( ));
 					logger.warn (warning.getLocalizedMessage ( ));
@@ -122,17 +119,19 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			if (this.result.getResultSet ( ).next ( )) {
 				
-				if (logger.isDebugEnabled ( ))
-					logger.debug ("DB returned: internal objectID = " + this.result.getResultSet ( ).getBigDecimal ("object_id"));
+				BigDecimal internalOID = this.result.getResultSet ( ).getBigDecimal ("object_id");
 				
-				res.addEntry ("oid", this.result.getResultSet ( ).getBigDecimal ("object_id").toPlainString ( ));
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("DB returned: internal objectID = " + internalOID);
+				
+				res.addEntry ("oid", internalOID.toPlainString ( ));
 				
 				this.rms.addEntrySet (res);
 				
 				if (checkRawData) {
 					
 					stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
-					stmtconn.loadStatement (SelectFromDB.RawRecordData (stmtconn.connection, this.result.getResultSet ( ).getBigDecimal ("object_id")));
+					stmtconn.loadStatement (SelectFromDB.RawRecordData (stmtconn.connection, internalOID));
 					
 					this.result = stmtconn.execute ( );
 					
@@ -147,10 +146,17 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 						this.rms.setStatus (RestStatusEnum.SQL_WARNING);
 					}
 					
-					if (this.result.getResultSet ( ).getString ("data") == null || (this.result.getResultSet ( ).getString ("data").equals (""))) {
+					if (this.result.getResultSet ( ).next ( )) {
+					
+						if (this.result.getResultSet ( ).getString ("data") == null || (this.result.getResultSet ( ).getString ("data").equals (""))) {
+							
+							this.rms.setStatus (RestStatusEnum.NO_RAWDATA_FOUND);
+							this.rms.setStatusDescription (this.rms.getStatusDescription ( ) + "\nNo RawData found");
+						}
+						
+					} else {
 						
 						this.rms.setStatus (RestStatusEnum.NO_RAWDATA_FOUND);
-						this.rms.setStatusDescription (this.rms.getStatusDescription ( ) + "\nNo RawData found");
 					}
 					
 				} else
@@ -167,15 +173,13 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			

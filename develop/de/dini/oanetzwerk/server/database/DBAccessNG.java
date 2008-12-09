@@ -40,8 +40,7 @@ public class DBAccessNG {
 			
 		} catch (NamingException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 	}
 	
@@ -58,10 +57,13 @@ public class DBAccessNG {
 			return this.statementConnection;
 		}
 		
-		if (isSingeleStatementConnection) {
+		if (this.isSingeleStatementConnection) {
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("Connection already exists, getting the existing one");
+			
+			this.statementConnection.close ( );
+			this.statementConnection = new SingleStatementConnection (this.ds.getConnection ( ));
 			
 			return this.statementConnection;
 			
@@ -94,6 +96,9 @@ public class DBAccessNG {
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("Connection already exists, getting the existing one");
+			
+			this.statementConnection.close ( );
+			this.statementConnection = new MultipleStatementConnection (this.ds.getConnection ( ));
 			
 			return this.statementConnection;
 		}
