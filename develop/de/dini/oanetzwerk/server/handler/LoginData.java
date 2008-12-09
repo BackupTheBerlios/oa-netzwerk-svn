@@ -1,16 +1,19 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
-
-import de.dini.oanetzwerk.server.database.*;
-import de.dini.oanetzwerk.codec.*;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.DeleteFromDB;
+import de.dini.oanetzwerk.server.database.InsertIntoDB;
+import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
+import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -20,11 +23,11 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  *
  */
 
-public class LoginData extends 
-AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+public class LoginData extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	static Logger logger = Logger.getLogger (LoginData.class);
-	
+	/**
+	 * 
+	 */
 	
 	public LoginData ( ) {
 		
@@ -52,6 +55,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 	}
 
+	
+	/**
+	 * @param name
+	 * @return
+	 */
 	
 	protected RestMessage getRestMessage(String name) {
 		
@@ -99,15 +107,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get LoginData: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get LoginData: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get LoginData: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get LoginData: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -122,8 +128,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			
@@ -201,8 +206,7 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 		} catch (NumberFormatException ex) {
 			
-			logger.error (res.getValue (key) + " is NOT a number!");
-			
+			logger.error (res.getValue (key) + " is NOT a number!", ex);
 			this.rms = new RestMessage (RestKeyword.LoginData);
 			this.rms.setStatusDescription (res.getValue (key) + " is NOT a number!");
 			
@@ -274,15 +278,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 		} catch (SQLException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -356,14 +358,12 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		} catch (SQLException ex) {
 			
 			logger.error ("An error occured while processing Delete LoginData: " + ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
 			logger.error ("An error occured while processing Delete LoginData: " + ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -389,6 +389,4 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}	
-	
-	
 }

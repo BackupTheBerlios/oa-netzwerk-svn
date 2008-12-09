@@ -25,8 +25,14 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 //TODO: Comments!!!
 
 /**
+ * The restserver provides a servlet, which can be connected by GET, POST, PUT and DELETE. Most servlet containers
+ * have to be prepared to support PUT- and DELETE-Methods.
+ * With the use of reflection the keyword, which is transmitted via the 2nd path-parameter (splitted by '/'),
+ * is loaded and the request will be requested in the instance of the specific-keyword-class.
+ * @see {@link de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface}
+ * @see {@link de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler}
+ * 
  * @author Michael K&uuml;hn
- *
  */
 
 @SuppressWarnings("serial")
@@ -106,8 +112,8 @@ public class RestServer extends HttpServlet {
 			Class <KeyWord2DatabaseInterface> c = (Class <KeyWord2DatabaseInterface>) Class.forName (classname);
 			Object o = c.newInstance ( );
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug (Class.forName (classname) + " is created");
+//			if (logger.isDebugEnabled ( ))
+//				logger.debug (Class.forName (classname) + " is created");
 			
 			String [ ] pathwithoutkeyword = new String [path.length - 2];
 			System.arraycopy (path, 2, pathwithoutkeyword, 0, path.length - 2);
@@ -116,45 +122,39 @@ public class RestServer extends HttpServlet {
 			
 		} catch (ClassNotFoundException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			
-			return createErrorResponse (ex, RestStatusEnum.CLASS_NOT_FOUND_ERROR);
+			return this.createErrorResponse (ex, RestStatusEnum.CLASS_NOT_FOUND_ERROR);
 			
 		} catch (InstantiationException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			
-			return createErrorResponse (ex, RestStatusEnum.CLASS_COULD_NOT_BE_INSTANTIATED_ERROR);
+			return this.createErrorResponse (ex, RestStatusEnum.CLASS_COULD_NOT_BE_INSTANTIATED_ERROR);
 			
 		} catch (IllegalAccessException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			
-			return createErrorResponse (ex, RestStatusEnum.ILLEGAL_ACCESS_ERROR);
+			return this.createErrorResponse (ex, RestStatusEnum.ILLEGAL_ACCESS_ERROR);
 			
 		} catch (IOException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			
-			return createErrorResponse (ex, RestStatusEnum.IO_ERROR);
+			return this.createErrorResponse (ex, RestStatusEnum.IO_ERROR);
 			
 		} catch (NotEnoughParametersException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			
-			return createErrorResponse (ex, RestStatusEnum.NOT_ENOUGH_PARAMETERS_ERROR);
+			return this.createErrorResponse (ex, RestStatusEnum.NOT_ENOUGH_PARAMETERS_ERROR);
 			
 		} catch (MethodNotImplementedException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			
-			return createErrorResponse (ex, RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+			return this.createErrorResponse (ex, RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		}
 		
 		// This section is unreachable
@@ -198,7 +198,7 @@ public class RestServer extends HttpServlet {
 		res.setCharacterEncoding ("UTF-8");
 		
 		this.out = res.getWriter ( );
-		this.out.write (processRequest (req, HttpVerbEnum.GET));
+		this.out.write (this.processRequest (req, HttpVerbEnum.GET));
 	}
 	
 	/**
@@ -212,7 +212,7 @@ public class RestServer extends HttpServlet {
 		res.setCharacterEncoding ("UTF-8");
 		
 		this.out = res.getWriter ( );
-		this.out.write (processRequest (req, HttpVerbEnum.POST));
+		this.out.write (this.processRequest (req, HttpVerbEnum.POST));
 	}
 
 	/**
@@ -225,13 +225,8 @@ public class RestServer extends HttpServlet {
 		req.setCharacterEncoding ("UTF-8");
 		res.setCharacterEncoding ("UTF-8");
 		
-		if (logger.isDebugEnabled ( )) {
-			
-			logger.debug("Character Encoding: " + req.getCharacterEncoding ( ));
-		}
-		
 		this.out = res.getWriter ( );
-		this.out.write (processRequest (req, HttpVerbEnum.PUT));
+		this.out.write (this.processRequest (req, HttpVerbEnum.PUT));
 	}
 
 	/**
@@ -245,6 +240,6 @@ public class RestServer extends HttpServlet {
 		res.setCharacterEncoding ("UTF-8");
 		
 		this.out = res.getWriter ( );
-		this.out.write (processRequest (req, HttpVerbEnum.DELETE));
+		this.out.write (this.processRequest (req, HttpVerbEnum.DELETE));
 	}
 }

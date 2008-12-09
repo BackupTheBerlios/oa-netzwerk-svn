@@ -1,16 +1,9 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
-
-import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -54,10 +47,12 @@ import de.dini.oanetzwerk.utils.imf.TypeValue;
  *
  */
 
-public class InternalMetadataEntry extends AbstractKeyWordHandler implements
-		KeyWord2DatabaseInterface {
+public class InternalMetadataEntry extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	static Logger logger = Logger.getLogger (InternalMetadataEntry.class);
+	/**
+	 * 
+	 */
+	
 	private final InternalMetadataJAXBMarshaller imMarsch;
 	
 	/**
@@ -264,19 +259,16 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 				
 			} catch (SQLException ex1) {
 				
-				
-				ex1.printStackTrace ( );
+				logger.error (ex1.getLocalizedMessage ( ), ex1);
 			}
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -291,8 +283,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			
@@ -325,7 +316,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 		} catch (NumberFormatException ex) {
 			
-			logger.error (path [0] + " is NOT a number!");
+			logger.error (path [0] + " is NOT a number!", ex);
 			
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
@@ -364,15 +355,13 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 		} catch (SQLException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		}  catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get InternalMetadataEntry: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get InternalMetadataEntry: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -387,8 +376,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 						
@@ -429,7 +417,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 */
 	
-	@SuppressWarnings("unused")
 	@Override
 	protected String putKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
 		
@@ -444,7 +431,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 		} catch (NumberFormatException ex) {
 			
-			logger.error (path [0] + " is NOT a number!");
+			logger.error (path [0] + " is NOT a number!", ex);
 			
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
@@ -483,6 +470,8 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 		} catch (Exception ex) {
 			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.REST_XML_DECODING_ERROR);
 			this.rms.setStatusDescription("unable to unmarshall xml " + strXML + " :" + ex);
@@ -510,8 +499,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		List <Language> languageList = imf.getLanguageList();
 		List<Classification> classificationList = imf.getClassificationList();
 		
-		ResultSet rs;
-
 		try {
 			
 			// 2 Werte, die eventuell auftretende Warnungen speichern können
@@ -557,8 +544,8 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						}
 
 					} catch (ParseException ex) {
-						logger.error("Datestamp with datevalue incorrect:  dateValue=" + dateValue.toString());
-						ex.printStackTrace();
+						
+						logger.error("Datestamp with datevalue incorrect:  dateValue=" + dateValue.toString ( ), ex);
 					}
 				}
 			}
@@ -832,7 +819,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 			if (classificationList != null) {
 				for (Classification classification : classificationList) {
-					boolean useAsOtherClassification = false;
 					// fuer jeden Klassifikationstypen muessen unterschiedliche Aktionen erfolgen
 					if (classification instanceof DDCClassification) {
 						String ddcValue = null;
@@ -906,7 +892,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 							// 1. eine Warnung geworfen werden und 
 							// 2. der Eintrag in eine OtherClassification umgebogen wird
 							logger.warn("Could not find a DINI_Set_id for '" + classification.getValue() + "', will be stored as OtherClassification");
-							useAsOtherClassification = true;
 							aggregationWarning = true;
 							aggregationWarningDescription = aggregationWarningDescription + "\nCould not find a DINI_Set_id for '" + classification.getValue() + "', will be stored as OtherClassification";
 							
@@ -922,7 +907,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 						}
 					}
 					
-					if ((classification instanceof OtherClassification) | (useAsOtherClassification = true)) {
+					if ((classification instanceof OtherClassification) | (true)) {
 						
 						BigDecimal other_id = null;
 
@@ -982,16 +967,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 			
 		} catch (SQLException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
@@ -1007,8 +990,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			
@@ -1019,5 +1001,4 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
-
 }

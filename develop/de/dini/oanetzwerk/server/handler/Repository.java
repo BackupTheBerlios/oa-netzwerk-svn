@@ -7,8 +7,6 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
-
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -26,10 +24,11 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  *
  */
 
-public class Repository extends 
-AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+public class Repository extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	static Logger logger = Logger.getLogger (Repository.class);
+	/**
+	 * 
+	 */
 	
 	public Repository ( ) {
 		

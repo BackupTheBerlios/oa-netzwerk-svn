@@ -1,15 +1,16 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.database.*;
-import de.dini.oanetzwerk.codec.*;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -19,10 +20,7 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  *
  */
 
-public class AllOIDs extends 
-AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
-	
-	static Logger logger = Logger.getLogger (AllOIDs.class);
+public class AllOIDs extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	public static final int ALL = 0;
 	public static final int FLAG = 1;
@@ -31,6 +29,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	private BigDecimal repositoryID = null;
 	private String strFlag = null;
+	
+	/**
+	 * 
+	 */
 	
 	public AllOIDs ( ) {
 		
@@ -175,7 +177,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		return RestXmlCodec.encodeRestMessage (this.rms);
 
 	}
-
+	
+	/**
+	 * @param flag
+	 * @return
+	 */
 	
 	protected RestMessage getOIDsRestMessage(int flag) {
 		
@@ -234,15 +240,13 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get AllOIDs: " + ex.getLocalizedMessage ( ));
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntryID: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get AllOIDs: " + ex.getLocalizedMessage ( ));
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -257,11 +261,9 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
-			
 			
 			entrySet = null;
 			this.result = null;
@@ -269,7 +271,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		}		
 		
 		return this.rms;
-		
 	}
 	
 	
@@ -314,6 +315,4 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}	
-	
-	
 }

@@ -1,16 +1,7 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -18,51 +9,28 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.DeleteFromDB;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
-import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
-import de.dini.oanetzwerk.utils.imf.Author;
-import de.dini.oanetzwerk.utils.imf.Classification;
-import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
-import de.dini.oanetzwerk.utils.imf.CompleteMetadataJAXBMarshaller;
-import de.dini.oanetzwerk.utils.imf.Contributor;
-import de.dini.oanetzwerk.utils.imf.DDCClassification;
-import de.dini.oanetzwerk.utils.imf.DINISetClassification;
-import de.dini.oanetzwerk.utils.imf.DNBClassification;
-import de.dini.oanetzwerk.utils.imf.DateValue;
-import de.dini.oanetzwerk.utils.imf.Description;
 import de.dini.oanetzwerk.utils.imf.DuplicateProbability;
-import de.dini.oanetzwerk.utils.imf.Editor;
-import de.dini.oanetzwerk.utils.imf.Format;
 import de.dini.oanetzwerk.utils.imf.FullTextLink;
 import de.dini.oanetzwerk.utils.imf.HitlistMetadata;
 import de.dini.oanetzwerk.utils.imf.HitlistMetadataJAXBMarshaller;
-import de.dini.oanetzwerk.utils.imf.Identifier;
-import de.dini.oanetzwerk.utils.imf.InternalMetadata;
-import de.dini.oanetzwerk.utils.imf.InternalMetadataJAXBMarshaller;
-import de.dini.oanetzwerk.utils.imf.Keyword;
-import de.dini.oanetzwerk.utils.imf.Language;
-import de.dini.oanetzwerk.utils.imf.OtherClassification;
-import de.dini.oanetzwerk.utils.imf.Publisher;
-import de.dini.oanetzwerk.utils.imf.Title;
-import de.dini.oanetzwerk.utils.imf.TypeValue;
 
 /**
  * @author Robin Malitz
  *
  */
 
-public class HitlistMetadataEntry extends AbstractKeyWordHandler implements
-		KeyWord2DatabaseInterface {
+public class HitlistMetadataEntry extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	static Logger logger = Logger.getLogger (HitlistMetadataEntry.class);
+	/**
+	 * 
+	 */
+	
 	private final HitlistMetadataJAXBMarshaller hmMarsh;
 	
 	/**
@@ -108,7 +76,7 @@ public class HitlistMetadataEntry extends AbstractKeyWordHandler implements
 			
 		} catch (NumberFormatException ex) {
 			
-			logger.error (path [0] + " is NOT a number!");
+			logger.error (path [0] + " is NOT a number!", ex);
 			
 			this.rms = new RestMessage (RestKeyword.HitlistMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
@@ -172,15 +140,13 @@ public class HitlistMetadataEntry extends AbstractKeyWordHandler implements
 			
 		} catch (SQLException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		}  catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get InternalMetadataEntry: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get InternalMetadataEntry: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -195,8 +161,7 @@ public class HitlistMetadataEntry extends AbstractKeyWordHandler implements
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 						

@@ -50,7 +50,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			object_id = new BigDecimal (path [0]);
 		} catch (NumberFormatException ex) {
 			
-			logger.error (path [0] + " is NOT a number!");
+			logger.error (path [0] + " is NOT a number!", ex);
 			
 			this.rms = new RestMessage (RestKeyword.DuplicateProbabilities);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
@@ -88,14 +88,12 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 		} catch (SQLException ex) {
 			
 			logger.error ("An error occured while processing Delete DuplicateProbabilities: " + ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
 			logger.error ("An error occured while processing Delete DuplicateProbabilities: " + ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -110,7 +108,6 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
 					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
@@ -154,7 +151,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 
 		} catch (NumberFormatException ex) {
 			
-			logger.error (path [0] + " is NOT a number!");
+			logger.error (path [0] + " is NOT a number!", ex);
 			
 			this.rms = new RestMessage (RestKeyword.DuplicateProbabilities);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
@@ -200,15 +197,13 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get DuplicatePossibilities: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get DuplicatePossibilities: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get DuplicatePossibilities: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get DuplicatePossibilities: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -223,8 +218,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			
@@ -270,7 +264,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 
 		} catch (NumberFormatException ex) {
 
-			logger.error(path[0] + " is NOT a number!");
+			logger.error(path[0] + " is NOT a number!", ex);
 
 			this.rms = new RestMessage(RestKeyword.DuplicateProbabilities);
 			this.rms.setStatus(RestStatusEnum.WRONG_PARAMETER);
@@ -360,24 +354,20 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			
 		} catch (NumberFormatException ex) {
 
-				logger.error(res.getValue(key) + " is NOT a number!");
-				this.rms = new RestMessage(
-						RestKeyword.DuplicateProbabilities);
-				this.rms.setStatusDescription(res.getValue(key)
-						+ " is NOT a number!");
+				logger.error(res.getValue(key) + " is NOT a number!", ex);
+				this.rms = new RestMessage(RestKeyword.DuplicateProbabilities);
+				this.rms.setStatusDescription(res.getValue(key) + " is NOT a number!");
 				return RestXmlCodec.encodeRestMessage(this.rms);
 
 		} catch (SQLException ex) {
 
-			logger.error(ex.getLocalizedMessage());
-			ex.printStackTrace();
+			logger.error(ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus(RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription(ex.getLocalizedMessage());
 
 		} catch (WrongStatementException ex) {
 
-			logger.error(ex.getLocalizedMessage());
-			ex.printStackTrace();
+			logger.error(ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus(RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription(ex.getLocalizedMessage());
 
@@ -392,8 +382,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 
 				} catch (SQLException ex) {
 
-					ex.printStackTrace();
-					logger.error(ex.getLocalizedMessage());
+					logger.error(ex.getLocalizedMessage ( ), ex);
 				}
 			}
 

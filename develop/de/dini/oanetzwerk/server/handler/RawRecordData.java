@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -32,8 +31,6 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  */
 
 public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
-	
-	private static Logger logger = Logger.getLogger (RawRecordData.class);
 	
 	/**
 	 * 

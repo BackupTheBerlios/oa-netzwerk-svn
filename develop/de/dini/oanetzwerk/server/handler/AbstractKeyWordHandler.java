@@ -1,7 +1,3 @@
-/**
- *
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import org.apache.log4j.Logger;
@@ -13,16 +9,15 @@ import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
-
 /**
- * @author Michael Kühn
- *
  * The KeyWordhandler is an abstract class which provides the necessary method processRequest. This method
  * will be called from the Restserver and chooses the right method to process the Request for the given
  * keyword.
  * All other methods are abstract and must be implemented in sub-classes.
  * All classes MUST implement the interface KeyWord2DatabaseInterface to ensure the existence of the necessary
  * method processRequest.
+ * 
+ * @author Michael K&uuml;hn
  */
 
 public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterface {

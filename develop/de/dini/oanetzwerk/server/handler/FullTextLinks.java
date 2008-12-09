@@ -1,27 +1,22 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.DeleteFromDB;
 import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
-import de.dini.oanetzwerk.codec.RestEntrySet;
-import de.dini.oanetzwerk.codec.RestKeyword;
-import de.dini.oanetzwerk.codec.RestMessage;
-import de.dini.oanetzwerk.codec.RestStatusEnum;
-import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
-
 
 /**
  * @author Manuel Klatt-Kafemann
@@ -31,16 +26,16 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  *
  */
 
-public class FullTextLinks extends AbstractKeyWordHandler implements
-		KeyWord2DatabaseInterface {
+public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	/**
 	 * 
 	 */
+	
 	public FullTextLinks ( ) {
+		
 		super (FullTextLinks.class.getName ( ), RestKeyword.FullTextLinks);
 	}
-
 
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
@@ -59,7 +54,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 			
 		} catch (NumberFormatException ex) {
 			
-			logger.error (path [0] + " is NOT a number!");
+			logger.error (path [0] + " is NOT a number!", ex);
 			
 			this.rms = new RestMessage (RestKeyword.FullTextLinks);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
@@ -96,14 +91,12 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 		} catch (SQLException ex) {
 			
 			logger.error ("An error occured while processing Delete FullTextLinks: " + ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
 			logger.error ("An error occured while processing Delete FullTextLinks: " + ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -129,11 +122,6 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 				
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
-	
-	
-	
-	
-	
 	
 	/**
 	 * @throws NotEnoughParametersException 
@@ -166,7 +154,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 			
 		} catch (NumberFormatException ex) {
 			
-			logger.error (path [0] + " is NOT a number!");
+			logger.error (path [0] + " is NOT a number!", ex);
 			
 			this.rms = new RestMessage (RestKeyword.FullTextLinks);
 			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
@@ -218,15 +206,13 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get WorklflowDB: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get WorklflowDB: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -246,8 +232,6 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 				}
 			}
 			
-//			this.rms.addEntrySet (res);
-//			res = null;
 			this.result = null;
 			dbng = null;
 		}
@@ -307,7 +291,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 			
 		} catch (NumberFormatException ex) {
 			
-			logger.error (res.getValue (key) + " is NOT a number!");
+			logger.error (res.getValue (key) + " is NOT a number!", ex);
 			
 			this.rms = new RestMessage (RestKeyword.FullTextLinks);
 			this.rms.setStatusDescription (res.getValue (key) + " is NOT a number!");
@@ -358,15 +342,13 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 			
 		} catch (SQLException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -381,8 +363,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			

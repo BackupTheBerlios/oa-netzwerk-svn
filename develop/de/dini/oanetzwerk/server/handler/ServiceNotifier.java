@@ -8,10 +8,17 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
-
-import de.dini.oanetzwerk.server.database.*;
-import de.dini.oanetzwerk.codec.*;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.DeleteFromDB;
+import de.dini.oanetzwerk.server.database.InsertIntoDB;
+import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
+import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -21,11 +28,11 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  *
  */
 
-public class ServiceNotifier extends 
-AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
-	static Logger logger = Logger.getLogger (ServiceNotifier.class);
-	
+	/**
+	 * 
+	 */
 	
 	public ServiceNotifier ( ) {
 		
@@ -75,7 +82,11 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		}
 		
 	}
-
+	
+	/**
+	 * @param service_id
+	 * @return
+	 */
 	
 	protected RestMessage getRestMessage(BigDecimal service_id) {
 		
@@ -160,7 +171,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		
 	}
 	
-	
 	/**
 	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
@@ -174,7 +184,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
-
 
 	/**
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
@@ -311,8 +320,6 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 		
-		
-		
 	/**
 	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
@@ -404,6 +411,4 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 				
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}	
-	
-	
 }

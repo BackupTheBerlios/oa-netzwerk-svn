@@ -3,8 +3,6 @@ package de.dini.oanetzwerk.server.handler;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
-
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -22,10 +20,7 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  *
  */
 
-public class ObjectServiceStatus extends 
-AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
-	
-	static Logger logger = Logger.getLogger (ObjectServiceStatus.class);
+public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
 	public static final int ALL = 0;
 //	public static final int FLAG = 1;
@@ -36,6 +31,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 //	private BigDecimal repositoryID = null;
 //	private String strFlag = null;
 	private BigDecimal objectEntryID = null;
+	
+	/**
+	 * 
+	 */
 	
 	public ObjectServiceStatus ( ) {
 		
@@ -212,6 +211,10 @@ AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
 	}
 
+	/**
+	 * @param flag
+	 * @return
+	 */
 	
 	protected RestMessage getOIDsRestMessage(int flag) {
 		
