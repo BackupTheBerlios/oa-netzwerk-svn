@@ -35,7 +35,6 @@ public class Identify implements OAIPMHVerbs {
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.OAIPMHVerbs#processRequest()
 	 */
-	@Override
 	public String processRequest (Map <String, String [ ]> parameter) {
 		
 		if (parameter.size ( ) > 1)

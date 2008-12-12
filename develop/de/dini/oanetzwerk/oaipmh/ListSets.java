@@ -30,7 +30,6 @@ public class ListSets implements OAIPMHVerbs {
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.OAIPMHVerbs#processRequest()
 	 */
-	@Override
 	public String processRequest (Map <String, String [ ]> parameter) {
 		
 		ObjectFactory obfac = new ObjectFactory ( );
