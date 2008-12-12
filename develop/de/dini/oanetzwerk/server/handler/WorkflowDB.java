@@ -64,9 +64,10 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the Service ID");
 		
-//		if (path.length >= 2) {
-//			if (path[1].equals("completeRebuild))
-//		}
+		if (path.length >= 2) {
+			if (path[1].equals("completeRebuild"))
+				complete = true;
+		}
 		
 		BigDecimal service_id;
 		
@@ -87,13 +88,19 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		SingleStatementConnection stmtconn = null;
-//		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (SelectFromDB.WorkflowDB (stmtconn.connection, service_id));
+			if (complete == false) {
+				// nur neu zu bearbeitende Daten laden
+				stmtconn.loadStatement (SelectFromDB.WorkflowDB (stmtconn.connection, service_id));
+			}
+			if (complete == true) {
+				// neu zu bearbeitende Daten und schon ehemals bearbeitete Daten laden
+				stmtconn.loadStatement (SelectFromDB.WorkflowDBComplete (stmtconn.connection, service_id));
+			}
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) {

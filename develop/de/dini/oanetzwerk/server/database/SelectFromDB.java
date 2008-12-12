@@ -364,6 +364,25 @@ public class SelectFromDB {
 	
 	/**
 	 * @param connection
+	 * @param service_id
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement WorkflowDBComplete (Connection connection, BigDecimal service_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id, max(w1.time) FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id" +
+				" UNION " +
+				"SELECT w1.object_id, max(w1.time) FROM dbo.Worklist w1 WHERE w1.service_id = ? GROUP BY w1.object_id");
+		
+		preparedstmt.setBigDecimal (1, service_id);
+		preparedstmt.setBigDecimal (2, service_id);
+		
+		return preparedstmt;
+	}
+	
+	
+	/**
+	 * @param connection
 	 * @param object_id
 	 * @param time
 	 * @param service_id
@@ -861,6 +880,7 @@ public class SelectFromDB {
 	public static PreparedStatement DDCCategoryWildcard (Connection connection, String wildcardCategory) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("select count(*) from DDC_Classification where DDC_Categorie like ?");
+		System.err.println("wildcard:" + wildcardCategory);
 		preparedstmt.setString(1, wildcardCategory);
 		
 		return preparedstmt;

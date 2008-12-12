@@ -109,6 +109,25 @@ public class TestWorkflowDB {
 
 	
 	@Test
+	public void test_GET_Complete() throws Exception{
+		WorkflowDB wfdb = new WorkflowDB();
+		String [] path = {"2", "completeRebuild"};
+
+		String strXML = wfdb.getKeyWord(path);
+		System.out.println(strXML);
+		RestMessage rmsg = RestXmlCodec.decodeRestMessage(strXML);
+
+		System.out.println("items found: " + rmsg.getListEntrySets().size());
+		
+		for(RestEntrySet entrySet : rmsg.getListEntrySets()) {
+			System.out.println(entrySet);
+		}
+
+		Assert.assertEquals(rmsg.getStatus(),RestStatusEnum.OK);
+	}
+	
+	
+	@Test
 	public void test_PUT_notEnoughInBody() throws Exception{
 		
 		String object_id = "19000";
