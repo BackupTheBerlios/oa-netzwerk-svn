@@ -445,6 +445,7 @@
       <include name="**/codec/*.java" />
       <include name="**/RestClient.java" />
       <include name="**/HelperMethods.java" />
+      <include name="**/utils/imf/**" />
       <exclude name="**/technotest*" />
       <exclude name="**/OAdmiNRealm.java" />
       <exclude name="**/server/**" />

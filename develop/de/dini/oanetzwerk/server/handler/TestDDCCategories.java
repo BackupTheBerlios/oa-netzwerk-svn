@@ -97,7 +97,7 @@ public class TestDDCCategories {
 		System.out.println("DDCCategories\\5x");
 		
 		DDCCategories ddcCategories = new DDCCategories();
-		String [] path = {"5x"};
+		String [] path = {"510"};
 
 		String strXML = ddcCategories.getKeyWord(path);
 		System.out.println(strXML);

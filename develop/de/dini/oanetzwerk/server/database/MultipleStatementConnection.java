@@ -71,6 +71,8 @@ public class MultipleStatementConnection implements StatementConnection {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("Executing Statement");
 		
+		System.out.println(this.getClass());
+		
 		try {
 			
 			this.multipleStatement.execute ( );

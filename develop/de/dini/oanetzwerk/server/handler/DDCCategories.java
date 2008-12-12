@@ -118,7 +118,8 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 				}
 				
 				logger.debug("wildcardDDCResult = " + wildcardDDCResult);
-
+				System.out.println("wildcardDDCResult = " + wildcardDDCResult);
+				
 				while (wildcardDDCResult.getResultSet ( ).next ( )) {		
 					res.addEntry("wildcardCategory",wildcardCategory);
 					res.addEntry("sum", wildcardDDCResult.getResultSet().getString(1));

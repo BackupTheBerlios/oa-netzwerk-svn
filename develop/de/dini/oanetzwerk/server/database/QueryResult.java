@@ -73,4 +73,8 @@ public class QueryResult {
 	
 		this.warning = warning;
 	} 
+	
+	public String toString() {
+		return "resultSet="+resultSet+" updateCount="+updateCount+" warning="+warning;
+	}
 }

@@ -879,9 +879,13 @@ public class SelectFromDB {
 	 */
 	public static PreparedStatement DDCCategoryWildcard (Connection connection, String wildcardCategory) throws SQLException {
 
-		PreparedStatement preparedstmt = connection.prepareStatement ("select count(*) from DDC_Classification where DDC_Categorie like ?");
-		System.err.println("wildcard:" + wildcardCategory);
-		preparedstmt.setString(1, wildcardCategory);
+		//PreparedStatement preparedstmt = connection.prepareStatement ("select count(*) from DDC_Classification where DDC_Categorie like ?"); //geht nich :(
+		//preparedstmt.setString(1, wildcardCategory);
+		//PreparedStatement preparedstmt = connection.prepareStatement ("select count(*) from DDC_Classification where DDC_Categorie like '5%'"); // geht
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("select count(*) from DDC_Classification where DDC_Categorie like '"+ wildcardCategory + "'"); 
+		
+		// alternativ kann man auch WHERE LEFT(DDC_Categorie,2) = '44'
 		
 		return preparedstmt;
 	}

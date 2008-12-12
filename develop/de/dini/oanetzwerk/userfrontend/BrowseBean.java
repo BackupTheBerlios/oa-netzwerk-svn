@@ -44,10 +44,10 @@ public class BrowseBean {
 		mapDDCSums = new HashMap<String, String>();
 		myDDCNameResolver = new DDCNameResolver();
 		setupMapDDCNames();
-		
+				
 		this.simpleDDCCategorySums = generateSimpleDDCCategorySums();
-		this.directDDCCategorySums = generateDirectDDCCategorySums(simpleDDCCategorySums);	
-		this.listDDCNaviNodes = generateListDDCNaviNodes(simpleDDCCategorySums);
+		//this.directDDCCategorySums = generateDirectDDCCategorySums(simpleDDCCategorySums);	
+		//this.listDDCNaviNodes = generateListDDCNaviNodes(simpleDDCCategorySums);
 	}
 
 	///// auto generated /////////////////////////////////////////////////////////////////////////
