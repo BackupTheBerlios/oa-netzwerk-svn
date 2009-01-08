@@ -22,8 +22,6 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
-//TODO: Comments!!!
-
 /**
  * The restserver provides a servlet, which can be connected by GET, POST, PUT and DELETE. Most servlet containers
  * have to be prepared to support PUT- and DELETE-Methods.
@@ -35,30 +33,58 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
  * @author Michael K&uuml;hn
  */
 
-@SuppressWarnings("serial")
 public class RestServer extends HttpServlet {
 	
+	/**
+	 * Serial Number for serialisation.
+	 * Serialisation is important for load balancing within the servlet container. 
+	 */
+	
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The static log4j logger. All debug logging will be made with the help of this nice static logger.
+	 */
+	
 	private static Logger logger = Logger.getLogger (RestServer.class);
+	
+	/**
+	 * PrintWriter object that is used for sending a response to the client.  
+	 */
+	
 	private PrintWriter out = null;
 	
 	/**
-	 * Standard Constructor 
+	 * Assistant object for sending the response to the client.
+	 */
+	
+	private HttpServletResponse response;
+	
+	/**
+	 * Standard Constructor. Does nothing.
 	 */
 	
 	public RestServer ( ) { }
 	
 	/**
-	 * @param req
-	 * @param i 
-	 * @return
+	 * Processes all request, no matter if GET, PUT, POST, DELETE.
+	 * For choosing the correct keyword-handler, the second segment of the request path is used to
+	 * load an instance of the keyword-handler-object via reflection.
+	 * The first two segments of the request path are truncated and the rest is sent to {@link de.dini.oanetzwerk.server.AbstractKeyWordHandler.processRequest}
+	 * of the instance of the keyword handler object.
+	 * If something goes wrong, which means an exception occurred, logfiles will be filled and an errorMessage will be created. 
+	 * 
+	 * @param req the http servlet request object received by every do*-method
+	 * @param verb HttpVerbEnum specifies the correct verb (GET, PUT, POST, DELETE)
+	 * @return the answer for the client
 	 */
 	
 	@SuppressWarnings("unchecked")
 	private String processRequest (HttpServletRequest req, HttpVerbEnum verb) {
 		
-		String path [ ] = req.getPathInfo ( ).split ("/");
-		
-		if (path.length < 1) {
+		if (req.getPathInfo ( ) == null || req.getPathInfo ( ).length ( ) < 2) {
+			
+			// Keyword was not specified, so we have nothing to do beside sending an error to the client 
 			
 			RestMessage rms = new RestMessage (RestKeyword.UNKNOWN);
 			rms.setStatus (RestStatusEnum.NOT_ENOUGH_PARAMETERS_ERROR);
@@ -83,6 +109,8 @@ public class RestServer extends HttpServlet {
 			return RestXmlCodec.encodeRestMessage (rms);
 		}
 		
+		String path [ ] = req.getPathInfo ( ).split ("/");
+		
 		if (logger.isDebugEnabled ( )) {
 			
 			logger.debug ("servlet: " + req.getContextPath ( ));
@@ -101,6 +129,8 @@ public class RestServer extends HttpServlet {
 			
 			if (verb == HttpVerbEnum.POST || verb == HttpVerbEnum.PUT) {
 				
+				// if verb POST or PUT, there should be some data in the body
+				
 				InputStream in = req.getInputStream ( );
 				
 				xml = HelperMethods.stream2String (in);
@@ -109,14 +139,15 @@ public class RestServer extends HttpServlet {
 					logger.debug ("XML: " + new String (Base64.decodeBase64 (xml.getBytes ("UTF-8"))));
 			}
 			
+			// new instance of the requested keyword handler is constructed 
+			
 			Class <KeyWord2DatabaseInterface> c = (Class <KeyWord2DatabaseInterface>) Class.forName (classname);
 			Object o = c.newInstance ( );
 			
-//			if (logger.isDebugEnabled ( ))
-//				logger.debug (Class.forName (classname) + " is created");
-			
 			String [ ] pathwithoutkeyword = new String [path.length - 2];
 			System.arraycopy (path, 2, pathwithoutkeyword, 0, path.length - 2);
+			
+			// calling the processing method of the object's instance and returning the result
 			
 			return (((KeyWord2DatabaseInterface) o).processRequest (xml, pathwithoutkeyword, verb));
 			
@@ -156,25 +187,30 @@ public class RestServer extends HttpServlet {
 			
 			return this.createErrorResponse (ex, RestStatusEnum.NOT_IMPLEMENTED_ERROR);
 		}
-		
-		// This section is unreachable
 	}
 	
 	/**
-	 * @param ex
-	 * @param restStatusEnum 
-	 * @return
+	 * This is the central error message constructing method.
+	 * The rest message will be constructed and encoded according to the received error (which means exception)
+	 * 
+	 * @param ex the throw exception
+	 * @param restStatusEnum the status for the rest message
+	 * @return the error response for the client
 	 */
 	
 	private String createErrorResponse (Exception ex, RestStatusEnum restStatusEnum) {
 		
 		if (ex == null) {
 			
+			// if exception is null, we need a new one to throw, an unknown one
+			
 			ex = new Exception ("Unknown Error occured");
 			logger.warn ("unknown error occured!");
 		}
 		
 		if (restStatusEnum == null) {
+			
+			// if error status is null, we should create an new unknown one
 			
 			restStatusEnum = RestStatusEnum.UNKNOWN_ERROR;
 			logger.warn ("unknown error occured!");
@@ -183,6 +219,10 @@ public class RestServer extends HttpServlet {
 		RestMessage rms = new RestMessage (RestKeyword.UNKNOWN);
 		rms.setStatus (restStatusEnum);
 		rms.setStatusDescription (ex.getLocalizedMessage ( ));
+		
+		// setting the http response status to 400, maybe another status could fit better 
+		
+		this.response.setStatus (HttpServletResponse.SC_BAD_REQUEST);
 		
 		return RestXmlCodec.encodeRestMessage (rms);
 	}
@@ -194,13 +234,14 @@ public class RestServer extends HttpServlet {
 	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
-		req.setCharacterEncoding ("UTF-8");
-		res.setCharacterEncoding ("UTF-8");
+		this.response = res;
+		this.setOANResponseHeader ( );
 		
-		this.out = res.getWriter ( );
+		this.out = this.response.getWriter ( );
 		this.out.write (this.processRequest (req, HttpVerbEnum.GET));
 	}
 	
+
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
@@ -208,10 +249,10 @@ public class RestServer extends HttpServlet {
 	@Override
 	protected void doPost (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
-		req.setCharacterEncoding ("UTF-8");
-		res.setCharacterEncoding ("UTF-8");
+		this.response = res;
+		this.setOANResponseHeader ( );
 		
-		this.out = res.getWriter ( );
+		this.out = this.response.getWriter ( );
 		this.out.write (this.processRequest (req, HttpVerbEnum.POST));
 	}
 
@@ -222,10 +263,10 @@ public class RestServer extends HttpServlet {
 	@Override
 	protected void doPut (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
-		req.setCharacterEncoding ("UTF-8");
-		res.setCharacterEncoding ("UTF-8");
+		this.response = res;
+		this.setOANResponseHeader ( );
 		
-		this.out = res.getWriter ( );
+		this.out = this.response.getWriter ( );
 		this.out.write (this.processRequest (req, HttpVerbEnum.PUT));
 	}
 
@@ -236,10 +277,20 @@ public class RestServer extends HttpServlet {
 	@Override
 	protected void doDelete (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
-		req.setCharacterEncoding ("UTF-8");
-		res.setCharacterEncoding ("UTF-8");
+		this.response = res;
+		this.setOANResponseHeader ( );
 		
-		this.out = res.getWriter ( );
+		this.out = this.response.getWriter ( );
 		this.out.write (this.processRequest (req, HttpVerbEnum.DELETE));
+	}
+	
+	/**
+	 * The response's header will be set here.
+	 */
+	
+	private void setOANResponseHeader ( ) {
+
+		this.response.setCharacterEncoding ("UTF-8");
+		this.response.setContentType ("application/xml; charset=UTF-8");
 	}
 }

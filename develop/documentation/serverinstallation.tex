@@ -1,0 +1,75 @@
+\documentclass[a4paper,12pt]{scrreprt}
+\usepackage{ngerman}
+\usepackage[T1]{fontenc} % Schriftartfestlegung
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+
+% Title Page
+\title{Installationsanleitung f"ur den OAN-Server}
+\author{Michael K"uhn}
+
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\begin{abstract}
+\end{abstract}
+
+\chapter{Einf"uhrung}
+Willkommen! In diesem Kapitel finden Sie einen kurzen "Uberblick dar"uber was OAN ist, wo die Software zu beziehen ist und unter welchen Lizenzen Software und Dokumentationen ver"offentlicht sind.
+\section{Was ist OAN}
+Hier erscheint demn"achst eine kurze Einf"uhrung in OAN.
+\section{Woher bekomme ich die Software}
+Software gibts bei Berlios
+\section{Aufbau dieses Dokuments}
+3 Kapitel: 1. Einf"uhrung, 2. Systemvorraussetzungen, 3. Installation
+\section{Lizenzen}
+Erkl"arungen zu den Lizenzen unter denen die Software und die Dokumentationen stehen
+\chapter{Systemvorraussetzungen}
+\section{Hardware}
+Getestet auf SPARC-Enterprise-T2000, sowie AMD Athlon(tm) 64.
+Sollte auf allen Platformen, die Java unterst"utzen, laufen. Keine Gew"ahr.
+\section{Betriebssysteme}
+Getestet auf SunOS 5.10, sowie Debian 4.0. Sollte auf allen Betriebssystemen, die Java unterst"utzen laufen. Keine Gew"ahr.
+\section{Software}
+Ben"otigt Java mind. Version 1.6, Apache Tomcat 6.0\\
+Apache Commons Bilbiotheken:\\
+beanutils 1.7.0\\
+cli 1.1\\
+codec 1.3\\
+collections 3.2\\
+dbcp 1.2.2\\
+digester 1.8\\
+httpclient 3.1\\
+lang 2.3\\
+logging 1.1\\
+pool 1.3\\
+sowie die Bilbliotheken:
+catalina \\
+jconn3\\
+jdom 1.1\\
+junit 4.4 (nur f"ur tests)\\
+log4j 1.2.15\\
+naming-factory-dbcp\\
+naming-factory\\
+naming-resources\\
+servlet-api\\
+\\
+sowie zum Kompilieren und Erstellen der Pakete Ant Version 1.7
+\chapter{Installation}
+\section{Vorbereitungen}
+Zuerst mu"s ein Benutzer f"ur den Servlet Container angelegt werden. Danach den Servlet-Container installieren (mit Tomcat 6.0 getestet).
+Datenbank mit allen Tabellen unter Sybase anlegen.
+Sobald dies geschehen ist, log4j.properties in \begin{verbatim}
+TOMCAT_HOME/conf 
+\end{verbatim} ablegen.
+Dann db-users.conf anlegen.
+\begin{verbatim}commons-codec, commons-httpclient, commons-logging, jdom\end{verbatim} und log4j in \begin{verbatim}TOMCAT_HOME/lib\end{verbatim} ablegen.
+\section{Konfigurieren}
+Here m"ussen alle Konfigurationssachen aufgeschrieben werden.
+\section{Kompilieren}
+mit Hilfe von Ant oadminrealm.jar (ant jarOAdminRealm) und resourcerealm.jar (ant jarResourceRealm) erzeugen und in \begin{verbatim}TOMCAT_HOME/lib\end{verbatim} kopieren. Danach ant warServer aufrufen und restserver.war erzeugen. Entweder per tomcat-manager deployen oder nach \begin{verbatim}TOMCAT_HOME/webapps\end{verbatim} kopieren.
+\chapter{Anhang}
+\section{ConfigFiles}
+\end{document}

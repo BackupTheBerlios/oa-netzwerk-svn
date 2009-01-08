@@ -3,11 +3,11 @@
  */
 package de.dini.oanetzwerk.oaipmh;
 
-
 /**
- * @author kuehnmic
+ * @author Michael K&uuml;hn
  *
  */
+
 public class RestDataConnection extends DataConnection {
 	
 }
