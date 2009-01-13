@@ -3,6 +3,8 @@ package de.dini.oanetzwerk.server.handler;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -21,6 +23,12 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 @Deprecated
 public class ServicesOrder extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+	
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (ServicesOrder.class);
 	
 	public ServicesOrder ( ) {
 

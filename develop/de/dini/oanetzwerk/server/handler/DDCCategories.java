@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -22,6 +24,16 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  */
 
 public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+	
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (DDCCategories.class);
+	
+	/**
+	 * 
+	 */
 	
 	private static Pattern patternWildcardCategory = null; 
 	

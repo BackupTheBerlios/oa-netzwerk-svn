@@ -3,6 +3,7 @@ package de.dini.oanetzwerk.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServlet;
@@ -33,7 +34,7 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
  * @author Michael K&uuml;hn
  */
 
-public class RestServer extends HttpServlet {
+public class RestServer extends HttpServlet implements Serializable {
 	
 	/**
 	 * Serial Number for serialisation.
@@ -241,7 +242,6 @@ public class RestServer extends HttpServlet {
 		this.out.write (this.processRequest (req, HttpVerbEnum.GET));
 	}
 	
-
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */

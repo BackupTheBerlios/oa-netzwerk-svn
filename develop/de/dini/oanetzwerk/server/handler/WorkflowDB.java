@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -28,6 +30,12 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  */
 
 public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+	
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (WorkflowDB.class);
 	
 	/**
 	 * 

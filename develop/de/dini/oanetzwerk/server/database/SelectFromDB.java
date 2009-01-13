@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.database;
 
 import java.math.BigDecimal;
@@ -19,7 +15,11 @@ import org.apache.log4j.Logger;
 
 public class SelectFromDB {
 	
-	static Logger logger = Logger.getLogger (SelectFromDB.class);
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (SelectFromDB.class);
 	
 	/**
 	 * @param connection
@@ -866,6 +866,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+
 	public static PreparedStatement AllDDCCategories (Connection connection) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("select dc.DDC_Categorie, count(o.object_id) FROM dbo.Object o JOIN DDC_Classification d ON o.object_id = d.object_id JOIN DDC_Categories dc ON d.DDC_Categorie = dc.DDC_Categorie GROUP BY dc.DDC_Categorie ORDER BY dc.DDC_Categorie");
@@ -877,6 +878,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+
 	public static PreparedStatement DDCCategoryWildcard (Connection connection, String wildcardCategory) throws SQLException {
 
 		//PreparedStatement preparedstmt = connection.prepareStatement ("select count(*) from DDC_Classification where DDC_Categorie like ?"); //geht nich :(
@@ -889,7 +891,6 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
-	
 	
 	/**
 	 * @param connection
@@ -909,8 +910,6 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
-	
-	
 	
 	/**
 	 * @param connection
@@ -942,8 +941,4 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
-	
-	
-	
-	
 }

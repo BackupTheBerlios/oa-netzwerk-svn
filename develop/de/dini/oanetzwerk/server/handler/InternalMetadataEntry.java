@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -48,6 +50,12 @@ import de.dini.oanetzwerk.utils.imf.TypeValue;
  */
 
 public class InternalMetadataEntry extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+	
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (InternalMetadataEntry.class);
 	
 	/**
 	 * 

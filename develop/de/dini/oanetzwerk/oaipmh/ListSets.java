@@ -11,7 +11,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.apache.log4j.Logger;
 import org.openarchives.oai._2.ListSetsType;
+import org.openarchives.oai._2.OAIPMHerrorcodeType;
 import org.openarchives.oai._2.OAIPMHtype;
 import org.openarchives.oai._2.ObjectFactory;
 import org.openarchives.oai._2.RequestType;
@@ -26,17 +28,44 @@ import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
  */
 
 public class ListSets implements OAIPMHVerbs {
-
+	
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (ListSets.class);
+	
+	/**
+	 * 
+	 */
+	
+	private ConnectionToolkit dataConnectionToolkit;
+	
+	/**
+	 * 
+	 */
+	//TODO: load ConnectionType from property file
+	private DataConnectionType conType = DataConnectionType.DB;
+	
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.OAIPMHVerbs#processRequest()
 	 */
+	
 	public String processRequest (Map <String, String [ ]> parameter) {
+		
+		
+		if (parameter.size ( ) > 1) {
+			
+			if (parameter.containsKey ("resumptionToken"))
+				return new OAIPMHError (OAIPMHerrorcodeType.BAD_RESUMPTION_TOKEN).toString ( );
+			
+			return new OAIPMHError (OAIPMHerrorcodeType.BAD_ARGUMENT).toString ( );
+		}
 		
 		ObjectFactory obfac = new ObjectFactory ( );
 		
 		ListSetsType listSets = obfac.createListSetsType ( );
 		listSets.getSet ( ).addAll (this.getSets ( ));
-		
 		
 		OAIPMHtype oaipmhMsg = obfac.createOAIPMHtype ( );
 		oaipmhMsg.setResponseDate (new XMLGregorianCalendarImpl (new GregorianCalendar ( )));
@@ -59,7 +88,7 @@ public class ListSets implements OAIPMHVerbs {
 			
 		} catch (JAXBException ex) {
 			
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 		
 		return w.toString ( );
@@ -70,14 +99,22 @@ public class ListSets implements OAIPMHVerbs {
 	 */
 	
 	private Collection <SetType> getSets ( ) {
-
+		
+		this.dataConnectionToolkit = ConnectionToolkit.getFactory (this.conType);
+		
+		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection ( );
+		
+		ArrayList <String [ ]> sets = dataConnection.getSets ( );
 		ArrayList <SetType> setArray = new ArrayList <SetType> ( );
 		
-		SetType testSet = new SetType ( );
-		testSet.setSetSpec ("ddc:000");
-		testSet.setSetName ("Allgemeines, Wissenschaft");
-		
-		setArray.add (testSet);
+		for (String [ ] strings : sets) {
+			
+			SetType testSet = new SetType ( );
+			testSet.setSetSpec (strings [0]);
+			testSet.setSetName (strings [1]);
+			
+			setArray.add (testSet);
+		}
 		
 		return setArray;
 	}

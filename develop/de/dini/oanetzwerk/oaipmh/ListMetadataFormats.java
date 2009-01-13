@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.apache.log4j.Logger;
 import org.openarchives.oai._2.ListMetadataFormatsType;
 import org.openarchives.oai._2.MetadataFormatType;
 import org.openarchives.oai._2.OAIPMHerrorcodeType;
@@ -25,10 +26,30 @@ import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
  */
 
 public class ListMetadataFormats implements OAIPMHVerbs {
-
+	
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (ListMetadataFormats.class);
+	
+	/**
+	 * 
+	 */
+	
+	private ConnectionToolkit dataConnectionToolkit;
+	
+	/**
+	 * 
+	 */
+	
+	//TODO: load ConnectionType from property file
+	private DataConnectionType conType = DataConnectionType.DB;
+	
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.OAIPMHVerbs#processRequest()
 	 */
+	
 	public String processRequest (Map <String, String [ ]> parameter) {
 		
 		ObjectFactory obfac = new ObjectFactory ( );
@@ -41,9 +62,19 @@ public class ListMetadataFormats implements OAIPMHVerbs {
 			
 			if (parameter.size ( ) == 2 && parameter.containsKey ("identifier")) {
 				
-				//TODO: if identifier does not exists, return "idDoesNotExist"-Error
-				reqType.setIdentifier (parameter.get ("identifier") [0]);
-			
+				String identifier = parameter.get ("identifier") [0];
+				
+				this.dataConnectionToolkit = ConnectionToolkit.getFactory (this.conType);
+				
+				DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection ( );
+				
+				if (dataConnection.existsIdentifier (identifier))
+					reqType.setIdentifier (identifier);
+				
+				else {
+					return new OAIPMHError (OAIPMHerrorcodeType.ID_DOES_NOT_EXIST).toString ( );
+				}
+				
 			} else
 				return new OAIPMHError (OAIPMHerrorcodeType.BAD_ARGUMENT).toString ( );
 		}
@@ -74,7 +105,7 @@ public class ListMetadataFormats implements OAIPMHVerbs {
 			
 		} catch (JAXBException ex) {
 			
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 		
 		return w.toString ( );

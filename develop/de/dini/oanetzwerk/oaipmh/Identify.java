@@ -30,20 +30,41 @@ import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 
 public class Identify implements OAIPMHVerbs {
 	
+	/**
+	 * 
+	 */
+	
 	private static Logger logger = Logger.getLogger (Identify.class);
+	
+	/**
+	 * 
+	 */
+	
+	private ConnectionToolkit dataConnectionToolkit;
+	
+	/**
+	 * 
+	 */
+	//TODO: load ConnectionType from property file
+	private DataConnectionType conType = DataConnectionType.DB;
 	
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.OAIPMHVerbs#processRequest()
 	 */
+	
 	public String processRequest (Map <String, String [ ]> parameter) {
 		
 		if (parameter.size ( ) > 1)
 			return new OAIPMHError (OAIPMHerrorcodeType.BAD_ARGUMENT).toString ( );
 		
+		this.dataConnectionToolkit = ConnectionToolkit.getFactory (this.conType);
+		
+		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection ( );
+		
 		ObjectFactory obfac = new ObjectFactory ( );
 		IdentifyType identify = obfac.createIdentifyType ( );
 		identify.setBaseURL ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
-		identify.setEarliestDatestamp ("1970-01-01"); //TODO: get earliest datestamp from database
+		identify.setEarliestDatestamp (dataConnection.getEarliestDataStamp ( ));
 		identify.setGranularity (GranularityType.YYYY_MM_DD);
 		identify.setProtocolVersion ("2.0");
 		identify.setRepositoryName ("OA Netzwerk OAI-PMH Export Interface");

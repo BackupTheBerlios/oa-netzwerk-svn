@@ -10,10 +10,12 @@ class DBDataConnectionFactory extends ConnectionToolkit {
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.ConnectionToolkit#createDataConnection()
 	 */
+	
 	@Override
 	public DataConnection createDataConnection ( ) {
 		
+		DBDataConnection dataConnection = new DBDataConnection ( ); 
 		
-		return null;
+		return dataConnection;
 	}
 }

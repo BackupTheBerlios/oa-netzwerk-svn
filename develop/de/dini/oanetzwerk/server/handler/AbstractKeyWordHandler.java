@@ -22,10 +22,24 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 
-	protected static Logger logger = Logger.getLogger (AbstractKeyWordHandler.class);
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (AbstractKeyWordHandler.class);
+	
+	/**
+	 * 
+	 */
+	
 	protected RestMessage rms;
+	
+	/**
+	 * 
+	 */
+	
 	protected QueryResult result;
-
+	
 	/**
 	 * This is the standard constructor which calls the super class. 
 	 * @param objectName 
@@ -50,38 +64,39 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	final public String processRequest (String data, String [ ] path, HttpVerbEnum verb) throws NotEnoughParametersException, MethodNotImplementedException {
 			
 		switch (verb) {
-		case GET:
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("GET case chosen");
-			
-			return getKeyWord (path);
-			
-		case DELETE:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("DELETE case chosen");
-						
-			return deleteKeyWord (path);
-			
-		case POST:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("POST case chosen");
-			
-			return postKeyWord (path, data);
-			
-		case PUT:
-			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("PUT case chosen");
-	
-			return putKeyWord (path, data);
-			
-		default:
-			
-			logger.error ("This HTTP-Method is not supported! Please use GET, POST, PUT or DELETE!");
-			return "null";
+			case GET:
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("GET case chosen");
+				
+				return getKeyWord (path);
+				
+			case DELETE:
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("DELETE case chosen");
+							
+				return deleteKeyWord (path);
+				
+			case POST:
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("POST case chosen");
+				
+				return postKeyWord (path, data);
+				
+			case PUT:
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("PUT case chosen");
+		
+				return putKeyWord (path, data);
+				
+			default:
+				
+				logger.error ("This HTTP-Method is not supported! Please use GET, POST, PUT or DELETE!");
+				return "null";
 		}
 	}
 

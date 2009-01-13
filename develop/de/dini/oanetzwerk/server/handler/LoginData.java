@@ -3,6 +3,8 @@ package de.dini.oanetzwerk.server.handler;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -24,6 +26,12 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  */
 
 public class LoginData extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
+	
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (LoginData.class);
 	
 	/**
 	 * 

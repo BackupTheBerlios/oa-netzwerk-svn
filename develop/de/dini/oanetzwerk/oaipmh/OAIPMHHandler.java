@@ -70,7 +70,7 @@ public class OAIPMHHandler extends HttpServlet {
 			
 		}
 		
-		resp.setContentType ("text/xml");	
+//		resp.setContentType ("text/xml");	
 		resp.getWriter ( ).write (this.getResponse (req, resp));
 	}
 	

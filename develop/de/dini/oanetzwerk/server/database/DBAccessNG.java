@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.server.database;
 
 import java.sql.SQLException;
@@ -15,7 +11,6 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
-
 /**
  * @author Michael K&uuml;hn
  *
@@ -23,10 +18,33 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 public class DBAccessNG {
 	
-	static Logger logger = Logger.getLogger (DBAccessNG.class);
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (DBAccessNG.class);
+	
+	/**
+	 * 
+	 */
+	
 	private DataSource ds;
+	
+	/**
+	 * 
+	 */
+	
 	private StatementConnection statementConnection;
+	
+	/**
+	 * 
+	 */
+	
 	private boolean isSingeleStatementConnection;
+	
+	/**
+	 * 
+	 */
 	
 	public DBAccessNG ( ) {
 		
@@ -43,6 +61,12 @@ public class DBAccessNG {
 			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
 	}
+	
+	/**
+	 * @return
+	 * @throws WrongStatementException
+	 * @throws SQLException
+	 */
 	
 	public StatementConnection getSingleStatementConnection ( ) throws WrongStatementException, SQLException {
 		
@@ -73,6 +97,12 @@ public class DBAccessNG {
 			throw new WrongStatementException ("Please use a MultipleStatementConnection");
 		}
 	}
+	
+	/**
+	 * @return
+	 * @throws WrongStatementException
+	 * @throws SQLException
+	 */
 	
 	public StatementConnection getMultipleStatementConnection ( ) throws WrongStatementException, SQLException {
 		
