@@ -6,10 +6,8 @@ import java.util.GregorianCalendar;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.openarchives.oai._2.GetRecordType;
@@ -21,10 +19,10 @@ import org.openarchives.oai._2.ObjectFactory;
 import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.RequestType;
 import org.openarchives.oai._2.VerbType;
-import org.openarchives.oai._2_0.oai_dc.OaiDcType;
-import org.purl.dc.elements._1.ElementType;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+
+import de.dini.oanetzwerk.oaipmh.oaidc.OAIDCType;
 
 /**
  * @author Michael K&uuml;hn
@@ -88,20 +86,12 @@ public class GetRecord implements OAIPMHVerbs {
 		
 		MetadataType metadata = new MetadataType ( );
 		
-//		org.openarchives.oai._2_0.oai_dc.ObjectFactory dcFac = new org.openarchives.oai._2_0.oai_dc.ObjectFactory ( );
-//		OaiDcType dcType = dcFac.createOaiDcType ( );
+		OAIDCType oaidctype = new OAIDCType ( );
 		
-		OaiDcType dcType = new OaiDcType ( );
+		oaidctype.setTitle ("TestTitle");
+		oaidctype.setCreator ("TestCreator");
 		
-		ElementType dctitle = new ElementType ( );
-		dctitle.setValue ("Titel");
-//		
-		JAXBElement <ElementType> jaxb = new JAXBElement <ElementType> (new QName ("http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd","dc"), ElementType.class, dctitle);
-////		jaxb.setValue (dctitle);
-//		
-		dcType.getTitleOrCreatorOrSubject ( ).add (jaxb);
-		
-		metadata.setAny (dcType);
+		metadata.setAny (oaidctype);
 		
 		record.setMetadata (metadata);
 		
@@ -119,7 +109,7 @@ public class GetRecord implements OAIPMHVerbs {
 		
 		try {
 			
-			JAXBContext context = JAXBContext.newInstance (OAIPMHtype.class);
+			JAXBContext context = JAXBContext.newInstance (OAIDCType.class, OAIPMHtype.class);
 			
 			Marshaller m = context.createMarshaller ( );
 			m.setProperty (Marshaller.JAXB_ENCODING, "UTF-8");
