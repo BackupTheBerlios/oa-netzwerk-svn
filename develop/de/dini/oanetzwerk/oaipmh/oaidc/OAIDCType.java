@@ -1,5 +1,8 @@
 package de.dini.oanetzwerk.oaipmh.oaidc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 		"subject",
 		"creator",
 		"format",
+		"type",
 		"publisher",
 		"source",
 		"description",
@@ -33,317 +37,242 @@ import javax.xml.bind.annotation.XmlType;
 public class OAIDCType {
 	
 	@XmlElement(required=false)
-	protected String title;
+	protected List<String> title;
 	
 	@XmlElement(required=false)
-	protected String namespace;
+	protected List<String> namespace;
 	
 	@XmlElement(required=false)
-	protected String date;
+	protected List<String> date;
 	
 	@XmlElement(required=false)
-	protected String language;
+	protected List<String> language;
 	
 	@XmlElement(required=false)
-	protected String relation;
+	protected List<String> relation;
 	
 	@XmlElement(required=false)
-	protected String rights;
+	protected List<String> rights;
 	
 	@XmlElement(required=false)
-	protected String coverage;
+	protected List<String> coverage;
 	
 	@XmlElement(required=false)
-	protected String contributor;
+	protected List<String> contributor;
 	
 	@XmlElement(required=false)
-	protected String subject;
+	protected List<String> subject;
 	
 	@XmlElement(required=false)
-	protected String creator;
+	protected List<String> creator;
 	
 	@XmlElement(required=false)
-	protected String format;
+	protected List<String> type;
 	
 	@XmlElement(required=false)
-	protected String publisher;
+	protected List<String> format;
 	
 	@XmlElement(required=false)
-	protected String source;
+	protected List<String> publisher;
 	
 	@XmlElement(required=false)
-	protected String description;
+	protected List<String> source;
 	
 	@XmlElement(required=false)
-	protected String identifier;
+	protected List<String> description;
+	
+	@XmlElement(required=false)
+	protected List<String> identifier;
 	
 	/**
 	 * @return the title
 	 */
-	public final String getTitle ( ) {
 	
+	public final List<String> getTitle ( ) {
+		
+		if (this.title == null)
+			this.title = new ArrayList <String> ( );
+		
 		return this.title;
 	}
 	
 	/**
-	 * @param title the title to set
-	 */
-	public final void setTitle (String title) {
-	
-		this.title = title;
-	}
-
-	
-	/**
 	 * @return the namespace
 	 */
-	public final String getNamespace ( ) {
 	
+	public final List<String> getNamespace ( ) {
+		
+		if (this.namespace == null)
+			this.namespace = new ArrayList <String> ( );
+		
 		return this.namespace;
 	}
 
-	
-	/**
-	 * @param namespace the namespace to set
-	 */
-	public final void setNamespace (String namespace) {
-	
-		this.namespace = namespace;
-	}
-
-	
 	/**
 	 * @return the date
 	 */
-	public final String getDate ( ) {
 	
+	public final List<String> getDate ( ) {
+		
+		if (this.date == null)
+			this.date = new ArrayList <String> ( );
+		
 		return this.date;
 	}
 
-	
-	/**
-	 * @param date the date to set
-	 */
-	public final void setDate (String date) {
-	
-		this.date = date;
-	}
-
-	
 	/**
 	 * @return the language
 	 */
-	public final String getLanguage ( ) {
 	
+	public final List<String> getLanguage ( ) {
+		
+		if (this.language == null)
+			this.language = new ArrayList <String> ( );
+		
 		return this.language;
 	}
 
-	
-	/**
-	 * @param language the language to set
-	 */
-	public final void setLanguage (String language) {
-	
-		this.language = language;
-	}
-
-	
 	/**
 	 * @return the relation
 	 */
-	public final String getRelation ( ) {
 	
+	public final List<String> getRelation ( ) {
+		
+		if (this.relation == null)
+			this.relation = new ArrayList <String> ( );
+		
 		return this.relation;
 	}
-
-	
-	/**
-	 * @param relation the relation to set
-	 */
-	public final void setRelation (String relation) {
-	
-		this.relation = relation;
-	}
-
 	
 	/**
 	 * @return the rights
 	 */
-	public final String getRights ( ) {
 	
+	public final List<String> getRights ( ) {
+		
+		if (this.rights == null)
+			this.rights = new ArrayList <String> ( );
+		
 		return this.rights;
 	}
-
-	
-	/**
-	 * @param rights the rights to set
-	 */
-	public final void setRights (String rights) {
-	
-		this.rights = rights;
-	}
-
 	
 	/**
 	 * @return the coverage
 	 */
-	public final String getCoverage ( ) {
 	
+	public final List<String> getCoverage ( ) {
+		
+		if (this.coverage == null)
+			this.coverage = new ArrayList <String> ( );
+		
 		return this.coverage;
 	}
 
-	
-	/**
-	 * @param coverage the coverage to set
-	 */
-	public final void setCoverage (String coverage) {
-	
-		this.coverage = coverage;
-	}
-
-	
 	/**
 	 * @return the contributor
 	 */
-	public final String getContributor ( ) {
 	
+	public final List<String> getContributor ( ) {
+		
+		if (this.contributor == null)
+			this.contributor = new ArrayList <String> ( );
+		
 		return this.contributor;
 	}
-
-	
-	/**
-	 * @param contributor the contributor to set
-	 */
-	public final void setContributor (String contributor) {
-	
-		this.contributor = contributor;
-	}
-
 	
 	/**
 	 * @return the subject
 	 */
-	public final String getSubject ( ) {
 	
+	public final List<String> getSubject ( ) {
+		
+		if (this.subject == null)
+			this.subject = new ArrayList <String> ( );
+		
 		return this.subject;
 	}
 
-	
 	/**
-	 * @param subject the subject to set
+	 * @return the creator
 	 */
-	public final void setSubject (String subject) {
 	
-		this.subject = subject;
+	public final List<String> getCreator ( ) {
+		
+		if (this.creator == null)
+			this.creator = new ArrayList <String> ( );
+		
+		return this.creator;
 	}
-
 	
 	/**
 	 * @return the creator
 	 */
-	public final String getCreator ( ) {
 	
-		return this.creator;
+	public final List<String> getType ( ) {
+		
+		if (this.type == null)
+			this.type = new ArrayList <String> ( );
+		
+		return this.type;
 	}
-
-	
-	/**
-	 * @param creator the creator to set
-	 */
-	public final void setCreator (String creator) {
-	
-		this.creator = creator;
-	}
-
 	
 	/**
 	 * @return the format
 	 */
-	public final String getFormat ( ) {
 	
+	public final List<String> getFormat ( ) {
+		
+		if (this.format == null)
+			this.format = new ArrayList <String> ( );
+		
 		return this.format;
 	}
-
-	
-	/**
-	 * @param format the format to set
-	 */
-	public final void setFormat (String format) {
-	
-		this.format = format;
-	}
-
 	
 	/**
 	 * @return the publisher
 	 */
-	public final String getPublisher ( ) {
 	
+	public final List<String> getPublisher ( ) {
+		
+		if (this.publisher == null)
+			this.publisher = new ArrayList <String> ( );
+		
 		return this.publisher;
 	}
-
-	
-	/**
-	 * @param publisher the publisher to set
-	 */
-	public final void setPublisher (String publisher) {
-	
-		this.publisher = publisher;
-	}
-
 	
 	/**
 	 * @return the source
 	 */
-	public final String getSource ( ) {
 	
+	public final List<String> getSource ( ) {
+		
+		if (this.source == null)
+			this.source = new ArrayList <String> ( );
+		
 		return this.source;
 	}
 
-	
-	/**
-	 * @param source the source to set
-	 */
-	public final void setSource (String source) {
-	
-		this.source = source;
-	}
-
-	
 	/**
 	 * @return the description
 	 */
-	public final String getDescription ( ) {
 	
+	public final List<String> getDescription ( ) {
+		
+		if (this.description == null)
+			this.description = new ArrayList <String> ( );
+		
 		return this.description;
 	}
-
-	
-	/**
-	 * @param description the description to set
-	 */
-	public final void setDescription (String description) {
-	
-		this.description = description;
-	}
-
 	
 	/**
 	 * @return the identifier
 	 */
-	public final String getIdentifier ( ) {
 	
+	public final List<String> getIdentifier ( ) {
+		
+		if (this.identifier == null)
+			this.identifier = new ArrayList <String> ( );
+		
 		return this.identifier;
 	}
-
-	
-	/**
-	 * @param identifier the identifier to set
-	 */
-	public final void setIdentifier (String identifier) {
-	
-		this.identifier = identifier;
-	}
-	
-	
 }

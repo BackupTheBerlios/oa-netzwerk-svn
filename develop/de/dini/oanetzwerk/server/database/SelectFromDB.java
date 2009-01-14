@@ -156,6 +156,12 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	/**
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 */
+	
 	public static PreparedStatement Repository (Connection connection) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT repository_id, name, url FROM dbo.Repositories");
@@ -213,10 +219,13 @@ public class SelectFromDB {
 //		
 //		return preparedstmt;
 //	}
-
 	
-	
-	
+	/**
+	 * @param connection
+	 * @param internalOID
+	 * @return
+	 * @throws SQLException
+	 */
 	
 	public static PreparedStatement RawRecordDataHistory (Connection connection, BigDecimal internalOID) throws SQLException {
 		

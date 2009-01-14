@@ -53,14 +53,12 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 		
 		// no parameters -- return ERROR
 		if (path.length < 1)
-			throw new NotEnoughParametersException(
-					"This method needs at least 2 parameters: the keyword and the string containing the name");
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the string containing the name");
 
 		// specific service_id -- return notifier status of that service
 		String name = null;
 		name = new String(path[0]);
 		return RestXmlCodec.encodeRestMessage(getRestMessage(name));
-			
 	}
 
 	
@@ -69,7 +67,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 	 * @return
 	 */
 	
-	protected RestMessage getRestMessage(String name) {
+	protected RestMessage getRestMessage (String name) {
 		
 		this.rms = new RestMessage (RestKeyword.LoginData);
 		RestEntrySet entrySet = new RestEntrySet ( );
@@ -81,7 +79,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			
 			// fetch and execute specific statement 
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );						
-			stmtconn.loadStatement (SelectFromDB.LoginData(stmtconn.connection, name));	
+			stmtconn.loadStatement (SelectFromDB.LoginData (stmtconn.connection, name));	
 			this.result = stmtconn.execute ( );
 			
 			// log warnings
@@ -140,13 +138,11 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 				}
 			}
 			
-			
 			entrySet = null;
 			this.result = null;
 			dbng = null;
 		}		
 		return this.rms;
-		
 	}
 	
 	
