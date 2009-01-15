@@ -13,11 +13,14 @@ import org.apache.log4j.Logger;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 
+import de.dini.oanetzwerk.oaipmh.oaidc.OAIDCType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.HeaderType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.ListIdentifiersType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.ListRecordsType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.MetadataType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHObjectFactory;
 import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHtype;
+import de.dini.oanetzwerk.oaipmh.oaipmh.RecordType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.RequestType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.VerbType;
 
@@ -26,13 +29,13 @@ import de.dini.oanetzwerk.oaipmh.oaipmh.VerbType;
  *
  */
 
-public class ListIdentifiers implements OAIPMHVerbs {
+public class ListRecords implements OAIPMHVerbs {
 	
 	/**
 	 * 
 	 */
 	
-	private static Logger logger = Logger.getLogger (ListIdentifiers.class);
+	private static Logger logger = Logger.getLogger (ListRecords.class);
 	
 	/**
 	 * 
@@ -47,7 +50,7 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	private DataConnectionType conType = DataConnectionType.DB;
 	
 	/**
-	 * @see de.dini.oanetzwerk.oaipmh.OAIPMHVerbs#processRequest()
+	 * @see de.dini.oanetzwerk.oaipmh.OAIPMHVerbs#processRequest(java.util.Map)
 	 */
 	
 	public String processRequest (Map <String, String [ ]> parameter) {
@@ -59,7 +62,9 @@ public class ListIdentifiers implements OAIPMHVerbs {
 		
 		OAIPMHObjectFactory obfac = new OAIPMHObjectFactory ( );
 		
-		ListIdentifiersType listIdents = obfac.createListIdentifiersType ( );
+		ListRecordsType listRecord = obfac.createListRecordsType ( );
+		
+		RecordType record = new RecordType ( );
 		
 		HeaderType header = new HeaderType ( );
 		header.setIdentifier ("oai:oanet:1234");
@@ -71,26 +76,41 @@ public class ListIdentifiers implements OAIPMHVerbs {
 		header.getSetSpec ( ).add ("other:9");
 		header.getSetSpec ( ).add ("other:10");
 		
-		listIdents.getHeader ( ).add (header);
+		record.setHeader (header);
 		
+		MetadataType metadata = new MetadataType ( );
+		
+		OAIDCType oaidctype = new OAIDCType ( );
+		
+		oaidctype.getTitle ( ).add ("Gastrointestinaler Sauerstofftransport und Laktatstoffwechsel während des normothermen kardiopulmonalen Bypasses beim Menschen");
+		oaidctype.getCreator ( ).add ("Jürgen Birnbaum");
+		oaidctype.getPublisher ( ).add ("Medizinische Fakultät - Universitätsklinikum Charité");
+		oaidctype.getDate ( ).add ("1998-03-02");
+		oaidctype.getIdentifier ( ).add ("http://edoc.hu-berlin.de/dissertationen/medizin/birnbaum-juergen/PDF/Birnbaum.pdf");
+		
+		metadata.setAny (oaidctype);
+		
+		record.setMetadata (metadata);
+		
+		listRecord.getRecord ( ).add (record);
 		
 		OAIPMHtype oaipmhMsg = obfac.createOAIPMHtype ( );
 		oaipmhMsg.setResponseDate (new XMLGregorianCalendarImpl (new GregorianCalendar ( )));
 		RequestType reqType = obfac.createRequestType ( );
 		reqType.setValue ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
-		reqType.setVerb (VerbType.LIST_IDENTIFIERS);
+		reqType.setVerb (VerbType.LIST_RECORDS);
 		
 		if (parameter.get ("metadataPrefix") [0] != null && !parameter.get ("metadataPrefix") [0].equals (""))
 			reqType.setMetadataPrefix (parameter.get ("metadataPrefix") [0]);
 		
 		oaipmhMsg.setRequest (reqType);
-		oaipmhMsg.setListIdentifiers (listIdents);
+		oaipmhMsg.setListRecords (listRecord);
 		
 		Writer w = new StringWriter ( );
 		
 		try {
 			
-			JAXBContext context = JAXBContext.newInstance (OAIPMHtype.class);
+			JAXBContext context = JAXBContext.newInstance (OAIDCType.class, OAIPMHtype.class);
 			Marshaller m = context.createMarshaller ( );
 			m.setProperty (Marshaller.JAXB_ENCODING, "UTF-8");
 			m.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);

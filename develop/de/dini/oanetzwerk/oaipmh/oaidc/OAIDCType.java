@@ -15,8 +15,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(namespace = "http://purl.org/dc/elements/1.1/", name = "dc")
-@XmlType(name = "oai-dc", propOrder = {
+@XmlRootElement(namespace = "http://www.openarchives.org/OAI/2.0/oai_dc/", name = "dc")
+@XmlType(name = "OAIDCType", propOrder = {
 		"title",
 		"namespace",
 		"date",
@@ -36,52 +36,52 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class OAIDCType {
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="title", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> title;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="namespace", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> namespace;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="date", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> date;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="language", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> language;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="relation", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> relation;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="rights", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> rights;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="coverage", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> coverage;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="contributor", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> contributor;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="subject", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> subject;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="creator", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> creator;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="type", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> type;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="format", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> format;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="publisher", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> publisher;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="source", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> source;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="description", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> description;
 	
-	@XmlElement(required=false)
+	@XmlElement(required=false, name="identifier", namespace="http://purl.org/dc/elements/1.1/")
 	protected List<String> identifier;
 	
 	/**

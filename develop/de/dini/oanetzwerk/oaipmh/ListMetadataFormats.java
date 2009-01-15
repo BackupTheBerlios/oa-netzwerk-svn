@@ -10,15 +10,16 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.log4j.Logger;
-import org.openarchives.oai._2.ListMetadataFormatsType;
-import org.openarchives.oai._2.MetadataFormatType;
-import org.openarchives.oai._2.OAIPMHerrorcodeType;
-import org.openarchives.oai._2.OAIPMHtype;
-import org.openarchives.oai._2.ObjectFactory;
-import org.openarchives.oai._2.RequestType;
-import org.openarchives.oai._2.VerbType;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+
+import de.dini.oanetzwerk.oaipmh.oaipmh.ListMetadataFormatsType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.MetadataFormatType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHObjectFactory;
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHtype;
+import de.dini.oanetzwerk.oaipmh.oaipmh.RequestType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.VerbType;
 
 /**
  * @author Michael K&uuml;hn
@@ -52,10 +53,10 @@ public class ListMetadataFormats implements OAIPMHVerbs {
 	
 	public String processRequest (Map <String, String [ ]> parameter) {
 		
-		ObjectFactory obfac = new ObjectFactory ( );
+		OAIPMHObjectFactory obfac = new OAIPMHObjectFactory ( );
 		
 		RequestType reqType = obfac.createRequestType ( );
-		reqType.setValue ("http://oanet/oaipmh/oaipmh");
+		reqType.setValue ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
 		reqType.setVerb (VerbType.LIST_METADATA_FORMATS);
 		
 		if (parameter.size ( ) > 1) {

@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
-import org.openarchives.oai._2.OAIPMHerrorcodeType;
+
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
 
 /**
  * @author Michael K&uuml;hn
@@ -45,8 +46,6 @@ public class OAIPMHHandler extends HttpServlet {
 	public void init (ServletConfig config) throws ServletException {
 		
 		super.init (config);
-		
-//		logger.debug ("INIT");
 	}
 	
 	/**
@@ -54,8 +53,6 @@ public class OAIPMHHandler extends HttpServlet {
 	 */
 	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-//		logger.debug ("doGet");
 		
 		req.setCharacterEncoding ("UTF-8");
 		resp.setCharacterEncoding ("UTF-8");

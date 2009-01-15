@@ -10,18 +10,19 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.log4j.Logger;
-import org.openarchives.oai._2.DeletedRecordType;
-import org.openarchives.oai._2.DescriptionType;
-import org.openarchives.oai._2.GranularityType;
-import org.openarchives.oai._2.IdentifyType;
-import org.openarchives.oai._2.OAIPMHerrorcodeType;
-import org.openarchives.oai._2.OAIPMHtype;
-import org.openarchives.oai._2.ObjectFactory;
-import org.openarchives.oai._2.RequestType;
-import org.openarchives.oai._2.VerbType;
-import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
 
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+
+import de.dini.oanetzwerk.oaipmh.oai_identifier.OaiIdentifierType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.DeletedRecordType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.DescriptionType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.GranularityType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.IdentifyType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHObjectFactory;
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHtype;
+import de.dini.oanetzwerk.oaipmh.oaipmh.RequestType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.VerbType;
 
 /**
  * @author Michael K&uuml;hn
@@ -61,7 +62,7 @@ public class Identify implements OAIPMHVerbs {
 		
 		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection ( );
 		
-		ObjectFactory obfac = new ObjectFactory ( );
+		OAIPMHObjectFactory obfac = new OAIPMHObjectFactory ( );
 		IdentifyType identify = obfac.createIdentifyType ( );
 		identify.setBaseURL ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
 		identify.setEarliestDatestamp (dataConnection.getEarliestDataStamp ( ));
@@ -82,7 +83,7 @@ public class Identify implements OAIPMHVerbs {
 		OAIPMHtype oaipmhMsg = obfac.createOAIPMHtype ( );
 		oaipmhMsg.setResponseDate (new XMLGregorianCalendarImpl (new GregorianCalendar ( )));
 		RequestType reqType = obfac.createRequestType ( );
-		reqType.setValue ("http://oanet/oaipmh/oaipmh");
+		reqType.setValue ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
 		reqType.setVerb (VerbType.IDENTIFY);
 		oaipmhMsg.setRequest (reqType);
 		oaipmhMsg.setIdentify (identify);

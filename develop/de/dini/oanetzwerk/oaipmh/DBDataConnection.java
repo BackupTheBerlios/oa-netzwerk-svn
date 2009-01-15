@@ -437,6 +437,10 @@ class DBDataConnection extends DataConnection {
 		return date;
 	}
 
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getCreators(java.lang.String)
+	 */
+	
 	@Override
 	public ArrayList <String> getCreators (String identifier) {
 
@@ -476,7 +480,13 @@ class DBDataConnection extends DataConnection {
 			
 			while (queryresult.getResultSet ( ).next ( )) {
 				
-				creators.add (queryresult.getResultSet ( ).getString (4) + " " + queryresult.getResultSet ( ).getString (2) + " " + queryresult.getResultSet ( ).getString (3));
+				//TODO: more generic please, add email and institution as well, when not null
+				
+				if (queryresult.getResultSet ( ).getString (4) == null || queryresult.getResultSet ( ).getString (4).equals (""))
+					creators.add (queryresult.getResultSet ( ).getString (2) + " " + queryresult.getResultSet ( ).getString (3));
+				
+				else
+					creators.add (queryresult.getResultSet ( ).getString (4) + " " + queryresult.getResultSet ( ).getString (2) + " " + queryresult.getResultSet ( ).getString (3));
 			}
 			
 		} catch (SQLException ex) {
@@ -640,52 +650,486 @@ class DBDataConnection extends DataConnection {
 		return titles;
 	}
 
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getDates(java.lang.String)
+	 */
+	
 	@Override
 	public ArrayList <String> getDates (String identifier) {
 
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList <String> dates = new ArrayList <String> ( );
+		String id [ ] = identifier.split (":");
+		
+		BigDecimal bdID;
+		
+		try {
+			
+			bdID = new BigDecimal (id [2]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+			return dates;
+		}
+		
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult  = null;
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
+			stmtconn.loadStatement (SelectFromDB.DateValues (stmtconn.connection, bdID));
+			
+			queryresult = stmtconn.execute ( );
+			
+			if (queryresult.getWarning ( ) != null) {
+				
+				for (Throwable warning : queryresult.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (queryresult.getResultSet ( ).next ( )) {
+				
+				dates.add (queryresult.getResultSet ( ).getDate ("value").toString ( ));
+			}
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} finally {
+			
+			try {
+				
+				stmtconn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
+		}
+		
+		return dates;
 	}
 
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getDescriptions(java.lang.String)
+	 */
+	
 	@Override
 	public ArrayList <String> getDescriptions (String identifier) {
 
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList <String> descriptions = new ArrayList <String> ( );
+		String id [ ] = identifier.split (":");
+		
+		BigDecimal bdID;
+		
+		try {
+			
+			bdID = new BigDecimal (id [2]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+			return descriptions;
+		}
+		
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult  = null;
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
+			stmtconn.loadStatement (SelectFromDB.Description (stmtconn.connection, bdID));
+			
+			queryresult = stmtconn.execute ( );
+			
+			if (queryresult.getWarning ( ) != null) {
+				
+				for (Throwable warning : queryresult.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (queryresult.getResultSet ( ).next ( )) {
+				
+				descriptions.add (queryresult.getResultSet ( ).getString ("abstract"));
+			}
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} finally {
+			
+			try {
+				
+				stmtconn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
+		}
+		
+		return descriptions;
 	}
 
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getFormats(java.lang.String)
+	 */
+	
 	@Override
 	public ArrayList <String> getFormats (String identifier) {
 
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList <String> formats = new ArrayList <String> ( );
+		String id [ ] = identifier.split (":");
+		
+		BigDecimal bdID;
+		
+		try {
+			
+			bdID = new BigDecimal (id [2]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+			return formats;
+		}
+		
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult  = null;
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
+			stmtconn.loadStatement (SelectFromDB.Format (stmtconn.connection, bdID));
+			
+			queryresult = stmtconn.execute ( );
+			
+			if (queryresult.getWarning ( ) != null) {
+				
+				for (Throwable warning : queryresult.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (queryresult.getResultSet ( ).next ( )) {
+				
+				formats.add (queryresult.getResultSet ( ).getString ("schema_f"));
+			}
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} finally {
+			
+			try {
+				
+				stmtconn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
+		}
+		
+		return formats;
 	}
 
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getIdentifiers(java.lang.String)
+	 */
+	
 	@Override
 	public ArrayList <String> getIdentifiers (String identifier) {
 
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList <String> identifieres = new ArrayList <String> ( );
+		String id [ ] = identifier.split (":");
+		
+		BigDecimal bdID;
+		
+		try {
+			
+			bdID = new BigDecimal (id [2]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+			return identifieres;
+		}
+		
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult  = null;
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
+			stmtconn.loadStatement (SelectFromDB.Identifier (stmtconn.connection, bdID));
+			
+			queryresult = stmtconn.execute ( );
+			
+			if (queryresult.getWarning ( ) != null) {
+				
+				for (Throwable warning : queryresult.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (queryresult.getResultSet ( ).next ( )) {
+				
+				identifieres.add (queryresult.getResultSet ( ).getString ("identifier"));
+			}
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} finally {
+			
+			try {
+				
+				stmtconn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
+		}
+		
+		return identifieres;
 	}
 
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getLanguages(java.lang.String)
+	 */
+	
 	@Override
 	public ArrayList <String> getLanguages (String identifier) {
 
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList <String> languages = new ArrayList <String> ( );
+		String id [ ] = identifier.split (":");
+		
+		BigDecimal bdID;
+		
+		try {
+			
+			bdID = new BigDecimal (id [2]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+			return languages;
+		}
+		
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult  = null;
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
+			stmtconn.loadStatement (SelectFromDB.Languages (stmtconn.connection, bdID));
+			
+			queryresult = stmtconn.execute ( );
+			
+			if (queryresult.getWarning ( ) != null) {
+				
+				for (Throwable warning : queryresult.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (queryresult.getResultSet ( ).next ( )) {
+				
+				languages.add (queryresult.getResultSet ( ).getString ("language"));
+			}
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} finally {
+			
+			try {
+				
+				stmtconn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
+		}
+		
+		return languages;
 	}
 
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getPublishers(java.lang.String)
+	 */
+	
 	@Override
 	public ArrayList <String> getPublishers (String identifier) {
 
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList <String> publishers = new ArrayList <String> ( );
+		String id [ ] = identifier.split (":");
+		
+		BigDecimal bdID;
+		
+		try {
+			
+			bdID = new BigDecimal (id [2]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+			return publishers;
+		}
+		
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult  = null;
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
+			stmtconn.loadStatement (SelectFromDB.Publisher (stmtconn.connection, bdID));
+			
+			queryresult = stmtconn.execute ( );
+			
+			if (queryresult.getWarning ( ) != null) {
+				
+				for (Throwable warning : queryresult.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (queryresult.getResultSet ( ).next ( )) {
+				
+				publishers.add (queryresult.getResultSet ( ).getString ("name"));
+			}
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} finally {
+			
+			try {
+				
+				stmtconn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
+		}
+		
+		return publishers;
 	}
 
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getTypes(java.lang.String)
+	 */
+	
 	@Override
 	public ArrayList <String> getTypes (String identifier) {
 
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList <String> types = new ArrayList <String> ( );
+		String id [ ] = identifier.split (":");
+		
+		BigDecimal bdID;
+		
+		try {
+			
+			bdID = new BigDecimal (id [2]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+			return types;
+		}
+		
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult  = null;
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
+			stmtconn.loadStatement (SelectFromDB.TypeValues (stmtconn.connection, bdID));
+			
+			queryresult = stmtconn.execute ( );
+			
+			if (queryresult.getWarning ( ) != null) {
+				
+				for (Throwable warning : queryresult.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (queryresult.getResultSet ( ).next ( )) {
+				
+				types.add (queryresult.getResultSet ( ).getString ("value"));
+			}
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} finally {
+			
+			try {
+				
+				stmtconn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
+		}
+		
+		return types;
 	}
 }

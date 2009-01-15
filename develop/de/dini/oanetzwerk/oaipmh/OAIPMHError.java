@@ -9,13 +9,13 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.openarchives.oai._2.OAIPMHerrorType;
-import org.openarchives.oai._2.OAIPMHerrorcodeType;
-import org.openarchives.oai._2.OAIPMHtype;
-import org.openarchives.oai._2.ObjectFactory;
-import org.openarchives.oai._2.RequestType;
-
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHObjectFactory;
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHtype;
+import de.dini.oanetzwerk.oaipmh.oaipmh.RequestType;
 
 /**
  * @author Michael K&uuml;hn
@@ -69,7 +69,7 @@ public class OAIPMHError {
 	
 	private JAXBElement <OAIPMHtype> createErrorMsg ( ) {
 		
-		ObjectFactory obfac = new ObjectFactory ( );
+		OAIPMHObjectFactory obfac = new OAIPMHObjectFactory ( );
 		
 		OAIPMHerrorType oaiError = obfac.createOAIPMHerrorType ( );
 		
@@ -117,7 +117,7 @@ public class OAIPMHError {
 		OAIPMHtype oaipmhMsg = obfac.createOAIPMHtype ( );
 		oaipmhMsg.setResponseDate (new XMLGregorianCalendarImpl (new GregorianCalendar ( )));
 		RequestType reqType = obfac.createRequestType ( );
-		reqType.setValue ("http://oanet/oaipmh/oaipmh");
+		reqType.setValue ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
 		oaipmhMsg.setRequest (reqType);
 		oaipmhMsg.getError ( ).add (oaiError);
 		
