@@ -40,7 +40,7 @@ public class SQL2DB {
 		
 		DriverManager.registerDriver (new com.sybase.jdbc3.jdbc.SybDriver ( ));
 		
-		Connection con = DriverManager.getConnection ("jdbc:sybase:Tds:themis.rz.hu-berlin.de:2025?ServiceName=oanetzwerktest", username, pw); 
+		Connection con = DriverManager.getConnection ("jdbc:sybase:Tds:127.0.0.1:2025?ServiceName=oanetzwerktest", username, pw); 
 		
 		
 		
