@@ -22,12 +22,16 @@
   <property name="url" value="http://oanet.cms.hu-berlin.de/manager" />
   <property name="username" value="" />
   <property name="password" value="" />
+	
+<!--
 
   <taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" />
   <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask" />
   <taskdef name="start" classname="org.apache.catalina.ant.StartTask" />
   <taskdef name="stop" classname="org.apache.catalina.ant.StopTask" />
   <taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask" />
+  
+ -->
 
   <path id="classpath.server">
     <pathelement location="${lib}/log4j-1.2.15.jar" />

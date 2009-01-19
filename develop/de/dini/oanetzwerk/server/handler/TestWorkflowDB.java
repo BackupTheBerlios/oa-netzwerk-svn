@@ -199,9 +199,9 @@ public class TestWorkflowDB {
 	@Test
 	public void test_PUT_noParams() throws Exception{
 		
-		String object_id = "19000";
-		String time = "2008-11-20 14:49:21.273";
-		String service_id = "2";
+		String object_id = "10";
+		String time = "2008-12-15 12:09:11.053";
+		String service_id = "5";
 		WorkflowDB wfdb = new WorkflowDB();
 		String [] path = {};
 

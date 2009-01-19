@@ -277,6 +277,35 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 		Iterator <String> it = res.getKeyIterator ( );
 		String key = "";
 		
+		
+		try {
+			
+			object_id = new BigDecimal (path [0]);
+
+			if (object_id.intValue() < 0) {
+				
+				logger.error (path [0] + " is NOT a valid number for this parameter!");
+				
+				this.rms = new RestMessage (RestKeyword.FullTextLinks);
+				this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+				this.rms.setStatusDescription (path [0] + " is NOT a valid number for this parameter!");
+				
+				return RestXmlCodec.encodeRestMessage (this.rms);				
+				
+			}
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!", ex);
+			
+			this.rms = new RestMessage (RestKeyword.FullTextLinks);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		
 		try {
 			
 			while (it.hasNext ( )) {
@@ -286,10 +315,11 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("key = " + key);
 				
-				if (key.equalsIgnoreCase ("object_id"))
-					object_id = new BigDecimal (res.getValue (key));
-				
-				else if (key.equalsIgnoreCase ("mimeformat"))
+//				if (key.equalsIgnoreCase ("object_id"))
+//					object_id = new BigDecimal (res.getValue (key));
+
+//				else if (key.equalsIgnoreCase ("mimeformat"))
+				if (key.equalsIgnoreCase ("mimeformat"))
 					mimeformat = new String (res.getValue (key));
 				else if (key.equalsIgnoreCase ("link"))
 					link = new String (res.getValue (key));
