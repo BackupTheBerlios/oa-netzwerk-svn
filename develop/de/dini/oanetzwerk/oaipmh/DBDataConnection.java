@@ -1,8 +1,10 @@
 package de.dini.oanetzwerk.oaipmh;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 
@@ -1131,5 +1133,114 @@ class DBDataConnection extends DataConnection {
 		}
 		
 		return types;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getIdentifier(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	
+	public LinkedList <Record> getIdentifier (String from, String until, String set) {
+		
+		LinkedList <Record> recordList = new LinkedList <Record> ( );
+		Date fromDate;
+		Date untilDate;
+		
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult  = null;
+		
+		try {
+			
+			if (from != null && !from.equals (""))
+				fromDate = Date.valueOf (from);
+			
+			else
+				fromDate = null;
+			
+			if (until != null && !until.equals (""))
+				untilDate = Date.valueOf (until);
+			
+			else
+				untilDate = null;
+			
+			if (fromDate != null && untilDate != null)
+				
+				if (untilDate.before (fromDate))
+					throw new IllegalArgumentException ("Until before From!");
+					
+		} catch (IllegalArgumentException ex) {
+			
+			logger.warn (ex.getLocalizedMessage ( ));
+			throw ex;
+		}
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
+			stmtconn.loadStatement (SelectFromDB.AllOIDsByDate (stmtconn.connection, fromDate, untilDate, set));
+			
+			queryresult = stmtconn.execute ( );
+			
+			if (queryresult.getWarning ( ) != null) {
+				
+				for (Throwable warning : queryresult.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (queryresult.getResultSet ( ).next ( )) {
+				
+				Record record = new Record ( );
+				
+				record.getHeader ( ).setIdentifier (queryresult.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+				record.getHeader ( ).setDatestamp (queryresult.getResultSet ( ).getDate (2).toString ( ));
+				
+				recordList.add (record);
+			}
+			
+			stmtconn.close ( );
+			
+			for (Record record : recordList) {
+				
+				stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
+				stmtconn.loadStatement (SelectFromDB.OAIListSetsbyID (stmtconn.connection, new BigDecimal(record.getHeader ( ).getIdentifier ( ))));
+				
+				if (queryresult.getWarning ( ) != null) {
+					
+					for (Throwable warning : queryresult.getWarning ( )) {
+						
+						logger.warn (warning.getLocalizedMessage ( ));
+					}
+				}
+				
+				while (queryresult.getResultSet ( ).next ( )) {
+					
+					record.getHeader ( ).getSet ( ).add (queryresult.getResultSet ( ).getString (1));
+				}
+				
+				stmtconn.close ( );
+			}
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} finally {
+			
+			try {
+				
+				stmtconn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
+		}
+		
+		return recordList;
 	}
 }

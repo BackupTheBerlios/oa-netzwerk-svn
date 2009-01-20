@@ -81,10 +81,8 @@ public class GetRecord implements OAIPMHVerbs {
 		header.setIdentifier (parameter.get ("identifier") [0]);
 		header.setDatestamp (dataConnection.getDateStamp (parameter.get ("identifier") [0]));
 		
-		for (String classification : dataConnection.getClassifications (parameter.get ("identifier") [0])) {
-			
+		for (String classification : dataConnection.getClassifications (parameter.get ("identifier") [0]))
 			header.getSetSpec ( ).add (classification);
-		}
 		
 		record.setHeader (header);
 		
@@ -92,55 +90,35 @@ public class GetRecord implements OAIPMHVerbs {
 		
 		OAIDCType oaidctype = new OAIDCType ( );
 		
-		for (String title : dataConnection.getTitles (parameter.get ("identifier") [0])) {
-			
+		for (String title : dataConnection.getTitles (parameter.get ("identifier") [0]))
 			oaidctype.getTitle ( ).add (title);
-		}
 		
-		for (String creator : dataConnection.getCreators (parameter.get ("identifier") [0])) {
-			
+		for (String creator : dataConnection.getCreators (parameter.get ("identifier") [0]))
 			oaidctype.getCreator ( ).add (creator);
-		}
 		
-		for (String subject : dataConnection.getSubjects (parameter.get ("identifier") [0])) {
-			
+		for (String subject : dataConnection.getSubjects (parameter.get ("identifier") [0]))
 			oaidctype.getSubject ( ).add (subject);
-		}
 		
-		for (String description : dataConnection.getDescriptions (parameter.get ("identifier") [0])) {
-			
+		for (String description : dataConnection.getDescriptions (parameter.get ("identifier") [0]))
 			oaidctype.getDescription ( ).add (description);
-		}
 		
-		for (String publisher : dataConnection.getPublishers (parameter.get ("identifier") [0])) {
-			
+		for (String publisher : dataConnection.getPublishers (parameter.get ("identifier") [0]))
 			oaidctype.getPublisher ( ).add (publisher);
-		}
 		
-		for (String date : dataConnection.getDates (parameter.get ("identifier") [0])) {
-			
+		for (String date : dataConnection.getDates (parameter.get ("identifier") [0]))
 			oaidctype.getDate ( ).add (date);
-		}
 		
-		for (String type : dataConnection.getTypes (parameter.get ("identifier") [0])) {
-			
+		for (String type : dataConnection.getTypes (parameter.get ("identifier") [0]))
 			oaidctype.getType ( ).add (type);
-		}
 		
-		for (String format : dataConnection.getFormats (parameter.get ("identifier") [0])) {
-			
+		for (String format : dataConnection.getFormats (parameter.get ("identifier") [0]))
 			oaidctype.getFormat ( ).add (format);
-		}
 		
-		for (String identifier : dataConnection.getIdentifiers (parameter.get ("identifier") [0])) {
-			
+		for (String identifier : dataConnection.getIdentifiers (parameter.get ("identifier") [0]))
 			oaidctype.getIdentifier ( ).add (identifier);
-		}
 		
-		for (String language : dataConnection.getLanguages (parameter.get ("identifier") [0])) {
-			
+		for (String language : dataConnection.getLanguages (parameter.get ("identifier") [0]))
 			oaidctype.getLanguage ( ).add (language);
-		}
 		
 		metadata.setAny (oaidctype);
 		record.setMetadata (metadata);

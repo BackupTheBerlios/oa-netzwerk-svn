@@ -39,6 +39,7 @@ public class OAIPMHError {
 	 * @see java.lang.Object#toString()
 	 */
 	
+	@Override
 	public String toString ( ) {
 		
 		Writer w = new StringWriter ( );

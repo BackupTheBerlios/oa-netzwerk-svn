@@ -1,6 +1,7 @@
 package de.dini.oanetzwerk.oaipmh;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * @author Michael K&uuml;hn
@@ -118,6 +119,17 @@ public class RestDataConnection extends DataConnection {
 
 	@Override
 	public ArrayList <String> getTypes (String identifier) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getIdentifier(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public LinkedList <Record> getIdentifier (String from, String until,
+			String set) {
 
 		// TODO Auto-generated method stub
 		return null;

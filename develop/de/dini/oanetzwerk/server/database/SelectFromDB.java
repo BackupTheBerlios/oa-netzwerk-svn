@@ -950,4 +950,70 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
+
+	/**
+	 * @param connection
+	 * @param from
+	 * @param until
+	 * @param set
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement AllOIDsByDate (Connection connection, Date from, Date until, String set) throws SQLException {
+		
+		PreparedStatement preparedstmt;
+		
+		if (from == null && until == null)
+			preparedstmt = connection.prepareStatement ("SELECT object_id, repository_datestamp from dbo.Object");
+		
+		else {
+			
+			if (from != null && until == null) {
+				
+				preparedstmt = connection.prepareStatement ("SELECT object_id, repository_datestamp from dbo.Object WHERE repository_datestamp > ?");
+				preparedstmt.setDate (1, from);
+				
+			} else if (from == null && until != null) {
+				
+				preparedstmt = connection.prepareStatement ("SELECT object_id, repository_datestamp from dbo.Object WHERE repository_datestamp < ?");
+				preparedstmt.setDate (1, until);
+				
+			} else {
+				
+				preparedstmt = connection.prepareStatement ("SELECT object_id, repository_datestamp from dbo.Object WHERE repository_datestamp > ? AND repository_datestamp < ?");
+				preparedstmt.setDate (1, from);
+				preparedstmt.setDate (2, until);
+			}
+		}
+		
+		return preparedstmt;
+	}
+	
+	/**
+	 * @param connection
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement OAIListSetsbyID (Connection connection, BigDecimal identifier) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT d.name " + 
+				"FROM dbo.DINI_Set_Categories d JOIN dbo.DINI_Set_Classification dsc " + 
+				"ON d.DINI_set_id = dsc.DINI_set_id AND dsc.object_id = ? GROUP BY d.name " + 
+				"UNION " + 
+				"SELECT 'ddc:' + d.DDC_Categorie as \"Name\" " + 
+				"FROM dbo.DDC_Categories d JOIN dbo.DDC_Classification dc " + 
+				"ON d.DDC_Categorie = dc.DDC_Categorie AND dc.object_id = ? GROUP BY d.name " + 
+				"UNION " + 
+				"SELECT 'dnb:' + d.DNB_Categorie as \"Name\" " + 
+				"FROM dbo.DNB_Categories d JOIN dbo.DNB_Classification dc " + 
+				"ON d.DNB_Categorie = dc.DNB_Categorie AND dc.object_id = ? GROUP BY d.name ORDER BY d.name");
+		
+		preparedstmt.setBigDecimal (1, identifier);
+		preparedstmt.setBigDecimal (2, identifier);
+		preparedstmt.setBigDecimal (3, identifier);
+		
+		return preparedstmt;
+	}
 }
