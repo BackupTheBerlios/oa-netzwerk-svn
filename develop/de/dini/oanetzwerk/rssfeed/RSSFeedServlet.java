@@ -174,7 +174,7 @@ public class RSSFeedServlet extends HttpServlet {
 
 			while (queryResult.getResultSet ( ).next ( )) {
 				SyndEntry entry = new SyndEntryImpl();
-				entry.setTitle(queryResult.getResultSet ( ).getString (0) + " --- "  +queryResult.getResultSet ( ).getString (1));
+				entry.setTitle(queryResult.getResultSet ( ).getString (1) + " --- "  +queryResult.getResultSet ( ).getString (3));
 				entry.setPublishedDate(queryResult.getResultSet ( ).getDate(2));
 				listDBEntries.add(entry);
 			}

@@ -112,6 +112,8 @@
   </path>
   
   <path id="classpath.rssfeed">
+	 <pathelement location="${lib}/jconn3.jar" />
+	 <pathelement location="${lib}/commons-cli-1.1.jar" />
     <pathelement location="${lib}/servlet-api.jar" />
     <pathelement location="${lib}/log4j-1.2.15.jar" />
     <pathelement location="${lib}/commons-httpclient-3.1.jar" />
@@ -122,6 +124,8 @@
   </path>	
   
   <path id="classpath.indexeraccess">
+  	 <pathelement location="${lib}/jconn3.jar" />
+  	 <pathelement location="${lib}/commons-cli-1.1.jar" />
 	 <pathelement location="${lib}/servlet-api.jar" />
 	 <pathelement location="${lib}/log4j-1.2.15.jar" />
 	 <pathelement location="${lib}/commons-httpclient-3.1.jar" />
@@ -583,6 +587,7 @@
 	      <classpath refid="classpath.rssfeed" />
 	      <include name="**/rssfeed/*.java" />
 	      <include name="**/database/*.java" />
+	    	<include name="**/utils/**" />
 	      <exclude name="**/technotest*" />
 	      <exclude name="**/OAdmiNRealm.java" />
 	      <exclude name="**/handler/**" />

@@ -1,6 +1,7 @@
 package de.dini.oanetzwerk.indexeraccess;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +14,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.MetadataDBMapper;
+import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
+import de.dini.oanetzwerk.utils.imf.Author;
+import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
+import de.dini.oanetzwerk.utils.imf.DuplicateProbability;
+import de.dini.oanetzwerk.utils.imf.FullTextLink;
+import de.dini.oanetzwerk.utils.imf.Title;
 
 /**
  * @author Robin Malitz
@@ -31,6 +41,9 @@ public class IndexerAccessServlet extends HttpServlet {
 	 */
 	
 	private static final long serialVersionUID = 1L;
+	
+	
+	private static String BASE_URL = "http://oanet.cms.hu-berlin.de/indexeraccess/";
 	
 	/**
 	 * 
@@ -87,8 +100,25 @@ public class IndexerAccessServlet extends HttpServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	private String getResponse (HttpServletRequest req, HttpServletResponse resp) {
-		StringBuffer sb = new StringBuffer();
 		
+		String strParam_oid = req.getParameter("oid");
+		BigDecimal bdOID = null;
+		try { bdOID = new BigDecimal(strParam_oid); } catch(Exception ex) {}  
+		
+		if(bdOID == null) {
+			return getOverviewPage(req, resp);
+		} else {
+			return getOIDPage(req, resp, bdOID);
+		}
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	private String getOverviewPage (HttpServletRequest req, HttpServletResponse resp) {
+				
+		
+		StringBuffer sb = new StringBuffer();		
+				
 		List<String> listOIDs = new ArrayList<String>();
 		
 		DBAccessNG dbng = new DBAccessNG ( );
@@ -144,13 +174,122 @@ public class IndexerAccessServlet extends HttpServlet {
 		
 		sb.append("<html>\n<body>\n<ul>\n");
 		for(String strOID : listOIDs) {
-		  sb.append("<li>").append(strOID).append("</li>\n");
+		  sb.append("<li><a href=\"").append(BASE_URL).append("?oid=").append(strOID).append("\">").append(strOID).append("</a></li>\n");
 		}
 		sb.append("</ul>\n</body>\n</html>");
 		
 		return sb.toString(); 
+	
 	}
+	
+	@SuppressWarnings("unchecked")
+	private String getOIDPage (HttpServletRequest req, HttpServletResponse resp, BigDecimal bdOID) {
+	
+		
+		StringBuffer sb = new StringBuffer();		
+				
+		CompleteMetadata cmf = new CompleteMetadata();
+		cmf.setOid(bdOID);
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		MultipleStatementConnection stmtconn = null;
+		RestEntrySet res = new RestEntrySet ( );
+		
+		try {
+			
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			// ausgelagert in separate Klasse, um den Code für andere Metadatenviews nachzunutzen
+			MetadataDBMapper.fillInternalMetadataFromDB(cmf, stmtconn);
+			
+			//TODO: remember to update this!!!
+			DuplicateProbability dupPro = new DuplicateProbability(new BigDecimal(815), 99.9, 0);
+			cmf.addDuplicateProbability(dupPro);
+			
+			// FulltextlinkAbfrage
+			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, cmf.getOid()));
+			QueryResult ftlResult = stmtconn.execute ( );
+			
+			if (ftlResult.getWarning ( ) != null) {
+				for (Throwable warning : ftlResult.getWarning ( )) {
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (ftlResult.getResultSet ( ).next ( )) {				
+				FullTextLink ftl = new FullTextLink();					
+				ftl.setUrl(ftlResult.getResultSet().getString("link"));
+				ftl.setMimeformat(ftlResult.getResultSet().getString("mimeformat"));
+				cmf.addFullTextLink(ftl);				
+			}			
+			
+			stmtconn.commit ( );
+			
+			//logger.debug("CMF (toString) >>>>>> " + cmf);			 
+			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		}  catch (WrongStatementException ex) {
+			
+			logger.error ("An error occured while processing Get CompleteMetadataEntry: " + ex.getLocalizedMessage ( ), ex);
+			
+		} finally {
+			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					logger.error (ex.getLocalizedMessage ( ), ex);
+				}
+			}
+						
+			dbng = null;
+		}
+		
+		// render HTML-OUTPUT for complete metadata
+		
+		sb.append("<html>\n");
+		
+		if(cmf.isEmpty()) {
+			// leeres CMF soll Fehler geben
+			
+			logger.info("leeres CMF angefragt");
+			
+		} else {
+			
+			sb.append("<head>\n");
+			for(Title title : cmf.getTitleList()) {
+				sb.append("<meta name=\"").append("title").append("\" value=\"").append(title.getTitle()).append("\"/>\n");				
+			}
+			for(Author author : cmf.getAuthorList()) {
+				sb.append("<meta name=\"").append("author").append("\" value=\"").append(author.getFirstname() + " " + author.getLastname()).append("\"/>\n");				
+			}
+			sb.append("</head>\n");
 
+			sb.append("<body>\n");
+			if(cmf.getFullTextLinkList().size() > 0) {
+			  sb.append("<li><a href=\"").append(cmf.getFullTextLinkList().get(0).getUrl()).append("\">").append(bdOID).append("</a></li>\n");
+			}
+			sb.append("</body>\n");
+		}
+
+		sb.append("</html>\n");		
+		
+		return sb.toString(); 
+			
+	}
+	
+
+	
+	
+	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
