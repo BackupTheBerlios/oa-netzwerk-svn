@@ -24,10 +24,25 @@ import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 import de.dini.oanetzwerk.utils.imf.Author;
+import de.dini.oanetzwerk.utils.imf.Classification;
 import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
+import de.dini.oanetzwerk.utils.imf.Contributor;
+import de.dini.oanetzwerk.utils.imf.DDCClassification;
+import de.dini.oanetzwerk.utils.imf.DINISetClassification;
+import de.dini.oanetzwerk.utils.imf.DNBClassification;
+import de.dini.oanetzwerk.utils.imf.DateValue;
+import de.dini.oanetzwerk.utils.imf.Description;
 import de.dini.oanetzwerk.utils.imf.DuplicateProbability;
+import de.dini.oanetzwerk.utils.imf.Editor;
+import de.dini.oanetzwerk.utils.imf.Format;
 import de.dini.oanetzwerk.utils.imf.FullTextLink;
+import de.dini.oanetzwerk.utils.imf.Identifier;
+import de.dini.oanetzwerk.utils.imf.Keyword;
+import de.dini.oanetzwerk.utils.imf.Language;
+import de.dini.oanetzwerk.utils.imf.OtherClassification;
+import de.dini.oanetzwerk.utils.imf.Publisher;
 import de.dini.oanetzwerk.utils.imf.Title;
+import de.dini.oanetzwerk.utils.imf.TypeValue;
 
 /**
  * @author Robin Malitz
@@ -265,12 +280,71 @@ public class IndexerAccessServlet extends HttpServlet {
 		} else {
 			
 			sb.append("<head>\n");
+			
+		    sb.append("<meta name=\"").append("oid").append("\" value=\"").append(cmf.getOid()).append("\"/>\n");				
+						
 			for(Title title : cmf.getTitleList()) {
 				sb.append("<meta name=\"").append("title").append("\" value=\"").append(title.getTitle()).append("\"/>\n");				
 			}
+			
 			for(Author author : cmf.getAuthorList()) {
 				sb.append("<meta name=\"").append("author").append("\" value=\"").append(author.getFirstname() + " " + author.getLastname()).append("\"/>\n");				
 			}
+			for(Contributor item : cmf.getContributorList()) {
+				sb.append("<meta name=\"").append("contributor").append("\" value=\"").append(item.getFirstname() + " " + item.getLastname()).append("\"/>\n");				
+			}
+			for(Editor item : cmf.getEditorList()) {
+				sb.append("<meta name=\"").append("editor").append("\" value=\"").append(item.getFirstname() + " " + item.getLastname()).append("\"/>\n");				
+			}
+			
+			for(DateValue item : cmf.getDateValueList()) {
+				sb.append("<meta name=\"").append("date").append("\" value=\"").append(item.getDateValue()).append("\"/>\n");				
+			}
+
+			for(Description item : cmf.getDescriptionList()) {
+				sb.append("<meta name=\"").append("description").append("\" value=\"").append(item.getDescription()).append("\"/>\n");				
+			}
+			
+			for(Format item : cmf.getFormatList()) {
+				sb.append("<meta name=\"").append("format").append("\" value=\"").append(item.getSchema_f()).append("\"/>\n");				
+			}
+			
+			for(Identifier item : cmf.getIdentifierList()) {
+				sb.append("<meta name=\"").append("identifier").append("\" value=\"").append(item.getIdentifier()).append("\"/>\n");				
+			}
+			
+			for(Keyword item : cmf.getKeywordList()) {
+				sb.append("<meta name=\"").append("keyword").append("\" value=\"").append(item.getKeyword()).append("\"/>\n");				
+			}
+			
+			for(Language item : cmf.getLanguageList()) {
+				sb.append("<meta name=\"").append("language").append("\" value=\"").append(item.getLanguage()).append("\"/>\n");				
+			}
+			
+			for(Publisher item : cmf.getPublisherList()) {
+				sb.append("<meta name=\"").append("publisher").append("\" value=\"").append(item.getName()).append("\"/>\n");				
+			}
+			
+			for(TypeValue item : cmf.getTypeValueList()) {
+				sb.append("<meta name=\"").append("type").append("\" value=\"").append(item.getTypeValue()).append("\"/>\n");				
+			}
+			
+			for(Classification item : cmf.getClassificationList()) {
+				if(item instanceof DINISetClassification) {
+					DINISetClassification castedItem = (DINISetClassification)item;
+					sb.append("<meta name=\"").append("classification_DINISetClassification").append("\" value=\"").append(castedItem.getValue()).append("\"/>\n");									
+				} else if(item instanceof DDCClassification) {
+					DDCClassification castedItem = (DDCClassification)item;
+					sb.append("<meta name=\"").append("classification_DDCClassification").append("\" value=\"").append(castedItem.getValue()).append("\"/>\n");									
+				} else if(item instanceof DNBClassification) {
+					DNBClassification castedItem = (DNBClassification)item;
+					sb.append("<meta name=\"").append("classification_DNBClassification").append("\" value=\"").append(castedItem.getValue()).append("\"/>\n");									
+				} else if(item instanceof OtherClassification) {
+					OtherClassification castedItem = (OtherClassification)item;
+					sb.append("<meta name=\"").append("classification_OtherClassification").append("\" value=\"").append(castedItem.getValue()).append("\"/>\n");									
+				}
+			}
+			
 			sb.append("</head>\n");
 
 			sb.append("<body>\n");
