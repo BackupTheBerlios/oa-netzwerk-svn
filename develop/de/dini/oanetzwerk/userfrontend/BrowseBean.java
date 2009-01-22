@@ -46,8 +46,8 @@ public class BrowseBean {
 		setupMapDDCNames();
 				
 		this.simpleDDCCategorySums = generateSimpleDDCCategorySums();
-		//this.directDDCCategorySums = generateDirectDDCCategorySums(simpleDDCCategorySums);	
-		//this.listDDCNaviNodes = generateListDDCNaviNodes(simpleDDCCategorySums);
+		this.directDDCCategorySums = generateDirectDDCCategorySums(simpleDDCCategorySums);	
+		this.listDDCNaviNodes = generateListDDCNaviNodes(simpleDDCCategorySums);
 	}
 
 	///// auto generated /////////////////////////////////////////////////////////////////////////
