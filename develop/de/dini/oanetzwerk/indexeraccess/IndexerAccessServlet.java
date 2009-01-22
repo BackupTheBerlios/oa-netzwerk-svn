@@ -1,13 +1,9 @@
-package de.dini.oanetzwerk.rssfeed;
+package de.dini.oanetzwerk.indexeraccess;
 
 import java.io.IOException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -15,35 +11,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndContentImpl;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndEntryImpl;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndFeedImpl;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.SyndFeedOutput;
-import com.sun.syndication.io.XmlReader;
-
-import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
-import de.dini.oanetzwerk.utils.imf.Title;
 
 /**
  * @author Robin Malitz
  *
  */
 
-public class RSSFeedServlet extends HttpServlet {
+public class IndexerAccessServlet extends HttpServlet {
 
 	/**
 	 * 
@@ -55,13 +36,13 @@ public class RSSFeedServlet extends HttpServlet {
 	 * 
 	 */
 	
-	private static Logger logger = Logger.getLogger (RSSFeedServlet.class);
+	private static Logger logger = Logger.getLogger (IndexerAccessServlet.class);
 	
 	/**
 	 * 
 	 */
 	
-	public RSSFeedServlet ( ) { }
+	public IndexerAccessServlet ( ) { }
 	
 	/**
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
@@ -80,7 +61,7 @@ public class RSSFeedServlet extends HttpServlet {
 	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		logger.debug ("doGet");
+//		logger.debug ("doGet");
 		
 		req.setCharacterEncoding ("UTF-8");
 		resp.setCharacterEncoding ("UTF-8");
@@ -95,7 +76,7 @@ public class RSSFeedServlet extends HttpServlet {
 			
 		}
 		
-		resp.setContentType ("text/xml");	
+		resp.setContentType ("text/html");	
 		resp.getWriter ( ).write (this.getResponse (req, resp));
 	}
 	
@@ -106,83 +87,41 @@ public class RSSFeedServlet extends HttpServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	private String getResponse (HttpServletRequest req, HttpServletResponse resp) {
+		StringBuffer sb = new StringBuffer();
 		
-		String strParamFeedType = req.getParameter ("feedType");
+		List<String> listOIDs = new ArrayList<String>();
 		
-		SyndFeedOutput mySyndFeedOutput = new SyndFeedOutput();
-		
-		// feed type für Ausgabe setzen
-		SyndFeed mySyndFeed = new SyndFeedImpl();
-		if(strParamFeedType == null) {
-			mySyndFeed.setFeedType("rss_2.0");
-		} else {
-			mySyndFeed.setFeedType(strParamFeedType);
-		}
-		mySyndFeed.setEncoding("UTF-8");
-		
-		// feed channel anlegen
-		mySyndFeed.setTitle("OANetzwerk Test-Feed");
-		mySyndFeed.setAuthor("Projekt: Open Access Netzwerk");
-		mySyndFeed.setLink("http://www.dini.de/projekte/oa-netzwerk/");
-		mySyndFeed.setDescription("Proof of Concept der technischen Realisierung eines RSS Feed Export");
-		
-		// entries anlegen
-		List<SyndEntry> listEntries = new ArrayList<SyndEntry>();
-		for (int i = 0; i < 5; i++) {
-			SyndEntry entry = new SyndEntryImpl();
-			entry.setAuthor("Autor "+i);
-			entry.setTitle("Titel "+i);
-			entry.setPublishedDate(new Date(System.currentTimeMillis()));
-			SyndContent scDesc = new SyndContentImpl();
-			scDesc.setType("text/plain");
-			StringBuffer sb = new StringBuffer();
-			Random rnd = new Random();
-			for(int j = 0; j < 20; j++) {
-				sb.append(RandomStringUtils.randomAlphabetic(3 + rnd.nextInt(12))).append(" ");
-			}			
-			scDesc.setValue(sb.toString());
-			entry.setDescription(scDesc);
-			listEntries.add(entry);
-		}
-		
-		mySyndFeed.setEntries(listEntries);
-		
-		// so aggregiert man einen Feed
-		try {
-			SyndFeedInput input = new SyndFeedInput();
-			SyndFeed inFeed = input.build(new XmlReader(new URL("http://open-access.net/de/rss/")));
-			listEntries.addAll(inFeed.getEntries());
-		} catch (Exception ex) {
-			logger.error(ex.getLocalizedMessage(), ex);
-		}
-		
-		
-		
-		
-		
-		
-
 		DBAccessNG dbng = new DBAccessNG ( );
-		MultipleStatementConnection stmtconn = null;
-		List<SyndEntry> listDBEntries = new ArrayList<SyndEntry>();
+		SingleStatementConnection stmtconn = null;
+
 		try {
 
-			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
-			QueryResult queryResult;
-			stmtconn.loadStatement (stmtconn.connection.prepareStatement ("select TOP 10 object_id, repository_datestamp, repository_identifier from dbo.Object order by repository_datestamp DESC"));
-			queryResult = stmtconn.execute ( );
 
-			while (queryResult.getResultSet ( ).next ( )) {
-				SyndEntry entry = new SyndEntryImpl();
-				entry.setTitle(queryResult.getResultSet ( ).getString (0) + " --- "  +queryResult.getResultSet ( ).getString (1));
-				entry.setPublishedDate(queryResult.getResultSet ( ).getDate(2));
-				listDBEntries.add(entry);
+			// fetch and execute specific statement 
+			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
+			stmtconn.loadStatement (SelectFromDB.AllOIDs(stmtconn.connection));	
+			QueryResult result = stmtconn.execute ( );
+
+			// log warnings
+			if (result.getWarning ( ) != null) {
+				for (Throwable warning : result.getWarning ( )) {
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
 			}
-			
+
+			// extract oids from db response
+			while(result.getResultSet ( ).next ( )) {
+				listOIDs.add("" + result.getResultSet().getInt("object_id"));
+			} 
+
 		} catch (SQLException ex) {
-			logger.error(ex.getLocalizedMessage(), ex);
+
+			logger.error ("An error occured while processing Get: " + ex.getLocalizedMessage ( ));			
+
 		} catch (WrongStatementException ex) {
-			logger.error(ex.getLocalizedMessage(), ex);
+
+			logger.error ("An error occured while processing Get: " + ex.getLocalizedMessage ( ));			
+
 		} finally {
 
 			if (stmtconn != null) {
@@ -194,27 +133,22 @@ public class RSSFeedServlet extends HttpServlet {
 
 				} catch (SQLException ex) {
 
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 
 			dbng = null;
 		}
 
-		if(listDBEntries != null && listDBEntries.size() > 0) {
-			listEntries.addAll(listDBEntries);
+		logger.debug("listOIDs = " + listOIDs);
+		
+		sb.append("<html>\n<body>\n<ul>\n");
+		for(String strOID : listOIDs) {
+		  sb.append("<li>").append(strOID).append("</li>\n");
 		}
+		sb.append("</ul>\n</body>\n</html>");
 		
-		
-		String strXML = "";
-		
-		// im eingestellten Type zu xml marshallen
-		try {
-			strXML = mySyndFeedOutput.outputString(mySyndFeed);
-		} catch (FeedException fex) {
-			logger.error(fex.getLocalizedMessage(), fex);
-		}
-			
-		return strXML;
+		return sb.toString(); 
 	}
 
 	/**
