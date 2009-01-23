@@ -1015,5 +1015,67 @@ public class SelectFromDB {
 		preparedstmt.setBigDecimal (3, identifier);
 		
 		return preparedstmt;
+		
+		/*
+		 * 
+		 * SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie FROM dbo.Object o 
+JOIN dbo.DNB_Classification dsc ON o.object_id = dsc.object_id
+JOIN dbo.DNB_Categories d ON d.DNB_Categorie = dsc.DNB_Categorie 
+-- WHERE o.repository_datestamp > '2008-01-01'
+
+
+UNION
+
+SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o 
+JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id
+JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id 
+-- WHERE o.repository_datestamp > '2008-01-01'
+
+UNION
+
+SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie FROM dbo.Object o 
+JOIN dbo.DDC_Classification dsc ON o.object_id = dsc.object_id
+JOIN dbo.DDC_Categories d ON d.DDC_Categorie = dsc.DDC_Categorie 
+-- WHERE o.repository_datestamp > '2008-01-01'
+
+
+
+ORDER BY o.object_id
+
+
+-- Abfrage 2
+
+SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie FROM dbo.Object o 
+JOIN dbo.DNB_Classification dsc ON o.object_id = dsc.object_id
+JOIN dbo.DNB_Categories d ON d.DNB_Categorie = dsc.DNB_Categorie 
+WHERE dsc.DNB_Categorie = '000'
+
+
+UNION
+
+SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o 
+JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id
+JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id 
+WHERE d.name = '000'
+-- WHERE o.repository_datestamp > '2008-01-01'
+
+UNION
+
+SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie FROM dbo.Object o 
+JOIN dbo.DDC_Classification dsc ON o.object_id = dsc.object_id
+JOIN dbo.DDC_Categories d ON d.DDC_Categorie = dsc.DDC_Categorie 
+WHERE dsc.DDC_Categorie = '000'
+-- WHERE o.repository_datestamp > '2008-01-01'
+
+
+
+ORDER BY o.object_id
+
+
+
+
+
+*/
+		
 	}
 }
