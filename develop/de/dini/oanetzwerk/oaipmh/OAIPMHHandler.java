@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.oaipmh;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class OAIPMHHandler extends HttpServlet {
 	public void init (ServletConfig config) throws ServletException {
 		
 		super.init (config);
+		new File ("webapps/oaipmh/resumtionToken").mkdirs ( );
 	}
 	
 	/**

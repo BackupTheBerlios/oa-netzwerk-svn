@@ -1176,7 +1176,7 @@ class DBDataConnection extends DataConnection {
 		try {
 			
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
-			stmtconn.loadStatement (SelectFromDB.AllOIDsByDate (stmtconn.connection, fromDate, untilDate, set));
+			stmtconn.loadStatement (SelectFromDB.OAIListSetsbyID (stmtconn.connection, set, fromDate, untilDate));
 			
 			queryresult = stmtconn.execute ( );
 			
@@ -1188,38 +1188,31 @@ class DBDataConnection extends DataConnection {
 				}
 			}
 			
+			Record record = new Record ( );
+			BigDecimal oid = new BigDecimal (0);
+			
 			while (queryresult.getResultSet ( ).next ( )) {
 				
-				Record record = new Record ( );
+				oid = queryresult.getResultSet ( ).getBigDecimal (1);
 				
-				record.getHeader ( ).setIdentifier (queryresult.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
-				record.getHeader ( ).setDatestamp (queryresult.getResultSet ( ).getDate (2).toString ( ));
+				if (record.getHeader ( ).getIdentifier ( ).equals (oid.toPlainString ( )))
+					record.getHeader ( ).getSet ( ).add (queryresult.getResultSet ( ).getString (3).toString ( ));
 				
-				recordList.add (record);
-			}
-			
-			stmtconn.close ( );
-			
-			for (Record record : recordList) {
-				
-				stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
-				stmtconn.loadStatement (SelectFromDB.OAIListSetsbyID (stmtconn.connection, new BigDecimal(record.getHeader ( ).getIdentifier ( ))));
-				
-				if (queryresult.getWarning ( ) != null) {
+				else {
 					
-					for (Throwable warning : queryresult.getWarning ( )) {
+					if (!record.getHeader ( ).getIdentifier ( ).equals ("")) {
 						
-						logger.warn (warning.getLocalizedMessage ( ));
+						recordList.add (record);
+						record = new Record ( );
 					}
-				}
-				
-				while (queryresult.getResultSet ( ).next ( )) {
 					
-					record.getHeader ( ).getSet ( ).add (queryresult.getResultSet ( ).getString (1));
+					record.getHeader ( ).setIdentifier (queryresult.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+					record.getHeader ( ).setDatestamp (queryresult.getResultSet ( ).getDate (2).toString ( ));
+					record.getHeader ( ).getSet ( ).add (queryresult.getResultSet ( ).getString (3).toString ( ));
 				}
-				
-				stmtconn.close ( );
 			}
+			
+			recordList.add (record);
 			
 		} catch (SQLException ex) {
 			

@@ -1,10 +1,18 @@
 package de.dini.oanetzwerk.oaipmh;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -68,6 +76,12 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	/**
 	 * 
 	 */
+	
+	private String resumptionToken = "";
+	
+	/**
+	 * 
+	 */
 	//TODO: load ConnectionType from property file
 	private DataConnectionType conType = DataConnectionType.DB;
 	
@@ -82,7 +96,7 @@ public class ListIdentifiers implements OAIPMHVerbs {
 		
 		if (parameter.containsKey ("resumptionToken")) {
 			
-			//TODO: ResumptionTokenHandling
+			this.resumptionToken = parameter.get ("resumptionToken") [0];
 			
 		} else if (!parameter.containsKey ("metadataPrefix"))
 			return new OAIPMHError (OAIPMHerrorcodeType.BAD_ARGUMENT).toString ( );
@@ -115,6 +129,10 @@ public class ListIdentifiers implements OAIPMHVerbs {
 		OAIPMHtype oaipmhMsg = obfac.createOAIPMHtype ( );
 		oaipmhMsg.setResponseDate (new XMLGregorianCalendarImpl (new GregorianCalendar ( )));
 		RequestType reqType = obfac.createRequestType ( );
+		
+		if (!this.resumptionToken.equals (""))
+			reqType.setResumptionToken (this.resumptionToken);
+		
 		reqType.setValue ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
 		reqType.setVerb (VerbType.LIST_IDENTIFIERS);
 		
@@ -162,16 +180,81 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	 * @return
 	 */
 	
+	@SuppressWarnings("unchecked")
 	private ArrayList <HeaderType> getHeaders ( ) {
 		
-		this.dataConnectionToolkit = ConnectionToolkit.getFactory (this.conType);
+		LinkedList <Record> recordList;
+		int token = 0;
 		
-		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection ( );
+		if (this.resumptionToken.equals ("")) {
+		
+			this.dataConnectionToolkit = ConnectionToolkit.getFactory (this.conType);
+			DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection ( );
+			
+			recordList = dataConnection.getIdentifier (this.getFrom ( ), this.getUntil ( ), this.getSet ( ));
+			
+			if (recordList.size ( ) > 10) {
+				
+				this.resumptionToken = "oanetToken" + UUID.randomUUID ( ).hashCode ( );
+				
+				try {
+					
+					ObjectOutputStream oos = new ObjectOutputStream (new FileOutputStream ("webapps/oaipmh/resumtionToken/" + this.resumptionToken + ".01"));
+					oos.writeObject (recordList);
+					
+				} catch (FileNotFoundException ex) {
+					
+					logger.error (ex.getLocalizedMessage ( ), ex);
+					recordList = new LinkedList <Record> ( );
+					
+				} catch (IOException ex) {
+					
+					logger.error (ex.getLocalizedMessage ( ), ex);
+					recordList = new LinkedList <Record> ( );
+				}
+			}
+			
+		} else {
+			
+			token = Integer.parseInt (this.resumptionToken.substring (resumptionToken.length ( ) - 2, resumptionToken.length ( ) - 1));
+			
+			this.resumptionToken = this.resumptionToken.substring (0, resumptionToken.length ( ) - 3);
+			
+			try {
+				
+				ObjectInputStream ois = new ObjectInputStream (new FileInputStream ("webapps/oaipmh/resumtionToken/" + this.resumptionToken));
+				recordList = (LinkedList <Record>) ois.readObject ( );
+				
+//				for (Record record : recordinputList) {
+//					
+//					logger.debug (record.getHeader ( ).getIdentifier ( ));
+//					logger.debug (record.getHeader ( ).getDatestamp ( ));
+//					logger.debug (record.getHeader ( ).getSet ( ).getFirst ( ));
+//				}
+				
+			} catch (FileNotFoundException ex) {
+
+				logger.error (ex.getLocalizedMessage ( ), ex);
+				recordList = new LinkedList <Record> ( );
+				
+			} catch (IOException ex) {
+
+				logger.error (ex.getLocalizedMessage ( ), ex);
+				recordList = new LinkedList <Record> ( );
+				
+			} catch (ClassNotFoundException ex) {
+
+				logger.error (ex.getLocalizedMessage ( ), ex);
+				recordList = new LinkedList <Record> ( );
+			}
+		}
 		
 		ArrayList <HeaderType> headers = new ArrayList <HeaderType> ( );
 		
-		for (Record record : dataConnection.getIdentifier (this.getFrom ( ), this.getUntil ( ), this.getSet ( ))) {
+		for (int i = token * 10; i < recordList.size ( ) && i < token * 10 + 10; i++) {
 			
+			logger.debug ("i = " + i);
+			Record record = recordList.get (i);
 			HeaderType header = new HeaderType ( );
 			
 			header.setIdentifier ("oai:oanet:" + record.getHeader ( ).getIdentifier ( ));
@@ -181,7 +264,51 @@ public class ListIdentifiers implements OAIPMHVerbs {
 				
 				header.getSetSpec ( ).add (set);
 			}
+			
+			headers.add (header);
 		}
+		
+		this.resumptionToken = this.resumptionToken + "." + ++token;
+		
+//		for (Record record : recordList) {
+//			
+//			HeaderType header = new HeaderType ( );
+//			
+//			header.setIdentifier ("oai:oanet:" + record.getHeader ( ).getIdentifier ( ));
+//			header.setDatestamp (record.getHeader ( ).getDatestamp ( ));
+//			
+//			for (String set : record.getHeader ( ).getSet ( )) {
+//				
+//				header.getSetSpec ( ).add (set);
+//			}
+//			
+//			headers.add (header);
+//		}
+		
+//		try {
+//			
+//			ObjectInputStream ois = new ObjectInputStream (new FileInputStream ("webapps/oaipmh/resumtionToken/testSerial"));
+//			LinkedList <Record> recordinputList = (LinkedList <Record>) ois.readObject ( );
+//			
+//			for (Record record : recordinputList) {
+//				
+//				logger.debug (record.getHeader ( ).getIdentifier ( ));
+//				logger.debug (record.getHeader ( ).getDatestamp ( ));
+//				logger.debug (record.getHeader ( ).getSet ( ).getFirst ( ));
+//			}
+//			
+//		} catch (FileNotFoundException ex) {
+//
+//			logger.error (ex.getLocalizedMessage ( ), ex);
+//			
+//		} catch (IOException ex) {
+//
+//			logger.error (ex.getLocalizedMessage ( ), ex);
+//			
+//		} catch (ClassNotFoundException ex) {
+//
+//			logger.error (ex.getLocalizedMessage ( ), ex);
+//		}
 		
 		return headers;
 	}
@@ -203,7 +330,6 @@ public class ListIdentifiers implements OAIPMHVerbs {
 		
 		this.metadataPrefix = metadataPrefix;
 	}
-
 	
 	/**
 	 * @return the from
@@ -212,7 +338,6 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	
 		return this.from;
 	}
-
 	
 	/**
 	 * @param from the from to set
@@ -221,7 +346,6 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	
 		this.from = from;
 	}
-
 	
 	/**
 	 * @return the until
@@ -230,7 +354,6 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	
 		return this.until;
 	}
-
 	
 	/**
 	 * @param until the until to set
@@ -239,7 +362,6 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	
 		this.until = until;
 	}
-
 	
 	/**
 	 * @return the set
@@ -248,7 +370,6 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	
 		return this.set;
 	}
-
 	
 	/**
 	 * @param set the set to set

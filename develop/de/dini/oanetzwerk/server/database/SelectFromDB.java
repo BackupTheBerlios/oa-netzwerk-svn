@@ -996,84 +996,201 @@ public class SelectFromDB {
 	 * @throws SQLException 
 	 */
 	
-	public static PreparedStatement OAIListSetsbyID (Connection connection, BigDecimal identifier) throws SQLException {
+	public static PreparedStatement OAIListSetsbyID (Connection connection, String set, Date from, Date until) throws SQLException {
 
-		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT d.name " + 
-				"FROM dbo.DINI_Set_Categories d JOIN dbo.DINI_Set_Classification dsc " + 
-				"ON d.DINI_set_id = dsc.DINI_set_id AND dsc.object_id = ? GROUP BY d.name " + 
-				"UNION " + 
-				"SELECT 'ddc:' + d.DDC_Categorie as \"Name\" " + 
-				"FROM dbo.DDC_Categories d JOIN dbo.DDC_Classification dc " + 
-				"ON d.DDC_Categorie = dc.DDC_Categorie AND dc.object_id = ? GROUP BY d.name " + 
-				"UNION " + 
-				"SELECT 'dnb:' + d.DNB_Categorie as \"Name\" " + 
-				"FROM dbo.DNB_Categories d JOIN dbo.DNB_Classification dc " + 
-				"ON d.DNB_Categorie = dc.DNB_Categorie AND dc.object_id = ? GROUP BY d.name ORDER BY d.name");
+//		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT d.name " + 
+//				"FROM dbo.DINI_Set_Categories d JOIN dbo.DINI_Set_Classification dsc " + 
+//				"ON d.DINI_set_id = dsc.DINI_set_id AND dsc.object_id = ? GROUP BY d.name " + 
+//				"UNION " + 
+//				"SELECT 'ddc:' + d.DDC_Categorie as \"Name\" " + 
+//				"FROM dbo.DDC_Categories d JOIN dbo.DDC_Classification dc " + 
+//				"ON d.DDC_Categorie = dc.DDC_Categorie AND dc.object_id = ? GROUP BY d.name " + 
+//				"UNION " + 
+//				"SELECT 'dnb:' + d.DNB_Categorie as \"Name\" " + 
+//				"FROM dbo.DNB_Categories d JOIN dbo.DNB_Classification dc " + 
+//				"ON d.DNB_Categorie = dc.DNB_Categorie AND dc.object_id = ? GROUP BY d.name ORDER BY d.name");
+//		
+//		preparedstmt.setBigDecimal (1, identifier);
+//		preparedstmt.setBigDecimal (2, identifier);
+//		preparedstmt.setBigDecimal (3, identifier);
+		boolean aND = false;
+				
+		StringBuffer sql = new StringBuffer ("SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie FROM dbo.Object o ");
+		sql.append ("JOIN dbo.DNB_Classification dsc ON o.object_id = dsc.object_id ");
+		sql.append ("JOIN dbo.DNB_Categories d ON d.DNB_Categorie = dsc.DNB_Categorie ");
 		
-		preparedstmt.setBigDecimal (1, identifier);
-		preparedstmt.setBigDecimal (2, identifier);
-		preparedstmt.setBigDecimal (3, identifier);
+		StringBuffer setFromUntil = new StringBuffer ("");
+		
+		if (set != null && !set.equals ("")) {
+			
+			sql.append ("WHERE dsc.DNB_Categorie = ? ");
+			aND = true;
+			
+		} else
+			set = null;
+		
+		if (from != null) {
+			
+			if (aND)
+				setFromUntil.append ("AND o.repository_datestamp > ? ");
+			
+			else {
+				
+				aND = true;
+				setFromUntil.append ("WHERE o.repository_datestamp > ? ");
+			}
+		}
+		
+		if (until != null) {
+			
+			if (aND)
+				setFromUntil.append ("AND o.repository_datestamp < ? ");
+			
+			else
+				setFromUntil.append ("WHERE o.repository_datestamp < ? ");
+		}
+		
+		sql.append (setFromUntil);
+		sql.append ("UNION ");
+		sql.append ("SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o "); 
+		sql.append ("JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id ");
+		sql.append ("JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id ");
+		
+		if (set != null && !set.equals (""))
+			sql.append ("WHERE d.name = ? ");
+		
+		sql.append (setFromUntil);
+		sql.append ("UNION ");
+		sql.append ("SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie FROM dbo.Object o ");
+		sql.append ("JOIN dbo.DDC_Classification dsc ON o.object_id = dsc.object_id ");
+		sql.append ("JOIN dbo.DDC_Categories d ON d.DDC_Categorie = dsc.DDC_Categorie ");
+		
+		if (set != null && !set.equals (""))
+			sql.append ("WHERE dsc.DDC_Categorie = ? ");
+		
+		sql.append (setFromUntil); 
+		sql.append ("ORDER BY o.object_id"); 
+		
+		logger.debug (sql.toString ( ));
+		
+		PreparedStatement preparedstmt = connection.prepareStatement (sql.toString ( ));
+		
+		if (set != null) {
+			
+			preparedstmt.setString (1, set);
+			
+			if (from != null && until != null) {
+				
+				preparedstmt.setDate (2, from);
+				preparedstmt.setDate (3, until);
+				preparedstmt.setString (4, set);
+				preparedstmt.setDate (5, from);
+				preparedstmt.setDate (6, until);
+				preparedstmt.setString (7, set);
+				preparedstmt.setDate (8, from);
+				preparedstmt.setDate (9, until);
+				
+			} else if (from == null && until == null) {
+				
+				preparedstmt.setString (2, set);
+				preparedstmt.setString (3, set);
+				
+			} else {
+				
+				preparedstmt.setString (3, set);
+				preparedstmt.setString (5, set);
+				
+				if (until == null) {
+					
+					preparedstmt.setDate (2, from);
+					preparedstmt.setDate (4, from);
+					preparedstmt.setDate (6, from);
+					
+				} else {
+					
+					preparedstmt.setDate (2, until);
+					preparedstmt.setDate (4, until);
+					preparedstmt.setDate (6, until);
+				}
+			} 
+			
+		} else if (until != null || from != null){
+			
+			if (until == null) {
+				
+				preparedstmt.setDate (1, from);
+				preparedstmt.setDate (2, from);
+				preparedstmt.setDate (3, from);
+				
+			} else if (from == null) {
+				
+				preparedstmt.setDate (1, until);
+				preparedstmt.setDate (2, until);
+				preparedstmt.setDate (3, until);
+				
+			} else {
+				
+				preparedstmt.setDate (1, from);
+				preparedstmt.setDate (2, until);
+				preparedstmt.setDate (3, from);
+				preparedstmt.setDate (4, until);
+				preparedstmt.setDate (5, from);
+				preparedstmt.setDate (6, until);
+			}
+			
+		} else ;
 		
 		return preparedstmt;
 		
 		/*
-		 * 
 		 * SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie FROM dbo.Object o 
-JOIN dbo.DNB_Classification dsc ON o.object_id = dsc.object_id
-JOIN dbo.DNB_Categories d ON d.DNB_Categorie = dsc.DNB_Categorie 
--- WHERE o.repository_datestamp > '2008-01-01'
-
-
-UNION
-
-SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o 
-JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id
-JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id 
--- WHERE o.repository_datestamp > '2008-01-01'
-
-UNION
-
-SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie FROM dbo.Object o 
-JOIN dbo.DDC_Classification dsc ON o.object_id = dsc.object_id
-JOIN dbo.DDC_Categories d ON d.DDC_Categorie = dsc.DDC_Categorie 
--- WHERE o.repository_datestamp > '2008-01-01'
-
-
-
-ORDER BY o.object_id
-
-
--- Abfrage 2
-
-SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie FROM dbo.Object o 
-JOIN dbo.DNB_Classification dsc ON o.object_id = dsc.object_id
-JOIN dbo.DNB_Categories d ON d.DNB_Categorie = dsc.DNB_Categorie 
-WHERE dsc.DNB_Categorie = '000'
-
-
-UNION
-
-SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o 
-JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id
-JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id 
-WHERE d.name = '000'
--- WHERE o.repository_datestamp > '2008-01-01'
-
-UNION
-
-SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie FROM dbo.Object o 
-JOIN dbo.DDC_Classification dsc ON o.object_id = dsc.object_id
-JOIN dbo.DDC_Categories d ON d.DDC_Categorie = dsc.DDC_Categorie 
-WHERE dsc.DDC_Categorie = '000'
--- WHERE o.repository_datestamp > '2008-01-01'
-
-
-
-ORDER BY o.object_id
-
-
-
-
+		JOIN dbo.DNB_Classification dsc ON o.object_id = dsc.object_id
+		JOIN dbo.DNB_Categories d ON d.DNB_Categorie = dsc.DNB_Categorie 
+		-- WHERE o.repository_datestamp > '2008-01-01'
+		
+		
+		UNION
+		
+		SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o 
+		JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id
+		JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id 
+		-- WHERE o.repository_datestamp > '2008-01-01'
+		
+		UNION
+		
+		SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie FROM dbo.Object o 
+		JOIN dbo.DDC_Classification dsc ON o.object_id = dsc.object_id
+		JOIN dbo.DDC_Categories d ON d.DDC_Categorie = dsc.DDC_Categorie 
+		-- WHERE o.repository_datestamp > '2008-01-01'
+		
+		ORDER BY o.object_id
+		
+		
+		-- Abfrage 2
+		
+		SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie FROM dbo.Object o 
+		JOIN dbo.DNB_Classification dsc ON o.object_id = dsc.object_id
+		JOIN dbo.DNB_Categories d ON d.DNB_Categorie = dsc.DNB_Categorie 
+		WHERE dsc.DNB_Categorie = '000'
+		
+		
+		UNION
+		
+		SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o 
+		JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id
+		JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id 
+		WHERE d.name = '000'
+		-- WHERE o.repository_datestamp > '2008-01-01'
+		
+		UNION
+		
+		SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie FROM dbo.Object o 
+		JOIN dbo.DDC_Classification dsc ON o.object_id = dsc.object_id
+		JOIN dbo.DDC_Categories d ON d.DDC_Categorie = dsc.DDC_Categorie 
+		WHERE dsc.DDC_Categorie = '000'
+		-- WHERE o.repository_datestamp > '2008-01-01'
+		
+		ORDER BY o.object_id
 
 */
 		

@@ -1,14 +1,20 @@
 package de.dini.oanetzwerk.oaipmh;
 
+import java.io.Serializable;
 import java.util.LinkedList;
-
 
 /**
  * @author Michael K&uuml;hn
  *
  */
 
-public class Record {
+public class Record implements Serializable {
+
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = -2411596695965731565L;
 
 	/**
 	 * 
@@ -53,8 +59,14 @@ public class Record {
  *
  */
 
-class Header {
+class Header implements Serializable {
 	
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = -2387149795829756775L;
+
 	/**
 	 * 
 	 */
@@ -78,7 +90,10 @@ class Header {
 	 */
 	
 	public final String getIdentifier ( ) {
-	
+		
+		if (this.identifier == null)
+			this.identifier = "";
+		
 		return this.identifier;
 	}
 	
@@ -96,7 +111,10 @@ class Header {
 	 */
 	
 	public final String getDatestamp ( ) {
-	
+		
+		if (this.datestamp == null)
+			this.datestamp = "";
+		
 		return this.datestamp;
 	}
 	
@@ -105,7 +123,7 @@ class Header {
 	 */
 	
 	public final void setDatestamp (String datestamp) {
-	
+		
 		this.datestamp = datestamp;
 	}
 	
@@ -122,6 +140,12 @@ class Header {
 	}
 }
 
-class MetaData {
+class MetaData implements Serializable {
+
+	/**
+	 * 
+	 */
+	
+	private static final long serialVersionUID = 1L;
 	
 }
