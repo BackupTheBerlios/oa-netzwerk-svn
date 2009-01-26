@@ -43,19 +43,19 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "resumptionTokenType", propOrder = {
+@XmlType(name = "resumptionTokenType", namespace="http://www.openarchives.org/OAI/2.0", propOrder = {
     "value"
 })
 public class ResumptionTokenType {
 
     @XmlValue
     protected String value;
-    @XmlAttribute(name="expirationDate", namespace="http://www.openarchives.org/OAI/2.0/")
+    @XmlAttribute(name="expirationDate")
     protected XMLGregorianCalendar expirationDate;
-    @XmlAttribute (namespace="http://www.openarchives.org/OAI/2.0/")
+    @XmlAttribute 
     @XmlSchemaType(name = "positiveInteger")
     protected BigInteger completeListSize;
-    @XmlAttribute (namespace="http://www.openarchives.org/OAI/2.0/")
+    @XmlAttribute 
     @XmlSchemaType(name = "nonNegativeInteger")
     protected BigInteger cursor;
 

@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
@@ -28,6 +29,7 @@ import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHObjectFactory;
 import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHtype;
 import de.dini.oanetzwerk.oaipmh.oaipmh.RequestType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.ResumptionTokenType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.VerbType;
 
 /**
@@ -54,6 +56,18 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	 */
 	
 	private String metadataPrefix = "";
+	
+	/**
+	 * 
+	 */
+	
+	private BigInteger completeListSize = BigInteger.valueOf (0);
+	
+	/**
+	 * 
+	 */
+	
+	private BigInteger resumptionTokenCursor = BigInteger.valueOf (0);
 	
 	/**
 	 * 
@@ -117,6 +131,8 @@ public class ListIdentifiers implements OAIPMHVerbs {
 			this.setSet (parameter.get ("set") [0]);
 
 		OAIPMHObjectFactory obfac = new OAIPMHObjectFactory ( );
+		RequestType reqType = obfac.createRequestType ( );
+		
 		ListIdentifiersType listIdents = obfac.createListIdentifiersType ( );
 		
 		ArrayList <HeaderType> headers = this.getHeaders ( );
@@ -126,12 +142,23 @@ public class ListIdentifiers implements OAIPMHVerbs {
 		
 		listIdents.getHeader ( ).addAll (headers);
 		
+		if (this.resumptionToken != null) {
+			
+			ResumptionTokenType resToType = new ResumptionTokenType ( );
+			
+			GregorianCalendar cal = new GregorianCalendar ( );
+			cal.add (GregorianCalendar.DAY_OF_MONTH, 1);
+			
+			resToType.setExpirationDate (new XMLGregorianCalendarImpl (cal));
+			resToType.setValue (this.resumptionToken);
+			resToType.setCompleteListSize (this.completeListSize);
+			resToType.setCursor (this.resumptionTokenCursor);
+			
+			listIdents.setResumptionToken (resToType);
+		}
+		
 		OAIPMHtype oaipmhMsg = obfac.createOAIPMHtype ( );
 		oaipmhMsg.setResponseDate (new XMLGregorianCalendarImpl (new GregorianCalendar ( )));
-		RequestType reqType = obfac.createRequestType ( );
-		
-		if (!this.resumptionToken.equals (""))
-			reqType.setResumptionToken (this.resumptionToken);
 		
 		reqType.setValue ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
 		reqType.setVerb (VerbType.LIST_IDENTIFIERS);
@@ -151,7 +178,7 @@ public class ListIdentifiers implements OAIPMHVerbs {
 		if (parameter.containsKey ("resumptionToken"))
 			reqType.setResumptionToken (parameter.get ("resumptionToken") [0]);
 		
-		if (parameter.get ("metadataPrefix") [0] != null && !parameter.get ("metadataPrefix") [0].equals (""))
+		if (parameter.containsKey ("metadataPrefix"))
 			reqType.setMetadataPrefix (parameter.get ("metadataPrefix") [0]);
 		
 		oaipmhMsg.setRequest (reqType);
@@ -193,13 +220,18 @@ public class ListIdentifiers implements OAIPMHVerbs {
 			
 			recordList = dataConnection.getIdentifier (this.getFrom ( ), this.getUntil ( ), this.getSet ( ));
 			
+			if (recordList.size ( ) == 0)
+				return new ArrayList <HeaderType> ( );
+			
 			if (recordList.size ( ) > 10) {
 				
 				this.resumptionToken = "oanetToken" + UUID.randomUUID ( ).hashCode ( );
 				
+				this.completeListSize = BigInteger.valueOf (recordList.size ( ));
+				
 				try {
 					
-					ObjectOutputStream oos = new ObjectOutputStream (new FileOutputStream ("webapps/oaipmh/resumtionToken/" + this.resumptionToken + ".01"));
+					ObjectOutputStream oos = new ObjectOutputStream (new FileOutputStream ("webapps/oaipmh/resumtionToken/" + this.resumptionToken));
 					oos.writeObject (recordList);
 					
 				} catch (FileNotFoundException ex) {
@@ -212,11 +244,16 @@ public class ListIdentifiers implements OAIPMHVerbs {
 					logger.error (ex.getLocalizedMessage ( ), ex);
 					recordList = new LinkedList <Record> ( );
 				}
-			}
+				
+			} else
+				this.resumptionToken = null;
 			
 		} else {
 			
-			token = Integer.parseInt (this.resumptionToken.substring (resumptionToken.length ( ) - 2, resumptionToken.length ( ) - 1));
+			token = Integer.parseInt (this.resumptionToken.substring (resumptionToken.length ( ) - 2, resumptionToken.length ( )));
+			
+			logger.debug ("Token: " + token);
+			this.resumptionTokenCursor = BigInteger.valueOf (token * 10);
 			
 			this.resumptionToken = this.resumptionToken.substring (0, resumptionToken.length ( ) - 3);
 			
@@ -224,13 +261,6 @@ public class ListIdentifiers implements OAIPMHVerbs {
 				
 				ObjectInputStream ois = new ObjectInputStream (new FileInputStream ("webapps/oaipmh/resumtionToken/" + this.resumptionToken));
 				recordList = (LinkedList <Record>) ois.readObject ( );
-				
-//				for (Record record : recordinputList) {
-//					
-//					logger.debug (record.getHeader ( ).getIdentifier ( ));
-//					logger.debug (record.getHeader ( ).getDatestamp ( ));
-//					logger.debug (record.getHeader ( ).getSet ( ).getFirst ( ));
-//				}
 				
 			} catch (FileNotFoundException ex) {
 
@@ -249,9 +279,14 @@ public class ListIdentifiers implements OAIPMHVerbs {
 			}
 		}
 		
+		this.completeListSize = BigInteger.valueOf (recordList.size ( ));
+		
 		ArrayList <HeaderType> headers = new ArrayList <HeaderType> ( );
 		
 		for (int i = token * 10; i < recordList.size ( ) && i < token * 10 + 10; i++) {
+			
+			if (i == 0)
+				continue;
 			
 			logger.debug ("i = " + i);
 			Record record = recordList.get (i);
@@ -268,7 +303,13 @@ public class ListIdentifiers implements OAIPMHVerbs {
 			headers.add (header);
 		}
 		
-		this.resumptionToken = this.resumptionToken + "." + ++token;
+		if (((token + 1) * 10) > recordList.size ( ))
+			this.resumptionToken = "";
+		
+		else
+			this.resumptionToken = this.resumptionToken + "." + String.format ("%2d", ++token).replace (' ', '0');
+		
+		logger.debug ("resumptionToken to write: " + this.resumptionToken);
 		
 //		for (Record record : recordList) {
 //			
