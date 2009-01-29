@@ -55,7 +55,7 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	 * 
 	 */
 	
-	private String metadataPrefix = "";
+	private String metadataPrefix;
 	
 	/**
 	 * 
@@ -73,19 +73,19 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	 * 
 	 */
 	
-	private String from = "";
+	private String from;
 	
 	/**
 	 * 
 	 */
 	
-	private String until = "";
+	private String until;
 	
 	/**
 	 * 
 	 */
 	
-	private String set = "";
+	private String set;
 	
 	/**
 	 * 
@@ -178,8 +178,8 @@ public class ListIdentifiers implements OAIPMHVerbs {
 		if (parameter.containsKey ("resumptionToken"))
 			reqType.setResumptionToken (parameter.get ("resumptionToken") [0]);
 		
-		if (parameter.containsKey ("metadataPrefix"))
-			reqType.setMetadataPrefix (parameter.get ("metadataPrefix") [0]);
+//		if (parameter.containsKey ("metadataPrefix"))
+//			reqType.setMetadataPrefix (parameter.get ("metadataPrefix") [0]);
 		
 		oaipmhMsg.setRequest (reqType);
 		oaipmhMsg.setListIdentifiers (listIdents);
@@ -218,12 +218,12 @@ public class ListIdentifiers implements OAIPMHVerbs {
 			this.dataConnectionToolkit = ConnectionToolkit.getFactory (this.conType);
 			DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection ( );
 			
-			recordList = dataConnection.getIdentifier (this.getFrom ( ), this.getUntil ( ), this.getSet ( ));
+			recordList = dataConnection.getIdentifierList (this.getFrom ( ), this.getUntil ( ), this.getSet ( ));
 			
 			if (recordList.size ( ) == 0)
 				return new ArrayList <HeaderType> ( );
 			
-			if (recordList.size ( ) > 10) {
+			if (recordList.size ( ) > 10) {			//TODO: get this value from propertyfile
 				
 				this.resumptionToken = "oanetToken" + UUID.randomUUID ( ).hashCode ( );
 				
@@ -253,7 +253,7 @@ public class ListIdentifiers implements OAIPMHVerbs {
 			token = Integer.parseInt (this.resumptionToken.substring (resumptionToken.length ( ) - 2, resumptionToken.length ( )));
 			
 			logger.debug ("Token: " + token);
-			this.resumptionTokenCursor = BigInteger.valueOf (token * 10);
+			this.resumptionTokenCursor = BigInteger.valueOf (token * 10);	//TODO: get this value from propertyfile
 			
 			this.resumptionToken = this.resumptionToken.substring (0, resumptionToken.length ( ) - 3);
 			
@@ -283,7 +283,7 @@ public class ListIdentifiers implements OAIPMHVerbs {
 		
 		ArrayList <HeaderType> headers = new ArrayList <HeaderType> ( );
 		
-		for (int i = token * 10; i < recordList.size ( ) && i < token * 10 + 10; i++) {
+		for (int i = token * 10; i < recordList.size ( ) && i < token * 10 + 10; i++) { //TODO: get this value from propertyfile
 			
 			if (i == 0)
 				continue;
@@ -303,7 +303,7 @@ public class ListIdentifiers implements OAIPMHVerbs {
 			headers.add (header);
 		}
 		
-		if (((token + 1) * 10) > recordList.size ( ))
+		if (((token + 1) * 10) > recordList.size ( ))	//TODO: get this value from propertyfile
 			this.resumptionToken = "";
 		
 		else
@@ -360,6 +360,9 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	
 	public final String getMetadataPrefix ( ) {
 		
+		if (this.metadataPrefix == null)
+			this.metadataPrefix = "";
+		
 		return this.metadataPrefix;
 	}
 	
@@ -375,14 +378,19 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	/**
 	 * @return the from
 	 */
-	public final String getFrom ( ) {
 	
+	public final String getFrom ( ) {
+		
+		if (this.from == null)
+			this.from = "";
+		
 		return this.from;
 	}
 	
 	/**
 	 * @param from the from to set
 	 */
+	
 	public final void setFrom (String from) {
 	
 		this.from = from;
@@ -391,14 +399,19 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	/**
 	 * @return the until
 	 */
-	public final String getUntil ( ) {
 	
+	public final String getUntil ( ) {
+		
+		if (this.until == null)
+			this.until = "";
+		
 		return this.until;
 	}
 	
 	/**
 	 * @param until the until to set
 	 */
+	
 	public final void setUntil (String until) {
 	
 		this.until = until;
@@ -407,14 +420,19 @@ public class ListIdentifiers implements OAIPMHVerbs {
 	/**
 	 * @return the set
 	 */
-	public final String getSet ( ) {
 	
+	public final String getSet ( ) {
+		
+		if (this.set == null)
+			this.set = "";
+		
 		return this.set;
 	}
 	
 	/**
 	 * @param set the set to set
 	 */
+	
 	public final void setSet (String set) {
 	
 		this.set = set;

@@ -66,10 +66,13 @@ public class OAIPMHHandler extends HttpServlet {
 		
 		if (userAgent.matches ("mozilla") || userAgent.matches ("opera") || userAgent.matches ("msie") || userAgent.matches ("netscape")) {
 			
+			resp.setContentType ("text/html");
 			
-		}
+		} else {
 		
-		resp.setContentType ("application/xml");	
+			resp.setContentType ("application/xml");
+		
+		}
 		resp.getWriter ( ).write (this.getResponse (req, resp));
 	}
 	

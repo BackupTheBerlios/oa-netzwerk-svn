@@ -998,21 +998,6 @@ public class SelectFromDB {
 	
 	public static PreparedStatement OAIListSetsbyID (Connection connection, String set, Date from, Date until) throws SQLException {
 
-//		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT d.name " + 
-//				"FROM dbo.DINI_Set_Categories d JOIN dbo.DINI_Set_Classification dsc " + 
-//				"ON d.DINI_set_id = dsc.DINI_set_id AND dsc.object_id = ? GROUP BY d.name " + 
-//				"UNION " + 
-//				"SELECT 'ddc:' + d.DDC_Categorie as \"Name\" " + 
-//				"FROM dbo.DDC_Categories d JOIN dbo.DDC_Classification dc " + 
-//				"ON d.DDC_Categorie = dc.DDC_Categorie AND dc.object_id = ? GROUP BY d.name " + 
-//				"UNION " + 
-//				"SELECT 'dnb:' + d.DNB_Categorie as \"Name\" " + 
-//				"FROM dbo.DNB_Categories d JOIN dbo.DNB_Classification dc " + 
-//				"ON d.DNB_Categorie = dc.DNB_Categorie AND dc.object_id = ? GROUP BY d.name ORDER BY d.name");
-//		
-//		preparedstmt.setBigDecimal (1, identifier);
-//		preparedstmt.setBigDecimal (2, identifier);
-//		preparedstmt.setBigDecimal (3, identifier);
 		boolean aND = false;
 				
 		StringBuffer sql = new StringBuffer ("SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie FROM dbo.Object o ");
@@ -1194,5 +1179,98 @@ public class SelectFromDB {
 
 */
 		
+	}
+
+	/**
+	 * @param connection
+	 * @param set
+	 * @param fromDate
+	 * @param untilDate
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement OAIListAll (Connection connection, String set, Date fromDate, Date untilDate) throws SQLException {
+		
+		/*
+		SELECT  o.object_id, t.title, t.qualifier, t.lang, -- Titeldaten (noch nach Qualifier sortieren)
+		p1.firstname, p1.lastname, -- Autorenname
+		p2.firstname, p2.lastname, -- Herausgebername (Editor)
+		p3.firstname, p3.lastname, -- Bearbeiternname (Contributor)
+		d.abstract, d.lang, -- Description
+		dv.value, -- DateValue
+		l.language, -- Sprache
+		k.keyword, k.lang, -- Schlagwoerter
+		tv.value, -- TypeValue
+		ftl.mimeformat, ftl.link, -- FullTextLinks  (diese an Stelle von Identifier und Format verwenden?)
+		pu.name -- Publisher
+		
+		FROM dbo.Object o
+		LEFT OUTER JOIN dbo.Titles t ON o.object_id = t.object_id
+		
+		LEFT OUTER JOIN dbo.Object2Author o2a ON o.object_id = o2a.object_id
+		LEFT OUTER JOIN dbo.Person p1 ON o2a.person_id = p1.person_id
+		
+		LEFT OUTER JOIN dbo.Object2Editor o2e ON o.object_id = o2e.object_id
+		LEFT OUTER JOIN dbo.Person p2 ON o2e.person_id = p2.person_id
+		
+		LEFT OUTER JOIN dbo.Object2Contributor o2c ON o.object_id = o2c.object_id
+		LEFT OUTER JOIN dbo.Person p3 ON o2c.person_id = p2.person_id
+		
+		LEFT OUTER JOIN dbo.Description d ON o.object_id = d.object_id
+		
+		LEFT OUTER JOIN dbo.DateValues dv ON o.object_id = dv.object_id
+		
+		LEFT OUTER JOIN dbo.Object2Language o2l ON o.object_id = o2l.object_id
+		LEFT OUTER JOIN dbo.Language l ON o2l.language_id = l.language_id
+		
+		
+		LEFT OUTER JOIN dbo.Object2Keywords o2k ON o.object_id = o2k.object_id
+		LEFT OUTER JOIN dbo.Keywords k ON o2k.keyword_id = k.keyword_id
+		
+		LEFT OUTER JOIN dbo.TypeValue tv ON o.object_id = tv.object_id
+		
+		LEFT OUTER JOIN dbo.FullTextLinks ftl ON o.object_id = ftl.object_id
+		
+		LEFT OUTER JOIN dbo.Publisher pu ON o.object_id = pu.object_id
+		
+		WHERE o.object_id <=20 and o.object_id > 10 or o.object_id = 1213
+		
+		ORDER BY o.object_id, t.qualifier, o2a.number, o2e.number, o2c.number, d.number, dv.number, o2l.number, k.keyword_id, tv.type_id, pu.number
+		*/
+		
+		StringBuffer sql = new StringBuffer ("SELECT o.object_id, t.title, t.qualifier, t.lang, ") 	//Title
+								.append ("p1.firstname, p1.lastname, ") 							//Author
+								.append ("p2.firstname, p2.lastname, ")								//Editor
+								.append ("p3.firstname, p3.lastname, ") 							//Contributor
+								.append ("d.abstract, d.lang, ")									//Description
+								.append ("dv.value, ")												//DateValue
+								.append ("l.language, ")											//Language
+								.append ("k.keyword, k.lang, ")										//Keywords
+								.append ("tv.value, ")												//TypeValue
+								.append ("ftl.mimeformat, ftl.link, ")								//FullTextLinks
+								.append ("pu.name ")												//Publisher
+								.append ("FROM dbo.Object o ")
+								.append ("LEFT OUTER JOIN dbo.Titles t ON o.object_id = t.object_id ")
+								.append ("LEFT OUTER JOIN dbo.Object2Author o2a ON o.object_id = o2a.object_id ")
+								.append ("LEFT OUTER JOIN dbo.Person p1 ON o2a.person_id = p1.person_id ")
+								.append ("LEFT OUTER JOIN dbo.Object2Editor o2e ON o.object_id = o2e.object_id ")
+								.append ("LEFT OUTER JOIN dbo.Person p2 ON o2e.person_id = p2.person_id ")
+								.append ("LEFT OUTER JOIN dbo.Object2Contributor o2c ON o.object_id = o2c.object_id ")
+								.append ("LEFT OUTER JOIN dbo.Person p3 ON o2c.person_id = p2.person_id ")
+								.append ("LEFT OUTER JOIN dbo.Description d ON o.object_id = d.object_id ")
+								.append ("LEFT OUTER JOIN dbo.DateValues dv ON o.object_id = dv.object_id ")
+								.append ("LEFT OUTER JOIN dbo.Object2Language o2l ON o.object_id = o2l.object_id ")
+								.append ("LEFT OUTER JOIN dbo.Language l ON o2l.language_id = l.language_id ")
+								.append ("LEFT OUTER JOIN dbo.Object2Keywords o2k ON o.object_id = o2k.object_id ")
+								.append ("LEFT OUTER JOIN dbo.Keywords k ON o2k.keyword_id = k.keyword_id ")
+								.append ("LEFT OUTER JOIN dbo.TypeValue tv ON o.object_id = tv.object_id ")
+								.append ("LEFT OUTER JOIN dbo.FullTextLinks ftl ON o.object_id = ftl.object_id ") 
+								.append ("LEFT OUTER JOIN dbo.Publisher pu ON o.object_id = pu.object_id ")
+								.append ("WHERE o.object_id <=20 and o.object_id > 10 or o.object_id = 1213 ")
+								.append ("ORDER BY o.object_id, t.qualifier, o2a.number, o2e.number, o2c.number, d.number, dv.number, o2l.number, k.keyword_id, tv.type_id, pu.number");
+								
+		PreparedStatement preparedstmt = connection.prepareStatement (sql.toString ( ));
+		
+		return preparedstmt;
 	}
 }

@@ -118,5 +118,14 @@ public abstract class DataConnection {
 	 * @return
 	 */
 	
-	abstract public LinkedList <Record> getIdentifier (String from, String until, String set);
+	abstract public LinkedList <Record> getIdentifierList (String from, String until, String set);
+
+	/**
+	 * @param from
+	 * @param until
+	 * @param set
+	 * @return
+	 */
+	
+	abstract public LinkedList <Record> getRecordList (String from, String until, String set);
 }

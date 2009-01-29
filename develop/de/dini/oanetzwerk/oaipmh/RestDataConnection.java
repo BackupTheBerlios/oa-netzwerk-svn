@@ -40,6 +40,10 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getClassifications(java.lang.String)
+	 */
+	
 	@Override
 	public ArrayList <String> getClassifications (String identifier) {
 
@@ -47,13 +51,19 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getDateStamp(java.lang.String)
+	 */
 	@Override
 	public String getDateStamp (String identifier) {
 
 		// TODO Auto-generated method stub
 		return "1646-07-01";
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getCreators(java.lang.String)
+	 */
 	@Override
 	public ArrayList <String> getCreators (String string) {
 
@@ -61,6 +71,9 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getSubjects(java.lang.String)
+	 */
 	@Override
 	public ArrayList <String> getSubjects (String string) {
 
@@ -68,6 +81,9 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getTitles(java.lang.String)
+	 */
 	@Override
 	public ArrayList <String> getTitles (String string) {
 
@@ -75,6 +91,9 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getDates(java.lang.String)
+	 */
 	@Override
 	public ArrayList <String> getDates (String identifier) {
 
@@ -82,6 +101,9 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getDescriptions(java.lang.String)
+	 */
 	@Override
 	public ArrayList <String> getDescriptions (String identifier) {
 
@@ -89,6 +111,9 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getFormats(java.lang.String)
+	 */
 	@Override
 	public ArrayList <String> getFormats (String identifier) {
 
@@ -96,6 +121,9 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getIdentifiers(java.lang.String)
+	 */
 	@Override
 	public ArrayList <String> getIdentifiers (String identifier) {
 
@@ -103,6 +131,9 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getLanguages(java.lang.String)
+	 */
 	@Override
 	public ArrayList <String> getLanguages (String identifier) {
 
@@ -110,6 +141,9 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getPublishers(java.lang.String)
+	 */
 	@Override
 	public ArrayList <String> getPublishers (String identifier) {
 
@@ -117,6 +151,9 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getTypes(java.lang.String)
+	 */
 	@Override
 	public ArrayList <String> getTypes (String identifier) {
 
@@ -125,11 +162,20 @@ public class RestDataConnection extends DataConnection {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getIdentifier(java.lang.String, java.lang.String, java.lang.String)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getIdentifierList(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public LinkedList <Record> getIdentifier (String from, String until,
-			String set) {
+	public LinkedList <Record> getIdentifierList (String from, String until, String set) {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getRecordList(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public LinkedList <Record> getRecordList (String from, String until, String set) {
 
 		// TODO Auto-generated method stub
 		return null;

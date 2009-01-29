@@ -1139,7 +1139,7 @@ class DBDataConnection extends DataConnection {
 	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getIdentifier(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	
-	public LinkedList <Record> getIdentifier (String from, String until, String set) {
+	public LinkedList <Record> getIdentifierList (String from, String until, String set) {
 		
 		LinkedList <Record> recordList = new LinkedList <Record> ( );
 		Date fromDate;
@@ -1214,6 +1214,108 @@ class DBDataConnection extends DataConnection {
 			
 			recordList.add (record);
 			
+		} catch (SQLException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} finally {
+			
+			try {
+				
+				stmtconn.close ( );
+				
+			} catch (SQLException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
+		}
+		
+		return recordList;
+	}
+
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getRecordList(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	
+	public LinkedList <Record> getRecordList (String from, String until, String set) {
+		
+		LinkedList <Record> recordList = new LinkedList <Record> ( );
+		Date fromDate;
+		Date untilDate;
+
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult  = null;
+		
+		try {
+			
+			if (from != null && !from.equals (""))
+				fromDate = Date.valueOf (from);
+			
+			else
+				fromDate = null;
+			
+			if (until != null && !until.equals (""))
+				untilDate = Date.valueOf (until);
+			
+			else
+				untilDate = null;
+			
+			if (fromDate != null && untilDate != null)
+				
+				if (untilDate.before (fromDate))
+					throw new IllegalArgumentException ("Until before From!");
+					
+		} catch (IllegalArgumentException ex) {
+			
+			logger.warn (ex.getLocalizedMessage ( ));
+			throw ex;
+		}
+		
+		try {
+			
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection ( );
+			stmtconn.loadStatement (SelectFromDB.OAIListAll (stmtconn.connection, set, fromDate, untilDate));
+			
+			queryresult = stmtconn.execute ( );
+			
+			if (queryresult.getWarning ( ) != null) {
+				
+				for (Throwable warning : queryresult.getWarning ( )) {
+					
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			Record record = new Record ( );
+			BigDecimal oid = new BigDecimal (0);
+			
+			while (queryresult.getResultSet ( ).next ( )) {
+				
+				oid = queryresult.getResultSet ( ).getBigDecimal (1);
+				
+				if (record.getHeader ( ).getIdentifier ( ).equals (oid.toPlainString ( )))
+					record.getHeader ( ).getSet ( ).add (queryresult.getResultSet ( ).getString (3).toString ( ));
+				
+				else {
+					
+					if (!record.getHeader ( ).getIdentifier ( ).equals ("")) {
+						
+						recordList.add (record);
+						record = new Record ( );
+					}
+					
+					record.getHeader ( ).setIdentifier (queryresult.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
+					record.getHeader ( ).setDatestamp (queryresult.getResultSet ( ).getDate (2).toString ( ));
+					record.getHeader ( ).getSet ( ).add (queryresult.getResultSet ( ).getString (3).toString ( ));
+				}
+			}
+			
+			recordList.add (record);
+
 		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
