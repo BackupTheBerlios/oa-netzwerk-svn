@@ -509,6 +509,7 @@
       <classpath refid="classpath.findnbrowse" />
       <include name="**/finddummy/**" />
       <include name="**/userfrontend/**" />
+      <include name="**/search/**" />
       <include name="**/RedirectionFilter.java" />
       <include name="**/codec/*.java" />
       <include name="**/RestClient.java" />
@@ -544,6 +545,7 @@
       <webinf dir="myfaces-root/find-dummy/WEB-INF/">
         <include name="faces-config.xml" />
         <include name="userfrontend_gui.xml" />
+      	<include name="searchclientprop.xml" />
         <include name="restclientprop.xml" />
         <include name="ddc_names_de.xml" />
       </webinf>

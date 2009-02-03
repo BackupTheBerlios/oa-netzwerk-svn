@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -121,15 +122,15 @@ public class IndexerAccessServlet extends HttpServlet {
 		try { bdOID = new BigDecimal(strParam_oid); } catch(Exception ex) {}  
 		
 		if(bdOID == null) {
-			return getOverviewPage(req, resp);
+			return getOverviewPage();
 		} else {
-			return getOIDPage(req, resp, bdOID);
+			return getOIDPage(bdOID);
 		}
 		
 	}
 
 	@SuppressWarnings("unchecked")
-	private String getOverviewPage (HttpServletRequest req, HttpServletResponse resp) {
+	private static String getOverviewPage () {
 				
 		
 		StringBuffer sb = new StringBuffer();		
@@ -198,7 +199,7 @@ public class IndexerAccessServlet extends HttpServlet {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private String getOIDPage (HttpServletRequest req, HttpServletResponse resp, BigDecimal bdOID) {
+	private static String getOIDPage (BigDecimal bdOID) {
 	
 		
 		StringBuffer sb = new StringBuffer();		
@@ -284,64 +285,64 @@ public class IndexerAccessServlet extends HttpServlet {
 		    sb.append("<meta name=\"").append("oid").append("\" value=\"").append(cmf.getOid()).append("\"/>\n");				
 						
 			for(Title title : cmf.getTitleList()) {
-				sb.append("<meta name=\"").append("title").append("\" value=\"").append(title.getTitle()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("title").append("\" value=\"").append(StringEscapeUtils.escapeHtml(title.getTitle())).append("\"/>\n");				
 			}
 			
 			for(Author author : cmf.getAuthorList()) {
-				sb.append("<meta name=\"").append("author").append("\" value=\"").append(author.getFirstname() + " " + author.getLastname()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("author").append("\" value=\"").append(StringEscapeUtils.escapeHtml(author.getFirstname() + " " + author.getLastname())).append("\"/>\n");				
 			}
 			for(Contributor item : cmf.getContributorList()) {
-				sb.append("<meta name=\"").append("contributor").append("\" value=\"").append(item.getFirstname() + " " + item.getLastname()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("contributor").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getFirstname() + " " + item.getLastname())).append("\"/>\n");				
 			}
 			for(Editor item : cmf.getEditorList()) {
-				sb.append("<meta name=\"").append("editor").append("\" value=\"").append(item.getFirstname() + " " + item.getLastname()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("editor").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getFirstname() + " " + item.getLastname())).append("\"/>\n");				
 			}
 			
 			for(DateValue item : cmf.getDateValueList()) {
-				sb.append("<meta name=\"").append("date").append("\" value=\"").append(item.getDateValue()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("date").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getDateValue())).append("\"/>\n");				
 			}
 
 			for(Description item : cmf.getDescriptionList()) {
-				sb.append("<meta name=\"").append("description").append("\" value=\"").append(item.getDescription()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("description").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getDescription())).append("\"/>\n");				
 			}
 			
 			for(Format item : cmf.getFormatList()) {
-				sb.append("<meta name=\"").append("format").append("\" value=\"").append(item.getSchema_f()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("format").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getSchema_f())).append("\"/>\n");				
 			}
 			
 			for(Identifier item : cmf.getIdentifierList()) {
-				sb.append("<meta name=\"").append("identifier").append("\" value=\"").append(item.getIdentifier()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("identifier").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getIdentifier())).append("\"/>\n");				
 			}
 			
 			for(Keyword item : cmf.getKeywordList()) {
-				sb.append("<meta name=\"").append("keyword").append("\" value=\"").append(item.getKeyword()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("keyword").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getKeyword())).append("\"/>\n");				
 			}
 			
 			for(Language item : cmf.getLanguageList()) {
-				sb.append("<meta name=\"").append("language").append("\" value=\"").append(item.getLanguage()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("language").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getLanguage())).append("\"/>\n");				
 			}
 			
 			for(Publisher item : cmf.getPublisherList()) {
-				sb.append("<meta name=\"").append("publisher").append("\" value=\"").append(item.getName()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("publisher").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getName())).append("\"/>\n");				
 			}
 			
 			for(TypeValue item : cmf.getTypeValueList()) {
-				sb.append("<meta name=\"").append("type").append("\" value=\"").append(item.getTypeValue()).append("\"/>\n");				
+				sb.append("<meta name=\"").append("type").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getTypeValue())).append("\"/>\n");				
 			}
 			
 			for(Classification item : cmf.getClassificationList()) {
 				if(item instanceof DINISetClassification) {
 					DINISetClassification castedItem = (DINISetClassification)item;
-					sb.append("<meta name=\"").append("classification_DINISetClassification").append("\" value=\"").append(castedItem.getValue()).append("\"/>\n");									
+					sb.append("<meta name=\"").append("classification_DINISetClassification").append("\" value=\"").append(StringEscapeUtils.escapeHtml(castedItem.getValue())).append("\"/>\n");									
 				} else if(item instanceof DDCClassification) {
 					DDCClassification castedItem = (DDCClassification)item;
-					sb.append("<meta name=\"").append("classification_DDCClassification").append("\" value=\"").append(castedItem.getValue()).append("\"/>\n");									
+					sb.append("<meta name=\"").append("classification_DDCClassification").append("\" value=\"").append(StringEscapeUtils.escapeHtml(castedItem.getValue())).append("\"/>\n");									
 				} else if(item instanceof DNBClassification) {
 					DNBClassification castedItem = (DNBClassification)item;
-					sb.append("<meta name=\"").append("classification_DNBClassification").append("\" value=\"").append(castedItem.getValue()).append("\"/>\n");									
+					sb.append("<meta name=\"").append("classification_DNBClassification").append("\" value=\"").append(StringEscapeUtils.escapeHtml(castedItem.getValue())).append("\"/>\n");									
 				} else if(item instanceof OtherClassification) {
 					OtherClassification castedItem = (OtherClassification)item;
-					sb.append("<meta name=\"").append("classification_OtherClassification").append("\" value=\"").append(castedItem.getValue()).append("\"/>\n");									
+					sb.append("<meta name=\"").append("classification_OtherClassification").append("\" value=\"").append(StringEscapeUtils.escapeHtml(castedItem.getValue())).append("\"/>\n");									
 				}
 			}
 			
@@ -423,5 +424,9 @@ public class IndexerAccessServlet extends HttpServlet {
 		logger.warn ("Trace called");
 		this.doGet (req, resp);
 	}
+	
+//	public static void main(String[] args) {
+//		System.out.println(IndexerAccessServlet.getOIDPage(new BigDecimal("67")));
+//	}
 	
 }
