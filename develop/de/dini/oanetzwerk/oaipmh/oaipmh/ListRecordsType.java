@@ -46,6 +46,7 @@ public class ListRecordsType {
 
     @XmlElement(required = true, namespace="http://www.openarchives.org/OAI/2.0/")
     protected List<RecordType> record;
+    @XmlElement(required = false, namespace="http://www.openarchives.org/OAI/2.0/")
     protected ResumptionTokenType resumptionToken;
 
     /**

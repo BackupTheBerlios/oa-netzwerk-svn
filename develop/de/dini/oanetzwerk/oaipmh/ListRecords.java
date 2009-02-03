@@ -26,6 +26,7 @@ import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl
 import de.dini.oanetzwerk.oaipmh.oaidc.OAIDCType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.HeaderType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.ListRecordsType;
+import de.dini.oanetzwerk.oaipmh.oaipmh.MetadataType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHObjectFactory;
 import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
 import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHtype;
@@ -138,7 +139,8 @@ public class ListRecords implements OAIPMHVerbs {
 		
 		if (this.resumptionToken != null) {
 			
-			ResumptionTokenType resToType = new ResumptionTokenType ( );
+//			ResumptionTokenType resToType = new ResumptionTokenType ( );
+			ResumptionTokenType resToType = obfac.createResumptionTokenType ( );
 			
 			GregorianCalendar cal = new GregorianCalendar ( );
 			cal.add (GregorianCalendar.DAY_OF_MONTH, 1);
@@ -314,16 +316,58 @@ public class ListRecords implements OAIPMHVerbs {
 			
 			RecordType record = new RecordType ( );
 			HeaderType header = new HeaderType ( );
+			MetadataType metadata = new MetadataType ( );
+			
+			OAIDCType oaidctype = new OAIDCType ( );
 			
 			header.setIdentifier ("oai:oanet:" + recordItem.getHeader ( ).getIdentifier ( ));
+			
 			header.setDatestamp (recordItem.getHeader ( ).getDatestamp ( ));
 			
-			for (String set : recordItem.getHeader ( ).getSet ( )) {
-				
+			for (String set : recordItem.getHeader ( ).getSet ( ))
 				header.getSetSpec ( ).add (set);
-			}
 			
 			record.setHeader (header);
+			
+			if (recordItem.getMetaData ( ).getTitle ( ).size ( ) != 0)
+				for (String title : recordItem.getMetaData ( ).getTitle ( ))
+					oaidctype.getTitle ( ).add (title);
+			
+			if (recordItem.getMetaData ( ).getCreator ( ).size ( ) != 0)
+				for (String creator : recordItem.getMetaData ( ).getCreator ( ))
+					oaidctype.getCreator ( ).add (creator);
+			
+			if (recordItem.getMetaData ( ).getSubject ( ).size ( ) != 0)
+				for (String subject : recordItem.getMetaData ( ).getSubject ( ))
+					oaidctype.getSubject ( ).add (subject);
+			
+			if (recordItem.getMetaData ( ).getDescription ( ).size ( ) != 0)
+				for (String description : recordItem.getMetaData ( ).getDescription ( ))
+					oaidctype.getDescription ( ).add (description);
+			
+			if (recordItem.getMetaData ( ).getDate ( ).size ( ) != 0)
+				for (String date : recordItem.getMetaData ( ).getDate ( ))
+					oaidctype.getDate ( ).add (date);
+			
+			if (recordItem.getMetaData ( ).getType ( ).size ( ) != 0)
+				for (String type : recordItem.getMetaData ( ).getType ( ))
+					oaidctype.getType ( ).add (type);
+			
+			if (recordItem.getMetaData ( ).getFormat ( ).size ( ) != 0)
+				for (String format : recordItem.getMetaData ( ).getFormat ( ))
+					oaidctype.getFormat ( ).add (format);
+			
+			if (recordItem.getMetaData ( ).getIdentifier ( ).size ( ) != 0)
+				for (String identifier : recordItem.getMetaData ( ).getIdentifier ( ))
+					oaidctype.getIdentifier ( ).add (identifier);
+			
+			if (recordItem.getMetaData ( ).getLanguage ( ).size ( ) != 0)
+				for (String language : recordItem.getMetaData ( ).getLanguage ( ))
+					oaidctype.getLanguage ( ).add (language);
+			
+			metadata.setAny (oaidctype);
+			
+			record.setMetadata (metadata);
 			
 			records.add (record);
 		}
@@ -354,59 +398,68 @@ public class ListRecords implements OAIPMHVerbs {
 	 */
 	
 	public final void setMetadataPrefix (String metadataPrefix) {
-	
+		
 		this.metadataPrefix = metadataPrefix;
 	}
-
 	
 	/**
 	 * @return the from
 	 */
-	public final String getFrom ( ) {
 	
+	public final String getFrom ( ) {
+		
+		if (this.from == null)
+			this.from = "";
+		
 		return this.from;
 	}
-
 	
 	/**
 	 * @param from the from to set
 	 */
-	public final void setFrom (String from) {
 	
+	public final void setFrom (String from) {
+		
 		this.from = from;
 	}
-
 	
 	/**
 	 * @return the until
 	 */
-	public final String getUntil ( ) {
 	
+	public final String getUntil ( ) {
+		
+		if (this.until == null)
+			this.until = "";
+		
 		return this.until;
 	}
-
 	
 	/**
 	 * @param until the until to set
 	 */
-	public final void setUntil (String until) {
 	
+	public final void setUntil (String until) {
+		
 		this.until = until;
 	}
-
 	
 	/**
 	 * @return the set
 	 */
-	public final String getSet ( ) {
 	
+	public final String getSet ( ) {
+		
+		if (this.set == null)
+			this.set = "";
+		
 		return this.set;
 	}
-
 	
 	/**
 	 * @param set the set to set
 	 */
+	
 	public final void setSet (String set) {
 	
 		this.set = set;

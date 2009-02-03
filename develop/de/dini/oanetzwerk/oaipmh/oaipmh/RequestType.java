@@ -257,7 +257,7 @@ public class RequestType {
      *     
      */
     public void setResumptionToken(String value) {
+    	
         this.resumptionToken = value;
     }
-
 }

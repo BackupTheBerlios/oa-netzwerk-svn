@@ -1297,10 +1297,11 @@ class DBDataConnection extends DataConnection {
 				
 				oid = queryresult.getResultSet ( ).getBigDecimal (1);
 				
-				if (record.getHeader ( ).getIdentifier ( ).equals (oid.toPlainString ( )))
-					record.getHeader ( ).getSet ( ).add (queryresult.getResultSet ( ).getString (3).toString ( ));
-				
-				else {
+				if (record.getHeader ( ).getIdentifier ( ).equals (oid.toPlainString ( ))) {
+					
+					
+					
+				} else {
 					
 					if (!record.getHeader ( ).getIdentifier ( ).equals ("")) {
 						
@@ -1308,9 +1309,17 @@ class DBDataConnection extends DataConnection {
 						record = new Record ( );
 					}
 					
-					record.getHeader ( ).setIdentifier (queryresult.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
-					record.getHeader ( ).setDatestamp (queryresult.getResultSet ( ).getDate (2).toString ( ));
-					record.getHeader ( ).getSet ( ).add (queryresult.getResultSet ( ).getString (3).toString ( ));
+					record.getHeader ( ).setIdentifier (queryresult.getResultSet ( ).getBigDecimal ("object_id").toPlainString ( ));
+					record.getHeader ( ).setDatestamp (queryresult.getResultSet ( ).getDate ("repository_datestamp").toString ( ));
+					record.getMetaData ( ).getTitle ( ).add (queryresult.getResultSet ( ).getString ("title"));
+					record.getMetaData ( ).getCreator ( ).add (queryresult.getResultSet ( ).getString ("author_firstname") + " " + queryresult.getResultSet ( ).getString ("author_lastname"));
+					record.getMetaData ( ).getSubject ( ).add (queryresult.getResultSet ( ).getString ("keyword"));
+					record.getMetaData ( ).getDescription ( ).add (queryresult.getResultSet ( ).getString ("abstract"));
+					record.getMetaData ( ).getDate ( ).add (queryresult.getResultSet ( ).getDate ("date").toString ( ));
+					record.getMetaData ( ).getType ( ).add (queryresult.getResultSet ( ).getString ("type"));
+					record.getMetaData ( ).getFormat ( ).add (queryresult.getResultSet ( ).getString ("mimeformat"));
+					record.getMetaData ( ).getIdentifier ( ).add (queryresult.getResultSet ( ).getString ("link"));
+					record.getMetaData ( ).getLanguage ( ).add (queryresult.getResultSet ( ).getString ("language"));
 				}
 			}
 			

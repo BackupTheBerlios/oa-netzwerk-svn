@@ -1176,9 +1176,7 @@ public class SelectFromDB {
 		-- WHERE o.repository_datestamp > '2008-01-01'
 		
 		ORDER BY o.object_id
-
-*/
-		
+		 */
 	}
 
 	/**
@@ -1189,6 +1187,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
+	
 	public static PreparedStatement OAIListAll (Connection connection, String set, Date fromDate, Date untilDate) throws SQLException {
 		
 		/*
@@ -1238,15 +1237,16 @@ public class SelectFromDB {
 		ORDER BY o.object_id, t.qualifier, o2a.number, o2e.number, o2c.number, d.number, dv.number, o2l.number, k.keyword_id, tv.type_id, pu.number
 		*/
 		
-		StringBuffer sql = new StringBuffer ("SELECT o.object_id, t.title, t.qualifier, t.lang, ") 	//Title
-								.append ("p1.firstname, p1.lastname, ") 							//Author
-								.append ("p2.firstname, p2.lastname, ")								//Editor
-								.append ("p3.firstname, p3.lastname, ") 							//Contributor
+//		StringBuffer sql = new StringBuffer ("SELECT o.object_id, t.title, t.qualifier, t.lang, ") 								//Title
+		StringBuffer sql = new StringBuffer ("SELECT o.object_id, t.title, o.repository_datestamp, ")							//Title
+								.append ("p1.firstname AS author_firstname, p1.lastname AS author_lastname, ") 					//Author
+								.append ("p2.firstname AS editor_firstname, p2.lastname AS editor_lastname, ")					//Editor
+								.append ("p3.firstname AS contributor_firstname, p3.lastname AS contributor_lastname, ") 		//Contributor
 								.append ("d.abstract, d.lang, ")									//Description
-								.append ("dv.value, ")												//DateValue
+								.append ("dv.value AS date, ")												//DateValue
 								.append ("l.language, ")											//Language
 								.append ("k.keyword, k.lang, ")										//Keywords
-								.append ("tv.value, ")												//TypeValue
+								.append ("tv.value AS type, ")												//TypeValue
 								.append ("ftl.mimeformat, ftl.link, ")								//FullTextLinks
 								.append ("pu.name ")												//Publisher
 								.append ("FROM dbo.Object o ")
@@ -1268,7 +1268,9 @@ public class SelectFromDB {
 								.append ("LEFT OUTER JOIN dbo.Publisher pu ON o.object_id = pu.object_id ")
 								.append ("WHERE o.object_id <=20 and o.object_id > 10 or o.object_id = 1213 ")
 								.append ("ORDER BY o.object_id, t.qualifier, o2a.number, o2e.number, o2c.number, d.number, dv.number, o2l.number, k.keyword_id, tv.type_id, pu.number");
-								
+		
+		logger.debug (sql.toString ( ));
+		
 		PreparedStatement preparedstmt = connection.prepareStatement (sql.toString ( ));
 		
 		return preparedstmt;

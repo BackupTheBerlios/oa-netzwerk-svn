@@ -311,46 +311,6 @@ public class ListIdentifiers implements OAIPMHVerbs {
 		
 		logger.debug ("resumptionToken to write: " + this.resumptionToken);
 		
-//		for (Record record : recordList) {
-//			
-//			HeaderType header = new HeaderType ( );
-//			
-//			header.setIdentifier ("oai:oanet:" + record.getHeader ( ).getIdentifier ( ));
-//			header.setDatestamp (record.getHeader ( ).getDatestamp ( ));
-//			
-//			for (String set : record.getHeader ( ).getSet ( )) {
-//				
-//				header.getSetSpec ( ).add (set);
-//			}
-//			
-//			headers.add (header);
-//		}
-		
-//		try {
-//			
-//			ObjectInputStream ois = new ObjectInputStream (new FileInputStream ("webapps/oaipmh/resumtionToken/testSerial"));
-//			LinkedList <Record> recordinputList = (LinkedList <Record>) ois.readObject ( );
-//			
-//			for (Record record : recordinputList) {
-//				
-//				logger.debug (record.getHeader ( ).getIdentifier ( ));
-//				logger.debug (record.getHeader ( ).getDatestamp ( ));
-//				logger.debug (record.getHeader ( ).getSet ( ).getFirst ( ));
-//			}
-//			
-//		} catch (FileNotFoundException ex) {
-//
-//			logger.error (ex.getLocalizedMessage ( ), ex);
-//			
-//		} catch (IOException ex) {
-//
-//			logger.error (ex.getLocalizedMessage ( ), ex);
-//			
-//		} catch (ClassNotFoundException ex) {
-//
-//			logger.error (ex.getLocalizedMessage ( ), ex);
-//		}
-		
 		return headers;
 	}
 	
