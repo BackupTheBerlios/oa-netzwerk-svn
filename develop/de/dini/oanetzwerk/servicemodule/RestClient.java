@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.servicemodule;
 
 import java.io.File;
@@ -30,24 +26,73 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 /**
- * @author Michael K&uuml;hn
+ * The RestClient provides a simple connection to the REST server. All important configurations will be stored 
+ * in the config file restclientprop.xml. For more informations about restclientprop.xml see the skeleton of this file.
+ * For creating an instance of the RestClient use one of the static createRestClient methods.
+ * To send data you can use either Get-, Post-, Put- or DeleteData or sendGet-, sendPost-, sendPut- or sendDeleteRestMessage.
+ * The first ones don't encode or decode any data, the second ones encode and decode all requestest.
  * 
+ * @author Michael K&uuml;hn
  */
 
 public class RestClient {
 	
-	private String servletPath = "restserver/server";
-	private int port;
-	private boolean nossl;
-	private String url = "";
-	private String querryPath;
-	private final String username;
-	private final String password;
-	private Properties props = new Properties ( );
-	private static Logger logger = Logger.getLogger (RestClient.class);
-
 	/**
-	 * Creates a new client and initialises this client.
+	 * The path to the servlet within the servlet container. (Specified in the web.xml)
+	 */
+	
+	private String servletPath = "restserver/server";
+	
+	/**
+	 * The servlet container's port.
+	 */
+	
+	private int port;
+	
+	/**
+	 * Usage of SSl or not (if true, SSL is NOT used)
+	 */
+	
+	private boolean nossl;
+	
+	/**
+	 * The server name (i.e. localhost, oanet.cms.hu-berlin.de, foo.bar.net)
+	 */
+	
+	private String qualifiedServerName = "";
+	
+	/**
+	 * The query which will be sent to the server. (i.e. Object/1/1/ )
+	 */
+	
+	private String queryPath;
+	
+	/**
+	 * The username! what else? This will be used for authenticating on the server.
+	 */
+	
+	private final String username;
+	
+	/**
+	 * This is the secret password (don't tell anybody!) Used together with the username for authentication.
+	 */
+	
+	private final String password;
+	
+	/**
+	 * If you like to, you can store all necessary things in a property file. 
+	 */
+	
+	private Properties props = new Properties ( );
+	
+	/**
+	 * This our static log4j logger.
+	 */
+	
+	private static Logger logger = Logger.getLogger (RestClient.class);
+	
+	/**
+	 * Creates a new client and initializes this client.
 	 * The log4j is configured, the path is filtered and SSL, username and password are set.
 	 * This Constructor is private due to our factory method which will call this constructor and return an
 	 * instance of RestClient.
@@ -64,7 +109,7 @@ public class RestClient {
 		
 		if (this.props != null) {
 			
-			this.url = new String (this.props.getProperty ("serverURL", "localhost"));
+			this.qualifiedServerName = new String (this.props.getProperty ("serverURL", "localhost"));
 			
 		} else {
 			
@@ -73,7 +118,7 @@ public class RestClient {
 	}
 	
 	/**
-	 * Creates a new client and initialises this client.
+	 * Creates a new client and initializes this client.
 	 * The log4j is configured, the URL and the path are filtered and SSL, username and password are set.
 	 * This Constructor is private due to our factory method which will call this constructor and return an
 	 * instance of RestClient.
@@ -87,10 +132,10 @@ public class RestClient {
 	
 	private RestClient (String url, String path, String user, String pwd) {
 		
-		this.url = filterurl (url);
+		this.qualifiedServerName = filterurl (url);
 		this.nossl = true;
 		this.nossl = setSSL (url);
-		this.querryPath = filterpath (path);
+		this.queryPath = filterpath (path);
 		this.username = user;
 		this.password = pwd;
 		
@@ -151,7 +196,7 @@ public class RestClient {
 	
 	private RestClient (File propFile, String restQueryPath, String user, String pwd) {
 		
-		this.querryPath = filterpath (restQueryPath);
+		this.queryPath = filterpath (restQueryPath);
 		this.username = user;
 		this.password = pwd;
 		
@@ -178,18 +223,18 @@ public class RestClient {
 		if (this.props == null) {
 			
 			this.port = 443;
-			this.url = "oanet.cms.hu-berlin.de";
+			this.qualifiedServerName = "oanet.cms.hu-berlin.de";
 			this.servletPath = "restserver/server";
 			logger.warn ("No Property File found, trying default settings!");
 			
 		} else {
 			
-			this.nossl = setSSL (url);
+			this.nossl = setSSL (qualifiedServerName);
 		}
 		
 		if (!this.nossl && this.props != null) {
 			
-			this.url = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
+			this.qualifiedServerName = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
 			this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
 			this.port = new Integer (this.props.getProperty ("SSLPort", "443"));
 			System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
@@ -197,7 +242,7 @@ public class RestClient {
 			
 		} else if (this.props != null) {
 			
-			this.url = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
+			this.qualifiedServerName = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
 			this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
 			this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
 		}
@@ -355,20 +400,20 @@ public class RestClient {
 					} else {
 						
 						logger.info ("HttpStatusCode: " + statusCode);
-						logger.error ("A http-error occured while processing the IDs from server " + this.url);
+						logger.error ("A http-error occured while processing the IDs from server " + this.qualifiedServerName);
 						logger.error (method.getStatusText ( ));
 					}
 					
 					if (errorcounter++ >= 10) {
 						
-						logger.error ("We got a http-error more than 10 times during communication with server " + url + " Now we are aborting communcation and trying to process the collected datas");
+						logger.error ("We got a http-error more than 10 times during communication with server " + qualifiedServerName + " Now we are aborting communcation and trying to process the collected datas");
 						method = null;
 						
 						return null;
 						
 					} else {
 						
-						logger.info (errorcounter + " errors occured. Server: " + this.url);
+						logger.info (errorcounter + " errors occured. Server: " + this.qualifiedServerName);
 						cont = true;
 						continue;
 					}
@@ -428,23 +473,23 @@ public class RestClient {
 		
 		if (this.nossl) {
 			
-			newclient.getState ( ).setCredentials (new AuthScope (this.url, this.port, AuthScope.ANY_REALM), defaultcreds);
+			newclient.getState ( ).setCredentials (new AuthScope (this.qualifiedServerName, this.port, AuthScope.ANY_REALM), defaultcreds);
 			buffer.append ("http://");
-			buffer.append (this.url).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (querryPath);
+			buffer.append (this.qualifiedServerName).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (queryPath);
 			
 		} else {
 			
-			newclient.getState ( ).setCredentials (new AuthScope (this.url, this.port, AuthScope.ANY_REALM), defaultcreds);
+			newclient.getState ( ).setCredentials (new AuthScope (this.qualifiedServerName, this.port, AuthScope.ANY_REALM), defaultcreds);
 			buffer.append ("https://");
-			buffer.append (this.url).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (querryPath);
+			buffer.append (this.qualifiedServerName).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (queryPath);
 		}
 		
 		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 		
 		if (logger.isDebugEnabled ( ))
-			logger.debug ("URL to connect to: " + this.url);
+			logger.debug ("URL to connect to: " + this.qualifiedServerName);
 		
-		this.url = buffer.toString ( );
+		this.qualifiedServerName = buffer.toString ( );
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("connection prepared");
@@ -463,7 +508,7 @@ public class RestClient {
 	public final String GetData ( ) {
 		
 		HttpClient client = prepareConnection ( );
-		GetMethod method = new GetMethod (this.url);
+		GetMethod method = new GetMethod (this.qualifiedServerName);
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("getRequest will be used");
@@ -482,7 +527,7 @@ public class RestClient {
 	public final String PostData (String data) throws UnsupportedEncodingException {
 		
 		HttpClient client = prepareConnection ( );
-		PostMethod method = new PostMethod (this.url);
+		PostMethod method = new PostMethod (this.qualifiedServerName);
 		
 		method.setRequestEntity (new StringRequestEntity (data, "text/plain", "UTF-8"));
 		
@@ -503,7 +548,7 @@ public class RestClient {
 	public final String PutData (String data) throws UnsupportedEncodingException {
 		
 		HttpClient client = prepareConnection ( );
-		PutMethod method = new PutMethod (this.url);
+		PutMethod method = new PutMethod (this.qualifiedServerName);
 		
 		method.setRequestEntity (new StringRequestEntity (data, "text/plain", "UTF-8"));
 				
@@ -522,7 +567,7 @@ public class RestClient {
 	public final String DeleteData ( ) {
 		
 		HttpClient client = prepareConnection ( );
-		DeleteMethod method = new DeleteMethod (this.url);
+		DeleteMethod method = new DeleteMethod (this.qualifiedServerName);
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("deleteRequest will be used");
@@ -531,7 +576,9 @@ public class RestClient {
 	}
 	
 	/**
-	 * @return
+	 * Provides a {@link GetMethod} connection to the REST server which returns an already decoded REST message.
+	 * 
+	 * @return the decoded response received from the REST server
 	 */
 	
 	public RestMessage sendGetRestMessage ( ) {
@@ -542,8 +589,10 @@ public class RestClient {
 	}
 	
 	/**
-	 * @param msg
-	 * @return
+	 * Provides a {@link PostMethod} connection to the REST server which returns an already decoded REST message.
+	 * 
+	 * @param msg the REST message which will be encoded and sent via POST to the REST server
+	 * @return the decoded response received from the REST server
 	 * @throws UnsupportedEncodingException
 	 */
 	
@@ -556,8 +605,10 @@ public class RestClient {
 	}
 	
 	/**
-	 * @param msg
-	 * @return
+	 * Provides a {@link PutMethod} connection to the REST server which returns an already decoded REST message.
+	 * 
+	 * @param msg the REST message which will be encoded and sent via PUT to the REST server
+	 * @return the decoded response received from the REST server
 	 * @throws UnsupportedEncodingException
 	 */
 	
@@ -570,7 +621,9 @@ public class RestClient {
 	}
 	
 	/**
-	 * @return
+	 * Provides a {@link DeleteMethod} connection to the REST server which returns an already decoded REST message.
+	 * 
+	 * @return the decoded response received from the REST server
 	 */
 	
 	public RestMessage sendDeleteRestMessage ( ) {

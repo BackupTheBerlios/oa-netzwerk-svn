@@ -41,7 +41,7 @@ public class RestServer extends HttpServlet implements Serializable {
 	 * Serialisation is important for load balancing within the servlet container. 
 	 */
 	
-	private static final long serialVersionUID = 1L;
+	private static final long	serialVersionUID	= 9207249844687946926L;
 
 	/**
 	 * The static log4j logger. All debug logging will be made with the help of this nice static logger.
