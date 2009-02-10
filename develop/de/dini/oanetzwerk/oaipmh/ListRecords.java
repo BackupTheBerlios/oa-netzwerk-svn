@@ -89,9 +89,17 @@ public class ListRecords implements OAIPMHVerbs {
 	 */
 	
 	private String set;
-
+	
+	/**
+	 * 
+	 */
+	
 	private BigInteger completeListSize;
-
+	
+	/**
+	 * 
+	 */
+	
 	private BigInteger resumptionTokenCursor;
 	
 	/**

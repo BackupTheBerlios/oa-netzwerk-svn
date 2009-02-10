@@ -1,7 +1,3 @@
-/**
- * 
- */
-
 package de.dini.oanetzwerk.servicemodule.harvester;
 
 import org.apache.commons.cli.CommandLine;
@@ -21,6 +17,10 @@ import de.dini.oanetzwerk.utils.HelperMethods;
  */
 
 public class RunHarvester {
+	
+	/**
+	 * 
+	 */
 	
 	private static Logger logger = Logger.getLogger (RunHarvester.class);
 	

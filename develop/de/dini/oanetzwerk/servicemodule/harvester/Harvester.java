@@ -1870,7 +1870,7 @@ public class Harvester {
 				if (postObjectEntryResponse != null)
 					description = postObjectEntryResponse.getStatusDescription ( );
 				
-				if (putRawDataResult == null || putRawDataResult.getStatus ( ) != RestStatusEnum.SQL_WARNING) {
+				if (postObjectEntryResponse == null || postObjectEntryResponse.getStatus ( ) != RestStatusEnum.SQL_WARNING) {
 					
 					logger.error ("Could NOT post ObjectEntry into the database for id " + currentObject.getInternalOID ( ) + "! " + description);
 					harvStateLog.error ("Could NOT put ObjectEntry into the database for id " + currentObject.getInternalOID ( ) + "! Cause: " + description);
@@ -1901,7 +1901,7 @@ public class Harvester {
 				if (getServicesResponse != null)
 					description = getServicesResponse.getStatusDescription ( );
 				
-				if (putRawDataResult == null || putRawDataResult.getStatus ( ) != RestStatusEnum.SQL_WARNING) {
+				if (getServicesResponse == null || getServicesResponse.getStatus ( ) != RestStatusEnum.SQL_WARNING) {
 					
 					logger.error ("Could NOT get Harvester-Service-ID from database for id " + currentObject.getInternalOID ( ) + "! " + description);
 					harvStateLog.error ("Could NOT get Harvester-Service-ID from database for id " + currentObject.getInternalOID ( ) + "! Cause: " + description);
@@ -2024,8 +2024,7 @@ public class Harvester {
 		
 		try {
 			
-			prepareRestTransmission (
-					"ObjectEntry/" + currentObject.getInternalOID ( ) + "/")
+			prepareRestTransmission ("ObjectEntry/" + currentObject.getInternalOID ( ) + "/")
 					.sendPostRestMessage (this.createObjectEntryRestMessage (currentObject, currentObject.getFailureCounter ( )));
 			
 		} catch (UnsupportedEncodingException ex) {
