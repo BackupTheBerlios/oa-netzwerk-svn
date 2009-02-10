@@ -475,3 +475,36 @@ SELECT @zeit = time FROM inserted
 BEGIN 
    INSERT INTO dbo.Worklist (object_id, time, service_id) values (@object_id, @zeit, @service_id)
 END;
+
+
+-- Daten fuer den OAI-Export (ListRecords)
+CREATE TABLE dbo.OAIExportCache (
+       object_id NUMERIC(38) NOT NULL
+     , create_date DATETIME NOT NULL
+	 , xml UNITEXT
+     , PRIMARY KEY (object_id, create_date)
+);
+
+
+ALTER TABLE dbo.OAIExportCache
+  ADD CONSTRAINT FK_Object_2_OAIExportCache
+      FOREIGN KEY (object_id)
+      REFERENCES dbo.Object (object_id);
+
+
+-- Daten fuer den DDC-Browsing
+CREATE TABLE dbo.DDC_Browsing_Help (
+       DDC_Categorie UNIVARCHAR(10) NOT NULL
+     , name_deu UNIVARCHAR(255) NOT NULL
+	 , name_eng UNIVARCHAR(255) NOT NULL
+	 , direct_count INT DEFAULT 0
+	 , sub_count INT DEFAULT 0
+	 , parent_DDC UNIVARCHAR(10) NULL
+     , PRIMARY KEY (DDC_Categorie)
+);
+
+ALTER TABLE dbo.DDC_Browsing_Help
+  ADD CONSTRAINT FK_DDC_Browsing_Help_2_DDC_Categories
+      FOREIGN KEY (DDC_Categorie)
+      REFERENCES dbo.DDC_Categories (DDC_Categorie);
+
