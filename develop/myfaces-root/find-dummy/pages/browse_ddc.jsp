@@ -48,8 +48,10 @@
 					(<t:outputText value="#{node_lvl2.longItemCount}"/>)
 					</div>
   	 	            <t:dataList id="ddcnavilist_lvl3" value="#{node_lvl2.listSubnodes}" var="node_lvl3" layout="unorderedList">
-						<t:outputText value="#{node_lvl3.strDDCValue}"/>&nbsp;<t:outputText value="#{node_lvl3.strNameDE}"/>&nbsp;(<t:outputText value="#{node_lvl3.longItemCount}"/>)
-	            		<t:dataList id="ddcnavilist_lvl4" value="#{node_lvl1.listSubnodes}" var="node_lvl4" layout="unorderedList">
+						<span class="span_ddc_num"><t:outputText value="#{node_lvl3.strDDCValue}"/></span>&nbsp;
+						<span class="span_ddc_name"><t:outputText value="#{node_lvl3.strNameDE}"/></span>&nbsp;
+                        (<t:outputText value="#{node_lvl3.longItemCount}"/>)
+	            		<t:dataList id="ddcnavilist_lvl4" value="#{node_lvl3.listSubnodes}" var="node_lvl4" layout="unorderedList">
 							<t:outputText value="#{node_lvl4.strDDCValue}"/>&nbsp;<t:outputText value="#{node_lvl4.strNameDE}"/>&nbsp;(<t:outputText value="#{node_lvl4.longItemCount}"/>)
 						</t:dataList>
 					</t:dataList>

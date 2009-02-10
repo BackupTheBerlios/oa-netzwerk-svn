@@ -51,7 +51,15 @@ public class HitBean implements Serializable {
 		logger.debug("getTrimmedTitle() for oid " + completeMetadata.getOid());
 		Title title = completeMetadata.getTitleList().get(0);
 		String s = title.getTitle();
-		if(s.length() > FrontentConstants.INT_TITLE_TRIMSIZE) s = s.substring(0, FrontentConstants.INT_TITLE_TRIMSIZE-4) + "...";
+		if(s.length() > FrontendConstants.INT_TITLE_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_TITLE_TRIMSIZE-4) + "...";
+		return s;
+	}
+
+	public String getTrimmedClipboardTitle() {
+		logger.debug("getTrimmedClipboardTitle() for oid " + completeMetadata.getOid());
+		Title title = completeMetadata.getTitleList().get(0);
+		String s = title.getTitle();
+		if(s.length() > FrontendConstants.INT_CLIPBOARD_TITLE_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_CLIPBOARD_TITLE_TRIMSIZE-4) + "...";
 		return s;
 	}
 	
@@ -75,7 +83,7 @@ public class HitBean implements Serializable {
 			}		
 		}
 		String s = sb.toString();
-		if(s.length() > FrontentConstants.INT_CREATORS_TRIMSIZE) s = s.substring(0, FrontentConstants.INT_CREATORS_TRIMSIZE-4) + "...";			
+		if(s.length() > FrontendConstants.INT_CREATORS_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_CREATORS_TRIMSIZE-4) + "...";			
 		return s;
 	}
 	
@@ -100,7 +108,7 @@ public class HitBean implements Serializable {
 			}
 			s = sb.toString();
 		}		
-		if(s.length() > FrontentConstants.INT_KEYWORDS_TRIMSIZE) s = s.substring(0, FrontentConstants.INT_KEYWORDS_TRIMSIZE-4) + "...";			
+		if(s.length() > FrontendConstants.INT_KEYWORDS_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_KEYWORDS_TRIMSIZE-4) + "...";			
 		return s;
 	}
 	
@@ -136,5 +144,14 @@ public class HitBean implements Serializable {
 		return "details_clicked";
 	}
 	
+	public String actionMerkenLink() {
+		this.parentHitlistBean.addSetClipboardOID(this.completeMetadata.getOid());
+		return "merken_clicked";
+	}
+	
+	public String actionVerwerfenLink() {
+		this.parentHitlistBean.removeSetClipboardOID(this.completeMetadata.getOid());
+		return "verwerfen_clicked";
+	}
 	
 }

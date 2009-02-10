@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
@@ -36,6 +38,7 @@ public class HitlistBean implements Serializable {
 	private List<BigDecimal> listHitOID;
 	private HashMap<BigDecimal, HitBean> mapHitBean;
 	private BigDecimal selectedDetailsOID = null;
+	private TreeSet<BigDecimal> setClipboardOID;
 	
 	public HitlistBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		
@@ -44,6 +47,14 @@ public class HitlistBean implements Serializable {
 		
 		this.listHitOID = new ArrayList<BigDecimal>();
 		this.mapHitBean = new HashMap<BigDecimal, HitBean>();	
+		this.setClipboardOID = new TreeSet<BigDecimal>(new Comparator<BigDecimal>() {
+            // das Set ist immer nach dem trimmed title sortiert
+			public int compare(BigDecimal o1, BigDecimal o2) {
+				String title1 = mapHitBean.get(o1).getTrimmedTitle();
+				String title2 = mapHitBean.get(o2).getTrimmedTitle();			
+				return title1.compareTo(title2);
+			}
+		});
 		
 		this.fakefillListHitOID();
 		this.updateHitlistMetadata();
@@ -76,6 +87,14 @@ public class HitlistBean implements Serializable {
 
 	public void setParentSearchBean(SearchBean parentSearchBean) {
 		this.parentSearchBean = parentSearchBean;
+	}	
+
+	public TreeSet<BigDecimal> getSetClipboardOID() {
+		return setClipboardOID;
+	}
+
+	public void setSetClipboardOID(TreeSet<BigDecimal> setClipboardOID) {
+		this.setClipboardOID = setClipboardOID;
 	}
 
 	public BigDecimal getSelectedDetailsOID() {
@@ -85,37 +104,32 @@ public class HitlistBean implements Serializable {
 	public void setSelectedDetailsOID(BigDecimal selectedDetailsOID) {
 		this.selectedDetailsOID = selectedDetailsOID;
 	}
-
+	
 	//////////////////////////////////////////////////////////////////////////////
 
+	public void addSetClipboardOID(BigDecimal anOIDtoAdd) {
+		this.setClipboardOID.add(anOIDtoAdd);
+	}
+	
+	public void removeSetClipboardOID(BigDecimal anOIDtoAdd) {
+		this.setClipboardOID.remove(anOIDtoAdd);
+	}
+	
+	public List<BigDecimal> getListClipboardOID() {
+		return new ArrayList<BigDecimal>(setClipboardOID);
+	}
+	
+	public int getSizeListClipboardOID() {
+		return setClipboardOID.size();
+	}
+	
 	public int getSizeListHitOID() {
 		return listHitOID.size();
 	}
 	
 	public void fakefillListHitOID() {
 		listHitOID = new ArrayList<BigDecimal>();
-		
-/*		listHitOID.add(new BigDecimal("1609"));
-		listHitOID.add(new BigDecimal("11100"));
-		listHitOID.add(new BigDecimal("11200"));
-		listHitOID.add(new BigDecimal("11300"));
-		listHitOID.add(new BigDecimal("11400"));
-		listHitOID.add(new BigDecimal("11500"));
-		listHitOID.add(new BigDecimal("11600"));
-		listHitOID.add(new BigDecimal("11700"));
-		listHitOID.add(new BigDecimal("11800"));
-		listHitOID.add(new BigDecimal("11900"));
-		listHitOID.add(new BigDecimal("12000"));
-		listHitOID.add(new BigDecimal("12100"));
-		listHitOID.add(new BigDecimal("12200"));
-		listHitOID.add(new BigDecimal("12300"));
-		listHitOID.add(new BigDecimal("12400"));
-		listHitOID.add(new BigDecimal("12500"));
-		listHitOID.add(new BigDecimal("12600"));
-		listHitOID.add(new BigDecimal("12700"));
-		listHitOID.add(new BigDecimal("12800"));
-		listHitOID.add(new BigDecimal("12900"));*/
-		
+				
 		listHitOID.add(new BigDecimal("2569"));
 		listHitOID.add(new BigDecimal("2143"));
 		listHitOID.add(new BigDecimal("1402"));
@@ -132,8 +146,13 @@ public class HitlistBean implements Serializable {
 	}
 	
 	public void updateHitlistMetadata() {
-		mapHitBean = new HashMap<BigDecimal, HitBean>();	
+		// TODO: hitbean-Einträge, die in setClipboard auftauchen, nicht verwerfen!
+		
+		//mapHitBean = new HashMap<BigDecimal, HitBean>();
+		
 		for(BigDecimal oid : listHitOID) {
+			if(mapHitBean.containsKey(oid)) continue;
+			
 			//CompleteMetadata cm = CompleteMetadata.createDummy();
 			CompleteMetadata cm = fetchCompleteMetadataByOID(oid);
 			logger.debug("fetched cm for oid " + oid);
@@ -144,8 +163,8 @@ public class HitlistBean implements Serializable {
 			HitBean hb = new HitBean();
 			hb.setParentHitlistBean(this);
 			//TODO: dont do this in productive ^^ ---->
-			cm.setDuplicateProbabilityList(new ArrayList<DuplicateProbability>());
-			cm.setFullTextLinkList(new ArrayList<FullTextLink>());			
+			if(cm.getDuplicateProbabilityList() == null) cm.setDuplicateProbabilityList(new ArrayList<DuplicateProbability>());			
+			if(cm.getFullTextLinkList() == null) cm.setFullTextLinkList(new ArrayList<FullTextLink>());			
 			//<----
 			hb.setCompleteMetadata(cm);
 			mapHitBean.put(oid, hb);

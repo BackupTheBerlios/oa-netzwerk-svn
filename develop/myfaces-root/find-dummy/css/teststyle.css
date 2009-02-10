@@ -33,6 +33,10 @@ a:active {
 
 /* spezielles*/
 
+img {
+	  border: none;	
+}
+
 dt {
   font-size:18px;
   color:#0000ff;
@@ -79,11 +83,21 @@ dt {
 #div_hitlist_scroller table {
   width: auto;
 }
+.paginator {
+  /* das ist für den Scroller*/
+  font-size: 11px;	
+}
+.scroller {
+  /* das ist für den Scroller*/
+  font-size: 9px;	
+}
+
 .colHit {
-  padding: 15px;
-  margin-top: 10px;
-  border-left: 5px solid silver;	
-  border-bottom: 1px solid silver;	
+  padding: 10px;
+  /*margin-top: 10px;*/
+  /*border-left: 5px solid silver;*/	
+  /*border-bottom: 1px solid silver;*/	
+  border-top: 1px solid silver;
   
 }
 #div_hit_overview {
@@ -94,6 +108,14 @@ dt {
   font-size: 11px;
   font-weight: bold;	
 }
+.command_link {
+  font-size: 9px;
+  /*font-weight: bold;*/
+}
+.command_link img {
+  margin-top: 5px;
+}
+
 #div_hitlist ul {
   font-size: 10px;
 }
@@ -117,6 +139,57 @@ dt {
 	font-size: 10px;
 	color: silver; 
 }
+
+/* Seitenaufteilung -- Hitlist */
+ 
+#div_inpagecenter_box {
+  float: left;
+  width: 70%;	  
+}
+#div_inpageright_box {
+  float: left;
+  width: 30%;	  
+}
+#div_opened_inpageright_box {
+  margin-left: 40px;
+  float: left;
+  width: 95%;	  
+}
+
+/* Clipboard in Hitlist */
+
+#div_clipboard_header {
+  border-top:1px solid black;
+  border-left:3px solid silver;
+  border-right:3px solid silver;
+  padding-left: 10px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  background-color: silver;
+  margin-top: 30px;
+}
+#div_clipboard_overview {
+  border-top:1px solid black;
+  border-left:3px solid silver;
+  border-right:3px solid silver;
+  padding-left: 10px;
+  height:100%;  
+}
+#div_clipboard_overview ul {
+  padding-left: 5px;
+  list-style: none;		
+}
+#div_clipboard_footer {
+  border-top:3px solid black;
+  border-left:3px solid silver;
+  border-right:3px solid silver;
+  border-bottom:1px solid black;
+  padding-left: 10px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+/* hitdetails */
 
 #div_hitdetails_navi {
   margin-left: 10px;

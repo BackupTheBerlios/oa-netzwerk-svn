@@ -19,8 +19,11 @@ public class DDCNameResolver {
 	private static Properties propNames_de = null;
 
 	public DDCNameResolver() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
-		if(propNames_de == null)
+		try {
 		  this.propNames_de = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/ddc_names_de.xml");
+		} catch(Exception ex) {
+  		  this.propNames_de = HelperMethods.loadPropertiesFromFile ("ddc_names_de.xml");
+		}
 	}
 	
 	public static String getCategoryName(String strDDCNumber, String strLang) {
