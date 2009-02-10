@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
 import de.dini.oanetzwerk.utils.imf.Contributor;
+import de.dini.oanetzwerk.utils.imf.DateValue;
 import de.dini.oanetzwerk.utils.imf.Description;
 import de.dini.oanetzwerk.utils.imf.FullTextLink;
 import de.dini.oanetzwerk.utils.imf.Identifier;
@@ -48,7 +49,7 @@ public class HitBean implements Serializable {
 	//////////////////////////////////////////////////////////////////////////////
 	
 	public String getTrimmedTitle() {
-		logger.debug("getTrimmedTitle() for oid " + completeMetadata.getOid());
+		//logger.debug("getTrimmedTitle() for oid " + completeMetadata.getOid());
 		Title title = completeMetadata.getTitleList().get(0);
 		String s = title.getTitle();
 		if(s.length() > FrontendConstants.INT_TITLE_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_TITLE_TRIMSIZE-4) + "...";
@@ -56,7 +57,7 @@ public class HitBean implements Serializable {
 	}
 
 	public String getTrimmedClipboardTitle() {
-		logger.debug("getTrimmedClipboardTitle() for oid " + completeMetadata.getOid());
+		//logger.debug("getTrimmedClipboardTitle() for oid " + completeMetadata.getOid());
 		Title title = completeMetadata.getTitleList().get(0);
 		String s = title.getTitle();
 		if(s.length() > FrontendConstants.INT_CLIPBOARD_TITLE_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_CLIPBOARD_TITLE_TRIMSIZE-4) + "...";
@@ -112,6 +113,22 @@ public class HitBean implements Serializable {
 		return s;
 	}
 	
+	public String getMergedKeywords() {
+		StringBuffer sb = new StringBuffer();
+		List<Keyword> listKeywords = completeMetadata.getKeywordList();
+		if(listKeywords != null && listKeywords.size() > 0) {
+			for(int i = 0; i < listKeywords.size(); i++) {
+				Keyword kw = listKeywords.get(i);
+				sb.append(kw.getKeyword());
+				String lang = kw.getLanguage();
+				if(lang != null && lang.length() > 0) sb.append("(").append(lang).append(")");
+				if(i < listKeywords.size()-1) sb.append(", ");
+			}
+		}
+		String s = sb.toString();
+		return s;
+	}
+	
 	public String getBestLink() {
 		List<FullTextLink> listFTL = completeMetadata.getFullTextLinkList();
 		String strFTL = "";
@@ -129,6 +146,14 @@ public class HitBean implements Serializable {
 			}	
 		}
 		return strFTL;
+	}
+	
+	public String getTrimmedDate() {
+		//logger.debug("getTrimmedDate() for oid " + completeMetadata.getOid());
+		if(completeMetadata.getDateValueList().isEmpty()) return "unbekannt";
+		DateValue dv = completeMetadata.getDateValueList().get(0);
+		String s = (dv.getDateValue().split("-"))[0]; 
+		return s;
 	}
 	
 	public String getMetadatastring() {

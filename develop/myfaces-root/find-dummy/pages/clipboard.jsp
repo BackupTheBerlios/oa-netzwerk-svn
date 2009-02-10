@@ -36,29 +36,47 @@
 
         <div id="div_clipboard_header">
             <span class="command_link">
-               <h:commandLink action="close_clipboard" title="Merkzettel verkleinern"><img src="../img/16x16_minimize.PNG" /></h:commandLink>
+               <h:commandLink action="close_clipboard" title="Merkzettel verkleinern"><img src="../img/16x16_minimize.png" /></h:commandLink>
             </span>
             <h:commandLink action="close_clipboard" title="Merkzettel verkleinern">
             Merkzettel
             </h:commandLink>
         </div>
-        <div id="div_clipboard_overview">
+		<div id="div_clipboard_overview">
 
             <t:dataList id="clipboard_overview" value="#{searchBean.hitlist.listClipboardOID}" var="clipboardOID" layout="unorderedList" first="0" dir="LTR">
+			   
+			   <div class="div_clipboard_hit_header">
                <span class="command_link">
-               <h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.PNG" /></h:commandLink>
+               <h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.png" /></h:commandLink>
                </span>
                <span class="command_link">
-               <h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionVerwerfenLink}" title="Objekt aus der Merkliste entfernen"><img src="../img/16x16_minus.PNG" /></h:commandLink>
+               <h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionVerwerfenLink}" title="Objekt aus der Merkliste entfernen"><img src="../img/16x16_minus.png" /></h:commandLink>
                </span>		
 			   <span class="list-identifier">
 			   <h:outputLink value="#{searchBean.hitlist.mapHitBean[clipboardOID].bestLink}" target="_blank" title="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedTitle}">
                <t:outputText value="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedTitle}"/>
                </h:outputLink>
                </span>
-               <span class="internal_identifier">(OID: <h:outputText value="#{clipboardOID}"/>)</span>
+				</div>
+
+			   <div class="div_clipboard_hit_details">               
+               <span class="hit-creators"><t:outputText value="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedCreators}"/> (<t:outputText value="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedDate}"/>):</span>
+               <%//<br/><span class="hit-keywords"><t:outputText value="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedKeywords}"/></span><br/>%>
+ 			   <span class="hit-url"><t:outputText value="#{searchBean.hitlist.mapHitBean[clipboardOID].bestLink}"/></span>
+			   <span class="internal_identifier">(OID: <h:outputText value="#{clipboardOID}"/>)</span>
+			   </div>
+
 			</t:dataList>
+
+		</div>
+        <div id="div_clipboard_footer">
+            <span class="command_link">
+               <h:commandLink action="clipboard_export_htmllist" title="Export des Merkzettels als HTML-Seite" target="_blank">[export list -- plain html]</h:commandLink>
+            </span>
         </div>
+
+
 </div>
 
 </h:form>

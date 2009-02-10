@@ -27,15 +27,24 @@
 
    			    <h:form>
 				<span class="center">
-                <img src="../img/Logo_oan_rgb_micro.PNG" />
-				<br/>
-				<h:outputText value="#{index.linkname_search}" />&nbsp;
-				<h:commandLink value="#{index.linkname_browse_ddc}" action="browse_ddc"/>
-				<br/>
+                <img src="../img/Logo_oan_rgb_micro.png" />
+				
+				<div id="div_option_tabs">
+					<div>
+						<h:outputText value="#{index.linkname_search}" />
+					</div>
+					<div>
+						<h:commandLink value="#{index.linkname_browse_ddc}" action="browse_ddc"/>
+					</div>
+				</div>
+
+				<div id="div_search_widgets">
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche"
 					         value="#{searchBean.strOneSlot}" />
 			    <h:commandButton value="#{index.find}"
 			                     action="#{searchBean.actionSearchButton}" />
+                </div>
+ 
 				<t:div rendered='#{searchBean.strRepositoryFilterRID != ""}'>
 					<small>Die Suchmaske wurde eingeschr&auml;nkt auf folgende Quelle:</small><br />
 					<h:outputLink value="#{searchBean.strRepositoryFilterURL}">

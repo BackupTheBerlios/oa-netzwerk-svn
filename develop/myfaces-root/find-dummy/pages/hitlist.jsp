@@ -63,13 +63,15 @@
 
             <h:dataTable id="hitlist" value="#{searchBean.hitlist.listHitOID}" var="hitOID" columnClasses="colHit" rows="5">
 				<h:column>
-						<span class="list-identifier"><h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}" target="_blank">
+                        <div class="div_hit_header">
+						  <span class="list-identifier"><h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}" target="_blank">
 						  <t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedTitle}"/></h:outputLink></span>&nbsp;
-                          <span class="command_link"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.PNG" /></h:commandLink></span>
-                          <span class="command_link"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionMerkenLink}" title="Objekt zur Merkliste hinzufügen"><img src="../img/16x16_plus.PNG" /></h:commandLink></span>						
-                        <div id="div_hit_overview"><nosp>
-                          <span class="hit-creators"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedCreators}"/></span><br/>
-						  <span class="hit-keywords"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedKeywords}"/></span><br/>
+                          <span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.png"/></h:commandLink></span>
+                          <span class="command_link_plus"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionMerkenLink}" title="Objekt zur Merkliste hinzufügen"><img src="../img/16x16_plus.png"/></h:commandLink></span>
+                        </div>						
+                        <div class="div_hit_overview"><nosp>
+                          <span class="hit-creators"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedCreators}"/> (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedDate}"/>):</span>
+                          <span class="hit-keywords"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedKeywords}"/></span><br/>
 						  <span class="hit-url"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}"/></span><br/>
 						  <span class="internal_identifier">(OID: <h:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.oid}"/>)</span>						
 						</div>
@@ -82,7 +84,7 @@
 <div id="div_inpageright_box">
         <div id="div_clipboard_header">
             <span class="command_link">
-               <h:commandLink action="show_clipboard" title="Merkzettel öffnen"><img src="../img/16x16_maximize.PNG" /></h:commandLink>
+               <h:commandLink action="show_clipboard" title="Merkzettel öffnen"><img src="../img/16x16_maximize.png" /></h:commandLink>
             </span>
             <h:commandLink action="show_clipboard" title="Merkzettel öffnen">
             Merkzettel
@@ -90,18 +92,18 @@
         </div>
         <div id="div_clipboard_overview">
             <t:dataList id="clipboard_overview" value="#{searchBean.hitlist.listClipboardOID}" var="clipboardOID" layout="unorderedList" first="0" dir="LTR">
-               <span class="command_link">
-               <h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.PNG" /></h:commandLink>
+               <span class="command_link_lupe">
+               <h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.png"/></h:commandLink>
                </span>
-               <span class="command_link">
-               <h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionVerwerfenLink}" title="Objekt aus der Merkliste entfernen"><img src="../img/16x16_minus.PNG" /></h:commandLink>
+               <span class="command_link_minus">
+               <h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionVerwerfenLink}" title="Objekt aus der Merkliste entfernen"><img src="../img/16x16_minus.png"/></h:commandLink>
                </span>		
 			   <span class="details_link">
 			   <h:outputLink value="#{searchBean.hitlist.mapHitBean[clipboardOID].bestLink}" target="_blank" title="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedTitle}">
                <t:outputText value="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedClipboardTitle}"/>
                </h:outputLink>
                </span>
-               <span class="internal_identifier">(OID: <h:outputText value="#{clipboardOID}"/>)</span>
+               <% // <span class="internal_identifier">(OID: <h:outputText value="#{clipboardOID}"/>)</span> %>
 			</t:dataList>
         </div>
         <div id="div_clipboard_footer">

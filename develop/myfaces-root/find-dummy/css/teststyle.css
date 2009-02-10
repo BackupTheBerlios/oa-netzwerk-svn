@@ -9,6 +9,15 @@ span, a, table, td, form, img, li {
    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
 
+body {
+    font-size: 12px;	
+}
+
+h1, h2, h3, h4, h5 {
+    color: #000044;
+    font-weight: bold;
+}
+
 /*allgemeines*/
 
 a:link {
@@ -35,6 +44,7 @@ a:active {
 
 img {
 	  border: none;	
+	  vertical-align: bottom;
 }
 
 dt {
@@ -55,6 +65,32 @@ dt {
 #div_main_search img {
   margin-bottom: 25;
 }
+
+#div_option_tabs {
+  font-size:14px;
+  padding-left: 50px;
+}
+#div_option_tabs div {
+  background:#EEEEEE none repeat scroll 0 50%;
+  border-left:1px solid gray;
+  border-right:1px solid gray;
+  border-top:1px solid gray;
+  float: left;
+  padding-left:5px;
+  padding-right:5px;
+  padding-bottom:5px;
+  margin-left:5px;
+  margin-right:5px;  
+  
+}
+#div_search_widgets {
+  background:#EEEEEE none repeat scroll 0;
+  border:1px solid gray;
+  float:left;
+  margin-left:40px;
+  padding:5px;
+}
+
 #div_flat_search {
   margin-top: 10px;
   margin-left: 10px;
@@ -93,50 +129,77 @@ dt {
 }
 
 .colHit {
-  padding: 10px;
-  /*margin-top: 10px;*/
-  /*border-left: 5px solid silver;*/	
-  /*border-bottom: 1px solid silver;*/	
-  border-top: 1px solid silver;
-  
+  /*border-top: 1px solid silver;*/  
 }
-#div_hit_overview {
-  margin-top: 5px;	
-  font-size: 10px;
+.div_hit_header {
+  border-top: 1px solid silver;
+  background: #FFFFFF none repeat scroll 0 50%;
+  padding-top: 5px;
+  padding-left: 10px;
+  padding-bottom: 5px;
+}
+.div_hit_overview {
+  background: #FFFFFF none repeat scroll 0 50%;
+  padding-left: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 .details_link {
   font-size: 11px;
-  font-weight: bold;	
+  font-weight: bold;
+  line-height: 18px;	
 }
 .command_link {
   font-size: 9px;
   /*font-weight: bold;*/
 }
-.command_link img {
-  margin-top: 5px;
-}
 
-#div_hitlist ul {
-  font-size: 10px;
+/*
+.command_link_lupe {
+  background: transparent url(../img/16x16_lupe.PNG) no-repeat scroll 0 100%;
+  padding-left: 20px;
 }
-#div_hitlist ul li {
-  float: left;
-  list-style: none;	
+.command_link_lupe span {
+  display: none;
+}
+.command_link_plus {
+  background: transparent url(../img/16x16_plus.PNG) no-repeat scroll 0 100%;
+  padding-left: 20px;
+}
+.command_link_plus span {
+  display: none;
+}
+.command_link_minus {
+  background: transparent url(../img/16x16_minus.PNG) no-repeat scroll 0 100%;
+  padding-left: 20px;
+}
+.command_link_minus span {
+  display: none;
+}*/
+
+.command_link a img {
+  margin-top: 0px;
+  vertical-align: bottom;
+}
+.list-identifier {
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 18px; 
 }
 .hit-url {
-  font-size: 10px;
+  font-size: 11px;
   color: #008800;
 }
 .hit-creators {
-  font-size: 10px;
-  color: #880000;
+  font-size: 11px;
+  /*color: #000000;*/
 }
 .hit-keywords {
-  font-size: 10px;
-  color: #888800;
+  font-size: 11px;
+  /*color: #000000;*/
 }
 .internal_identifier {
-	font-size: 10px;
+	font-size: 11px;
 	color: silver; 
 }
 
@@ -160,36 +223,54 @@ dt {
 
 #div_clipboard_header {
   border-top:1px solid black;
-  border-left:3px solid silver;
-  border-right:3px solid silver;
-  padding-left: 10px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  background-color: silver;
+  border-left:1px solid black;
+  border-right:1px solid black;
+  padding: 10px;
+  background-color: #f0f0ff;
   margin-top: 30px;
+  margin-right: 10px;
 }
 #div_clipboard_overview {
   border-top:1px solid black;
-  border-left:3px solid silver;
-  border-right:3px solid silver;
-  padding-left: 10px;
-  height:100%;  
+  border-left:1px solid black;
+  border-right:1px solid black;
+  padding: 10px;
+  margin-right: 10px;
 }
 #div_clipboard_overview ul {
-  padding-left: 5px;
   list-style: none;		
 }
 #div_clipboard_footer {
-  border-top:3px solid black;
-  border-left:3px solid silver;
-  border-right:3px solid silver;
-  border-bottom:1px solid black;
-  padding-left: 10px;
-  padding-top: 3px;
-  padding-bottom: 3px;
+  border: 1px solid black;
+  padding: 10px; 
+  margin-right: 10px;
 }
 
-/* hitdetails */
+
+/* nur innerhalb von clipboard */
+
+#div_clipboard_overview_left {
+  float: left;
+  padding: 10px;
+  margin-right: 10px;
+  width: 60%
+}
+#div_clipboard_overview_right {
+  float: left;
+  padding: 10px;
+  margin-right: 10px;
+  width: 30%
+}
+
+.div_clipboard_hit_header {
+	
+}
+
+.div_clipboard_hit_details {
+	margin-left:38px;
+}
+
+/* ---------------------- hitdetails ---------------------------------------------- */
 
 #div_hitdetails_navi {
   margin-left: 10px;
@@ -208,7 +289,6 @@ dt {
 #div_hitdetails table {
 	border: thin;
 	border-color: black;
-	width: 100%;	
 }
 #div_hitdetails td {
 	padding: 5px;	
@@ -223,12 +303,24 @@ dt {
 	background-color: #EEEEFF;
 	font-size: 11px;	
 }
-#div_hitdetails ul li {
+#div_hitdetails ul {
   float: left;
-  /*list-style: none;*/
-  margin-left: 15px;
+  list-style: none;
+}
+#div_hitdetails ul li {
+  margin-left: 5px;
   margin-right: 5px;	
 }
+#div_hitdetails_abstract {
+  width: 100%;	
+}
+#div_hitdetails_abstract div {
+  width: 45%;	
+  float: left;
+  margin-left:5px;
+  padding-right:10px;
+}
+
 /* BROWSING ------------------------------------------------------------------------------------ */
 #div_simplebrowselist {
   margin-left: 10px;

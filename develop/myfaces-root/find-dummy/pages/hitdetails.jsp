@@ -96,19 +96,20 @@
 				<tr>
 				<td class="hitlist_head">Zusammenfassung:</td>
 				<td class="hitlist_content">			
+					<div id="div_hitdetails_abstract">
 							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.descriptionList}" 
-			                            var="desc" layout="unorderedList" first="0">
+			                            var="desc" layout="simple" first="0">
+								<div>
 								<h:outputText value="#{desc.description}"/>
+								</div>
 							</t:dataList>
+					</div>
 				</td>
 				</tr>
 				<tr>
 				<td class="hitlist_head">Schlagworte:</td>
 				<td class="hitlist_content">			
-							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.keywordList}" 
-			                            var="keyword" layout="unorderedList" first="0"	dir="LTR">
-								<t:outputText value="#{keyword.keyword}"></t:outputText>&nbsp;<t:outputText value="(#{keyword.language})" rendered='#{keyword.language != ""}'></t:outputText>&nbsp;
-							</t:dataList>
+					<h:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].mergedKeywords}" />
 				</td>
 				</tr>
 				<tr>
@@ -174,12 +175,16 @@
 							</t:dataList>
 				</td>
 				</tr>
-				<tr>
-				<td class="hitlist_head">Metadatensatz:</td>
-				<td class="hitlist_content">			
-					<h:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].metadatastring}"/>
-				</td>
-				</tr>
+
+				<%
+				//<tr>
+				//<td class="hitlist_head">Metadatensatz:</td>
+				//<td class="hitlist_content">			
+				//	<h:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].metadatastring}"/>
+				//</td>
+				//</tr>
+                %>
+
 			</table>
 
         </div>     
