@@ -18,5 +18,5 @@ public enum RestKeyword {
 	LoginData,
 	DDCCategories,
 	DuplicateProbabilities,
-	UNKNOWN
+	UNKNOWN, OAIExportCache
 }

@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.oaipmh.Record;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
@@ -131,7 +132,7 @@ public class DCGenerator {
 			}
 		}
 	}
-
+	
 	/**
 	 * 
 	 */
@@ -157,8 +158,8 @@ public class DCGenerator {
 	
 	private void getOIDs ( ) {
 		
-//		RestMessage getWorkflowDBResponse = prepareRestTransmission ("WorkflowDB/" + this.serviceID.toPlainString ( )).sendGetRestMessage ( );
-		RestMessage getWorkflowDBResponse = prepareRestTransmission ("WorkflowDB/4/").sendGetRestMessage ( );
+		RestMessage getWorkflowDBResponse = prepareRestTransmission ("WorkflowDB/" + this.serviceID.toPlainString ( )).sendGetRestMessage ( );
+//		RestMessage getWorkflowDBResponse = prepareRestTransmission ("WorkflowDB/4/").sendGetRestMessage ( );
 		
 		if (getWorkflowDBResponse == null || getWorkflowDBResponse.getListEntrySets ( ).isEmpty ( ) || getWorkflowDBResponse.getStatus ( ) != RestStatusEnum.OK) {
 			
@@ -190,6 +191,10 @@ public class DCGenerator {
 	
 	private void createDC ( ) {
 		
+		DCGroovyXMLParser groovyparser = new DCGroovyXMLParser ( );
+		
+		int i = 0;
+		
 		for (BigDecimal oid : this.oidList) {
 			
 			RestMessage getCMFDBResponse = prepareRestTransmission ("CompleteMetadataEntry/" + oid.toPlainString ( )).sendGetRestMessage ( );
@@ -211,19 +216,21 @@ public class DCGenerator {
 					logger.warn ("SQL_WARNING: " + description);
 				}
 			}
-
-			System.out.println (getCMFDBResponse.getListEntrySets ( ).get (0).getValue ("completemetadata"));
+			
+			Record record = groovyparser.xmlTestParser (getCMFDBResponse.getListEntrySets ( ).get (0).getValue ("completemetadata"));
+			
+			System.out.println (groovyparser.xmlGeneratior (record));
+			
+			if (i++ > 100)
+				break;
 		}
-		
 	}
 	
 	/**
 	 * 
 	 */
 	
-	private void storeDC ( ) {
-		
-	}
+	private void storeDC ( ) { }
 	
 	/**
 	 * @param resource
