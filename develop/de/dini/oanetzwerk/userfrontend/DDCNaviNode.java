@@ -8,7 +8,9 @@ public class DDCNaviNode {
 	private String strDDCValue;
 	private String strNameDE;
 	private long longItemCount;
+	private long longItemSubCount;
 	private List<DDCNaviNode> listSubnodes;
+	private BrowseBean parentBrowseBean; 
 	
 	public DDCNaviNode() {
 		listSubnodes = new ArrayList<DDCNaviNode>();
@@ -30,6 +32,14 @@ public class DDCNaviNode {
 		this.longItemCount = longItemCount;
 	}
 
+	public long getLongItemSubCount() {
+		return longItemSubCount;
+	}
+
+	public void setLongItemSubCount(long longItemSubCount) {
+		this.longItemSubCount = longItemSubCount;
+	}
+
 	public List<DDCNaviNode> getListSubnodes() {
 		return listSubnodes;
 	}
@@ -46,4 +56,26 @@ public class DDCNaviNode {
 		this.strNameDE = strNameDE;
 	}
 	
+	public BrowseBean getParentBrowseBean() {
+		return parentBrowseBean;
+	}
+
+	public void setParentBrowseBean(BrowseBean parentBrowseBean) {
+		this.parentBrowseBean = parentBrowseBean;
+	}
+
+	
+	///////////////////////////////////////////////////////////////////
+	
+	public boolean isInPath() {
+		for(String item : parentBrowseBean.getPathDDCCategories()) if(item.equals(this.strDDCValue)) return true;
+		return false;
+	}
+
+	public String actionSelectDDCCategoryLink() {
+		this.parentBrowseBean.addDDCCategoryToPath(this.strDDCValue);
+		return "ddc_category_selected";
+	}
+	
+
 }

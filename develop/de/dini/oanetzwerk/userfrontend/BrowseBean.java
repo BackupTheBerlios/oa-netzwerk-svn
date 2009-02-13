@@ -37,6 +37,7 @@ public class BrowseBean {
 	private List<String[]> directDDCCategorySums = null;
 	private HashMap<String,String> mapDDCSums = null;
 	private List<DDCNaviNode> listDDCNaviNodes = null;
+    private List<String> pathDDCCategories = null; 
 	
 	public BrowseBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		this.props = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
@@ -49,9 +50,11 @@ public class BrowseBean {
 		this.directDDCCategorySums = DDCDataSingleton.getInstance().getDirectDDCCategorySums();
 			//	new ArrayList<String[]>(); 
 		//generateDirectDDCCategorySums(simpleDDCCategorySums);	
-		this.listDDCNaviNodes = DDCDataSingleton.getInstance().getListDDCNaviNodes(); 
+		this.listDDCNaviNodes = DDCDataSingleton.getInstance().getListDDCNaviNodes(this); 
 			//new ArrayList<DDCNaviNode>(); 
 		//generateListDDCNaviNodes(simpleDDCCategorySums);
+		
+		this.pathDDCCategories = new ArrayList<String>();
 	}
 
 	///// auto generated /////////////////////////////////////////////////////////////////////////
@@ -89,6 +92,14 @@ public class BrowseBean {
 
 	public void setListDDCNaviNodes(List<DDCNaviNode> listDDCNaviNodes) {
 		this.listDDCNaviNodes = listDDCNaviNodes;
+	}
+
+	public List<String> getPathDDCCategories() {
+		return pathDDCCategories;
+	}
+
+	public void setPathDDCCategories(List<String> pathDDCCategories) {
+		this.pathDDCCategories = pathDDCCategories;
 	}
 
 	public SearchBean getParentSearchBean() {
@@ -340,4 +351,26 @@ public class BrowseBean {
 //		
 //		return nodeList;
 //	}
+	
+	
+	public void addDDCCategoryToPath(String strDDCValue) {
+		int level = 1;
+		int ddc = 0; try {ddc = Integer.parseInt(strDDCValue.substring(0, 3));} catch(Exception ex) {}
+		if(ddc % 100 == 0) level = 0;
+		if(ddc % 10 != 0 && ddc % 100 > 9) level = 2;
+
+		this.pathDDCCategories = new ArrayList<String>();
+		if(level == 0) {
+			this.pathDDCCategories.add(strDDCValue);
+		} else if(level == 1) {
+			this.pathDDCCategories.add(strDDCValue.charAt(0)+"00");
+			this.pathDDCCategories.add(strDDCValue);
+		} else if(level == 2) {
+			this.pathDDCCategories.add(strDDCValue.charAt(0)+"00");
+			this.pathDDCCategories.add(strDDCValue.charAt(0)+strDDCValue.charAt(1)+"0");
+			this.pathDDCCategories.add(strDDCValue);
+		}
+		
+	}
+		
 }

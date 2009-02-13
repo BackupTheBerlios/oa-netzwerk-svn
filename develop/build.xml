@@ -548,6 +548,7 @@
       	<include name="searchclientprop.xml" />
         <include name="restclientprop.xml" />
         <include name="ddc_names_de.xml" />
+	    <include name="log4j.xml" />
       </webinf>
       <classes dir="${build.findnbrowse}" />
       <zipfileset dir="myfaces-root/find-dummy/">

@@ -32,13 +32,13 @@ public final class DDCDataSingleton {
 	DDCNameResolver myDDCNameResolver = null;
 	private HashMap mapDDCNames_de = null;
 	private List<String[]> simpleDDCCategorySums = null;
-	private HashMap<String,String> mapDDCSums = null;
+	private HashMap<String,String[]> mapDDCSums = null;
 	private List<String[]> directDDCCategorySums = null;
 	private List<DDCNaviNode> listDDCNaviNodes = null;
 	
 	private DDCDataSingleton() {
 		simpleDDCCategorySums = new ArrayList<String[]>();
-		mapDDCSums = new HashMap<String,String>();
+		mapDDCSums = new HashMap<String,String[]>();
 		try {
 			myDDCNameResolver = new DDCNameResolver();
 			setupMapDDCNames();			
@@ -74,6 +74,19 @@ public final class DDCDataSingleton {
 	}
 
 	public List<DDCNaviNode> getListDDCNaviNodes() {
+		return listDDCNaviNodes;
+	}
+	
+	private void setParentBrowseBeanRecursive(DDCNaviNode node, BrowseBean parentBrowseBean) {
+		node.setParentBrowseBean(parentBrowseBean);
+		List<DDCNaviNode> listNodes = node.getListSubnodes();
+		if(listNodes != null && !listNodes.isEmpty()) {
+		   for(DDCNaviNode subnode: listNodes) setParentBrowseBeanRecursive(subnode, parentBrowseBean);
+		}
+	}
+	
+	public List<DDCNaviNode> getListDDCNaviNodes(BrowseBean parentBrowseBean) {
+		for(DDCNaviNode node: listDDCNaviNodes) setParentBrowseBeanRecursive(node, parentBrowseBean);
 		return listDDCNaviNodes;
 	}
 	
@@ -143,11 +156,17 @@ public final class DDCDataSingleton {
 			Iterator <String> it = res.getKeyIterator ( );
 			String key = "";
 			
+			String strCat = null;
+			String strDirectSum = null;
+			String strSubSum = null;
 			while (it.hasNext ( )) {
 				key = it.next ( );
-				listDDCCategoriesAndSum.add(new String[] {key, res.getValue (key)} );	
-				mapDDCSums.put(key, res.getValue (key));
+				if("DDC_Categorie".equals(key)) strCat = res.getValue (key);
+				if("direct_count".equals(key)) strDirectSum = res.getValue (key);
+				if("sub_count".equals(key)) strSubSum = res.getValue (key);
 			}
+			listDDCCategoriesAndSum.add(new String[] {strCat, strDirectSum} );	
+			mapDDCSums.put(strCat, new String[] {strDirectSum, strSubSum});
 			
 		}
 		
@@ -306,9 +325,12 @@ private List<String[]> generateDirectDDCCategorySums(List<String[]> listSimpleSu
 			String cat1 = ""+i+"00";
 			node1.setStrDDCValue(cat1);
 			try {
-				String sum = mapDDCSums.get(cat1);
+				String sum = mapDDCSums.get(cat1)[0];
 				if(sum == null) sum = "0";
 				node1.setLongItemCount(Long.parseLong(sum));
+				sum = mapDDCSums.get(cat1)[1];
+				if(sum == null) sum = "0";
+				node1.setLongItemSubCount(Long.parseLong(sum));
 			} catch (Exception ex) {
 				node1.setLongItemCount(-1);
 			}			
@@ -321,9 +343,12 @@ private List<String[]> generateDirectDDCCategorySums(List<String[]> listSimpleSu
 					String cat3 = i+"0"+k;
 					node3.setStrDDCValue(cat3);
 					try {
-						String sum = mapDDCSums.get(cat3);
+						String sum = mapDDCSums.get(cat3)[0];
 						if(sum == null) sum = "0";
 						node3.setLongItemCount(Long.parseLong(sum));
+						sum = mapDDCSums.get(cat3)[1];
+						if(sum == null) sum = "0";
+						node3.setLongItemSubCount(Long.parseLong(sum));
 					} catch (Exception ex) {
 						node3.setLongItemCount(-1);
 					}		
@@ -339,9 +364,12 @@ private List<String[]> generateDirectDDCCategorySums(List<String[]> listSimpleSu
 				String cat2 = ""+i+j+"0";
 				node2.setStrDDCValue(cat2);
 				try {
-					String sum = mapDDCSums.get(cat2);
+					String sum = mapDDCSums.get(cat2)[0];
 					if(sum == null) sum = "0";
 					node2.setLongItemCount(Long.parseLong(sum));
+					sum = mapDDCSums.get(cat2)[1];
+					if(sum == null) sum = "0";
+					node2.setLongItemSubCount(Long.parseLong(sum));
 				} catch (Exception ex) {
 					node2.setLongItemCount(-1);
 				}		
@@ -353,9 +381,12 @@ private List<String[]> generateDirectDDCCategorySums(List<String[]> listSimpleSu
 					String cat3 = ""+i+j+k;
 					node3.setStrDDCValue(cat3);
 					try {
-						String sum = mapDDCSums.get(cat3);
+						String sum = mapDDCSums.get(cat3)[0];
 						if(sum == null) sum = "0";
 						node3.setLongItemCount(Long.parseLong(sum));
+						sum = mapDDCSums.get(cat3)[1];
+						if(sum == null) sum = "0";
+						node3.setLongItemSubCount(Long.parseLong(sum));
 					} catch (Exception ex) {
 						node3.setLongItemCount(-1);
 					}		

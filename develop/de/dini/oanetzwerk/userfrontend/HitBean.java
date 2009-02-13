@@ -1,6 +1,7 @@
 package de.dini.oanetzwerk.userfrontend;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -20,16 +21,27 @@ public class HitBean implements Serializable {
 	private static Logger logger = Logger.getLogger (HitBean.class);
 
 	private HitlistBean parentHitlistBean = null;
-	
+	private BigDecimal bdOID = null;
 	private CompleteMetadata completeMetadata;
 	
 	public HitBean() {
 		
 	}
 	
+    public HitBean(BigDecimal bdOID) {
+		this.bdOID = bdOID;
+	}
+	
 	///////////////////////////// AUTO GENERATED ///////////////////////////////
 		
 	public CompleteMetadata getCompleteMetadata() {
+		if(completeMetadata == null) {
+		  //logger.debug("try to fetch Metadata here");
+		  completeMetadata = parentHitlistBean.getParentSearchBean()
+		                                      .getMdLoaderBean()
+		                                      .getMapCompleteMetadata()
+		                                      .get(bdOID);
+		}
 		return completeMetadata;
 	}
 
@@ -50,15 +62,15 @@ public class HitBean implements Serializable {
 	
 	public String getTrimmedTitle() {
 		//logger.debug("getTrimmedTitle() for oid " + completeMetadata.getOid());
-		Title title = completeMetadata.getTitleList().get(0);
+		Title title = getCompleteMetadata().getTitleList().get(0);
 		String s = title.getTitle();
 		if(s.length() > FrontendConstants.INT_TITLE_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_TITLE_TRIMSIZE-4) + "...";
 		return s;
 	}
 
 	public String getTrimmedClipboardTitle() {
-		//logger.debug("getTrimmedClipboardTitle() for oid " + completeMetadata.getOid());
-		Title title = completeMetadata.getTitleList().get(0);
+		//logger.debug("getTrimmedClipboardTitle() for oid " + getCompleteMetadata().getOid());
+		Title title = getCompleteMetadata().getTitleList().get(0);
 		String s = title.getTitle();
 		if(s.length() > FrontendConstants.INT_CLIPBOARD_TITLE_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_CLIPBOARD_TITLE_TRIMSIZE-4) + "...";
 		return s;
@@ -66,7 +78,7 @@ public class HitBean implements Serializable {
 	
 	public String getTrimmedCreators() {
 		StringBuffer sb = new StringBuffer();
-		List<Author> listAuthors = completeMetadata.getAuthorList();
+		List<Author> listAuthors = getCompleteMetadata().getAuthorList();
 		if(listAuthors != null && listAuthors.size() > 0) {
 			for(int i = 0; i < listAuthors.size(); i++) {
 				Author author = listAuthors.get(i);
@@ -74,7 +86,7 @@ public class HitBean implements Serializable {
 				if(i < listAuthors.size()-1) sb.append(", ");
 			}
 		}
-		List<Contributor> listCon = completeMetadata.getContributorList();
+		List<Contributor> listCon = getCompleteMetadata().getContributorList();
 		if(listCon != null && listCon.size() > 0) {
 			if(listAuthors != null && listAuthors.size() > 0) sb.append(", ");
 			for(int i = 0; i < listCon.size(); i++) {
@@ -90,7 +102,7 @@ public class HitBean implements Serializable {
 	
 	public String getTrimmedKeywords() {
 		StringBuffer sb = new StringBuffer();
-		List<Keyword> listKeywords = completeMetadata.getKeywordList();
+		List<Keyword> listKeywords = getCompleteMetadata().getKeywordList();
 		if(listKeywords != null && listKeywords.size() > 0) {
 			for(int i = 0; i < listKeywords.size(); i++) {
 				Keyword kw = listKeywords.get(i);
@@ -102,7 +114,7 @@ public class HitBean implements Serializable {
 		}
 		String s = sb.toString();
 		if(s.length() == 0) {
-			List<Description> listDesc = completeMetadata.getDescriptionList();
+			List<Description> listDesc = getCompleteMetadata().getDescriptionList();
 			if(listDesc != null && listDesc.size() > 0) {
 				Description desc = listDesc.get(0);
 				sb.append(desc.getDescription());
@@ -115,7 +127,7 @@ public class HitBean implements Serializable {
 	
 	public String getMergedKeywords() {
 		StringBuffer sb = new StringBuffer();
-		List<Keyword> listKeywords = completeMetadata.getKeywordList();
+		List<Keyword> listKeywords = getCompleteMetadata().getKeywordList();
 		if(listKeywords != null && listKeywords.size() > 0) {
 			for(int i = 0; i < listKeywords.size(); i++) {
 				Keyword kw = listKeywords.get(i);
@@ -130,13 +142,13 @@ public class HitBean implements Serializable {
 	}
 	
 	public String getBestLink() {
-		List<FullTextLink> listFTL = completeMetadata.getFullTextLinkList();
+		List<FullTextLink> listFTL = getCompleteMetadata().getFullTextLinkList();
 		String strFTL = "";
 		if(listFTL != null && listFTL.size() > 0) {
 			strFTL = listFTL.get(0).getUrl();
 		}
 		if(strFTL.length() == 0) {
-			List<Identifier> listIdent = completeMetadata.getIdentifierList();		
+			List<Identifier> listIdent = getCompleteMetadata().getIdentifierList();		
 			if(listIdent != null && listIdent.size() > 0) {
 				for(int i = 0; i < listIdent.size(); i++) {
 					String s = listIdent.get(i).getIdentifier();					 
@@ -149,15 +161,15 @@ public class HitBean implements Serializable {
 	}
 	
 	public String getTrimmedDate() {
-		//logger.debug("getTrimmedDate() for oid " + completeMetadata.getOid());
-		if(completeMetadata.getDateValueList().isEmpty()) return "unbekannt";
-		DateValue dv = completeMetadata.getDateValueList().get(0);
+		//logger.debug("getTrimmedDate() for oid " + getCompleteMetadata().getOid());
+		if(getCompleteMetadata().getDateValueList().isEmpty()) return "unbekannt";
+		DateValue dv = getCompleteMetadata().getDateValueList().get(0);
 		String s = (dv.getDateValue().split("-"))[0]; 
 		return s;
 	}
 	
 	public String getMetadatastring() {
-		String s = this.completeMetadata.toString();
+		String s = this.getCompleteMetadata().toString();
 		s = s.replaceAll("\n", "<br/>");
 		return s;
 	}
@@ -165,17 +177,17 @@ public class HitBean implements Serializable {
 	/////////////////////// action method //////////////////////////////
 
 	public String actionDetailsLink() {
-		this.parentHitlistBean.setSelectedDetailsOID(this.completeMetadata.getOid());
+		this.parentHitlistBean.setSelectedDetailsOID(this.getCompleteMetadata().getOid());
 		return "details_clicked";
 	}
 	
 	public String actionMerkenLink() {
-		this.parentHitlistBean.addSetClipboardOID(this.completeMetadata.getOid());
+		this.parentHitlistBean.addSetClipboardOID(this.getCompleteMetadata().getOid());
 		return "merken_clicked";
 	}
 	
 	public String actionVerwerfenLink() {
-		this.parentHitlistBean.removeSetClipboardOID(this.completeMetadata.getOid());
+		this.parentHitlistBean.removeSetClipboardOID(this.getCompleteMetadata().getOid());
 		return "verwerfen_clicked";
 	}
 	

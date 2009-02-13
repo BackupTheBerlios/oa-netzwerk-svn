@@ -878,7 +878,8 @@ public class SelectFromDB {
 
 	public static PreparedStatement AllDDCCategories (Connection connection) throws SQLException {
 
-		PreparedStatement preparedstmt = connection.prepareStatement ("select dc.DDC_Categorie, count(o.object_id) FROM dbo.Object o JOIN DDC_Classification d ON o.object_id = d.object_id JOIN DDC_Categories dc ON d.DDC_Categorie = dc.DDC_Categorie GROUP BY dc.DDC_Categorie ORDER BY dc.DDC_Categorie");
+		//PreparedStatement preparedstmt = connection.prepareStatement ("select dc.DDC_Categorie, count(o.object_id) FROM dbo.Object o JOIN DDC_Classification d ON o.object_id = d.object_id JOIN DDC_Categories dc ON d.DDC_Categorie = dc.DDC_Categorie GROUP BY dc.DDC_Categorie ORDER BY dc.DDC_Categorie");
+		PreparedStatement preparedstmt = connection.prepareStatement ("select * from DDC_Browsing_Help");
 		
 		return preparedstmt;
 	}

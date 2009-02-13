@@ -33,78 +33,68 @@
 		<div id="div_simplebrowselist">
 			<h3>Einfache DDC-Liste</h3>
 
-            <t:dataList id="ddcnavilist_lvl1" value="#{searchBean.browse.listDDCNaviNodes}" var="node_lvl1" layout="unorderedList">
-				<div class="div_simplebrowselist_lvl1_outer">
-				<div class="div_simplebrowselist_lvl1_inner">
-				<span class="span_ddc_num"><t:outputText value="#{node_lvl1.strDDCValue}"/></span>&nbsp;
-				<span class="span_ddc_name"><t:outputText value="#{node_lvl1.strNameDE}"/></span>&nbsp;
-				(<t:outputText value="#{node_lvl1.longItemCount}"/>)
-				</div>
-	            <t:dataList id="ddcnavilist_lvl2" value="#{node_lvl1.listSubnodes}" var="node_lvl2" layout="unorderedList">
-					<div class="div_simplebrowselist_lvl2_outer">
-					<div class="div_simplebrowselist_lvl2_inner">
-					<span class="span_ddc_num"><t:outputText value="#{node_lvl2.strDDCValue}"/></span>&nbsp;
-					<span class="span_ddc_name"><t:outputText value="#{node_lvl2.strNameDE}"/></span>&nbsp;
-					(<t:outputText value="#{node_lvl2.longItemCount}"/>)
-					</div>
-  	 	            <t:dataList id="ddcnavilist_lvl3" value="#{node_lvl2.listSubnodes}" var="node_lvl3" layout="unorderedList">
-						<span class="span_ddc_num"><t:outputText value="#{node_lvl3.strDDCValue}"/></span>&nbsp;
-						<span class="span_ddc_name"><t:outputText value="#{node_lvl3.strNameDE}"/></span>&nbsp;
-                        (<t:outputText value="#{node_lvl3.longItemCount}"/>)
-	            		<t:dataList id="ddcnavilist_lvl4" value="#{node_lvl3.listSubnodes}" var="node_lvl4" layout="unorderedList">
-							<t:outputText value="#{node_lvl4.strDDCValue}"/>&nbsp;<t:outputText value="#{node_lvl4.strNameDE}"/>&nbsp;(<t:outputText value="#{node_lvl4.longItemCount}"/>)
-						</t:dataList>
-					</t:dataList>
-					</div>
-				</t:dataList>
-				</div>
+			<div class="div_ddc_breadcrump">
+            PFAD:
+            <t:dataList id="ddc_breadcrump" value="#{searchBean.browse.pathDDCCategories}" var="item" layout="simple">
+				<t:outputText value="#{item}"/> &gt; 
 			</t:dataList>
+			</div>
 
-			<hr/>
+            <t:dataList id="ddcnavilist_lvl1" value="#{searchBean.browse.listDDCNaviNodes}" var="node_lvl1" layout="unorderedList">
+                
+                <t:div rendered="#{node_lvl1.inPath}">
+				<div class="selected_category_wrapper">
+				<span class="span_ddc_num"><t:outputText value="#{node_lvl1.strDDCValue}"/></span>&nbsp;
+				<span class="span_ddc_selected_name"><t:outputText value="#{node_lvl1.strNameDE}"/></span>
+				(<t:outputText value="#{node_lvl1.longItemCount}"/>|<t:outputText value="#{node_lvl1.longItemSubCount}"/>)
+				</div>
+                </t:div>	            
+                <t:div rendered="#{!node_lvl1.inPath}">
+				<span class="span_ddc_num"><t:outputText value="#{node_lvl1.strDDCValue}"/></span>&nbsp;
+				<h:commandLink action="#{node_lvl1.actionSelectDDCCategoryLink}" title=""><span class="span_ddc_name"><t:outputText value="#{node_lvl1.strNameDE}"/></span></h:commandLink>&nbsp;
+				(<t:outputText value="#{node_lvl1.longItemCount}"/>|<t:outputText value="#{node_lvl1.longItemSubCount}"/>)
+                </t:div>	            
 
-            <h:dataTable id="browselist" value="#{searchBean.browse.simpleDDCCategorySums}" var="entry" columnClasses="colCategory">
-				<h:column>
-					<f:facet name="header">
-						<h:outputText value="DDC-Wert"/>
-					</f:facet>
-					<t:outputText value="#{entry[0]}"/>
-				</h:column>
-				<h:column>
-					<f:facet name="header">
-						<h:outputText value="Name der Kategorie"/>
-					</f:facet>
-					<t:outputText value="#{searchBean.browse.mapDDCNames_de[entry[0]]}"/>
-				</h:column>
-				<h:column>
-					<f:facet name="header">
-						<h:outputText value="Anzahl der Dokumente"/>
-					</f:facet>
-					<t:outputText value="#{entry[1]}"/>
-				</h:column>
-			</h:dataTable>
+                <t:div rendered="#{node_lvl1.inPath}">
+	            <t:dataList id="ddcnavilist_lvl2" value="#{node_lvl1.listSubnodes}" var="node_lvl2" layout="unorderedList">
 
-			<hr/>
+                    <t:div rendered="#{node_lvl2.inPath}">
+   					<div class="selected_category_wrapper">
+					<span class="span_ddc_num"><t:outputText value="#{node_lvl2.strDDCValue}"/></span>&nbsp;
+					<span class="span_ddc_selected_name"><t:outputText value="#{node_lvl2.strNameDE}"/></span>
+					(<t:outputText value="#{node_lvl2.longItemCount}"/>|<t:outputText value="#{node_lvl2.longItemSubCount}"/>)
+					</div>
+					</t:div>
+                    <t:div rendered="#{!node_lvl2.inPath}">
+					<span class="span_ddc_num"><t:outputText value="#{node_lvl2.strDDCValue}"/></span>&nbsp;
+					<h:commandLink action="#{node_lvl2.actionSelectDDCCategoryLink}" title=""><span class="span_ddc_name"><t:outputText value="#{node_lvl2.strNameDE}"/></span></h:commandLink>
+					(<t:outputText value="#{node_lvl2.longItemCount}"/>|<t:outputText value="#{node_lvl2.longItemSubCount}"/>)
+					</t:div>
 
-            <h:dataTable id="browselist2" value="#{searchBean.browse.directDDCCategorySums}" var="entry" columnClasses="colCategory">
-				<h:column>
-					<f:facet name="header">
-						<h:outputText value="DDC-Wert (wildcard)"/>
-					</f:facet>
-					<t:outputText value="#{entry[2]}"/>
-				</h:column>
-				<h:column>
-					<f:facet name="header">
-						<h:outputText value="Name der Kategorie"/>
-					</f:facet>
-					<t:outputText value="#{searchBean.browse.mapDDCNames_de[entry[0]]}"/>
-				</h:column>
-				<h:column>
-					<f:facet name="header">
-						<h:outputText value="Anzahl der Dokumente (wildcard match)"/>
-					</f:facet>
-					<t:outputText value="#{entry[1]}"/>
-				</h:column>
-			</h:dataTable>
+					<t:div rendered="#{node_lvl2.inPath}">
+  	 	            <t:dataList id="ddcnavilist_lvl3" value="#{node_lvl2.listSubnodes}" var="node_lvl3" layout="unorderedList">
+
+                        <t:div rendered="#{node_lvl3.inPath}">
+						<div class="selected_category_wrapper">
+						<span class="span_ddc_num"><t:outputText value="#{node_lvl3.strDDCValue}"/></span>&nbsp;
+						<span class="span_ddc_selected_name"><t:outputText value="#{node_lvl3.strNameDE}"/></span>
+                        (<t:outputText value="#{node_lvl3.longItemCount}"/>|<t:outputText value="#{node_lvl3.longItemSubCount}"/>)
+						</div>
+						</t:div>
+                        <t:div rendered="#{!node_lvl3.inPath}">
+						<span class="span_ddc_num"><t:outputText value="#{node_lvl3.strDDCValue}"/></span>&nbsp;
+						<h:commandLink action="#{node_lvl3.actionSelectDDCCategoryLink}" title=""><span class="span_ddc_name"><t:outputText value="#{node_lvl3.strNameDE}"/></span></h:commandLink>
+                        (<t:outputText value="#{node_lvl3.longItemCount}"/>|<t:outputText value="#{node_lvl3.longItemSubCount}"/>)
+						</t:div>
+
+					</t:dataList>
+					</t:div>
+
+				</t:dataList>
+				</t:div>
+
+			</t:dataList>
+			
         </div>     
 
 </h:form>

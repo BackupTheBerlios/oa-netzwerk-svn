@@ -90,8 +90,14 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 					}
 				}
 
-				while (allDDCResult.getResultSet ( ).next ( )) {		
-					res.addEntry(allDDCResult.getResultSet().getString(1), allDDCResult.getResultSet().getString(2));
+				while (allDDCResult.getResultSet ( ).next ( )) {
+					res = new RestEntrySet ( );
+					res.addEntry("DDC_Categorie", allDDCResult.getResultSet().getString("DDC_Categorie"));
+					res.addEntry("name_deu", allDDCResult.getResultSet().getString("name_deu"));
+					res.addEntry("name_eng", allDDCResult.getResultSet().getString("name_eng"));
+					res.addEntry("direct_count", allDDCResult.getResultSet().getString("direct_count"));
+					res.addEntry("sub_count", allDDCResult.getResultSet().getString("sub_count"));
+					this.rms.addEntrySet (res);	
 				}			
 
 				stmtconn.commit ( );
@@ -138,11 +144,10 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 				}			
 
 				stmtconn.commit ( );
-				
+				this.rms.addEntrySet (res);	
 			}
 			
-			this.rms.setStatus (RestStatusEnum.OK);
-			this.rms.addEntrySet (res);			
+			this.rms.setStatus (RestStatusEnum.OK);		
 			
 		} catch (SQLException ex) {
 			

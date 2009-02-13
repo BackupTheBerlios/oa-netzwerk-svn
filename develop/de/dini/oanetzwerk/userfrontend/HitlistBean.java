@@ -36,7 +36,9 @@ public class HitlistBean implements Serializable {
 	private SearchBean parentSearchBean = null;
 		
 	private List<BigDecimal> listHitOID;
-	private HashMap<BigDecimal, HitBean> mapHitBean;
+	private UpdatingHitBeanHashMap mapHitBean;
+	
+	//private HashMap<BigDecimal, HitBean> mapHitBean;
 	private BigDecimal selectedDetailsOID = null;
 	private TreeSet<BigDecimal> setClipboardOID;
 	
@@ -46,7 +48,10 @@ public class HitlistBean implements Serializable {
 		this.cmMarsh = CompleteMetadataJAXBMarshaller.getInstance();
 		
 		this.listHitOID = new ArrayList<BigDecimal>();
-		this.mapHitBean = new HashMap<BigDecimal, HitBean>();	
+		
+		//this.mapHitBean = new HashMap<BigDecimal, HitBean>();
+		this.mapHitBean = new UpdatingHitBeanHashMap(this);	
+		
 		this.setClipboardOID = new TreeSet<BigDecimal>(new Comparator<BigDecimal>() {
             // das Set ist immer nach dem trimmed title sortiert
 			public int compare(BigDecimal o1, BigDecimal o2) {
@@ -56,8 +61,8 @@ public class HitlistBean implements Serializable {
 			}
 		});
 		
-		this.fakefillListHitOID();
-		this.updateHitlistMetadata();
+		//this.fakefillListHitOID();
+		//this.updateHitlistMetadata();
 		
 	}
 	
@@ -71,16 +76,22 @@ public class HitlistBean implements Serializable {
 		this.listHitOID = listHitOID;
 	}
 
-	public HashMap<BigDecimal, HitBean> getMapHitBean() {
-		return mapHitBean;
-	}
+//	public HashMap<BigDecimal, HitBean> getMapHitBean() {
+//		return mapHitBean;
+//	}
+//
+//	public void setMapHitBean(HashMap<BigDecimal, HitBean> mapHitBean) {
+//		this.mapHitBean = mapHitBean;
+//	}
 
-	public void setMapHitBean(
-			HashMap<BigDecimal, HitBean> mapHitBean) {
-		this.mapHitBean = mapHitBean;
-	}
+	public UpdatingHitBeanHashMap getMapHitBean() {
+	    return mapHitBean;
+    }
 
-		
+    public void setMapHitBean(UpdatingHitBeanHashMap mapHitBean) {
+    	this.mapHitBean = mapHitBean;
+    }
+
 	public SearchBean getParentSearchBean() {
 		return parentSearchBean;
 	}
@@ -145,46 +156,58 @@ public class HitlistBean implements Serializable {
 
 	}
 	
-	public void updateHitlistMetadata() {
-		// TODO: hitbean-Einträge, die in setClipboard auftauchen, nicht verwerfen!
-		
-		//mapHitBean = new HashMap<BigDecimal, HitBean>();
-		
-		for(BigDecimal oid : listHitOID) {
-			if(mapHitBean.containsKey(oid)) continue;
+	/**
+	 * 
+	 * Die Methode verwirft leere Treffer. Das konkrete Anlegen von HitBeans für die OID-Liste
+	 * ist auf just-in-time Laden durch die UpdatingHitBeanHashMap verschoben, die get() so
+	 * überschreibt, dass erst im Bedarfsfall eine neue HitBean mit einem CompleteMetadata aus 
+	 * der application-scope MetadataLoaderBean anlegt.
+	 * 
+	 */
+	public void updateHitlistMetadata() {				
+				
+		//for(BigDecimal bdOID : listHitOID) {
+			//if(mapHitBean.containsKey(bdOID)) continue;
 			
-			//CompleteMetadata cm = CompleteMetadata.createDummy();
-			CompleteMetadata cm = fetchCompleteMetadataByOID(oid);
-			logger.debug("fetched cm for oid " + oid);
-			//if (cm == null) {
-			//	cm = CompleteMetadata.createDummy();
-			//	cm.setOid(oid);
-			//}
-			HitBean hb = new HitBean();
-			hb.setParentHitlistBean(this);
-			//TODO: dont do this in productive ^^ ---->
-			if(cm.getDuplicateProbabilityList() == null) cm.setDuplicateProbabilityList(new ArrayList<DuplicateProbability>());			
-			if(cm.getFullTextLinkList() == null) cm.setFullTextLinkList(new ArrayList<FullTextLink>());			
-			//<----
-			hb.setCompleteMetadata(cm);
-			mapHitBean.put(oid, hb);
+			//CompleteMetadata cm = fetchCompleteMetadataByOID(bdOID);			
+			//logger.debug("try to fetch cm for oid " + bdOID + " from metadataLoader");
+			//CompleteMetadata cm = parentSearchBean.getMdLoaderBean().getMapCompleteMetadata().get(bdOID);
+			
+			//HitBean hb = new HitBean();
+			//hb.setParentHitlistBean(this);
+
+			//if(cm.getDuplicateProbabilityList() == null) cm.setDuplicateProbabilityList(new ArrayList<DuplicateProbability>());			
+			//if(cm.getFullTextLinkList() == null) cm.setFullTextLinkList(new ArrayList<FullTextLink>());			
+			
+			//hb.setCompleteMetadata(cm);
+			//mapHitBean.put(bdOID, hb);
+		//}
+		
+		for(BigDecimal bdOID : listHitOID) {
+			if(!mapHitBean.containsKey(bdOID)) {
+				logger.debug("create emptry wrapper HitBean for oid " + bdOID + "");
+				HitBean hb = new HitBean(bdOID);
+				hb.setParentHitlistBean(this);
+				mapHitBean.put(bdOID, hb);							
+			}
 		}
 		
 		// delete all oid from list (and hash) that have no real metadata
-		List<BigDecimal> cleanedListHitOID = new ArrayList<BigDecimal>();
-		for(int i = 0; i < listHitOID.size(); i++) {
-			BigDecimal oid = listHitOID.get(i);
-			logger.debug("check cm for oid " + oid);
-			CompleteMetadata cmCheck = mapHitBean.get(oid).getCompleteMetadata();
-			if(cmCheck != null && !cmCheck.isEmpty()) {
-				cleanedListHitOID.add(oid);
-				logger.debug("keep cm for oid " + oid);
-			}
-		}
-		listHitOID = cleanedListHitOID;
+//		List<BigDecimal> cleanedListHitOID = new ArrayList<BigDecimal>();
+//		for(int i = 0; i < listHitOID.size(); i++) {
+//			BigDecimal bdOID = listHitOID.get(i);
+//			logger.debug("check cm for oid " + bdOID);
+//			CompleteMetadata cmCheck = mapHitBean.get(bdOID).getCompleteMetadata();
+//			if(cmCheck != null && !cmCheck.isEmpty()) {
+//				cleanedListHitOID.add(bdOID);
+//				logger.debug("keep cm for oid " + bdOID);
+//			}
+//		}
+//		listHitOID = cleanedListHitOID;
 		
 	}
 	
+	/*
 	private RestClient prepareRestTransmission (String resource) {
 		
 		return RestClient.createRestClient (new File (System.getProperty ("catalina.base") + this.props.getProperty ("restclientpropfile")), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
@@ -237,5 +260,5 @@ public class HitlistBean implements Serializable {
 		return cm;
 		
 	}
-	
+*/	
 }

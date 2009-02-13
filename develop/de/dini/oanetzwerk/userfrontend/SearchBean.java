@@ -15,7 +15,10 @@ import java.util.Properties;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Appender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.RollingFileAppender;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -26,10 +29,13 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
 
 public class SearchBean implements Serializable {
-
+	
 	private static Logger logger = Logger.getLogger (HitlistBean.class);
 	private Properties props = null;
 	private Properties search_props = null;
+
+	private MetadataLoaderBean mdLoaderBean;
+	
 	private String strOneSlot = "";
     private BigDecimal directOID = null; 
 	private String strRepositoryFilterRID = null;
@@ -43,6 +49,12 @@ public class SearchBean implements Serializable {
     
     public SearchBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException  {
     	    	
+//    	Logger myFrontEndLogger = Logger.getLogger("de.dini.oanetzwerk.userfrontend");
+//    	myFrontEndLogger.setLevel(Level.DEBUG);
+//    	RollingFileAppender myAppender = new RollingFileAppender();
+//    	myAppender.setFile("userfrontend.log");
+//    	myFrontEndLogger.addAppender(myAppender);
+    	
 		this.props = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
     	
     	hitlist = new HitlistBean();
@@ -63,6 +75,14 @@ public class SearchBean implements Serializable {
     
     
     ////////////// AUTO GENERATED ////////////////////
+    
+	public MetadataLoaderBean getMdLoaderBean() {
+		return mdLoaderBean;
+	}
+
+	public void setMdLoaderBean(MetadataLoaderBean mdLoaderBean) {
+		this.mdLoaderBean = mdLoaderBean;
+	}
     
 	public String getStrOneSlot() {
 		return strOneSlot;
@@ -122,29 +142,32 @@ public class SearchBean implements Serializable {
 	
 	//////////////// UTIL methods ///////////////////////
 	
-	private void parseOneSlotSearchField() {
+	private String parseOneSlotSearchField() {
 		logger.debug("parseOneSlotSearchField");
 		if(strOneSlot != null && strOneSlot.length() > 0) {
 			String strQuery = new String(strOneSlot);
 			strQuery = strQuery.toUpperCase();
 			strQuery = strQuery.trim();
 			if(strQuery.startsWith("OID:")) {
-				parseOneSlotForDirectOID(strQuery);
+				return parseOneSlotForDirectOID(strQuery);
 			} else {
-				parseOneSlotForQueryString(strQuery);
+				return parseOneSlotForQueryString(strQuery);
 			}
+		} else {
+			return "error";
 		}
 	}
 	
-	private void parseOneSlotForQueryString(String strQuery) {		
+	private String parseOneSlotForQueryString(String strQuery) {		
 		logger.debug("parseOneSlotForQueryString");
 		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
 		listOIDs = mySearchClient.querySearchService(strQuery);
 		this.hitlist.setListHitOID(listOIDs);
 		this.hitlist.updateHitlistMetadata();
+		return "search_clicked";
 	}
 	
-	private void parseOneSlotForDirectOID(String strTest) {		
+	private String parseOneSlotForDirectOID(String strTest) {		
 		logger.debug("parseOneSlotForDirectOID");
 		try {
 			String[] oids = (strTest.substring(strTest.indexOf("OID:")+4)).split(":");
@@ -157,14 +180,17 @@ public class SearchBean implements Serializable {
 				}
 				this.hitlist.setListHitOID(listOIDs);
 				this.hitlist.updateHitlistMetadata();
+				return "search_clicked";
 			} else {
 				this.hitlist.fakefillListHitOID();
-				this.hitlist.updateHitlistMetadata();											
+				this.hitlist.updateHitlistMetadata();	
+				return "search_clicked";
 			}
 		} catch (NumberFormatException ex) {
 			//this.directOID = null;
 			this.hitlist.fakefillListHitOID();
-			this.hitlist.updateHitlistMetadata();					
+			this.hitlist.updateHitlistMetadata();	
+			return "error";
 		}
 
 	}
@@ -205,8 +231,7 @@ public class SearchBean implements Serializable {
 	//////////////// Action Methods /////////////////////
 	
 	public String actionSearchButton() {
-		parseOneSlotSearchField();
-		return "search_clicked";
+		return parseOneSlotSearchField();
 	}
 	
 }
