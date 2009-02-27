@@ -3,6 +3,7 @@ package de.dini.oanetzwerk.indexeraccess;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -299,7 +300,8 @@ public class IndexerAccessServlet extends HttpServlet {
 			}
 			
 			for(DateValue item : cmf.getDateValueList()) {
-				sb.append("<meta name=\"").append("date").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getDateValue())).append("\"/>\n");				
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				sb.append("<meta name=\"").append("date").append("\" value=\"").append(StringEscapeUtils.escapeHtml(sdf.format(item.getDateValue()))).append("\"/>\n");				
 			}
 
 			for(Description item : cmf.getDescriptionList()) {
