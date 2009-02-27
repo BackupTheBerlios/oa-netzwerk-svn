@@ -453,3 +453,52 @@ td.tabContent {
 }
 
 /* END tabbedpane */
+
+#div_project_main {
+  margin: 10px;
+}
+
+#div_project_main h2 {
+  margin-top: 30px;
+}
+
+#div_project_main h3 {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+#div_project_main p {
+  margin-left: 10px;
+}
+
+#div_project_main ul {
+  list-style: none;
+}
+
+#div_project_main ul li {
+  float: left;
+  width: 33%;
+}
+
+#div_impressum_main {
+  margin: 10px;
+}
+
+#div_impressum_main p {
+  margin-left: 10px;
+}
+
+#div_impressum_main h2 {
+  margin-top: 30px;
+}
+
+#div_impressum_main h3 {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.halfbox {
+  float: left;
+  width: 45%;
+  margin-right: 20px;
+}
