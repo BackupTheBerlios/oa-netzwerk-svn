@@ -1,7 +1,12 @@
 package de.dini.oanetzwerk.server.database;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 
+import org.apache.log4j.Logger;
+
+import de.dini.oanetzwerk.server.handler.InternalMetadataEntry;
+import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.Classification;
@@ -25,6 +30,8 @@ import de.dini.oanetzwerk.utils.imf.TypeValue;
 
 public class MetadataDBMapper {
 
+	private static Logger logger = Logger.getLogger (MetadataDBMapper.class);
+	
 	public static void fillHitlistMetadataFromDB(HitlistMetadata hmf, MultipleStatementConnection stmtconn) throws SQLException, WrongStatementException {
 		
 		QueryResult queryResult;
@@ -183,11 +190,14 @@ public class MetadataDBMapper {
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
-			
-			DateValue temp = new DateValue ( );
-			temp.setDateValue(queryResult.getResultSet ( ).getString ("value"));
-			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addDateValue (temp);
+			try {
+			  DateValue temp = new DateValue ( );
+			  temp.setDateValue(HelperMethods.sql2javaDate(queryResult.getResultSet ( ).getDate("value")));
+			  temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
+			  hmf.addDateValue (temp);
+			} catch(ParseException pex) {
+				logger.warn("skip dateValue '" + queryResult.getResultSet ( ).getDate("value") +"': ", pex);
+			}
 		}
 				
 		// Auswertung der TypeValue-Werte

@@ -146,6 +146,21 @@ public class HelperMethods {
 		return date;
 	}
 	
+	public static java.sql.Date java2sqlDate (java.util.Date javaDate) throws ParseException {		
+		java.sql.Date sqlDate = new Date(javaDate.getTime());
+		return sqlDate;
+	}
+
+	public static java.util.Date sql2javaDate (java.sql.Date sqlDate) throws ParseException {		
+		java.util.Date javaDate = new java.util.Date(sqlDate.getTime());
+		return javaDate;
+	}
+	
+	public static java.util.Date extract_java_datestamp (String dateString) throws ParseException {
+		java.util.Date sdf = new SimpleDateFormat ("yyyy-MM-dd").parse (dateString);
+		return sdf;
+	}
+	
 
 	public static BigDecimal getBigDecimalFromCmdLine (String optionValue) throws NumberFormatException {
 		

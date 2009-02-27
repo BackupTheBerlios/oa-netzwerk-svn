@@ -207,6 +207,15 @@ public class HitlistBean implements Serializable {
 		
 	}
 	
+	public void addHitbeanToMap(BigDecimal bdOID) {
+			if(!mapHitBean.containsKey(bdOID)) {
+				logger.debug("create emptry wrapper HitBean for oid " + bdOID + "");
+				HitBean hb = new HitBean(bdOID);
+				hb.setParentHitlistBean(this);
+				mapHitBean.put(bdOID, hb);							
+			}
+	}
+	
 	/*
 	private RestClient prepareRestTransmission (String resource) {
 		

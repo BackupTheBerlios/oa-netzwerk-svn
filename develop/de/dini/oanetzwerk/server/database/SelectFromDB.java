@@ -1276,4 +1276,20 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
+	
+	/**
+	 * @param value
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement RepositoryData (Connection connection, BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM Object o, Repositories r WHERE o.repository_id = r.repository_id AND object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+	
+	
 }

@@ -543,7 +543,8 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							logger.debug("dateValue hinzufÃ¼gen" + dateValue.toString());
 						}
 						
-						stmtconn.loadStatement (InsertIntoDB.DateValue (stmtconn.connection, object_id, dateValue.getNumber(), HelperMethods.extract_datestamp(dateValue.getDateValue())));
+						// TODO: beide Werte (Timestamp und origstring) einfügen
+						stmtconn.loadStatement (InsertIntoDB.DateValue (stmtconn.connection, object_id, dateValue.getNumber(), HelperMethods.java2sqlDate(dateValue.getDateValue())));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getUpdateCount ( ) < 1) {

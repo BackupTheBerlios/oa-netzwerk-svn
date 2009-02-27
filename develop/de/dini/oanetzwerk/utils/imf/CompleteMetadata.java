@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class CompleteMetadata extends InternalMetadata {
 
 	List<FullTextLink> fullTextLinkList;
-
 	List<DuplicateProbability> duplicateProbabilityList;
+	RepositoryData repositoryData;
 	
 	public CompleteMetadata() {
 		super();
@@ -39,6 +39,8 @@ public class CompleteMetadata extends InternalMetadata {
 		for(DuplicateProbability duplicateProbability : duplicateProbabilityList) {
 			sb.append(duplicateProbability+"\n");
 		}
+		sb.append("\n-- repositoryData:");
+		sb.append(repositoryData+"\n");
 		return sb.toString();
 	}
 	
@@ -82,7 +84,15 @@ public class CompleteMetadata extends InternalMetadata {
 			List<DuplicateProbability> duplicateProbabilityList) {
 		this.duplicateProbabilityList = duplicateProbabilityList;
 	}
-		
+
+	public RepositoryData getRepositoryData() {
+		return repositoryData;
+	}
+
+	public void setRepositoryData(RepositoryData repositoryData) {
+		this.repositoryData = repositoryData;
+	}
+			
 }
 
 

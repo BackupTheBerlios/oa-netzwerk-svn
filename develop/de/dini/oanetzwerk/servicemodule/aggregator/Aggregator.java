@@ -652,6 +652,14 @@ public class Aggregator {
 		return result;
 	}
 	
+	/**
+	 * zieht den eigentlichen Metadatensatz als IMF-Objekt aus dem XML heraus, indem es
+	 * eine auf das Metadaten-Format bezogene GeneratorKlasse benutzt 
+	 * 
+	 * @param xmlRawdata
+	 * @return
+	 * @throws AggregationFailedException
+	 */
 	private InternalMetadata extractMetaData(String xmlRawdata) throws AggregationFailedException {
 
 		logger.debug("extractMetadata");

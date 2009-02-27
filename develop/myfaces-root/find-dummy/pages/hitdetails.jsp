@@ -34,7 +34,7 @@
 			</h:form>
 		</div>
 
-
+<h:form>
 
 		<div id="div_hitdetails">
 
@@ -74,17 +74,7 @@
 				</td>
 				</tr>
 				<tr>
-				<td class="hitlist_head">Herausgeber:</td>
-				<td class="hitlist_content">			
-
-							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.editorList}" 
-			                            var="editor" layout="unorderedList" first="0"	dir="LTR">
-								<t:outputText value="#{editor.firstname}"></t:outputText>&nbsp;<t:outputText value="#{editor.lastname}"></t:outputText>&nbsp;
-							</t:dataList>
-				</td>
-				</tr>
-				<tr>
-				<td class="hitlist_head">Verlag/Institution:</td>
+				<td class="hitlist_head">Herausgeber/Institution:</td>
 				<td class="hitlist_content">			
 
 							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.publisherList}" 
@@ -166,12 +156,49 @@
 							</t:dataList>
 				</td>
 				</tr>
+
 				<tr>
 				<td class="hitlist_head">Volltext:</td>
 				<td class="hitlist_content">			
 							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.fullTextLinkList}" 
 			                            var="ftl" layout="unorderedList" first="0"	dir="LTR">
-								<h:outputLink value="#{ftl.url}"><t:outputText value="#{ftl.url}"/></h:outputLink>
+								<h:outputLink value="#{ftl.url}" target="_blank"><t:outputText value="#{ftl.url}"/></h:outputLink>
+							</t:dataList>
+							<t:div rendered="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].fullTextLinkListSize == 0}">
+                              <h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].bestLink}" target="_blank">
+                              (<t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].bestLink}"/>)</h:outputLink>
+                            </t:div>
+				</td>
+				</tr>
+
+				<tr>
+				<td class="hitlist_head">Herkunft aus Repository:</td>
+				<td class="hitlist_content">		
+                  <h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
+                  <t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryName}"/>
+				  (<t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryURL}"/>)
+  			      </h:outputLink>
+				</td>
+				</tr>
+				<tr>
+				<td class="hitlist_head">originaler OAI/PMH-Record:</td>
+				<td class="hitlist_content">
+			      <h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedFullOAIURL}" target="_blank">
+				  <t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedFullOAIURL}"/>
+ 			      </h:outputLink>
+				</td>
+				</tr>
+
+				<tr>
+				<td class="hitlist_head">Ähnlichkeiten:</td>
+				<td class="hitlist_content">			
+							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.duplicateProbabilityList}" 
+			                            var="item" layout="unorderedList" first="0" dir="LTR">
+								OID:<t:outputText value="#{item.referToOID}"/> (<t:outputText value="#{item.probability}"/>%)
+								<h:outputLink value="#{searchBean.hitlist.mapHitBean[item.referToOID].bestLink}" target="_blank">
+				                <t:outputText value="#{searchBean.hitlist.mapHitBean[item.referToOID].trimmedTitle}"/>
+ 					            </h:outputLink>
+                                <span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[item.referToOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.png"/></h:commandLink></span>
 							</t:dataList>
 				</td>
 				</tr>
@@ -188,6 +215,9 @@
 			</table>
 
         </div>     
+
+</h:form>
+
 
 	</body>
 </f:view>

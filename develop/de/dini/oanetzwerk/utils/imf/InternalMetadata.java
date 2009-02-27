@@ -1,12 +1,15 @@
 package de.dini.oanetzwerk.utils.imf;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import de.dini.oanetzwerk.utils.HelperMethods;
 
 @XmlRootElement( namespace = "http://oanetzwerk.dini.de/" ) 
 public class InternalMetadata {
@@ -26,6 +29,7 @@ public class InternalMetadata {
 	int contributorCounter = 0;
 	
 	List<Keyword> keywordList;
+	int keywordCounter = 0;
 	
 	List<Description> descriptionList;
 	int descriptionCounter = 0;
@@ -49,6 +53,7 @@ public class InternalMetadata {
 	int languageCounter = 0;
 	
 	List<Classification> classificationList;
+	int classificationCounter = 0;
 	
 	public boolean isEmpty() {
 		//TODO: stets überprüfen, ob neue Metadatenelemente hinzugekommen sind, die hier nicht überprüft werden
@@ -78,6 +83,7 @@ public class InternalMetadata {
 		authorCounter = 0;
 
 		keywordList = new LinkedList<Keyword>();
+		keywordCounter = 0;
 		
 		descriptionList = new LinkedList<Description>();
 		descriptionCounter = 0;
@@ -101,6 +107,7 @@ public class InternalMetadata {
 		languageCounter = 0;
 
 		classificationList = new LinkedList<Classification>();	
+		classificationCounter = 0;
 		
 		contributorList = new LinkedList<Contributor>();
 		contributorCounter = 0;
@@ -162,7 +169,9 @@ public class InternalMetadata {
 		
 		DateValue dv = new DateValue();
 		dv.setNumber(1);
-		dv.setDateValue("2008-02-28");
+		try {
+		  dv.setDateValue(HelperMethods.extract_java_datestamp("2008-02-28"));
+		} catch(Exception ex) {}
 		myIM.addDateValue(dv);
 		
 		Description desc = new Description();
@@ -333,7 +342,14 @@ public class InternalMetadata {
 	@Deprecated
 	public int addDateValue(String dateValue, int number) {
 		int result = 0;
-		DateValue temp = new DateValue(dateValue, number);
+		DateValue temp = null;
+		try {
+			temp = new DateValue();
+			temp.setNumber(number);
+			temp.setDateValue(HelperMethods.extract_java_datestamp(dateValue));
+		} catch(Exception ex) {}
+
+
 		this.dateValueList.add(temp);
 		System.out.println(temp);
 		return result;
@@ -803,6 +819,22 @@ public class InternalMetadata {
 
 	public void setContributorCounter(int contributorCounter) {
 		this.contributorCounter = contributorCounter;
+	}
+	
+	public int getKeywordCounter() {
+		return keywordCounter;
+	}
+
+	public void setKeywordCounter(int keywordCounter) {
+		this.keywordCounter = keywordCounter;
+	}
+
+	public int getClassificationCounter() {
+		return classificationCounter;
+	}
+
+	public void setClassificationCounter(int classificationCounter) {
+		this.classificationCounter = classificationCounter;
 	}
 
 	public BigDecimal getOid() {

@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -9,8 +10,10 @@ import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.filter.ElementFilter;
 
+import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.Classification;
+import de.dini.oanetzwerk.utils.imf.Contributor;
 import de.dini.oanetzwerk.utils.imf.DDCClassification;
 import de.dini.oanetzwerk.utils.imf.DINISetClassification;
 import de.dini.oanetzwerk.utils.imf.DNBClassification;
@@ -29,6 +32,7 @@ import de.dini.oanetzwerk.utils.imf.TypeValue;
 abstract class AbstractIMFGenerator {
 
 	static Logger logger = Logger.getLogger (AbstractIMFGenerator.class);
+	static Logger aggrStateLog = Logger.getLogger("AggregationState");
 	
 	protected String xmlData;
 	protected InternalMetadata im;
@@ -43,6 +47,10 @@ abstract class AbstractIMFGenerator {
 	protected int typeValueCounter = 0;
 	protected int dateValueCounter = 0;
 	protected int publisherCounter = 0;
+	protected int contributorCounter = 0;
+	protected int classificationCounter = 0;
+	
+	protected int editorCounter = 0;
 	
 	public AbstractIMFGenerator() {
 		this.im = new InternalMetadata();
@@ -84,6 +92,7 @@ abstract class AbstractIMFGenerator {
 	
 	protected Classification extractClassification(String metadataEntry) {
 		Classification result = null;
+		this.classificationCounter++;
 		String value = null;
 		
 		value = removeNoisyWhitespace(metadataEntry);
@@ -219,7 +228,12 @@ abstract class AbstractIMFGenerator {
 		
 		if (value != null) {
 			dateValue = new DateValue();
-			dateValue.setDateValue(value);
+			dateValue.setStringValue(value);
+			try {
+			  dateValue.setDateValue(HelperMethods.extract_datestamp(value));
+			} catch(ParseException pex) {
+				aggrStateLog.error("couldn't parse value '" + value + "' as datestamp:", pex);
+			}
 			dateValue.setNumber(this.dateValueCounter);
 		}
 		return dateValue;
@@ -265,6 +279,19 @@ abstract class AbstractIMFGenerator {
 		}
 		return author;
 	}
+
+	protected Contributor extractContributor(String value) {
+		Contributor contributor = null;
+		this.contributorCounter ++;
+		if (value != null) {
+			contributor = new Contributor();
+			String[] names = extractSinglePersonName(value);
+			contributor.setFirstname(names[0]);
+			contributor.setLastname(names[1]);
+			contributor.setNumber(this.contributorCounter);
+		}
+		return contributor;
+	}	
 	
 	protected String[] extractSinglePersonName(String value) {
 		String[] name = new String[2];

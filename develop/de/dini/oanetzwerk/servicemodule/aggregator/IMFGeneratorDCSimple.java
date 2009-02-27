@@ -20,6 +20,7 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 	//private Namespace namespace = Namespace.getNamespace("oai_dc","http://www.openarchives.org/OAI/2.0/oai_dc/");
 	
 	static Logger logger = Logger.getLogger (IMFGeneratorDCSimple.class);
+	static Logger aggrStateLog = Logger.getLogger("AggregationState");
 	
 	public IMFGeneratorDCSimple() {
 		super();
@@ -102,6 +103,9 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 						if (metadataEntry.getName().equals("date")) {
 							im.addDateValue(this.extractDateValue(metadataEntry.getText()));
 						}
+						if (metadataEntry.getName().equals("contributor")) {
+							im.addContributor(this.extractContributor(metadataEntry.getText()));
+						}
 						if (metadataEntry.getName().equals("type")) {
 							im.addTypeValue(this.extractTypeValue(metadataEntry.getText()));
 						}
@@ -111,10 +115,38 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 						if (metadataEntry.getName().equals("identifier")) {
 							im.addIdentifier(this.extractIdentifier(metadataEntry.getText()));
 						}
+						if (metadataEntry.getName().equals("source")) {
+							aggrStateLog.info("found \"source\" element, but do not parse it yet: " + metadataEntry.getText());
+						}
 						if (metadataEntry.getName().equals("language")) {
 							im.addLanguage(this.extractLanguage(metadataEntry.getText()));
 						}
+						if (metadataEntry.getName().equals("relation")) {
+							aggrStateLog.info("found \"relation\" element, but do not parse it yet: " + metadataEntry.getText());
+						}
+						if (metadataEntry.getName().equals("coverage")) {
+							aggrStateLog.info("found \"coverage\" element, but do not parse it yet: " + metadataEntry.getText());
+						}
+						if (metadataEntry.getName().equals("rights")) {
+							aggrStateLog.info("found \"rights\" element, but do not parse it yet: " + metadataEntry.getText());
+						}
 				}
+				
+				// counter setzen
+				im.setAuthorCounter(this.authorCounter);
+				im.setClassificationCounter(this.classificationCounter);
+				im.setContributorCounter(this.contributorCounter);
+				im.setDateValueCounter(this.dateValueCounter);
+				im.setDescriptionCounter(this.descriptionCounter);
+				//TODO: Gibt es überhaupt Editor????
+				im.setEditorCounter(this.editorCounter);  
+				im.setFormatCounter(this.formatCounter);
+				im.setIdentifierCounter(this.identifierCounter);
+				im.setKeywordCounter(this.keywordCounter);
+				im.setLanguageCounter(this.languageCounter);
+				im.setPublisherCounter(this.publisherCounter);
+				im.setTitleCounter(this.titleCounter);
+				im.setTypeValueCounter(this.typeValueCounter);
 				
 			}
 		} catch(Exception e) {

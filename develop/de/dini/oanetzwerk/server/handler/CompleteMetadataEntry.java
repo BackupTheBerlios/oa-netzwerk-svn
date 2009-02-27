@@ -21,6 +21,7 @@ import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
 import de.dini.oanetzwerk.utils.imf.CompleteMetadataJAXBMarshaller;
 import de.dini.oanetzwerk.utils.imf.DuplicateProbability;
 import de.dini.oanetzwerk.utils.imf.FullTextLink;
+import de.dini.oanetzwerk.utils.imf.RepositoryData;
 
 /**
  * @author Robin Malitz
@@ -101,14 +102,44 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
+			////////////////////////////
+			// Kern-Metadaten - Abfrage
+			////////////////////////////
+			
 			// ausgelagert in separate Klasse, um den Code für andere Metadatenviews nachzunutzen
 			MetadataDBMapper.fillInternalMetadataFromDB(cmf, stmtconn);
 			
+			////////////////////////////
+			// DupPro - Abfrage
+			////////////////////////////			
 			
-			DuplicateProbability dupPro = new DuplicateProbability(new BigDecimal(815), 99.9, 0);
-			cmf.addDuplicateProbability(dupPro);
+			stmtconn.loadStatement (SelectFromDB.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
+			QueryResult dupproResult = stmtconn.execute ( );
 			
-			// FulltextlinkAbfrage
+			if (dupproResult.getWarning ( ) != null) {
+				for (Throwable warning : dupproResult.getWarning ( )) {
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			int num = 0;
+			while (dupproResult.getResultSet ( ).next ( )) {
+				try {
+				  DuplicateProbability dupPro = new DuplicateProbability();
+				  dupPro.setNumber(num);
+				  dupPro.setReferToOID(new BigDecimal(dupproResult.getResultSet().getString("duplicate_id")));
+				  dupPro.setProbability(dupproResult.getResultSet().getDouble("percentage"));
+				  cmf.addDuplicateProbability(dupPro);				
+				  num++;
+				} catch(Exception ex) {
+					logger.error("error fetching duplicate possibilities for OID: " + cmf.getOid(), ex);
+				}
+			}	
+						
+			//////////////////////////
+			// Fulltextlink - Abfrage
+			//////////////////////////
+			
 			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, cmf.getOid()));
 			QueryResult ftlResult = stmtconn.execute ( );
 			
@@ -123,6 +154,29 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 				ftl.setUrl(ftlResult.getResultSet().getString("link"));
 				ftl.setMimeformat(ftlResult.getResultSet().getString("mimeformat"));
 				cmf.addFullTextLink(ftl);				
+			}			
+			
+			////////////////////////////			
+			// RepositoryData - Abfrage
+			////////////////////////////
+			
+			stmtconn.loadStatement (SelectFromDB.RepositoryData(stmtconn.connection, cmf.getOid()));
+			QueryResult repdataResult = stmtconn.execute ( );
+			
+			if (repdataResult.getWarning ( ) != null) {
+				for (Throwable warning : repdataResult.getWarning ( )) {
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			while (repdataResult.getResultSet ( ).next ( )) {
+				RepositoryData repData = new RepositoryData(cmf.getOid());
+				repData.setRepositoryID(repdataResult.getResultSet().getInt("repository_id"));
+				repData.setRepositoryName(repdataResult.getResultSet().getString("name"));
+				repData.setRepositoryOAI_BASEURL(repdataResult.getResultSet().getString("oai_url"));
+				repData.setRepositoryOAI_EXTID(repdataResult.getResultSet().getString("repository_identifier"));
+				repData.setRepositoryURL(repdataResult.getResultSet().getString("url"));
+				cmf.setRepositoryData(repData);
 			}			
 			
 			stmtconn.commit ( );
