@@ -99,15 +99,22 @@
 				<tr>
 				<td class="hitlist_head">Schlagworte:</td>
 				<td class="hitlist_content">			
-					<h:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].mergedKeywords}" />
+					<% //<h:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].mergedKeywords}" />
+					%>
+					<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedKeywordList}" 
+			                    var="item" layout="unorderedList" first="0"	dir="LTR">
+						<t:outputText value="#{item[0]}"></t:outputText>&nbsp;
+                        <h:outputLink value="#{item[1]}" target="_blank">[google]</h:outputLink>&nbsp;
+                        <h:outputLink value="#{item[2]}" target="_blank">[wikipedia]</h:outputLink>                       
+					</t:dataList>					
 				</td>
 				</tr>
 				<tr>
 				<td class="hitlist_head">Klassifikation:</td>
 				<td class="hitlist_content">			
-							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.classificationList}" 
+							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedClassificationList}" 
 			                            var="classif" layout="unorderedList" first="0"	dir="LTR">
-								<t:outputText value="#{classif.value}"></t:outputText>&nbsp;
+								<t:outputText value="#{classif}"></t:outputText>&nbsp;
 							</t:dataList>
 				</td>
 				</tr>
@@ -141,9 +148,15 @@
 				<tr>
 				<td class="hitlist_head">Sprache:</td>
 				<td class="hitlist_content">			
-							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.languageList}" 
+<%
+							//<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.languageList}" 
+			                //            var="item" layout="unorderedList" first="0" dir="LTR">
+							//	<t:outputText value="#{item.language}"></t:outputText>&nbsp;
+							//</t:dataList>
+%>
+							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedLanguageList}" 
 			                            var="item" layout="unorderedList" first="0" dir="LTR">
-								<t:outputText value="#{item.language}"></t:outputText>&nbsp;
+								<t:outputText value="#{item}"></t:outputText>&nbsp;
 							</t:dataList>
 				</td>
 				</tr>

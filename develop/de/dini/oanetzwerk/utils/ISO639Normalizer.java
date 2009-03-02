@@ -3,6 +3,12 @@ package de.dini.oanetzwerk.utils;
 import java.util.HashMap;
 import java.util.Locale;
 
+/**
+ * Methoden, um den String eines Language-Metadatums zu einer Locale mit ISO639-3-Kennung umzuwandeln
+ * 
+ * @author malitzro
+ *
+ */
 public class ISO639Normalizer {
 
 	private static HashMap<String,Locale> mapISO639_3 = new HashMap<String, Locale>();

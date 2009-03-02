@@ -31,6 +31,7 @@ public final class DDCDataSingleton {
 	
 	DDCNameResolver myDDCNameResolver = null;
 	private HashMap mapDDCNames_de = null;
+	private HashMap<String,String> mapDDCNames_de_fromDB = null;
 	private List<String[]> simpleDDCCategorySums = null;
 	private HashMap<String,String[]> mapDDCSums = null;
 	private List<String[]> directDDCCategorySums = null;
@@ -39,6 +40,7 @@ public final class DDCDataSingleton {
 	private DDCDataSingleton() {
 		simpleDDCCategorySums = new ArrayList<String[]>();
 		mapDDCSums = new HashMap<String,String[]>();
+		mapDDCNames_de_fromDB = new HashMap<String, String>();
 		try {
 			myDDCNameResolver = new DDCNameResolver();
 			setupMapDDCNames();			
@@ -90,8 +92,18 @@ public final class DDCDataSingleton {
 		return listDDCNaviNodes;
 	}
 	
+	public HashMap<String, String> getMapDDCNames_de_fromDB() {
+		return mapDDCNames_de_fromDB;
+	}
+
+	public void setMapDDCNames_de_fromDB(
+			HashMap<String, String> mapDDCNames_de_fromDB) {
+		this.mapDDCNames_de_fromDB = mapDDCNames_de_fromDB;
+	}	
+	
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	
+
 	private void setupMapDDCNames() {
 		this.mapDDCNames_de = new HashMap<String,String>();
 		for(String key : DDCNameResolver.getListDDCNumbers()) {
@@ -159,15 +171,17 @@ public final class DDCDataSingleton {
 			String strCat = null;
 			String strDirectSum = null;
 			String strSubSum = null;
+			String strCatName = null;
 			while (it.hasNext ( )) {
 				key = it.next ( );
 				if("DDC_Categorie".equals(key)) strCat = res.getValue (key);
 				if("direct_count".equals(key)) strDirectSum = res.getValue (key);
 				if("sub_count".equals(key)) strSubSum = res.getValue (key);
+				if("name_deu".equals(key)) strCatName = res.getValue (key);
 			}
 			listDDCCategoriesAndSum.add(new String[] {strCat, strDirectSum} );	
 			mapDDCSums.put(strCat, new String[] {strDirectSum, strSubSum});
-			
+			mapDDCNames_de_fromDB.put(strCat, strCatName);
 		}
 		
 		//Collections.sort(listDDCCategoriesAndSum, new CategoryNumberComparator());

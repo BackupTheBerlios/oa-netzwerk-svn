@@ -3,19 +3,28 @@ package de.dini.oanetzwerk.userfrontend;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.utils.ISO639Normalizer;
 import de.dini.oanetzwerk.utils.imf.Author;
+import de.dini.oanetzwerk.utils.imf.Classification;
 import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
 import de.dini.oanetzwerk.utils.imf.Contributor;
+import de.dini.oanetzwerk.utils.imf.DDCClassification;
+import de.dini.oanetzwerk.utils.imf.DINISetClassification;
+import de.dini.oanetzwerk.utils.imf.DNBClassification;
 import de.dini.oanetzwerk.utils.imf.DateValue;
 import de.dini.oanetzwerk.utils.imf.Description;
 import de.dini.oanetzwerk.utils.imf.DuplicateProbability;
 import de.dini.oanetzwerk.utils.imf.FullTextLink;
 import de.dini.oanetzwerk.utils.imf.Identifier;
 import de.dini.oanetzwerk.utils.imf.Keyword;
+import de.dini.oanetzwerk.utils.imf.Language;
+import de.dini.oanetzwerk.utils.imf.OtherClassification;
 import de.dini.oanetzwerk.utils.imf.Title;
 
 public class HitBean implements Serializable {
@@ -187,6 +196,54 @@ public class HitBean implements Serializable {
 		sb.append("?verb=GetRecord&metadataPrefix=oai_dc&identifier=");
 		sb.append(getCompleteMetadata().getRepositoryData().getRepositoryOAI_EXTID());
 		return sb.toString();
+	}
+	
+	public List<String> getTrimmedLanguageList() {
+		List<String> trimmedLangs = new ArrayList<String>();
+		for(Language lang : getCompleteMetadata().getLanguageList()) {
+			Locale locale = ISO639Normalizer.get_ISO639_3(lang.getLanguage());
+			if(locale != null) {
+				trimmedLangs.add(locale.getDisplayLanguage(Locale.GERMAN) + " ("+ ISO639Normalizer.wrapDoubleISO(locale.getISO3Language()) +")");
+			} else {
+			    trimmedLangs.add(lang.getLanguage());
+			}
+		}
+		return trimmedLangs;
+	}
+	
+	public List<String> getTrimmedClassificationList() {
+		List<String> trimmedClassis = new ArrayList<String>();
+		for(Classification classi : getCompleteMetadata().getClassificationList()) {
+			if(classi instanceof DNBClassification) {
+				trimmedClassis.add("DNB: " + ((DNBClassification)classi).getValue());
+			} else if(classi instanceof DINISetClassification) {
+				trimmedClassis.add("DINI: " + ((DINISetClassification)classi).getValue());
+			} else if(classi instanceof DDCClassification) {
+				String ddcName_de = DDCDataSingleton.getInstance().getMapDDCNames_de_fromDB().get(((DDCClassification)classi).getValue());
+				if(ddcName_de != null && ddcName_de.length() > 0) {
+				  trimmedClassis.add("DDC: " + ddcName_de + " (" + ((DDCClassification)classi).getValue()+ ")");
+				} else {
+				  trimmedClassis.add("DDC: " + ((DDCClassification)classi).getValue());
+				}
+			} else if(classi instanceof OtherClassification) {
+				trimmedClassis.add("Sonstige: " + ((OtherClassification)classi).getValue());
+			}
+		}
+		return trimmedClassis;
+	}
+	
+	public List<String[]> getTrimmedKeywordList() {
+		List<String[]> trimmedKeywords = new ArrayList<String[]>();
+		for(Keyword keyword : getCompleteMetadata().getKeywordList()) {
+			String keyword_val = keyword.getKeyword();
+			String[] s = new String[3];
+			s[0] = keyword_val;
+			if(keyword.getLanguage() != null && keyword.getLanguage().length() > 0) s[0] += " (" + keyword.getLanguage() + ")";
+			s[1] = "http://www.google.de/search?q=%22" + keyword_val + "%22";
+			s[2] = "http://de.wikipedia.org/wiki/Spezial:Search?search=%22" + keyword_val + "%22";
+			trimmedKeywords.add(s);
+		}
+		return trimmedKeywords;
 	}
 	
 	public String getMetadatastring() {

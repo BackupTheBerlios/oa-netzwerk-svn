@@ -583,6 +583,7 @@ public class Aggregator {
 			
 			RestMessage msgPutResponse = null;
 			try {
+				logger.debug("internal metadata to send via PUT: " + xmlInternalMetadata);
 				msgPutResponse = restclient.sendPutRestMessage(msgPutRequest);
 			} catch (IOException ioex) {
 
