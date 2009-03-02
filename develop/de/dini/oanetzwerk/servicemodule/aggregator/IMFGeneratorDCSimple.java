@@ -2,8 +2,10 @@ package de.dini.oanetzwerk.servicemodule.aggregator;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jdom.Element;
@@ -13,6 +15,7 @@ import org.jdom.input.SAXBuilder;
 import org.xml.sax.InputSource;
 
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
+import de.dini.oanetzwerk.utils.imf.Keyword;
 
 
 public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
@@ -54,6 +57,8 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 		//		InternalMetadata im = new InternalMetadata();
 		this.xmlData = data;
 
+		Set<Keyword> setKeywords = new HashSet<Keyword>();
+		
 		org.jdom.Document doc;
 		SAXBuilder builder = new SAXBuilder();
 		
@@ -92,7 +97,9 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 							im.addAuthor(this.extractAuthor(metadataEntry.getText()));
 						}
 						if (metadataEntry.getName().equals("subject")) {
-							im.addKeyword(this.extractKeyword(metadataEntry.getText()));
+							// nicht direkt einspeichern, um durch Einlesen in ein Set zuerst Dopplungen auszuschlieﬂen!
+							//im.addKeyword(this.extractKeyword(metadataEntry.getText()));
+                            setKeywords.add(this.extractKeyword(metadataEntry.getText()));
 						}
 						if (metadataEntry.getName().equals("description")) {
 							im.addDescription(this.extractDescription(metadataEntry.getText()));
@@ -147,6 +154,10 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 				im.setPublisherCounter(this.publisherCounter);
 				im.setTitleCounter(this.titleCounter);
 				im.setTypeValueCounter(this.typeValueCounter);
+				
+				for(Keyword keyword : setKeywords) {
+					im.addKeyword(keyword);
+				}
 				
 			}
 		} catch(Exception e) {

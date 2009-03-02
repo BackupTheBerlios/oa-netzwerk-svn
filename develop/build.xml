@@ -296,6 +296,7 @@
       <include name="**/RestClient.java" />
       <include name="**/exceptions/*.java" />
       <include name="**/imf/*.java" />
+      <include name="**/HelperMethods.java" />
       <exclude name="**/Test*" />
     </javac>
   </target>
