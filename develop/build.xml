@@ -296,6 +296,7 @@
       <include name="**/RestClient.java" />
       <include name="**/exceptions/*.java" />
       <include name="**/imf/*.java" />
+      <include name="**/utils/ISO*.java" />
       <include name="**/HelperMethods.java" />
       <exclude name="**/Test*" />
     </javac>
@@ -515,7 +516,7 @@
       <include name="**/codec/*.java" />
       <include name="**/RestClient.java" />
       <include name="**/HelperMethods.java" />
-      <include name="**/ISO639Normalizer.java" />
+      <include name="**/ISO*.java" />
       <include name="**/utils/imf/**" />
       <exclude name="**/technotest*" />
       <exclude name="**/OAdmiNRealm.java" />
