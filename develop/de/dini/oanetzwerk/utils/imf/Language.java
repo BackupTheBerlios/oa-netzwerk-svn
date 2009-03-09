@@ -2,6 +2,7 @@ package de.dini.oanetzwerk.utils.imf;
 
 public class Language {
 	String language;
+	String iso639language;
 	int number;
 
 	public Language() {
@@ -15,6 +16,7 @@ public class Language {
 
 	public String toString() {
 		String result = "language=" +this.language;
+		result = result + "\n" + "iso639language=" + this.iso639language;
 		result = result + "\n" + "number=" + this.number;
 		return result;
 	}
@@ -34,5 +36,13 @@ public class Language {
 	public void setNumber(int number) {
 		this.number = number;
 	}
-	
+
+	public String getIso639language() {
+		return iso639language;
+	}
+
+	public void setIso639language(String iso639language) {
+		this.iso639language = iso639language;
+	}
+
 }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -12,6 +13,7 @@ import org.jdom.Element;
 import org.jdom.filter.ElementFilter;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.utils.ISO639LangNormalizer;
 import de.dini.oanetzwerk.utils.ISO8601DateNormalizer;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.Classification;
@@ -203,6 +205,20 @@ abstract class AbstractIMFGenerator {
 		if (value != null) {
 			language = new Language();
 			language.setLanguage(value);
+			Locale locale = ISO639LangNormalizer.get_ISO639_3(value);
+			if(locale != null) {
+				language.setIso639language(locale.getISO3Language());
+			} else {
+			    if(value.equalsIgnoreCase("mis") || 
+			       value.equalsIgnoreCase("mul") || 
+			       value.equalsIgnoreCase("und")) {
+			    	language.setIso639language(value.toLowerCase());
+			    } else if(value != null && value.length() > 0) {
+			    	language.setIso639language("und");
+			    } else {
+			    	language.setIso639language("mis");
+			    }
+			}
 			language.setNumber(this.languageCounter);
 		}
 		return language;

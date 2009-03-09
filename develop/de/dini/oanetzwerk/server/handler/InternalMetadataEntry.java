@@ -197,6 +197,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 				
 			}
 			
+			stmtconn.loadStatement (DeleteFromDB.Object2Iso639Language(stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				
+			}
+			
 			stmtconn.loadStatement (DeleteFromDB.Object2Keywords (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
@@ -245,6 +253,8 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			if (this.result.getUpdateCount ( ) < 1) {
 				
 			}
+			
+			// TODO: DELETE Languages/Iso639Languages without references !!!
 			
 			stmtconn.loadStatement (DeleteFromDB.Other_Categories (stmtconn.connection));
 			this.result = stmtconn.execute ( );
@@ -487,7 +497,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			return RestXmlCodec.encodeRestMessage (this.rms);			
 		}
 	
-		
 		// PREPARE SQL STATEMENTS
 		
 		List <Title> titleList = imf.getTitleList ( );
@@ -505,7 +514,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 		List <TypeValue> typeValueList = imf.getTypeValueList ( );
 
 		List <Language> languageList = imf.getLanguageList();
-		List<Classification> classificationList = imf.getClassificationList();
+		List <Classification> classificationList = imf.getClassificationList();
 		
 		try {
 			
@@ -543,8 +552,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							logger.debug("dateValue hinzufügen" + dateValue.toString());
 						}
 						
-						// TODO: beide Werte (Timestamp und origstring) einf�gen
-						stmtconn.loadStatement (InsertIntoDB.DateValue (stmtconn.connection, object_id, dateValue.getNumber(), HelperMethods.java2sqlDate(dateValue.getDateValue())));
+						stmtconn.loadStatement (InsertIntoDB.DateValue (stmtconn.connection, object_id, dateValue.getNumber(), HelperMethods.java2sqlDate(dateValue.getDateValue()), dateValue.getStringValue()));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getUpdateCount ( ) < 1) {
@@ -788,8 +796,12 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 				for (Language language : languageList) {
 
 					if (logger.isDebugEnabled()) {
-						logger.debug("Langauge-Informationen hinzufügen" + language.toString());
+						logger.debug("Language-Informationen hinzufügen" + language.toString());
 					}
+					
+					//////////////////
+					// Originalwert
+					//////////////////
 					
 					BigDecimal language_id = null;
 					
@@ -822,7 +834,47 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						
 						//warn, error, rollback, nothing????
 					}
+					
+					//////////////////////
+					// ISO 639 Kodierung
+					//////////////////////
+					
+					BigDecimal iso639language_id = null;
+					
+					if(language.getIso639language() != null) {
+					
+						stmtconn.loadStatement (SelectFromDB.Iso639LanguageByName (stmtconn.connection, language.getIso639language()));
+						this.result = stmtconn.execute ( );
 
+						if (!this.result.getResultSet ( ).next ( )) {
+
+							stmtconn.loadStatement (InsertIntoDB.Iso639Language (stmtconn.connection, language.getIso639language()));
+							this.result = stmtconn.execute ( );
+
+							if (this.result.getUpdateCount ( ) < 1) {
+
+								//warn, error, rollback, nothing????
+							}
+						}
+
+						stmtconn.loadStatement (SelectFromDB.Iso639LanguageByName (stmtconn.connection, language.getIso639language()));
+						this.result = stmtconn.execute ( );
+
+						while (this.result.getResultSet ( ).next ( )) {
+
+							iso639language_id = this.result.getResultSet ( ).getBigDecimal(1);
+
+						}
+						
+						stmtconn.loadStatement (InsertIntoDB.Object2Iso639Language(stmtconn.connection, object_id, iso639language_id, language.getNumber()));
+						this.result = stmtconn.execute ( );
+
+						if (this.result.getUpdateCount ( ) < 1) {
+
+							//warn, error, rollback, nothing????
+						}
+
+					}
 				}
 			}
 			

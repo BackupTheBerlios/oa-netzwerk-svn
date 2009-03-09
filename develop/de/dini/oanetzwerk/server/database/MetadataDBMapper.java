@@ -98,6 +98,7 @@ public class MetadataDBMapper {
 //			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
 			hmf.addTitle (temp);
 		}
+		hmf.setTitleCounter(hmf.getTitleList().size());
 		
 		// Auswertung der Autoren
 		stmtconn.loadStatement (SelectFromDB.Authors (stmtconn.connection, hmf.getOid()));
@@ -114,6 +115,7 @@ public class MetadataDBMapper {
 			temp.setTitle(queryResult.getResultSet ( ).getString("title"));
 			hmf.addAuthor (temp);
 		}
+		hmf.setAuthorCounter(hmf.getAuthorList().size());
 		
 		// Auswertung der Editoren
 		stmtconn.loadStatement (SelectFromDB.Editors (stmtconn.connection, hmf.getOid()));
@@ -130,6 +132,7 @@ public class MetadataDBMapper {
 			temp.setTitle(queryResult.getResultSet ( ).getString("title"));
 			hmf.addEditor (temp);
 		}
+		hmf.setEditorCounter(hmf.getEditorList().size());
 		
 		// Auswertung der Bearbeiter
 		stmtconn.loadStatement (SelectFromDB.Contributors (stmtconn.connection, hmf.getOid()));
@@ -146,6 +149,7 @@ public class MetadataDBMapper {
 			temp.setTitle(queryResult.getResultSet ( ).getString("title"));
 			hmf.addContributor (temp);
 		}
+		hmf.setContributorCounter(hmf.getContributorList().size());
 	
 		// Auswertung des Formats
 		stmtconn.loadStatement (SelectFromDB.Format (stmtconn.connection, hmf.getOid()));
@@ -158,6 +162,7 @@ public class MetadataDBMapper {
 			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
 			hmf.addFormat (temp);
 		}
+		hmf.setFormatCounter(hmf.getFormatList().size());
 		
 		// Auswertung des Identifiers
 		stmtconn.loadStatement (SelectFromDB.Identifier (stmtconn.connection, hmf.getOid()));
@@ -171,6 +176,8 @@ public class MetadataDBMapper {
 			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
 			hmf.addIdentifier (temp);
 		}
+		hmf.setIdentifierCounter(hmf.getIdentifierList().size());
+
 		
 		// Auswertung der Description
 		stmtconn.loadStatement (SelectFromDB.Description (stmtconn.connection, hmf.getOid()));
@@ -184,6 +191,8 @@ public class MetadataDBMapper {
 			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
 			hmf.addDescription (temp);
 		}
+		hmf.setDescriptionCounter(hmf.getDescriptionList().size());
+
 
 		// Auswertung der DateValue-Werte
 		stmtconn.loadStatement (SelectFromDB.DateValues (stmtconn.connection, hmf.getOid()));
@@ -194,11 +203,14 @@ public class MetadataDBMapper {
 			  DateValue temp = new DateValue ( );
 			  temp.setDateValue(HelperMethods.sql2javaDate(queryResult.getResultSet ( ).getDate("value")));
 			  temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
+			  temp.setStringValue (queryResult.getResultSet ( ).getString ("originalValue"));
 			  hmf.addDateValue (temp);
 			} catch(ParseException pex) {
 				logger.warn("skip dateValue '" + queryResult.getResultSet ( ).getDate("value") +"': ", pex);
 			}
 		}
+		hmf.setDateValueCounter(hmf.getDateValueList().size());
+
 				
 		// Auswertung der TypeValue-Werte
 		stmtconn.loadStatement (SelectFromDB.TypeValues (stmtconn.connection, hmf.getOid()));
@@ -211,6 +223,8 @@ public class MetadataDBMapper {
 //			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
 			hmf.addTypeValue (temp);
 		}
+		hmf.setTypeValueCounter(hmf.getTypeValueList().size());
+
 
 		// Auswertung der Publisher-Werte
 		stmtconn.loadStatement (SelectFromDB.Publisher (stmtconn.connection, hmf.getOid()));
@@ -223,6 +237,8 @@ public class MetadataDBMapper {
 			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
 			hmf.addPublisher (temp);
 		}
+		hmf.setPublisherCounter(hmf.getPublisherList().size());
+
 		
 		// Auswertung der DDC-Classifications-Werte
 		stmtconn.loadStatement (SelectFromDB.DDCClassification (stmtconn.connection, hmf.getOid()));
@@ -271,6 +287,7 @@ public class MetadataDBMapper {
 //			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
 			hmf.addClassfication(cl);
 		}
+		hmf.setClassificationCounter(hmf.getClassificationList().size());
 
 		// Auswertung der Keywords-Werte
 		stmtconn.loadStatement (SelectFromDB.Keywords (stmtconn.connection, hmf.getOid()));
@@ -284,8 +301,10 @@ public class MetadataDBMapper {
 //			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
 			hmf.addKeyword(temp);
 		}
+		hmf.setKeywordCounter(hmf.getKeywordList().size());
+
 		
-		// Auswertung der Keywords-Werte
+		// Auswertung der Language-Werte
 		stmtconn.loadStatement (SelectFromDB.Languages (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
@@ -293,9 +312,12 @@ public class MetadataDBMapper {
 			
 			Language temp = new Language();
 			temp.setLanguage(queryResult.getResultSet ( ).getString("language"));
+			temp.setIso639language(queryResult.getResultSet ( ).getString("iso639language"));
 			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
 			hmf.addLanguage(temp);
 		}
+		hmf.setLanguageCounter(hmf.getLanguageList().size());
+
 		
 	}
 }

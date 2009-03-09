@@ -16,6 +16,7 @@ import org.xml.sax.InputSource;
 
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 import de.dini.oanetzwerk.utils.imf.Keyword;
+import de.dini.oanetzwerk.utils.imf.Language;
 
 
 public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
@@ -38,6 +39,7 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 		typeValueCounter = 0;
 		dateValueCounter = 0;
 		publisherCounter = 0;
+		classificationCounter = 0;
 	}
 	
 	
@@ -97,7 +99,7 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 							im.addAuthor(this.extractAuthor(metadataEntry.getText()));
 						}
 						if (metadataEntry.getName().equals("subject")) {
-							// nicht direkt einspeichern, um durch Einlesen in ein Set zuerst Dopplungen auszuschließen!
+							// nicht direkt einspeichern, um durch Einlesen in ein Set zuerst Dopplungen auszuschlieï¿½en!
 							//im.addKeyword(this.extractKeyword(metadataEntry.getText()));
                             setKeywords.add(this.extractKeyword(metadataEntry.getText()));
 						}
@@ -139,13 +141,24 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 						}
 				}
 				
+				if(im.getLanguageList().isEmpty()) {
+					Language lang = new Language();
+					lang.setNumber(1);
+					lang.setIso639language("mis");
+					im.addLanguage(lang);
+				}
+				
+				for(Keyword keyword : setKeywords) {
+					im.addKeyword(keyword);
+				}
+				
 				// counter setzen
 				im.setAuthorCounter(this.authorCounter);
 				im.setClassificationCounter(this.classificationCounter);
 				im.setContributorCounter(this.contributorCounter);
 				im.setDateValueCounter(this.dateValueCounter);
 				im.setDescriptionCounter(this.descriptionCounter);
-				//TODO: Gibt es überhaupt Editor????
+				//TODO: editor wird in DC nicht benutzt
 				im.setEditorCounter(this.editorCounter);  
 				im.setFormatCounter(this.formatCounter);
 				im.setIdentifierCounter(this.identifierCounter);
@@ -154,11 +167,7 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 				im.setPublisherCounter(this.publisherCounter);
 				im.setTitleCounter(this.titleCounter);
 				im.setTypeValueCounter(this.typeValueCounter);
-				
-				for(Keyword keyword : setKeywords) {
-					im.addKeyword(keyword);
-				}
-				
+												
 			}
 		} catch(Exception e) {
 			logger.error("error while parsing XML String: " + e);

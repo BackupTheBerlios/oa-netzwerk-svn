@@ -554,7 +554,7 @@ public class SelectFromDB {
 	public static PreparedStatement DateValues (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
-		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT number, value FROM dbo.DateValues WHERE object_id = ?");
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT number, value, originalValue FROM dbo.DateValues WHERE object_id = ?");
 		preparedstmt.setBigDecimal (1, object_id);
 		
 		return preparedstmt;
@@ -682,7 +682,17 @@ public class SelectFromDB {
 	public static PreparedStatement Languages (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
-		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT language, number FROM dbo.Language L JOIN dbo.Object2Language O ON L.language_id = O.language_id WHERE O.object_id = ?");
+		//PreparedStatement preparedstmt = connection.prepareStatement ("SELECT L.language, I.iso639language, O.number FROM dbo.Language L JOIN dbo.Object2Language O ON L.language_id = O.language_id JOIN dbo.Object2Iso639Language I ON L.language_id = I.language_id WHERE O.object_id = ?");
+		
+		PreparedStatement preparedstmt = 
+			connection.prepareStatement (
+		"SELECT L.language AS language, I.iso639language AS iso639language, O2L.number AS number " +
+		"FROM dbo.Object2Language O2L "+
+		"LEFT JOIN dbo.Language L ON L.language_id = O2L.language_id " + 
+		"LEFT JOIN dbo.Object2Iso639Language I2L ON O2L.object_id = I2L.object_id " + 
+		"LEFT JOIN dbo.Iso639Language I ON I.language_id = I2L.language_id " +
+		"WHERE O2L.object_id = ?");
+		
 		preparedstmt.setBigDecimal (1, object_id);
 		
 		return preparedstmt;
@@ -732,6 +742,20 @@ public class SelectFromDB {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT language_id FROM dbo.Language WHERE (language = ?)");
 		preparedstmt.setString (1, language);
+		
+		return preparedstmt;
+	}
+	
+	/**
+	 * @param language
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement Iso639LanguageByName (Connection connection, String iso639language) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT language_id FROM dbo.Iso639Language WHERE (iso639language = ?)");
+		preparedstmt.setString (1, iso639language);
 		
 		return preparedstmt;
 	}

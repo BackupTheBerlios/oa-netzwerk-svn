@@ -750,7 +750,7 @@ public class InternalMetadata {
 		for(Contributor contributor : contributorList) {
 			sb.append(contributor+"\n");
 		}		
-		sb.append("\n-- keywords:\n");
+		sb.append("\n-- keywords: -- counter " + keywordCounter +" :\n");
 		for(Keyword keyword : keywordList) {
 			sb.append(keyword+"\n");
 		}
@@ -782,7 +782,7 @@ public class InternalMetadata {
 		for(Language lang : languageList) {
 			sb.append(lang+"\n");
 		}
-		sb.append("\n-- classificationList:\n");
+		sb.append("\n-- classificationList -- counter " + classificationCounter + " :\n");
 		for(ClassificationInterface classification : classificationList) {
 			sb.append(classification+"\n");
 		}

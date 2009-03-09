@@ -208,18 +208,19 @@ public class InsertIntoDB {
 	 */
 	
 	public static PreparedStatement DateValue (Connection connection, BigDecimal object_id,
-			int number, Date extract_datestamp) throws SQLException {
+			int number, Date extract_datestamp, String origValue) throws SQLException {
 		
 		if (logger.isDebugEnabled ( )) {
 			
-			logger.debug ("Insert DateValues: INSERT INTO dbo.DateValues (object_id, number, value) " +
-					"VALUES (" + object_id + ", " + number + ", " + extract_datestamp + ")");
+			logger.debug ("Insert DateValues: INSERT INTO dbo.DateValues (object_id, number, value, originalValue) " +
+					"VALUES (" + object_id + ", " + number + ", " + extract_datestamp + ", " + origValue + ")");
 		}
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.DateValues (object_id, number, value) VALUES (?,?,?)");
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.DateValues (object_id, number, value, originalValue) VALUES (?,?,?,?)");
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setInt (2, number);
 		preparedstmt.setDate (3, extract_datestamp);
+		preparedstmt.setString (4, origValue);
 		
 		return preparedstmt;
 	}
@@ -490,6 +491,25 @@ public class InsertIntoDB {
 		
 		return preparedstmt;
 	}
+	
+	/**
+	 * @param language
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement Iso639Language (Connection connection, String iso639language) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Language: INSERT INTO dbo.Iso639Language (iso639language) VALUES (" + iso639language + ")");
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement("INSERT INTO dbo.Iso639Language (iso639language) VALUES (?)");
+		preparedstmt.setString(1, iso639language);
+		
+		return preparedstmt;
+	}
 
 	/**
 	 * @param connection
@@ -510,6 +530,32 @@ public class InsertIntoDB {
 		}
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Object2Language (object_id, language_id, number) VALUES (?,?,?)");
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setBigDecimal(2, language_id);
+		preparedstmt.setInt(3, number);
+		
+		return preparedstmt;
+	}
+	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @param language_id
+	 * @param number
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public static PreparedStatement Object2Iso639Language (Connection connection, BigDecimal object_id,
+			BigDecimal language_id, int number) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert Object2Language: INSERT INTO dbo.Object2Iso639Language (object_id, language_id, number) " +
+					"VALUES (" + object_id + ", " + language_id + ", " + number + ")");
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Object2Iso639Language (object_id, language_id, number) VALUES (?,?,?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setBigDecimal(2, language_id);
 		preparedstmt.setInt(3, number);
