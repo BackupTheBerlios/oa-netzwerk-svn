@@ -212,10 +212,22 @@ abstract class AbstractIMFGenerator {
 			    if(value.equalsIgnoreCase("mis") || 
 			       value.equalsIgnoreCase("mul") || 
 			       value.equalsIgnoreCase("und")) {
+			    	// gültige Status-Kürzel aus ISO639, die keiner Locale entsprechen, werden durchgeschleift
 			    	language.setIso639language(value.toLowerCase());
 			    } else if(value != null && value.length() > 0) {
-			    	language.setIso639language("und");
+			    	// ein existierender Wert, der weder zu Locale gemappt werden konnte, noch iso-Status-Kürzel ist 
+			    	// Spezialfälle
+			    	//TODO: hier konfigurierbares Spezialmapping einbetten
+			    	if(value.equalsIgnoreCase("esp")) {
+			    		language.setIso639language("spa");
+			    	} else if(value.equalsIgnoreCase("other")) {
+			    		language.setIso639language("mis"); 
+			    	} else {
+			    	  	// wenn nichts hilft als "undetermined" markieren
+			    	    language.setIso639language("und");
+			    	}
 			    } else {
+			    	// wenn der value leer ist, als "missing" markieren
 			    	language.setIso639language("mis");
 			    }
 			}
