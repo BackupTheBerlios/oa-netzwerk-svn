@@ -182,19 +182,24 @@ public class RestXmlCodec {
 					
 					logger.debug("** key == " + key);
 					
-					Content content = elementEntry.getContent(0);
 					String value = "";
-					if(content instanceof org.jdom.Text) {
-						if(useBase64values) {
-							value = decodeBase64(((Text)content).getValue());
-						} else {
-							value = ((Text)content).getValue();
-						}						
-					} else if(content instanceof org.jdom.Element) {
-						if(((Element)content).getName().equals("NULL")) {
-							value = null;
+					
+					
+					if(elementEntry.getContent() != null && elementEntry.getContent().size() > 0) {
+						Content content = elementEntry.getContent(0);
+
+						if(content instanceof org.jdom.Text) {
+							if(useBase64values) {
+								value = decodeBase64(((Text)content).getValue());
+							} else {
+								value = ((Text)content).getValue();
+							}						
+						} else if(content instanceof org.jdom.Element) {
+							if(((Element)content).getName().equals("NULL")) {
+								value = null;
+							}
 						}
-					}		
+					}
 					
 					logger.debug("** value == " + value);	
 					
