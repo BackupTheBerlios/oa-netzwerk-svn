@@ -9,7 +9,7 @@ import java.util.Locale;
  * @author malitzro
  *
  */
-public class ISO639Normalizer {
+public class ISO639LangNormalizer {
 
 	private static HashMap<String,Locale> mapISO639_3 = new HashMap<String, Locale>();
 	

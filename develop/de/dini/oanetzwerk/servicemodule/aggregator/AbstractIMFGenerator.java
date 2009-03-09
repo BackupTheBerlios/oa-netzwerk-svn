@@ -2,6 +2,7 @@ package de.dini.oanetzwerk.servicemodule.aggregator;
 
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.jdom.Element;
 import org.jdom.filter.ElementFilter;
 
 import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.utils.ISO8601DateNormalizer;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.Classification;
 import de.dini.oanetzwerk.utils.imf.Contributor;
@@ -229,11 +231,9 @@ abstract class AbstractIMFGenerator {
 		if (value != null) {
 			dateValue = new DateValue();
 			dateValue.setStringValue(value);
-			try {
-			  dateValue.setDateValue(HelperMethods.extract_datestamp(value));
-			} catch(ParseException pex) {
-				aggrStateLog.error("couldn't parse value '" + value + "' as datestamp:", pex);
-			}
+			Date date = ISO8601DateNormalizer.getDateFromUTCString(value);
+		    if(date == null) aggrStateLog.error("couldn't parse value '" + value + "' as datestamp");
+   		    dateValue.setDateValue(date);
 			dateValue.setNumber(this.dateValueCounter);
 		}
 		return dateValue;

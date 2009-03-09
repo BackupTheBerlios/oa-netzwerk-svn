@@ -3,12 +3,12 @@ package de.dini.oanetzwerk.utils;
 import java.util.Locale;
 
 
-public class Test_ISO639Normalizer {
+public class Test_ISO639LangNormalizer {
 	
 	
 	private static String normalizeLang_ISO639_3(String input) {
-		Locale localeISO = ISO639Normalizer.get_ISO639_3(input);
-		if(localeISO != null) return localeISO.getDisplayLanguage(Locale.GERMAN) + " / " + localeISO.getDisplayLanguage(Locale.ENGLISH) +  " [ISO639-3:"+ISO639Normalizer.wrapDoubleISO(localeISO.getISO3Language())+"]";
+		Locale localeISO = ISO639LangNormalizer.get_ISO639_3(input);
+		if(localeISO != null) return localeISO.getDisplayLanguage(Locale.GERMAN) + " / " + localeISO.getDisplayLanguage(Locale.ENGLISH) +  " [ISO639-3:"+ISO639LangNormalizer.wrapDoubleISO(localeISO.getISO3Language())+"]";
 		return input;
 	}
 	

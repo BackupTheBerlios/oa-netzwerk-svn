@@ -9,7 +9,7 @@ import java.util.Locale;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.utils.ISO639Normalizer;
+import de.dini.oanetzwerk.utils.ISO639LangNormalizer;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.Classification;
 import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
@@ -201,9 +201,9 @@ public class HitBean implements Serializable {
 	public List<String> getTrimmedLanguageList() {
 		List<String> trimmedLangs = new ArrayList<String>();
 		for(Language lang : getCompleteMetadata().getLanguageList()) {
-			Locale locale = ISO639Normalizer.get_ISO639_3(lang.getLanguage());
+			Locale locale = ISO639LangNormalizer.get_ISO639_3(lang.getLanguage());
 			if(locale != null) {
-				trimmedLangs.add(locale.getDisplayLanguage(Locale.GERMAN) + " ("+ ISO639Normalizer.wrapDoubleISO(locale.getISO3Language()) +")");
+				trimmedLangs.add(locale.getDisplayLanguage(Locale.GERMAN) + " ("+ ISO639LangNormalizer.wrapDoubleISO(locale.getISO3Language()) +")");
 			} else {
 			    trimmedLangs.add(lang.getLanguage());
 			}
