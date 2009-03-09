@@ -38,6 +38,13 @@ CREATE TABLE dbo.Language (
      , PRIMARY KEY (language_id)
 );
 
+CREATE TABLE dbo.Iso639Language (
+       language_id NUMERIC(38) IDENTITY
+     , iso639language UNIVARCHAR(255) NOT NULL
+     , PRIMARY KEY (language_id)
+);
+
+
 CREATE TABLE dbo.Keywords (
        keyword_id NUMERIC(38) IDENTITY
      , keyword UNIVARCHAR(255) NOT NULL
@@ -153,6 +160,13 @@ CREATE TABLE dbo.Object2Language (
      , PRIMARY KEY (object_id, language_id)
 );
 
+CREATE TABLE dbo.Object2Iso639Language (
+       object_id NUMERIC(38) NOT NULL
+     , language_id NUMERIC(38) NOT NULL
+     , number INTEGER
+     , PRIMARY KEY (object_id, language_id)
+);
+
 CREATE TABLE dbo.DDC_Classification (
        object_id NUMERIC(38) NOT NULL
      , DDC_Categorie UNIVARCHAR(10) NOT NULL
@@ -180,7 +194,8 @@ CREATE TABLE dbo.Other_Classification (
 CREATE TABLE dbo.DateValues (
        object_id NUMERIC(38) NOT NULL
      , number INTEGER NOT NULL
-     , value DATETIME
+     , value DATETIME NULL
+	 , originalValue UNIVARCHAR(50) NOT NULL
      , PRIMARY KEY (object_id, number)
 );
 
@@ -442,10 +457,22 @@ ALTER TABLE dbo.Object2Language
       FOREIGN KEY (language_id)
       REFERENCES dbo.Language (language_id);
 
+ALTER TABLE dbo.Object2Iso639Language
+  ADD CONSTRAINT FK_Object2Iso639Language_1
+      FOREIGN KEY (language_id)
+      REFERENCES dbo.Iso639Language (language_id);
+
+
 ALTER TABLE dbo.Object2Language
   ADD CONSTRAINT FK_Object2Language_2
       FOREIGN KEY (object_id)
       REFERENCES dbo.Object (object_id);
+
+ALTER TABLE dbo.Object2Iso639Language
+  ADD CONSTRAINT FK_Object2Iso639Language_2
+      FOREIGN KEY (object_id)
+      REFERENCES dbo.Object (object_id);
+
 
 ALTER TABLE dbo.ServicesOrder
   ADD CONSTRAINT FK_ServicesOrder_1

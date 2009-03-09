@@ -24,6 +24,12 @@ insert into dbo.Repositories (name, url, oai_url) values ('TOBIAS-lib Tuebingen'
 insert into dbo.Repositories (name, url, oai_url) values ('Duet Duisburg', 'http://www.ub.uni-duisburg.de/ETD-db','http://www.ub.uni-duisburg.de:8080/cgi-oai2/2/OAI-XMLFile-2.1/XMLFile/DuetT/oai.pl')
 insert into dbo.Repositories (name, url, oai_url) values ('OPUS Hohenheim', 'http://www.ub.uni-hohenheim.de/opus/index.html','http://opus.ub.uni-hohenheim.de/oai2/oai2.php')
 insert into dbo.Repositories (name, url, oai_url) values ('Volltextserver Ulm', 'http://vts.uni-ulm.de','http://vts.uni-ulm.de/oai/oai.asp')
+insert into dbo.Repositories (name, url, oai_url) values ('SerWisS - Fachhochschule Hannover', 'http://opus.bsz-bw.de/fhhv','http://opus.bsz-bw.de/fhhv/oai2/oai2.php')
+insert into dbo.Repositories (name, url, oai_url) values ('EVA STAR - Uni Karlsruhe', 'http://www.ubka.uni-karlsruhe.de/eva/index.html','http://www.ubka.uni-karlsruhe.de/oai/eva/oai2.php')
+insert into dbo.Repositories (name, url, oai_url) values ('DuEPublico Duisbug-Essen', 'http://duepublico.uni-duisburg-essen.de/','http://duepublico.uni-duisburg-essen.de/servlets/OAIDataProvider')
+
+
+
 
 
 
