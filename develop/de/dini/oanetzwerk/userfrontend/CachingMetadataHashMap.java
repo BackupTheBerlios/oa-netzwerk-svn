@@ -45,6 +45,10 @@ public class CachingMetadataHashMap extends HashMap<BigDecimal,CompleteMetadata>
 		if(cm == null) {
 			logger.debug("try to fetch cm for oid " + bdOID + " via REST");
 			cm = fetchCompleteMetadataByOID(bdOID);
+			if(cm == null) {
+				cm = new CompleteMetadata();
+				cm.setOid(bdOID);
+			}
 			if(cm.getDuplicateProbabilityList() == null) cm.setDuplicateProbabilityList(new ArrayList<DuplicateProbability>());			
 			if(cm.getFullTextLinkList() == null) cm.setFullTextLinkList(new ArrayList<FullTextLink>());			
 			super.put(bdOID, cm);

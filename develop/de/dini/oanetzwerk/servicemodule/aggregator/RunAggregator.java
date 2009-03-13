@@ -1,5 +1,8 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.OptionBuilder;
@@ -105,6 +108,11 @@ public class RunAggregator {
 					if (cmd.getOptionValue("timestamp") != null)
 						time = cmd.getOptionValue("timestamp");
 
+					// TODO: wenn time null ist, geht PUT WORKFLOWDB nicht
+					if(time == null) {
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
+						time = sdf.format(new Date(System.currentTimeMillis()));
+					}
 					
 					// Here we go: create a new instance of the aggregator
 					Aggregator aggregator;

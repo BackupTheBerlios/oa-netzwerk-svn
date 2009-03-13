@@ -16,6 +16,7 @@ public class CompleteMetadata extends InternalMetadata {
 		super();
 		fullTextLinkList = new LinkedList<FullTextLink>();
 		duplicateProbabilityList = new LinkedList<DuplicateProbability>();
+		repositoryData = new RepositoryData();
 	}
 
 	public static CompleteMetadata createDummy() {
