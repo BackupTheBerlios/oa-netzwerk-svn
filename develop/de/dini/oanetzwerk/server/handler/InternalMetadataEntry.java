@@ -880,6 +880,8 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			
 			if (classificationList != null) {
 				for (Classification classification : classificationList) {
+					boolean notParsed = false;
+					
 					// fuer jeden Klassifikationstypen muessen unterschiedliche Aktionen erfolgen
 					if (classification instanceof DDCClassification) {
 						String ddcValue = null;
@@ -893,23 +895,23 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						}
 		
 
-						if (ddcValue == null) {
-							// Versuch, über den übergebenen Namen den richten DDC-Wert zu bestimmen
+						if (ddcValue != null) {
+							// Daten zuordnen
 							
-						}
-						// Daten zuordnen
-						
-						stmtconn.loadStatement (InsertIntoDB.DDCClassification (stmtconn.connection, object_id, ddcValue));
-						this.result = stmtconn.execute ( );
-						
-						if (this.result.getUpdateCount ( ) < 1) {
+							stmtconn.loadStatement (InsertIntoDB.DDCClassification (stmtconn.connection, object_id, ddcValue));
+							this.result = stmtconn.execute ( );
 							
-							//warn, error, rollback, nothing????
+							if (this.result.getUpdateCount ( ) < 1) {
+								//warn, error, rollback, nothing????
+							}
+						} else {
+							logger.warn("Could not find a DDC_Value for '" + classification.getValue() + "', will be stored as OtherClassification");
+							notParsed = true;
+							aggregationWarning = true;
+							aggregationWarningDescription = aggregationWarningDescription + "\nCould not find a DDC_Value for '" + classification.getValue() + "', will be stored as OtherClassification";
 						}
-//						db.insertDDCClassification(object_id, ddcValue);
 					}
 					if (classification instanceof DNBClassification) {
-//						BigDecimal DNB_Categorie = null;
 						String DNB_Categorie = null;
 						
 						stmtconn.loadStatement (SelectFromDB.DNBCategoriesByCategorie (stmtconn.connection, classification.getValue()));
@@ -920,10 +922,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							DNB_Categorie = this.result.getResultSet ( ).getString(1);
 						}
 						
-//						rs = db.selectDNBCategoriesByCategorie(classification.getValue());
-//						while (rs.next()) {
-//							DNB_Categorie = rs.getString(1);
-//						}
 						// Daten zuordnen
 						stmtconn.loadStatement (InsertIntoDB.DNBClassification (stmtconn.connection, object_id, DNB_Categorie));
 						this.result = stmtconn.execute ( );
@@ -932,7 +930,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							
 							//warn, error, rollback, nothing????
 						}
-//						db.insertDNBClassification (object_id, DNB_Categorie);
 					}					
 					if (classification instanceof DINISetClassification) {
 						
@@ -952,6 +949,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							// wenn kein Wert in der DB gefunden werden konnte, soll
 							// 1. eine Warnung geworfen werden und 
 							// 2. der Eintrag in eine OtherClassification umgebogen wird
+							notParsed = true;
 							logger.warn("Could not find a DINI_Set_id for '" + classification.getValue() + "', will be stored as OtherClassification");
 							aggregationWarning = true;
 							aggregationWarningDescription = aggregationWarningDescription + "\nCould not find a DINI_Set_id for '" + classification.getValue() + "', will be stored as OtherClassification";
@@ -968,7 +966,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						}
 					}
 					
-					if ((classification instanceof OtherClassification) | (true)) {
+					if ((classification instanceof OtherClassification) | (notParsed == true)) {
 						
 						BigDecimal other_id = null;
 
