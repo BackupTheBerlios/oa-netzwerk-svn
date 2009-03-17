@@ -966,7 +966,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						}
 					}
 					
-					if ((classification instanceof OtherClassification) | (notParsed == true)) {
+					if ((classification instanceof OtherClassification) || (notParsed == true)) {
 						
 						BigDecimal other_id = null;
 
