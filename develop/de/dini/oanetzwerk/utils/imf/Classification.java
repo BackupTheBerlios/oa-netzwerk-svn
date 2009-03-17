@@ -50,6 +50,7 @@ public abstract class Classification implements ClassificationInterface {
 			return false;
 	}
 	
+	@Deprecated
 	public void setSplitValue() {
 		String[] temp = this.value.split(":");
 		if (temp.length < 2) {

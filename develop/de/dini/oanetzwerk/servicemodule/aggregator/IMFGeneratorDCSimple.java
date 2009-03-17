@@ -125,19 +125,19 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 							im.addIdentifier(this.extractIdentifier(metadataEntry.getText()));
 						}
 						if (metadataEntry.getName().equals("source")) {
-							aggrStateLog.info("found \"source\" element, but do not parse it yet: " + metadataEntry.getText());
+							aggrStateLog.debug("found \"source\" element, but do not parse it yet: '" + metadataEntry.getText() + "'");
 						}
 						if (metadataEntry.getName().equals("language")) {
 							im.addLanguage(this.extractLanguage(metadataEntry.getText()));
 						}
 						if (metadataEntry.getName().equals("relation")) {
-							aggrStateLog.info("found \"relation\" element, but do not parse it yet: " + metadataEntry.getText());
+							aggrStateLog.debug("found \"relation\" element, but do not parse it yet: '" + metadataEntry.getText() + "'");
 						}
 						if (metadataEntry.getName().equals("coverage")) {
-							aggrStateLog.info("found \"coverage\" element, but do not parse it yet: " + metadataEntry.getText());
+							aggrStateLog.debug("found \"coverage\" element, but do not parse it yet: '" + metadataEntry.getText() + "'");
 						}
 						if (metadataEntry.getName().equals("rights")) {
-							aggrStateLog.info("found \"rights\" element, but do not parse it yet: " + metadataEntry.getText());
+							aggrStateLog.debug("found \"rights\" element, but do not parse it yet: '" + metadataEntry.getText() + "'");
 						}
 				}
 				

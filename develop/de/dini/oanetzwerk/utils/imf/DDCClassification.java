@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class DDCClassification extends Classification  implements ClassificationInterface {
 	public DDCClassification(String value) {
 		super(value);
-		setSplitValue();
+		//setSplitValue();
 	}
 	
 	public String toString() {

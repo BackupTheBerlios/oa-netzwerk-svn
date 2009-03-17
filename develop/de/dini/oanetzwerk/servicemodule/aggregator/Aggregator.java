@@ -243,7 +243,7 @@ public class Aggregator {
 		this.time = time;
 
 		logger.debug("StartSingleRecord:  RecordId=" + this.currentRecordId + "\ttime="+time);
-		//aggrStateLog.info("OID: " + id);
+		aggrStateLog.info("OID: " + id + " - START");
 		
 		String data = null;
 		InternalMetadata imf = null;

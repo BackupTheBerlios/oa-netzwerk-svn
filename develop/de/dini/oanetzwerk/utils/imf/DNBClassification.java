@@ -7,7 +7,7 @@ public class DNBClassification extends Classification  implements Classification
 	
 	public DNBClassification(String value) {
 		super(value);
-		setSplitValue();
+		//setSplitValue();
 	}
 
 	public String toString() {

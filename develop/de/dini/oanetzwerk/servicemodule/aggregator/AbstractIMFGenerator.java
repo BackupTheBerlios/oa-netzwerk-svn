@@ -1,6 +1,7 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.filter.ElementFilter;
 
+import de.dini.oanetzwerk.utils.DDCMatcher_DINI;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.ISO639LangNormalizer;
 import de.dini.oanetzwerk.utils.ISO8601DateNormalizer;
@@ -82,11 +84,14 @@ abstract class AbstractIMFGenerator {
 			while (iteratorHeader.hasNext()) {
 				Element headerEntry = (Element) iteratorHeader.next();
 				if (headerEntry.getName().equals("setSpec")) {
-					Classification cl = this.extractClassification(headerEntry.getValue());
-					if (cl != null) {
+					List<Classification> list = this.extractClassifications(headerEntry.getValue());
+					for(Classification cl : list) {
+					  if (cl != null) {	
 						this.im.addClassfication(cl);
-					} else {
+						this.classificationCounter++;
+					  } else {
 						// cl wurde nicht erzeugt, muss noch als DEBUG raus
+					  }
 					}
 				}
 			}
@@ -94,9 +99,8 @@ abstract class AbstractIMFGenerator {
 		return result;
 	}
 	
-	protected Classification extractClassification(String metadataEntry) {
-		Classification result = null;
-		this.classificationCounter++;
+	protected List<Classification> extractClassifications(String metadataEntry) {
+		List<Classification> list = new ArrayList<Classification>();
 		String value = null;
 		
 		value = removeNoisyWhitespace(metadataEntry);
@@ -113,16 +117,24 @@ abstract class AbstractIMFGenerator {
 //		}
 		
 		if (Classification.isDDC(value)) {
-			result = new DDCClassification(value);
+			
+			// hier wird der DDC-Wert DINI-konform "abgerundet" und - falls unterschiedlich - zusätzlich als Other gemerkt
+			String valDDC = StringUtils.substringAfterLast(value, ":");
+			valDDC = DDCMatcher_DINI.fillUpWithZeros(valDDC);
+			String s[] = DDCMatcher_DINI.convert(valDDC);
+			list.add(new DDCClassification(s[0]));			
+			if(s.length > 1) list.add(new OtherClassification("ddc:" + s[1]));
 		} else if (Classification.isDNB(value)) {
-			result = new DNBClassification(value);
+			String[] s = value.split(":");			
+			list.add(new DNBClassification(s[1]));
 		} else if (Classification.isDINISet(value)) {
-			result = new DINISetClassification(value);
+			String[] s = value.split(":");			
+			list.add(new DINISetClassification(s[1]));
 		} else if (Classification.isOther(value)) {
-			result = new OtherClassification(value);
+			list.add(new OtherClassification(value));
 		}
 
-		return result;
+		return list;
 	}
 	
 	protected Title extractTitleInformation(String value) {
@@ -260,7 +272,7 @@ abstract class AbstractIMFGenerator {
 			dateValue = new DateValue();
 			dateValue.setStringValue(value);
 			Date date = ISO8601DateNormalizer.getDateFromUTCString(value);
-		    if(date == null) aggrStateLog.error("couldn't parse value '" + value + "' as datestamp");
+		    if(date == null) aggrStateLog.warn("couldn't parse value '" + value + "' as datestamp");
    		    dateValue.setDateValue(date);
 			dateValue.setNumber(this.dateValueCounter);
 		}
