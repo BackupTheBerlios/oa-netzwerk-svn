@@ -771,9 +771,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getUpdateCount ( ) < 1) {
-						
+						logger.error("Fehler bei OID:" + object_id + " INSERT Keyword:'" + keyword.getKeyword() + "'");
 						//warn, error, rollback, nothing????
-					}
+					} 
 					
 					stmtconn.loadStatement (SelectFromDB.LatestKeyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 					this.result = stmtconn.execute ( );
@@ -782,13 +782,17 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						keyword_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
 					
-					stmtconn.loadStatement (InsertIntoDB.Object2Keyword (stmtconn.connection, object_id, keyword_id));
-					this.result = stmtconn.execute ( );
+					if(keyword_id != null) {
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
+						stmtconn.loadStatement (InsertIntoDB.Object2Keyword (stmtconn.connection, object_id, keyword_id));
+						this.result = stmtconn.execute ( );
+
+						if (this.result.getUpdateCount ( ) < 1) {
+							logger.error("Fehler bei OID:" + object_id + " INSERT Object2Keyword:'" + keyword_id + "'");
+							//warn, error, rollback, nothing????
+						}
 					}
+					
 				}
 			}
 			
@@ -803,36 +807,40 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					// Originalwert
 					//////////////////
 					
-					BigDecimal language_id = null;
+					if(language.getLanguage() != null) {
 					
-					stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
-					this.result = stmtconn.execute ( );
-					
-					if (!this.result.getResultSet ( ).next ( )) {
-						
-						stmtconn.loadStatement (InsertIntoDB.Language (stmtconn.connection, language.getLanguage()));
+						BigDecimal language_id = null;
+
+						stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
 						this.result = stmtconn.execute ( );
-						
+
+						if (!this.result.getResultSet ( ).next ( )) {
+
+							stmtconn.loadStatement (InsertIntoDB.Language (stmtconn.connection, language.getLanguage()));
+							this.result = stmtconn.execute ( );
+
+							if (this.result.getUpdateCount ( ) < 1) {
+
+								//warn, error, rollback, nothing????
+							}
+						}
+
+						stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
+						this.result = stmtconn.execute ( );
+
+						while (this.result.getResultSet ( ).next ( )) {
+
+							language_id = this.result.getResultSet ( ).getBigDecimal(1);
+						}
+
+						stmtconn.loadStatement (InsertIntoDB.Object2Language (stmtconn.connection, object_id, language_id, language.getNumber()));
+						this.result = stmtconn.execute ( );
+
 						if (this.result.getUpdateCount ( ) < 1) {
-							
+
 							//warn, error, rollback, nothing????
 						}
-					}
-
-					stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
-					this.result = stmtconn.execute ( );
 					
-					while (this.result.getResultSet ( ).next ( )) {
-						
-						language_id = this.result.getResultSet ( ).getBigDecimal(1);
-					}
-					
-					stmtconn.loadStatement (InsertIntoDB.Object2Language (stmtconn.connection, object_id, language_id, language.getNumber()));
-					this.result = stmtconn.execute ( );
-					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
 					}
 					
 					//////////////////////
