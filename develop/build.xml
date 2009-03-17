@@ -297,6 +297,7 @@
       <include name="**/exceptions/*.java" />
       <include name="**/imf/*.java" />
       <include name="**/utils/ISO*.java" />
+      <include name="**/utils/MetadataFormatType.java" />
       <include name="**/HelperMethods.java" />
       <exclude name="**/Test*" />
     </javac>
