@@ -201,11 +201,30 @@ public class HitBean implements Serializable {
 	public List<String> getTrimmedLanguageList() {
 		List<String> trimmedLangs = new ArrayList<String>();
 		for(Language lang : getCompleteMetadata().getLanguageList()) {
-			Locale locale = ISO639LangNormalizer.get_ISO639_3(lang.getLanguage());
-			if(locale != null) {
-				trimmedLangs.add(locale.getDisplayLanguage(Locale.GERMAN) + " ("+ ISO639LangNormalizer.wrapDoubleISO(locale.getISO3Language()) +")");
+			Locale locale = null;
+			String specialValue = "";
+			if(lang != null && lang.getIso639language() != null) {
+				if(lang.getIso639language().equalsIgnoreCase("mis")) {
+					specialValue = "(mis = Angabe fehlt leider)";
+				} else if(lang.getIso639language().equalsIgnoreCase("mul")) {
+					specialValue = "(mul = gemischt)";
+				} else if(lang.getIso639language().equalsIgnoreCase("und")) {
+					specialValue = "(und = unbestimmt)";
+				} else {
+				  locale = new Locale(lang.getIso639language().substring(0,2));				  
+				}
 			} else {
-			    trimmedLangs.add(lang.getLanguage());
+			  locale = ISO639LangNormalizer.get_ISO639_3(lang.getLanguage());
+			}
+			if(locale != null) {
+				String iso = ISO639LangNormalizer.wrapDoubleISO(lang.getIso639language());
+				if(iso != null) {
+					trimmedLangs.add(locale.getDisplayLanguage(Locale.GERMAN) + " ("+ iso +")");
+				} else {
+					trimmedLangs.add(locale.getDisplayLanguage(Locale.GERMAN));
+				}
+			} else {
+			    trimmedLangs.add(lang.getLanguage() + " " + specialValue);
 			}
 		}
 		return trimmedLangs;
@@ -250,6 +269,44 @@ public class HitBean implements Serializable {
 		String s = this.getCompleteMetadata().toString();
 		s = s.replaceAll("\n", "<br/>");
 		return s;
+	}
+	
+	public String getFlagIMG() {
+		String img = "unknown.png";
+		
+		for(Language lang : this.getCompleteMetadata().getLanguageList()) {
+			if(lang != null && lang.getIso639language() != null) {
+				if(lang.getIso639language().equalsIgnoreCase("DEU")) return "de.png";
+				if(lang.getIso639language().equalsIgnoreCase("FRA")) return "fr.png";
+				if(lang.getIso639language().equalsIgnoreCase("SPA")) return "es.png";
+				if(lang.getIso639language().equalsIgnoreCase("ENG")) return "gb.png";
+				if(lang.getIso639language().equalsIgnoreCase("ITA")) return "it.png";
+				if(lang.getIso639language().equalsIgnoreCase("MUL")) return "europeanunion.png";
+			}
+		}
+		 
+		return img;
+	}
+	
+	public String getFlagALT() {
+		String result = "Sprache: unbekannt";
+		
+		for(Language lang : this.getCompleteMetadata().getLanguageList()) {
+			if(lang != null && lang.getIso639language() != null) {
+				if(lang.getIso639language().equalsIgnoreCase("mis")) {
+				  result = "Sprache: Angabe fehlt leider";
+				} else if(lang.getIso639language().equalsIgnoreCase("mul")) {
+			      result = "Sprache: gemischt";
+				} else if(lang.getIso639language().equalsIgnoreCase("und")) {
+				  result = "Sprache: unbestimmt";
+				} else {
+				  Locale locale = new Locale(lang.getIso639language().substring(0,2));
+				  result = "Sprache: " + (locale.getDisplayLanguage(Locale.GERMAN));
+				}
+			}
+		}
+		 
+		return result;
 	}
 	
 	/////////////////////// action method //////////////////////////////

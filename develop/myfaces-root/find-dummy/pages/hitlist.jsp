@@ -68,6 +68,7 @@
 						  <t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedTitle}"/></h:outputLink></span>&nbsp;
                           <span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.png"/></h:commandLink></span>
                           <span class="command_link_plus"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionMerkenLink}" title="Objekt zur Merkliste hinzufügen"><img src="../img/16x16_plus.png"/></h:commandLink></span>
+							<h:graphicImage url="../img/flags/#{searchBean.hitlist.mapHitBean[hitOID].flagIMG}" alt="#{searchBean.hitlist.mapHitBean[hitOID].flagALT}" title="#{searchBean.hitlist.mapHitBean[hitOID].flagALT}"/>
                         </div>						
                         <div class="div_hit_overview"><nosp>
                           <span class="hit-creators"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedCreators}"/> (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedDate}"/>):</span>
