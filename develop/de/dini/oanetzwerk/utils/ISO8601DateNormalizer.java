@@ -10,7 +10,7 @@ public class ISO8601DateNormalizer {
 	
 	public static final SimpleDateFormat sdf0 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	public static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-	public static final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+	public static final SimpleDateFormat sdf2 = new SimpleDateFormat("yy-MM-dd");
 	public static final SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy");
 	
 	/**
