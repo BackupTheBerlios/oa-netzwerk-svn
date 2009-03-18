@@ -261,10 +261,19 @@ public class InternalMetadata {
 		
 	}
 	
-	public int addClassfication(Classification cl) {
+	public int addClassfication(Classification new_classi) {
 		int result = 0;
-		if (cl != null) {
-			this.classificationList.add(cl);
+		boolean exists = false;
+		if (new_classi != null) {
+			for(Classification existing_classi : this.classificationList) {
+			  if(new_classi.getClass().equals(existing_classi.getClass())) {
+				if(new_classi.getValue().equals(existing_classi.getValue())) {
+					exists = true;
+					break;
+				}
+			  }
+			}
+			if(!exists) this.classificationList.add(new_classi);
 //			System.out.println(cl);
 		}
 		return result;

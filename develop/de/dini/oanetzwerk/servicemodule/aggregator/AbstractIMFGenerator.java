@@ -84,6 +84,8 @@ abstract class AbstractIMFGenerator {
 			while (iteratorHeader.hasNext()) {
 				Element headerEntry = (Element) iteratorHeader.next();
 				if (headerEntry.getName().equals("setSpec")) {
+
+					// ein oder mehrere Klassifikationen aus einem setSpec-Eintrag extrahieren 
 					List<Classification> list = this.extractClassifications(headerEntry.getValue());
 					for(Classification cl : list) {
 					  if (cl != null) {	
@@ -93,6 +95,7 @@ abstract class AbstractIMFGenerator {
 						// cl wurde nicht erzeugt, muss noch als DEBUG raus
 					  }
 					}
+					
 				}
 			}
 		}
@@ -118,12 +121,14 @@ abstract class AbstractIMFGenerator {
 		
 		if (Classification.isDDC(value)) {
 			
-			// hier wird der DDC-Wert DINI-konform "abgerundet" und - falls unterschiedlich - zusätzlich als Other gemerkt
-			String valDDC = StringUtils.substringAfterLast(value, ":");
-			valDDC = DDCMatcher_DINI.fillUpWithZeros(valDDC);
-			String s[] = DDCMatcher_DINI.convert(valDDC);
-			list.add(new DDCClassification(s[0]));			
-			if(s.length > 1) list.add(new OtherClassification("ddc:" + s[1]));
+			String valDDC = StringUtils.substringAfterLast(value, ":");			
+			if(valDDC != null && valDDC.length() > 0) {
+				// hier wird der DDC-Wert DINI-konform "abgerundet" und - falls unterschiedlich - zusätzlich als Other gemerkt
+				valDDC = DDCMatcher_DINI.fillUpWithZeros(valDDC);
+				String s[] = DDCMatcher_DINI.convert(valDDC);
+				list.add(new DDCClassification(s[0]));			
+				if(s.length > 1) list.add(new OtherClassification("ddc:" + s[1]));
+			}
 		} else if (Classification.isDNB(value)) {
 			String[] s = value.split(":");			
 			list.add(new DNBClassification(s[1]));

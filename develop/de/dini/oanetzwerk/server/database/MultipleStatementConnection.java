@@ -29,8 +29,8 @@ public class MultipleStatementConnection implements StatementConnection {
 	
 	protected MultipleStatementConnection (Connection dataSourceConnection) throws SQLException {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("MultipleStatementConnection Instance will be prepared");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("MultipleStatementConnection Instance will be prepared");
 		
 		this.connection = dataSourceConnection;
 		this.connection.setAutoCommit (false);
@@ -43,8 +43,8 @@ public class MultipleStatementConnection implements StatementConnection {
 	
 	public void close ( ) throws SQLException {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("closing Statement and Connection");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("closing Statement and Connection");
 		
 		if (!this.connection.isClosed ( )) {
 		
@@ -68,10 +68,10 @@ public class MultipleStatementConnection implements StatementConnection {
 		
 		QueryResult result = new QueryResult ( );
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("Executing Statement");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("Executing Statement");
 		
-		System.out.println(this.getClass());
+		//System.out.println(this.getClass());
 		
 		try {
 			
@@ -92,8 +92,8 @@ public class MultipleStatementConnection implements StatementConnection {
 		result.setUpdateCount (this.multipleStatement.getUpdateCount ( ));
 		result.setWarning (this.multipleStatement.getWarnings ( ));
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("Returning Result");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("Returning Result");
 		
 		return result;
 	}
@@ -106,8 +106,8 @@ public class MultipleStatementConnection implements StatementConnection {
 		
 		try {
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("Committing Transaction");
+//			if (logger.isDebugEnabled ( ))
+//				logger.debug ("Committing Transaction");
 			
 			this.connection.commit ( );
 			
@@ -130,7 +130,7 @@ public class MultipleStatementConnection implements StatementConnection {
 	
 	public void rollback ( ) throws SQLException {
 		
-		logger.info ("Doing rollback!");
+//		logger.info ("Doing rollback!");
 		
 		this.connection.rollback ( );
 	}
@@ -141,8 +141,8 @@ public class MultipleStatementConnection implements StatementConnection {
 	
 	public boolean loadStatement (PreparedStatement pstmt) {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("loading Statement");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("loading Statement");
 		
 		this.multipleStatement = pstmt;
 		
@@ -156,8 +156,8 @@ public class MultipleStatementConnection implements StatementConnection {
 	@Override
 	protected void finalize ( ) throws Throwable {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("finalizing MultipleStatementConnection");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("finalizing MultipleStatementConnection");
 		
 		if (!this.connection.isClosed ( )) {
 			

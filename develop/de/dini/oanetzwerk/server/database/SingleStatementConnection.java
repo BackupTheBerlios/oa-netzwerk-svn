@@ -24,8 +24,8 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	protected SingleStatementConnection (Connection dataSourceConnection) throws SQLException {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("SingleStatementConnection Instance will be prepared");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("SingleStatementConnection Instance will be prepared");
 		
 		this.connection = dataSourceConnection;
 		this.connection.setAutoCommit (true);
@@ -40,8 +40,8 @@ public class SingleStatementConnection implements StatementConnection {
 		
 		if (this.singleStatement == null) {
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("loading Statement");
+//			if (logger.isDebugEnabled ( ))
+//				logger.debug ("loading Statement");
 			
 			this.singleStatement = pstmt;
 			
@@ -49,8 +49,8 @@ public class SingleStatementConnection implements StatementConnection {
 			
 		} else {
 			
-			if (logger.isDebugEnabled ( ))
-				logger.debug ("cannot load Statement");
+//			if (logger.isDebugEnabled ( ))
+//				logger.debug ("cannot load Statement");
 			
 			return false;
 		}
@@ -64,8 +64,8 @@ public class SingleStatementConnection implements StatementConnection {
 		
 		QueryResult result = new QueryResult ( );
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("executing Statement");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("executing Statement");
 		
 		this.singleStatement.execute ( );
 		
@@ -73,8 +73,8 @@ public class SingleStatementConnection implements StatementConnection {
 		result.setUpdateCount (this.singleStatement.getUpdateCount ( ));
 		result.setWarning (this.singleStatement.getWarnings ( ));
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("Returning Result");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("Returning Result");
 		
 		return result;
 	}
@@ -85,8 +85,8 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	public void close ( ) throws SQLException {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("closing Statement and Connection");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("closing Statement and Connection");
 		
 		if (!this.connection.isClosed ( )) {
 	
@@ -109,8 +109,8 @@ public class SingleStatementConnection implements StatementConnection {
 	@Override
 	protected void finalize ( ) throws Throwable {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("finalizing SingleStatementConnection");
+//		if (logger.isDebugEnabled ( ))
+//			logger.debug ("finalizing SingleStatementConnection");
 		
 		if (!this.connection.isClosed ( )) {
 		
