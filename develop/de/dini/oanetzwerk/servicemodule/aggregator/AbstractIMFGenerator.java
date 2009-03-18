@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -122,19 +124,36 @@ abstract class AbstractIMFGenerator {
 		if (Classification.isDDC(value)) {
 			
 			String valDDC = StringUtils.substringAfterLast(value, ":");			
+			// eine Zahl herausmatchen
+			for ( Matcher m = Pattern.compile("\\d+").matcher(valDDC); m.find(); ) { 
+			  valDDC = m.toMatchResult().group();
+			  break;
+			}
 			if(valDDC != null && valDDC.length() > 0) {
 				// hier wird der DDC-Wert DINI-konform "abgerundet" und - falls unterschiedlich - zusätzlich als Other gemerkt
 				valDDC = DDCMatcher_DINI.fillUpWithZeros(valDDC);
 				String s[] = DDCMatcher_DINI.convert(valDDC);
 				list.add(new DDCClassification(s[0]));			
-				if(s.length > 1) list.add(new OtherClassification("ddc:" + s[1]));
+				if(s.length > 1) list.add(new OtherClassification(value));
 			}
 		} else if (Classification.isDNB(value)) {
-			String[] s = value.split(":");			
-			list.add(new DNBClassification(s[1]));
+			String[] s = value.split(":");
+			String valDNB = s[1];
+			// eine Zahl herausmatchen
+			for ( Matcher m = Pattern.compile("\\d+").matcher(valDNB); m.find(); ) { 
+			  valDNB = m.toMatchResult().group();
+			  break;
+			}
+
+			if(valDNB != null && valDNB.length() > 0) {
+				if(valDNB.length() > 0) valDNB = StringUtils.substring(valDNB, valDNB.length()-2, valDNB.length());
+				if(valDNB.length() < 2) valDNB = "0" + valDNB;
+				list.add(new DNBClassification(valDNB));				
+			} else {
+				list.add(new OtherClassification(value));
+			}
 		} else if (Classification.isDINISet(value)) {
-			String[] s = value.split(":");			
-			list.add(new DINISetClassification(s[1]));
+			list.add(new DINISetClassification(value));
 		} else if (Classification.isOther(value)) {
 			list.add(new OtherClassification(value));
 		}

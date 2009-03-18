@@ -904,14 +904,15 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 		
 
 						if (ddcValue != null) {
-							// Daten zuordnen
 							
+							// Daten zuordnen							
 							stmtconn.loadStatement (InsertIntoDB.DDCClassification (stmtconn.connection, object_id, ddcValue));
 							this.result = stmtconn.execute ( );
 							
 							if (this.result.getUpdateCount ( ) < 1) {
 								//warn, error, rollback, nothing????
 							}
+							
 						} else {
 							logger.warn("Could not find a DDC_Value for '" + classification.getValue() + "', will be stored as OtherClassification");
 							notParsed = true;
@@ -920,24 +921,34 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						}
 					}
 					if (classification instanceof DNBClassification) {
-						String DNB_Categorie = null;
+						String dnbValue = null;
 						
 						stmtconn.loadStatement (SelectFromDB.DNBCategoriesByCategorie (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
 						while (this.result.getResultSet ( ).next ( )) {
 							
-							DNB_Categorie = this.result.getResultSet ( ).getString(1);
+							dnbValue = this.result.getResultSet ( ).getString(1);
 						}
 						
-						// Daten zuordnen
-						stmtconn.loadStatement (InsertIntoDB.DNBClassification (stmtconn.connection, object_id, DNB_Categorie));
-						this.result = stmtconn.execute ( );
-						
-						if (this.result.getUpdateCount ( ) < 1) {
+						if (dnbValue != null) {
 							
-							//warn, error, rollback, nothing????
+							// Daten zuordnen
+							stmtconn.loadStatement (InsertIntoDB.DNBClassification (stmtconn.connection, object_id, dnbValue));
+							this.result = stmtconn.execute ( );
+							
+							if (this.result.getUpdateCount ( ) < 1) {								
+								//warn, error, rollback, nothing????
+							}
+							
+						} else {
+							logger.warn("Could not find a DNB_Value for '" + classification.getValue() + "', will be stored as OtherClassification");
+							notParsed = true;
+							aggregationWarning = true;
+							aggregationWarningDescription = aggregationWarningDescription + "\nCould not find a DNB_Value for '" + classification.getValue() + "', will be stored as OtherClassification";
 						}
+						
+
 					}					
 					if (classification instanceof DINISetClassification) {
 						
