@@ -211,11 +211,12 @@ public class HitBean implements Serializable {
 				} else if(lang.getIso639language().equalsIgnoreCase("und")) {
 					specialValue = "(und = unbestimmt)";
 				} else {
-				  locale = new Locale(lang.getIso639language().substring(0,2));				  
+				  locale = ISO639LangNormalizer.getLocaleFromISO639_3(lang.getIso639language());				  
 				}
-			} else {
-			  locale = ISO639LangNormalizer.get_ISO639_3(lang.getLanguage());
-			}
+			} 
+//			else {
+//			  locale = ISO639LangNormalizer.get_ISO639_3(lang.getLanguage());
+//			}
 			if(locale != null) {
 				String iso = ISO639LangNormalizer.wrapDoubleISO(lang.getIso639language());
 				if(iso != null) {
@@ -300,7 +301,7 @@ public class HitBean implements Serializable {
 				} else if(lang.getIso639language().equalsIgnoreCase("und")) {
 				  result = "Sprache: unbestimmt";
 				} else {
-				  Locale locale = new Locale(lang.getIso639language().substring(0,2));
+				  Locale locale = ISO639LangNormalizer.getLocaleFromISO639_3(lang.getIso639language());
 				  result = "Sprache: " + (locale.getDisplayLanguage(Locale.GERMAN));
 				}
 			}

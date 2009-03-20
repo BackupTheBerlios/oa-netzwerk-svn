@@ -2,6 +2,8 @@ package de.dini.oanetzwerk.utils;
 
 import java.util.Locale;
 
+import sun.security.action.GetLongAction;
+
 
 public class Test_ISO639LangNormalizer {
 	
@@ -31,6 +33,9 @@ public class Test_ISO639LangNormalizer {
 		for(String lang : inputs) {
 			System.out.println("'" + lang + "' --> '" + normalizeLang_ISO639_3(lang) + "'");
 		}		
+		
+		System.out.println(ISO639LangNormalizer.getLocaleFromISO639_3("eng"));
+		System.out.println(ISO639LangNormalizer.getLocaleFromISO639_3("eng").getDisplayName());
 	}
 
 }
