@@ -80,6 +80,9 @@ public class RunAggregator {
 		options.addOption(OptionBuilder.withLongOpt("testing").withDescription(
 		"Test mode - state in workflow db does not change").create('t'));
 
+		options.addOption(OptionBuilder.withLongOpt("complete").withDescription(
+		"Complete mode - complete rebuild").create('c'));
+		
 		if (args.length > 0) {
 
 			try {
