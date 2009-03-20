@@ -155,8 +155,9 @@ public class Aggregator {
 			newObjects = false;
 
 			// complete = true => alle Objekte erneut beabeiten
-			if (logger.isDebugEnabled())
-				logger.debug("Aggregator AutoMode Complete cycle started");
+			if (complete == true)
+				if (logger.isDebugEnabled())
+					logger.debug("Aggregator AutoMode Complete cycle started");
 
 			
 			// zuerst muss die Workflow-DB nach Arbeitsobjekten befragt werden
