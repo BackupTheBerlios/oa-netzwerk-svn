@@ -144,7 +144,7 @@ public class Aggregator {
 	 * Checks in DB, which objects have been harvested and need to be aggregated, then runs
 	 * StartSingleMode using the aquired IDs.
 	 */
-	public void startAutoMode() {
+	public void startAutoMode(boolean complete) {
 		
 		boolean newObjects = true;
 
@@ -154,13 +154,22 @@ public class Aggregator {
 			// kommt
 			newObjects = false;
 
+			// complete = true => alle Objekte erneut beabeiten
+			if (logger.isDebugEnabled())
+				logger.debug("Aggregator AutoMode Complete cycle started");
+
+			
 			// zuerst muss die Workflow-DB nach Arbeitsobjekten befragt werden
 			if (logger.isDebugEnabled())
 				logger.debug("Aggregator AutoMode cycle started");
 
 			// TODO: hardcoded ServiceID !!!
+			String serviceId = "2";
 
-			String ressource = "WorkflowDB/2"; // + id;
+			String ressource = "WorkflowDB/" + serviceId; // + id;
+			if (complete == true) {
+				ressource = ressource + "/completeRebuild";
+			}
 			RestClient restclient = RestClient.createRestClient(this.props
 					.getProperty("host"), ressource, this.props
 					.getProperty("username"), this.props

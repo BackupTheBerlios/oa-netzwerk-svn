@@ -91,10 +91,12 @@ public class RunAggregator {
 							+ Aggregator.class.getCanonicalName(), options);
 
 				else if (cmd.hasOption("itemId") || cmd.hasOption('i')
-						|| cmd.hasOption('a') || cmd.hasOption("auto")) {
+						|| cmd.hasOption('a') || cmd.hasOption("auto")
+						|| cmd.hasOption('c') || cmd.hasOption("complete")) {
 
 					int id = 0;
 					String time = null;
+					boolean complete = false;
 
 					// Bestimmen, ob nur eine einzelne ID übergeben wurde oder
 					// der Auto-Modus genutzt werden soll
@@ -123,13 +125,19 @@ public class RunAggregator {
 						// Standardfall ohne Testing
 						aggregator = new Aggregator();
 					}
+					
+					
+					if ((cmd.getOptionValue('c') != null) || (cmd.getOptionValue("complete") != null)) {
+						complete = true;
+					}
 
 					// hier wird entweder die spezifische Objekt-ID übergeben
 					// oder ein Auto-Durchlauf gestartet
 					if (id > 0) {
 						aggregator.startSingleRecord(id, time);
 					} else {
-						aggregator.startAutoMode();
+						// wenn Complete true gesetzt ist, sollen alle Daten erneut bearbeitet werden, sonst nur die aktuell zu bearbeitenden
+						aggregator.startAutoMode(complete);
 					}
 
 				} else {
