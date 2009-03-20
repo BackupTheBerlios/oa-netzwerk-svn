@@ -252,15 +252,19 @@ public class HitBean implements Serializable {
 		return trimmedClassis;
 	}
 	
-	public List<String[]> getTrimmedKeywordList() {
-		List<String[]> trimmedKeywords = new ArrayList<String[]>();
+	public List<Object[]> getTrimmedKeywordList() {
+		List<Object[]> trimmedKeywords = new ArrayList<Object[]>();
 		for(Keyword keyword : getCompleteMetadata().getKeywordList()) {
 			String keyword_val = keyword.getKeyword();
-			String[] s = new String[3];
+			Object[] s = new Object[4];
 			s[0] = keyword_val;
-			if(keyword.getLanguage() != null && keyword.getLanguage().length() > 0) s[0] += " (" + keyword.getLanguage() + ")";
+			if(keyword.getLanguage() != null && keyword.getLanguage().length() > 0) s[0] = keyword_val + " (" + keyword.getLanguage() + ")";
 			s[1] = "http://www.google.de/search?q=%22" + keyword_val + "%22";
 			s[2] = "http://de.wikipedia.org/wiki/Spezial:Search?search=%22" + keyword_val + "%22";
+			KeywordBean kb = new KeywordBean();
+			kb.setParentHitBean(this);
+			kb.setKeyword(keyword);
+			s[3] = kb;
 			trimmedKeywords.add(s);
 		}
 		return trimmedKeywords;

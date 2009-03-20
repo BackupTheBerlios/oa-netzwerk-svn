@@ -311,6 +311,17 @@ dt {
   margin-left: 5px;
   margin-right: 5px;	
 }
+.keyword_li li {
+  margin-left: 5px;
+  margin-right: 5px;	
+  float: left;
+  width: 300px;
+  font-size: 14px;
+}
+.title_li li {
+  font-size: 14px;
+  font-weight: bold;
+}
 #div_hitdetails_abstract {
   width: 100%;	
 }

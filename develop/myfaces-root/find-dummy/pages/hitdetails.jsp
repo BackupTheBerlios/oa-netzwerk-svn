@@ -48,7 +48,7 @@
 				<td class="hitlist_head">Titel:</td>
 				<td class="hitlist_content">
 							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.titleList}" 
-			                            var="titleItem" layout="unorderedList" first="0"	dir="LTR">
+			                            var="titleItem" layout="unorderedList" first="0" dir="LTR" styleClass="title_li">
 								<t:outputText value="#{titleItem.title}"/>
 							</t:dataList>
 				</td>
@@ -102,10 +102,10 @@
 					<% //<h:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].mergedKeywords}" />
 					%>
 					<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedKeywordList}" 
-			                    var="item" layout="unorderedList" first="0"	dir="LTR">
-						<t:outputText value="#{item[0]}"></t:outputText>&nbsp;
-                        <h:outputLink value="#{item[1]}" target="_blank">[google]</h:outputLink>&nbsp;
-                        <h:outputLink value="#{item[2]}" target="_blank">[wikipedia]</h:outputLink>                       
+			                    var="item" layout="unorderedList" first="0"	dir="LTR" styleClass="keyword_li">
+                        <h:outputLink value="#{item[1]}" target="_blank" title="diesen Begriff bei Google suchen"><img src="../img/google_G.png"/></h:outputLink>&nbsp;
+                        <h:outputLink value="#{item[2]}" target="_blank" title="diesen Begriff bei Wikipedia nachschlagen"><img src="../img/wikipedia_W.png"/></h:outputLink>&nbsp;                       
+						<h:commandLink action="#{item[3].actionSearchForKeywordLink}" title="nach diesem Schlagwort suchen"><t:outputText value="#{item[0]}"></t:outputText></h:commandLink>&nbsp;
 					</t:dataList>					
 				</td>
 				</tr>
@@ -187,7 +187,7 @@
 				<tr>
 				<td class="hitlist_head">Herkunft aus Repository:</td>
 				<td class="hitlist_content">		
-                  <h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
+                  &nbsp;<h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
                   <t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryName}"/>
 				  (<t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryURL}"/>)
   			      </h:outputLink>
@@ -196,7 +196,7 @@
 				<tr>
 				<td class="hitlist_head">originaler OAI/PMH-Record:</td>
 				<td class="hitlist_content">
-			      <h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedFullOAIURL}" target="_blank">
+			      &nbsp;<h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedFullOAIURL}" target="_blank">
 				  <t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedFullOAIURL}"/>
  			      </h:outputLink>
 				</td>

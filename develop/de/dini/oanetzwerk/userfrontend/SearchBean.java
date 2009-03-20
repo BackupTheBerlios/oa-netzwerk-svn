@@ -140,6 +140,13 @@ public class SearchBean implements Serializable {
 		this.hitlist = hitlist;
 	}
 	
+	public void searchFor(String strQuery) {
+		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
+		listOIDs = mySearchClient.querySearchService(strQuery);
+		this.hitlist.setListHitOID(listOIDs);
+		this.hitlist.updateHitlistMetadata();
+	}
+	
 	//////////////// UTIL methods ///////////////////////
 	
 	private String parseOneSlotSearchField() {
@@ -160,10 +167,11 @@ public class SearchBean implements Serializable {
 	
 	private String parseOneSlotForQueryString(String strQuery) {		
 		logger.debug("parseOneSlotForQueryString");
-		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
-		listOIDs = mySearchClient.querySearchService(strQuery);
-		this.hitlist.setListHitOID(listOIDs);
-		this.hitlist.updateHitlistMetadata();
+//		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
+//		listOIDs = mySearchClient.querySearchService(strQuery);
+//		this.hitlist.setListHitOID(listOIDs);
+//		this.hitlist.updateHitlistMetadata();
+		this.searchFor(strQuery);
 		return "search_clicked";
 	}
 	
