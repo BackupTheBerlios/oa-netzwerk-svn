@@ -122,7 +122,7 @@ public class RunAggregator {
 					// Here we go: create a new instance of the aggregator
 					Aggregator aggregator;
 					// im Testfall wird ein anderer Constructor aufgerufen
-					if ((cmd.getOptionValue('t') != null) || (cmd.getOptionValue("testing") != null)) {
+					if ((cmd.hasOption('t')) || (cmd.hasOption("testing"))) {
 						aggregator = new Aggregator(true); }
 					else {
 						// Standardfall ohne Testing
@@ -130,7 +130,7 @@ public class RunAggregator {
 					}
 					
 					
-					if ((cmd.getOptionValue('c') != null) || (cmd.getOptionValue("complete") != null)) {
+					if ((cmd.hasOption('c')) || (cmd.hasOption("complete"))) {
 						complete = true;
 					}
 
