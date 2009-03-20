@@ -1,5 +1,7 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.junit.BeforeClass;
@@ -125,33 +127,69 @@ public class TestAbstractIMFGenerator {
 	@Test
 	public void testExtractClassification() {
 		String strInput = null;
-		Classification extractedClassification = null;
+		List<Classification> extractedClassifications = null;
 		
-		strInput = " \t   \n ddc:fooWert \t   \n ";
-		extractedClassification = myIMFGen.extractClassification(strInput);
-		Assert.assertEquals("fooWert", extractedClassification.getValue());
-
-		strInput = "ddc:fooWert";
-		extractedClassification = myIMFGen.extractClassification(strInput);
-		Assert.assertTrue(extractedClassification instanceof DDCClassification);
-
-		strInput = "pub-type:fooWert";
-		extractedClassification = myIMFGen.extractClassification(strInput);
-		Assert.assertTrue(extractedClassification instanceof DINISetClassification);
-
-		strInput = "dnb:fooWert";
-		extractedClassification = myIMFGen.extractClassification(strInput);
-		Assert.assertTrue(extractedClassification instanceof DNBClassification);
+		strInput = " \t   \n ddc:004 \t   \n ";
+		extractedClassifications = myIMFGen.extractClassifications(strInput);
+		Assert.assertEquals("004", extractedClassifications.get(0).getValue());
+		Assert.assertTrue(extractedClassifications.get(0) instanceof DDCClassification);
+		System.out.println(strInput + " --> " + extractedClassifications);
+			
+		strInput = "ddc:4";
+		extractedClassifications = myIMFGen.extractClassifications(strInput);
+		Assert.assertEquals("004", extractedClassifications.get(0).getValue());
+		Assert.assertTrue(extractedClassifications.get(0) instanceof DDCClassification);
+		System.out.println(strInput + " --> " + extractedClassifications);
+		
+		strInput = "ddc:32,";
+		extractedClassifications = myIMFGen.extractClassifications(strInput);
+		Assert.assertEquals("030", extractedClassifications.get(0).getValue());
+		Assert.assertTrue(extractedClassifications.get(0) instanceof DDCClassification);		
+		Assert.assertEquals("ddc:32,", extractedClassifications.get(1).getValue());
+		Assert.assertTrue(extractedClassifications.get(1) instanceof OtherClassification);		
+		System.out.println(strInput + " --> " + extractedClassifications);
+		
+		strInput = "ddc:foo";
+		extractedClassifications = myIMFGen.extractClassifications(strInput);
+		Assert.assertEquals("ddc:foo", extractedClassifications.get(0).getValue());
+		Assert.assertTrue(extractedClassifications.get(0) instanceof OtherClassification);
+		System.out.println(strInput + " --> " + extractedClassifications);
+		
+		strInput = "pub-type:dissertation";
+		extractedClassifications = myIMFGen.extractClassifications(strInput);
+		Assert.assertEquals("pub-type:dissertation", extractedClassifications.get(0).getValue());
+		Assert.assertTrue(extractedClassifications.get(0) instanceof DINISetClassification);
+		System.out.println(strInput + " --> " + extractedClassifications);
 		
 		strInput = " \t   \n PuB-tYPe:fooWert \t   \n ";
-		extractedClassification = myIMFGen.extractClassification(strInput);
-		Assert.assertEquals("fooWert", extractedClassification.getValue());
-		Assert.assertTrue(extractedClassification instanceof DINISetClassification);
+		extractedClassifications = myIMFGen.extractClassifications(strInput);
+		Assert.assertEquals("pub-type:fooWert", extractedClassifications.get(0).getValue());
+		Assert.assertTrue(extractedClassifications.get(0) instanceof DINISetClassification);
+		System.out.println(strInput + " --> " + extractedClassifications);
 
+		strInput = "dnb:05";
+		extractedClassifications = myIMFGen.extractClassifications(strInput);
+		Assert.assertEquals("05", extractedClassifications.get(0).getValue());
+		Assert.assertTrue(extractedClassifications.get(0) instanceof DNBClassification);
+		System.out.println(strInput + " --> " + extractedClassifications);
+		
+		strInput = "dnb:5";
+		extractedClassifications = myIMFGen.extractClassifications(strInput);
+		Assert.assertEquals("05", extractedClassifications.get(0).getValue());
+		Assert.assertTrue(extractedClassifications.get(0) instanceof DNBClassification);
+		System.out.println(strInput + " --> " + extractedClassifications);
+
+		strInput = "dnb:foo";
+		extractedClassifications = myIMFGen.extractClassifications(strInput);
+		Assert.assertEquals("dnb:foo", extractedClassifications.get(0).getValue());
+		Assert.assertTrue(extractedClassifications.get(0) instanceof OtherClassification);
+		System.out.println(strInput + " --> " + extractedClassifications);
+		
 		strInput = "fooKuerzel:fooWert";
-		extractedClassification = myIMFGen.extractClassification(strInput);
-		Assert.assertEquals("fooKuerzel:fooWert", extractedClassification.getValue());
-		Assert.assertTrue(extractedClassification instanceof OtherClassification);
+		extractedClassifications = myIMFGen.extractClassifications(strInput);
+		Assert.assertEquals("fooKuerzel:fooWert", extractedClassifications.get(0).getValue());
+		Assert.assertTrue(extractedClassifications.get(0) instanceof OtherClassification);
+		System.out.println(strInput + " --> " + extractedClassifications);
 		
 		
 	}
