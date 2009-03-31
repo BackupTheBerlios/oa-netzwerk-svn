@@ -2,7 +2,7 @@ package de.dini.oanetzwerk.utils;
 
 import java.util.Locale;
 
-import sun.security.action.GetLongAction;
+//import sun.security.action.GetLongAction;
 
 
 public class Test_ISO639LangNormalizer {

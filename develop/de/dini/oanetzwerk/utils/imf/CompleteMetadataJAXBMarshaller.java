@@ -10,7 +10,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.handler.CompleteMetadataEntry;
 
 public class CompleteMetadataJAXBMarshaller {
 

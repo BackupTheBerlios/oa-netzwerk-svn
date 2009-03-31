@@ -1,13 +1,11 @@
 package de.dini.oanetzwerk.search;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.Properties;
 
@@ -20,8 +18,6 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
-
-import de.dini.oanetzwerk.utils.HelperMethods;
 
 /**
  * This class wraps a HttpClient that connects to the search service. It offers convenient query-methods

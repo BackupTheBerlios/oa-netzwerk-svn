@@ -11,7 +11,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestRestXmlCodec {
@@ -42,6 +41,7 @@ public class TestRestXmlCodec {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public void printDiff(List<HashMap<String,String>> input, List<HashMap<String,String>> output) {
 		for(int i = 0; i < input.size() && i < output.size(); i++) {
 			System.out.println((i+1) + ". Eintrag");
@@ -62,6 +62,7 @@ public class TestRestXmlCodec {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void tunnelKVpair(String key, String value) {
 		List<HashMap<String,String>> input = new ArrayList<HashMap<String,String>>();
 		HashMap<String,String> entry = new HashMap<String,String>();
@@ -99,6 +100,7 @@ public class TestRestXmlCodec {
 		tunnelKVpair("test5", "&nonsense;");
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testCodecFunction() {
 		List<HashMap<String,String>> input = getFooInput();	
@@ -112,6 +114,7 @@ public class TestRestXmlCodec {
 		printDiff(input, output);		
 	}
 	
+	@SuppressWarnings({ "deprecation", "deprecation", "deprecation", "unchecked" })
 	@Test
 	public void printCompleteTestrun() {
 		

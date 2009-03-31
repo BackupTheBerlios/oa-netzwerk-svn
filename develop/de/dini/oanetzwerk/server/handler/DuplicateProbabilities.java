@@ -260,6 +260,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 		BigDecimal object_id = null;
 		BigDecimal duplicate_id = null;
 		BigDecimal percentage = null;
+		@SuppressWarnings("unused")
 		int number = 0;
 
 		if (path.length < 1)

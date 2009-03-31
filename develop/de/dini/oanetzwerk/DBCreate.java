@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
-import java.sql.Date;
-
-import java.sql.ResultSet;
+//import java.sql.Date;
+//
+//import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.InvalidPropertiesFormatException;
@@ -323,7 +323,7 @@ public class DBCreate {
 	private static void createDB ( ) {
 		
 		DBCreate db = createDBAccess ( );
-		int [ ] updateCounts = null;
+//		int [ ] updateCounts = null;
 		BufferedReader file = null;
 		
 		try {
@@ -415,7 +415,7 @@ public class DBCreate {
 	private static void fillDBWithStandardValues ( ) {
 		
 		DBCreate db = createDBAccess ( );
-		int [ ] updateCounts = null;
+//		int [ ] updateCounts = null;
 		BufferedReader file = null;
 		
 		try {

@@ -5,7 +5,7 @@ import java.text.ParseException;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.handler.InternalMetadataEntry;
+//import de.dini.oanetzwerk.server.handler.InternalMetadataEntry;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 import de.dini.oanetzwerk.utils.imf.Author;

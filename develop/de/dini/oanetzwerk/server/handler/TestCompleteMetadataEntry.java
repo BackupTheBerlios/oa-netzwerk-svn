@@ -12,7 +12,6 @@ import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
-import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 
 /**

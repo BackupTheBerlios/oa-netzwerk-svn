@@ -26,7 +26,7 @@ public class TestEncoding {
 		
 		byte[] baUTF_8 = strOriginal.getBytes("UTF-8");
 		byte[] baISO_8859_1 = strOriginal.getBytes("ISO-8859-1");
-		byte[] baUS_ASCII = strOriginal.getBytes("US-ASCII");
+//		byte[] baUS_ASCII = strOriginal.getBytes("US-ASCII");
 		
 		String strISO_8859_1 = new String(baISO_8859_1, "UTF-8");
 		String strUTF_8 = new String(baUTF_8, "UTF-8");

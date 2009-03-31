@@ -17,6 +17,7 @@ public class OAIExportCache extends AbstractKeyWordHandler implements KeyWord2Da
 	 * 
 	 */
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger (OAIExportCache.class);
 	
 	/**

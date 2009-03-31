@@ -4,7 +4,7 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+//import java.sql.Date;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
@@ -17,7 +17,7 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
-import de.dini.oanetzwerk.utils.HelperMethods;
+//import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -233,8 +233,8 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		//TODO: /harvestedtoday/ überprüfen, body muß leer sein.
-		BigDecimal repository_id = new BigDecimal (0);
-		Date harvested = HelperMethods.today ( );
+//		BigDecimal repository_id = new BigDecimal (0);
+//		Date harvested = HelperMethods.today ( );
 		//TODO: Connection, Update
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}

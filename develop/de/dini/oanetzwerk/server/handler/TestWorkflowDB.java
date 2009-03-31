@@ -131,7 +131,7 @@ public class TestWorkflowDB {
 	public void test_PUT_notEnoughInBody() throws Exception{
 		
 		String object_id = "19000";
-		String time = "2008-11-20 14:49:21.273";
+//		String time = "2008-11-20 14:49:21.273";
 		String service_id = "2";
 		WorkflowDB wfdb = new WorkflowDB();
 		String [] path = {};

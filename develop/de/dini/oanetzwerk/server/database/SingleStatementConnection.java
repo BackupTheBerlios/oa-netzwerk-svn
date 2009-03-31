@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 public class SingleStatementConnection implements StatementConnection {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger (SingleStatementConnection.class);
 	public final Connection connection;
 	private PreparedStatement singleStatement = null;
