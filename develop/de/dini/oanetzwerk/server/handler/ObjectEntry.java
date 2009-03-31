@@ -355,6 +355,8 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 				res.addEntry ("repository_identifier", this.result.getResultSet ( ).getString ("repository_identifier"));
 				res.addEntry ("testdata", Boolean.toString (this.result.getResultSet ( ).getBoolean ("testdata")));
 				res.addEntry ("failure_counter", Integer.toString (this.result.getResultSet ( ).getInt ("failure_counter")));
+				res.addEntry ("peculiar", Integer.toString (this.result.getResultSet ( ).getInt ("peculiar")));
+				res.addEntry ("outdated", Integer.toString (this.result.getResultSet ( ).getInt ("outdated")));
 				
 				this.rms.setStatus (RestStatusEnum.OK);
 				this.rms.addEntrySet (res);
@@ -434,6 +436,8 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 		Date repository_datestamp = null;
 		boolean testdata = true;
 		int failureCounter = 0;
+		int peculiar = 0;
+		int outdated = 0;
 		
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
@@ -482,6 +486,16 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			} else if (key.equalsIgnoreCase ("failureCounter")) {
 				
 				failureCounter = new Integer (res.getValue (key));
+
+			} else if (key.equalsIgnoreCase ("peculiar")) {
+				
+				peculiar = new Integer (res.getValue (key));
+				
+			} else if (key.equalsIgnoreCase ("outdated")) {
+				
+				outdated = new Integer (res.getValue (key));				
+				
+				
 				
 			} else {
 				

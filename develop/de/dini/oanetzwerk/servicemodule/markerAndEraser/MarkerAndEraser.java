@@ -19,13 +19,14 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 
 /**
  * @author Michael K&uuml;hn
+ * @author Manuel Klatt-Kafemann
  *
  */
 
 public class MarkerAndEraser {
 	
 	/**
-	 * 
+	 * log4j-Logger
 	 */
 	
 	private static Logger logger = Logger.getLogger (MarkerAndEraser.class); 
@@ -60,10 +61,11 @@ public class MarkerAndEraser {
 	
 	private String propertyfile = "markereraserprop.xml";
 	
+
+	
 	/**
 	 * @param repositoryID
 	 */
-	
 	public MarkerAndEraser (BigDecimal repositoryID) {
 		
 		this.repositoryID = repositoryID;
@@ -98,9 +100,50 @@ public class MarkerAndEraser {
 	
 	public void markAndErase ( ) {
 		
+		// 1. alle IDs des übergebenen Repositoriums holen und in lokaler Liste speichern
+		
+		// für jede dieser IDs ObjectEntry holen
+		
+		// schauen,
+		
+		
+//		this.getData();
+		
+		
 		this.getTestData ( );
 	}
 	
+	private void getData() {
+		String result = prepareRestTransmission ("AllOIDs/fromRepositoryID/" + this.repositoryID.toPlainString ( )).GetData ( );
+		
+		RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		
+		Iterator <RestEntrySet> it = rms.getListEntrySets ( ).listIterator ( );
+		RestEntrySet key = null;
+		
+		if (!it.hasNext ( )) 
+			logger.warn ("No OIDs found for this repository!");
+		
+		while (it.hasNext ( )) { //next
+			
+			key = it.next ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("oid: " + key.getValue ("oid"));
+			
+			// if harvested older than config-weeks
+			try {
+				
+//				this.deleteTestData (new BigDecimal (key.getValue ("oid")));
+				
+			} catch (NumberFormatException ex) {
+				
+				logger.error (ex.getLocalizedMessage ( ), ex);
+			}
+		}
+		
+	}
+
 	/**
 	 * 
 	 */
