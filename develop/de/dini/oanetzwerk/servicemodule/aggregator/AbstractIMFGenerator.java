@@ -1,6 +1,5 @@
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,7 +15,6 @@ import org.jdom.Element;
 import org.jdom.filter.ElementFilter;
 
 import de.dini.oanetzwerk.utils.DDCMatcher_DINI;
-import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.ISO639LangNormalizer;
 import de.dini.oanetzwerk.utils.ISO8601DateNormalizer;
 import de.dini.oanetzwerk.utils.imf.Author;
