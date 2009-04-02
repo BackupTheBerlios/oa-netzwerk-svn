@@ -265,8 +265,7 @@ public class Aggregator {
 			data = loadRawData(this.currentRecordId);
 			if (data == null) {
 				// Daten für dieses Objekt konnten nicht geladen werden
-				logger.error("loadRawData not successful");
-				return;
+				throw new AggregationFailedException("loadRawData not successful");
 			}
 
 			// 2. Auseinandernehmen der Rohdaten
@@ -277,7 +276,7 @@ public class Aggregator {
 			if (data == null) {
 				// keine decodierten Rohdaten vorhanden, eine weitere
 				// Bearbeitung macht keinen Sinn
-				return;
+				throw new AggregationFailedException("decodeBase64 failed");
 			}
 
 			// 3. Prüfen der Codierung der Rohdaten
@@ -306,10 +305,9 @@ public class Aggregator {
 
 			// Auslesen der Metadaten
 			imf = extractMetaData(data);
-			if (data == null) {
-				// die Metadaten konnten nicht ausgelesen werden, keine weitere
-				// Bearbeitung sinnvoll
-				return;
+			if (imf == null || imf.isEmpty()) {
+				// die Metadaten konnten nicht ausgelesen werden, keine weitere Bearbeitung sinnvoll
+				throw new AggregationFailedException("extracted IMF-Object was null or empty");
 			}
 
 			// schreiben der Metadaten
