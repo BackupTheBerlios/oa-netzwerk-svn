@@ -528,7 +528,7 @@
   </target>
   
   <target name="warFindnBrowse" depends="compileFindnBrowse">
-    <war destfile="${build}/findnbrowse.war" webxml="myfaces-root/find-dummy/WEB-INF/web.xml">
+    <war destfile="${build}/findnbrowse.war" webxml="myfaces-root/userfrontend-gui/WEB-INF/web.xml">
       <lib dir="${lib}">
         <include name="myfaces-api-1.2.3.jar" />
         <include name="myfaces-impl-1.2.3.jar" />
@@ -547,7 +547,7 @@
       <metainf dir="myfaces-root/admin-gui/META-INF/">
         <!--include name="context.xml"/-->
       </metainf>
-      <webinf dir="myfaces-root/find-dummy/WEB-INF/">
+      <webinf dir="myfaces-root/userfrontend-gui/WEB-INF/">
         <include name="faces-config.xml" />
         <include name="userfrontend_gui.xml" />
       	<include name="searchclientprop.xml" />
@@ -556,13 +556,13 @@
 	    <include name="log4j.xml" />
       </webinf>
       <classes dir="${build.findnbrowse}" />
-      <zipfileset dir="myfaces-root/find-dummy/">
+      <zipfileset dir="myfaces-root/userfrontend-gui/">
         <include name="*.jsp" />
       </zipfileset>
-      <zipfileset dir="myfaces-root/find-dummy/messages/" prefix="WEB-INF/classes/finddummy/" />
-      <zipfileset dir="myfaces-root/find-dummy/css/" prefix="css/" />
-      <zipfileset dir="myfaces-root/find-dummy/img/" prefix="img/" />
-      <zipfileset dir="myfaces-root/find-dummy/pages/" prefix="pages/" />
+      <zipfileset dir="myfaces-root/userfrontend-gui/messages/" prefix="WEB-INF/classes/finddummy/" />
+      <zipfileset dir="myfaces-root/userfrontend-gui/css/" prefix="css/" />
+      <zipfileset dir="myfaces-root/userfrontend-gui/img/" prefix="img/" />
+      <zipfileset dir="myfaces-root/userfrontend-gui/pages/" prefix="pages/" />
     </war>
   </target>
   
