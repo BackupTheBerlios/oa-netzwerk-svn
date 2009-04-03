@@ -74,7 +74,9 @@
                           <span class="hit-creators"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedCreators}"/> (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedDate}"/>):</span>
                           <span class="hit-keywords"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedKeywords}"/></span><br/>
 						  <span class="hit-url"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}"/></span><br/>
-						  <span class="hit-url"><h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
+						  <span class="hit-url">							
+						  <h:graphicImage url="#{searchBean.hitlist.mapHitBean[hitOID].urlIRIcon}" alt="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" title="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" width="16" height="16"/>
+						  <h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
                   <t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}"/>
 				  (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}"/>)
   			      </h:outputLink></span><br/>	

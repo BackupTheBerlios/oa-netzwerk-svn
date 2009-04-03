@@ -25,6 +25,7 @@ import de.dini.oanetzwerk.utils.imf.Identifier;
 import de.dini.oanetzwerk.utils.imf.Keyword;
 import de.dini.oanetzwerk.utils.imf.Language;
 import de.dini.oanetzwerk.utils.imf.OtherClassification;
+import de.dini.oanetzwerk.utils.imf.RepositoryData;
 import de.dini.oanetzwerk.utils.imf.Title;
 
 public class HitBean implements Serializable {
@@ -312,6 +313,20 @@ public class HitBean implements Serializable {
 		}
 		 
 		return result;
+	}
+	
+	public String getUrlIRIcon() {
+		String url = "";
+		
+		RepositoryData rd = this.completeMetadata.getRepositoryData();
+		if(rd != null) {
+			String s = rd.getRepositoryURL();
+			if(s != null && s.length() > 0) {
+				url = s + "/favicon.ico";
+			}
+		}
+		 
+		return url;
 	}
 	
 	/////////////////////// action method //////////////////////////////
