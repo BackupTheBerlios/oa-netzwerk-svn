@@ -110,7 +110,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
 			stmtconn.loadStatement (DeleteFromDB.Description (stmtconn.connection, object_id));
+			logger.debug("BEFORE DeleteFromDB.Description");
 			this.result = stmtconn.execute ( );
+			logger.debug("AFTER DeleteFromDB.Description");
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 			//TODO: überall checken, dass wenigstens eine LOG Warnung geworfen wird 	
@@ -118,7 +120,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			}
 			
 			stmtconn.loadStatement (DeleteFromDB.DateValues (stmtconn.connection, object_id));
+			logger.debug("BEFORE DeleteFromDB.DateValues");
 			this.result = stmtconn.execute ( );
+			logger.debug("AFTER DeleteFromDB.DateValues");
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				
@@ -198,8 +202,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			}
 			
 			stmtconn.loadStatement (DeleteFromDB.Object2Iso639Language(stmtconn.connection, object_id));
+			logger.debug("BEFORE DeleteFromDB.Object2Iso639Language");
 			this.result = stmtconn.execute ( );
-			
+			logger.debug("AFTER DeleteFromDB.Object2Iso639Language");
+
 			if (this.result.getUpdateCount ( ) < 1) {
 				
 				
@@ -240,19 +246,22 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 				
 			}
 			
-			stmtconn.loadStatement (DeleteFromDB.PersonWithoutReference (stmtconn.connection));
-			this.result = stmtconn.execute ( );
+//			stmtconn.loadStatement (DeleteFromDB.PersonWithoutReference (stmtconn.connection));
+//			this.result = stmtconn.execute ( );
+//			
+//			if (this.result.getUpdateCount ( ) < 1) {
+//				
+//			}
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-			}
-			
-			stmtconn.loadStatement (DeleteFromDB.KeywordsWithoutReference (stmtconn.connection));
-			this.result = stmtconn.execute ( );
-			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-			}
+			// TODO: Diese Anfrage braucht etwa 24 sec und sollte daher sparsam, nach einem Aggregatorlauf im Automodus gefeuert werden
+//			stmtconn.loadStatement (DeleteFromDB.KeywordsWithoutReference (stmtconn.connection));
+//			logger.debug("BEFORE DeleteFromDB.KeywordsWithoutReference");
+//			this.result = stmtconn.execute ( );
+//			logger.debug("AFTER DeleteFromDB.KeywordsWithoutReference");
+//			
+//			if (this.result.getUpdateCount ( ) < 1) {
+//				
+//			}
 			
 			// TODO: DELETE Languages/Iso639Languages without references !!!
 			
@@ -263,7 +272,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 				
 			}
 			
+			logger.debug("BEFORE commit");
 			stmtconn.commit ( );
+			logger.debug("AFTER commit");
 			
 			res.addEntry("oid", object_id.toPlainString());
 			this.rms.setStatus(RestStatusEnum.OK);

@@ -69,7 +69,7 @@ public class MultipleStatementConnection implements StatementConnection {
 		QueryResult result = new QueryResult ( );
 		
 //		if (logger.isDebugEnabled ( ))
-//			logger.debug ("Executing Statement");
+//			logger.debug ("Executing Statement: ");
 		
 		//System.out.println(this.getClass());
 		

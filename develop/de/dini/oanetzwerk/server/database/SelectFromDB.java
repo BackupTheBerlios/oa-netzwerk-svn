@@ -379,9 +379,15 @@ public class SelectFromDB {
 	 */
 	public static PreparedStatement WorkflowDBComplete (Connection connection, BigDecimal service_id) throws SQLException {
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id, max(w1.time) FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id" +
-				" UNION " +
-				"SELECT w1.object_id, max(w1.time) FROM dbo.Worklist w1 WHERE w1.service_id = ? GROUP BY w1.object_id");
+//		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id, max(w1.time) FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id" +
+//				" UNION " +
+//				"SELECT w1.object_id, max(w1.time) FROM dbo.Worklist w1 WHERE w1.service_id = ? GROUP BY w1.object_id");
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM "
+		+ "(SELECT w1.object_id, max(w1.time) as time FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id " 
+		+ "UNION "
+		+ "SELECT w1.object_id, max(w1.time) as time FROM dbo.Worklist w1 WHERE w1.service_id = ? GROUP BY w1.object_id ) AS list "
+		+ "ORDER BY time");
 		
 		preparedstmt.setBigDecimal (1, service_id);
 		preparedstmt.setBigDecimal (2, service_id);

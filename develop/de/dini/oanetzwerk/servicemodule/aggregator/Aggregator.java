@@ -179,7 +179,11 @@ public class Aggregator {
 			// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus
 			// dem
 			// XML extrahiert werden
+			
+			if (logger.isDebugEnabled()) logger.debug("BEFORE GET WorkflowDB/" + serviceId);
 			RestMessage msgGetWFResponse = restclient.sendGetRestMessage();
+			if (logger.isDebugEnabled()) logger.debug("AFTER GET WorkflowDB/" + serviceId);
+			
 			if (msgGetWFResponse.getStatus() != RestStatusEnum.OK) {
 				// TODO: Was nun?
 				logger.error("WorkflowDB response failed: "
@@ -262,7 +266,9 @@ public class Aggregator {
 
 			// Abfolge
 			// 1. Laden der Rohdaten
-			data = loadRawData(this.currentRecordId);
+			
+			data = loadRawData(this.currentRecordId);			
+			
 			if (data == null) {
 				// Daten für dieses Objekt konnten nicht geladen werden
 				throw new AggregationFailedException("loadRawData not successful");
@@ -304,7 +310,10 @@ public class Aggregator {
 			}
 
 			// Auslesen der Metadaten
+			if (logger.isDebugEnabled()) logger.debug("BEFORE extractMetaData");
 			imf = extractMetaData(data);
+			if (logger.isDebugEnabled()) logger.debug("AFTER extractMetaData");
+
 			if (imf == null || imf.isEmpty()) {
 				// die Metadaten konnten nicht ausgelesen werden, keine weitere Bearbeitung sinnvoll
 				throw new AggregationFailedException("extracted IMF-Object was null or empty");
@@ -469,7 +478,10 @@ public class Aggregator {
 			
 			try {
 				
+				if (logger.isDebugEnabled()) logger.debug("BEFORE PUT WorkflowDB/"+id);
 				result = prepareRestTransmission ("WorkflowDB/").PutData (requestxml);
+				if (logger.isDebugEnabled()) logger.debug("AFTER PUT WorkflowDB/"+id);
+
 				//result = restclient.PutData (requestxml);
 				
 			} catch (UnsupportedEncodingException ex) {
@@ -544,8 +556,10 @@ public class Aggregator {
 		logger.debug("# GET ");
 			
 		// GET-Anfrage auf "InternalMetadataEntry"
-		msgGetResponse = restclient.sendGetRestMessage();
 		
+		if (logger.isDebugEnabled()) logger.debug("BEFORE GET InternalMetadataEntry/"+this.currentRecordId);
+		msgGetResponse = restclient.sendGetRestMessage();
+		if (logger.isDebugEnabled()) logger.debug("AFTER GET InternalMetadataEntry/"+this.currentRecordId);		
 		
 		// Gibt es das schon unter der OID?
 		if(msgGetResponse.getStatus() == RestStatusEnum.OK) {
@@ -555,7 +569,12 @@ public class Aggregator {
 			
 			// neue Anfrage auf Delete zum löschen des bereits existierenden Datensatzes
 			restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+			
+			if (logger.isDebugEnabled()) logger.debug("BEFORE DELETE InternalMetadataEntry/"+this.currentRecordId);
 			RestMessage msgDeleteResponse = restclient.sendDeleteRestMessage();
+			if (logger.isDebugEnabled()) logger.debug("AFTETR DELETE InternalMetadataEntry/"+this.currentRecordId);
+			
+			
 			logger.debug("### RESPONSE ###\n\n"+ msgDeleteResponse);
 			RestEntrySet tmpEntrySet = msgGetResponse.getListEntrySets().get(0);
 			logger.debug("oid nach Delete: " + tmpEntrySet.getValue("oid"));
@@ -592,7 +611,12 @@ public class Aggregator {
 			RestMessage msgPutResponse = null;
 			try {
 				logger.debug("internal metadata to send via PUT: " + xmlInternalMetadata);
+				
+				if (logger.isDebugEnabled()) logger.debug("BEFORE PUT InternalMetadataEntry/"+this.currentRecordId);
 				msgPutResponse = restclient.sendPutRestMessage(msgPutRequest);
+				if (logger.isDebugEnabled()) logger.debug("AFTER PUT InternalMetadataEntry/"+this.currentRecordId);
+
+				
 			} catch (IOException ioex) {
 
 				logger.error (ioex.getLocalizedMessage ( ));
@@ -769,7 +793,10 @@ public class Aggregator {
 		// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus dem
 		// XML extrahiert werden		
 		//RestMessage rms = RestXmlCodec.decodeRestMessage (result);
+		
+		if (logger.isDebugEnabled()) logger.debug("BEFORE GET RawRecordData/" + id);
 		RestMessage response = restclient.sendGetRestMessage();
+		if (logger.isDebugEnabled()) logger.debug("AFTER GET RawRecordData/" + id);
 		
 		//TODO: hier Fehlerbehandlung via rms.getStatus()
 		
