@@ -89,9 +89,8 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 			}
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
-//		RestEntrySet res = new RestEntrySet ( );
 		
 		try {
 			
@@ -99,7 +98,7 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 			
 			if (bGetAll) {
 				
-				stmtconn.loadStatement (stmtconn.connection.prepareStatement("SELECT * FROM dbo.Services"));
+				stmtconn.loadStatement (stmtconn.connection.prepareStatement ("SELECT * FROM dbo.Services"));
 				
 			} else {
 				
@@ -116,30 +115,9 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 			
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) {
-				
-				for (Throwable warning : result.getWarning ( )) {
-					
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
-			
-			/*if (this.result.getResultSet ( ).next ( )) {
-				
-				if (logger.isDebugEnabled ( )) 
-					logger.debug ("DB returned: \n\tservice_id = " + this.result.getResultSet ( ).getInt (1) +
-							"\n\tname = " + this.result.getResultSet ( ).getString (2));
-				
-				res.addEntry ("service_id", this.result.getResultSet ( ).getBigDecimal (1).toPlainString ( ));
-				res.addEntry ("name", this.result.getResultSet ( ).getString (2));
-				
-				this.rms.setStatus (RestStatusEnum.OK);
-				
-			} else {
-				
-				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
-				this.rms.setStatusDescription ("No matching Service found");
-			}*/
 			
 			boolean foundOne = false;			
 			while (this.result.getResultSet ( ).next ( )) {
@@ -162,16 +140,14 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get Services: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get Services: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus(RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription(ex.toString());
 		
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get Services: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get Services: " + ex.getLocalizedMessage ( ), ex);
 			
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -187,12 +163,10 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 				} catch (SQLException ex) {
 					
 					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			
-//			this.rms.addEntrySet (res);
-//			res = null;
 			this.result = null;
 			dbng = null;		}
 		

@@ -1,10 +1,15 @@
 package de.dini.oanetzwerk.server;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.util.InvalidPropertiesFormatException;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +65,12 @@ public class RestServer extends HttpServlet implements Serializable {
 	 */
 	
 	private HttpServletResponse response;
+	
+	/**
+	 * General server properties loaded from config file 
+	 */
+	
+	private Properties serverproperties;
 	
 	/**
 	 * Standard Constructor. Does nothing.
@@ -121,7 +132,22 @@ public class RestServer extends HttpServlet implements Serializable {
 		}
 		
 		String xml = "";
-		String classname = "de.dini.oanetzwerk.server.handler." + path [1];
+		String classname;
+		String dataSource;
+		
+		if (this.getServerproperties ( ) != null) {
+			
+			classname = this.getServerproperties ( ).getProperty ("handlerpath") + path [1];
+			dataSource = this.getServerproperties ( ).getProperty ("datasource");
+			
+		} else {
+			
+			classname = "de.dini.oanetzwerk.server.handler." + path [1];
+			dataSource = "jdbc/oanetztest";
+			
+			logger.info ("classname: " + classname);
+			logger.info ("Data source: " + dataSource);
+		}
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("Class to be loaded: " + classname);
@@ -150,7 +176,7 @@ public class RestServer extends HttpServlet implements Serializable {
 			
 			// calling the processing method of the object's instance and returning the result
 			
-			return (((KeyWord2DatabaseInterface) o).processRequest (xml, pathwithoutkeyword, verb));
+			return (((KeyWord2DatabaseInterface) o).processRequest (xml, pathwithoutkeyword, verb, dataSource));
 			
 		} catch (ClassNotFoundException ex) {
 			
@@ -292,5 +318,50 @@ public class RestServer extends HttpServlet implements Serializable {
 
 		this.response.setCharacterEncoding ("UTF-8");
 		this.response.setContentType ("application/xml; charset=UTF-8");
+	}
+	
+	/**
+	 * @return the serverproperties
+	 */
+	
+	protected final Properties getServerproperties ( ) {
+		
+		if (this.serverproperties == null) {
+			
+			this.serverproperties = new Properties ( );
+			
+			File serverpropFile = new File ("webapps/restserver/WEB-INF/serverprop.xml");
+			
+			try {
+				
+				this.serverproperties.loadFromXML (new FileInputStream (serverpropFile));
+				
+			} catch (InvalidPropertiesFormatException ex) {
+				
+				logger.error (serverpropFile.getAbsoluteFile ( ) + " is not a valid java.util.Properties file!");
+				logger.error (ex.getLocalizedMessage ( ), ex);
+				
+				this.serverproperties = null;
+				return null;
+				
+			} catch (FileNotFoundException ex) {
+				
+				logger.error (serverpropFile.getAbsoluteFile ( ) + " not found! Does it really exist?");
+				logger.error (ex.getLocalizedMessage ( ), ex);
+				
+				this.serverproperties = null;
+				return null;
+				
+			} catch (IOException ex) {
+				
+				logger.error ("While opening " + serverpropFile.getAbsoluteFile ( ) + " an I/O-Error occured. Please fix this!");
+				logger.error (ex.getLocalizedMessage ( ), ex);
+				
+				this.serverproperties = null;
+				return null;
+			}
+		}
+		
+		return this.serverproperties;
 	}
 }

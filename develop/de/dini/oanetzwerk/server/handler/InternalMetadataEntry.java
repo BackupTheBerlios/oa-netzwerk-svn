@@ -101,7 +101,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
@@ -112,165 +112,156 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			stmtconn.loadStatement (DeleteFromDB.Description (stmtconn.connection, object_id));
 			logger.debug("BEFORE DeleteFromDB.Description");
 			this.result = stmtconn.execute ( );
-			logger.debug("AFTER DeleteFromDB.Description");
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-			//TODO: überall checken, dass wenigstens eine LOG Warnung geworfen wird 	
-				
-			}
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
+			
+			logger.debug("AFTER DeleteFromDB.Description");
 			
 			stmtconn.loadStatement (DeleteFromDB.DateValues (stmtconn.connection, object_id));
 			logger.debug("BEFORE DeleteFromDB.DateValues");
 			this.result = stmtconn.execute ( );
 			logger.debug("AFTER DeleteFromDB.DateValues");
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			stmtconn.loadStatement (DeleteFromDB.Formats (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 
 			stmtconn.loadStatement (DeleteFromDB.Identifiers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.TypeValue (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.Titles (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.Publishers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.Object2Author (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.Object2Editor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			stmtconn.loadStatement (DeleteFromDB.Object2Contributor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.Object2Language (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.Object2Iso639Language(stmtconn.connection, object_id));
 			logger.debug("BEFORE DeleteFromDB.Object2Iso639Language");
 			this.result = stmtconn.execute ( );
 			logger.debug("AFTER DeleteFromDB.Object2Iso639Language");
 
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.Object2Keywords (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.Other_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.DDC_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.DNB_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			stmtconn.loadStatement (DeleteFromDB.DINI_Set_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-			}
-			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 //			stmtconn.loadStatement (DeleteFromDB.PersonWithoutReference (stmtconn.connection));
 //			this.result = stmtconn.execute ( );
 //			
-//			if (this.result.getUpdateCount ( ) < 1) {
-//				
-//			}
-			
+//						if (this.result.getWarning ( ) != null) 
+//			for (Throwable warning : result.getWarning ( ))
+//				logger.warn (warning.getLocalizedMessage ( ));
+
 			// TODO: Diese Anfrage braucht etwa 24 sec und sollte daher sparsam, nach einem Aggregatorlauf im Automodus gefeuert werden
 //			stmtconn.loadStatement (DeleteFromDB.KeywordsWithoutReference (stmtconn.connection));
 //			logger.debug("BEFORE DeleteFromDB.KeywordsWithoutReference");
 //			this.result = stmtconn.execute ( );
 //			logger.debug("AFTER DeleteFromDB.KeywordsWithoutReference");
 //			
-//			if (this.result.getUpdateCount ( ) < 1) {
-//				
-//			}
+//						if (this.result.getWarning ( ) != null) 
+//			for (Throwable warning : result.getWarning ( ))
+//				logger.warn (warning.getLocalizedMessage ( ));
+
 			
 			// TODO: DELETE Languages/Iso639Languages without references !!!
 			
 			stmtconn.loadStatement (DeleteFromDB.Other_Categories (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-			}
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			logger.debug("BEFORE commit");
 			stmtconn.commit ( );
@@ -354,7 +345,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
@@ -469,7 +460,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );		
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));		
 		MultipleStatementConnection stmtconn = null;
 		
 		RestMessage msgPutRequest = RestXmlCodec.decodeRestMessage (data);
@@ -547,10 +538,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (InsertIntoDB.Title (stmtconn.connection, object_id, title.getQualifier(), title.getTitle(), title.getLang()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 				}
 			}
 
@@ -566,10 +557,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (InsertIntoDB.DateValue (stmtconn.connection, object_id, dateValue.getNumber(), HelperMethods.java2sqlDate(dateValue.getDateValue()), dateValue.getStringValue()));
 						this.result = stmtconn.execute ( );
 						
-						if (this.result.getUpdateCount ( ) < 1) {
-							
-							//warn, error, rollback, nothing????
-						}
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
 
 					} catch (ParseException ex) {
 						
@@ -587,10 +577,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (InsertIntoDB.Format (stmtconn.connection, object_id, format.getNumber(), format.getSchema_f()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
 
 				}
 			}
@@ -604,10 +593,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (InsertIntoDB.Identifier (stmtconn.connection, object_id, identifier.getNumber(), identifier.getIdentifier()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 				}
 			}
 
@@ -619,11 +608,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (InsertIntoDB.Description (stmtconn.connection, object_id, description.getNumber(), description.getDescription()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
-	
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 				}
 			}
 
@@ -635,10 +623,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (InsertIntoDB.TypeValue (stmtconn.connection, object_id, typeValue.getTypeValue()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 				}
 			}
 
@@ -651,10 +639,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (InsertIntoDB.Publisher (stmtconn.connection, object_id, publisher.getNumber(), publisher.getName()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 				}
 			}
 
@@ -673,13 +661,17 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							.getInstitution(), author.getEmail()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, author.getFirstname(), author.getLastname()));
 					this.result = stmtconn.execute ( );
-					
+
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 					while (this.result.getResultSet ( ).next ( )) {
 						
 						person_id = this.result.getResultSet ( ).getBigDecimal(1);
@@ -688,10 +680,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (InsertIntoDB.Object2Author (stmtconn.connection, object_id, person_id, author.getNumber()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 				}
 			}
 			
@@ -709,14 +701,17 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							.getInstitution(), editor.getEmail()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
 
 					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, editor.getFirstname(), editor.getLastname()));
 					this.result = stmtconn.execute ( );
 					
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 					while (this.result.getResultSet ( ).next ( )) {
 						
 						person_id = this.result.getResultSet ( ).getBigDecimal(1);
@@ -725,13 +720,12 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (InsertIntoDB.Object2Editor (stmtconn.connection, object_id, person_id, editor.getNumber()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 				}
 			}
-
 			
 			if (contributorList != null) {
 				for (Contributor contributor : contributorList) {
@@ -746,14 +740,17 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							.getInstitution(), contributor.getEmail()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
 					
 					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, contributor.getFirstname(), contributor.getLastname()));
 					this.result = stmtconn.execute ( );
 					
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 					while (this.result.getResultSet ( ).next ( )) {
 						
 						person_id = this.result.getResultSet ( ).getBigDecimal(1);
@@ -762,10 +759,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (InsertIntoDB.Object2Editor (stmtconn.connection, object_id, person_id, contributor.getNumber()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getUpdateCount ( ) < 1) {
-						
-						//warn, error, rollback, nothing????
-					}
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 					//TODO: Object2Editor für contributor???
 				}
 			}
@@ -781,6 +778,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (InsertIntoDB.Keyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
+
 					if (this.result.getUpdateCount ( ) < 1) {
 						logger.error("Fehler bei OID:" + object_id + " INSERT Keyword:'" + keyword.getKeyword() + "'");
 						//warn, error, rollback, nothing????
@@ -788,6 +789,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					
 					stmtconn.loadStatement (SelectFromDB.LatestKeyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 					this.result = stmtconn.execute ( );
+					
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
 					
 					while (this.result.getResultSet ( ).next ( )) {
 						keyword_id = this.result.getResultSet ( ).getBigDecimal(1);
@@ -797,10 +802,13 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					
 						stmtconn.loadStatement (InsertIntoDB.Object2Keyword (stmtconn.connection, object_id, keyword_id));
 						this.result = stmtconn.execute ( );
+						
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
 
 						if (this.result.getUpdateCount ( ) < 1) {
 							logger.error("Fehler bei OID:" + object_id + " INSERT Object2Keyword:'" + keyword_id + "'");
-							//warn, error, rollback, nothing????
 						}
 					}
 										
@@ -824,20 +832,28 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 
 						stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
 						this.result = stmtconn.execute ( );
-
+						
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
+						
 						if (!this.result.getResultSet ( ).next ( )) {
 
 							stmtconn.loadStatement (InsertIntoDB.Language (stmtconn.connection, language.getLanguage()));
 							this.result = stmtconn.execute ( );
 
-							if (this.result.getUpdateCount ( ) < 1) {
+							if (this.result.getWarning ( ) != null) 
+								for (Throwable warning : result.getWarning ( ))
+									logger.warn (warning.getLocalizedMessage ( ));
 
-								//warn, error, rollback, nothing????
-							}
 						}
 
 						stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
 						this.result = stmtconn.execute ( );
+
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
 
 						while (this.result.getResultSet ( ).next ( )) {
 
@@ -847,11 +863,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (InsertIntoDB.Object2Language (stmtconn.connection, object_id, language_id, language.getNumber()));
 						this.result = stmtconn.execute ( );
 
-						if (this.result.getUpdateCount ( ) < 1) {
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
 
-							//warn, error, rollback, nothing????
-						}
-					
 					}
 					
 					//////////////////////
@@ -865,19 +880,27 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (SelectFromDB.Iso639LanguageByName (stmtconn.connection, language.getIso639language()));
 						this.result = stmtconn.execute ( );
 
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
+
 						if (!this.result.getResultSet ( ).next ( )) {
 
 							stmtconn.loadStatement (InsertIntoDB.Iso639Language (stmtconn.connection, language.getIso639language()));
 							this.result = stmtconn.execute ( );
 
-							if (this.result.getUpdateCount ( ) < 1) {
+							if (this.result.getWarning ( ) != null) 
+								for (Throwable warning : result.getWarning ( ))
+									logger.warn (warning.getLocalizedMessage ( ));
 
-								//warn, error, rollback, nothing????
-							}
 						}
 
 						stmtconn.loadStatement (SelectFromDB.Iso639LanguageByName (stmtconn.connection, language.getIso639language()));
 						this.result = stmtconn.execute ( );
+
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
 
 						while (this.result.getResultSet ( ).next ( )) {
 
@@ -888,10 +911,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (InsertIntoDB.Object2Iso639Language(stmtconn.connection, object_id, iso639language_id, language.getNumber()));
 						this.result = stmtconn.execute ( );
 
-						if (this.result.getUpdateCount ( ) < 1) {
-
-							//warn, error, rollback, nothing????
-						}
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
 
 					}
 				}
@@ -908,21 +930,24 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (SelectFromDB.DDCCategoriesByCategorie (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
+
 						while (this.result.getResultSet ( ).next ( )) {
 							
 							ddcValue = this.result.getResultSet ( ).getString(1);
 						}
 		
-
 						if (ddcValue != null) {
 							
 							// Daten zuordnen							
 							stmtconn.loadStatement (InsertIntoDB.DDCClassification (stmtconn.connection, object_id, ddcValue));
 							this.result = stmtconn.execute ( );
 							
-							if (this.result.getUpdateCount ( ) < 1) {
-								//warn, error, rollback, nothing????
-							}
+							if (this.result.getWarning ( ) != null) 
+								for (Throwable warning : result.getWarning ( ))
+									logger.warn (warning.getLocalizedMessage ( ));
 							
 						} else {
 							logger.warn("Could not find a DDC_Value for '" + classification.getValue() + "', will be stored as OtherClassification");
@@ -937,6 +962,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (SelectFromDB.DNBCategoriesByCategorie (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
+
 						while (this.result.getResultSet ( ).next ( )) {
 							
 							dnbValue = this.result.getResultSet ( ).getString(1);
@@ -948,9 +977,9 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							stmtconn.loadStatement (InsertIntoDB.DNBClassification (stmtconn.connection, object_id, dnbValue));
 							this.result = stmtconn.execute ( );
 							
-							if (this.result.getUpdateCount ( ) < 1) {								
-								//warn, error, rollback, nothing????
-							}
+							if (this.result.getWarning ( ) != null) 
+								for (Throwable warning : result.getWarning ( ))
+									logger.warn (warning.getLocalizedMessage ( ));
 							
 						} else {
 							logger.warn("Could not find a DNB_Value for '" + classification.getValue() + "', will be stored as OtherClassification");
@@ -958,7 +987,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							aggregationWarning = true;
 							aggregationWarningDescription = aggregationWarningDescription + "\nCould not find a DNB_Value for '" + classification.getValue() + "', will be stored as OtherClassification";
 						}
-						
 
 					}					
 					if (classification instanceof DINISetClassification) {
@@ -968,6 +996,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (SelectFromDB.DINISetCategoriesByName (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
+
 						logger.debug("before result of DINI set id fetch for '"+classification.getValue()+"'");
 						
 						while (this.result.getResultSet ( ).next ( )) {
@@ -990,9 +1022,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							stmtconn.loadStatement (InsertIntoDB.DINISetClassification (stmtconn.connection, object_id, DINI_set_id));
 							this.result = stmtconn.execute ( );
 						
-							if (this.result.getUpdateCount ( ) < 1) {
-								//warn, error, rollback, nothing????
-							}
+							if (this.result.getWarning ( ) != null) 
+								for (Throwable warning : result.getWarning ( ))
+									logger.warn (warning.getLocalizedMessage ( ));
+
 						}
 					}
 					
@@ -1004,6 +1037,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
+
 						while (this.result.getResultSet ( ).next ( )) {
 							
 							other_id = this.result.getResultSet ( ).getBigDecimal(1);
@@ -1016,28 +1053,30 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							stmtconn.loadStatement (InsertIntoDB.OtherCategories (stmtconn.connection, classification.getValue()));
 							this.result = stmtconn.execute ( );
 							
-							if (this.result.getUpdateCount ( ) < 1) {
-								
-								//warn, error, rollback, nothing????
-							}
+							if (this.result.getWarning ( ) != null) 
+								for (Throwable warning : result.getWarning ( ))
+									logger.warn (warning.getLocalizedMessage ( ));
+
 							stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (stmtconn.connection, classification.getValue()));
 							this.result = stmtconn.execute ( );
 							
+							if (this.result.getWarning ( ) != null) 
+								for (Throwable warning : result.getWarning ( ))
+									logger.warn (warning.getLocalizedMessage ( ));
+
 							while (this.result.getResultSet ( ).next ( )) {
 								
 								other_id = this.result.getResultSet ( ).getBigDecimal(1);
 							}
-							
-
 						}
 						// ID dieser Klassifikation bestimmen und zuordnen
 						stmtconn.loadStatement (InsertIntoDB.OtherClassification (stmtconn.connection, object_id, other_id));
 						this.result = stmtconn.execute ( );
 						
-						if (this.result.getUpdateCount ( ) < 1) {
-							
-							//warn, error, rollback, nothing????
-						}
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
+
 					}
 				}
 			}

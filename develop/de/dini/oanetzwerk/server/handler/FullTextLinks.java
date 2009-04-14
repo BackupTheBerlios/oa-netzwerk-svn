@@ -71,7 +71,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.FullTextLinks);
@@ -83,10 +83,17 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			stmtconn.loadStatement (DeleteFromDB.FullTextLinks (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : this.result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+			
 			if (this.result.getUpdateCount ( ) < 1) {
+				
 				stmtconn.rollback ( );
 				throw new SQLException ("FullTextLinks entries could not be deleted");
+				
 			} else {
+				
 				stmtconn.commit ( );
 			}
 			
@@ -171,7 +178,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -181,13 +188,9 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) {
-				
-				for (Throwable warning : result.getWarning ( )) {
-					
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			RestEntrySet entrySet;
 			boolean resultSetWasEmpty = true;
@@ -277,7 +280,6 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 		Iterator <String> it = res.getKeyIterator ( );
 		String key = "";
 		
-		
 		try {
 			
 			object_id = new BigDecimal (path [0]);
@@ -304,7 +306,6 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
-		
 		
 		try {
 			
@@ -340,7 +341,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 		
 		this.rms = new RestMessage (RestKeyword.FullTextLinks);
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		res = new RestEntrySet ( );
 		
@@ -352,10 +353,9 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : this.result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			stmtconn.commit ( );
 			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, object_id));
@@ -364,9 +364,6 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			if (this.result.getResultSet ( ).next ( )) {
 				
-//				if (logger.isDebugEnabled ( ))
-//					logger.debug ("DB returned: workflow_id = " + this.result.getResultSet ( ).getBigDecimal (1));
-		
 				res.addEntry ("object_id", this.result.getResultSet ( ).getBigDecimal ("object_id").toPlainString ( ));
 				stmtconn.commit ( );
 				

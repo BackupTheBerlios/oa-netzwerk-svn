@@ -32,6 +32,12 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	 * 
 	 */
 	
+	private String dataSource;
+	
+	/**
+	 * 
+	 */
+	
 	protected RestMessage rms;
 	
 	/**
@@ -99,6 +105,44 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 				return "null";
 		}
 	}
+	
+	/**
+	 * @throws NotEnoughParametersException 
+	 * @throws MethodNotImplementedException 
+	 * @see de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface#processRequest(java.lang.String, java.lang.String[], int, java.lang.String)
+	 */
+	
+	final public String processRequest (String data, String [ ] path, HttpVerbEnum verb, String dataSource) throws NotEnoughParametersException, MethodNotImplementedException {
+		
+		this.setDataSource (dataSource);
+		
+		return processRequest (data, path, verb);
+	}
+	
+	
+	/**
+	 * @return the dataSource
+	 */
+	
+	protected final String getDataSource ( ) {
+		
+		if (this.dataSource == null || this.dataSource.equals (""))
+			this.dataSource = "jdbc/oanetztest";
+		
+		return this.dataSource;
+	}
+	
+
+	
+	/**
+	 * @param dataSource the dataSource to set
+	 */
+	
+	private final void setDataSource (String dataSource) {
+	
+		this.dataSource = dataSource;
+	}
+	
 
 	/**
 	 * This method handles the HTTP-PUT Request which inserts new data.

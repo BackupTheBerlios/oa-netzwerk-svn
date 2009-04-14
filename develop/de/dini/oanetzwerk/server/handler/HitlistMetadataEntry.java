@@ -93,7 +93,7 @@ public class HitlistMetadataEntry extends AbstractKeyWordHandler implements KeyW
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
@@ -111,11 +111,9 @@ public class HitlistMetadataEntry extends AbstractKeyWordHandler implements KeyW
 			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, hmf.getOid()));
 			QueryResult ftlResult = stmtconn.execute ( );
 			
-			if (ftlResult.getWarning ( ) != null) {
-				for (Throwable warning : ftlResult.getWarning ( )) {
+			if (ftlResult.getWarning ( ) != null)
+				for (Throwable warning : ftlResult.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			while (ftlResult.getResultSet ( ).next ( )) {				
 				FullTextLink ftl = new FullTextLink();					

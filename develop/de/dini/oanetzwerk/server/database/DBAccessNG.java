@@ -62,6 +62,23 @@ public class DBAccessNG {
 		}
 	}
 	
+	public DBAccessNG (String dataSource) {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("DBAccessNG Instance will be prepared");
+		
+		try {
+			
+			this.statementConnection = null;
+			this.ds = (DataSource) ((Context) new InitialContext ( ).lookup ("java:comp/env")).lookup (dataSource);
+			
+		} catch (Exception ex) {
+			
+			logger.error ("DataSource could not be loaded. We can't connect to the database. Please enter the correct datasource!");
+			logger.error (ex.getLocalizedMessage ( ), ex);
+		}
+	}
+	
 	/**
 	 * @return
 	 * @throws WrongStatementException

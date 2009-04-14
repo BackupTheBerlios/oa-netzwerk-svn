@@ -4,7 +4,6 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
-//import java.sql.Date;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
@@ -17,7 +16,6 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
-//import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -79,11 +77,12 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 				this.rms = new RestMessage (RestKeyword.Repository);
 				this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
 				this.rms.setStatusDescription (path [0] + " is NOT a number!");
+				
 				return RestXmlCodec.encodeRestMessage (this.rms);
 			}
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -101,13 +100,9 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 			
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) {
-				
-				for (Throwable warning : result.getWarning ( )) {
-					
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			if (repositoryID != null) {
 			
@@ -173,14 +168,12 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 		} catch (SQLException ex) {
 			
 			logger.error ("An error occured while processing Get Repository: " + ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 
 			logger.error ("An error occured while processing Get Repository: " + ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -195,7 +188,6 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
 					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}

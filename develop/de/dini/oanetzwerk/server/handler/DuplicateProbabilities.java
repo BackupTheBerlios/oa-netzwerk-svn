@@ -67,7 +67,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.DuplicateProbabilities);
@@ -78,6 +78,10 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			
 			stmtconn.loadStatement (DeleteFromDB.DuplicatePossibilities(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
+			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				// da eh nichts gelöscht wurde, entsprechende Daten wieder in Ursprungszustand versetzen
@@ -154,7 +158,6 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 				this.rms.setStatusDescription (path [0] + " is NOT a valid number for this parameter!");
 				
 				return RestXmlCodec.encodeRestMessage (this.rms);				
-				
 			}
 
 		} catch (NumberFormatException ex) {
@@ -168,7 +171,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -178,13 +181,9 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			stmtconn.loadStatement (SelectFromDB.DuplicateProbabilities(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			
-			
-			if (this.result.getWarning ( ) != null) {
-				for (Throwable warning : result.getWarning ( )) {
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 
 			counter = 0;
 			
@@ -285,7 +284,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 		this.rms = RestXmlCodec.decodeRestMessage(data);
 		RestEntrySet res = null;
 
-		DBAccessNG dbng = new DBAccessNG();
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		
 		String key = "";
@@ -343,14 +342,16 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 						stmtconn.connection, object_id, duplicate_id,
 						percentage));
 				this.result = stmtconn.execute();
-
+				
+				if (this.result.getWarning ( ) != null) 
+					for (Throwable warning : result.getWarning ( ))
+						logger.warn (warning.getLocalizedMessage ( ));
+				
 				if (this.result.getUpdateCount() < 1) {
 					errorHappended = true;
 				
 					// warn, error, rollback, nothing????
 				}
-//				logger.debug("GetWarnings: " + stmtconn.connection.getWarnings().getNextWarning());
-
 			}
 			if (errorHappended == false) 
 				stmtconn.commit();

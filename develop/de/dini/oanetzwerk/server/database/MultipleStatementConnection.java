@@ -7,9 +7,9 @@ package de.dini.oanetzwerk.server.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 
 import org.apache.log4j.Logger;
-
 
 /**
  * @author Michael K&uuml;hn
@@ -18,8 +18,22 @@ import org.apache.log4j.Logger;
 
 public class MultipleStatementConnection implements StatementConnection {
 	
-	static Logger logger = Logger.getLogger (MultipleStatementConnection.class);
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (MultipleStatementConnection.class);
+	
+	/**
+	 * 
+	 */
+	
 	public final Connection connection;
+	
+	/**
+	 * 
+	 */
+	
 	private PreparedStatement multipleStatement;
 	
 	/**
@@ -35,6 +49,14 @@ public class MultipleStatementConnection implements StatementConnection {
 		this.connection = dataSourceConnection;
 		this.connection.setAutoCommit (false);
 		this.multipleStatement = null;
+		
+		SQLWarning warning = this.connection.getWarnings ( );
+		
+		while (warning != null) {
+			
+			logger.warn ("A SQL-Connection-Warning occured: " + warning.getMessage ( ) + " " + warning.getSQLState ( ) + " " + warning.getErrorCode ( ));
+			warning = warning.getNextWarning ( );
+		}
 	}
 
 	/**
@@ -71,11 +93,15 @@ public class MultipleStatementConnection implements StatementConnection {
 //		if (logger.isDebugEnabled ( ))
 //			logger.debug ("Executing Statement: ");
 		
-		//System.out.println(this.getClass());
+		if (this.multipleStatement.getWarnings ( ) != null)
+			logger.warn ("A SQL-Statement-Warning occured: " + this.multipleStatement.getWarnings ( ).getMessage ( ) + " " + this.multipleStatement.getWarnings ( ).getSQLState ( ) + " " + this.multipleStatement.getWarnings ( ).getErrorCode ( ));
 		
 		try {
 			
 			this.multipleStatement.execute ( );
+			
+			if (this.multipleStatement.getWarnings ( ) != null)
+				logger.warn ("A SQL-Statement-Warning occured: " + this.multipleStatement.getWarnings ( ).getMessage ( ) + " " + this.multipleStatement.getWarnings ( ).getSQLState ( ) + " " + this.multipleStatement.getWarnings ( ).getErrorCode ( ));
 			
 		} catch (SQLException ex) {
 			
@@ -109,7 +135,13 @@ public class MultipleStatementConnection implements StatementConnection {
 //			if (logger.isDebugEnabled ( ))
 //				logger.debug ("Committing Transaction");
 			
+			if (this.multipleStatement.getWarnings ( ) != null)
+				logger.warn ("A SQL-Statement-Warning occured: " + this.multipleStatement.getWarnings ( ).getMessage ( ) + " " + this.multipleStatement.getWarnings ( ).getSQLState ( ) + " " + this.multipleStatement.getWarnings ( ).getErrorCode ( ));
+			
 			this.connection.commit ( );
+			
+			if (this.multipleStatement.getWarnings ( ) != null)
+				logger.warn ("A SQL-Statement-Warning occured: " + this.multipleStatement.getWarnings ( ).getMessage ( ) + " " + this.multipleStatement.getWarnings ( ).getSQLState ( ) + " " + this.multipleStatement.getWarnings ( ).getErrorCode ( ));
 			
 		} catch (SQLException ex) {
 			

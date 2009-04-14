@@ -60,7 +60,6 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 		name = new String(path[0]);
 		return RestXmlCodec.encodeRestMessage(getRestMessage(name));
 	}
-
 	
 	/**
 	 * @param name
@@ -72,7 +71,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 		this.rms = new RestMessage (RestKeyword.LoginData);
 		RestEntrySet entrySet = new RestEntrySet ( );
 
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -83,11 +82,9 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			this.result = stmtconn.execute ( );
 			
 			// log warnings
-			if (this.result.getWarning ( ) != null) {
-				for (Throwable warning : result.getWarning ( )) {
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			// extract data from db response
 			while(this.result.getResultSet ( ).next ( )) {
@@ -144,7 +141,6 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 		}		
 		return this.rms;
 	}
-	
 	
 	/**
 	 * @throws MethodNotImplementedException 
@@ -220,7 +216,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 		
 		this.rms = new RestMessage (RestKeyword.LoginData);
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		res = new RestEntrySet ( );
 		
@@ -231,6 +227,10 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			// 1. Prüfen, ob gewählter Nutzername in anderer Schreibweise schon im System vorhanden ist
 			stmtconn.loadStatement (SelectFromDB.LoginDataLowerCase(stmtconn.connection, name));
 			this.result = stmtconn.execute ( );
+			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			if (this.result.getResultSet().next()) {
 				// Name schon vorhanden, muss mit Fehler reagiert werden
@@ -244,10 +244,10 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 						stmtconn.connection, name, password, email));
 				this.result = stmtconn.execute();
 
-				if (this.result.getUpdateCount() < 1) {
+				if (this.result.getWarning ( ) != null) 
+					for (Throwable warning : result.getWarning ( ))
+						logger.warn (warning.getLocalizedMessage ( ));
 
-					// warn, error, rollback, nothing????
-				}
 				stmtconn.commit();
 
 				// 3. Prüfen, ob korrekt gespeichert wurde
@@ -256,6 +256,10 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 
 				this.result = stmtconn.execute();
 
+				if (this.result.getWarning ( ) != null) 
+					for (Throwable warning : result.getWarning ( ))
+						logger.warn (warning.getLocalizedMessage ( ));
+				
 				if (this.result.getResultSet().next()) {
 
 					res.addEntry("name", this.result.getResultSet().getString(
@@ -303,8 +307,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			
@@ -317,8 +320,6 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 		
-		
-		
 	/**
 	 * @throws MethodNotImplementedException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
@@ -327,14 +328,13 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 	
 	@Override
 	protected String deleteKeyWord (String [ ] path) throws NotEnoughParametersException {
-
 		
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the name");
 		
 		String name = new String (path[0]);
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.ServiceNotifier);
@@ -346,6 +346,10 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			stmtconn.loadStatement (DeleteFromDB.LoginData(stmtconn.connection, name));
 			this.result = stmtconn.execute ( );
 			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			if (this.result.getUpdateCount ( ) < 1) {
 				stmtconn.rollback ( );
 				throw new SQLException ("LoginData entries could not be deleted");
@@ -382,7 +386,6 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
 					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}

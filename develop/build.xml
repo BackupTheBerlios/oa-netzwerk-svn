@@ -391,6 +391,9 @@
         <include name="commons-codec-1.3.jar" />
         <include name="commons-lang-2.3.jar" />
       </lib>
+      <webinf dir="conf">
+      	<include name="serverprop.xml" />
+      </webinf>
       <metainf dir="conf">
         <include name="context.xml" />
       </metainf>

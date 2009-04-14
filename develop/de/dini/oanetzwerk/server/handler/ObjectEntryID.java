@@ -84,7 +84,7 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		

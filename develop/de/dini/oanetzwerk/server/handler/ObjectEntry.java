@@ -75,7 +75,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.ObjectEntry);
@@ -87,154 +87,135 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			stmtconn.loadStatement (DeleteFromDB.DateValues (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.DDC_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Description (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.DINI_Set_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.DNB_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.DuplicatePossibilities (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Formats (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Identifiers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Object2Author (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Object2Contributor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Object2Editor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Object2Keywords (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Object2Language (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Other_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Publishers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Titles (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.TypeValue (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.WorkflowDB (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.RawData (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.loadStatement (DeleteFromDB.Object (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
@@ -320,7 +301,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
@@ -333,10 +314,8 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			
 			if (this.result.getWarning ( ) != null) {
 				
-				for (Throwable warning : result.getWarning ( )) {
-					
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
-				}
 			}
 			
 			if (this.result.getResultSet ( ).next ( )) {
@@ -473,8 +452,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 						
 					} catch (ParseException ex) {
 						
-						logger.error (ex.getLocalizedMessage ( ));
-						ex.printStackTrace ( );
+						logger.error (ex.getLocalizedMessage ( ), ex);
 					}
 					
 				} else repository_datestamp = null;
@@ -495,8 +473,6 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 				
 				outdated = new Integer (res.getValue (key));				
 				
-				
-				
 			} else {
 				
 				logger.warn ("maybe I read a parameter which is not implemented! But I am continueing");
@@ -506,7 +482,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 
 		Date harvested = HelperMethods.today ( );
 		
-		DBAccessNG dbng = new DBAccessNG ( );		
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));		
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.ObjectEntry);
@@ -518,11 +494,10 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			
 			stmtconn.loadStatement (UpdateInDB.Object (stmtconn.connection, object_id, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
 			this.result = stmtconn.execute ( );
-						
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//TODO:warn, error, rollback, nothing????
-			}
+					
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.commit ( );
 			stmtconn.loadStatement (SelectFromDB.ObjectEntry (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
@@ -644,7 +619,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 
 		Date harvested = HelperMethods.today ( );
 		
-		DBAccessNG dbng = new DBAccessNG ( );		
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));		
 		MultipleStatementConnection stmtconn = null;
 		
 		if (logger.isDebugEnabled ( ))
@@ -672,6 +647,10 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			stmtconn.loadStatement (SelectFromDB.ObjectEntry (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
 			this.result = stmtconn.execute ( );
 			
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
+
 			if (this.result.getResultSet ( ).next ( )) {
 				
 				if (logger.isDebugEnabled ( ))

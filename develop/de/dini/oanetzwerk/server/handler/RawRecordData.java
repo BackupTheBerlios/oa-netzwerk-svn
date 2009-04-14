@@ -89,7 +89,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -140,6 +140,11 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			}
 			
 			this.result = stmtconn.execute ( );
+			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
 			this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 			
 			RestEntrySet res;
@@ -196,8 +201,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			
@@ -250,7 +254,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 
-		DBAccessNG dbng = new DBAccessNG ( );		
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));		
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
@@ -272,13 +276,9 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 				
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) {
-				
-				for (Throwable warning : result.getWarning ( )) {
-					
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			res.addEntry ("ObjectID", (object_id.toPlainString ( )));
 			
@@ -286,15 +286,13 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 		
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Post RawRecordData: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Post RawRecordData: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Post RawRecordData: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Post RawRecordData: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -309,8 +307,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			
@@ -370,20 +367,22 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );		
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));		
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
 		if (logger.isDebugEnabled ( ))
+			
 			try {
+				
 				logger.debug ("The following values will be inserted:\n\tinternal OID = " + object_id +
 						"\n\tRepository Datestamp = " + repository_timestamp +
 						"\n\tData = " + new String (Base64.decodeBase64((data).getBytes ("UTF-8"))) +
 						"\n\tMetaDataFormat = " + metaDataFormat);
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				logger.warn (e.getLocalizedMessage());
+				
+			} catch (UnsupportedEncodingException ex) {
+				
+				logger.warn (ex.getLocalizedMessage(), ex);
 			}
 		
 		try {
@@ -393,13 +392,9 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			stmtconn.loadStatement (InsertIntoDB.RawRecordData (stmtconn.connection, object_id, repository_timestamp, data, metaDataFormat));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) {
-				
-				for (Throwable warning : result.getWarning ( )) {
-					
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			res.addEntry ("oid", Integer.toString (this.result.getUpdateCount ( )));
 			
@@ -407,15 +402,13 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 		
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Put RawRecordData: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Put RawRecordData: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Put RawRecordData: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Put RawRecordData: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -430,8 +423,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			

@@ -101,7 +101,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 		this.rms = new RestMessage (RestKeyword.ServiceNotifier);
 		RestEntrySet entrySet = new RestEntrySet ( );
 
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -112,11 +112,9 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			this.result = stmtconn.execute ( );
 			
 			// log warnings
-			if (this.result.getWarning ( ) != null) {
-				for (Throwable warning : result.getWarning ( )) {
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			// extract oids from db response
 			while(this.result.getResultSet ( ).next ( )) {
@@ -142,15 +140,13 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get ServiceNotifier: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get ServiceNotifier: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ServiceNotifier: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get ServiceNotifier: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -166,10 +162,9 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 				} catch (SQLException ex) {
 					
 					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
-			
 			
 			entrySet = null;
 			this.result = null;
@@ -254,7 +249,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 		
 		this.rms = new RestMessage (RestKeyword.ServiceNotifier);
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		res = new RestEntrySet ( );
 		
@@ -266,15 +261,18 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getUpdateCount ( ) < 1) {
-				
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			stmtconn.commit ( );
 			stmtconn.loadStatement (SelectFromDB.ServiceNotify(stmtconn.connection, service_id));
 			
 			this.result = stmtconn.execute ( );
+			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			if (this.result.getResultSet ( ).next ( )) {
 
@@ -291,15 +289,13 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			
 		} catch (SQLException ex) {
 			
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 
-			logger.error (ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -314,8 +310,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
 			
@@ -358,7 +353,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.ServiceNotifier);
@@ -369,6 +364,10 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			
 			stmtconn.loadStatement (DeleteFromDB.ServiceNotify(stmtconn.connection, service_id));
 			this.result = stmtconn.execute ( );
+			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				stmtconn.rollback ( );
@@ -386,14 +385,12 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 		} catch (SQLException ex) {
 			
 			logger.error ("An error occured while processing Delete ServiceNotifier: " + ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
 			logger.error ("An error occured while processing Delete ServiceNotifier: " + ex.getLocalizedMessage ( ), ex);
-			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -408,7 +405,6 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
 					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}

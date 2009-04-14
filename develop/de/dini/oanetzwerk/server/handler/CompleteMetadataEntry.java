@@ -94,7 +94,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
@@ -116,11 +116,9 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			stmtconn.loadStatement (SelectFromDB.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
 			QueryResult dupproResult = stmtconn.execute ( );
 			
-			if (dupproResult.getWarning ( ) != null) {
-				for (Throwable warning : dupproResult.getWarning ( )) {
+			if (dupproResult.getWarning ( ) != null)
+				for (Throwable warning : dupproResult.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			int num = 0;
 			while (dupproResult.getResultSet ( ).next ( )) {
@@ -143,11 +141,9 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, cmf.getOid()));
 			QueryResult ftlResult = stmtconn.execute ( );
 			
-			if (ftlResult.getWarning ( ) != null) {
-				for (Throwable warning : ftlResult.getWarning ( )) {
+			if (ftlResult.getWarning ( ) != null)
+				for (Throwable warning : ftlResult.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			while (ftlResult.getResultSet ( ).next ( )) {				
 				FullTextLink ftl = new FullTextLink();					
@@ -163,11 +159,9 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			stmtconn.loadStatement (SelectFromDB.RepositoryData(stmtconn.connection, cmf.getOid()));
 			QueryResult repdataResult = stmtconn.execute ( );
 			
-			if (repdataResult.getWarning ( ) != null) {
-				for (Throwable warning : repdataResult.getWarning ( )) {
+			if (repdataResult.getWarning ( ) != null)
+				for (Throwable warning : repdataResult.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			while (repdataResult.getResultSet ( ).next ( )) {
 				RepositoryData repData = new RepositoryData(cmf.getOid());

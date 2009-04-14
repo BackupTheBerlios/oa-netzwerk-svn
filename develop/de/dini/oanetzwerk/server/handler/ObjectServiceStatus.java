@@ -96,11 +96,6 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-
-		
-		
-		
-		
 //		// filter by marking flag -- return all fitting OIDs
 //		if ("markedAs".equals(path[0])) {
 //			
@@ -229,7 +224,7 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 		this.rms = new RestMessage (RestKeyword.ObjectServiceStatus);
 		RestEntrySet entrySet = new RestEntrySet ( );
 
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -256,11 +251,9 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 			this.result = stmtconn.execute ( );
 			
 			// log warnings
-			if (this.result.getWarning ( ) != null) {
-				for (Throwable warning : result.getWarning ( )) {
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			// extract oids from db response
 			while(this.result.getResultSet ( ).next ( )) {
@@ -284,15 +277,13 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectServiceStatus: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get ObjectServiceStatus: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectServiceStatus: " + ex.getLocalizedMessage ( ));
-			ex.printStackTrace ( );
+			logger.error ("An error occured while processing Get ObjectServiceStatus: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
@@ -307,11 +298,9 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 					
 				} catch (SQLException ex) {
 					
-					ex.printStackTrace ( );
-					logger.error (ex.getLocalizedMessage ( ));
+					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
-			
 			
 			entrySet = null;
 			this.result = null;

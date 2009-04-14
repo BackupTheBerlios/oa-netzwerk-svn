@@ -70,7 +70,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 //		if (path.length < 1)
 //			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 				
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
@@ -84,11 +84,9 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 				stmtconn.loadStatement (SelectFromDB.AllDDCCategories(stmtconn.connection));
 				QueryResult allDDCResult = stmtconn.execute ( );
 
-				if (allDDCResult.getWarning ( ) != null) {
-					for (Throwable warning : allDDCResult.getWarning ( )) {
+				if (allDDCResult.getWarning ( ) != null)
+					for (Throwable warning : allDDCResult.getWarning ( ))
 						logger.warn (warning.getLocalizedMessage ( ));
-					}
-				}
 
 				while (allDDCResult.getResultSet ( ).next ( )) {
 					res = new RestEntrySet ( );
@@ -129,11 +127,9 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 				stmtconn.loadStatement (SelectFromDB.DDCCategoryWildcard(stmtconn.connection, wildcardCategory));
 				QueryResult wildcardDDCResult = stmtconn.execute ( );
 
-				if (wildcardDDCResult.getWarning ( ) != null) {
-					for (Throwable warning : wildcardDDCResult.getWarning ( )) {
+				if (wildcardDDCResult.getWarning ( ) != null)
+					for (Throwable warning : wildcardDDCResult.getWarning ( ))
 						logger.warn (warning.getLocalizedMessage ( ));
-					}
-				}
 				
 				logger.debug("wildcardDDCResult = " + wildcardDDCResult);
 				System.out.println("wildcardDDCResult = " + wildcardDDCResult);

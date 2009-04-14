@@ -196,7 +196,7 @@ public class AllOIDs extends AbstractKeyWordHandler implements KeyWord2DatabaseI
 		this.rms = new RestMessage (RestKeyword.AllOIDs);
 		RestEntrySet entrySet = new RestEntrySet ( );
 
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -222,11 +222,9 @@ public class AllOIDs extends AbstractKeyWordHandler implements KeyWord2DatabaseI
 			this.result = stmtconn.execute ( );
 			
 			// log warnings
-			if (this.result.getWarning ( ) != null) {
-				for (Throwable warning : result.getWarning ( )) {
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 			
 			// extract oids from db response
 			while(this.result.getResultSet ( ).next ( )) {
@@ -248,13 +246,13 @@ public class AllOIDs extends AbstractKeyWordHandler implements KeyWord2DatabaseI
 			
 		} catch (SQLException ex) {
 			
-			logger.error ("An error occured while processing Get AllOIDs: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get AllOIDs: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get AllOIDs: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get AllOIDs: " + ex.getLocalizedMessage ( ), ex);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
 			

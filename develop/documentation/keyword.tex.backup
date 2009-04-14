@@ -1,0 +1,110 @@
+\documentclass[a4paper,12pt]{scrreprt}
+\usepackage{ngerman}
+\usepackage[T1]{fontenc} % Schriftartfestlegung
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+
+% Title Page
+\title{Neues REST-KeyWord anlegen}
+\author{Michael K"uhn}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Erstellen eines neuen REST-Keywords
+\end{abstract}
+
+\chapter{Anlegen der Java-Klasse}
+\section{Name, Package, Superklasse, Interface}
+Der Klassenname muß mit dem Name des REST-Keywords "ubereinstimmen, damit der Classloader des REST-Servers die neue REST-Klasse findet.
+Die neue Klasse muß dem Package \verb|de.dini.oanetzwerk.server.handler| hinzugef"ugt werden.
+Jede neue REST-Keyword-Klasse mu"s von der abstrakten Klasse \verb|AbstractKeyWordHandler| abgeleitet werden und das Interface \verb|KeyWord2DatabaseInterface|
+implementieren. Jetzt m"ussen nur noch die im Interface deklarierten Methoden implementiert werden. Diese Methoden repr"asentieren die 4 wichtigsten HTTP-Verben \verb|GET POST PUT| und \verb|DELETE|.
+\section{Konstruktor, Logger}
+Der Standardkonstrukter des neuen Keywords mu"s "uberschrieben werden und es mu"s ein Aufruf des Konstruktors der Superklasse hinzugefügt werden:
+\begin{verbatim}
+ super (NewKeyWord.class.getName ( ), RestKeyword.NewKeyWord);
+\end{verbatim}
+Das neue Keyword mu"s dem Enum \verb|de.dini.oanetzwerk.codec.RestKeyword| hinzugef"ugt werden.
+F"ur Logging-Ausschriften sollte das Apache-Log4j-Framework benutzt werden:
+\begin{verbatim}
+ private static Logger logger = Logger.getLogger (NewKeyWord.class);
+\end{verbatim}
+
+\section{Beispielcode}
+\begin{verbatim*}
+ package de.dini.oanetzwerk.server.handler;
+
+import org.apache.log4j.Logger;
+
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
+import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
+
+/**
+ * @author Michael K&uuml;hn
+ *
+ */
+
+public class OAIExportCache extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface  {
+	
+	/**
+	 * 
+	 */
+	
+	private static Logger logger = Logger.getLogger (OAIExportCache.class);
+	
+	/**
+	 * 
+	 */
+	
+	public OAIExportCache ( ) {
+
+		super (OAIExportCache.class.getName ( ), RestKeyword.OAIExportCache);
+	}
+	
+	/**
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#deleteKeyWord(java.lang.String[])
+	 */
+	
+	@Override
+	protected String deleteKeyWord (String [ ] path) throws MethodNotImplementedException, NotEnoughParametersException {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	/**
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#getKeyWord(java.lang.String[])
+	 */
+	@Override
+	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	/**
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#postKeyWord(java.lang.String[], java.lang.String)
+	 */
+	@Override
+	protected String postKeyWord (String [ ] path, String data) throws MethodNotImplementedException, NotEnoughParametersException {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	/**
+	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
+	 */
+	@Override
+	protected String putKeyWord (String [ ] path, String data) throws NotEnoughParametersException, MethodNotImplementedException {
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+}
+\end{verbatim*}
+
+\end{document}

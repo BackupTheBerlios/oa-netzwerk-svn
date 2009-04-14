@@ -6,23 +6,20 @@ package de.dini.oanetzwerk.server.database;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Date;
 
 import org.apache.log4j.Logger;
 
 /**
+ * @author Manuel Klatt-Kafemann
  * @author Michael K&uuml;hn
- *
  */
 
 public class DeleteFromDB {
-
 	
-	static Logger logger = Logger.getLogger (DeleteFromDB.class);
-	
-	
+	private static Logger logger = Logger.getLogger (DeleteFromDB.class);
 	
 	/**
 	 * @param connection
@@ -358,6 +355,13 @@ public class DeleteFromDB {
 	}
 	
 
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException
+	 */
+	
 	public static PreparedStatement WorkflowDB (Connection connection, BigDecimal object_id) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.WorkflowDB WHERE object_id = ?");
@@ -365,6 +369,15 @@ public class DeleteFromDB {
 		
 		return preparedstmt;
 	}
+	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @param time
+	 * @param service_id
+	 * @return
+	 * @throws SQLException
+	 */
 	
 	public static PreparedStatement WorkflowDB (Connection connection, BigDecimal object_id, Date time, BigDecimal service_id) throws SQLException {
 
@@ -382,8 +395,14 @@ public class DeleteFromDB {
 		
 		return preparedstmt;
 	}
-
-
+	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException
+	 */
+	
 	public static PreparedStatement RawData (Connection connection, BigDecimal object_id) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.RawData WHERE object_id = ?");
@@ -391,7 +410,13 @@ public class DeleteFromDB {
 		
 		return preparedstmt;
 	}
-
+	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException
+	 */
 	
 	public static PreparedStatement Object (Connection connection, BigDecimal object_id) throws SQLException {
 		
@@ -401,6 +426,12 @@ public class DeleteFromDB {
 		return preparedstmt;
 	}
 	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException
+	 */
 	
 	public static PreparedStatement FullTextLinks (Connection connection, BigDecimal object_id) throws SQLException {
 		
@@ -409,7 +440,13 @@ public class DeleteFromDB {
 		
 		return preparedstmt;
 	}
-
+	
+	/**
+	 * @param connection
+	 * @param service_id
+	 * @return
+	 * @throws SQLException
+	 */
 	
 	public static PreparedStatement ServiceNotify (Connection connection, BigDecimal service_id) throws SQLException {
 		
@@ -419,6 +456,13 @@ public class DeleteFromDB {
 		return preparedstmt;
 	}
 
+	/**
+	 * @param connection
+	 * @param name
+	 * @return
+	 * @throws SQLException
+	 */
+	
 	public static PreparedStatement LoginData (Connection connection, String name) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.LoginData WHERE name = ?");
@@ -426,6 +470,4 @@ public class DeleteFromDB {
 		
 		return preparedstmt;
 	}
-	
-	
 }

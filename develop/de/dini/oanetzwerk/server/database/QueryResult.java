@@ -7,7 +7,6 @@ package de.dini.oanetzwerk.server.database;
 import java.sql.ResultSet;
 import java.sql.SQLWarning;
 
-
 /**
  * @author Michael K&uuml;hn
  *
@@ -15,9 +14,27 @@ import java.sql.SQLWarning;
 
 public class QueryResult {
 	
+	/**
+	 * 
+	 */
+	
 	private ResultSet resultSet;
+	
+	/**
+	 * 
+	 */
+	
 	private int updateCount;
+	
+	/**
+	 * 
+	 */
+	
 	private SQLWarning warning;
+	
+	/**
+	 * 
+	 */
 	
 	public QueryResult ( ) {
 
@@ -29,6 +46,7 @@ public class QueryResult {
 	/**
 	 * @return the resultSet
 	 */
+	
 	public final ResultSet getResultSet ( ) {
 	
 		return this.resultSet;
@@ -37,6 +55,7 @@ public class QueryResult {
 	/**
 	 * @param resultSet the resultSet to set
 	 */
+	
 	protected final void setResultSet (ResultSet resultSet) {
 	
 		this.resultSet = resultSet;
@@ -45,6 +64,7 @@ public class QueryResult {
 	/**
 	 * @return the updateCount
 	 */
+	
 	public final int getUpdateCount ( ) {
 	
 		return this.updateCount;
@@ -53,6 +73,7 @@ public class QueryResult {
 	/**
 	 * @param updateCount the updateCount to set
 	 */
+	
 	protected final void setUpdateCount (int updateCount) {
 	
 		this.updateCount = updateCount;
@@ -61,6 +82,7 @@ public class QueryResult {
 	/**
 	 * @return the warning
 	 */
+	
 	public final SQLWarning getWarning ( ) {
 	
 		return this.warning;
@@ -69,12 +91,18 @@ public class QueryResult {
 	/**
 	 * @param warning the warning to set
 	 */
+	
 	protected final void setWarning (SQLWarning warning) {
 	
 		this.warning = warning;
 	} 
 	
-	public String toString() {
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	
+	public String toString ( ) {
+		
 		return "resultSet="+resultSet+" updateCount="+updateCount+" warning="+warning;
 	}
 }

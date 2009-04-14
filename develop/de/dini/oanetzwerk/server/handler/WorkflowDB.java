@@ -94,7 +94,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -111,13 +111,9 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			}
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) {
-				
-				for (Throwable warning : result.getWarning ( )) {
-					
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
-				}
-			}
 
 			// Datumsformat wie in DB
 			SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
@@ -225,10 +221,12 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 //					SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
 					
 					try {
+						
 						time = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss.S").parse (new String (res.getValue (key)));
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						
+					} catch (ParseException ex) {
+						
+						logger.error (ex.getLocalizedMessage ( ), ex);
 					}
 				}
 //					time = new String (res.getValue (key));
@@ -246,7 +244,6 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		
 		this.rms = new RestMessage (RestKeyword.WorkflowDB);
 
 		// Prüfen, ob überhaupt Daten übergeben wurden
@@ -258,9 +255,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		
-		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		res = new RestEntrySet ( );
 		
@@ -271,15 +266,19 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			stmtconn.loadStatement (InsertIntoDB.WorkflowDB (stmtconn.connection, object_id, service_id));
 			this.result = stmtconn.execute ( );
 
-			if (this.result.getUpdateCount ( ) < 1) {
-				//warn, error, rollback, nothing????
-			}
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			stmtconn.commit ( );
 
 			// 2. eingetragenen Zeitwert auslesen
 			stmtconn.loadStatement (SelectFromDB.WorkflowDBInserted(stmtconn.connection, object_id, service_id));
 			this.result = stmtconn.execute ( );
+			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
 			
 			if (this.result.getResultSet ( ).next ( )) {
 				
@@ -295,12 +294,10 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				if (newObject == false) {
 					stmtconn.loadStatement (DeleteFromDB.WorkflowDB (stmtconn.connection, object_id, new java.sql.Date(time.getTime()), service_id));
 					this.result = stmtconn.execute();
-					if (this.result.getUpdateCount ( ) < 1) {
-//						stmtconn.rollback ( );
-//						throw new SQLException ("WorkflowDB entries ");
-					} else {
-//						stmtconn.commit ( );
-					}
+					
+					if (this.result.getWarning ( ) != null) 
+						for (Throwable warning : result.getWarning ( ))
+							logger.warn (warning.getLocalizedMessage ( ));
 				}
 				
 				stmtconn.commit ( );
@@ -312,8 +309,6 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 				this.rms.setStatusDescription ("No matching WorklflowDB Entry found");
 			}
-			
-				
 			
 			stmtconn.loadStatement (SelectFromDB.WorkflowDBInserted(stmtconn.connection, object_id, service_id));
 			
