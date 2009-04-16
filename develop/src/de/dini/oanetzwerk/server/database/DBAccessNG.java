@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.server.database;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.naming.Context;
@@ -34,6 +35,12 @@ public class DBAccessNG {
 	 * 
 	 */
 	
+	private Connection dataSourceConnection;
+	
+	/**
+	 * 
+	 */
+	
 	private StatementConnection statementConnection;
 	
 	/**
@@ -55,8 +62,13 @@ public class DBAccessNG {
 			
 			this.statementConnection = null;
 			this.ds = (DataSource) ((Context) new InitialContext ( ).lookup ("java:comp/env")).lookup ("jdbc/oanetztest");
+			this.dataSourceConnection = this.ds.getConnection ( );
 			
 		} catch (NamingException ex) {
+			
+			logger.error (ex.getLocalizedMessage ( ), ex);
+			
+		} catch (SQLException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
 		}
@@ -71,6 +83,7 @@ public class DBAccessNG {
 			
 			this.statementConnection = null;
 			this.ds = (DataSource) ((Context) new InitialContext ( ).lookup ("java:comp/env")).lookup (dataSource);
+			this.dataSourceConnection = this.ds.getConnection ( );
 			
 		} catch (Exception ex) {
 			
@@ -91,8 +104,11 @@ public class DBAccessNG {
 
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("Creating new SingleStatementConnection");
+
+			if (this.dataSourceConnection == null)
+				throw new SQLException ("Connection based on the given data source not available!");
 			
-			this.statementConnection = new SingleStatementConnection (this.ds.getConnection ( ));
+			this.statementConnection = new SingleStatementConnection (this.dataSourceConnection);
 			this.isSingeleStatementConnection = true;
 			
 			return this.statementConnection;
@@ -128,7 +144,10 @@ public class DBAccessNG {
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("Creating new MultipleStatementConnection");
 			
-			this.statementConnection = new MultipleStatementConnection (this.ds.getConnection ( ));
+			if (this.dataSourceConnection == null)
+				throw new SQLException ("Connection based on the given data source not available!");
+			
+			this.statementConnection = new MultipleStatementConnection (this.dataSourceConnection);
 			this.isSingeleStatementConnection = false;
 			
 			return this.statementConnection;
