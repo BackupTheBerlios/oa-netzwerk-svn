@@ -2,7 +2,7 @@
  * 
  */
 
-package de.dini.oanetzwerk.servicemoduletests;
+package de.dini.oanetzwerk.servicemodule.harvester;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -15,8 +15,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.junit.Before;
-
-import de.dini.oanetzwerk.servicemodule.harvester.Harvester;
 
 
 /**
