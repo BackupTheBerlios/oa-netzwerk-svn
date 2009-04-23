@@ -219,11 +219,37 @@ public class IndexerAccessServlet extends HttpServlet {
 			// ausgelagert in separate Klasse, um den Code für andere Metadatenviews nachzunutzen
 			MetadataDBMapper.fillInternalMetadataFromDB(cmf, stmtconn);
 			
-			//TODO: remember to update this!!!
-			DuplicateProbability dupPro = new DuplicateProbability(new BigDecimal(815), 99.9, 0);
-			cmf.addDuplicateProbability(dupPro);
+            ////////////////////////////
+			// DupPro - Abfrage
+			////////////////////////////			
 			
+			stmtconn.loadStatement (SelectFromDB.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
+			QueryResult dupproResult = stmtconn.execute ( );
+			
+			if (dupproResult.getWarning ( ) != null) {
+				for (Throwable warning : dupproResult.getWarning ( )) {
+					logger.warn (warning.getLocalizedMessage ( ));
+				}
+			}
+			
+			int num = 0;
+			while (dupproResult.getResultSet ( ).next ( )) {
+				try {
+				  DuplicateProbability dupPro = new DuplicateProbability();
+				  dupPro.setNumber(num);
+				  dupPro.setReferToOID(new BigDecimal(dupproResult.getResultSet().getString("duplicate_id")));
+				  dupPro.setProbability(dupproResult.getResultSet().getDouble("percentage"));
+				  cmf.addDuplicateProbability(dupPro);				
+				  num++;
+				} catch(Exception ex) {
+					logger.error("error fetching duplicate possibilities for OID: " + cmf.getOid(), ex);
+				}
+			}	
+			
+			///////////////////////
 			// FulltextlinkAbfrage
+			///////////////////////
+			
 			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, cmf.getOid()));
 			QueryResult ftlResult = stmtconn.execute ( );
 			
@@ -302,6 +328,7 @@ public class IndexerAccessServlet extends HttpServlet {
 			for(DateValue item : cmf.getDateValueList()) {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				sb.append("<meta name=\"").append("date").append("\" value=\"").append(StringEscapeUtils.escapeHtml(sdf.format(item.getDateValue()))).append("\"/>\n");				
+				sb.append("<meta name=\"").append("date_unparsed").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getStringValue())).append("\"/>\n");				
 			}
 
 			for(Description item : cmf.getDescriptionList()) {
@@ -321,6 +348,7 @@ public class IndexerAccessServlet extends HttpServlet {
 			}
 			
 			for(Language item : cmf.getLanguageList()) {
+				sb.append("<meta name=\"").append("language_iso639").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getIso639language())).append("\"/>\n");
 				sb.append("<meta name=\"").append("language").append("\" value=\"").append(StringEscapeUtils.escapeHtml(item.getLanguage())).append("\"/>\n");				
 			}
 			

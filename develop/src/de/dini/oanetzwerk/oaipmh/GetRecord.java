@@ -144,6 +144,7 @@ public class GetRecord implements OAIPMHVerbs {
 			m.setProperty (Marshaller.JAXB_ENCODING, "UTF-8");
 			m.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.setProperty (Marshaller.JAXB_SCHEMA_LOCATION, "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd");
+			m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new OAIPMH_NamespacePrefixMapper()); 
 			m.marshal (obfac.createOAIPMH (oaipmhMsg), w);
 			
 		} catch (JAXBException ex) {

@@ -18,7 +18,6 @@ import de.dini.oanetzwerk.utils.imf.DateValue;
 import de.dini.oanetzwerk.utils.imf.Description;
 import de.dini.oanetzwerk.utils.imf.Editor;
 import de.dini.oanetzwerk.utils.imf.Format;
-import de.dini.oanetzwerk.utils.imf.HitlistMetadata;
 import de.dini.oanetzwerk.utils.imf.Identifier;
 import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 import de.dini.oanetzwerk.utils.imf.Keyword;
@@ -32,54 +31,54 @@ public class MetadataDBMapper {
 
 	private static Logger logger = Logger.getLogger (MetadataDBMapper.class);
 	
-	public static void fillHitlistMetadataFromDB(HitlistMetadata hmf, MultipleStatementConnection stmtconn) throws SQLException, WrongStatementException {
-		
-		QueryResult queryResult;
-		
-		stmtconn.loadStatement (SelectFromDB.Title (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		// Auswertung der Titel
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Title temp = new Title ( );
-			temp.setTitle (queryResult.getResultSet ( ).getString ("title"));
-			temp.setQualifier (queryResult.getResultSet ( ).getString ("qualifier"));
-			temp.setLang (queryResult.getResultSet ( ).getString ("lang"));
+//	public static void fillHitlistMetadataFromDB(HitlistMetadata hmf, MultipleStatementConnection stmtconn) throws SQLException, WrongStatementException {
+//		
+//		QueryResult queryResult;
+//		
+//		stmtconn.loadStatement (SelectFromDB.Title (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		// Auswertung der Titel
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Title temp = new Title ( );
+//			temp.setTitle (queryResult.getResultSet ( ).getString ("title"));
+//			temp.setQualifier (queryResult.getResultSet ( ).getString ("qualifier"));
+//			temp.setLang (queryResult.getResultSet ( ).getString ("lang"));
+////			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
+//			hmf.addTitle (temp);
+//		}
+//		
+//		// Auswertung der Autoren
+//		stmtconn.loadStatement (SelectFromDB.Authors (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Author temp = new Author ( );
+//			temp.setNumber(queryResult.getResultSet ( ).getInt("number"));
+//			temp.setFirstname(queryResult.getResultSet ( ).getString("firstname"));
+//			temp.setLastname(queryResult.getResultSet ( ).getString("lastname"));
+//			temp.setInstitution(queryResult.getResultSet ( ).getString("institution"));
+//			temp.setEmail(queryResult.getResultSet ( ).getString("email"));
+//			temp.setTitle(queryResult.getResultSet ( ).getString("title"));
+//			hmf.addAuthor (temp);
+//		}
+//		
+//				// Auswertung des Identifiers
+//		stmtconn.loadStatement (SelectFromDB.Identifier (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Identifier temp = new Identifier ( );
+//			temp.setIdentifier(queryResult.getResultSet ( ).getString ("identifier"));
+////			temp.setLanguage(queryResult.getResultSet ( ).getString ("lang"));
 //			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addTitle (temp);
-		}
-		
-		// Auswertung der Autoren
-		stmtconn.loadStatement (SelectFromDB.Authors (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Author temp = new Author ( );
-			temp.setNumber(queryResult.getResultSet ( ).getInt("number"));
-			temp.setFirstname(queryResult.getResultSet ( ).getString("firstname"));
-			temp.setLastname(queryResult.getResultSet ( ).getString("lastname"));
-			temp.setInstitution(queryResult.getResultSet ( ).getString("institution"));
-			temp.setEmail(queryResult.getResultSet ( ).getString("email"));
-			temp.setTitle(queryResult.getResultSet ( ).getString("title"));
-			hmf.addAuthor (temp);
-		}
-		
-				// Auswertung des Identifiers
-		stmtconn.loadStatement (SelectFromDB.Identifier (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Identifier temp = new Identifier ( );
-			temp.setIdentifier(queryResult.getResultSet ( ).getString ("identifier"));
-//			temp.setLanguage(queryResult.getResultSet ( ).getString ("lang"));
-			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addIdentifier (temp);
-		}
-		
-	}
+//			hmf.addIdentifier (temp);
+//		}
+//		
+//	}
 	
 	public static void fillInternalMetadataFromDB(InternalMetadata hmf, MultipleStatementConnection stmtconn) throws SQLException, WrongStatementException {
 		
