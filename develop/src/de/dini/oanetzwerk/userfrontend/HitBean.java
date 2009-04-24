@@ -161,7 +161,7 @@ public class HitBean implements Serializable {
 		List<FullTextLink> listFTL = getCompleteMetadata().getFullTextLinkList();
 		String strFTL = "";
 		if(listFTL != null && listFTL.size() > 0) {
-			strFTL = listFTL.get(0).getUrl();
+			if(!listFTL.get(0).getUrl().equalsIgnoreCase("na")) strFTL = listFTL.get(0).getUrl();
 		}
 		if(strFTL.length() == 0) {
 			List<Identifier> listIdent = getCompleteMetadata().getIdentifierList();		
