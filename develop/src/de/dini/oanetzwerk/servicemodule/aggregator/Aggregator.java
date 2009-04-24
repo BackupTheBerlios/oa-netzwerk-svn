@@ -241,8 +241,27 @@ public class Aggregator {
 			}
 		}
 
+		logger.debug("# deleteUnneededData() after Automode");
+		deleteUnneededData();
+		
 	}
 
+	public void deleteUnneededData() {
+				
+		// neue Anfrage auf Delete zum Bereinigen der Datenbank
+		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), 
+				                                             "UnneededData",
+				                                             this.props.getProperty ("username"),
+				                                             this.props.getProperty ("password"));
+		
+		RestMessage msgDeleteResponse = restclient.sendDeleteRestMessage();
+		
+		if(msgDeleteResponse.getStatus() != RestStatusEnum.OK) {
+			logger.error("# delete UnneededData not OK : " + msgDeleteResponse.getStatus() + " : " + msgDeleteResponse.getStatusDescription());
+		}
+			
+	}
+	
 	/*
 	 * implements workflow for a single entry
 	 * 

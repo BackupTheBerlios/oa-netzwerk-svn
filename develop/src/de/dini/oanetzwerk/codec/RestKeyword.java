@@ -1,6 +1,7 @@
 package de.dini.oanetzwerk.codec;
 
 public enum RestKeyword {
+	UNKNOWN,
 	ObjectEntry,
 	ObjectEntryID,
 	AllOIDs,
@@ -18,5 +19,6 @@ public enum RestKeyword {
 	LoginData,
 	DDCCategories,
 	DuplicateProbabilities,
-	UNKNOWN, OAIExportCache
+	OAIExportCache,
+	UnneededData
 }

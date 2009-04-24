@@ -323,6 +323,22 @@ public class DeleteFromDB {
 		
 		return preparedstmt;
 	}
+	
+	public static PreparedStatement LanguagesWithoutReference (Connection connection) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.Language WHERE "
+				+ "(language_id NOT IN (SELECT language_id FROM dbo.Object2Language GROUP BY language_id) )");
+		
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement Iso639LanguagesWithoutReference (Connection connection) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.Iso639Language WHERE "
+				+ "(language_id NOT IN (SELECT language_id FROM dbo.Object2Iso639Language GROUP BY language_id) )");
+		
+		return preparedstmt;
+	}
 
 	/**
 	 * @param connection
