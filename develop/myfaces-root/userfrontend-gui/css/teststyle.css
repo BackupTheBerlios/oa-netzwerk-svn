@@ -513,3 +513,35 @@ td.tabContent {
   width: 45%;
   margin-right: 20px;
 }
+
+#div_repositories {
+  margin-left: 10px;
+  margin-top: 30px;
+  margin-right: 10px;	  				
+}
+#div_repositories h2 {
+  margin-bottom: 10px;
+}
+#div_repositories ul {
+}
+#div_repositories ul li {
+  float:left;
+  margin-bottom:10px;
+  margin-left:15px;
+  margin-right:5px;
+  width:380px;	
+}
+.span_reponame {
+	font-size: 14px;
+	font-weight: bold;
+}
+.span_testbetrieb {
+	color: gray;
+	font-size: 9px;
+}
+#div_repositories_list {
+  	  				
+}
+#div_repositories_footer {
+  	  				
+}

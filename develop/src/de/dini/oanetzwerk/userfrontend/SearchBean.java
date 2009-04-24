@@ -30,7 +30,7 @@ import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
 
 public class SearchBean implements Serializable {
 	
-	private static Logger logger = Logger.getLogger (HitlistBean.class);
+	private static Logger logger = Logger.getLogger (SearchBean.class);
 	private Properties props = null;
 	private Properties search_props = null;
 

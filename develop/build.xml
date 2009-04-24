@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="OA-Netzwerk" default="warServer">
 
+  <property environment="env"/>
   <property name="src" value="." />
   <property name="ress" value="resources" />
   <property name="build" value="build" />
@@ -103,6 +104,10 @@
     <pathelement location="${lib}/jdom.jar" />
   </path>
   
+  <path id="jre.libs" description="Java runtime libraries">
+	<pathelement location="${java.home}/lib" />
+  </path>	
+	
   <path id="classpath.oaipmh">
     <pathelement location="${lib}/servlet-api.jar" />
     <pathelement location="${lib}/log4j-1.2.15.jar" />
@@ -521,6 +526,7 @@
       <include name="**/codec/*.java" />
       <include name="**/RestClient.java" />
       <include name="**/HelperMethods.java" />
+      <include name="**/RepositoryConfig.java" />
       <include name="**/ISO*.java" />
       <include name="**/utils/imf/**" />
       <exclude name="**/technotest*" />
@@ -570,7 +576,7 @@
   </target>
   
   <target name="compileOAIPMH" depends="init">
-    <javac destdir="${build.oaipmh}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+    <javac bootclasspathref="jre.libs" destdir="${build.oaipmh}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
       <classpath refid="classpath.oaipmh" />
       <include name="**/_2/*.java" />
       <include name="**/oaipmh/*.java" />
