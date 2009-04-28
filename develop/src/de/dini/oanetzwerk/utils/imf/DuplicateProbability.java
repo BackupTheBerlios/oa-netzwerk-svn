@@ -6,15 +6,17 @@ public class DuplicateProbability {
 	
 	BigDecimal referToOID;
     double probability;
+    double reverseProbability;
 	int number;
 
 	public DuplicateProbability() {
 		
 	}
 	
-    public DuplicateProbability(BigDecimal referToOID, double probability, int number) {
+    public DuplicateProbability(BigDecimal referToOID, double probability, double reverseProbability, int number) {
     	this.referToOID = referToOID;
         this.probability = probability;
+        this.reverseProbability = reverseProbability;
     	this.number = number;
 	}
 
@@ -40,6 +42,14 @@ public class DuplicateProbability {
 
 	public void setProbability(double probability) {
 		this.probability = probability;
+	}
+
+	public double getReverseProbability() {
+		return reverseProbability;
+	}
+
+	public void setReverseProbability(double reverseProbability) {
+		this.reverseProbability = reverseProbability;
 	}
 
 	public int getNumber() {

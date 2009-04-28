@@ -126,7 +126,8 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 				  DuplicateProbability dupPro = new DuplicateProbability();
 				  dupPro.setNumber(num);
 				  dupPro.setReferToOID(new BigDecimal(dupproResult.getResultSet().getString("duplicate_id")));
-				  dupPro.setProbability(dupproResult.getResultSet().getDouble("percentage"));
+				  dupPro.setProbability(dupproResult.getResultSet().getDouble("percentage"));				  
+				  //TODO: dupPro.setReverseProbability(dupproResult.getResultSet().getDouble("reversePercentage")); 				  
 				  cmf.addDuplicateProbability(dupPro);				
 				  num++;
 				} catch(Exception ex) {

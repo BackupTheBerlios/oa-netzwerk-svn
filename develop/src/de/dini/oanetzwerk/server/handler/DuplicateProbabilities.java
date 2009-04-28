@@ -196,6 +196,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 				RestEntrySet entrySet = new RestEntrySet(); 
 				entrySet.addEntry ("referToOID", this.result.getResultSet ( ).getBigDecimal (2).toPlainString ( ));
 				entrySet.addEntry ("probability", this.result.getResultSet ( ).getBigDecimal (3).toPlainString ( ));
+				//TODO: entrySet.addEntry ("reverseProbability", this.result.getResultSet ( ).getBigDecimal (4).toPlainString ( ));
 				entrySet.addEntry ("number", (new Integer(counter)).toString());
 				this.rms.addEntrySet(entrySet);
 			}
@@ -259,6 +260,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 		BigDecimal object_id = null;
 		BigDecimal duplicate_id = null;
 		BigDecimal percentage = null;
+		BigDecimal reversePercentage = null;
 		@SuppressWarnings("unused")
 		int number = 0;
 
@@ -310,19 +312,18 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 
 						if (key.equalsIgnoreCase("referToOID"))
 							duplicate_id = new BigDecimal(res.getValue(key));
-
 						else if (key.equalsIgnoreCase("probability"))
 							percentage = new BigDecimal(res.getValue(key));
-
+						else if (key.equalsIgnoreCase("reverseProbability"))
+							reversePercentage = new BigDecimal(res.getValue(key));
 						else if (key.equalsIgnoreCase("number"))
 							number = new Integer(res.getValue(key)).intValue();
-
 						else
 							continue;
 					}
 
 				this.rms = new RestMessage(RestKeyword.DuplicateProbabilities);
-
+				
 				// Prüfen, ob überhaupt Daten übergeben wurden
 				if ((object_id == null) | (duplicate_id == null)
 						| (percentage == null)) {
@@ -338,6 +339,8 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 
 				res = new RestEntrySet();
 
+				// TODO: reversePercentage speichern
+				
 				stmtconn.loadStatement(InsertIntoDB.DuplicatePossibilities(
 						stmtconn.connection, object_id, duplicate_id,
 						percentage));
