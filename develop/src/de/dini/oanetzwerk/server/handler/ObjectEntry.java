@@ -419,9 +419,9 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 		boolean testdata = true;
 		int failureCounter = 0;
 		@SuppressWarnings("unused")
-		int peculiar = 0;
+		boolean peculiar = false;
 		@SuppressWarnings("unused")
-		int outdated = 0;
+		boolean outdated = false;
 		
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
@@ -477,15 +477,25 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 				
 			} else if (key.equalsIgnoreCase ("failureCounter")) {
 				
-				failureCounter = new Integer (res.getValue (key));
-
+				try {
+				
+					failureCounter = new Integer (res.getValue (key));
+				
+				} catch (NumberFormatException ex) {
+					
+					logger.error ("ObjectId " + object_id + " created a NumberFormatException!");
+					logger.error (ex.getLocalizedMessage ( ), ex);
+					
+					failureCounter = 10;
+				}
+				
 			} else if (key.equalsIgnoreCase ("peculiar")) {
 				
-				peculiar = new Integer (res.getValue (key));
+				peculiar = new Boolean (res.getValue (key));
 				
 			} else if (key.equalsIgnoreCase ("outdated")) {
 				
-				outdated = new Integer (res.getValue (key));				
+				outdated = new Boolean (res.getValue (key));				
 				
 			} else {
 				

@@ -211,13 +211,21 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("key = " + key);
 				
-				if (key.equalsIgnoreCase ("object_id"))
+				if (key.equalsIgnoreCase ("object_id")) {
+					
 					object_id = new BigDecimal (res.getValue (key));
-				
-				else if (key.equalsIgnoreCase ("service_id"))
+					
+					if (logger.isDebugEnabled ( ))
+						logger.debug ("object_id: " + res.getValue (key));
+					
+				} else if (key.equalsIgnoreCase ("service_id")) {
+					
 					service_id = new BigDecimal (res.getValue (key));
-				
-				else if (key.equalsIgnoreCase ("time")) {
+					
+					if (logger.isDebugEnabled ( ))
+						logger.debug ("object_id: " + res.getValue (key));
+					
+				} else if (key.equalsIgnoreCase ("time")) {
 //					SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
 					
 					try {

@@ -295,7 +295,7 @@ public class RestServer extends HttpServlet implements Serializable {
 		this.out = this.response.getWriter ( );
 		this.out.write (this.processRequest (req, HttpVerbEnum.PUT));
 	}
-
+	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doDelete(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
@@ -315,7 +315,7 @@ public class RestServer extends HttpServlet implements Serializable {
 	 */
 	
 	private void setOANResponseHeader ( ) {
-
+		
 		this.response.setCharacterEncoding ("UTF-8");
 		this.response.setContentType ("application/xml; charset=UTF-8");
 	}
