@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 
 public class DataVisibilityListener implements ActionListener {
 	
-	private static boolean showAll = false;
+//	private static boolean showAll = false;
 	
 	/**
 	 * @see javax.faces.event.ActionListener#processAction(javax.faces.event.ActionEvent)
@@ -32,6 +32,7 @@ public class DataVisibilityListener implements ActionListener {
 	public void processAction (ActionEvent arg0) throws AbortProcessingException {
 		
 		ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory (FactoryFinder.APPLICATION_FACTORY);
+		@SuppressWarnings("unused")
 		Application application = factory.getApplication ( );
 		FacesContext context = FacesContext.getCurrentInstance ( );
 		HttpSession session = (HttpSession) context.getExternalContext ( ).getSession (false);
@@ -56,6 +57,7 @@ public class DataVisibilityListener implements ActionListener {
 		UIComponent nodetailcomponent = null;
 		UIComponent detailcomponent = null;
 		List <UIComponent> compList = new LinkedList <UIComponent> ( );
+		@SuppressWarnings("unused")
 		Long id = new Long (0);
 		
 		formComponent = context.getViewRoot ( ).findComponent ("dataform");

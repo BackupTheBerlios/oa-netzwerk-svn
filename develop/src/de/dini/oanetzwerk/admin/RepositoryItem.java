@@ -6,8 +6,6 @@ package de.dini.oanetzwerk.admin;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
 
 /**
  * @author Michael K&uuml;hn
@@ -18,7 +16,7 @@ public class RepositoryItem {
 	
 	FacesContext ctx = FacesContext.getCurrentInstance ( );
 	HttpSession session = (HttpSession) ctx.getExternalContext ( ).getSession (false);
-	private static Logger logger = Logger.getLogger (RepositoryItem.class);
+//	private static Logger logger = Logger.getLogger (RepositoryItem.class);
 	private String name = "", url = "";
 	private Long id = new Long (0);
 	

@@ -113,6 +113,11 @@ public class MarkerAndEraser {
 		this.getTestData ( );
 	}
 	
+	/**
+	 * 
+	 */
+	
+	@SuppressWarnings("unused")
 	private void getData() {
 		String result = prepareRestTransmission ("AllOIDs/fromRepositoryID/" + this.repositoryID.toPlainString ( )).GetData ( );
 		
@@ -266,6 +271,7 @@ public class MarkerAndEraser {
 		
 		logger.info ("Deleting object " + oid.toPlainString ( ) + " marked as test data");
 		
+		@SuppressWarnings("unused")
 		String result = prepareRestTransmission ("ObjectEntry/" + oid.toPlainString ( )).DeleteData ( );
 	}
 	
@@ -311,12 +317,19 @@ public class MarkerAndEraser {
 
 class ObjectEntry {
 	
+	@SuppressWarnings("unused")
 	private final BigDecimal objectID;
+	@SuppressWarnings("unused")
 	private BigDecimal repositoryID;
+	@SuppressWarnings("unused")
 	private Date harvested;
+	@SuppressWarnings("unused")
 	private Date repositoryDateStamp;
+	@SuppressWarnings("unused")
 	private String repositoryIdentifier;
+	@SuppressWarnings("unused")
 	private boolean testData;
+	@SuppressWarnings("unused")
 	private int failureCounter;
 	
 	public ObjectEntry (BigDecimal objectID) {

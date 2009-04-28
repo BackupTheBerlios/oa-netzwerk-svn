@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.ServletConfig;
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 
@@ -30,13 +28,10 @@ import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.SyndFeedOutput;
 import com.sun.syndication.io.XmlReader;
 
-import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
-import de.dini.oanetzwerk.utils.imf.Title;
 
 /**
  * @author Robin Malitz
@@ -111,7 +106,7 @@ public class RSSFeedServlet extends HttpServlet {
 		
 		SyndFeedOutput mySyndFeedOutput = new SyndFeedOutput();
 		
-		// feed type für Ausgabe setzen
+		// feed type fï¿½r Ausgabe setzen
 		SyndFeed mySyndFeed = new SyndFeedImpl();
 		if(strParamFeedType == null) {
 			mySyndFeed.setFeedType("rss_2.0");

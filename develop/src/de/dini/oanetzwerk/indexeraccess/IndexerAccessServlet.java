@@ -17,7 +17,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
-import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
@@ -115,7 +114,7 @@ public class IndexerAccessServlet extends HttpServlet {
 	 * @param resp
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
+	
 	private String getResponse (HttpServletRequest req, HttpServletResponse resp) {
 		
 		String strParam_oid = req.getParameter("oid");
@@ -130,7 +129,10 @@ public class IndexerAccessServlet extends HttpServlet {
 		
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * @return
+	 */
+	
 	private static String getOverviewPage () {
 				
 		
@@ -199,7 +201,11 @@ public class IndexerAccessServlet extends HttpServlet {
 	
 	}
 	
-	@SuppressWarnings("unchecked")
+	/**
+	 * @param bdOID
+	 * @return
+	 */
+	
 	private static String getOIDPage (BigDecimal bdOID) {
 	
 		
@@ -210,6 +216,7 @@ public class IndexerAccessServlet extends HttpServlet {
 		
 		DBAccessNG dbng = new DBAccessNG ( );
 		MultipleStatementConnection stmtconn = null;
+		@SuppressWarnings("unused")
 		RestEntrySet res = new RestEntrySet ( );
 		
 		try {

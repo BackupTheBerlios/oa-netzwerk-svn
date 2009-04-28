@@ -12,6 +12,10 @@ import java.util.ArrayList;
 @Deprecated
 public class RepositoryListItems extends ArrayList <RepositoryListItems> {
 	
+	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 1L;
 	private Long selectedID;
 	
 	/**

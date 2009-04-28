@@ -12,6 +12,11 @@ import java.io.Serializable;
 
 public class Finddummy implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 1L;
+
 	public String find ( ) {
 		
 		return "go2found";

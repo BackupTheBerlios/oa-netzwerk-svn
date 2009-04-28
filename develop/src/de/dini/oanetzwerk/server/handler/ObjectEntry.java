@@ -393,6 +393,9 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("doing Post Object Entry");
+		
 		BigDecimal object_id;
 		
 		try {
@@ -415,7 +418,9 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 		Date repository_datestamp = null;
 		boolean testdata = true;
 		int failureCounter = 0;
+		@SuppressWarnings("unused")
 		int peculiar = 0;
+		@SuppressWarnings("unused")
 		int outdated = 0;
 		
 		this.rms = RestXmlCodec.decodeRestMessage (data);
@@ -435,12 +440,18 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 				
 				else repository_id = new BigDecimal (-1);
 				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("repository_id: " + repository_id);
+				
 			} else if (key.equalsIgnoreCase ("repository_identifier")) {
 				
 				if (res.getValue (key) != null)
 					repository_identifier = res.getValue (key);
 				
 				else repository_identifier = "";
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("repository_identifier: " + repository_identifier);
 				
 			} else if (key.equalsIgnoreCase ("repository_datestamp")) {
 				
@@ -454,6 +465,9 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 						
 						logger.error (ex.getLocalizedMessage ( ), ex);
 					}
+					
+					if (logger.isDebugEnabled ( ))
+						logger.debug ("repository_datestamp: " + repository_datestamp);
 					
 				} else repository_datestamp = null;
 				
@@ -476,6 +490,8 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			} else {
 				
 				logger.warn ("maybe I read a parameter which is not implemented! But I am continueing");
+				logger.debug (key + " found with value: " + res.getValue (key));
+				
 				continue;
 			}
 		}
@@ -491,6 +507,9 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 		try {
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Updating ObjectEntry " + object_id + " in database");
 			
 			stmtconn.loadStatement (UpdateInDB.Object (stmtconn.connection, object_id, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
 			this.result = stmtconn.execute ( );
@@ -557,6 +576,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 	}
 
 	/**
+	 * @throws NotEnoughParametersException 
 	 * @see de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler#putKeyWord(java.lang.String[], java.lang.String)
 	 * This method inserts a new Object entry. The values for the new object will be extracted from the
 	 * HTTP-Body's data.
@@ -564,7 +584,10 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 	 */
 	
 	@Override
-	protected String putKeyWord (String [ ] path, String data) {
+	protected String putKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("doing Put ObjectEntry");
 		
 		BigDecimal repository_id = new BigDecimal (0);
 		String repository_identifier = "";
@@ -586,9 +609,15 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 				
 				repository_id = new BigDecimal (res.getValue (key));
 				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("repository_id: " + repository_id);
+				
 			} else if (key.equalsIgnoreCase ("repository_identifier")) {
 				
 				repository_identifier = res.getValue (key);
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("repository_identifier: " + repository_identifier);
 				
 			} else if (key.equalsIgnoreCase ("repository_datestamp")) {
 				
@@ -602,6 +631,9 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 					ex.printStackTrace ( );
 				}
 				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("repository_datestamp: " + repository_datestamp);
+				
 			} else if (key.equalsIgnoreCase ("testdata")) {
 				
 				testdata = new Boolean (res.getValue (key));
@@ -613,6 +645,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			} else {
 				
 				logger.warn ("maybe I read a parameter which is not implemented! But I am continueing");
+				logger.debug (key + " found with value: " + res.getValue (key));
 				continue;
 			}
 		}

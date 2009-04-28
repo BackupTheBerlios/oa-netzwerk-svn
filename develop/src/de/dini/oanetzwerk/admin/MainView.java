@@ -18,6 +18,16 @@ import org.apache.log4j.PatternLayout;
 
 public class MainView implements Serializable {
 	
+	/**
+	 * 
+	 */
+	
+	private static final long	serialVersionUID	= 1L;
+	
+	/**
+	 * 
+	 */
+	
 	private static Logger logger = Logger.getLogger (MainView.class);
 	
 	/**

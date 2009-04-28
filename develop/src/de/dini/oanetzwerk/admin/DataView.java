@@ -31,6 +31,10 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class DataView implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long	serialVersionUID	= 1L;
 	FacesContext ctx = FacesContext.getCurrentInstance ( );
 	HttpSession session = (HttpSession) ctx.getExternalContext ( ).getSession (false);
 	private Properties props = null;
