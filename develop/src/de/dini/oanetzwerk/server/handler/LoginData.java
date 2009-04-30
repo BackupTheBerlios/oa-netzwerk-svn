@@ -53,7 +53,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 		
 		// no parameters -- return ERROR
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the string containing the name");
+			throw new NotEnoughParametersException ("This method needs at least 1 parameters: the string containing the name");
 
 		// specific service_id -- return notifier status of that service
 		String name = null;
@@ -330,7 +330,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 	protected String deleteKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the name");
+			throw new NotEnoughParametersException ("This method needs at least 1 parameter: the name of the entry to delete");
 		
 		String name = new String (path[0]);
 		

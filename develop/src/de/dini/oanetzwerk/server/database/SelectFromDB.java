@@ -944,7 +944,7 @@ public class SelectFromDB {
 	public static PreparedStatement DuplicateProbabilities (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
-		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT object_id, duplicate_id, percentage FROM dbo.DuplicatePossibilities WHERE object_id = ?");
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT object_id, duplicate_id, percentage, reverse_percentage FROM dbo.DuplicatePossibilities WHERE object_id = ?");
 		
 		preparedstmt.setBigDecimal (1, object_id);
 		

@@ -50,7 +50,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 	protected String deleteKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+			throw new NotEnoughParametersException ("This method needs at least 1 parameter: the internal object ID");
 		
 		BigDecimal object_id;
 		
@@ -142,7 +142,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 		int counter = 0;
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the Service ID");
+			throw new NotEnoughParametersException ("This method needs at least 1 parameter: the internal object ID");
 		
 		BigDecimal object_id;
 		
@@ -196,7 +196,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 				RestEntrySet entrySet = new RestEntrySet(); 
 				entrySet.addEntry ("referToOID", this.result.getResultSet ( ).getBigDecimal (2).toPlainString ( ));
 				entrySet.addEntry ("probability", this.result.getResultSet ( ).getBigDecimal (3).toPlainString ( ));
-				//TODO: entrySet.addEntry ("reverseProbability", this.result.getResultSet ( ).getBigDecimal (4).toPlainString ( ));
+				entrySet.addEntry ("reverseProbability", this.result.getResultSet ( ).getBigDecimal (4).toPlainString ( ));
 				entrySet.addEntry ("number", (new Integer(counter)).toString());
 				this.rms.addEntrySet(entrySet);
 			}
@@ -260,13 +260,13 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 		BigDecimal object_id = null;
 		BigDecimal duplicate_id = null;
 		BigDecimal percentage = null;
-		BigDecimal reversePercentage = null;
+		BigDecimal reverse_percentage = null;
 		@SuppressWarnings("unused")
 		int number = 0;
 
 		if (path.length < 1)
 			throw new NotEnoughParametersException(
-					"This method needs at least 2 parameters: the keyword and the Service ID");
+					"This method needs at least 1 parameter: the internal object ID");
 
 		try {
 
@@ -315,7 +315,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 						else if (key.equalsIgnoreCase("probability"))
 							percentage = new BigDecimal(res.getValue(key));
 						else if (key.equalsIgnoreCase("reverseProbability"))
-							reversePercentage = new BigDecimal(res.getValue(key));
+							reverse_percentage = new BigDecimal(res.getValue(key));
 						else if (key.equalsIgnoreCase("number"))
 							number = new Integer(res.getValue(key)).intValue();
 						else
@@ -325,25 +325,19 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 				this.rms = new RestMessage(RestKeyword.DuplicateProbabilities);
 				
 				// Prüfen, ob überhaupt Daten übergeben wurden
-				if ((object_id == null) | (duplicate_id == null)
-						| (percentage == null)) {
+				if ((object_id == null) || (duplicate_id == null) || (percentage == null) || reverse_percentage == null) {
 					// Fehlermeldung generieren und abbrechen
-					this.rms = new RestMessage(
-							RestKeyword.DuplicateProbabilities);
-					this.rms
-							.setStatus(RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
-					this.rms
-							.setStatusDescription("PUT /DuplicateProbabilities/ needs 2 entries in body: referToOID and probability");
+					this.rms = new RestMessage(RestKeyword.DuplicateProbabilities);
+					this.rms.setStatus(RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
+					this.rms.setStatusDescription("PUT /DuplicateProbabilities/ needs 3 entries in body: referToOID, probability and reverseProbability");
 					return RestXmlCodec.encodeRestMessage(this.rms);
 				}
 
 				res = new RestEntrySet();
 
-				// TODO: reversePercentage speichern
-				
 				stmtconn.loadStatement(InsertIntoDB.DuplicatePossibilities(
 						stmtconn.connection, object_id, duplicate_id,
-						percentage));
+						percentage, reverse_percentage));
 				this.result = stmtconn.execute();
 				
 				if (this.result.getWarning ( ) != null) 

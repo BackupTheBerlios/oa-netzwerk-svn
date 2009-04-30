@@ -760,19 +760,20 @@ public class InsertIntoDB {
 	 * @throws SQLException 
 	 */
 	public static PreparedStatement DuplicatePossibilities (Connection connection,
-			BigDecimal object_id, BigDecimal duplicate_id, BigDecimal percentage) throws SQLException {
+			BigDecimal object_id, BigDecimal duplicate_id, BigDecimal percentage, BigDecimal reverse_percentage) throws SQLException {
 		
 		if (logger.isDebugEnabled ( )) {
 			
-			logger.debug ("INSERT INTO dbo.DuplicatePossibilities (object_id, duplicate_id, percentage) " +
-					"VALUES (" + object_id + ",  " + duplicate_id + ", " + percentage + ")");
+			logger.debug ("INSERT INTO dbo.DuplicatePossibilities (object_id, duplicate_id, percentage, reverse_percentage) " +
+					"VALUES (" + object_id + ", " + duplicate_id + ", " + percentage + ", " + reverse_percentage + ")");
 		}
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.DuplicatePossibilities (object_id, duplicate_id, percentage) VALUES (?, ?, ?)");
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.DuplicatePossibilities (object_id, duplicate_id, percentage, reverse_percentage) VALUES (?, ?, ?, ?)");
 		
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setBigDecimal (2, duplicate_id);
 		preparedstmt.setBigDecimal (3, percentage);
+		preparedstmt.setBigDecimal (4, reverse_percentage);
 		
 		return preparedstmt;
 	}

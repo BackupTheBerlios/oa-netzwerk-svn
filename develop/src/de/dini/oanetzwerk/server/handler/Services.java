@@ -212,7 +212,7 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 			
 			// SID is missing!
 			this.rms.setStatus(RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
-			this.rms.setStatusDescription("no 'service_id' entry given in request");
+			this.rms.setStatusDescription("no 'service_id' entry given in request body");
 			return RestXmlCodec.encodeRestMessage(this.rms);
 		}
 		
@@ -221,7 +221,7 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 			
 			// name is missing! 
 			this.rms.setStatus(RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
-			this.rms.setStatusDescription("no 'name' entry given in request");
+			this.rms.setStatusDescription("no 'name' entry given in request body");
 			return RestXmlCodec.encodeRestMessage(this.rms);
 		} 
 		

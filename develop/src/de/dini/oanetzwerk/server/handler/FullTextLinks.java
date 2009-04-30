@@ -52,7 +52,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 	protected String deleteKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+			throw new NotEnoughParametersException ("This method needs at least 1 parameter: the internal object ID");
 		
 		BigDecimal object_id;
 		
@@ -147,7 +147,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the Object_ID");
+			throw new NotEnoughParametersException ("This method needs at least 1 parameter: the internal object ID");
 		
 		BigDecimal object_id;
 		

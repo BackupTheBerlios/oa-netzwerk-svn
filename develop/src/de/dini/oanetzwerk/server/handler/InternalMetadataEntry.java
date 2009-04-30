@@ -82,7 +82,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 	protected String deleteKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+			throw new NotEnoughParametersException ("This method needs at least 1 parameter: the internal object ID");
 		
 		BigDecimal object_id;
 		
@@ -325,7 +325,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+			throw new NotEnoughParametersException ("This method needs at least 1 parameter: the internal object ID");
 
 		// erzeuge imf-Object, das Schrittweise mit Daten befüllt wird
 		InternalMetadata imf = new InternalMetadata ( );
@@ -441,7 +441,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 	protected String putKeyWord (String [ ] path, String data) throws NotEnoughParametersException {
 		
 		if (path.length < 1)
-			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
+			throw new NotEnoughParametersException ("This method needs at least 1 parameters: the internal object ID");
 		
 		BigDecimal object_id;
 		
