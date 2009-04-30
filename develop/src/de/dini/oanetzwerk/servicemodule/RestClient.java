@@ -386,7 +386,7 @@ public class RestClient {
 		try {
 			
 			do {
-			
+				
 				int statusCode = client.executeMethod (method);
 				
 				if (statusCode != HttpStatus.SC_OK) {
@@ -402,6 +402,7 @@ public class RestClient {
 						logger.info ("HttpStatusCode: " + statusCode);
 						logger.error ("A http-error occured while processing the IDs from server " + this.qualifiedServerName);
 						logger.error (method.getStatusText ( ));
+						logger.error (method.getResponseBodyAsString ( ));
 					}
 					
 					if (errorcounter++ >= 10) {
@@ -490,6 +491,9 @@ public class RestClient {
 			logger.debug ("URL to connect to: " + this.qualifiedServerName);
 		
 		this.qualifiedServerName = buffer.toString ( );
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Full Path to connect to: " + this.qualifiedServerName);
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("connection prepared");
@@ -585,6 +589,11 @@ public class RestClient {
 		
 		String response = this.GetData ( );
 		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Response: " + response);
+		}
+		
 		return RestXmlCodec.decodeRestMessage (response);
 	}
 	
@@ -600,6 +609,12 @@ public class RestClient {
 		
 		String request = RestXmlCodec.encodeRestMessage (msg);
 		String response = this.PostData (request);
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Request: " + request);
+			logger.debug ("Response: " + response);
+		}
 		
 		return RestXmlCodec.decodeRestMessage (response);
 	}
@@ -617,6 +632,12 @@ public class RestClient {
 		String request = RestXmlCodec.encodeRestMessage (msg);
 		String response = this.PutData (request);
 		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Request: " + request);
+			logger.debug ("Response: " + response);
+		}
+		
 		return RestXmlCodec.decodeRestMessage (response);
 	}
 	
@@ -630,6 +651,11 @@ public class RestClient {
 		
 		String response = this.DeleteData ( );
 		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Response: " + response);
+		}
+
 		return RestXmlCodec.decodeRestMessage (response);
 	}
 }

@@ -1717,8 +1717,12 @@ public class Harvester {
 	
 	private RestMessage createObjectEntryRestMessage (ObjectIdentifier obj, int failurecounter) {
 		
-		if (logger.isDebugEnabled ( ))
+		if (logger.isDebugEnabled ( )) {
+			
 			logger.debug ("createObjectEntryRestMessage");
+			logger.debug ("repository ID: " + this.getRepositoryID ( ));
+			logger.debug ("repository Identifier: " + obj.getExternalOID ( ));
+		}
 		
 		RestMessage rms = new RestMessage ( );
 		
@@ -1763,7 +1767,9 @@ public class Harvester {
 		
 		try {
 			
-			postObjectEntryResponse = prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/").sendPostRestMessage (this.createObjectEntryRestMessage (this.ids.get (index), this.ids.get (index).getFailureCounter ( )));
+//			postObjectEntryResponse = prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/")
+			postObjectEntryResponse = HelperMethods.prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/", this.getProps ( ))
+				.sendPostRestMessage (this.createObjectEntryRestMessage (this.ids.get (index), this.ids.get (index).getFailureCounter ( )));
 			
 		} catch (UnsupportedEncodingException ex) {
 			
@@ -2023,9 +2029,10 @@ public class Harvester {
 		currentObject.setFailureCounter (currentObject.getFailureCounter ( ) + 1);
 		
 		try {
-			
-			prepareRestTransmission ("ObjectEntry/" + currentObject.getInternalOID ( ) + "/")
-					.sendPostRestMessage (this.createObjectEntryRestMessage (currentObject, currentObject.getFailureCounter ( )));
+			HelperMethods.prepareRestTransmission ("ObjectEntry/" + currentObject.getInternalOID ( ) + "/", this.getProps ( ))
+				.sendPostRestMessage (this.createObjectEntryRestMessage (currentObject, currentObject.getFailureCounter ( )));
+//			prepareRestTransmission ()
+//					.sendPostRestMessage (this.createObjectEntryRestMessage (currentObject, currentObject.getFailureCounter ( )));
 			
 		} catch (UnsupportedEncodingException ex) {
 			
@@ -2037,7 +2044,7 @@ public class Harvester {
 	 * @param string
 	 * @return
 	 */
-	
+	@Deprecated
 	private RestClient prepareRestTransmission (String resource) {
 		
 		if (logger.isDebugEnabled ( ))

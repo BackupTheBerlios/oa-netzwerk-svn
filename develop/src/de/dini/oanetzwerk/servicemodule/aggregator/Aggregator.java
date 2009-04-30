@@ -457,7 +457,7 @@ public class Aggregator {
 	
 	/**
 	 * 
-	 * fsetzt Eintrag für aktuelles Objekt in der Workflow-DB
+	 * setzt Eintrag für aktuelles Objekt in der Workflow-DB
 	 * 
 	 * wenn Testing == True ist, wird kein Eintrag eingefügt 
 	 * (entsprechender Konstruktor muss aufgerufen werden)
