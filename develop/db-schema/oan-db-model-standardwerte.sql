@@ -1,4 +1,4 @@
-insert into dbo.Repositories (name, url, oai_url) values ('EDOC HU', 'http://edoc.hu-berlin.de','http://edoc.hu-berlin.de/OAI-2.0');
+﻿insert into dbo.Repositories (name, url, oai_url) values ('EDOC HU', 'http://edoc.hu-berlin.de','http://edoc.hu-berlin.de/OAI-2.0');
 insert into dbo.Repositories (name, url, oai_url) values ('RWTH Aachen', 'http://www.bth.rwth-aachen.de/opus3','http://darwin.bth.rwth-aachen.de/opus3/oai2/oai2.php')
 insert into dbo.Repositories (name, url, oai_url) values ('Fraunhofer Eprints', 'http://eprints.fraunhofer.de','http://publica.fraunhofer.de/eprints.har')
 insert into dbo.Repositories (name, url, oai_url) values ('MONARCH Chemnitz', 'http://archiv.tu-chemnitz.de','http://archiv.tu-chemnitz.de/cgi-bin/interfaces/oai/oai2.pl')
@@ -27,6 +27,9 @@ insert into dbo.Repositories (name, url, oai_url) values ('Volltextserver Ulm', 
 insert into dbo.Repositories (name, url, oai_url) values ('SerWisS - Fachhochschule Hannover', 'http://opus.bsz-bw.de/fhhv','http://opus.bsz-bw.de/fhhv/oai2/oai2.php')
 insert into dbo.Repositories (name, url, oai_url) values ('EVA STAR - Uni Karlsruhe', 'http://www.ubka.uni-karlsruhe.de/eva/index.html','http://www.ubka.uni-karlsruhe.de/oai/eva/oai2.php')
 insert into dbo.Repositories (name, url, oai_url) values ('DuEPublico Duisbug-Essen', 'http://duepublico.uni-duisburg-essen.de/','http://duepublico.uni-duisburg-essen.de/servlets/OAIDataProvider')
+insert into dbo.Repositories (name, url, oai_url) values ('Robert Koch-Institut', 'http://edoc.rki.de/','http://edoc.rki.de/OAI')
+insert into dbo.Repositories (name, url, oai_url) values ('Europauniversitaet Viadrina Frankfurt/Oder', 'http://www.euv-frankfurt-o.de','http://opus.kobv.de/euv/oai2/oai2.php')
+
 
 
 

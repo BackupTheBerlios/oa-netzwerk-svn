@@ -232,6 +232,7 @@ CREATE TABLE dbo.DuplicatePossibilities (
        object_id NUMERIC(38) NOT NULL
      , duplicate_id NUMERIC(38) NOT NULL
      , percentage NUMERIC(7,3) NOT NULL
+	 , reverse_percentage NUMERIC(7,3) NOT NULL
      , PRIMARY KEY (object_id, duplicate_id)
 );
 

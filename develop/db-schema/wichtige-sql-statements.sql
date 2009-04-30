@@ -1,4 +1,4 @@
--- Setzen von WorkflowDB-Eintraegen;
+﻿-- Setzen von WorkflowDB-Eintraegen;
 
 INSERT dbo.WorkflowDB (object_id, time, service_id)
 SELECT object_id, GetDate(), 4
@@ -55,4 +55,20 @@ END
 -- Update der Sub-Count-Werte
 
 UPDATE dbo.DDC_Browsing_Help set sub_count = fnDDCCount(DDC_Categorie)
+
+
+
+-- alle Objekte neu Aggregieren
+
+INSERT dbo.WorkflowDB (object_id, time, service_id)
+SELECT object_id, GetDate(), 1
+FROM dbo.Object
+
+
+-- nur neu Aggregiere, wo noch kein Identifier gefunden wurde
+INSERT dbo.WorkflowDB (object_id, time, service_id)
+SELECT object_id, GetDate(), 1
+ o.object_id FROM dbo.Object o LEFT OUTER JOIN dbo.Identifier i ON o.object_id = i.object_id where i.identifier is null
+
+
 
