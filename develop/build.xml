@@ -2,7 +2,7 @@
 <project name="OA-Netzwerk" default="warServer">
 
   <property environment="env"/>
-  <property name="src" value="." />
+  <property name="src" value="./src" />
   <property name="ress" value="resources" />
   <property name="build" value="build" />
   <property name="build.server" value="build/server" />
