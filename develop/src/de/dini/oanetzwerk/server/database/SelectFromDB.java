@@ -22,6 +22,9 @@ public class SelectFromDB {
 	private static Logger logger = Logger.getLogger (SelectFromDB.class);
 	
 	/**
+	 * Fetch all information for the object specified by "object_id"
+	 * 
+	 * 
 	 * @param connection
 	 * @param object_id 
 	 * @return
@@ -38,6 +41,11 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * 
+	 * This method is deprecated. It's signature does not correspond to the task!
+	 * 
+	 * Find the object_id of an object with the given information "repository_id", "repository_identifier" and "repository_datestamp"
+	 * 
 	 * @param connection
 	 * @param repository_id
 	 * @param harvested
@@ -48,7 +56,7 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
-
+	@Deprecated
 	public static PreparedStatement ObjectEntry (Connection connection,
 			BigDecimal repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier,
@@ -63,14 +71,41 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
+	 * 
+	 * Find the object_id of an object with the given information "repository_id", "repository_identifier" and "repository_datestamp"
+	 * 
+	 * @param connection
+	 * @param repository_id
+	 * @param repository_datestamp
+	 * @param repository_identifier
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement ObjectEntry (Connection connection,
+			BigDecimal repository_id, 
+			Date repository_datestamp, String repository_identifier) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT object_id FROM dbo.Object WHERE repository_id = ? AND repository_identifier = ? AND repository_datestamp = ?");
+		
+		preparedstmt.setBigDecimal (1, repository_id);
+		preparedstmt.setString (2, repository_identifier);
+		preparedstmt.setDate (3, repository_datestamp);
+		
+		return preparedstmt;
+	}
+	
+	
+	/**
+	 * Find the object_id of an object with the given information "repository_id", "externalOID" which in fact is the "repository_identifier" 
+	 * 
 	 * @param connection
 	 * @param bigDecimal
 	 * @param string
 	 * @return
 	 * @throws SQLException 
 	 */
-
 	public static PreparedStatement ObjectEntryID (Connection connection,
 			BigDecimal repositoryID, String externalOID) throws SQLException {
 		
@@ -83,11 +118,13 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * 
+	 * Fetch all "object_id"-values of all objects
+	 * 
 	 * @param connection
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement AllOIDs (Connection connection) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o");
@@ -95,47 +132,56 @@ public class SelectFromDB {
 	}
 	
 	/**
+	 * Fetch all "object_id"-values of all objects which are marked as "testdata"
+	 * 
 	 * @param connection
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement AllOIDsMarkAsTest (Connection connection) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.testdata = 1");
 		return preparedstmt;
 	}
+
 	
 	/**
+	 * Fetch all "object_id"-values of all objects which are NOT marked as "testdata"
+	 * 
 	 * @param connection
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement AllOIDsMarkAsNotTest (Connection connection) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE o.testdata = 0");
 		return preparedstmt;
 	}
+
 	
 	/**
+	 * Fetch all "object_id"-values of all objects with an entry in the "FullTextLinks"-table, that are
+	 * all objects with a link to the full text
+	 * 
 	 * @param connection
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement AllOIDsMarkAsHasFulltextlink (Connection connection) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT DISTINCT object_id FROM dbo.FullTextLinks");
 		return preparedstmt;
 	}
 
+	
 	/**
+	 * Fetch all "object_id"-values for the given repository "repID"
+	 * 
 	 * @param connection
+	 * @param repID
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement AllOIDsFromRepositoryID (Connection connection, BigDecimal repID) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE (repository_id = ?)");
@@ -143,12 +189,15 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
+	 * Fetch all "object_id"-values for the given repository "repID" that are marked as testdata
+	 * 
 	 * @param connection
+	 * @param repID
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement AllOIDsFromRepositoryIDMarkAsTest (Connection connection, BigDecimal repID) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT o.object_id FROM dbo.Object o WHERE (repository_id = ?) AND o.testdata = 1");
@@ -157,25 +206,28 @@ public class SelectFromDB {
 	}
 	
 	/**
+	 * Fetch the repository_id, the name and the url of all repositories in the database
+	 * 
 	 * @param connection
 	 * @return
 	 * @throws SQLException
 	 */
-	
 	public static PreparedStatement Repository (Connection connection) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT repository_id, name, url FROM dbo.Repositories");
 		
 		return preparedstmt;
 	}
+
 	
 	/**
+	 * Fetch the name, url, oai_url, test_data, harvest_amount and harvest_pause data for the specified repository
+	 * 
 	 * @param connection
 	 * @param repositoryID
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement Repository (Connection connection,
 			BigDecimal repositoryID) throws SQLException {
 		
@@ -184,6 +236,7 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
+
 	
 	/**
 	 * @param connection
@@ -204,29 +257,15 @@ public class SelectFromDB {
 	}
 	
 
-//	/**
-//	 * @param connection
-//	 * @param predecessor_id
-//	 * @param service_id
-//	 * @return
-//	 * @throws SQLException
-//	 */
-//	public static PreparedStatement Workflow (Connection connection, BigDecimal predecessor_id, BigDecimal service_id) throws SQLException {
-//		
-//		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id, max(w1.time) FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id");
-//		
-//		preparedstmt.setBigDecimal (1, service_id);
-//		
-//		return preparedstmt;
-//	}
 	
 	/**
+	 * Fetch all "RawRecord"-data for the specified object_id ("internalOID")
+	 * 
 	 * @param connection
 	 * @param internalOID
 	 * @return
 	 * @throws SQLException
 	 */
-	
 	public static PreparedStatement RawRecordDataHistory (Connection connection, BigDecimal internalOID) throws SQLException {
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM dbo.RawData WHERE object_id = ?");
@@ -236,13 +275,15 @@ public class SelectFromDB {
 	}
 	
 	/**
+	 * Fetch the RawRecord-data for the specified object_id and the given date,
+	 * should return only one record set
+	 * 
 	 * @param connection
 	 * @param internalOID
 	 * @param repository_timestamp
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement RawRecordData (Connection connection,
 			BigDecimal internalOID, Date repository_timestamp) throws SQLException {
 		
@@ -253,13 +294,17 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
+	 * 
+ 	 * Fetch the RawRecord-data for the specified object_id, it
+ 	 * delivers the newest entry for the given object
+	 * 
 	 * @param connection
 	 * @param internalOID
 	 * @return
 	 * @throws SQLException 
 	 */
-
 	public static PreparedStatement RawRecordData (Connection connection,
 			BigDecimal internalOID) throws SQLException {
 		
