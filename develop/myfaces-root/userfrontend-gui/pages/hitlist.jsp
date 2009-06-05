@@ -18,12 +18,14 @@
 				<h:commandLink value="#{index.linkname_start}" action="start"/>&nbsp;
                 <h:commandLink value="#{index.linkname_projekt}" action="projekt"/>&nbsp;
                 <h:commandLink value="#{index.linkname_impressum}" action="impressum"/>&nbsp; 
+                <h:commandLink value="Teilnehmende Repositorien" action="repositories"/>&nbsp;
 			</h:form>
             </div>
 	
 		<div id="div_flat_search">
 			<h:form>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
+                <span class="span_selected_ddc">Kategorie: <h:commandLink value="#{searchBean.browse.selectedDDCCatName}" action="browse_ddc"/></span>
 				<h:commandButton value="#{index.find}" action="#{searchBean.actionSearchButton}"/>
 			</h:form>
 			</div>
@@ -46,16 +48,16 @@
           paginatorTableClass="paginator"
           paginatorActiveColumnStyle="font-weight:bold;">
           <f:facet name="previous">
-			<t:outputText value="zurück"/>
+			<t:outputText value="-"/>
           </f:facet>
           <f:facet name="next">
-			<t:outputText value="vorwärts"/>
+			<t:outputText value="+"/>
           </f:facet>
           <f:facet name="fastforward">
-			<t:outputText value="}}"/>
+			<t:outputText value="++"/>
           </f:facet>
           <f:facet name="fastrewind">
-			<t:outputText value="{{"/>
+			<t:outputText value="--"/>
           </f:facet>
         </t:dataScroller>
 	</div>
@@ -75,7 +77,7 @@
                           <span class="hit-keywords"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedKeywords}"/></span><br/>
 						  <span class="hit-url"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}"/></span><br/>
 						  <span class="hit-url">							
-						  <h:graphicImage url="#{searchBean.hitlist.mapHitBean[hitOID].urlIRIcon}" alt="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" title="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" width="16" height="16"/>
+						  <% /* <h:graphicImage url="#{searchBean.hitlist.mapHitBean[hitOID].urlIRIcon}" alt="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" title="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" width="16" height="16"/> */ %>
 						  <h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
                   <t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}"/>
 				  (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}"/>)

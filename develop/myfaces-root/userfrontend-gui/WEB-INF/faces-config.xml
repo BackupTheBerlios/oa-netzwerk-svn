@@ -30,17 +30,17 @@
 			<to-view-id>/pages/repositories.jsp</to-view-id>
 			<redirect/>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>browse_ddc</from-outcome>
+			<to-view-id>/pages/browse_ddc.jsp</to-view-id>
+			<redirect/>
+		</navigation-case>
     </navigation-rule>		
 	<navigation-rule>
 		<from-view-id>/pages/start.jsp</from-view-id>
 		<navigation-case>
 			<from-outcome>search_clicked</from-outcome>
 			<to-view-id>/pages/hitlist.jsp</to-view-id>
-			<redirect/>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>browse_ddc</from-outcome>
-			<to-view-id>/pages/browse_ddc.jsp</to-view-id>
 			<redirect/>
 		</navigation-case>
     </navigation-rule>		

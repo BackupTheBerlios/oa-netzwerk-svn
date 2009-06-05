@@ -37,8 +37,11 @@ public class BrowseBean {
 	private List<String[]> directDDCCategorySums = null;
 	private HashMap<String,String> mapDDCSums = null;
 	private List<DDCNaviNode> listDDCNaviNodes = null;
-    private List<String> pathDDCCategories = null; 
 	
+    private List<String> pathDDCCategories = null; 
+	private String selectedDDCCatValue = null;
+	private String selectedDDCCatName = "Alles";
+    
 	public BrowseBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		this.props = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
 
@@ -108,6 +111,22 @@ public class BrowseBean {
 
 	public void setParentSearchBean(SearchBean parentSearchBean) {
 		this.parentSearchBean = parentSearchBean;
+	}
+	
+	public String getSelectedDDCCatValue() {
+		return selectedDDCCatValue;
+	}
+
+	public void setSelectedDDCCatValue(String selectedDDCCatValue) {
+		this.selectedDDCCatValue = selectedDDCCatValue;
+	}
+
+	public String getSelectedDDCCatName() {
+		return selectedDDCCatName;
+	}
+
+	public void setSelectedDDCCatName(String selectedDDCCatName) {
+		this.selectedDDCCatName = selectedDDCCatName;
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////
@@ -373,4 +392,10 @@ public class BrowseBean {
 		
 	}
 		
+	public String actionUnselectDDCCategoryLink() {
+		this.setPathDDCCategories(new ArrayList<String>());
+		this.setSelectedDDCCatValue(null);
+		this.setSelectedDDCCatName("Alles");
+		return "ddc_category_selected";
+	}
 }

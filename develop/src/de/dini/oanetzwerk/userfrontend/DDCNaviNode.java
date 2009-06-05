@@ -74,8 +74,9 @@ public class DDCNaviNode {
 
 	public String actionSelectDDCCategoryLink() {
 		this.parentBrowseBean.addDDCCategoryToPath(this.strDDCValue);
+		this.parentBrowseBean.setSelectedDDCCatValue(this.strDDCValue);
+		this.parentBrowseBean.setSelectedDDCCatName((String)DDCDataSingleton.getInstance().getMapDDCNames_de().get(this.strDDCValue));
 		return "ddc_category_selected";
 	}
 	
-
 }

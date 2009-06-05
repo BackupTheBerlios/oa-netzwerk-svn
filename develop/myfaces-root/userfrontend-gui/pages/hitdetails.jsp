@@ -172,7 +172,8 @@
 
 				<tr>
 				<td class="hitlist_head">Volltext:</td>
-				<td class="hitlist_content">			
+				<td class="hitlist_content">	
+                   <ul><li>		
                    <h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].bestLink}" target="_blank">
                    <t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].bestLink}"/></h:outputLink>
 <%
@@ -185,25 +186,19 @@
                               //<h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].bestLink}" target="_blank">
                               //(<t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].bestLink}"/>)</h:outputLink>
                             //</t:div>
-%>
+%>                 
 				</td>
 				</tr>
 
 				<tr>
 				<td class="hitlist_head">Herkunft aus Repository:</td>
 				<td class="hitlist_content">		
+                  <ul><li>
                   &nbsp;<h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
                   <t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryName}"/>
 				  (<t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryURL}"/>)
   			      </h:outputLink>
-				</td>
-				</tr>
-				<tr>
-				<td class="hitlist_head">originaler OAI/PMH-Record:</td>
-				<td class="hitlist_content">
-			      &nbsp;<h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedFullOAIURL}" target="_blank">
-				  <t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedFullOAIURL}"/>
- 			      </h:outputLink>
+                  </li></ul>
 				</td>
 				</tr>
 
@@ -211,13 +206,25 @@
 				<td class="hitlist_head">Ähnlichkeiten:</td>
 				<td class="hitlist_content">			
 							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.duplicateProbabilityList}" 
-			                            var="item" layout="unorderedList" first="0" dir="LTR">
-								OID:<t:outputText value="#{item.referToOID}"/> (<t:outputText value="#{item.probability}"/>%)
+			                            var="item" layout="unorderedList" first="0" dir="LTR">								
+                                (<t:outputText value="#{item.probability}"/>% : <t:outputText value="#{item.reverseProbability}"/>%)
+                                <span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[item.referToOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.png"/></h:commandLink></span>
 								<h:outputLink value="#{searchBean.hitlist.mapHitBean[item.referToOID].bestLink}" target="_blank">
 				                <t:outputText value="#{searchBean.hitlist.mapHitBean[item.referToOID].trimmedTitle}"/>
- 					            </h:outputLink>
-                                <span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[item.referToOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.png"/></h:commandLink></span>
+ 					            </h:outputLink>                                
+                                <span class="internal_identifier">(OID:<t:outputText value="#{item.referToOID}"/>)</span>
 							</t:dataList>
+				</td>
+				</tr>
+
+				<tr>
+				<td class="hitlist_head">OAI/PMH-Record:</td>
+				<td class="hitlist_content">
+                  <ul><li>
+			      &nbsp;<h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedFullOAIURL}" target="_blank">
+				  <t:outputText value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedFullOAIURL}"/>
+ 			      </h:outputLink>
+                  </li></ul>
 				</td>
 				</tr>
 

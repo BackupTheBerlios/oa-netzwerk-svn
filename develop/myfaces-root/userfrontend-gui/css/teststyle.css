@@ -136,12 +136,12 @@ dt {
   background: #FFFFFF none repeat scroll 0 50%;
   padding-top: 5px;
   padding-left: 10px;
-  padding-bottom: 5px;
+  /*padding-bottom: 5px;*/
 }
 .div_hit_overview {
   background: #FFFFFF none repeat scroll 0 50%;
   padding-left: 20px;
-  padding-top: 5px;
+  /*padding-top: 5px;*/
   padding-bottom: 5px;
 }
 .details_link {
@@ -189,6 +189,7 @@ dt {
 .hit-url {
   font-size: 11px;
   color: #008800;
+  /*line-height: 18px;*/
 }
 .hit-creators {
   font-size: 11px;
@@ -310,6 +311,7 @@ dt {
 #div_hitdetails ul li {
   margin-left: 5px;
   margin-right: 5px;	
+  margin-bottom: 1px;
 }
 .keyword_li li {
   margin-left: 5px;
@@ -323,7 +325,7 @@ dt {
   font-weight: bold;
 }
 #div_hitdetails_abstract {
-  width: 100%;	
+  width: 100%;	  
 }
 #div_hitdetails_abstract div {
   width: 45%;	
@@ -340,6 +342,7 @@ dt {
 }
 #div_simplebrowselist li {
   margin-left: 10px;
+  margin-bottom: 5px;
   font-size: 10px;
   list-style: none;
 }
@@ -371,14 +374,32 @@ dt {
 }
 .span_ddc_name {
   font-size: 12px;
-  font-weight: bold;	  
+  /*font-weight: bold;*/	  
 }
 .span_ddc_selected_name {
-  font-size: 16px;
-  font-weight: bold;	  
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 .selected_category_wrapper {
-  border-left: 3px solid silver;	
+  /*border-left: 3px solid silver;*/	
+  margin-bottom: 5px;
+}
+.span_selected_ddc {
+  background-color:#F0F0FF;
+  border:1px solid black;
+  line-height:12px;
+  padding:2px 10px;
+}
+#div_ddc_breadcrump {
+  margin-top: 10px;	
+}
+#div_alle_dcc_cat {
+  margin-top: 10px;
+  margin-left: 10px;
+  font-size: 14px;
+  font-weight: bold;	
+  margin-bottom: 5px;
 }
 
 .center {

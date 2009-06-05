@@ -149,6 +149,12 @@ public class SearchBean implements Serializable {
 	
 	//////////////// UTIL methods ///////////////////////
 	
+	private String evalOneSlotAndDDC() {
+		logger.debug("evalOneSlotAndDDC");
+		this.searchFor(this.browse.getSelectedDDCCatName());
+		return "search_clicked";
+	}
+	
 	private String parseOneSlotSearchField() {
 		logger.debug("parseOneSlotSearchField");
 		if(strOneSlot != null && strOneSlot.length() > 0) {
@@ -242,4 +248,7 @@ public class SearchBean implements Serializable {
 		return parseOneSlotSearchField();
 	}
 	
+	public String actionSearchWithDDCButton() {
+		return evalOneSlotAndDDC();
+	}
 }

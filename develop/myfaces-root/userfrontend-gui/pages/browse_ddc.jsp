@@ -18,30 +18,39 @@
 				<h:commandLink value="#{index.linkname_start}" action="start"/>&nbsp;
                 <h:commandLink value="#{index.linkname_projekt}" action="projekt"/>&nbsp;
                 <h:commandLink value="#{index.linkname_impressum}" action="impressum"/>&nbsp; 
+                <h:commandLink value="Teilnehmende Repositorien" action="repositories"/>&nbsp;
 			</h:form>
             </div>
-	
-		<div id="div_flat_search">
+
+			<div id="div_flat_search">
 			<h:form>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
-				<h:commandButton value="#{index.find}" action="#{searchBean.actionSearchButton}"/>
+				<span class="span_selected_ddc">Kategorie: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
+				<h:commandButton value="Finde!" action="#{searchBean.actionSearchWithDDCButton}"/>
 			</h:form>
-			</div>
-	
+		</div>
+
 <h:form>
 
 		<div id="div_simplebrowselist">
-			<h3>Einfache DDC-Liste</h3>
+			<h3>Liste der Fachgebiete nach Dewey-Dezimalklassifikation (DDC)</h3>
+            <div class="div_howto">
+            W&auml;hlen Sie eine Kategorie aus, auf die Sie die Suche einschr&auml;nken wollen!
+            </div>
 
-			<div class="div_ddc_breadcrump">
+<% /* 
+			<div id="div_ddc_breadcrump">
             PFAD:
             <t:dataList id="ddc_breadcrump" value="#{searchBean.browse.pathDDCCategories}" var="item" layout="simple">
 				<t:outputText value="#{item}"/> &gt; 
 			</t:dataList>
 			</div>
 
+*/ %>
+            <div id="div_alle_dcc_cat">
+            <h:commandLink action="#{searchBean.browse.actionUnselectDDCCategoryLink}" title=""><span class="span_ddc_name"><t:outputText value="Alle Kategorien (Keine Einschränkung)"/></span></h:commandLink>
+            </div>                
             <t:dataList id="ddcnavilist_lvl1" value="#{searchBean.browse.listDDCNaviNodes}" var="node_lvl1" layout="unorderedList">
-                
                 <t:div rendered="#{node_lvl1.inPath}">
 				<div class="selected_category_wrapper">
 				<span class="span_ddc_num"><t:outputText value="#{node_lvl1.strDDCValue}"/></span>&nbsp;
@@ -98,6 +107,8 @@
         </div>     
 
 </h:form>
+
+
 
 	</body>
 </f:view>

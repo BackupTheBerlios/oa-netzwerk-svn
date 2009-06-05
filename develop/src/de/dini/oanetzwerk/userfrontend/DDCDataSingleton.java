@@ -88,8 +88,9 @@ public final class DDCDataSingleton {
 	}
 	
 	public List<DDCNaviNode> getListDDCNaviNodes(BrowseBean parentBrowseBean) {
-		for(DDCNaviNode node: listDDCNaviNodes) setParentBrowseBeanRecursive(node, parentBrowseBean);
-		return listDDCNaviNodes;
+		List<DDCNaviNode> newListDDCNaviNodes = generateListDDCNaviNodes(simpleDDCCategorySums);
+		for(DDCNaviNode node: newListDDCNaviNodes) setParentBrowseBeanRecursive(node, parentBrowseBean);
+		return newListDDCNaviNodes;
 	}
 	
 	public HashMap<String, String> getMapDDCNames_de_fromDB() {

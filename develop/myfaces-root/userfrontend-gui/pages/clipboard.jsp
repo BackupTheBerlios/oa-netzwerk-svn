@@ -18,6 +18,7 @@
 				<h:commandLink value="#{index.linkname_start}" action="start"/>&nbsp;
                 <h:commandLink value="#{index.linkname_projekt}" action="projekt"/>&nbsp;
                 <h:commandLink value="#{index.linkname_impressum}" action="impressum"/>&nbsp; 
+                <h:commandLink value="Teilnehmende Repositorien" action="repositories"/>&nbsp;
 			</h:form>
             </div>
 	
