@@ -318,8 +318,10 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetch all information, including the service-id, for the service specified by name
+	 * 
 	 * @param connection
-	 * @param name
+	 * @param name String representing the name of the service
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -333,8 +335,10 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetch all information, including the service-id, for the service specified by the service_id
+	 * 
 	 * @param connection
-	 * @param objectEntryID
+	 * @param service_id 
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -349,6 +353,9 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetch the id of the service that is predecessor to the service specified by service_id.
+	 * Used in conjunction with workflow queries.
+	 * 
 	 * @param connection
 	 * @param service_id
 	 * @return
@@ -364,26 +371,7 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
-//	/**
-//	 * @param connection
-//	 * @param service_id
-//	 * @return
-//	 * @throws SQLException 
-//	 */
-//	
-//	public static PreparedStatement WorkflowDB (Connection connection,
-//			BigDecimal service_id) throws SQLException {
-//
-//		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? " + 
-//				"WHERE (w1.time > (SELECT MAX(time) FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id) " +
-//				"OR w1.object_id NOT IN (SELECT object_id FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id)) GROUP BY w1.object_id");
-//
-//		preparedstmt.setBigDecimal (1, service_id);
-//
-//		return preparedstmt;
-//	}
 
-	
 	/**
 	 * @param connection
 	 * @param service_id
@@ -423,10 +411,6 @@ public class SelectFromDB {
 	 * @throws SQLException 
 	 */
 	public static PreparedStatement WorkflowDBComplete (Connection connection, BigDecimal service_id) throws SQLException {
-		
-//		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT w1.object_id, max(w1.time) FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id" +
-//				" UNION " +
-//				"SELECT w1.object_id, max(w1.time) FROM dbo.Worklist w1 WHERE w1.service_id = ? GROUP BY w1.object_id");
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT * FROM "
 		+ "(SELECT w1.object_id, max(w1.time) as time FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id " 
