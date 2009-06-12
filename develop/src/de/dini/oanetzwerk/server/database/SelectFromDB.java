@@ -1065,6 +1065,8 @@ public class SelectFromDB {
 
 	
 	/**
+	 * OAI-Export: Fetch the oldest datestamp of any object
+	 * 
 	 * @param connection
 	 * @return
 	 * @throws SQLException 
@@ -1078,6 +1080,8 @@ public class SelectFromDB {
 
 	
 	/**
+	 * OAI-Export: fetch all object_ids specified by the set and from/until restrictions
+	 * 
 	 * @param connection
 	 * @param from
 	 * @param until
@@ -1085,7 +1089,6 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement AllOIDsByDate (Connection connection, Date from, Date until, String set) throws SQLException {
 		
 		PreparedStatement preparedstmt;
@@ -1116,12 +1119,12 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	
 	/**
 	 * @param connection
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement OAIListSetsbyID (Connection connection, String set, Date from, Date until) throws SQLException {
 
 		boolean aND = false;
