@@ -469,6 +469,8 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetch the title-information of the object specified by the object_id; returns title, qualifier and language
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
@@ -484,6 +486,8 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the author-information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
@@ -500,6 +504,8 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the editor information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
@@ -516,6 +522,8 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the contributor information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
@@ -532,6 +540,8 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the format information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
@@ -548,6 +558,8 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the Identifier information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
@@ -564,6 +576,8 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the Description information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
@@ -580,12 +594,13 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the DateValues information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement DateValues (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -596,12 +611,13 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the TypeValues information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement TypeValues (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -612,12 +628,13 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the Publisher information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement Publisher (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -628,12 +645,13 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the DDC classification information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement DDCClassification (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -643,13 +661,15 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
+	 * Fetches the DNB classification information of the object specified by the object_id
+	 *  
 	 * @param connection
 	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement DNBClassification (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -659,13 +679,15 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
+	 * Fetches the DINI-Set-Classification information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement DINISetClassification (
 			Connection connection, BigDecimal object_id) throws SQLException {
 
@@ -675,13 +697,15 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
+	 * Fetches the Other Classifcation information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement OtherClassification (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -692,12 +716,13 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the Keyword information of the object specified by the object_id 
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement Keywords (Connection connection,
 			BigDecimal object_id) throws SQLException {
 		
@@ -708,17 +733,17 @@ public class SelectFromDB {
 	}
 
 	/**
+	 * Fetches the Languages information of the object specified by the object_id 
+	 * Includes the iso-639-mapping.
+	 * 
 	 * @param connection
 	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement Languages (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
-		//PreparedStatement preparedstmt = connection.prepareStatement ("SELECT L.language, I.iso639language, O.number FROM dbo.Language L JOIN dbo.Object2Language O ON L.language_id = O.language_id JOIN dbo.Object2Iso639Language I ON L.language_id = I.language_id WHERE O.object_id = ?");
-		
 		PreparedStatement preparedstmt = 
 			connection.prepareStatement (
 		"SELECT L.language AS language, I.iso639language AS iso639language, O2L.number AS number " +
@@ -733,13 +758,15 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+
 	/**
-	 * @param firstname
-	 * @param lastname
+	 * Fetches the ID of the last person that was inserted (uses MAX(id)) 
+	 * 
+	 * @param firstname   of the person that was inserted
+	 * @param lastname	  of the person that was inserted
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement LatestPerson (Connection connection, String firstname,
 			String lastname) throws SQLException {
 
@@ -750,13 +777,15 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+
 	/**
+	 * Fetches the ID of the last keyword that was inserted (uses MAX(id))
+	 * 
 	 * @param keyword
 	 * @param language
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement LatestKeyword (Connection connection, String keyword,
 			String language) throws SQLException {
 
@@ -767,12 +796,14 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+
 	/**
-	 * @param language
+	 * Fetches the ID of the language specified by "language"
+	 * 
+	 * @param language   String value
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement LanguageByName (Connection connection, String language) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT language_id FROM dbo.Language WHERE (language = ?)");
@@ -781,12 +812,14 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	
 	/**
-	 * @param language
+	 * Fetches the ID of the ISO639-language specified by "language"
+	 * 
+	 * @param iso639language
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement Iso639LanguageByName (Connection connection, String iso639language) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT language_id FROM dbo.Iso639Language WHERE (iso639language = ?)");
@@ -796,11 +829,12 @@ public class SelectFromDB {
 	}
 
 	/**
-	 * @param categorie
+	 * Fetches the ID of the DDC-category specified by "category", example: 610
+	 * 
+	 * @param category
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement DDCCategoriesByCategorie (Connection connection, String category) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT DDC_Categorie FROM dbo.DDC_Categories WHERE (DDC_Categorie = ?)");
@@ -809,12 +843,14 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
-	 * @param value
+	 * Fetches the ID of the DNB-category specified by "category"
+	 * 
+	 * @param category
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement DNBCategoriesByCategorie (Connection connection, String category) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT DNB_Categorie FROM dbo.DNB_Categories WHERE (DNB_Categorie = ?)");
@@ -823,12 +859,14 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
-	 * @param value
+	 * Fetches the ID of the DINI-Set-category specified by "category"
+	 * 
+	 * @param category
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement DINISetCategoriesByName (Connection connection, String category) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT DINI_set_id FROM dbo.DINI_Set_Categories WHERE (name = ?)");
@@ -837,12 +875,14 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
-	 * @param value
+	 * Fetches the ID of the last "OtherClassification" that was inserted (uses MAX(id))
+	 * 
+	 * @param category
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement LatestOtherCategories (Connection connection, String category) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT MAX(other_id) FROM dbo.Other_Categories WHERE (name = ?)");
@@ -851,12 +891,13 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
-	 * @param value
+	 * Fetches the FullTextLink information of the object specified by object_id
+	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement FullTextLinks (Connection connection, BigDecimal object_id) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT object_id, mimeformat, link FROM dbo.FullTextLinks WHERE (object_id = ?)");
@@ -865,8 +906,11 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
-	 * @param value
+	 * Fetches the current services status for all objects from the workflow control
+	 * 
+	 * @param connection
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -877,8 +921,11 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	
 	/**
-	 * @param value
+	 * Fetches the current services status from the workflow control for the object specified by object_id 
+	 * 
+	 * @param object_id
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -891,7 +938,10 @@ public class SelectFromDB {
 	}
 	
 	/**
-	 * @param value
+	 * Fetches the information necessary for service_notifier.
+	 * Data retrieved for the service specified by service_id
+	 * 
+	 * @param service_id
 	 * @return
 	 * @throws SQLException 
 	 */
@@ -905,6 +955,8 @@ public class SelectFromDB {
 
 
 	/**
+	 * Fetches the user data for the login control, specified by the user name "name"
+	 * 
 	 * @param name
 	 * @return
 	 * @throws SQLException 
@@ -917,7 +969,11 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
+	 * Fetches the user data for the login control, specified by the user name "name".
+	 * the returned "name" is in lower case and the parameter "name" is automatically converted to lower case 
+	 * 
 	 * @param name in lower cases
 	 * @return
 	 * @throws SQLException 
@@ -930,11 +986,14 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
+	 * Necessary for browsing. Fetches the DDC_Categorie and the amount of documents categorized in this DDC Categorie
+	 * 
+	 * @param connection
 	 * @return
 	 * @throws SQLException 
 	 */
-
 	public static PreparedStatement AllDDCCategories (Connection connection) throws SQLException {
 
 		//PreparedStatement preparedstmt = connection.prepareStatement ("select dc.DDC_Categorie, count(o.object_id) FROM dbo.Object o JOIN DDC_Classification d ON o.object_id = d.object_id JOIN DDC_Categories dc ON d.DDC_Categorie = dc.DDC_Categorie GROUP BY dc.DDC_Categorie ORDER BY dc.DDC_Categorie");
@@ -943,11 +1002,15 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	
 	/**
+	 * Necessary for browsing. Fetches the amount of documents categorized by "wildcardCategory"
+	 * 
+	 * @param connection
+	 * @param wildcardCategory
 	 * @return
 	 * @throws SQLException 
 	 */
-
 	public static PreparedStatement DDCCategoryWildcard (Connection connection, String wildcardCategory) throws SQLException {
 
 		//PreparedStatement preparedstmt = connection.prepareStatement ("select count(*) from DDC_Classification where DDC_Categorie like ?"); //geht nich :(
@@ -960,16 +1023,16 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
+
 	
 	/**
+	 * Fetches the DuplicateProbabilities information for the object specified by object_id
+	 * 
 	 * @param connection
 	 * @param object_id
-	 * @param time
-	 * @param service_id
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement DuplicateProbabilities (Connection connection,
 			BigDecimal object_id) throws SQLException {
 
@@ -980,12 +1043,14 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	
 	/**
+	 * OAI-Export:  fetch all set information
+	 * 
 	 * @param connection
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement OAIListSets (Connection connection) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT d.name, d.setNameEng as \"setName\" FROM dbo.DINI_Set_Categories d JOIN dbo.DINI_Set_Classification dsc ON d.DINI_set_id = dsc.DINI_set_id GROUP BY d.name" +
@@ -997,13 +1062,13 @@ public class SelectFromDB {
 		
 		return preparedstmt;
 	}
+
 	
 	/**
 	 * @param connection
 	 * @return
 	 * @throws SQLException 
 	 */
-	
 	public static PreparedStatement OAIGetOldestDate (Connection connection) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("select MIN(repository_datestamp) from dbo.Object ");
@@ -1011,6 +1076,7 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
 	 * @param connection
 	 * @param from
