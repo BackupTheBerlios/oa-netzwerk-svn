@@ -19,6 +19,8 @@
                 <h:commandLink value="#{index.linkname_projekt}" action="projekt"/>&nbsp;
                 <h:commandLink value="#{index.linkname_impressum}" action="impressum"/>&nbsp; 
                 <h:commandLink value="Teilnehmende Repositorien" action="repositories"/>&nbsp;
+                <h:outputLink value="http://oanetzwerk.wordpress.com" target="_blank">Blog</h:outputLink>&nbsp;
+                <h:outputLink value="http://oanetzwerk.wordpress.com/2009/07/03/worum-geht-es-eigentlich/" target="_blank">About</h:outputLink>&nbsp;
 			</h:form>
             </div>
 	
