@@ -323,6 +323,7 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 
 		this.rms = new RestMessage (RestKeyword.ObjectServiceStatus);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.ObjectServiceStatus+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -337,6 +338,7 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 
 		this.rms = new RestMessage (RestKeyword.ObjectServiceStatus);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("PUT method is not implemented for ressource '"+RestKeyword.ObjectServiceStatus+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 	
@@ -351,6 +353,7 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 
 		this.rms = new RestMessage (RestKeyword.ObjectServiceStatus);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("DELETE-method is not implemented for ressource '"+RestKeyword.ObjectServiceStatus+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}	
 	

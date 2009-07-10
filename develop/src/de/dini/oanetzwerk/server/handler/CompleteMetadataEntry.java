@@ -61,7 +61,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 	protected String deleteKeyWord (String [ ] path) {
 		this.rms = new RestMessage (RestKeyword.CompleteMetadataEntry);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("DELETE-method is not implemented for ressource '"+RestKeyword.CompleteMetadataEntry+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -250,7 +250,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 	protected String postKeyWord (String [ ] path, String data) {
 		this.rms = new RestMessage (RestKeyword.CompleteMetadataEntry);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.CompleteMetadataEntry+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -264,7 +264,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 		
 		this.rms = new RestMessage (RestKeyword.CompleteMetadataEntry);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("PUT method is not implemented for ressource '"+RestKeyword.CompleteMetadataEntry+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 }

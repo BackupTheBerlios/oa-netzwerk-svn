@@ -59,6 +59,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 		
 		this.rms = new RestMessage (RestKeyword.RawRecordData);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("DELETE-method is not implemented for ressource '"+RestKeyword.RawRecordData+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 

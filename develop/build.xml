@@ -230,15 +230,15 @@
   
  <target name="compileServer_ReadOnly" depends="init">
    <tstamp />
-   <javac destdir="${build.server}" debug="true" debuglevel="lines,vars,source">
-     <classpath refid="classpath.server" />
+   <javac destdir="${build.server_readonly}" debug="true" debuglevel="lines,vars,source">
+     <classpath refid="classpath.server_readonly" />
      <src path="${src}/de/dini/oanetzwerk/codec" />
      <src path="${src}/de/dini/oanetzwerk/server" />
      <src path="${src}/de/dini/oanetzwerk/utils" />
      <src path="${src}/de/dini/oanetzwerk/servicemodule" />    	
      <exclude name="**/harvester/*" />
      <exclude name="**/aggregator/*" />
- 	  <exclude name="**/examples/*" />
+ 	 <exclude name="**/examples/*" />
      <exclude name="**/markerAndEraser/*" />
      <exclude name="**/dcgenerator/*.java" />
      <exclude name="**/ResourceRealm.java" />
@@ -451,7 +451,7 @@
     </war>
   </target>
 
-	  <target name="warServer_ReadOnly" depends="compileServer">
+	  <target name="warServer_ReadOnly" depends="compileServer_ReadOnly">
 	    <war destfile="${build}/rest.war" webxml="conf_readonly/web.xml">
 	      <lib dir="${lib}">
 	        <include name="commons-cli-1.1.jar" />

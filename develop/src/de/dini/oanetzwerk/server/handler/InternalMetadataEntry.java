@@ -428,7 +428,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 
 		this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.InternalMetadataEntry+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 

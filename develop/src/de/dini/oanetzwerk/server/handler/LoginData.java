@@ -153,6 +153,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 
 		this.rms = new RestMessage (RestKeyword.LoginData);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.LoginData+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 

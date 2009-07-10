@@ -55,7 +55,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 	protected String deleteKeyWord (String [ ] path) {
 		this.rms = new RestMessage (RestKeyword.DDCCategories);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("DELETE-method is not implemented for ressource '"+RestKeyword.DDCCategories+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -189,7 +189,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 	protected String postKeyWord (String [ ] path, String data) {
 		this.rms = new RestMessage (RestKeyword.DDCCategories);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.DDCCategories+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -203,7 +203,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 		
 		this.rms = new RestMessage (RestKeyword.DDCCategories);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("PUT method is not implemented for ressource '"+RestKeyword.DDCCategories+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 }

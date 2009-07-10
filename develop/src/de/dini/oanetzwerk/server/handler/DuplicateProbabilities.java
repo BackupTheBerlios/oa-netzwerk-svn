@@ -246,7 +246,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 		
 		this.rms = new RestMessage (RestKeyword.DuplicateProbabilities);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.DuplicateProbabilities+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 

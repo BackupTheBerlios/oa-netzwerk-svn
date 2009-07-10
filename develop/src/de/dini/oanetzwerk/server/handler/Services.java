@@ -47,7 +47,7 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 
 		this.rms = new RestMessage (RestKeyword.Services);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("DELETE-method is not implemented for ressource '"+RestKeyword.Services+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -182,7 +182,7 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 
 		this.rms = new RestMessage (RestKeyword.Services);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.Services+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 

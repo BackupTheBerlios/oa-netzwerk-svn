@@ -51,7 +51,7 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 
 		this.rms = new RestMessage (RestKeyword.ObjectEntryID);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("DELETE-method is not implemented for ressource '"+RestKeyword.ObjectEntryID+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 	
@@ -226,6 +226,7 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 
 		this.rms = new RestMessage (RestKeyword.ObjectEntryID);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.ObjectEntryID+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 	
@@ -240,6 +241,7 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 
 		this.rms = new RestMessage (RestKeyword.ObjectEntryID);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("PUT method is not implemented for ressource '"+RestKeyword.ObjectEntryID+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 }

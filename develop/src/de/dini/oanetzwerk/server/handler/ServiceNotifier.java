@@ -131,11 +131,11 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			// error if no service_ids at all
 			if(entrySet.getEntryHashMap().isEmpty()) {				
 				if (logger.isDebugEnabled ( ))
-					logger.debug ("No matching service_id found");
+					logger.debug ("No matching notify entry found for service_id='"+service_id+"'.");
 				
 				entrySet.addEntry ("service_id", null);
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
-				this.rms.setStatusDescription ("No matching service_id found");
+				this.rms.setStatusDescription ("No matching notify entry found for service_id='"+service_id+"'.");
 			}
 			
 		} catch (SQLException ex) {
@@ -185,6 +185,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 
 		this.rms = new RestMessage (RestKeyword.ServiceNotifier);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.ServiceNotifier+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 

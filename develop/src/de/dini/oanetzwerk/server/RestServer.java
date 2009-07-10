@@ -39,7 +39,7 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
  * @see {@link de.dini.oanetzwerk.server.handler.KeyWord2DatabaseInterface}
  * @see {@link de.dini.oanetzwerk.server.handler.AbstractKeyWordHandler}
  * 
- * @author Michael K&uuml;hn
+ * @author Michael K&uuml;hn, Robin Malitz
  */
 
 public class RestServer extends HttpServlet implements Serializable {
@@ -172,6 +172,10 @@ public class RestServer extends HttpServlet implements Serializable {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("Class to be loaded: " + classname);
 			
+		if(bReadOnlyMode && path[1].equals("LoginData")) {
+			return this.createErrorResponse (new Exception("ERROR: This REST server instance has been configured as READ ONLY. Ressource '"+path[1]+"' is disabled is this mode."), RestStatusEnum.ILLEGAL_ACCESS_ERROR);
+		}
+		
 		try {
 			
 			if (verb == HttpVerbEnum.POST || verb == HttpVerbEnum.PUT) {

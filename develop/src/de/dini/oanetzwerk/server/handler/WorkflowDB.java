@@ -55,7 +55,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 		
 		this.rms = new RestMessage (RestKeyword.WorkflowDB);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("DELETE-method is not implemented for ressource '"+RestKeyword.WorkflowDB+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -176,7 +176,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 		
 		this.rms = new RestMessage (RestKeyword.WorkflowDB);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.WorkflowDB+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 

@@ -210,7 +210,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			if (resultSetWasEmpty == true) {
 				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
-				this.rms.setStatusDescription ("No matching ObjectEntry found");
+				this.rms.setStatusDescription ("No matching object found.");
 			} else {
 				this.rms.setStatus (RestStatusEnum.OK);
 			}
@@ -259,7 +259,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 		
 		this.rms = new RestMessage (RestKeyword.FullTextLinks);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.FullTextLinks+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 

@@ -133,6 +133,7 @@ public class UnneededData extends AbstractKeyWordHandler implements KeyWord2Data
 		
 		this.rms = new RestMessage (RestKeyword.UnneededData);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("DELETE-method is not implemented for ressource '"+RestKeyword.UnneededData+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
@@ -141,6 +142,7 @@ public class UnneededData extends AbstractKeyWordHandler implements KeyWord2Data
 
 		this.rms = new RestMessage (RestKeyword.UnneededData);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("POST method is not implemented for ressource '"+RestKeyword.UnneededData+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 		
@@ -149,6 +151,7 @@ public class UnneededData extends AbstractKeyWordHandler implements KeyWord2Data
 	
 		this.rms = new RestMessage (RestKeyword.UnneededData);
 		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);		
+		this.rms.setStatusDescription("PUT method is not implemented for ressource '"+RestKeyword.UnneededData+"'.");
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 }
