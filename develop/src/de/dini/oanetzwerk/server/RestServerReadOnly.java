@@ -29,6 +29,8 @@ import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 
 /**
+ * Ist lieber mittels init parameter in RestServer abgebildet.
+ * 
  * The restserver provides a servlet, which can be connected by GET, POST, PUT and DELETE. Most servlet containers
  * have to be prepared to support PUT- and DELETE-Methods.
  * With the use of reflection the keyword, which is transmitted via the 2nd path-parameter (splitted by '/'),
@@ -39,6 +41,7 @@ import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
  * @author Michael K&uuml;hn
  */
 
+@Deprecated
 public class RestServerReadOnly extends HttpServlet implements Serializable {
 	
 	/**

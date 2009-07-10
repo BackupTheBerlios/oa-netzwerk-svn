@@ -11,11 +11,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -72,11 +75,19 @@ public class RestServer extends HttpServlet implements Serializable {
 	
 	private Properties serverproperties;
 	
+	private boolean bReadOnlyMode = true;
+	
 	/**
 	 * Standard Constructor. Does nothing.
 	 */
 	
 	public RestServer ( ) { }
+	
+	public void init(ServletConfig servletConfig) throws ServletException {
+		super.init(servletConfig);
+		bReadOnlyMode = Boolean.parseBoolean(StringUtils.defaultString(servletConfig.getInitParameter("readonly"),"true"));
+	}
+	
 	
 	/**
 	 * Processes all request, no matter if GET, PUT, POST, DELETE.
@@ -94,6 +105,10 @@ public class RestServer extends HttpServlet implements Serializable {
 	@SuppressWarnings("unchecked")
 	private String processRequest (HttpServletRequest req, HttpVerbEnum verb) {
 		
+		if(bReadOnlyMode && (verb == HttpVerbEnum.POST || verb == HttpVerbEnum.PUT || verb == HttpVerbEnum.DELETE)) {			
+			return this.createErrorResponse (new Exception("ERROR: HttpVerb was "+verb+". This REST server instance has been configured as READ ONLY. This means only GET requests are activated."), RestStatusEnum.ILLEGAL_ACCESS_ERROR);
+		}
+		
 		if (req.getPathInfo ( ) == null || req.getPathInfo ( ).length ( ) < 2) {
 			
 			// Keyword was not specified, so we have nothing to do beside sending an error to the client 
@@ -101,6 +116,11 @@ public class RestServer extends HttpServlet implements Serializable {
 			RestMessage rms = new RestMessage (RestKeyword.UNKNOWN);
 			rms.setStatus (RestStatusEnum.NOT_ENOUGH_PARAMETERS_ERROR);
 			StringBuffer sbDesc = new StringBuffer ( );
+			if(bReadOnlyMode) {
+				sbDesc.append ("Diese Instanz der REST-Schnittstelle ist als READ-ONLY konfiguriert.\n");
+			} else {
+				sbDesc.append ("Diese Instanz der REST-Schnittstelle ist als VOLLZUGRIFF konfigutiert.\n");				
+			}
 			sbDesc.append ("Sie haben in der URL keine Ressource benannt. Folgende Schlüsselworte sind momentan über die REST-Schnittstelle verfügbar: ");
 			
 			for (RestKeyword name : RestKeyword.values ( )) {
