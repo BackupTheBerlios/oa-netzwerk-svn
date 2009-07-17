@@ -19,6 +19,8 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.userfrontend.SearchClientException;
+
 /**
  * This class wraps a HttpClient that connects to the search service. It offers convenient query-methods
  * that return lists of OIDs as result for search parameters of various formats. It will be used to as a
@@ -73,7 +75,7 @@ public class SearchClient {
 		return newclient;
 	}
 	
-	public List<BigDecimal> querySearchService(String query) {
+	public List<BigDecimal> querySearchService(String query) throws SearchClientException {
 		
 		byte[] baResponseBody = null;
 		List<BigDecimal> listResultOIDs = new ArrayList<BigDecimal>();
@@ -89,7 +91,8 @@ public class SearchClient {
 		    logger.debug ("complete URL = " + strCompleteURL);
 		} catch (Exception ex) {
 			logger.error("couldn't encode given query string '" + query + "' : " + ex);
-			return listResultOIDs;
+			//return listResultOIDs;
+			throw new SearchClientException("Couldn't encode given query string.");
 		}
 		GetMethod method = new GetMethod(strCompleteURL);		
 		method.setDoAuthentication( true );
@@ -108,15 +111,17 @@ public class SearchClient {
 				if (statusCode == HttpStatus.SC_UNAUTHORIZED) {				
 					logger.info ("HttpStatusCode: " + statusCode);
 					logger.error (method.getStatusText());
-					logger.error ("Wrong username and/or password");				
+					logger.error ("Wrong username and/or password");	
+					throw new SearchClientException("Wrong username and/or password while querying search service.");
 				} else {				
 					logger.info ("HttpStatusCode: " + statusCode);
 					logger.error ("A http-error occured while processing the IDs from server " + this.strSearchServiceBaseURL);
 					logger.error (method.getStatusText());
+					throw new SearchClientException("A http-error occured while querying search service.");
 				}
 
 				// return empty result list
-				return listResultOIDs;
+				//return listResultOIDs;
 
 			} else {			
 
@@ -129,12 +134,15 @@ public class SearchClient {
 		} catch (ConnectException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
-			return listResultOIDs;
+			//return listResultOIDs;
+			throw new SearchClientException("An ConnectException occured while querying search service.");
+
 			
 		} catch (IOException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
-			return listResultOIDs;
+			//return listResultOIDs;
+			throw new SearchClientException("An IOException occured while querying search service.");
 			
 		} finally {
 			
@@ -167,8 +175,9 @@ public class SearchClient {
 		} catch (UnsupportedEncodingException ueex) {
 			
 			logger.error ("error decoding response body : " + ueex.getLocalizedMessage ( ), ueex);
-			return listResultOIDs;
-			
+			//return listResultOIDs;
+			throw new SearchClientException("An error decoding response body occured while querying search service.");
+
 		}
 		
 		return listResultOIDs;

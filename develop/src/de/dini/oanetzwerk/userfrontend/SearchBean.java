@@ -47,6 +47,9 @@ public class SearchBean implements Serializable {
     private HitlistBean hitlist = null;
     private BrowseBean browse = null;
     
+    private boolean bErrorLastSearch = false;
+    private String strErrorLastSearch = "";
+    
     public SearchBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException  {
     	    	
 //    	Logger myFrontEndLogger = Logger.getLogger("de.dini.oanetzwerk.userfrontend");
@@ -139,10 +142,38 @@ public class SearchBean implements Serializable {
 	public void setHitlist(HitlistBean hitlist) {
 		this.hitlist = hitlist;
 	}
-	
+		
+	public boolean isBErrorLastSearch() {
+		return bErrorLastSearch;
+	}
+
+
+	public void setBErrorLastSearch(boolean errorLastSearch) {
+		bErrorLastSearch = errorLastSearch;
+	}
+
+
+	public String getStrErrorLastSearch() {
+		return strErrorLastSearch;
+	}
+
+
+	public void setStrErrorLastSearch(String strErrorLastSearch) {
+		this.strErrorLastSearch = strErrorLastSearch;
+	}
+
+
 	public void searchFor(String strQuery) {
 		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
-		listOIDs = mySearchClient.querySearchService(strQuery);
+		try {
+			listOIDs = mySearchClient.querySearchService(strQuery);
+			bErrorLastSearch = false;
+			strErrorLastSearch = "";
+		} catch(SearchClientException scex) {
+			logger.error("SearchClientException: " + scex);
+			bErrorLastSearch = true;
+			strErrorLastSearch = "Fehler: " + scex.getMessage();
+		}
 		this.hitlist.setListHitOID(listOIDs);
 		this.hitlist.updateHitlistMetadata();
 	}

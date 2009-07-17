@@ -29,6 +29,10 @@
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
                 <span class="span_selected_ddc">Kategorie: <h:commandLink value="#{searchBean.browse.selectedDDCCatName}" action="browse_ddc"/></span>
 				<h:commandButton value="#{index.find}" action="#{searchBean.actionSearchButton}"/>
+                <t:div id="div_search_error" rendered='#{searchBean.strErrorLastSearch != ""}'>
+					Beim angeschlossenen Suchdienst ist leider ein Fehler aufgetreten:<br />
+					<small>(<h:outputText value="#{searchBean.strErrorLastSearch}" />)</small>					
+				</t:div>
 			</h:form>
 			</div>
 	

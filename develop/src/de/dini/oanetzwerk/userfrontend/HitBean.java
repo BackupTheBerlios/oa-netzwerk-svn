@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -327,6 +328,15 @@ public class HitBean implements Serializable {
 		}
 		 
 		return url;
+	}
+	
+	public List<DuplicateProbability> getTrimmedDuplicateProbabilityList() {
+		List<DuplicateProbability> trimmedDupPros = new ArrayList<DuplicateProbability>();
+		for(DuplicateProbability dupPro : getCompleteMetadata().getDuplicateProbabilityList()) {
+			if(dupPro.getProbability() >= FrontendConstants.DOUBLE_DUPPRO_THREASHOLD) trimmedDupPros.add(dupPro);
+		}
+		Collections.sort(trimmedDupPros, new DuplicateProbabilityComparator(false));
+		return trimmedDupPros;
 	}
 	
 	/////////////////////// action method //////////////////////////////

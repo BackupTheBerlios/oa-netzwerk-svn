@@ -27,7 +27,12 @@
 		<div id="div_flat_search">
 			<h:form>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
+                <span class="span_selected_ddc">Kategorie: <h:commandLink value="#{searchBean.browse.selectedDDCCatName}" action="browse_ddc"/></span>
 				<h:commandButton value="#{index.find}" action="#{searchBean.actionSearchButton}"/>
+                <t:div id="div_search_error" rendered='#{searchBean.strErrorLastSearch != ""}'>
+					Beim angeschlossenen Suchdienst ist leider ein Fehler aufgetreten:<br />
+					<small>(<h:outputText value="#{searchBean.strErrorLastSearch}" />)</small>					
+				</t:div> 
 			</h:form>
 			</div>
 
@@ -208,13 +213,13 @@
 				<tr>
 				<td class="hitlist_head">Ähnlichkeiten:</td>
 				<td class="hitlist_content">			
-							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.duplicateProbabilityList}" 
-			                            var="item" layout="unorderedList" first="0" dir="LTR">								
-                                (<t:outputText value="#{item.probability}"/>% : <t:outputText value="#{item.reverseProbability}"/>%)
+							<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedDuplicateProbabilityList}" 
+			                            var="item" layout="unorderedList" first="0" dir="LTR">								                               
                                 <span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[item.referToOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.png"/></h:commandLink></span>
 								<h:outputLink value="#{searchBean.hitlist.mapHitBean[item.referToOID].bestLink}" target="_blank">
 				                <t:outputText value="#{searchBean.hitlist.mapHitBean[item.referToOID].trimmedTitle}"/>
  					            </h:outputLink>                                
+                                (<t:outputText value="#{item.probability}"/>% : <t:outputText value="#{item.reverseProbability}"/>%)
                                 <span class="internal_identifier">(OID:<t:outputText value="#{item.referToOID}"/>)</span>
 							</t:dataList>
 				</td>

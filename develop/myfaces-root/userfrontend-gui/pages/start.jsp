@@ -54,10 +54,18 @@
 						<h:outputText value="#{searchBean.strRepositoryFilterName}" />
 						<small>(<h:outputText value="#{searchBean.strRepositoryFilterURL}" />)</small>
 					</h:outputLink>
-				</t:div> 
+				</t:div>
+ 
+                 <t:div id="div_search_error" rendered='#{searchBean.strErrorLastSearch != ""}'>
+					Beim angeschlossenen Suchdienst ist leider ein Fehler aufgetreten:<br />
+					<small>(<h:outputText value="#{searchBean.strErrorLastSearch}" />)</small>		
+				 </t:div> 
+
 				</span>
 				</h:form>
 	
+
+
 			</div>
 
 		</body>
