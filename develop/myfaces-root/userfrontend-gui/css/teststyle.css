@@ -203,6 +203,10 @@ dt {
 	font-size: 11px;
 	color: silver; 
 }
+.command_link_bibtex {
+	font-size: 11px;
+	font-weight: bold;
+}
 
 /* Seitenaufteilung -- Hitlist */
  
@@ -538,7 +542,9 @@ td.tabContent {
 #div_repositories {
   margin-left: 10px;
   margin-top: 30px;
-  margin-right: 10px;	  				
+  margin-right: 10px;
+  float: left;
+  width: 100%;	  				
 }
 #div_repositories h2 {
   margin-bottom: 10px;
@@ -561,8 +567,8 @@ td.tabContent {
 	font-size: 9px;
 }
 #div_repositories_list {
-  	  				
+  width: 100%;	  					  	  			
 }
 #div_repositories_footer {
-  	  				
+  margin: 10px;  	  				
 }

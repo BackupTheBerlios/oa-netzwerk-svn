@@ -130,6 +130,18 @@ public class HitlistBean implements Serializable {
 		return new ArrayList<BigDecimal>(setClipboardOID);
 	}
 	
+	public String getKommaSepClipboardOIDs() {
+		StringBuffer result = new StringBuffer();
+		Iterator<BigDecimal> it = setClipboardOID.iterator();
+        int i = 0;
+        while(it.hasNext()) {        	
+		    if(i > 0) result.append(",");
+			result.append(it.next());
+			i++;
+		}
+		return result.toString();
+	}
+	
 	public int getSizeListClipboardOID() {
 		return setClipboardOID.size();
 	}
@@ -158,9 +170,9 @@ public class HitlistBean implements Serializable {
 	
 	/**
 	 * 
-	 * Die Methode verwirft leere Treffer. Das konkrete Anlegen von HitBeans für die OID-Liste
+	 * Die Methode verwirft leere Treffer. Das konkrete Anlegen von HitBeans fï¿½r die OID-Liste
 	 * ist auf just-in-time Laden durch die UpdatingHitBeanHashMap verschoben, die get() so
-	 * überschreibt, dass erst im Bedarfsfall eine neue HitBean mit einem CompleteMetadata aus 
+	 * ï¿½berschreibt, dass erst im Bedarfsfall eine neue HitBean mit einem CompleteMetadata aus 
 	 * der application-scope MetadataLoaderBean anlegt.
 	 * 
 	 */

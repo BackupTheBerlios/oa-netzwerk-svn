@@ -18,6 +18,7 @@
   <property name="build.resourcerealm" value="build/resourcerealm" />
   <property name="build.oaipmh" value="build/oaipmh" />
   <property name="build.rssfeed" value="build/rssfeed" />
+  <property name="build.bibexport" value="build/bibexport" />
   <property name="build.indexeraccess" value="build/indexeraccess" />
   <property name="lib" value="lib" />
   <property name="archive" value="arch" />
@@ -131,15 +132,27 @@
   <path id="classpath.rssfeed">
 	 <pathelement location="${lib}/jconn3.jar" />
 	 <pathelement location="${lib}/commons-cli-1.1.jar" />
-    <pathelement location="${lib}/servlet-api.jar" />
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-    <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-    <pathelement location="${lib}/commons-codec-1.3.jar" />
-    <pathelement location="${lib}/commons-lang-2.3.jar" />
-    <pathelement location="${lib}/rome-1.0RC1.jar" />
+     <pathelement location="${lib}/servlet-api.jar" />
+     <pathelement location="${lib}/log4j-1.2.15.jar" />
+     <pathelement location="${lib}/commons-httpclient-3.1.jar" />
+     <pathelement location="${lib}/commons-codec-1.3.jar" />
+     <pathelement location="${lib}/commons-lang-2.3.jar" />
+     <pathelement location="${lib}/rome-1.0RC1.jar" />
      <pathelement location="${lib}/jdom.jar" />
   </path>	
   
+  <path id="classpath.bibexport">
+	 <pathelement location="${lib}/jconn3.jar" />
+	 <pathelement location="${lib}/commons-cli-1.1.jar" />
+	 <pathelement location="${lib}/servlet-api.jar" />
+	 <pathelement location="${lib}/log4j-1.2.15.jar" />
+	 <pathelement location="${lib}/commons-httpclient-3.1.jar" />
+	 <pathelement location="${lib}/commons-codec-1.3.jar" />
+	 <pathelement location="${lib}/commons-lang-2.3.jar" />
+	 <pathelement location="${lib}/javabib-bin.jar" />
+	 <pathelement location="${lib}/jdom.jar" />
+  </path>	
+	
   <path id="classpath.indexeraccess">
   	 <pathelement location="${lib}/jconn3.jar" />
   	 <pathelement location="${lib}/commons-cli-1.1.jar" />
@@ -179,6 +192,7 @@
     <mkdir dir="${build.oaipmh}" />
     <mkdir dir="${build.rssfeed}" />
   	<mkdir dir="${build.indexeraccess}" />
+    <mkdir dir="${build.bibexport}" />
   </target>
   
   <target name="initArch">
@@ -720,6 +734,36 @@
 	      <classes dir="${build.indexeraccess}" />
 	    </war>
 	  </target>
+	
+	<target name="compileBibExport" depends="init">
+		    <javac destdir="${build.bibexport}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+		      <classpath refid="classpath.bibexport" />
+		      <include name="**/bibexport/*.java" />
+		      <include name="**/database/*.java" />
+		      <include name="**/utils/**" />
+		      <exclude name="**/technotest*" />
+		      <exclude name="**/OAdmiNRealm.java" />
+		      <exclude name="**/handler/**" />
+		      <exclude name="**/ResourceRealm.java" />
+		      <exclude name="**/RestServer.java" />
+		      <exclude name="**/Test*" />
+		    </javac>
+	 </target>
+		  
+	 <target name="warBibExport" depends="compileBibExport">
+		    <war destfile="${build}/bibexport.war" webxml="conf_bibexport/web.xml">
+		      <lib dir="${lib}">
+		        <include name="log4j-1.2.15.jar" />
+		      	<include name="javabib-bin.jar" />
+		      	<include name="commons-lang-2.3.jar" />
+		      	<include name="jdom.jar" />
+		      </lib>
+		      <metainf dir="conf_bibexport">
+		    	 <include name="context.xml" />
+		      </metainf>
+		      <classes dir="${build.bibexport}" />
+		    </war>
+	 </target>
 	
 	
   <target name="deployServer" depends="warServer" description="Install restserver">

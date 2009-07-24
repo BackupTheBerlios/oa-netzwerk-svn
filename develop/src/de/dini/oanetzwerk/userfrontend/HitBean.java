@@ -357,6 +357,6 @@ public class HitBean implements Serializable {
 	public String actionVerwerfenLink() {
 		this.parentHitlistBean.removeSetClipboardOID(this.getCompleteMetadata().getOid());
 		return "verwerfen_clicked";
-	}
+	}	
 	
 }
