@@ -28,13 +28,14 @@
 			<h:form>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
                 <span class="span_selected_ddc">Kategorie: <h:commandLink value="#{searchBean.browse.selectedDDCCatName}" action="browse_ddc"/></span>
-				<h:commandButton value="#{index.find}" action="#{searchBean.actionSearchButton}"/>
+				<h:commandButton value="#{index.find}" action="#{searchBean.actionSearchButton}"/>&nbsp;
+				<h:outputLink value="#{searchBean.linkForSearchFeed}" target="_blank" title="Die letzte Suche nach '#{searchBean.strOneSlot}' als RSS-Feed abonieren."><img src="../img/feed-icon-28x28.png"/></h:outputLink> <small>*) Das RSS-Alerting-Feature ist noch in der Beta-Phase.</small>
                 <t:div id="div_search_error" rendered='#{searchBean.strErrorLastSearch != ""}'>
 					Beim angeschlossenen Suchdienst ist leider ein Fehler aufgetreten:<br />
 					<small>(<h:outputText value="#{searchBean.strErrorLastSearch}" />)</small>					
 				</t:div>
 			</h:form>
-			</div>
+		</div>
 	
 
 
@@ -69,7 +70,7 @@
 	</div>
 		<div id="div_hitlist">
 
-            <h:dataTable id="hitlist" value="#{searchBean.hitlist.listHitOID}" var="hitOID" columnClasses="colHit" rows="5">
+            <h:dataTable id="hitlist" value="#{searchBean.hitlist.listHitOID}" var="hitOID" columnClasses="colHit" rows="10">
 				<h:column>
                         <div class="div_hit_header">
 						  <span class="list-identifier"><h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}" target="_blank">
@@ -94,6 +95,8 @@
 				</h:column>
 			</h:dataTable>
         </div>     
+
+        <span class="command_link_bibtex"><h:commandLink action="#{searchBean.actionAddAllHitsToClipboard}" title="Alle #{searchBean.hitlist.sizeListHitOID} Treffer zur Merkliste hinzufügen">[alle Treffer zur Merkliste hinzufügen]</h:commandLink> (Achtung, dieser Vorgang kann bisweilen recht lange dauern!)</span>
 </div>
 
 <t:div rendered="#{searchBean.hitlist.sizeListClipboardOID > 0}">

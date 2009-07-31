@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.InvalidPropertiesFormatException;
@@ -180,6 +182,18 @@ public class SearchBean implements Serializable {
 	
 	//////////////// UTIL methods ///////////////////////
 	
+	public String getLinkForSearchFeed() {
+		String sLink = "";
+        try {
+		  if(strOneSlot != null && strOneSlot.trim().length() > 0) {
+            sLink = "http://oanet.cms.hu-berlin.de/rssfeed/feed?search=" + URLEncoder.encode(this.strOneSlot.trim(),"UTF-8");          
+		  }
+        } catch(UnsupportedEncodingException ex) {
+        	// NO OP
+        }
+		return sLink;
+	}
+	
 	private String evalOneSlotAndDDC() {
 		logger.debug("evalOneSlotAndDDC");
 		this.searchFor(this.browse.getSelectedDDCCatName());
@@ -282,4 +296,12 @@ public class SearchBean implements Serializable {
 	public String actionSearchWithDDCButton() {
 		return evalOneSlotAndDDC();
 	}
+	
+	public String actionAddAllHitsToClipboard() {
+		for(BigDecimal bdOID: this.hitlist.getListHitOID()) {
+			this.hitlist.addSetClipboardOID(bdOID);
+		}
+		return "";
+	}
+		
 }

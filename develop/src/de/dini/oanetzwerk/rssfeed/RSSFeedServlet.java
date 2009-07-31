@@ -1,11 +1,14 @@
 package de.dini.oanetzwerk.rssfeed;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 
 import javax.servlet.ServletConfig;
@@ -15,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 import com.sun.syndication.feed.synd.SyndContent;
@@ -28,10 +32,24 @@ import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.SyndFeedOutput;
 import com.sun.syndication.io.XmlReader;
 
+import de.dini.oanetzwerk.search.SearchClient;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
+import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.userfrontend.SearchClientException;
+import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
+import de.dini.oanetzwerk.utils.imf.Author;
+import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
+import de.dini.oanetzwerk.utils.imf.DateValue;
+import de.dini.oanetzwerk.utils.imf.Description;
+import de.dini.oanetzwerk.utils.imf.DuplicateProbability;
+import de.dini.oanetzwerk.utils.imf.FullTextLink;
+import de.dini.oanetzwerk.utils.imf.Identifier;
+import de.dini.oanetzwerk.utils.imf.RepositoryData;
+import de.dini.oanetzwerk.utils.imf.Title;
 
 /**
  * @author Robin Malitz
@@ -40,21 +58,11 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 public class RSSFeedServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = 1L;
-	
-	/**
-	 * 
-	 */
-	
 	private static Logger logger = Logger.getLogger (RSSFeedServlet.class);
 	
-	/**
-	 * 
-	 */
+	private Properties search_props = null;	
+	private SearchClient mySearchClient = null;
 	
 	public RSSFeedServlet ( ) { }
 	
@@ -64,9 +72,13 @@ public class RSSFeedServlet extends HttpServlet {
 	@Override
 	public void init (ServletConfig config) throws ServletException {
 		
-		super.init (config);
-		
-//		logger.debug ("INIT");
+      super.init (config);
+      try {
+   	    search_props = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/searchclientprop.xml");
+   	    mySearchClient = new SearchClient(search_props);
+      } catch (IOException ioex) {
+    	  throw new ServletException("Error at setup of search service client, ", ioex);
+      }
 	}
 	
 	/**
@@ -101,12 +113,9 @@ public class RSSFeedServlet extends HttpServlet {
 	 */
 	@SuppressWarnings("unchecked")
 	private String getResponse (HttpServletRequest req, HttpServletResponse resp) {
-		
+						
+		// Feed-Type bestimmen und Feed anlegen
 		String strParamFeedType = req.getParameter ("feedType");
-		
-		SyndFeedOutput mySyndFeedOutput = new SyndFeedOutput();
-		
-		// feed type f�r Ausgabe setzen
 		SyndFeed mySyndFeed = new SyndFeedImpl();
 		if(strParamFeedType == null) {
 			mySyndFeed.setFeedType("rss_2.0");
@@ -115,11 +124,53 @@ public class RSSFeedServlet extends HttpServlet {
 		}
 		mySyndFeed.setEncoding("UTF-8");
 		
-		// feed channel anlegen
-		mySyndFeed.setTitle("OANetzwerk Test-Feed");
-		mySyndFeed.setAuthor("Projekt: Open Access Netzwerk");
-		mySyndFeed.setLink("http://www.dini.de/projekte/oa-netzwerk/");
-		mySyndFeed.setDescription("Proof of Concept der technischen Realisierung eines RSS Feed Export");
+		if(req.getParameter("test") != null) {
+			
+			mySyndFeed.setTitle("OANetzwerk Test-Feed");
+			mySyndFeed.setAuthor("Projekt: Open Access Netzwerk");
+			mySyndFeed.setLink("http://oansuche.open-access.net");
+			mySyndFeed.setDescription("Proof of Concept der technischen Realisierung eines RSS Feed Export");
+			mySyndFeed = getTestFeed(mySyndFeed);
+		
+		} else if(req.getParameter("recent10") != null) {
+			
+			mySyndFeed.setTitle("OANetzwerk Recent-10-Feed");
+			mySyndFeed.setAuthor("Projekt: Open Access Netzwerk");
+			mySyndFeed.setLink("http://oansuche.open-access.net");
+			mySyndFeed.setDescription("Liefert die 10 jüngsten Einträge.");
+			mySyndFeed = getRecent10Feed(mySyndFeed);
+			
+		} else if(req.getParameter("search") != null) {
+			
+			String suchString = req.getParameter("search").trim();
+			mySyndFeed.setTitle("OANetzwerk Alterting-Feed - abonierter Suchbegriff '"+ StringEscapeUtils.escapeHtml(suchString)+"'");
+			mySyndFeed.setAuthor("Projekt: Open Access Netzwerk");
+			mySyndFeed.setLink("http://oansuche.open-access.net");
+			mySyndFeed.setDescription("Liefert alle Treffer, die auch die Suche nach dem Suchbegriff momentan ergibt.");
+			mySyndFeed = getSearchFeed(mySyndFeed, suchString);
+			
+		} else {
+			
+			mySyndFeed.setTitle("OANetzwerk Feed-Feature: Genereller Hinweis");
+			mySyndFeed.setAuthor("Projekt: Open Access Netzwerk");
+			mySyndFeed.setLink("http://oansuche.open-access.net");
+			mySyndFeed.setDescription("Rufen Sie die URL, die sie gerade abfragen, mit den Parametern 'recent10' oder 'search=<IhrSuchbegriff>' ab!");
+			
+		}
+						
+		// im eingestellten Type zu xml marshallen
+		String strXML = "";
+		SyndFeedOutput mySyndFeedOutput = new SyndFeedOutput();
+		try {
+			strXML = mySyndFeedOutput.outputString(mySyndFeed);
+		} catch (FeedException fex) {
+			logger.error(fex.getLocalizedMessage(), fex);
+		}
+			
+		return strXML;
+	}
+
+	private SyndFeed getTestFeed(SyndFeed mySyndFeed) {		
 		
 		// entries anlegen
 		List<SyndEntry> listEntries = new ArrayList<SyndEntry>();
@@ -199,19 +250,322 @@ public class RSSFeedServlet extends HttpServlet {
 			listEntries.addAll(listDBEntries);
 		}
 		
-		
-		String strXML = "";
-		
-		// im eingestellten Type zu xml marshallen
-		try {
-			strXML = mySyndFeedOutput.outputString(mySyndFeed);
-		} catch (FeedException fex) {
-			logger.error(fex.getLocalizedMessage(), fex);
-		}
-			
-		return strXML;
+		return mySyndFeed;
 	}
+	
+	private SyndFeed getRecent10Feed(SyndFeed mySyndFeed) {		
+		
+		List<SyndEntry> listEntries = new ArrayList<SyndEntry>();	
+		List<BigDecimal> listOIDsToExport = new ArrayList<BigDecimal>();
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		MultipleStatementConnection stmtconn = null;
+		
+		/////////////////////////////////
+		// letzten 10 Einträge erfragen
+		/////////////////////////////////
+		
+		try {
 
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
+			QueryResult queryResult;
+			stmtconn.loadStatement (stmtconn.connection.prepareStatement ("select TOP 10 object_id, repository_datestamp, repository_identifier from dbo.Object order by repository_datestamp DESC"));
+			queryResult = stmtconn.execute ( );
+
+			while (queryResult.getResultSet ( ).next ( )) {
+				try {
+				  BigDecimal bdOID = null;
+				  bdOID = new BigDecimal(queryResult.getResultSet ( ).getString (1));
+				  //logger.debug("recent oid fetched: " + bdOID);
+				  listOIDsToExport.add(bdOID);
+				} catch (NumberFormatException ex) {/*NO OP*/}
+			}
+			
+		} catch (SQLException ex) {
+			logger.error(ex.getLocalizedMessage(), ex);
+		} catch (WrongStatementException ex) {
+			logger.error(ex.getLocalizedMessage(), ex);
+		} finally {
+
+			if (stmtconn != null) {
+
+				try {
+
+					stmtconn.close ( );
+					stmtconn = null;
+
+				} catch (SQLException ex) {
+
+				}
+			}
+
+		}
+
+		//////////////////////////////
+		// Metadaten aus DB beziehen 
+		//////////////////////////////
+		
+		try {
+
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
+					
+			for(BigDecimal bdOID : listOIDsToExport) {
+				CompleteMetadata cmf = getCompleteMetadata(stmtconn, bdOID);
+				//logger.debug("recent cmf fetched: " + cmf);
+				if(!cmf.isEmpty()) {
+				  SyndEntry entry = getSyndEntryFromCompleteMetadata(cmf);				
+			      if(entry != null) listEntries.add(entry);
+				}
+			}
+						
+		} catch (SQLException ex) {
+			logger.error(ex.getLocalizedMessage(), ex);
+		} catch (WrongStatementException ex) {
+			logger.error(ex.getLocalizedMessage(), ex);
+		} finally {
+			if (stmtconn != null) {
+				try {
+					stmtconn.close ( );
+    				stmtconn = null;
+				} catch (SQLException ex) {
+				}
+			}
+			dbng = null;
+		}
+
+		mySyndFeed.setEntries(listEntries);
+		
+		return mySyndFeed;
+	}
+	
+	private SyndFeed getSearchFeed(SyndFeed mySyndFeed, String suchString) {		
+		
+		List<SyndEntry> listEntries = new ArrayList<SyndEntry>();
+		
+		// Treffer abfragen
+		
+		List<BigDecimal> listOIDsToExport = new ArrayList<BigDecimal>();
+		try {
+			listOIDsToExport = mySearchClient.querySearchService(suchString);
+		} catch(SearchClientException scex) {
+			logger.error("SearchClientException: " + scex);
+			return mySyndFeed;
+		}
+		
+		DBAccessNG dbng = new DBAccessNG ( );
+		MultipleStatementConnection stmtconn = null;
+		try {
+
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
+		
+			//////////////////////////////
+			// Metadaten aus DB beziehen 
+			//////////////////////////////
+			
+			for(BigDecimal bdOID : listOIDsToExport) {
+				CompleteMetadata cmf = getCompleteMetadata(stmtconn, bdOID);
+				SyndEntry entry = getSyndEntryFromCompleteMetadata(cmf);
+				if(entry != null) listEntries.add(entry);
+			}
+						
+		} catch (SQLException ex) {
+			logger.error(ex.getLocalizedMessage(), ex);
+		} catch (WrongStatementException ex) {
+			logger.error(ex.getLocalizedMessage(), ex);
+		} finally {
+			if (stmtconn != null) {
+				try {
+					stmtconn.close ( );
+    				stmtconn = null;
+				} catch (SQLException ex) {
+				}
+			}
+			dbng = null;
+		}
+
+		mySyndFeed.setEntries(listEntries);
+		
+		return mySyndFeed;
+	}
+	
+	private CompleteMetadata getCompleteMetadata(MultipleStatementConnection stmtconn, BigDecimal bdOID) throws SQLException, WrongStatementException {
+		// erzeuge cmf-Object, das Schrittweise mit Daten befüllt wird
+		CompleteMetadata cmf = new CompleteMetadata();
+		cmf.setOid(bdOID);
+		
+		// ausgelagert in separate Klasse, um den Code für andere Metadatenviews nachzunutzen
+		MetadataDBMapper.fillInternalMetadataFromDB(cmf, stmtconn);
+		
+		////////////////////////////
+		// DupPro - Abfrage
+		////////////////////////////			
+		
+		stmtconn.loadStatement (SelectFromDB.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
+		QueryResult dupproResult = stmtconn.execute ( );
+		
+		if (dupproResult.getWarning ( ) != null)
+			for (Throwable warning : dupproResult.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+		
+		int num = 0;
+		while (dupproResult.getResultSet ( ).next ( )) {
+			try {
+			  DuplicateProbability dupPro = new DuplicateProbability();
+			  dupPro.setNumber(num);
+			  dupPro.setReferToOID(new BigDecimal(dupproResult.getResultSet().getString("duplicate_id")));
+			  dupPro.setProbability(dupproResult.getResultSet().getDouble("percentage"));				  
+			  dupPro.setReverseProbability(dupproResult.getResultSet().getDouble("reversePercentage")); 				  
+			  cmf.addDuplicateProbability(dupPro);				
+			  num++;
+			} catch(Exception ex) {
+				logger.error("error fetching duplicate possibilities for OID: " + cmf.getOid(), ex);
+			}
+		}	
+					
+		//////////////////////////
+		// Fulltextlink - Abfrage
+		//////////////////////////
+		
+		stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, cmf.getOid()));
+		QueryResult ftlResult = stmtconn.execute ( );
+		
+		if (ftlResult.getWarning ( ) != null)
+			for (Throwable warning : ftlResult.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+		
+		while (ftlResult.getResultSet ( ).next ( )) {				
+			FullTextLink ftl = new FullTextLink();					
+			ftl.setUrl(ftlResult.getResultSet().getString("link"));
+			ftl.setMimeformat(ftlResult.getResultSet().getString("mimeformat"));
+			cmf.addFullTextLink(ftl);				
+		}			
+		
+		////////////////////////////			
+		// RepositoryData - Abfrage
+		////////////////////////////
+		
+		stmtconn.loadStatement (SelectFromDB.RepositoryData(stmtconn.connection, cmf.getOid()));
+		QueryResult repdataResult = stmtconn.execute ( );
+		
+		if (repdataResult.getWarning ( ) != null)
+			for (Throwable warning : repdataResult.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+		
+		while (repdataResult.getResultSet ( ).next ( )) {
+			RepositoryData repData = new RepositoryData(cmf.getOid());
+			repData.setRepositoryID(repdataResult.getResultSet().getInt("repository_id"));
+			repData.setRepositoryName(repdataResult.getResultSet().getString("name"));
+			repData.setRepositoryOAI_BASEURL(repdataResult.getResultSet().getString("oai_url"));
+			repData.setRepositoryOAI_EXTID(repdataResult.getResultSet().getString("repository_identifier"));
+			repData.setRepositoryURL(repdataResult.getResultSet().getString("url"));
+			cmf.setRepositoryData(repData);
+		}			
+		
+		stmtconn.commit ( );			
+		
+		return cmf;
+	}	
+	
+	private SyndEntry getSyndEntryFromCompleteMetadata(CompleteMetadata cmf) {
+		SyndEntry entry = new SyndEntryImpl();
+		StringBuffer sb = null;
+		
+		sb = new StringBuffer();
+		for(int i = 0; i < cmf.getAuthorList().size(); i++) {
+			Author author = cmf.getAuthorList().get(i);
+			if(i > 0) sb.append(", ");
+			sb.append(author.getFirstname()+ " " + author.getLastname());			
+		}
+		String strAuthor = sb.toString();
+		entry.setAuthor(strAuthor);
+						
+		Date date = null;
+		DateValue dateValue = null;
+		for(DateValue dv : cmf.getDateValueList()) {
+			dateValue = dv;
+			if(dateValue.getDateValue() != null) date = dateValue.getDateValue();
+		}
+		// TODO: Ersatzdate zusammenbauen!!! 
+
+
+		String sDate = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+		if(date == null) {
+			date = new Date(0);
+			logger.debug("kein Datum");
+		} else {
+			sDate = " ("+sdf.format(date)+")";
+			logger.debug("Datum = '" + date + "' --> '"+sDate+"'");
+		}
+		entry.setPublishedDate(date);
+		
+		sb = new StringBuffer();
+		for(int i = 0; i < cmf.getDescriptionList().size(); i++) {
+			Description desc = cmf.getDescriptionList().get(i);
+			if(i > 0) sb.append("<br/>\n");
+			sb.append(desc.getDescription());			
+		}
+		SyndContent scDesc = new SyndContentImpl();
+		scDesc.setType("text/html");
+		logger.debug("Zusammenfassung = '" + sb.toString() + "'");
+		if(sb.toString().trim().length() > 0) {			
+			String s = sb.toString();
+			if(s.length() > 400) {
+                s = s.substring(0, 399);
+                s = s.substring(0, s.lastIndexOf(" "));
+    			s = s + " [...]";
+    			logger.debug("trimmed s = '" + s + "'");
+			}			
+			scDesc.setValue("<p><b>" + strAuthor + sDate + "</b><br/>\n" + s + "</p>");
+		} else {
+			scDesc.setValue("<p><b>" + strAuthor + sDate + "</b><br/>\n" + "(keine Zusammenfassung verf&uuml;gbar)</p>");			
+		}
+		entry.setDescription(scDesc);
+		
+		String strFullTextLink = getBestLink(cmf);
+		if(strFullTextLink.length() > 0) {
+			entry.setLink(strFullTextLink);
+		}
+		
+		sb = new StringBuffer();
+		for(int i = 0; i < cmf.getTitleList().size(); i++) {
+			Title title = cmf.getTitleList().get(i);
+			if(i > 0) sb.append(", ");
+			sb.append(title.getTitle());			
+		}
+		String strTitle = sb.toString();
+		if(strTitle.length() > 0) {
+		    entry.setTitle(strTitle);		
+		} else {
+			if(strFullTextLink.length() > 0) {
+				entry.setTitle(strFullTextLink);
+			} else {
+				return null;
+			}
+		}
+		
+		return entry;
+	}
+	
+	public String getBestLink(CompleteMetadata cmf) {
+		List<FullTextLink> listFTL = cmf.getFullTextLinkList();
+		String strFTL = "";
+		if(listFTL != null && listFTL.size() > 0) {
+			if(!listFTL.get(0).getUrl().equalsIgnoreCase("na")) strFTL = listFTL.get(0).getUrl();
+		}
+		if(strFTL.length() == 0) {
+			List<Identifier> listIdent = cmf.getIdentifierList();		
+			if(listIdent != null && listIdent.size() > 0) {
+				for(int i = 0; i < listIdent.size(); i++) {
+					String s = listIdent.get(i).getIdentifier();					 
+					if(s.startsWith("http://")) strFTL = s; 
+					if(s.endsWith(".pdf")) break;
+				}
+			}	
+		}
+		return strFTL;
+	}
+	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */

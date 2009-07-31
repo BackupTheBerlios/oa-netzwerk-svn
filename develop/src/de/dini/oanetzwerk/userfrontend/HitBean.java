@@ -1,13 +1,16 @@
 package de.dini.oanetzwerk.userfrontend;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.utils.ISO639LangNormalizer;
@@ -75,17 +78,27 @@ public class HitBean implements Serializable {
 	
 	public String getTrimmedTitle() {
 		//logger.debug("getTrimmedTitle() for oid " + completeMetadata.getOid());
-		Title title = getCompleteMetadata().getTitleList().get(0);
-		String s = title.getTitle();
-		if(s.length() > FrontendConstants.INT_TITLE_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_TITLE_TRIMSIZE-4) + "...";
+		String s = "";
+		if(getCompleteMetadata().getTitleList().size() > 0) {
+		  Title title = getCompleteMetadata().getTitleList().get(0);
+		  s = title.getTitle();
+		  if(s.length() > FrontendConstants.INT_TITLE_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_TITLE_TRIMSIZE-4) + "...";
+		} else {
+		  s = getBestLink();
+		}
 		return s;
 	}
 
 	public String getTrimmedClipboardTitle() {
 		//logger.debug("getTrimmedClipboardTitle() for oid " + getCompleteMetadata().getOid());
-		Title title = getCompleteMetadata().getTitleList().get(0);
-		String s = title.getTitle();
-		if(s.length() > FrontendConstants.INT_CLIPBOARD_TITLE_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_CLIPBOARD_TITLE_TRIMSIZE-4) + "...";
+		String s = "";
+		if(getCompleteMetadata().getTitleList().size() > 0) {
+		  Title title = getCompleteMetadata().getTitleList().get(0);
+		  s = title.getTitle();
+		  if(s.length() > FrontendConstants.INT_CLIPBOARD_TITLE_TRIMSIZE) s = s.substring(0, FrontendConstants.INT_CLIPBOARD_TITLE_TRIMSIZE-4) + "...";
+		} else {
+		  s = getBestLink();
+		}
 		return s;
 	}
 	
@@ -174,6 +187,8 @@ public class HitBean implements Serializable {
 				}
 			}	
 		}
+        if(strFTL.indexOf("\"") != -1) strFTL = strFTL.substring(0, strFTL.indexOf("\""));
+	    strFTL = StringEscapeUtils.escapeHtml(strFTL);
 		return strFTL;
 	}
 	

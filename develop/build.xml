@@ -625,6 +625,7 @@
         <include name="commons-digester-1.8.jar" />
         <include name="commons-discovery-0.4.jar" />
         <include name="commons-logging-1.1.jar" />
+      	<include name="commons-lang-2.3.jar" />
         <include name="jstl.jar" />
         <include name="standard.jar" />
         <include name="log4j-1.2.15.jar" />
@@ -704,6 +705,9 @@
 	    	 <include name="context.xml" />
 	      </metainf>
 	      <classes dir="${build.rssfeed}" />
+	      <webinf dir="conf_rssfeed/">
+	    	 <include name="searchclientprop.xml" />
+	      </webinf>
 	    </war>
 	  </target>
 
