@@ -21,12 +21,16 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
+import com.sun.syndication.feed.synd.SyndCategory;
+import com.sun.syndication.feed.synd.SyndCategoryImpl;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndContentImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
+import com.sun.syndication.feed.synd.SyndPerson;
+import com.sun.syndication.feed.synd.SyndPersonImpl;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.SyndFeedOutput;
@@ -48,6 +52,7 @@ import de.dini.oanetzwerk.utils.imf.Description;
 import de.dini.oanetzwerk.utils.imf.DuplicateProbability;
 import de.dini.oanetzwerk.utils.imf.FullTextLink;
 import de.dini.oanetzwerk.utils.imf.Identifier;
+import de.dini.oanetzwerk.utils.imf.Keyword;
 import de.dini.oanetzwerk.utils.imf.RepositoryData;
 import de.dini.oanetzwerk.utils.imf.Title;
 
@@ -114,7 +119,10 @@ public class RSSFeedServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	private String getResponse (HttpServletRequest req, HttpServletResponse resp) {
 						
-		// Feed-Type bestimmen und Feed anlegen
+		////////////////////////////////////////////////////
+		// Feed-Type bestimmen und Feed-Container anlegen
+		////////////////////////////////////////////////////
+		
 		String strParamFeedType = req.getParameter ("feedType");
 		SyndFeed mySyndFeed = new SyndFeedImpl();
 		if(strParamFeedType == null) {
@@ -123,6 +131,10 @@ public class RSSFeedServlet extends HttpServlet {
 			mySyndFeed.setFeedType(strParamFeedType);
 		}
 		mySyndFeed.setEncoding("UTF-8");
+		
+		/////////////////////////////////////////////////////////////
+		// unterschiedliche Inhalte als Liste an Eintraegen fuellen
+		/////////////////////////////////////////////////////////////
 		
 		if(req.getParameter("test") != null) {
 			
@@ -311,9 +323,10 @@ public class RSSFeedServlet extends HttpServlet {
 					
 			for(BigDecimal bdOID : listOIDsToExport) {
 				CompleteMetadata cmf = getCompleteMetadata(stmtconn, bdOID);
+				Date dateRepo = getRepositoryDatestamp(stmtconn, bdOID);
 				//logger.debug("recent cmf fetched: " + cmf);
 				if(!cmf.isEmpty()) {
-				  SyndEntry entry = getSyndEntryFromCompleteMetadata(cmf);				
+				  SyndEntry entry = getSyndEntryFromCompleteMetadata(cmf, dateRepo);				
 			      if(entry != null) listEntries.add(entry);
 				}
 			}
@@ -364,7 +377,8 @@ public class RSSFeedServlet extends HttpServlet {
 			
 			for(BigDecimal bdOID : listOIDsToExport) {
 				CompleteMetadata cmf = getCompleteMetadata(stmtconn, bdOID);
-				SyndEntry entry = getSyndEntryFromCompleteMetadata(cmf);
+				Date dateRepo = getRepositoryDatestamp(stmtconn, bdOID);
+				SyndEntry entry = getSyndEntryFromCompleteMetadata(cmf, dateRepo);
 				if(entry != null) listEntries.add(entry);
 			}
 						
@@ -466,9 +480,43 @@ public class RSSFeedServlet extends HttpServlet {
 		return cmf;
 	}	
 	
-	private SyndEntry getSyndEntryFromCompleteMetadata(CompleteMetadata cmf) {
+	private Date getRepositoryDatestamp(MultipleStatementConnection stmtconn, BigDecimal bdOID) throws SQLException, WrongStatementException {
+
+		Date dateRepo = null;	
+		
+		stmtconn.loadStatement (SelectFromDB.ObjectEntry(stmtconn.connection, bdOID));
+		QueryResult oeResult = stmtconn.execute ( );
+		
+		if (oeResult.getWarning ( ) != null)
+			for (Throwable warning : oeResult.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+		
+		while (oeResult.getResultSet ( ).next ( )) {
+			try {
+				dateRepo = HelperMethods.sql2javaDate(oeResult.getResultSet().getDate("repository_datestamp"));
+			} catch(Exception ex) {
+				logger.error("error fetching object entry for OID: " + bdOID, ex);
+			}
+		}	
+					
+		stmtconn.commit ( );			
+		
+		return dateRepo;
+	}
+	
+	/**
+	 * formatiert die Inhalte der Datensaetze ineinander um 
+	 * 
+	 * @param cmf
+	 * @return
+	 */
+	private SyndEntry getSyndEntryFromCompleteMetadata(CompleteMetadata cmf, Date dateRepo) {
 		SyndEntry entry = new SyndEntryImpl();
 		StringBuffer sb = null;
+		
+		/////////////
+		// Authors
+		/////////////
 		
 		sb = new StringBuffer();
 		for(int i = 0; i < cmf.getAuthorList().size(); i++) {
@@ -478,16 +526,42 @@ public class RSSFeedServlet extends HttpServlet {
 		}
 		String strAuthor = sb.toString();
 		entry.setAuthor(strAuthor);
-						
-		Date date = null;
-		DateValue dateValue = null;
-		for(DateValue dv : cmf.getDateValueList()) {
-			dateValue = dv;
-			if(dateValue.getDateValue() != null) date = dateValue.getDateValue();
+		
+		List<SyndPerson> listSyndPerson = new ArrayList<SyndPerson>();
+		for(int i = 0; i < cmf.getAuthorList().size(); i++) {
+			Author author = cmf.getAuthorList().get(i);		
+			SyndPerson syndPerson = new SyndPersonImpl();
+			syndPerson.setName(author.getFirstname()+ " " + author.getLastname());
+			listSyndPerson.add(syndPerson);			
 		}
-		// TODO: Ersatzdate zusammenbauen!!! 
-
-
+		entry.setAuthors(listSyndPerson);
+		
+		//////////////////
+		// Category
+		//////////////////
+		
+		List<SyndCategory> listSyndCategory = new ArrayList<SyndCategory>();
+		for(int i = 0; i < cmf.getKeywordList().size(); i++) {
+			Keyword keyword = cmf.getKeywordList().get(i);		
+			SyndCategoryImpl cat = new SyndCategoryImpl();
+			cat.setName(keyword.getKeyword());
+			//cat.setTaxonomyUri("http://purl.org/dc/terms/subject");
+			listSyndCategory.add(cat);			
+		}
+		entry.setCategories(listSyndCategory);
+		
+		//////////////////
+		// Date
+		//////////////////
+				
+		Date date = null;
+//		DateValue dateValue = null;
+//		for(DateValue dv : cmf.getDateValueList()) {
+//			dateValue = dv;
+//			if(dateValue.getDateValue() != null) date = dateValue.getDateValue();
+//		}
+		date = dateRepo;
+		
 		String sDate = "";
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 		if(date == null) {
@@ -498,6 +572,10 @@ public class RSSFeedServlet extends HttpServlet {
 			logger.debug("Datum = '" + date + "' --> '"+sDate+"'");
 		}
 		entry.setPublishedDate(date);
+
+		/////////////////
+		// Description
+		/////////////////
 		
 		sb = new StringBuffer();
 		for(int i = 0; i < cmf.getDescriptionList().size(); i++) {
@@ -522,10 +600,18 @@ public class RSSFeedServlet extends HttpServlet {
 		}
 		entry.setDescription(scDesc);
 		
+		//////////////////
+		// Link
+		//////////////////
+		
 		String strFullTextLink = getBestLink(cmf);
 		if(strFullTextLink.length() > 0) {
 			entry.setLink(strFullTextLink);
 		}
+		
+		//////////////////
+		// Title
+		//////////////////
 		
 		sb = new StringBuffer();
 		for(int i = 0; i < cmf.getTitleList().size(); i++) {

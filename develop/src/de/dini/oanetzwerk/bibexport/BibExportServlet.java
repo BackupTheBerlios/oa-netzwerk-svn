@@ -96,9 +96,11 @@ public class BibExportServlet extends HttpServlet {
 		strParamOIDs = StringUtils.defaultString(req.getParameter("OIDs"),"");
 		
 		if(strParamType.equals("bibtex")) {
-	      resp.setContentType ("application/x-bibtex");			
+	      resp.setContentType ("application/x-bibtex");
+	      resp.setHeader("Content-Disposition", "filename=oan_export.bib"); // nach RFC 1806
 		} else {
 		  resp.setContentType ("text/plain");
+	      resp.setHeader("Content-Disposition", "filename=oan_export.bib"); // nach RFC 1806
 		}
 		
 		if(req.getParameter("OIDs") == null) {
@@ -268,6 +270,7 @@ public class BibExportServlet extends HttpServlet {
 		StringBuffer sb = null;
 		DateFormat df_year = new SimpleDateFormat("yyyy");
 		DateFormat df_month = new SimpleDateFormat("MM");
+		DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
 		
 		String strBibtexEntryType = "misc";
 		
@@ -302,11 +305,13 @@ public class BibExportServlet extends HttpServlet {
         String strMonth = null;
 		for(int i = 0; i < cmf.getDateValueList().size(); i++) {
 			DateValue dateValue = cmf.getDateValueList().get(i);
-			if(dateValue.getDateValue() != null) {
+			if(dateValue.getDateValue() != null) {				
 			    strYear = df_year.format(dateValue.getDateValue());
 			    strMonth = df_month.format(dateValue.getDateValue());
+			    bibtexEntry.setField("date", bibtexFile.makeString(sdf.format(dateValue.getDateValue())));
 			} else {
 				strYear = dateValue.getStringValue();
+				bibtexEntry.setField("date", bibtexFile.makeString(dateValue.getStringValue()));
 			}
 		}
 		if(strYear != null) bibtexEntry.setField("year", bibtexFile.makeString(strYear));		
@@ -360,8 +365,8 @@ public class BibExportServlet extends HttpServlet {
 		if(sb.toString().length() > 0) {
 			bibtexEntry.setField("abstract", bibtexFile.makeString(sb.toString()));
 		}
-		
-		bibtexEntry.setField("note", bibtexFile.makeString("exportiert durch http://oansuche.open-access.net"));
+				
+		bibtexEntry.setField("note", bibtexFile.makeString("exportiert am "+sdf.format(new Date())+" durch http://oansuche.open-access.net"));
 		
 		return bibtexEntry;
 	}

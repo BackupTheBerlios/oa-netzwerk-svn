@@ -85,7 +85,7 @@
 						  <span class="hit-url"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}"/></span><br/>
 						  <span class="hit-url">							
 						  <% /* <h:graphicImage url="#{searchBean.hitlist.mapHitBean[hitOID].urlIRIcon}" alt="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" title="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" width="16" height="16"/> */ %>
-                          <span class="command_link_bibtex"><h:outputLink value="http://oanet.cms.hu-berlin.de/bibexport?type=bibtexx&OIDs=#{hitOID}" title="Bibtex-Eintrag des Objekts anzeigen">[bibtex]</h:outputLink></span>&nbsp;
+                          <span class="command_link_bibtex"><h:outputLink value="http://oanet.cms.hu-berlin.de/bibexport?type=bibtex&OIDs=#{hitOID}" title="Bibtex-Eintrag des Objekts anzeigen">[bibtex]</h:outputLink></span>&nbsp;
 						  <h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
                   <t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}"/>
 				  (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}"/>)
@@ -127,7 +127,7 @@
         </div>
         <div id="div_clipboard_footer">
             <span class="command_link">
-               <h:outputLink value="http://oanet.cms.hu-berlin.de/bibexport?type=bibtexx&OIDs=#{searchBean.hitlist.kommaSepClipboardOIDs}" title="Export des Merkzettels als Bibtex-Datei" target="_blank">[bibtex]</h:outputLink>
+               <h:outputLink value="http://oanet.cms.hu-berlin.de/bibexport?type=bibtex&OIDs=#{searchBean.hitlist.kommaSepClipboardOIDs}" title="Export des Merkzettels als Bibtex-Datei" target="_blank">[bibtex]</h:outputLink>
             </span>
             <span class="command_link">
                <h:commandLink action="clipboard_export_htmllist" title="Export des Merkzettels als HTML-Seite" target="_blank">[plain html links]</h:commandLink>

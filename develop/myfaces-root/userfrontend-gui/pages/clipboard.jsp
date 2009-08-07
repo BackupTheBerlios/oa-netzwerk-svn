@@ -75,7 +75,7 @@
 		</div>
         <div id="div_clipboard_footer">
             <span class="command_link">
-               <h:outputLink value="http://oanet.cms.hu-berlin.de/bibexport?type=bibtexx&OIDs=#{searchBean.hitlist.kommaSepClipboardOIDs}" title="Export des Merkzettels als Bibtex-Datei" target="_blank">[bibtex]</h:outputLink>
+               <h:outputLink value="http://oanet.cms.hu-berlin.de/bibexport?type=bibtex&OIDs=#{searchBean.hitlist.kommaSepClipboardOIDs}" title="Export des Merkzettels als Bibtex-Datei" target="_blank">[bibtex]</h:outputLink>
             </span>
             <span class="command_link">
                <h:commandLink action="clipboard_export_htmllist" title="Export des Merkzettels als HTML-Seite" target="_blank">[plain html links]</h:commandLink>
