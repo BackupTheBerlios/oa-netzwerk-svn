@@ -76,6 +76,10 @@ public class SearchClient {
 	}
 	
 	public List<BigDecimal> querySearchService(String query) throws SearchClientException {
+		return querySearchService(query, null);
+	}
+	
+    public List<BigDecimal> querySearchService(String strQuery, String strDDC) throws SearchClientException {
 		
 		byte[] baResponseBody = null;
 		List<BigDecimal> listResultOIDs = new ArrayList<BigDecimal>();
@@ -83,14 +87,18 @@ public class SearchClient {
 		// lazy init of internal http client
 		if(myHttpClient == null) myHttpClient = getHttpClient();		
 		
-		// TODO: prepare query
 		String strCompleteURL = "http://" + this.strSearchServiceBaseURL + "?search=";
 		try {
-			if(query == null) query = "";
-		    strCompleteURL += URLEncoder.encode(query,"UTF-8");
+			if(strQuery == null) strQuery = "";
+		    strCompleteURL += URLEncoder.encode(strQuery,"UTF-8");
+		    logger.debug ("strQuery = '" + strQuery + "'");
+		    if(strDDC != null && strDDC.length() > 0) {
+		    	strCompleteURL += "&ddc=" + URLEncoder.encode(strDDC,"UTF-8");
+			    logger.debug ("strDDC = '" + strDDC + "'");
+		    }
 		    logger.debug ("complete URL = " + strCompleteURL);
 		} catch (Exception ex) {
-			logger.error("couldn't encode given query string '" + query + "' : " + ex);
+			logger.error("couldn't encode given query string '" + strQuery + "' : " + ex);
 			//return listResultOIDs;
 			throw new SearchClientException("Couldn't encode given query string.");
 		}
@@ -182,7 +190,5 @@ public class SearchClient {
 		
 		return listResultOIDs;
 	}
-	
-	
 	
 }

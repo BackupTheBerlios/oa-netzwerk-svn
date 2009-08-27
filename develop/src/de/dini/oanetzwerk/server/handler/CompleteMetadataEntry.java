@@ -21,6 +21,7 @@ import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
 import de.dini.oanetzwerk.utils.imf.CompleteMetadataJAXBMarshaller;
 import de.dini.oanetzwerk.utils.imf.DuplicateProbability;
 import de.dini.oanetzwerk.utils.imf.FullTextLink;
+import de.dini.oanetzwerk.utils.imf.InterpolatedDDCClassification;
 import de.dini.oanetzwerk.utils.imf.RepositoryData;
 
 /**
@@ -173,6 +174,28 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 				repData.setRepositoryURL(repdataResult.getResultSet().getString("url"));
 				cmf.setRepositoryData(repData);
 			}			
+			
+			//////////////////////////////
+			// InterpolatedDDC - Abfrage
+			//////////////////////////////
+			
+			stmtconn.loadStatement (SelectFromDB.InterpolatedDDCClassification(stmtconn.connection, cmf.getOid()));
+			QueryResult interpolatedDDCResult = stmtconn.execute ( );
+			
+			if (interpolatedDDCResult.getWarning ( ) != null)
+				for (Throwable warning : interpolatedDDCResult.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+			
+			while (interpolatedDDCResult.getResultSet ( ).next ( )) {
+				InterpolatedDDCClassification interpolatedDDC = new InterpolatedDDCClassification();				
+				interpolatedDDC.setValue(interpolatedDDCResult.getResultSet().getString("Interpolated_DDC_Categorie"));
+				interpolatedDDC.setProbability(interpolatedDDCResult.getResultSet().getDouble("percentage"));
+				cmf.addClassfication(interpolatedDDC);
+			}		
+			
+			/////////////////
+			// COMMIT
+			/////////////////
 			
 			stmtconn.commit ( );
 			

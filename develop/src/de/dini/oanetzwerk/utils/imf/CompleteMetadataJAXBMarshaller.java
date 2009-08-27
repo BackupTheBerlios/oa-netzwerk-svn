@@ -19,7 +19,7 @@ public class CompleteMetadataJAXBMarshaller {
 		
 	private CompleteMetadataJAXBMarshaller() {
 		try {
-			context = JAXBContext.newInstance( CompleteMetadata.class, InternalMetadata.class, OtherClassification.class, DINISetClassification.class, DNBClassification.class, DDCClassification.class ); 
+			context = JAXBContext.newInstance( CompleteMetadata.class, InternalMetadata.class, OtherClassification.class, DINISetClassification.class, DNBClassification.class, DDCClassification.class, InterpolatedDDCClassification.class ); 
 		} catch(JAXBException jex) {
 			logger.error(jex);
 		}

@@ -779,6 +779,19 @@ public class InsertIntoDB {
 	}
 
 	
-	
+	public static PreparedStatement InterpolatedDDCClassification (Connection connection, BigDecimal object_id,
+			String ddcValue, BigDecimal percentage) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {			
+			logger.debug ("Insert InterpolatedDDCClassification:");
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO dbo.Interpolated_DDC_Classification (object_id, Interpolated_DDC_Categorie, percentage) VALUES (?, ?, ?)");
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setString (2, ddcValue);
+		preparedstmt.setBigDecimal (3, percentage);
+		
+		return preparedstmt;
+	}	
 	
 }

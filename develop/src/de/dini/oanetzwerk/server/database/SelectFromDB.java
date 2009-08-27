@@ -1419,5 +1419,22 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	public static PreparedStatement InterpolatedDDCClassification_withCategorie (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT name, D.Interpolated_DDC_Categorie, D.percentage FROM dbo.Interpolated_DDC_Classification D JOIN dbo.DDC_Categories C ON D.Interpolated_DDC_Categorie = C.DDC_Categorie WHERE D.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement InterpolatedDDCClassification (Connection connection,
+			BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT object_id, D.Interpolated_DDC_Categorie, D.percentage FROM dbo.Interpolated_DDC_Classification D WHERE D.object_id = ?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
 	
 }

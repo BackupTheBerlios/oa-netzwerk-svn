@@ -26,6 +26,7 @@ import de.dini.oanetzwerk.utils.imf.Description;
 import de.dini.oanetzwerk.utils.imf.DuplicateProbability;
 import de.dini.oanetzwerk.utils.imf.FullTextLink;
 import de.dini.oanetzwerk.utils.imf.Identifier;
+import de.dini.oanetzwerk.utils.imf.InterpolatedDDCClassification;
 import de.dini.oanetzwerk.utils.imf.Keyword;
 import de.dini.oanetzwerk.utils.imf.Language;
 import de.dini.oanetzwerk.utils.imf.OtherClassification;
@@ -261,6 +262,13 @@ public class HitBean implements Serializable {
 				  trimmedClassis.add("DDC: " + ddcName_de + " (" + ((DDCClassification)classi).getValue()+ ")");
 				} else {
 				  trimmedClassis.add("DDC: " + ((DDCClassification)classi).getValue());
+				}
+			} else if(classi instanceof InterpolatedDDCClassification) {
+				String ddcName_de = DDCDataSingleton.getInstance().getMapDDCNames_de_fromDB().get(((InterpolatedDDCClassification)classi).getValue());
+				if(ddcName_de != null && ddcName_de.length() > 0) {
+				  trimmedClassis.add("DDC*: " + ddcName_de + " (" + ((InterpolatedDDCClassification)classi).getValue()+ ")" + " (" + ((InterpolatedDDCClassification)classi).getProbability() + "%)");
+				} else {
+				  trimmedClassis.add("DDC*: " + ((InterpolatedDDCClassification)classi).getValue() + " (" + ((InterpolatedDDCClassification)classi).getProbability() + "%)");
 				}
 			} else if(classi instanceof OtherClassification) {
 				trimmedClassis.add("Sonstige: " + ((OtherClassification)classi).getValue());

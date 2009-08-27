@@ -486,4 +486,14 @@ public class DeleteFromDB {
 		
 		return preparedstmt;
 	}
+	
+	public static PreparedStatement Interpolated_DDC_Classification (Connection connection,
+			BigDecimal object_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.Interpolated_DDC_Classification WHERE object_id=?");
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+
 }

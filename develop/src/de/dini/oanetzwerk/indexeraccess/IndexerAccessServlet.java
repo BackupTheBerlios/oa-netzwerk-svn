@@ -38,6 +38,7 @@ import de.dini.oanetzwerk.utils.imf.Editor;
 import de.dini.oanetzwerk.utils.imf.Format;
 import de.dini.oanetzwerk.utils.imf.FullTextLink;
 import de.dini.oanetzwerk.utils.imf.Identifier;
+import de.dini.oanetzwerk.utils.imf.InterpolatedDDCClassification;
 import de.dini.oanetzwerk.utils.imf.Keyword;
 import de.dini.oanetzwerk.utils.imf.Language;
 import de.dini.oanetzwerk.utils.imf.OtherClassification;
@@ -374,6 +375,9 @@ public class IndexerAccessServlet extends HttpServlet {
 				} else if(item instanceof DDCClassification) {
 					DDCClassification castedItem = (DDCClassification)item;
 					sb.append("<meta name=\"").append("classification_DDCClassification").append("\" value=\"").append(StringEscapeUtils.escapeHtml(castedItem.getValue())).append("\"/>\n");									
+				} else if(item instanceof InterpolatedDDCClassification) {
+					InterpolatedDDCClassification castedItem = (InterpolatedDDCClassification)item;
+					sb.append("<meta name=\"").append("classification_DDCClassification").append("\" value=\"").append(StringEscapeUtils.escapeHtml(castedItem.getValue())).append("\"/><!--interpolated-->\n");									
 				} else if(item instanceof DNBClassification) {
 					DNBClassification castedItem = (DNBClassification)item;
 					sb.append("<meta name=\"").append("classification_DNBClassification").append("\" value=\"").append(StringEscapeUtils.escapeHtml(castedItem.getValue())).append("\"/>\n");									

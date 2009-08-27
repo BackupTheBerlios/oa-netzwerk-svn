@@ -18,7 +18,7 @@ public class InternalMetadataJAXBMarshaller {
 		
 	private InternalMetadataJAXBMarshaller() {
 		try {
-			context = JAXBContext.newInstance( InternalMetadata.class, OtherClassification.class, DINISetClassification.class, DNBClassification.class, DDCClassification.class ); 
+			context = JAXBContext.newInstance( InternalMetadata.class, OtherClassification.class, DINISetClassification.class, DNBClassification.class, DDCClassification.class, InterpolatedDDCClassification.class ); 
 		} catch(JAXBException jex) {
 			logger.error(jex);
 		}
