@@ -43,6 +43,7 @@ import de.dini.oanetzwerk.utils.imf.Keyword;
 import de.dini.oanetzwerk.utils.imf.Language;
 import de.dini.oanetzwerk.utils.imf.OtherClassification;
 import de.dini.oanetzwerk.utils.imf.Publisher;
+import de.dini.oanetzwerk.utils.imf.RepositoryData;
 import de.dini.oanetzwerk.utils.imf.Title;
 import de.dini.oanetzwerk.utils.imf.TypeValue;
 
@@ -274,6 +275,49 @@ public class IndexerAccessServlet extends HttpServlet {
 				cmf.addFullTextLink(ftl);				
 			}			
 			
+			////////////////////////////			
+			// RepositoryData - Abfrage
+			////////////////////////////
+			
+			stmtconn.loadStatement (SelectFromDB.RepositoryData(stmtconn.connection, cmf.getOid()));
+			QueryResult repdataResult = stmtconn.execute ( );
+			
+			if (repdataResult.getWarning ( ) != null)
+				for (Throwable warning : repdataResult.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+			
+			while (repdataResult.getResultSet ( ).next ( )) {
+				RepositoryData repData = new RepositoryData(cmf.getOid());
+				repData.setRepositoryID(repdataResult.getResultSet().getInt("repository_id"));
+				repData.setRepositoryName(repdataResult.getResultSet().getString("name"));
+				repData.setRepositoryOAI_BASEURL(repdataResult.getResultSet().getString("oai_url"));
+				repData.setRepositoryOAI_EXTID(repdataResult.getResultSet().getString("repository_identifier"));
+				repData.setRepositoryURL(repdataResult.getResultSet().getString("url"));
+				cmf.setRepositoryData(repData);
+			}			
+			
+			//////////////////////////////
+			// InterpolatedDDC - Abfrage
+			//////////////////////////////
+			
+			stmtconn.loadStatement (SelectFromDB.InterpolatedDDCClassification(stmtconn.connection, cmf.getOid()));
+			QueryResult interpolatedDDCResult = stmtconn.execute ( );
+			
+			if (interpolatedDDCResult.getWarning ( ) != null)
+				for (Throwable warning : interpolatedDDCResult.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+			
+			while (interpolatedDDCResult.getResultSet ( ).next ( )) {
+				InterpolatedDDCClassification interpolatedDDC = new InterpolatedDDCClassification();				
+				interpolatedDDC.setValue(interpolatedDDCResult.getResultSet().getString("Interpolated_DDC_Categorie"));
+				interpolatedDDC.setProbability(interpolatedDDCResult.getResultSet().getDouble("percentage"));
+				cmf.addClassfication(interpolatedDDC);
+			}
+			
+			/////////////////
+			// COMMIT
+			/////////////////
+			
 			stmtconn.commit ( );
 			
 			//logger.debug("CMF (toString) >>>>>> " + cmf);			 
@@ -316,6 +360,8 @@ public class IndexerAccessServlet extends HttpServlet {
 		} else {
 			
 			sb.append("<head>\n");
+			
+			sb.append("<!-- IndexerAccess v1.0.001 -->\n");
 			
 		    sb.append("<meta name=\"").append("oid").append("\" value=\"").append(cmf.getOid()).append("\"/>\n");				
 						

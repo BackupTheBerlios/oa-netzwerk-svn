@@ -133,6 +133,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			this.result = null;
 			dbng = null;
+			
 		}
 				
 		return RestXmlCodec.encodeRestMessage (this.rms);

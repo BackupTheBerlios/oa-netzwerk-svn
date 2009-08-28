@@ -165,10 +165,10 @@ public class SearchBean implements Serializable {
 	}
 
 
-	public void searchFor(String strQuery) {
+	public void searchFor(String strQuery, String strDDC) {
 		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
 		try {
-			listOIDs = mySearchClient.querySearchService(strQuery);
+			listOIDs = mySearchClient.querySearchService(strQuery, strDDC);
 			bErrorLastSearch = false;
 			strErrorLastSearch = "";
 		} catch(SearchClientException scex) {
@@ -196,7 +196,15 @@ public class SearchBean implements Serializable {
 	
 	private String evalOneSlotAndDDC() {
 		logger.debug("evalOneSlotAndDDC");
-		this.searchFor(this.browse.getSelectedDDCCatName());
+		String strDDC = this.browse.getSelectedDDCCatValue();
+		if(strOneSlot != null && strOneSlot.length() > 0) {
+			String strQuery = new String(strOneSlot);
+			strQuery = strQuery.toUpperCase();
+			strQuery = strQuery.trim();			
+		    this.searchFor(strQuery, strDDC);
+		} else if(strDDC != null) {
+		    this.searchFor(null, strDDC);
+		}				
 		return "search_clicked";
 	}
 	
@@ -222,7 +230,7 @@ public class SearchBean implements Serializable {
 //		listOIDs = mySearchClient.querySearchService(strQuery);
 //		this.hitlist.setListHitOID(listOIDs);
 //		this.hitlist.updateHitlistMetadata();
-		this.searchFor(strQuery);
+		this.searchFor(strQuery, null);
 		return "search_clicked";
 	}
 	

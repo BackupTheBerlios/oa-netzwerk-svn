@@ -117,6 +117,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 			
 			this.result = null;
 			dbng = null;
+			
 		}
 				
 		return RestXmlCodec.encodeRestMessage (this.rms);
@@ -222,6 +223,11 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 			
 			this.result = null;
 			dbng = null;
+			
+			if(counter == 0) {
+				this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+				this.rms.setStatusDescription ("No " + RestKeyword.InterpolatedDDC + " found for object_id " + object_id + ".");
+			}
 		}
 		
 		return RestXmlCodec.encodeRestMessage (this.rms);
