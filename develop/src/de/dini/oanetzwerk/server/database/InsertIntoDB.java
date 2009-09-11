@@ -794,4 +794,42 @@ public class InsertIntoDB {
 		return preparedstmt;
 	}	
 	
+	public static PreparedStatement UsageData_Months (Connection connection, BigDecimal object_id,
+			BigDecimal metrics_id, long counter, Date counted_for_date) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {			
+			logger.debug ("Insert UsageData_Months:");
+		}
+		
+		PreparedStatement preparedstmt = 
+			connection.prepareStatement( "INSERT INTO dbo.UsageData_Months (object_id, metrics_id, counter, counted_for_date) "
+					                   + "VALUES (?, ?, ?, ?)");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setBigDecimal (2, metrics_id);
+		preparedstmt.setLong (3, counter);
+		preparedstmt.setDate(4, counted_for_date);
+		
+		return preparedstmt;
+	}	
+	
+	public static PreparedStatement UsageData_Overall (Connection connection, BigDecimal object_id,
+			BigDecimal metrics_id, long counter, Date last_update) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {			
+			logger.debug ("Insert UsageData_Overall:");
+		}
+		
+		PreparedStatement preparedstmt = 
+			connection.prepareStatement( "INSERT INTO dbo.UsageData_Overall (object_id, metrics_id, counter, last_update) "
+					                   + "VALUES (?, ?, ?, ?)");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setBigDecimal (2, metrics_id);
+		preparedstmt.setLong (3, counter);
+		preparedstmt.setDate(4, last_update);
+		
+		return preparedstmt;
+	}
+	
 }

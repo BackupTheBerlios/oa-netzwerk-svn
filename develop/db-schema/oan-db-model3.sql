@@ -548,3 +548,35 @@ CREATE TABLE dbo.Interpolated_DDC_Classification (
      , percentage NUMERIC(7,3) NOT NULL
      , PRIMARY KEY (object_id, Interpolated_DDC_Categorie)
 );
+
+CREATE TABLE dbo.UsageData_Metrics (
+       metrics_id NUMERIC(38) IDENTITY
+     , name UNIVARCHAR(255) NOT NULL
+     , PRIMARY KEY (metrics_id)
+);
+
+CREATE TABLE dbo.UsageData_Months (
+       object_id NUMERIC(38) NOT NULL
+     , metrics_id NUMERIC(38) NOT NULL
+     , counter NUMERIC(38) DEFAULT 0
+     , counted_for_date DATETIME NOT NULL
+     , PRIMARY KEY (object_id, metrics_id, counted_for_date)
+);
+
+ALTER TABLE dbo.UsageData_Months
+  ADD CONSTRAINT FK_UsageData_Months_2_UsageData_Metrics
+      FOREIGN KEY (metrics_id)
+      REFERENCES dbo.UsageData_Metrics (metrics_id);
+
+CREATE TABLE dbo.UsageData_Overall (
+       object_id NUMERIC(38) NOT NULL
+     , metrics_id NUMERIC(38) NOT NULL
+     , counter NUMERIC(38) DEFAULT 0
+     , last_update DATETIME NOT NULL
+     , PRIMARY KEY (object_id, metrics_id)
+);
+
+ALTER TABLE dbo.UsageData_Overall
+  ADD CONSTRAINT FK_UsageData_Overall_2_UsageData_Metrics
+      FOREIGN KEY (metrics_id)
+      REFERENCES dbo.UsageData_Metrics (metrics_id);

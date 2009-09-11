@@ -359,4 +359,43 @@ public class HelperMethods {
 		
 		return RestClient.createRestClient (properties.getProperty ("host"), resource, properties.getProperty ("username"), properties.getProperty ("password"));
 	}
+	
+	/**
+	 * returns a date set the first day of the preceeding month relative
+	 * to a given date (which can be "now" by setting it to new Date())
+	 * 
+	 * @param fromDate
+	 * @return
+	 */
+	public static java.util.Date getFirstDayOfPreceedingMonth(java.util.Date relativeToDate) {
+		java.util.Date dateToReturn = new java.util.Date();
+		GregorianCalendar gc = new GregorianCalendar();
+		
+		gc.setTime(relativeToDate);
+		gc.add(Calendar.MONTH, -1);
+		gc.set(gc.get(Calendar.YEAR), gc.get(Calendar.MONTH), 1);
+		
+		dateToReturn = gc.getTime();
+		
+		return dateToReturn; 
+	}
+	
+	/**
+	 * returns a date set the first day of the given month relative
+	 * to a given date (which can be "now" by setting it to new Date())
+	 * 
+	 * @param fromDate
+	 * @return
+	 */
+	public static java.util.Date getFirstDayOfGivenMonth(java.util.Date relativeToDate) {
+		java.util.Date dateToReturn = new java.util.Date();
+		GregorianCalendar gc = new GregorianCalendar();
+		
+		gc.setTime(relativeToDate);
+		gc.set(gc.get(Calendar.YEAR), gc.get(Calendar.MONTH), 1);
+		
+		dateToReturn = gc.getTime();
+		
+		return dateToReturn; 
+	}
 }

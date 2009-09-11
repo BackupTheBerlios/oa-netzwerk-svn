@@ -19,5 +19,6 @@ public enum RestKeyword {
 	DuplicateProbabilities,
 	OAIExportCache,
 	UnneededData,
-	InterpolatedDDC
+	InterpolatedDDC,
+	UsageData
 }

@@ -1437,4 +1437,50 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	public static PreparedStatement UsageData_Metrics (Connection connection,
+			String metrics_name) throws SQLException {
+
+		PreparedStatement preparedstmt = 
+			connection.prepareStatement ( "SELECT metrics_id FROM dbo.UsagaData_Metrics WHERE name=?" );
+		
+		preparedstmt.setString (1, metrics_name);
+		
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement UsageData_Metrics_AllNames (Connection connection) throws SQLException {
+
+		PreparedStatement preparedstmt = 
+			connection.prepareStatement ( "SELECT name FROM dbo.UsageData_Metrics" );
+				
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement UsageData_Months_ListForMetricsName (Connection connection,
+			BigDecimal object_id, String metrics_name) throws SQLException {
+
+		PreparedStatement preparedstmt = 
+			connection.prepareStatement ( "SELECT object_id, name, counter, counted_for_date "
+					                    + "FROM dbo.UsageData_Months mo JOIN dbo.UsageData_Metrics me ON mo.metrics_id = me.metrics_id "
+                                        + "WHERE object_id=? AND name=? "
+                                        + "ORDER BY counted_for_date DESC");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setString (2, metrics_name);
+		
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement UsageData_Overall (Connection connection,
+			BigDecimal object_id, String metrics_name) throws SQLException {
+
+		PreparedStatement preparedstmt = 
+			connection.prepareStatement ( "SELECT object_id, name, counter, last_update "
+					                    + "FROM dbo.UsageData_Overall mo JOIN dbo.UsageData_Metrics me ON mo.metrics_id = me.metrics_id "
+                                        + "WHERE object_id=? ");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
 }
