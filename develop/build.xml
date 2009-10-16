@@ -9,6 +9,8 @@
   <property name="build.server_readonly" value="build/server_readonly" />
   <property name="build.harvester" value="build/harvester" />
   <property name="build.oidgetter" value="build/oidgetter" />
+  <property name="build.openrestclient" value="build/openrestclient" />
+  <property name="dist.openrestclient" value="dist_OpenRestClient" />
   <property name="build.inspector" value="build/inspector" />
   <property name="build.aggregator" value="build/aggregator" />
   <property name="build.markereraser" value="build/markereraser" />
@@ -75,6 +77,16 @@
     <pathelement location="${lib}/commons-logging-1.1.jar" />
     <pathelement location="${lib}/jdom.jar" />
     <pathelement location="${lib}/log4j-1.2.15.jar" />
+  </path>
+	
+  <path id="classpath.openrestclient">
+	<pathelement location="${lib}/commons-cli-1.1.jar" />
+	<pathelement location="${lib}/commons-codec-1.3.jar" />
+	<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+  	<pathelement location="${lib}/commons-lang-2.3.jar" />
+	<pathelement location="${lib}/commons-logging-1.1.jar" />
+	<pathelement location="${lib}/jdom.jar" />
+	<pathelement location="${lib}/log4j-1.2.15.jar" />
   </path>
   
   <path id="classpath.aggregator">
@@ -183,6 +195,7 @@
   	<mkdir dir="${build.server_readonly}" />
     <mkdir dir="${build.harvester}" />
     <mkdir dir="${build.oidgetter}" />
+  	<mkdir dir="${build.openrestclient}" />
     <mkdir dir="${build.aggregator}" />
     <mkdir dir="${build.inspector}" />
     <mkdir dir="${build.markereraser}" />
@@ -291,9 +304,9 @@
       <include name="**/HelperMethods.java" />
       <exclude name="**/server/" />
       <exclude name="**/Test*" />
-    </javac>
-  
-</target>
+    </javac>  
+  </target>
+	
   <target name="compileOIDGetter" depends="init">
     <javac destdir="${build.oidgetter}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
       <classpath refid="classpath.oidgetter" />
@@ -307,6 +320,64 @@
     </javac>
   </target>
   
+	  <target name="jarOIDGetter" depends="compileOIDGetter">
+	    <property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
+	    <jar jarfile="OIDGetter.jar">
+	      <fileset dir="${build.oidgetter}" />
+	      <manifest>
+	        <attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.examples.OIDGetter" />
+	        <attribute name="Class-Path" value="${cp}" />
+	      </manifest>
+	    </jar>
+	  </target>
+	
+  <target name="compileOpenRestClient" depends="init">
+    <javac destdir="${build.openrestclient}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+      <classpath refid="classpath.openrestclient" />
+      <include name="**/examples/OIDGetter.java" />
+      <include name="**/examples/OpenRestClientExample.java" />
+      <include name="**/codec/*.java" />
+      <include name="**/RestClient.java" />
+      <include name="**/utils/exceptions/*.java" />
+      <include name="**/utils/imf/*.java" />
+      <include name="**/HelperMethods.java" />
+      <exclude name="**/server/" />
+      <exclude name="**/Test*" />
+    </javac>
+  </target>	
+
+  <target name="jarOpenRestClient" depends="compileOpenRestClient">
+    <property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar lib/commons-lang-2.3.jar ." />
+    <jar jarfile="oanetzwerk-openrestclient.jar">
+      <fileset dir="${build.openrestclient}" />
+      <manifest>
+        <attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.examples.OpenRestClientExample" />
+        <attribute name="Class-Path" value="${cp}" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="distOpenRestClient" depends="jarOpenRestClient">
+  	<mkdir dir="${dist.openrestclient}" />
+  	<copy todir="${dist.openrestclient}">
+  		<fileset dir="conf_openrestclient" />
+  		<fileset dir="." includes="oanetzwerk-openrestclient.jar" /> 
+  		<fileset dir="${src}/de/dini/oanetzwerk/servicemodule/examples/" includes="OpenRestClientExample.java" />
+  		<fileset dir="${lib}">
+  			<include name="commons-cli-1.1.jar" />
+  			<include name="log4j-1.2.15.jar" />
+  			<include name="commons-httpclient-3.1.jar" />
+  			<include name="jdom.jar" />
+  			<include name="commons-logging-1.1.jar" />
+  			<include name="commons-codec-1.3.jar" />
+  			<include name="commons-lang-2.3.jar" />
+  		</fileset>
+  	</copy>
+  	<zip destfile="openrestclient.zip">
+  		<fileset dir="${dist.openrestclient}"></fileset>
+  	</zip>
+  </target>		
+	
   <target name="jarHarvester" depends="compileHarvester">
     <property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
     <jar jarfile="Harvester.jar">
@@ -318,16 +389,7 @@
     </jar>
   </target>
   
-  <target name="jarOIDGetter" depends="compileOIDGetter">
-    <property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
-    <jar jarfile="OIDGetter.jar">
-      <fileset dir="${build.oidgetter}" />
-      <manifest>
-        <attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.examples.OIDGetter" />
-        <attribute name="Class-Path" value="${cp}" />
-      </manifest>
-    </jar>
-  </target>
+
   
   <target name="distHarvester" depends="jarHarvester">
     <tar destfile="Harvester.tar">

@@ -43,7 +43,7 @@ public class KeywordBean {
 		this.parentHitBean
 	        .getParentHitlistBean()
 	        .getParentSearchBean()
-	        .searchFor(keyword.getKeyword());
+	        .searchFor(keyword.getKeyword(),null);
 		return "search4keyword_clicked";
 	}
 	

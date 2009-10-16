@@ -19,6 +19,8 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.DeleteFromDB;
+import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.utils.HelperMethods;
@@ -74,21 +76,10 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 		try {
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+						
+			doDeleteALL(stmtconn, object_id);
 			
-			/*stmtconn.loadStatement (DeleteFromDB.Interpolated_DDC_Classification(stmtconn.connection, object_id));
-			this.result = stmtconn.execute ( );
-			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
-			
-			if (this.result.getUpdateCount ( ) < 1) {
-				// da eh nichts gelöscht wurde, entsprechende Daten wieder in Ursprungszustand versetzen
-				stmtconn.rollback();
-			} else {
-				// gelöschte Daten als solche committen
-				stmtconn.commit ( );
-			}*/
+			stmtconn.commit ( );
 			
 			RestEntrySet res = new RestEntrySet ( );
 			
@@ -307,7 +298,8 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 
 		this.rms = RestXmlCodec.decodeRestMessage(data);
 		RestEntrySet res = null;
-
+        List<RestEntrySet> requestEntrySets = this.rms.getListEntrySets();
+		
 		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
 		MultipleStatementConnection stmtconn = null;
 		
@@ -317,7 +309,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 			boolean errorHappended = false; 
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
 
-			Iterator<RestEntrySet> itSets = this.rms.getListEntrySets().iterator();
+			Iterator<RestEntrySet> itSets = requestEntrySets.iterator();
 			while (itSets.hasNext()) {
 				res = itSets.next();
 
@@ -334,8 +326,9 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 					if (logger.isDebugEnabled())
 						logger.debug("key = " + key);
 
-					if (key.equalsIgnoreCase("metrics"))
+					if (key.equalsIgnoreCase("metrics")) {
 						metrics_name = res.getValue(key);
+					}						
 					else if (key.equalsIgnoreCase("last_update"))
 						try {
 						    last_update = sdf.parse(res.getValue(key));
@@ -359,48 +352,55 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 
 				this.rms = new RestMessage(RestKeyword.UsageData);
 				
-				BigDecimal bdMetricsID = getMetricsId(stmtconn, metrics_name);
+				// ID der Metrik holen
+				
+				metrics_id = getMetricsId(stmtconn, metrics_name);
 
 				this.rms = new RestMessage(RestKeyword.UsageData);
 				this.rms.setStatus(RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
+				this.rms.setListEntrySets(requestEntrySets);
 				
 				// Prüfen, ob überhaupt Daten übergeben wurden
 				
 				if (metrics_name == null) {				 
 					
 					this.rms.setStatusDescription("POST /UsageData/ needs a 'metrics_name' in an entry.");
+					res.addEntry("ERROR_OCCURED_HERE", "POST /UsageData/ needs a 'metrics_name' in an entry.");
   				    return RestXmlCodec.encodeRestMessage(this.rms);
   				    
-				} else if(bdMetricsID == null) {
+				} else if(metrics_id == null) {
 					
 					this.rms.setStatusDescription("Metrics named '" + metrics_name + "' are unknown to database.");
+					res.addEntry("ERROR_OCCURED_HERE", "Metrics named '" + metrics_name + "' are unknown to database.");
 					return RestXmlCodec.encodeRestMessage(this.rms);
 				
-				} else if(count_overall == -1 || count_of_month == -1) {
+				} else if(count_overall == -1 && count_of_month == -1) {
 					
 					this.rms.setStatusDescription("POST /UsageData/ needs either entry 'count_overall' or 'count_of_month' in an entry.");
+					res.addEntry("ERROR_OCCURED_HERE", "POST /UsageData/ needs either entry 'count_overall' or 'count_of_month' in an entry.");
 					return RestXmlCodec.encodeRestMessage(this.rms);
 					
 				}
 				
-
-				res = new RestEntrySet();
-
-				/*
-				stmtconn.loadStatement(InsertIntoDB.UsageDataClassification(
-						stmtconn.connection, object_id, ddc_value, percentage));
-				this.result = stmtconn.execute();
-				
-				if (this.result.getWarning ( ) != null) 
-					for (Throwable warning : result.getWarning ( ))
-						logger.warn (warning.getLocalizedMessage ( ));
-				
-				if (this.result.getUpdateCount() < 1) {
-					errorHappended = true;
-				
-					// warn, error, rollback, nothing????
+				if (count_overall >= 0) {
+					try {
+				        doPostOverall(stmtconn, object_id, metrics_id, count_overall, last_update);
+					} catch (ParseException pex) {
+						this.rms.setStatusDescription("last_update value '" + last_update + "' malformed.");
+						res.addEntry("ERROR_OCCURED_HERE", "last_update value '" + last_update + "' malformed.");
+						return RestXmlCodec.encodeRestMessage(this.rms);
+					}
 				}
-				*/
+				if (count_of_month >= 0) {
+					try {
+						doPostMonth(stmtconn, object_id, metrics_id, count_of_month, relative_to_date);	
+					} catch (ParseException pex) {
+						this.rms.setStatusDescription("relative_to_date value '" + relative_to_date + "' malformed.");
+						res.addEntry("ERROR_OCCURED_HERE", "relative_to_date value '" + relative_to_date + "' malformed.");
+						return RestXmlCodec.encodeRestMessage(this.rms);
+					}
+			    }
+				
 			}
 			if (errorHappended == false) { 
 				stmtconn.commit();
@@ -533,7 +533,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 		
 		for(String strMetricsName : mapUsageDataOveralls.keySet()) {
 			
-			stmtconn.loadStatement (SelectFromDB.UsageData_Months_ListForMetricsName(stmtconn.connection, object_id, strMetricsName));
+			stmtconn.loadStatement (SelectFromDB.UsageData_Overall_ForMetricsName(stmtconn.connection, object_id, strMetricsName));
 			this.result = stmtconn.execute ( );
 
 			if (this.result.getWarning ( ) != null) 
@@ -566,6 +566,60 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 		}
 		
 		return null;
+	}
+	
+	private void doPostOverall(MultipleStatementConnection stmtconn, BigDecimal object_id, BigDecimal metrics_id, long count_overall, Date last_update) throws SQLException, ParseException {
+        
+		stmtconn.loadStatement (DeleteFromDB.UsageData_Overall(stmtconn.connection, object_id, metrics_id));
+		this.result = stmtconn.execute ( );
+
+		if (this.result.getWarning ( ) != null) 
+			for (Throwable warning : result.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+			
+		stmtconn.loadStatement (InsertIntoDB.UsageData_Overall(stmtconn.connection, object_id, metrics_id, count_overall, HelperMethods.java2sqlDate(last_update)));
+		this.result = stmtconn.execute ( );
+
+		if (this.result.getWarning ( ) != null) 
+			for (Throwable warning : result.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+		
+	}
+	
+	private void doPostMonth(MultipleStatementConnection stmtconn, BigDecimal object_id, BigDecimal metrics_id, long count_of_month, Date relative_to_date) throws SQLException, ParseException {	
+    
+		stmtconn.loadStatement (DeleteFromDB.UsageData_Months(stmtconn.connection, object_id, metrics_id, HelperMethods.java2sqlDate(relative_to_date)));
+		this.result = stmtconn.execute ( );
+
+		if (this.result.getWarning ( ) != null) 
+			for (Throwable warning : result.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+		
+		stmtconn.loadStatement (InsertIntoDB.UsageData_Months(stmtconn.connection, object_id, metrics_id, count_of_month, HelperMethods.java2sqlDate(relative_to_date)));
+		this.result = stmtconn.execute ( );
+
+		if (this.result.getWarning ( ) != null) 
+			for (Throwable warning : result.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+		
+    }
+	
+	private void doDeleteALL(MultipleStatementConnection stmtconn, BigDecimal object_id) throws SQLException {
+		
+		stmtconn.loadStatement (DeleteFromDB.UsageData_ALL_Months(stmtconn.connection, object_id));
+		this.result = stmtconn.execute ( );
+
+		if (this.result.getWarning ( ) != null) 
+			for (Throwable warning : result.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+		
+		stmtconn.loadStatement (DeleteFromDB.UsageData_ALL_Overall(stmtconn.connection, object_id));
+		this.result = stmtconn.execute ( );
+
+		if (this.result.getWarning ( ) != null) 
+			for (Throwable warning : result.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+		
 	}
 	
 }

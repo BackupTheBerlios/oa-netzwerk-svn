@@ -496,4 +496,44 @@ public class DeleteFromDB {
 		return preparedstmt;
 	}
 
+	public static PreparedStatement UsageData_Months (Connection connection, BigDecimal object_id,
+			BigDecimal metrics_id, Date counted_for_date) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.UsageData_Months WHERE object_id=? AND metrics_id=? AND counted_for_date=?");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setBigDecimal (2, metrics_id);
+		preparedstmt.setDate (3, counted_for_date);
+		
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement UsageData_Overall (Connection connection, BigDecimal object_id,
+			BigDecimal metrics_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.UsageData_Overall WHERE object_id=? AND metrics_id=?");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setBigDecimal (2, metrics_id);
+		
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement UsageData_ALL_Months (Connection connection, BigDecimal object_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.UsageData_Months WHERE object_id=?");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+		
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement UsageData_ALL_Overall (Connection connection, BigDecimal object_id) throws SQLException {
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("DELETE FROM dbo.UsageData_Overall WHERE object_id=?");
+		
+		preparedstmt.setBigDecimal (1, object_id);
+
+		return preparedstmt;
+	}
 }

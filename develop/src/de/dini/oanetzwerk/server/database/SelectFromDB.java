@@ -1441,7 +1441,7 @@ public class SelectFromDB {
 			String metrics_name) throws SQLException {
 
 		PreparedStatement preparedstmt = 
-			connection.prepareStatement ( "SELECT metrics_id FROM dbo.UsagaData_Metrics WHERE name=?" );
+			connection.prepareStatement ( "SELECT metrics_id FROM dbo.UsageData_Metrics WHERE name=?" );
 		
 		preparedstmt.setString (1, metrics_name);
 		
@@ -1471,15 +1471,16 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
-	public static PreparedStatement UsageData_Overall (Connection connection,
+	public static PreparedStatement UsageData_Overall_ForMetricsName (Connection connection,
 			BigDecimal object_id, String metrics_name) throws SQLException {
 
 		PreparedStatement preparedstmt = 
 			connection.prepareStatement ( "SELECT object_id, name, counter, last_update "
 					                    + "FROM dbo.UsageData_Overall mo JOIN dbo.UsageData_Metrics me ON mo.metrics_id = me.metrics_id "
-                                        + "WHERE object_id=? ");
+                                        + "WHERE object_id=? AND name=?");
 		
 		preparedstmt.setBigDecimal (1, object_id);
+		preparedstmt.setString (2, metrics_name);
 		
 		return preparedstmt;
 	}
