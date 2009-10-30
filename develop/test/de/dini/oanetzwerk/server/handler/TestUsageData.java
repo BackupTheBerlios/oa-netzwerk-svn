@@ -369,7 +369,7 @@ public class TestUsageData {
 
 	}
 	
-	@Test
+	@Ignore @Test
 	public void test_DELETE_forOID() throws Exception{
 
 		System.out.println("test_DELETE_forOID");
