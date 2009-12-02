@@ -27,8 +27,11 @@
 		<div id="div_flat_search">
 			<h:form>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
-                <span class="span_selected_ddc">Kategorie: <h:commandLink value="#{searchBean.browse.selectedDDCCatName}" action="browse_ddc"/></span>
+                <span class="span_selected_ddc">Kategorie: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/> <h:commandLink value="Kategorie ändern" action="browse_ddc"/></span>
 				<h:commandButton value="#{index.find}" action="#{searchBean.actionSearchButton}"/>&nbsp;
+                <%--
+                <h:commandButton value="Alternative Suche" action="#{searchBean.actionSearch2Button}"/>&nbsp;
+				--%>
 				<h:outputLink value="#{searchBean.linkForSearchFeed}" target="_blank" title="Die letzte Suche nach '#{searchBean.strOneSlot}' als RSS-Feed abonieren."><img src="../img/feed-icon-28x28.png"/></h:outputLink> <small>*) Das RSS-Alerting-Feature ist noch in der Beta-Phase.</small>
                 <t:div id="div_search_error" rendered='#{searchBean.strErrorLastSearch != ""}'>
 					Beim angeschlossenen Suchdienst ist leider ein Fehler aufgetreten:<br />

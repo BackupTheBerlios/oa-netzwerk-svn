@@ -301,6 +301,11 @@ public class SearchBean implements Serializable {
 		return parseOneSlotSearchField();
 	}
 	
+	public String actionSearch2Button() {
+		//TODO: implement another suche here (Ronny :P)
+		return parseOneSlotSearchField();
+	}
+	
 	public String actionSearchWithDDCButton() {
 		return evalOneSlotAndDDC();
 	}
