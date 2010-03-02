@@ -46,8 +46,8 @@
 					         value="#{searchBean.strOneSlot}" />
 			    <h:commandButton value="#{index.find}"
 			                     action="#{searchBean.actionSearchButton}" />
-                </div>
- 
+				</div>
+ 				<!-- ------------------- -->
 				<t:div rendered='#{searchBean.strRepositoryFilterRID != ""}'>
 					<small>Die Suchmaske wurde eingeschr&auml;nkt auf folgende Quelle:</small><br />
 					<h:outputLink value="#{searchBean.strRepositoryFilterURL}">
