@@ -104,7 +104,7 @@ public class RestServer extends HttpServlet implements Serializable {
 	
 	@SuppressWarnings("unchecked")
 	private String processRequest (HttpServletRequest req, HttpVerbEnum verb) {
-		
+			
 		if(bReadOnlyMode && (verb == HttpVerbEnum.POST || verb == HttpVerbEnum.PUT || verb == HttpVerbEnum.DELETE)) {			
 			return this.createErrorResponse (new Exception("ERROR: HttpVerb was "+verb+". This REST server instance has been configured as READ ONLY. This means only GET requests are activated."), RestStatusEnum.ILLEGAL_ACCESS_ERROR);
 		}
@@ -354,7 +354,7 @@ public class RestServer extends HttpServlet implements Serializable {
 			
 			this.serverproperties = new Properties ( );
 			
-			File serverpropFile = new File ("webapps/restserver/WEB-INF/serverprop.xml");
+			File serverpropFile = new File (System.getProperty ("catalina.base"), "webapps/restserver/WEB-INF/serverprop.xml");
 			
 			try {
 				
@@ -371,7 +371,7 @@ public class RestServer extends HttpServlet implements Serializable {
 			} catch (FileNotFoundException ex) {
 				
 				logger.error (serverpropFile.getAbsoluteFile ( ) + " not found! Does it really exist?");
-				logger.error (ex.getLocalizedMessage ( ), ex);
+				//logger.error (ex.getLocalizedMessage ( ), ex);
 				
 				this.serverproperties = null;
 				return null;

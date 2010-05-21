@@ -207,17 +207,17 @@ public class RestClient {
 		} catch (InvalidPropertiesFormatException ex) {
 			
 			logger.warn (ex.getLocalizedMessage ( ), ex);
-			logger.warn ("SSL-Conections might be impossible");
+			logger.warn ("SSL-Connections might be impossible");
 			
 		} catch (FileNotFoundException ex) {
 			
 			logger.warn (ex.getLocalizedMessage ( ), ex);
-			logger.warn ("SSL-Conections might be impossible");
+			logger.warn ("SSL-Connections might be impossible");
 			
 		} catch (IOException ex) {
 			
 			logger.warn (ex.getLocalizedMessage ( ), ex);
-			logger.warn ("SSL-Conections might be impossible");
+			logger.warn ("SSL-Connections might be impossible");
 		}
 		
 		if (this.props == null) {
@@ -484,7 +484,7 @@ public class RestClient {
 			buffer.append ("https://");
 			buffer.append (this.qualifiedServerName).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (queryPath);
 		}
-		
+
 		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
 		
 		if (logger.isDebugEnabled ( ))
@@ -593,7 +593,7 @@ public class RestClient {
 			
 			logger.debug ("Response: " + response);
 		}
-		
+				
 		return RestXmlCodec.decodeRestMessage (response);
 	}
 	

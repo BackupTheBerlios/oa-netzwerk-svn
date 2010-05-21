@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,8 +27,10 @@ import org.apache.commons.cli.Options;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.exceptions.ServiceIDException;
 import de.dini.oanetzwerk.utils.exceptions.ValueFromKeyException;
@@ -100,8 +103,20 @@ public class HelperMethods {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug (new File (file).getAbsoluteFile ( ));
-		
+			
 		props.loadFromXML (new FileInputStream (file));
+		
+		return props;
+	}
+	
+	public static Properties loadPropertiesFromFileWithinWebcontainer (String file) throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
+		
+		Properties props = new Properties ( );
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug (new File (file).getAbsoluteFile ( ));
+			
+		props.loadFromXML (new FileInputStream (System.getProperty("catalina.home") + System.getProperty("file.separator") + file));
 		
 		return props;
 	}
@@ -359,6 +374,18 @@ public class HelperMethods {
 		
 		return RestClient.createRestClient (properties.getProperty ("host"), resource, properties.getProperty ("username"), properties.getProperty ("password"));
 	}
+	
+	public static String getRestFailureMessage(final RestKeyword keyword, final RestStatusEnum status,  final String description) {
+		
+		logger.error (description);
+		
+		final RestMessage rms = new RestMessage (keyword);
+		rms.setStatus (status);
+		rms.setStatusDescription (description);
+		
+		return RestXmlCodec.encodeRestMessage (rms);
+	}
+	
 	
 	/**
 	 * returns a date set the first day of the preceeding month relative

@@ -139,7 +139,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			
 		} catch (WrongStatementException ex) {
 			
-			logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ));
+			logger.error ("An error occured while processing Get WorklflowDB: " + ex.getLocalizedMessage ( ));
 			ex.printStackTrace ( );
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));

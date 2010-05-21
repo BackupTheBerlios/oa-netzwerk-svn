@@ -1,6 +1,7 @@
 package de.dini.oanetzwerk.userfrontend;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -43,8 +44,10 @@ public class BrowseBean {
 	private String selectedDDCCatName = "Alles";
     
 	public BrowseBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
-		this.props = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
-
+		
+		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
+		//this.props = HelperMethods.loadPropertiesFromFile ("userfrontend_gui.xml");
+		
 		//mapDDCSums = new HashMap<String, String>();
 		myDDCNameResolver = new DDCNameResolver();
 		setupMapDDCNames();

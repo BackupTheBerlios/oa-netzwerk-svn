@@ -45,7 +45,7 @@ public final class DDCDataSingleton {
 			myDDCNameResolver = new DDCNameResolver();
 			setupMapDDCNames();			
 			try {
-		      this.props = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
+		      this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
 			} catch(Exception ex) {
 				// to test this external from server context
   			  this.props = HelperMethods.loadPropertiesFromFile ("userfrontend_gui.xml");	

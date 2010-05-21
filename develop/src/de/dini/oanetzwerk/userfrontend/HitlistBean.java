@@ -44,7 +44,7 @@ public class HitlistBean implements Serializable {
 	
 	public HitlistBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		
-		this.props = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
+		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
 		this.cmMarsh = CompleteMetadataJAXBMarshaller.getInstance();
 		
 		this.listHitOID = new ArrayList<BigDecimal>();

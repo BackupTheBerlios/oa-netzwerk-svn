@@ -27,6 +27,10 @@ public class RestEntrySet {
 		return this.entryHashMap.get(key);
 	}
 	
+	public String remove(String key) {
+		return this.entryHashMap.remove(key);
+	}
+	
 	public Iterator<String> getKeyIterator() {
 		return entryHashMap.keySet().iterator();
 	}

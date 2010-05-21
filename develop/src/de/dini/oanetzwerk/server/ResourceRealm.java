@@ -51,6 +51,9 @@ public class ResourceRealm extends RealmBase {
 	/**
 	 * 
 	 */
+
+	private File configFile;
+	
 	
 	public ResourceRealm ( ) {
 		
@@ -64,13 +67,13 @@ public class ResourceRealm extends RealmBase {
 	public synchronized void start ( ) throws LifecycleException {
 		
 		super.start ( );
-		File file = new File (this.pathname);
+		configFile = new File (this.pathname);
 		
-		if (!file.isAbsolute ( ))
-			file = new File (System.getProperty ("catalina.base"), this.pathname);
+		if (!configFile.isAbsolute ( ))
+			configFile = new File (System.getProperty ("catalina.base"), this.pathname);
 		
-		if (!file.exists ( ) || !file.canRead ( ))
-			throw new LifecycleException (sm.getString ("ResourceRealm.loadExist", file.getAbsolutePath ( )));
+		if (!configFile.exists ( ) || !configFile.canRead ( ))
+			throw new LifecycleException (sm.getString ("ResourceRealm.loadExist", configFile.getAbsolutePath ( )));
 	}
 	
 	/**
@@ -101,7 +104,8 @@ public class ResourceRealm extends RealmBase {
 		
 		try {
 			
-			this.props.loadFromXML (new FileInputStream (this.pathname));
+			System.out.println(pathname);
+			this.props.loadFromXML (new FileInputStream (configFile));
 			
 		} catch (InvalidPropertiesFormatException ex1) {
 			

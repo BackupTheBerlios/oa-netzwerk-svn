@@ -19,6 +19,8 @@ import org.apache.log4j.Logger;
 
 public class UpdateInDB {
 
+	static Logger logger = Logger.getLogger (UpdateInDB.class);
+
 	/**
 	 * @param connection
 	 * @param repository_id
@@ -31,12 +33,10 @@ public class UpdateInDB {
 	 * @throws SQLException 
 	 */
 	
-	static Logger logger = Logger.getLogger (UpdateInDB.class);
-	
 	public static PreparedStatement Object (Connection connection,
 			BigDecimal object_id, BigDecimal repository_id, Date harvested,
 			Date repository_datestamp, String repository_identifier,
-			boolean testdata, int failureCounter) throws SQLException {
+			boolean testdata, int failureCounter, boolean peculiar, boolean outdated, int peculiarCounter) throws SQLException {
 		
 		if (logger.isDebugEnabled ( )) {
 			
@@ -45,13 +45,16 @@ public class UpdateInDB {
 					", failure_counter = " + failureCounter + " WHERE object_id = " + object_id);
 		}
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ?, testdata = ?, failure_counter = ? WHERE object_id = ? AND repository_id = ?");
+		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.Object SET harvested = ?, repository_datestamp = ?, testdata = ?, failure_counter = ?, peculiar = ?, outdated = ?, peculiar_counter = ? WHERE object_id = ? AND repository_id = ?");
 		preparedstmt.setDate (1, harvested);
 		preparedstmt.setDate (2, repository_datestamp);
 		preparedstmt.setBoolean (3, testdata);
 		preparedstmt.setInt (4, failureCounter);
-		preparedstmt.setBigDecimal (5, object_id);
-		preparedstmt.setBigDecimal (6, repository_id);
+		preparedstmt.setBoolean (5, peculiar);
+		preparedstmt.setBoolean (6, outdated);
+		preparedstmt.setInt (7, peculiarCounter);
+		preparedstmt.setBigDecimal (8, object_id);
+		preparedstmt.setBigDecimal (9, repository_id);
 		
 		return preparedstmt;
 	}
@@ -108,5 +111,20 @@ public class UpdateInDB {
 		return preparedstmt;
 	}
 	
+	public static PreparedStatement Repository (final Connection connection,
+			final BigDecimal repository_id, final Date dateToSet, final String dateField) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Updating Repository: UPDATE dbo.Repositories SET " + dateField + " = " + dateToSet +
+					" WHERE repository_id = " + repository_id);
+		}
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.Repositories SET " + dateField + " = ? WHERE repository_id = ?");
+		preparedstmt.setDate(1, dateToSet);
+		preparedstmt.setBigDecimal(2, repository_id);
+		
+		return preparedstmt;
+	}
 	
 }

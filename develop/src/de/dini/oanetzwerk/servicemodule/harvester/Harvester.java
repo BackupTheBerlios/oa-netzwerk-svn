@@ -1593,7 +1593,8 @@ public class Harvester {
 				} else {
 					
 					this.updateHarvestedDatestamp (objectcounter);
-				} // endelse
+				} // endelse				
+				
 			} // endelse
 		} // endfor
 		
@@ -1607,7 +1608,7 @@ public class Harvester {
 	
 	private void setFullHarvestDateStamp ( ) throws UnsupportedEncodingException {
 		
-		String postRepositories = prepareRestTransmission ("Repositories/" + this.getRepositoryID ( ) + "/harvestedtoday/").PostData ("");
+		String postRepositories = prepareRestTransmission ("Repository/" + this.getRepositoryID ( ) + "/harvestedtoday/").PostData ("");
 		
 		RestMessage postRepositoriesmsg = RestXmlCodec.decodeRestMessage (postRepositories);
 		
@@ -1740,9 +1741,10 @@ public class Harvester {
 		res.addEntry ("repository_identifier", obj.getExternalOID ( ));
 		res.addEntry ("repository_datestamp", datestamp);
 		res.addEntry ("testdata", Boolean.toString (this.isTestData ( )));
-		res.addEntry ("failureCounter", Integer.toString (failurecounter));
+		res.addEntry ("failure_counter", Integer.toString (failurecounter));
 		res.addEntry ("peculiar", Boolean.toString (false));
 		res.addEntry ("outdated", Boolean.toString (false));
+		res.addEntry ("peculiar_counter", Integer.toString(0));
 		
 		rms.addEntrySet (res);
 		
@@ -1750,7 +1752,8 @@ public class Harvester {
 	}
 	
 	/**
-	 * This method only sets a new datestamp for the given Object.
+	 * This method sets a new datestamp for the given Object. Furthermore it resets the peculiarCounter 
+	 * as well as the peculiar and outdated fields as with an harvesting datestamp-update the existence of the object is obviously proven.
 	 * 
 	 * @param index index of the current ObjectIdentifier
 	 */

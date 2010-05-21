@@ -5,6 +5,8 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
 
@@ -14,8 +16,11 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.UpdateInDB;
+import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -26,6 +31,8 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 public class Repository extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
 	
+	private static final String PATH_MARKEDTODAY = "markedtoday";
+	private static final String PATH_HARVESTEDTODAY = "harvestedtoday";
 	/**
 	 * 
 	 */
@@ -126,6 +133,11 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 					res.addEntry ("harvest_amount", Integer.toString (this.result.getResultSet ( ).getInt ("harvest_amount")));
 					res.addEntry ("harvest_pause", Integer.toString (this.result.getResultSet ( ).getInt ("harvest_pause")));
 					
+					Date lastFullHarvestBegin = this.result.getResultSet ( ).getDate ("last_full_harvest_begin");
+					res.addEntry ("last_full_harvest_begin", lastFullHarvestBegin == null ? null : lastFullHarvestBegin.toString());
+					Date lastMarkerEraserBegin = this.result.getResultSet ( ).getDate ("last_markereraser_begin");
+					res.addEntry ("last_markereraser_begin", lastMarkerEraserBegin == null ? null : lastMarkerEraserBegin.toString());
+					
 					this.rms.setStatus (RestStatusEnum.OK);
 					this.rms.addEntrySet (res);
 					
@@ -211,9 +223,11 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
+		BigDecimal repositoryID;
+		
 		try {
 			
-			new BigDecimal (path [0]);
+			repositoryID = new BigDecimal (path [0]);
 			
 		} catch (NumberFormatException ex) {
 			
@@ -225,10 +239,69 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 			
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
-		//TODO: /harvestedtoday/ überprüfen, body muß leer sein.
-//		BigDecimal repository_id = new BigDecimal (0);
-//		Date harvested = HelperMethods.today ( );
-		//TODO: Connection, Update
+
+		// check for /harvestedtoday/ and /markedtoday/ request
+		if (path.length == 2 && (path[1].equals(PATH_HARVESTEDTODAY) || path[1].equals(PATH_MARKEDTODAY)))
+		{
+			if (data != null)
+			{
+				logger.info("POST-Request to Repository/" + path[0] + "/harvestedtoday/ or /markedtoday/ should not contain any data in body! Ignoring data: \n" + data );
+			}
+			
+			DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+			SingleStatementConnection stmtconn = null;
+			
+			try {
+				
+				stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
+				
+				if (path[1].equals(PATH_HARVESTEDTODAY)) {
+					
+					stmtconn.loadStatement (UpdateInDB.Repository(stmtconn.connection, repositoryID, HelperMethods.today(), "last_full_harvest_begin"));
+					
+				} else if (path[1].equals(PATH_MARKEDTODAY)) {
+					
+					stmtconn.loadStatement (UpdateInDB.Repository(stmtconn.connection, repositoryID, HelperMethods.today(), "last_markereraser_begin"));
+				}
+				
+				this.result = stmtconn.execute ( );
+						
+				if (this.result.getWarning ( ) != null)
+					for (Throwable warning : result.getWarning ( ))
+						logger.warn (warning.getLocalizedMessage ( ), warning);
+									
+			} catch (SQLException ex) {
+				
+				logger.error ("An error occured while processing Post Repository: " + ex.getLocalizedMessage ( ), ex);
+				this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+				this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+				
+			} catch (WrongStatementException ex) {
+
+				logger.error ("An error occured while processing Post Repository: " + ex.getLocalizedMessage ( ), ex);
+				this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+				this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+				
+			} finally {
+				
+				if (stmtconn != null) {
+					
+					try {
+						
+						stmtconn.close ( );
+						stmtconn = null;
+						
+					} catch (SQLException ex) {
+						
+						logger.error (ex.getLocalizedMessage ( ), ex);
+					}
+				}
+				
+				this.result = null;
+				dbng = null;
+			}
+		}
+		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 

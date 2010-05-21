@@ -119,6 +119,30 @@ public class SelectFromDB {
 
 	/**
 	 * 
+	 * Find the objects for a specified repository and object ids which are higher than the specified offset 
+	 * 
+	 * @param connection
+	 * @param repository_id
+	 * @param repository_datestamp
+	 * @param repository_identifier
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static PreparedStatement ObjectEntry (Connection connection,
+			BigDecimal repository_id, 
+			BigDecimal oid_offset) throws SQLException {
+		
+		// TODO: make batch size configurable
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT TOP 1000 * FROM dbo.Object o WHERE o.repository_id = ? AND o.object_id > ?");
+		preparedstmt.setBigDecimal (1, repository_id);
+		preparedstmt.setBigDecimal (2, oid_offset);
+		
+		return preparedstmt;
+	}
+	
+	
+	/**
+	 * 
 	 * Fetch all "object_id"-values of all objects
 	 * 
 	 * @param connection
@@ -231,7 +255,7 @@ public class SelectFromDB {
 	public static PreparedStatement Repository (Connection connection,
 			BigDecimal repositoryID) throws SQLException {
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT name, url, oai_url, test_data, harvest_amount, harvest_pause FROM dbo.Repositories WHERE (repository_id = ?)");
+		PreparedStatement preparedstmt = connection.prepareStatement ("SELECT name, url, oai_url, test_data, harvest_amount, harvest_pause, last_full_harvest_begin, last_markereraser_begin FROM dbo.Repositories WHERE (repository_id = ?)");
 		preparedstmt.setBigDecimal (1, repositoryID);
 		
 		return preparedstmt;

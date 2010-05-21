@@ -70,7 +70,7 @@ public class Aggregator {
 	private Properties props; // special aggregator settings like connecting
 								// server
 
-	private boolean testing = false; // if et to true, aggregator stores data, but no update to workflow is saved
+	private boolean testing = false; // if set to true, aggregator stores data, but no update to workflow is saved
 
 	private BigDecimal serviceID;
 	

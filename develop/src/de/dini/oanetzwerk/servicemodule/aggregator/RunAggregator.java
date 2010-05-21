@@ -55,16 +55,14 @@ public class RunAggregator {
 
 		options.addOption("h", false, "show help");
 
-		options
-				.addOption(OptionBuilder
+		options.addOption(OptionBuilder
 						.withLongOpt("itemId")
 						.withArgName("ID")
 						.withDescription(
 								"Id of the database object, that shall be extracted and converted")
 						.withValueSeparator().hasArg().create('i'));
 		
-		options
-		.addOption(OptionBuilder
+		options.addOption(OptionBuilder
 				.withLongOpt("timestamp")
 				.withArgName("time")
 				.withDescription(

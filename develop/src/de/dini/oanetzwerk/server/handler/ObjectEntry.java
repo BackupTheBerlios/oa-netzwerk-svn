@@ -281,6 +281,116 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 	@Override
 	protected String getKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
+		// case of /ObjectEntry/fromRepositoryID/<repositoryID>/oidOffset/<oid-offset> request
+		
+		if (path.length == 4) {
+		
+			if (!path[0].equals("fromRepositoryID") && !path[2].equals("oidOffset")) {
+				
+				return HelperMethods.getRestFailureMessage(RestKeyword.ObjectEntry, RestStatusEnum.WRONG_PARAMETER, 
+						"Invalid Request URL for resource /ObjectEntry ! Please check the REST-API for proper usage!");
+			}
+
+			BigDecimal repositoryID;
+			BigDecimal oidOffset;
+			
+			try {
+				
+				repositoryID = new BigDecimal (path [1]);
+				
+			} catch (NumberFormatException ex) {
+				
+				return HelperMethods.getRestFailureMessage(RestKeyword.ObjectEntry, RestStatusEnum.WRONG_PARAMETER, 
+						path [1] + " is NOT a number!");
+			}
+
+			try {
+				
+				oidOffset = new BigDecimal (path [3]);
+				
+			} catch (NumberFormatException ex) {
+				
+				return HelperMethods.getRestFailureMessage(RestKeyword.ObjectEntry, RestStatusEnum.WRONG_PARAMETER, 
+						path [3] + " is NOT a number!");
+			}
+
+			DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+			SingleStatementConnection stmtconn = null;
+			RestEntrySet res = new RestEntrySet ( );
+			
+			try {
+				
+				stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
+				
+				stmtconn.loadStatement (SelectFromDB.ObjectEntry (stmtconn.connection, repositoryID, oidOffset));
+				this.result = stmtconn.execute ( );
+				
+				if (this.result.getWarning ( ) != null) {
+					
+					for (Throwable warning : result.getWarning ( ))
+						logger.warn (warning.getLocalizedMessage ( ), warning);
+				}
+				
+				while (this.result.getResultSet ( ).next ( )) {
+					
+					if (logger.isDebugEnabled ( )) 
+						logger.debug ("DB returned: \n\tobject_id = " + this.result.getResultSet ( ).getBigDecimal (1));
+					
+					res = new RestEntrySet(); 
+					res.addEntry ("object_id", this.result.getResultSet ( ).getBigDecimal ("object_id").toPlainString ( ));
+					res.addEntry ("repository_id", this.result.getResultSet ( ).getBigDecimal ("repository_id").toPlainString ( ));
+					res.addEntry ("harvested", this.result.getResultSet ( ).getDate ("harvested").toString ( ));
+					res.addEntry ("repository_datestamp", this.result.getResultSet ( ).getDate ("repository_datestamp").toString ( ));
+					res.addEntry ("repository_identifier", this.result.getResultSet ( ).getString ("repository_identifier"));
+					res.addEntry ("testdata", Boolean.toString (this.result.getResultSet ( ).getBoolean ("testdata")));
+					res.addEntry ("failure_counter", Integer.toString (this.result.getResultSet ( ).getInt ("failure_counter")));
+					res.addEntry ("peculiar", Integer.toString (this.result.getResultSet ( ).getInt ("peculiar")));
+					res.addEntry ("outdated", Integer.toString (this.result.getResultSet ( ).getInt ("outdated")));
+					res.addEntry ("peculiar_counter", Integer.toString (this.result.getResultSet ( ).getInt ("peculiar_counter")));
+					this.rms.addEntrySet(res);
+				}
+				
+				this.rms.setStatus (RestStatusEnum.OK);
+				
+				
+			} catch (SQLException ex) {
+				
+				logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ), ex);
+				this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+				this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+				
+			} catch (WrongStatementException ex) {
+				
+				logger.error ("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage ( ), ex);
+				this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+				this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+				
+			} finally {
+				
+				if (stmtconn != null) {
+					
+					try {
+						
+						stmtconn.close ( );
+						stmtconn = null;
+						
+					} catch (SQLException ex) {
+						
+						ex.printStackTrace ( );
+						logger.error (ex.getLocalizedMessage ( ));
+					}
+				}
+				
+				res = null;
+				this.result = null;
+				dbng = null;
+			}
+					
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		// case of /ObjectEntry/<oid> request
+		
 		if (path.length < 1)
 			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 		
@@ -416,12 +526,13 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 		BigDecimal repository_id = new BigDecimal (0);
 		String repository_identifier = "";
 		Date repository_datestamp = null;
+		Date harvested = null;
 		boolean testdata = true;
 		int failureCounter = 0;
-		@SuppressWarnings("unused")
+		
 		boolean peculiar = false;
-		@SuppressWarnings("unused")
 		boolean outdated = false;
+		Integer peculiarCounter = 0;
 		
 		this.rms = RestXmlCodec.decodeRestMessage (data);
 		RestEntrySet res = this.rms.getListEntrySets ( ).get (0);
@@ -470,12 +581,26 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 						logger.debug ("repository_datestamp: " + repository_datestamp);
 					
 				} else repository_datestamp = null;
+			} else if (key.equalsIgnoreCase ("harvested")) {
 				
+				if (res.getValue (key) != null) {
+					
+					try {
+						
+						harvested = HelperMethods.extract_datestamp (res.getValue (key));
+						
+					} catch (ParseException ex) {
+						
+						logger.error (ex.getLocalizedMessage ( ), ex);
+					}
+									
+				} else harvested = null;
+			
 			} else if (key.equalsIgnoreCase ("testdata")) {
 				
 				testdata = new Boolean (res.getValue (key));
 				
-			} else if (key.equalsIgnoreCase ("failureCounter")) {
+			} else if (key.equalsIgnoreCase ("failure_counter")) {
 				
 				try {
 				
@@ -496,17 +621,25 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			} else if (key.equalsIgnoreCase ("outdated")) {
 				
 				outdated = new Boolean (res.getValue (key));				
+			
+			} else if (key.equalsIgnoreCase ("peculiar_counter")) {
 				
+				peculiarCounter = new Integer(res.getValue (key));				
+			
 			} else {
 				
 				logger.warn ("maybe I read a parameter which is not implemented! But I am continueing");
-				logger.debug (key + " found with value: " + res.getValue (key));
+				logger.info (key + " found with value: " + res.getValue (key));
 				
 				continue;
 			}
 		}
 
-		Date harvested = HelperMethods.today ( );
+		// if object is not marked as unavailable/peculiar, the request is an update, so we should update the harvested datestamp
+		if (peculiarCounter == 0)
+		{
+			harvested = HelperMethods.today ( );
+		}
 		
 		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));		
 		MultipleStatementConnection stmtconn = null;
@@ -521,7 +654,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("Updating ObjectEntry " + object_id + " in database");
 			
-			stmtconn.loadStatement (UpdateInDB.Object (stmtconn.connection, object_id, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			stmtconn.loadStatement (UpdateInDB.Object (stmtconn.connection, object_id, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter, peculiar, outdated, peculiarCounter));
 			this.result = stmtconn.execute ( );
 					
 			if (this.result.getWarning ( ) != null)

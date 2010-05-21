@@ -60,8 +60,8 @@ public class SearchBean implements Serializable {
 //    	myAppender.setFile("userfrontend.log");
 //    	myFrontEndLogger.addAppender(myAppender);
     	
-		this.props = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
-    	
+		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
+		
     	hitlist = new HitlistBean();
     	hitlist.setParentSearchBean(this);
     	
@@ -74,7 +74,8 @@ public class SearchBean implements Serializable {
     	setupRepositoryFilterByRID(strRepositoryFilterRID);
     	
     	// set connector to search server
-    	search_props = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/searchclientprop.xml");
+    	search_props = HelperMethods.loadPropertiesFromFileWithinWebcontainer ("webapps/findnbrowse/WEB-INF/searchclientprop.xml");
+    	//search_props = HelperMethods.loadPropertiesFromFile ("searchclientprop.xml");
     	mySearchClient = new SearchClient(search_props);
     }
     
