@@ -104,7 +104,6 @@ public class ResourceRealm extends RealmBase {
 		
 		try {
 			
-			System.out.println(pathname);
 			this.props.loadFromXML (new FileInputStream (configFile));
 			
 		} catch (InvalidPropertiesFormatException ex1) {

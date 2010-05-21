@@ -143,10 +143,11 @@ public class RestServer extends HttpServlet implements Serializable {
 		
 		String path [ ] = req.getPathInfo ( ).split ("/");
 		
+		logger.info ("REQUEST PATH: " + req.getPathInfo ( ));
+
 		if (logger.isDebugEnabled ( )) {
 			
 			logger.debug ("servlet: " + req.getContextPath ( ));
-			logger.debug ("PATH: " + req.getPathInfo ( ));
 			logger.debug ("PATH[0]: " + path [0]);
 			logger.debug ("PATH[1]: " + path [1]);
 		}
@@ -165,13 +166,13 @@ public class RestServer extends HttpServlet implements Serializable {
 			classname = "de.dini.oanetzwerk.server.handler." + path [1];
 			dataSource = "jdbc/oanetztest";
 			
-			logger.info ("classname: " + classname);
-			logger.info ("Data source: " + dataSource);
 		}
 		
-		if (logger.isDebugEnabled ( ))
+		if (logger.isDebugEnabled ( )) {
 			logger.debug ("Class to be loaded: " + classname);
-			
+			logger.debug ("Data source: " + dataSource);
+		}
+		
 		if(bReadOnlyMode && path[1].equals("LoginData")) {
 			return this.createErrorResponse (new Exception("ERROR: This REST server instance has been configured as READ ONLY. Ressource '"+path[1]+"' is disabled is this mode."), RestStatusEnum.ILLEGAL_ACCESS_ERROR);
 		}

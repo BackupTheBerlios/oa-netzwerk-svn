@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -39,27 +40,21 @@ public class MarkerAndEraser {
 	private static final int LIMIT_OUTDATED = 6;
 
 	/**
-	 * log4j-Logger
+	 * general log4j-Logger
 	 */
 
 	private static Logger logger = Logger.getLogger(MarkerAndEraser.class);
 
 	/**
-	 * 
+	 * log4j-Logger for marknerase processing status 
 	 */
 
 	private static Logger marknEraseStateLog = Logger
-			.getLogger("marknEraseStateLog");
+			.getLogger("MarknEraseState");
 
-	/**
-	 * 
-	 */
-
+	
 	private final BigDecimal repositoryID;
-
-	/**
-	 * 
-	 */
+	
 
 	private Date lastRepositoryHarvestDate;
 	
@@ -67,18 +62,8 @@ public class MarkerAndEraser {
 	private Date lastRepositoryMarkAndEraseDate;
 
 
-	
-//	private final int REQUEST_BATCH_SIZE = 1000;
-	
-	/**
-	 * 
-	 */
-
 	private Properties props = new Properties();
 
-	/**
-	 * 
-	 */
 
 	private String propertyfile = "markereraserprop.xml";
 
@@ -88,6 +73,9 @@ public class MarkerAndEraser {
 
 	public MarkerAndEraser(BigDecimal repositoryID) {
 
+		// setup log4j config-file
+		DOMConfigurator.configure("log4j.xml");
+		
 		this.repositoryID = repositoryID;
 
 		try {
@@ -125,9 +113,10 @@ public class MarkerAndEraser {
 		getRepositoryInfo();
 		
 		// check for data that has not been collected during the last full harvest
-		this.checkForPeculiarObjects();
+		checkForPeculiarObjects();
 		
-		//this.getData();
+		// update workflowDB entries
+		processWorkflowData();
 		
 		try {	
 			setMarkerEraserDateStampForRepository();
@@ -143,7 +132,7 @@ public class MarkerAndEraser {
 	 * entries with the according processing status
 	 */
 
-	private void getData() {
+	private void processWorkflowData() {
 
 		String ressource = "";
 
@@ -191,11 +180,11 @@ public class MarkerAndEraser {
 
 		while (it.hasNext()) { // next
 
-			if (i++ >= 1) {
-				// break;
-				System.out.println("break...");
-				break;
-			}
+//			if (i++ > 2) {
+//				// break;
+//				System.out.println("break...");
+//				break;
+//			}
 
 			key = it.next();
 
@@ -363,13 +352,13 @@ public class MarkerAndEraser {
 			key = it.next();
 			final String lastFullHarvestDate = key.getValue("last_full_harvest_begin");
 			final String lastMarkerEraserDate = key.getValue("last_markereraser_begin");
-						
+
 			try {
 				
-				this.lastRepositoryHarvestDate 		= (lastFullHarvestDate == null) ? null : new SimpleDateFormat("yyyy-mm-dd").parse(lastFullHarvestDate);
-				this.lastRepositoryMarkAndEraseDate 	= (lastMarkerEraserDate == null) ? null : new SimpleDateFormat("yyyy-mm-dd").parse(lastMarkerEraserDate);
+				this.lastRepositoryHarvestDate 		= (lastFullHarvestDate == null) ? null : new SimpleDateFormat("yyyy-MM-dd").parse(lastFullHarvestDate);
+				this.lastRepositoryMarkAndEraseDate = (lastMarkerEraserDate == null) ? null : new SimpleDateFormat("yyyy-MM-dd").parse(lastMarkerEraserDate);
 				
-				logger.info("last repository harvest date: " + this.lastRepositoryHarvestDate + "   last repository mark&erase date: " + lastMarkerEraserDate);
+				logger.info("last repository harvest date: " + this.lastRepositoryHarvestDate + "   last repository mark&erase date: " + this.lastRepositoryMarkAndEraseDate);
 			} catch (ParseException e) {
 				e.printStackTrace();
 				logger.warn("Latest Repository Harvest datestamp and/or latest repository mark&erase datestamp not properly set for repository with id " + this.repositoryID + "! Make sure to run Harvester/Marker&Eraser in advance!");
@@ -400,14 +389,12 @@ public class MarkerAndEraser {
 		
 		// check if there has been a full harvest cycle for the specified repository since the last mark&Erase run
 		// if not, skip mark&Erase procedure
-		if (this.lastRepositoryMarkAndEraseDate != null && this.lastRepositoryHarvestDate.before(lastRepositoryMarkAndEraseDate)) {
+		if (this.lastRepositoryMarkAndEraseDate != null && (this.lastRepositoryHarvestDate.before(lastRepositoryMarkAndEraseDate) || lastRepositoryHarvestDate.equals(lastRepositoryMarkAndEraseDate))) {
 			
-			logger.info("There has been no full harvest cycle for repository with id " + repositoryID + "! Skipping marker procedure for this repository!");
+			logger.info("There has not been a full harvest cycle for repository with id " + repositoryID + " since the last Marker&Eraser run! Skipping marker procedure for this repository!");
 			return;
 		}
-		
-		
-		System.out.println("checking2");		
+				
 		// send multiple requests to retrieve batches of ObjectEntries for the current repository
 		while (!lastBatch)
 		{
@@ -439,7 +426,7 @@ public class MarkerAndEraser {
 				
 				try {
 					
-					harvestedTimestamp = new SimpleDateFormat("yyyy-mm-dd").parse(res.getValue("harvested"));
+					harvestedTimestamp = new SimpleDateFormat("yyyy-MM-dd").parse(res.getValue("harvested"));
 				
 				} catch (ParseException e) {
 					
@@ -453,13 +440,9 @@ public class MarkerAndEraser {
 				
 				if (harvestedTimestamp.before(lastRepositoryHarvestDate)) {
 					
-					System.out.println("found object to mark");
 					// mark and increase peculiar counter
 					markAndIncreasePeculiarCounter(res);
 					
-					System.out.println(res.getValue("outdated"));
-					System.out.println(res.getValue("peculiar"));
-
 					// update object entry
 					RestMessage updateResponse = null;
 					BigDecimal objectId = null;
@@ -472,10 +455,6 @@ public class MarkerAndEraser {
 						RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), updateResource, this.props.getProperty ("username"), this.props.getProperty ("password"));
 						RestMessage updateRequest = new RestMessage(RestKeyword.ObjectEntry);
 						updateRequest.addEntrySet (res);
-						
-						System.out.println("counter " + res.getValue("peculiar_counter"));
-
-						logger.debug("object entry to send via POST: " + objectId);
 						updateResponse = restclient.sendPostRestMessage(updateRequest);
 						
 					} catch (UnsupportedEncodingException e) {
@@ -492,7 +471,7 @@ public class MarkerAndEraser {
 
 					} else {
 						
-						logger.info("success updating object entry with oid " + objectId);
+						marknEraseStateLog.info("Object with oid " + objectId + " has not been updated, successfully marked!");
 					}
 					
 					
@@ -504,7 +483,6 @@ public class MarkerAndEraser {
 
 			if (rms.getListEntrySets().size() < 1000) {
 				lastBatch = true;
-				System.out.println("lastBatch");
 			} 			
 		}
 		
@@ -608,10 +586,7 @@ public class MarkerAndEraser {
 					this.deleteTestData(oid);
 
 				else
-					logger
-							.info("OID "
-									+ oid
-									+ " ist marked as tested an will be deleted within the next two weeks!");
+					logger.info("OID " + oid + " ist marked as tested an will be deleted within the next two weeks!");
 
 			} catch (Exception ex) {
 
@@ -706,8 +681,8 @@ public class MarkerAndEraser {
 				
 			} else {
 				
-				logger.error ("Could NOT post Repositories FullHarvest-DateStamp into the database for repository No " + this.repositoryID + "! " + description);
-				// TODO: harvStateLog.error ("Could NOT post Repositories FullHarvest-DateStamp into the database for repository No " + this.getRepositoryID ( ) + "! Cause: " + description);
+				logger.error ("Could NOT post Repositories MarkAndErase-DateStamp into the database for repository No " + this.repositoryID + "! " + description);
+				marknEraseStateLog.error ("Could NOT post Repositories MarkAndErase-DateStamp into the database for repository No " + this.repositoryID + "! Cause: " + description);
 				
 				return;
 			}
