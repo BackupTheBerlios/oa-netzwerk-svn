@@ -8,21 +8,12 @@
 <html>
 <f:view>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<link rel="stylesheet" href="../css/teststyle.css" type="text/css"/>
+		<%@ include file="components/header.htm" %>
 		<title>Found</title>
 	</head>
 	<body>
-			<div id="div_general_links">
-			<h:form>
-				<h:commandLink value="#{index.linkname_start}" action="start"/>&nbsp;
-                <h:commandLink value="#{index.linkname_projekt}" action="projekt"/>&nbsp;
-                <h:commandLink value="#{index.linkname_impressum}" action="impressum"/>&nbsp;
-                <h:commandLink value="Teilnehmende Repositorien" action="repositories"/>&nbsp;
-                <h:outputLink value="http://oanetzwerk.wordpress.com" target="_blank">Blog</h:outputLink>&nbsp;
-                <h:outputLink value="http://oanetzwerk.wordpress.com/2009/07/03/worum-geht-es-eigentlich/" target="_blank">About</h:outputLink>&nbsp; 
-			</h:form>
-            </div>
+			<!-- include link navigation -->	         
+        	<%@ include file="components/mainnavigation.htm" %>
 	
 		<div id="div_flat_search">
 			<h:form>

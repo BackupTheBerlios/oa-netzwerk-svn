@@ -7,25 +7,20 @@
 <f:loadBundle basename="finddummy.index" var="index"/>
 
 <html>
+	
 	<f:view>
-	    <head>
-		   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		   <link rel="stylesheet" href="../css/teststyle.css" type="text/css"/>
-		   <title><h:outputText value="#{index.title}"/></title>
-  	    </head>
-		<body>
-			
-			<div id="div_general_links">
-			<h:form>
-				<h:commandLink value="#{index.linkname_start}" action="start"/>&nbsp;
-                <h:commandLink value="#{index.linkname_projekt}" action="projekt"/>&nbsp;
-                <h:commandLink value="#{index.linkname_impressum}" action="impressum"/>&nbsp; 
-                <h:commandLink value="Teilnehmende Repositorien" action="repositories"/>&nbsp;
-                <h:outputLink value="http://oanetzwerk.wordpress.com" target="_blank">Blog</h:outputLink>&nbsp;
-                <h:outputLink value="http://oanetzwerk.wordpress.com/2009/07/03/worum-geht-es-eigentlich/" target="_blank">About</h:outputLink>&nbsp;
-			</h:form>
-            </div>
-			
+	
+	<head>
+		<%@ include file="components/header.htm" %>
+		<title><h:outputText value="#{index.start_title}"/></title>
+	</head>
+	
+	<body>
+			         
+			<!-- include link navigation -->	         
+        	<%@ include file="components/mainnavigation.htm" %>
+    		         
+						
 			<div id="div_main_search">
 
    			    <h:form>
@@ -44,6 +39,8 @@
 				<div id="div_search_widgets">
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche"
 					         value="#{searchBean.strOneSlot}" />
+				<h:commandButton value="#{index.find_meta}"
+			                     action="#{searchBean.actionSearch2Button}" />
 			    <h:commandButton value="#{index.find}"
 			                     action="#{searchBean.actionSearchButton}" />
 				</div>
@@ -68,6 +65,6 @@
 
 			</div>
 
-		</body>
-	</f:view>
+		</f:view>
+	</body>
 </html>
