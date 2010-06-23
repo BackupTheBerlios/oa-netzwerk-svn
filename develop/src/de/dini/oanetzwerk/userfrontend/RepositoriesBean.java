@@ -85,6 +85,7 @@ public class RepositoriesBean implements Serializable {
 		for (RestEntrySet res : rms.getListEntrySets ( )) {
 			Iterator <String> it = res.getKeyIterator ( );
 			String key = "";
+
 			while (it.hasNext ( )) {
 				RepositoryConfig repoConfig = new RepositoryConfig();
 				key = it.next ( );
