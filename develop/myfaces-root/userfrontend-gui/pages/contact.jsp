@@ -21,13 +21,13 @@
 				<h4>Unter folgender E-Mail Adresse können Sie uns erreichen:</h4>
 				<p>E-Mail: oan(at)dini.de</p><br />
 				
-				<h4>Bei technischen Fragen wenden Sie sich bitte an:</h4>
+				<!--<h4>Bei technischen Fragen wenden Sie sich bitte an:</h4>
 				<p>
 				<b>Sammy David</b><br />
 				HU Berlin, Computer- und Medienservice (CMS)<br />
 				E-Mail: sammy.david(at)cms.hu-berlin.de<br />
  				Telefon: 030 2093 70041
-				</p>				
+				</p>-->				
 			</div>
 
 		</body>

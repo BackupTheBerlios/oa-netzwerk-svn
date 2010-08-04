@@ -24,7 +24,8 @@ public abstract class ConnectionToolkit {
 	 * @return
 	*/
 	
-	static final ConnectionToolkit getFactory (DataConnectionType connectionType) {
+	//TODO not public
+	public static final ConnectionToolkit getFactory (DataConnectionType connectionType) {
 		
 		switch (connectionType) {
 			case DB:

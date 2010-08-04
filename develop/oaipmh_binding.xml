@@ -1,0 +1,331 @@
+<binding xmlns:oai="http://www.openarchives.org/OAI/2.0/" name="oaipmh_binding" package="de.dini.oanetzwerk.oaipmh"
+	trim-whitespace="true">
+	
+	<format label="oai:verbType" type="de.dini.oanetzwerk.oaipmh.VerbType" enum-value-method="toString" />
+	<format label="oai:OAI-PMHerrorcodeType" type="de.dini.oanetzwerk.oaipmh.OAIPMHErrorcodeType" enum-value-method="toString" />
+	<format label="oai:statusType" type="de.dini.oanetzwerk.oaipmh.StatusType" enum-value-method="toString" />
+	<format label="oai:protocolVersionType" type="de.dini.oanetzwerk.oaipmh.ProtocolVersionType" enum-value-method="toString" />
+	<format label="oai:deletedRecordType" type="de.dini.oanetzwerk.oaipmh.DeletedRecordType" enum-value-method="toString" />
+	<format label="oai:granularityType" type="de.dini.oanetzwerk.oaipmh.GranularityType" enum-value-method="toString" />
+
+
+	<!-- ===================================================================== -->
+	<!-- ============                                         ================ -->
+	<!-- ============                 OAI PMH                 ================ -->
+	<!-- ============                                         ================ -->
+	<!-- ===================================================================== -->
+
+
+	<!-- ========================== OAIPMH-Type ============================== -->
+
+	<mapping abstract="true" type-name="oai:OAI-PMHtype" class="de.dini.oanetzwerk.oaipmh.OAIPMHtype">
+		
+		<namespace uri="http://www.openarchives.org/OAI/2.0/" default="elements" prefix="" />
+		<namespace uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi" />
+		
+		<value style="attribute" ns="http://www.w3.org/2001/XMLSchema-instance" name="schemaLocation" field="schemaLocation" />
+		<!-- mandatory -->
+		<value style="element" name="responseDate" get-method="getResponseDate" set-method="setResponseDate" />
+		<structure map-as="oai:requestType" get-method="getRequest" set-method="setRequest" name="request" />
+		<!-- optional -->
+		<structure ordered="false" choice="true">
+			<collection test-method="ifError" get-method="getErrors" set-method="setErrors" usage="optional"
+				create-type="java.util.ArrayList">
+				<structure map-as="oai:OAI-PMHerrorType" name="error" />
+			</collection>
+			<structure map-as="oai:IdentifyType" test-method="ifIdentify" get-method="getIdentify" set-method="setIdentify"
+				usage="optional" name="Identify" />
+			<structure map-as="oai:ListMetadataFormatsType" test-method="ifListMetadataFormats" get-method="getListMetadataFormats"
+				set-method="setListMetadataFormats" usage="optional" name="ListMetadataFormats" />
+			<structure map-as="oai:ListSetsType" test-method="ifListSets" get-method="getListSets" set-method="setListSets"
+				usage="optional" name="ListSets" />
+			<structure map-as="oai:GetRecordType" test-method="ifGetRecord" get-method="getGetRecord" set-method="setGetRecord"
+				usage="optional" name="GetRecord" />
+			<structure map-as="oai:ListIdentifiersType" test-method="ifListIdentifiers" get-method="getListIdentifiers"
+				set-method="setListIdentifiers" usage="optional" name="ListIdentifiers" />
+			<structure map-as="oai:ListRecordsType" test-method="ifListRecords" get-method="getListRecords"
+				set-method="setListRecords" usage="optional" name="ListRecords"/>
+			
+		</structure>
+	</mapping>
+
+	<mapping class="de.dini.oanetzwerk.oaipmh.OAIPMHtype" name="OAI-PMH">
+		<structure map-as="oai:OAI-PMHtype" />
+	</mapping>
+
+	<!-- ============================ Request Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:requestType" class="de.dini.oanetzwerk.oaipmh.RequestType">
+		<value style="text" get-method="getValue" set-method="setValue" />
+		<value style="attribute" name="verb" get-method="getVerb" set-method="setVerb" usage="optional" format="oai:verbType" />
+		<value style="attribute" name="identifier" get-method="getIdentifier" set-method="setIdentifier" usage="optional" />
+		<value style="attribute" name="metadataPrefix" get-method="getMetadataPrefix" set-method="setMetadataPrefix"
+			usage="optional" />
+		<value style="attribute" name="from" get-method="getFrom" set-method="setFrom" usage="optional" />
+		<value style="attribute" name="until" get-method="getUntil" set-method="setUntil" usage="optional" />
+		<value style="attribute" name="set" get-method="getSet" set-method="setSet" usage="optional" />
+		<value style="attribute" name="resumptionToken" get-method="getResumptionToken" set-method="setResumptionToken"
+			usage="optional" />
+	</mapping>
+
+
+	<!-- ============================ Error Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:OAI-PMHerrorType" class="de.dini.oanetzwerk.oaipmh.OAIPMHErrorType">
+		<value style="text" get-method="getValue" set-method="setValue" />
+		<value style="attribute" name="code" get-method="getCode" set-method="setCode" format="oai:OAI-PMHerrorcodeType" />
+	</mapping>
+
+
+	<!-- ============================ Identify Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:IdentifyType" class="de.dini.oanetzwerk.oaipmh.IdentifyType">
+		<value style="element" name="repositoryName" get-method="getRepositoryName" set-method="setRepositoryName" />
+		<value style="element" name="baseURL" get-method="getBaseURL" set-method="setBaseURL" />
+		<value style="element" name="protocolVersion" get-method="getProtocolVersion" set-method="setProtocolVersion"
+			format="oai:protocolVersionType" />
+		<collection get-method="getAdminEmails" set-method="setAdminEmails" create-type="java.util.ArrayList">
+			<value style="element" name="adminEmail" type="java.lang.String" />
+		</collection>
+		<value style="element" name="earliestDatestamp" get-method="getEarliestDatestamp" set-method="setEarliestDatestamp" />
+		<value style="element" name="deletedRecord" get-method="getDeletedRecord" set-method="setDeletedRecord"
+			format="oai:deletedRecordType" />
+		<value style="element" name="granularity" get-method="getGranularity" set-method="setGranularity" format="oai:granularityType" />
+		<collection get-method="getCompressions" set-method="setCompressions" create-type="java.util.ArrayList">
+			<value style="element" name="compression" type="java.lang.String" />
+		</collection>
+		<collection get-method="getDescriptions" set-method="setDescriptions" create-type="java.util.ArrayList">
+			<structure map-as="oai:descriptionType" name="description" />
+		</collection>
+	</mapping>
+
+
+	<!--   ============================ ListMetaDataFormats Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:ListMetadataFormatsType" class="de.dini.oanetzwerk.oaipmh.ListMetadataFormatsType">
+		<collection get-method="getMetadataFormats" set-method="setMetadataFormats" create-type="java.util.ArrayList">
+			<structure map-as="oai:metadataFormatType" name="metadataFormat" />
+		</collection>
+	</mapping>
+
+
+	<!--   ============================ ListSets Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:ListSetsType" class="de.dini.oanetzwerk.oaipmh.ListSetsType">
+		<collection get-method="getSets" set-method="setSets" create-type="java.util.ArrayList">
+			<structure map-as="oai:setType" name="set" />
+		</collection>
+		<structure map-as="oai:resumptionTokenType" get-method="getResumptionToken" set-method="setResumptionToken"
+			usage="optional" name="resumptionToken" />
+	</mapping>
+
+
+	<!--   ============================ GetRecord Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:GetRecordType" class="de.dini.oanetzwerk.oaipmh.GetRecordType">
+		<structure map-as="oai:recordType" get-method="getRecord" set-method="setRecord" name="record" />
+	</mapping>
+
+	<!--   ============================ ListRecords Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:ListRecordsType" class="de.dini.oanetzwerk.oaipmh.ListRecordsType">
+		<collection get-method="getRecords" set-method="setRecords" create-type="java.util.ArrayList">
+			<structure map-as="oai:recordType" name="record" />
+		</collection>
+		<structure map-as="oai:resumptionTokenType" get-method="getResumptionToken" set-method="setResumptionToken"
+			usage="optional" name="resumptionToken" />
+	</mapping>
+
+
+	<!--   ============================ ListIdentifiers Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:ListIdentifiersType" class="de.dini.oanetzwerk.oaipmh.ListIdentifiersType">
+		<collection get-method="getHeaders" set-method="setHeaders" create-type="java.util.ArrayList">
+			<structure map-as="oai:headerType" name="header" />
+		</collection>
+		<structure map-as="oai:resumptionTokenType" get-method="getResumptionToken" set-method="setResumptionToken"
+			usage="optional" name="resumptionToken" />
+	</mapping>
+
+
+	<!--   ============================ Record Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:recordType" class="de.dini.oanetzwerk.oaipmh.RecordType">
+		<structure map-as="oai:headerType" get-method="getHeader" set-method="setHeader" name="header" />
+		<structure map-as="oai:metadataType" get-method="getMetadata" set-method="setMetadata" usage="optional"
+			name="metadata" />
+		<collection get-method="getAbouts" set-method="setAbouts" create-type="java.util.ArrayList" usage="optional">
+			<structure map-as="oai:aboutType" name="about" />
+		</collection>
+	</mapping>
+
+
+	<!--     ============================ Header Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:headerType" class="de.dini.oanetzwerk.oaipmh.HeaderType">
+		<value style="element" name="identifier" get-method="getIdentifier" set-method="setIdentifier" />
+		<value style="element" name="datestamp" get-method="getDatestamp" set-method="setDatestamp" />
+		<collection get-method="getSetSpecs" set-method="setSetSpecs" create-type="java.util.ArrayList">
+			<value style="element" name="setSpec" type="java.lang.String" />
+		</collection>
+		<value style="attribute" name="status" get-method="getStatus" set-method="setStatus" usage="optional"
+			format="oai:statusType" />
+	</mapping>
+
+	<!--     ============================ Metadata Type ======================== -->
+
+
+	<mapping abstract="true" class="de.dini.oanetzwerk.oaipmh.AbstractMetadataType" />
+
+
+	<mapping abstract="true" type-name="oai:metadataType" class="de.dini.oanetzwerk.oaipmh.MetadataType">
+		<structure get-method="getAny" set-method="setAny" type="de.dini.oanetzwerk.oaipmh.AbstractMetadataType" />
+	</mapping>
+
+
+	<!--     ============================ About Type ======================== -->
+
+	<mapping name="about" class="de.dini.oanetzwerk.oaipmh.AbstractAboutType" />
+
+	<mapping abstract="true" type-name="oai:aboutType" class="de.dini.oanetzwerk.oaipmh.AboutType">
+		<structure get-method="getAny" set-method="setAny" type="de.dini.oanetzwerk.oaipmh.AbstractAboutType" />
+	</mapping>
+
+
+	<!--     ============================ ResumptionToken Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:resumptionTokenType" class="de.dini.oanetzwerk.oaipmh.ResumptionTokenType">
+		<value style="text" get-method="getValue" set-method="setValue" />
+		<value style="attribute" name="expirationDate" get-method="getExpirationDate" set-method="setExpirationDate"
+			usage="optional" />
+		<value style="attribute" name="completeListSize" get-method="getCompleteListSize" set-method="setCompleteListSize"
+			usage="optional" />
+		<value style="attribute" name="cursor" get-method="getCursor" set-method="setCursor" usage="optional" />
+	</mapping>
+
+
+	<!--     ============================ Description Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:descriptionType" class="de.dini.oanetzwerk.oaipmh.DescriptionType">
+		<!--    <value name="any" field="any" usage="optional" />-->
+		<!--    <structure map-as="oai-identifier:oai-identifierType"/>-->
+		<structure field="object" />
+	</mapping>
+
+
+
+
+	<!--    ============================ MetadataFormat Type ======================== -->
+
+
+	<mapping abstract="true" type-name="oai:metadataFormatType" class="de.dini.oanetzwerk.oaipmh.MetadataFormatType">
+		<value style="element" name="metadataPrefix" get-method="getMetadataPrefix" set-method="setMetadataPrefix" />
+		<value style="element" name="schema" get-method="getSchema" set-method="setSchema" />
+		<value style="element" name="metadataNamespace" get-method="getMetadataNamespace" set-method="setMetadataNamespace" />
+	</mapping>
+
+
+	<!--    ============================ Set Type ======================== -->
+
+	<mapping abstract="true" type-name="oai:setType" class="de.dini.oanetzwerk.oaipmh.SetType">
+		<value style="element" name="setSpec" get-method="getSetSpec" set-method="setSetSpec" />
+		<value style="element" name="setName" get-method="getSetName" set-method="setSetName" />
+		<collection get-method="getSetDescriptions" set-method="setSetDescriptions" create-type="java.util.ArrayList">
+			<structure map-as="oai:descriptionType" name="setDescription" />
+		</collection>
+	</mapping>
+
+	<!-- ===================================================================== -->
+	<!-- ============                                         ================ -->
+	<!-- ============             OAI Identifier              ================ -->
+	<!-- ============                                         ================ -->
+	<!-- ===================================================================== -->
+
+	<mapping class="de.dini.oanetzwerk.oaipmh.oaiidentifier.OaiIdentifierType" name="oai-identifier">
+		<namespace uri="http://www.openarchives.org/OAI/2.0/oai-identifier" default="none" prefix="" />
+		<namespace uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi" />
+		<value style="attribute" ns="http://www.w3.org/2001/XMLSchema-instance" name="schemaLocation" field="schemaLocation" />
+		<structure map-as="oai-identifierType" />
+	</mapping>
+
+	<mapping abstract="true" type-name="oai-identifierType" class="de.dini.oanetzwerk.oaipmh.oaiidentifier.OaiIdentifierType">
+		<value style="element" name="scheme" get-method="getScheme" set-method="setScheme" />
+		<value style="element" name="repositoryIdentifier" get-method="getRepositoryIdentifier" set-method="setRepositoryIdentifier" />
+		<value style="element" name="delimiter" get-method="getDelimiter" set-method="setDelimiter" />
+		<value style="element" name="sampleIdentifier" get-method="getSampleIdentifier" set-method="setSampleIdentifier" />
+	</mapping>
+
+
+	<!-- ===================================================================== -->
+	<!-- ============                                         ================ -->
+	<!-- ============                 OAI DC                  ================ -->
+	<!-- ============                                         ================ -->
+	<!-- ===================================================================== -->
+
+	<mapping name="dc" class="de.dini.oanetzwerk.oaipmh.oaidc.OAIDCType" extends="de.dini.oanetzwerk.oaipmh.AbstractMetadataType">
+		<namespace uri="http://www.openarchives.org/OAI/2.0/oai_dc" default="elements" prefix="oai_dc" />
+		<namespace uri="http://purl.org/dc/elements/1.1/" default="attributes" prefix="dc" />
+		<namespace uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi" />
+		<value style="attribute" ns="http://www.w3.org/2001/XMLSchema-instance" name="schemaLocation" field="schemaLocation" />
+		<structure map-as="oai_dcType" />
+	</mapping>
+	
+	
+	<!-- abstract="true" type-name="oai_dcType"  -->
+	<mapping abstract="true" type-name="oai_dcType" class="de.dini.oanetzwerk.oaipmh.oaidc.OAIDCType" extends="de.dini.oanetzwerk.oaipmh.AbstractMetadataType">
+	
+		<namespace uri="http://www.openarchives.org/OAI/2.0/oai_dc" default="none" prefix="oai_dc" />
+		<namespace uri="http://purl.org/dc/elements/1.1/" default="elements" prefix="dc" />
+
+		<collection field="title" type="java.util.ArrayList" usage="optional">
+			<value name="title" type="java.lang.String" usage="optional" />
+		</collection>
+		<collection field="namespace" type="java.util.ArrayList" usage="optional">
+			<value name="namespace" type="java.lang.String" />
+		</collection>
+		<collection field="date" type="java.util.ArrayList" usage="optional">
+			<value name="date" type="java.lang.String" />
+		</collection>
+		<collection field="language" type="java.util.ArrayList" usage="optional">
+			<value name="language" type="java.lang.String" />
+		</collection>
+		<collection field="relation" type="java.util.ArrayList" usage="optional">
+			<value name="relation" type="java.lang.String" />
+		</collection>
+		<collection field="rights" type="java.util.ArrayList" usage="optional">
+			<value name="rights" type="java.lang.String" />
+		</collection>
+		<collection field="coverage" type="java.util.ArrayList" usage="optional">
+			<value name="coverage" type="java.lang.String" />
+		</collection>
+		<collection field="contributor" type="java.util.ArrayList" usage="optional">
+			<value name="contributor" type="java.lang.String" />
+		</collection>
+		<collection field="subject" type="java.util.ArrayList" usage="optional">
+			<value name="subject" type="java.lang.String" />
+		</collection>
+		<collection field="creator" type="java.util.ArrayList" usage="optional">
+			<value name="creator" type="java.lang.String" />
+		</collection>
+		<collection field="type" type="java.util.ArrayList" usage="optional">
+			<value name="type" type="java.lang.String" />
+		</collection>
+		<collection field="format" type="java.util.ArrayList" usage="optional">
+			<value name="format" type="java.lang.String" />
+		</collection>
+		<collection field="publisher" type="java.util.ArrayList" usage="optional">
+			<value name="publisher" type="java.lang.String" />
+		</collection>
+		<collection field="source" type="java.util.ArrayList" usage="optional">
+			<value name="source" type="java.lang.String" />
+		</collection>
+		<collection field="description" type="java.util.ArrayList" usage="optional">
+			<value name="description" type="java.lang.String" />
+		</collection>
+		<collection field="identifier" type="java.util.ArrayList" usage="optional">
+			<value name="identifier" type="java.lang.String" />
+		</collection>
+	</mapping>
+
+
+</binding>

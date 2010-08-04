@@ -181,7 +181,7 @@ public class Harvester {
 	 */
 	
 	public boolean prepareHarvester (int id) {
-		
+				
 		Harvester.harvester.repositoryID = id;
 		
 		try {
@@ -208,7 +208,7 @@ public class Harvester {
 			System.exit (1);
 		}
 		
-		harvStateLog.info ("Harvesting for Repository No " + id + "prepared");
+		harvStateLog.info ("Harvesting for Repository No " + id + " prepared!");
 		
 		return true;
 	}
@@ -574,6 +574,7 @@ public class Harvester {
 					if (logger.isDebugEnabled ( ))
 						logger.debug ("processing extracted Records");
 					
+					harvStateLog.info("initiating set datestamp");
 					this.processRecords ( );
 					
 					if (resumptionToken != null) {
@@ -1544,6 +1545,7 @@ public class Harvester {
 	
 	protected void processRecords ( ) throws UnsupportedEncodingException {
 		
+		harvStateLog.info("processing records....");
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("processRecords");
 		
@@ -1560,7 +1562,10 @@ public class Harvester {
 			logger.debug ("now we process " + this.ids.size ( ) + " Records");
 		
 		if (this.isFullharvest ( ))
+		{
+			harvStateLog.info("set full harvestdatestamp");
 			this.setFullHarvestDateStamp ( );
+		}
 		
 		for (int objectcounter = 0; objectcounter < this.ids.size ( ); objectcounter++) {
 			
@@ -1608,7 +1613,11 @@ public class Harvester {
 	
 	private void setFullHarvestDateStamp ( ) throws UnsupportedEncodingException {
 		
-		String postRepositories = prepareRestTransmission ("Repository/" + this.getRepositoryID ( ) + "/harvestedtoday/").PostData ("");
+//		String postRepositories = prepareRestTransmission ("Repository/" + this.getRepositoryID ( ) + "/harvestedtoday/").PostData ("");
+		String resource = "Repository/" + this.repositoryID + "/harvestedtoday/";
+		
+		String postRepositories = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"))
+		.PostData("");
 		
 		RestMessage postRepositoriesmsg = RestXmlCodec.decodeRestMessage (postRepositories);
 		
@@ -1631,11 +1640,16 @@ public class Harvester {
 				
 			} else {
 				
-				logger.error ("Could NOT post Repositories FullHarvest-DateStamp into the database for repository No " + this.getRepositoryID ( ) + "! " + description);
-				harvStateLog.error ("Could NOT post Repositories FullHarvest-DateStamp into the database for repository No " + this.getRepositoryID ( ) + "! Cause: " + description);
+				logger.error ("Could NOT post Repositories FullHarvest-DateStamp into the database for repository No " + this.getRepositoryID ( ) + "! " + description + " \n" + postRepositories);
+				harvStateLog.error ("Could NOT post Repositories FullHarvest-DateStamp into the database for repository No " + this.getRepositoryID ( ) + "! Cause: " + description + " \n" + postRepositories);
 				
 				return;
 			}
+		}
+		else
+		{
+			if (logger.isDebugEnabled ( ))
+				logger.debug ("Datestamp for last full harvest of repository with id " + this.repositoryID + " successfully set!");
 		}
 	}
 

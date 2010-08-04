@@ -190,5 +190,94 @@ public class SearchClient {
 		
 		return listResultOIDs;
 	}
+    
+
+    public List<BigDecimal> querySearchService2(String strQuery, String strDDC) throws SearchClientException
+    {
+      byte[] baResponseBody = null;
+      List<BigDecimal> listResultOIDs = new ArrayList<BigDecimal>();
+
+      if (this.myHttpClient == null) this.myHttpClient = getHttpClient();
+
+      String strCompleteURL = "http://134.106.31.87/search/cgi-bin/metasearch.cgi?search=";
+      try {
+        if (strQuery == null) strQuery = "";
+        strCompleteURL = strCompleteURL + URLEncoder.encode(strQuery, "UTF-8");
+        logger.debug("strQuery = '" + strQuery + "'");
+        if ((strDDC != null) && (strDDC.length() > 0)) {
+          strCompleteURL = strCompleteURL + "&ddc=" + URLEncoder.encode(strDDC, "UTF-8");
+          logger.debug("strDDC = '" + strDDC + "'");
+        }
+        logger.debug("complete URL = " + strCompleteURL);
+      } catch (Exception ex) {
+        logger.error("couldn't encode given query string '" + strQuery + "' : " + ex);
+
+        throw new SearchClientException("Couldn't encode given query string.");
+      }
+      GetMethod method = new GetMethod(strCompleteURL);
+      method.setDoAuthentication(true);
+      try
+      {
+        int statusCode = this.myHttpClient.executeMethod(method);
+
+        if (statusCode != 200)
+        {
+          if (statusCode == 401) {
+            logger.info("HttpStatusCode: " + statusCode);
+            logger.error(method.getStatusText());
+            logger.error("Wrong username and/or password");
+            throw new SearchClientException("Wrong username and/or password while querying search service.");
+          }
+          logger.info("HttpStatusCode: " + statusCode);
+          logger.error("A http-error occured while processing the IDs from server " + this.strSearchServiceBaseURL);
+          logger.error(method.getStatusText());
+          throw new SearchClientException("A http-error occured while querying search service.");
+        }
+
+        baResponseBody = method.getResponseBody();
+
+        if (baResponseBody == null) { List<BigDecimal> localList1 = listResultOIDs;
+          return localList1; }
+
+      }
+      catch (ConnectException ex)
+      {
+      }
+      catch (IOException ex)
+      {
+      }
+      finally
+      {
+        if (method != null) method.releaseConnection();
+        if (logger.isDebugEnabled()) logger.debug("Connection closed");
+
+      }
+
+      try
+      {
+        String strSearchResult = new String(baResponseBody, "UTF-8");
+        String[] lines = strSearchResult.split("\n");
+
+        for (String line : lines) {
+          String[] items = line.split(";");
+          String strOID = items[0];
+          logger.info("splitted result line : " + Arrays.asList(items));
+          try {
+            BigDecimal bdOID = new BigDecimal(strOID);
+            listResultOIDs.add(bdOID);
+          } catch (Exception ex) {
+            logger.warn("skipped oid '" + strOID + "' from search result : " + ex.getLocalizedMessage(), ex);
+          }
+        }
+      }
+      catch (UnsupportedEncodingException ueex)
+      {
+        logger.error("error decoding response body : " + ueex.getLocalizedMessage(), ueex);
+
+        throw new SearchClientException("An error decoding response body occured while querying search service.");
+      }
+
+      return listResultOIDs;
+    }
 	
 }

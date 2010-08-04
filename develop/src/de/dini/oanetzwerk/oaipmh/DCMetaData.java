@@ -44,6 +44,12 @@ public class DCMetaData implements Serializable {
 	 * 
 	 */
 	
+	private LinkedList <String> publisher;
+	
+	/**
+	 * 
+	 */
+	
 	private LinkedList <String> date;
 	
 	/**
@@ -116,6 +122,18 @@ public class DCMetaData implements Serializable {
 			this.description = new LinkedList <String> ( );
 		
 		return this.description;
+	}
+	
+	/**
+	 * @return the publisher
+	 */
+	
+	public final LinkedList <String> getPublisher( ) {
+		
+		if (this.publisher == null)
+			this.publisher = new LinkedList <String> ( );
+		
+		return this.publisher;
 	}
 	
 	/**

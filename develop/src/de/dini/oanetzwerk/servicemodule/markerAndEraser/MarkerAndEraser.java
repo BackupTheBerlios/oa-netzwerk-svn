@@ -150,7 +150,7 @@ public class MarkerAndEraser {
 			ex.printStackTrace();
 		}
 
-		ressource = "WorkflowDB/" + serviceId;
+		ressource = "WorkflowDB/" + serviceId + "/forRepository/" + this.repositoryID;
 
 		RestMessage rms = HelperMethods.prepareRestTransmission(ressource,
 				this.getProps()).sendGetRestMessage();
@@ -176,15 +176,7 @@ public class MarkerAndEraser {
 
 		BigDecimal oid;
 
-		int i = 0;
-
 		while (it.hasNext()) { // next
-
-//			if (i++ > 2) {
-//				// break;
-//				System.out.println("break...");
-//				break;
-//			}
 
 			key = it.next();
 
@@ -264,12 +256,12 @@ public class MarkerAndEraser {
 
 		try {
 
-			if (logger.isDebugEnabled())
-				logger.debug("BEFORE PUT WorkflowDB/" + oid);
+			long start = System.currentTimeMillis();
+
 			result = HelperMethods.prepareRestTransmission("WorkflowDB/",
 					this.getProps()).sendPutRestMessage(rms);
-			if (logger.isDebugEnabled())
-				logger.debug("AFTER PUT WorkflowDB/" + oid);
+			
+			logger.info("PUT sent to /WorkflowDB for object " + oid + " in " + Long.toString(System.currentTimeMillis() - start));
 
 			// result = restclient.PutData (requestxml);
 
@@ -437,6 +429,7 @@ public class MarkerAndEraser {
 				if(logger.isDebugEnabled()) {
 					logger.debug("Comparing datestamps " + harvestedTimestamp + " and " + lastRepositoryHarvestDate + "for object with id " + res.getValue("object_id"));
 				}
+
 				
 				if (harvestedTimestamp.before(lastRepositoryHarvestDate)) {
 					

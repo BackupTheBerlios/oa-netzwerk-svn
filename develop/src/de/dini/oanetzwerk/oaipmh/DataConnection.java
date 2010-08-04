@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.oaipmh;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -118,7 +119,7 @@ public abstract class DataConnection {
 	 * @return
 	 */
 	
-	abstract public LinkedList <Record> getIdentifierList (String from, String until, String set);
+	abstract public LinkedList <Record> getIdentifierList (String from, String until, String set, BigInteger idOffset, int resultCount);
 
 	/**
 	 * @param from
@@ -127,5 +128,5 @@ public abstract class DataConnection {
 	 * @return
 	 */
 	
-	abstract public LinkedList <Record> getRecordList (String from, String until, String set);
+	abstract public LinkedList <Record> getRecordList (String from, String until, String set, BigInteger idOffset, int resultCount);
 }

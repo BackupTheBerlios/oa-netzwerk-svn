@@ -428,7 +428,7 @@ public class RSSFeedServlet extends HttpServlet {
 			  dupPro.setNumber(num);
 			  dupPro.setReferToOID(new BigDecimal(dupproResult.getResultSet().getString("duplicate_id")));
 			  dupPro.setProbability(dupproResult.getResultSet().getDouble("percentage"));				  
-			  dupPro.setReverseProbability(dupproResult.getResultSet().getDouble("reversePercentage")); 				  
+			  dupPro.setReverseProbability(dupproResult.getResultSet().getDouble("reverse_percentage")); 				  
 			  cmf.addDuplicateProbability(dupPro);				
 			  num++;
 			} catch(Exception ex) {

@@ -286,6 +286,9 @@ public class RestServer extends HttpServlet implements Serializable {
 	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
+		System.out.println("get request received!");
+		logger.info("get request received!");
+		
 		this.response = res;
 		this.setOANResponseHeader ( );
 		

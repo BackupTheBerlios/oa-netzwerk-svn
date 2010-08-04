@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.oaipmh;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -165,7 +166,7 @@ public class RestDataConnection extends DataConnection {
 	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getIdentifierList(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public LinkedList <Record> getIdentifierList (String from, String until, String set) {
+	public LinkedList <Record> getIdentifierList (String from, String until, String set, BigInteger idOffset, int resultCount) {
 
 		// TODO Auto-generated method stub
 		return null;
@@ -175,7 +176,7 @@ public class RestDataConnection extends DataConnection {
 	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getRecordList(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public LinkedList <Record> getRecordList (String from, String until, String set) {
+	public LinkedList <Record> getRecordList (String from, String until, String set, BigInteger idOffset, int resultCount) {
 
 		// TODO Auto-generated method stub
 		return null;

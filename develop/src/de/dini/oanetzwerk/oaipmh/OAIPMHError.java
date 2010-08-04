@@ -1,66 +1,52 @@
 package de.dini.oanetzwerk.oaipmh;
 
+import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.GregorianCalendar;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import org.jibx.runtime.BindingDirectory;
+import org.jibx.runtime.IBindingFactory;
+import org.jibx.runtime.IMarshallingContext;
+import org.jibx.runtime.JiBXException;
 
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
-
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHObjectFactory;
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHtype;
-import de.dini.oanetzwerk.oaipmh.oaipmh.RequestType;
-
-/**
- * @author Michael K&uuml;hn
- *
- */
 
 public class OAIPMHError {
+
+	private OAIPMHErrorcodeType error;
+	private String message;
+
 	
-	OAIPMHerrorcodeType error;
-	
-	/**
-	 * @param bad_argument
-	 */
-	
-	public OAIPMHError (OAIPMHerrorcodeType error) {
+	public OAIPMHError (OAIPMHErrorcodeType error) {
 		
 		this.error = error;
 	}
 	
-	/**
-	 * @see java.lang.Object#toString()
-	 */
-	
-	@Override
+	public OAIPMHError (OAIPMHErrorcodeType error, String message) {
+		
+		this.error = error;
+		this.message = message;
+	}
+    
+    
+    @Override
 	public String toString ( ) {
 		
-		Writer w = new StringWriter ( );
-		
+    	Writer writer = new StringWriter();
+    	
 		try {
+			IBindingFactory oaipmhFactory = BindingDirectory.getFactory(OAIPMHtype.class);
+            IMarshallingContext mctx = oaipmhFactory.createMarshallingContext();
+            mctx.setIndent(2);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            mctx.setOutput(bos, "UTF-8");
+            mctx.marshalDocument(createErrorMsg(), "UTF-8", false, writer);
+            
+			return writer.toString();
+		} catch (JiBXException e) {
 			
-			JAXBContext context = JAXBContext.newInstance (OAIPMHtype.class);
-			Marshaller m = context.createMarshaller ( );
-			m.setProperty (Marshaller.JAXB_ENCODING, "UTF-8");
-			m.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.setProperty (Marshaller.JAXB_SCHEMA_LOCATION, "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd");
-			this.createErrorMsg ( );
-			m.marshal (this.createErrorMsg ( ), w);
-			
-		} catch (JAXBException ex) {
-			
-			ex.printStackTrace();
+			System.err.println(e.getLocalizedMessage ( ) +  e);
 		}
-		
-		
-		return w.toString ( );
+		return null;
 	}
 
 	/**
@@ -68,46 +54,46 @@ public class OAIPMHError {
 	 * 
 	 */
 	
-	private JAXBElement <OAIPMHtype> createErrorMsg ( ) {
+	private OAIPMHtype createErrorMsg ( ) {
 		
-		OAIPMHObjectFactory obfac = new OAIPMHObjectFactory ( );
-		
-		OAIPMHerrorType oaiError = obfac.createOAIPMHerrorType ( );
+		OAIPMHErrorType oaiError = new OAIPMHErrorType();
 		
 		switch (this.error) {
 			case BAD_ARGUMENT:
-				oaiError.setCode (OAIPMHerrorcodeType.BAD_ARGUMENT);
+				oaiError.setCode (OAIPMHErrorcodeType.BAD_ARGUMENT);
 				oaiError.setValue ("Sorry! One argument in the request is not valid.");
 				break;
 			
 			case BAD_VERB:
-				oaiError.setCode (OAIPMHerrorcodeType.BAD_VERB);
+				oaiError.setCode (OAIPMHErrorcodeType.BAD_VERB);
 				oaiError.setValue ("Sorry! The requested verb is illegal.");
 				break;
 			
 			case BAD_RESUMPTION_TOKEN:
-				oaiError.setCode (OAIPMHerrorcodeType.BAD_RESUMPTION_TOKEN);
+				oaiError.setCode (OAIPMHErrorcodeType.BAD_RESUMPTION_TOKEN);
 				oaiError.setValue ("Sorry! The requested resumptionToken does not exist or has already expired.");
 				break;
 			
 			case CANNOT_DISSEMINATE_FORMAT:
-				oaiError.setCode (OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT);
+				oaiError.setCode (OAIPMHErrorcodeType.CANNOT_DISSEMINATE_FORMAT);
 				break;
 			
 			case ID_DOES_NOT_EXIST:
-				oaiError.setCode (OAIPMHerrorcodeType.ID_DOES_NOT_EXIST);
+				oaiError.setCode (OAIPMHErrorcodeType.ID_DOES_NOT_EXIST);
+				oaiError.setValue ("Sorry! The requested identifier does not exist.");
 				break;
 			
 			case NO_METADATA_FORMATS:
-				oaiError.setCode (OAIPMHerrorcodeType.NO_METADATA_FORMATS);
+				oaiError.setCode (OAIPMHErrorcodeType.NO_METADATA_FORMATS);
 				break;
 			
 			case NO_RECORDS_MATCH:
-				oaiError.setCode (OAIPMHerrorcodeType.NO_RECORDS_MATCH);
+				oaiError.setCode (OAIPMHErrorcodeType.NO_RECORDS_MATCH);
+				oaiError.setValue ("Sorry! No records matching the request.");
 				break;
 			
 			case NO_SET_HIERARCHY:
-				oaiError.setCode (OAIPMHerrorcodeType.NO_SET_HIERARCHY);
+				oaiError.setCode (OAIPMHErrorcodeType.NO_SET_HIERARCHY);
 				break;
 			
 			default:
@@ -115,13 +101,16 @@ public class OAIPMHError {
 				break;
 		}
 		
-		OAIPMHtype oaipmhMsg = obfac.createOAIPMHtype ( );
-		oaipmhMsg.setResponseDate (new XMLGregorianCalendarImpl (new GregorianCalendar ( )));
-		RequestType reqType = obfac.createRequestType ( );
-		reqType.setValue ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
-		oaipmhMsg.setRequest (reqType);
-		oaipmhMsg.getError ( ).add (oaiError);
+		// overwrite default error message if there has been one explicitly defined 
+		if (message != null)
+		{
+			oaiError.setValue(message);
+		}
 		
-		return obfac.createOAIPMH (oaipmhMsg);
+		RequestType reqType = new RequestType();
+		OAIPMHtype oaipmhMsg = new OAIPMHtype(reqType);
+		oaipmhMsg.getErrors().add (oaiError);
+		
+		return oaipmhMsg;
 	}
 }

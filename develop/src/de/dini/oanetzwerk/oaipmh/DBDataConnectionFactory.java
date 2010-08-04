@@ -11,11 +11,16 @@ class DBDataConnectionFactory extends ConnectionToolkit {
 	 * @see de.dini.oanetzwerk.oaipmh.ConnectionToolkit#createDataConnection()
 	 */
 	
+	private DBDataConnection dataConnection = null;
+	
 	@Override
 	public DataConnection createDataConnection ( ) {
 		
-		DBDataConnection dataConnection = new DBDataConnection ( ); 
+		if (this.dataConnection == null) {
+			
+			dataConnection = new DBDataConnection();
+		}
 		
-		return dataConnection;
+		return this.dataConnection;
 	}
 }

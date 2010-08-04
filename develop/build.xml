@@ -1,35 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="OA-Netzwerk" default="warServer">
 
-  <property environment="env"/>
-  <property name="src" value="./src" />
-  <property name="ress" value="resources" />
-  <property name="build" value="build" />
-  <property name="build.server" value="build/server" />
-  <property name="build.server_readonly" value="build/server_readonly" />
-  <property name="build.harvester" value="build/harvester" />
-  <property name="build.oidgetter" value="build/oidgetter" />
-  <property name="build.openrestclient" value="build/openrestclient" />
-  <property name="dist.openrestclient" value="dist_OpenRestClient" />
-  <property name="build.inspector" value="build/inspector" />
-  <property name="build.aggregator" value="build/aggregator" />
-  <property name="build.markereraser" value="build/markereraser" />
-  <property name="build.adminservlet" value="build/adminservlet" />
-  <property name="build.findnbrowse" value="build/findnbrowse" />
-  <property name="build.oadminrealm" value="build/oadminrealm" />
-  <property name="build.resourcerealm" value="build/resourcerealm" />
-  <property name="build.oaipmh" value="build/oaipmh" />
-  <property name="build.rssfeed" value="build/rssfeed" />
-  <property name="build.bibexport" value="build/bibexport" />
-  <property name="build.indexeraccess" value="build/indexeraccess" />
-  <property name="lib" value="lib" />
-  <property name="archive" value="arch" />
-  <property name="path" value="/restserver" />
-  <property name="url" value="http://oanet.cms.hu-berlin.de/manager" />
-  <property name="username" value="" />
-  <property name="password" value="" />
+	<property environment="env"/>
+	<property name="src" value="./src" />
+	<property name="ress" value="resources" />
+	<property name="build" value="build" />
+	<property name="build.server" value="build/server" />
+	<property name="build.server_readonly" value="build/server_readonly" />
+	<property name="build.harvester" value="build/harvester" />
+	<property name="build.oidgetter" value="build/oidgetter" />
+	<property name="build.openrestclient" value="build/openrestclient" />
+	<property name="dist.openrestclient" value="dist_OpenRestClient" />
+	<property name="build.inspector" value="build/inspector" />
+	<property name="build.aggregator" value="build/aggregator" />
+	<property name="build.markereraser" value="build/markereraser" />
+	<property name="build.adminservlet" value="build/adminservlet" />
+	<property name="build.findnbrowse" value="build/findnbrowse" />
+	<property name="build.oadminrealm" value="build/oadminrealm" />
+	<property name="build.resourcerealm" value="build/resourcerealm" />
+	<property name="build.oaipmh" value="build/oaipmh" />
+	<property name="build.rssfeed" value="build/rssfeed" />
+	<property name="build.bibexport" value="build/bibexport" />
+	<property name="build.indexeraccess" value="build/indexeraccess" />
+	<property name="dist" value="dist" />
+	<property name="lib" value="lib" />
+	<property name="archive" value="arch" />
+	<property name="path" value="/restserver" />
+	<property name="url" value="http://oanet.cms.hu-berlin.de/manager" />
+	<property name="username" value="" />
+	<property name="password" value="" />
+
 	
-<!--
+	<!-- ==================================================================== -->
+	<!-- Task Defintions                                                      -->
+	<!-- ==================================================================== -->
+
+	<!-- Define Jibx Binding Task -->
+	<taskdef name="bind" classname="org.jibx.binding.ant.CompileTask" classpathref="classpath.oaipmh" />
+
+
+	
+	<!--
 
   <taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" />
   <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask" />
@@ -38,821 +49,859 @@
   <taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask" />
   
  -->
+	
 
-  <path id="classpath.server">
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-    <pathelement location="${lib}/jconn3.jar" />
-    <pathelement location="${lib}/commons-codec-1.3.jar" />
-    <pathelement location="${lib}/jdom.jar" />
-    <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-    <pathelement location="${lib}/servlet-api.jar" />
-    <pathelement location="${lib}/commons-lang-2.3.jar" />
-    <pathelement location="${lib}/commons-cli-1.1.jar" />
-  </path>
-	
-  <path id="classpath.server_readonly">
-	<pathelement location="${lib}/log4j-1.2.15.jar" />
-	<pathelement location="${lib}/jconn3.jar" />
-	<pathelement location="${lib}/commons-codec-1.3.jar" />
-	<pathelement location="${lib}/jdom.jar" />
-	<pathelement location="${lib}/commons-httpclient-3.1.jar" />
-	<pathelement location="${lib}/servlet-api.jar" />
-	<pathelement location="${lib}/commons-lang-2.3.jar" />
-	<pathelement location="${lib}/commons-cli-1.1.jar" />
-  </path>
-	  
-  <path id="classpath.harvester">
-    <pathelement location="${lib}/commons-cli-1.1.jar" />
-    <pathelement location="${lib}/commons-codec-1.3.jar" />
-    <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-    <pathelement location="${lib}/commons-logging-1.1.jar" />
-    <pathelement location="${lib}/jdom.jar" />
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-  </path>
-  
-  <path id="classpath.oidgetter">
-    <pathelement location="${lib}/commons-cli-1.1.jar" />
-    <pathelement location="${lib}/commons-codec-1.3.jar" />
-    <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-    <pathelement location="${lib}/commons-logging-1.1.jar" />
-    <pathelement location="${lib}/jdom.jar" />
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-  </path>
-	
-  <path id="classpath.openrestclient">
-	<pathelement location="${lib}/commons-cli-1.1.jar" />
-	<pathelement location="${lib}/commons-codec-1.3.jar" />
-	<pathelement location="${lib}/commons-httpclient-3.1.jar" />
-  	<pathelement location="${lib}/commons-lang-2.3.jar" />
-	<pathelement location="${lib}/commons-logging-1.1.jar" />
-	<pathelement location="${lib}/jdom.jar" />
-	<pathelement location="${lib}/log4j-1.2.15.jar" />
-  </path>
-  
-  <path id="classpath.aggregator">
-    <pathelement location="${lib}/commons-cli-1.1.jar" />
-    <pathelement location="${lib}/commons-codec-1.3.jar" />
-    <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-    <pathelement location="${lib}/commons-lang-2.3.jar" />
-    <pathelement location="${lib}/commons-logging-1.1.jar" />
-    <pathelement location="${lib}/jdom.jar" />
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-  </path>
-  
-  <path id="classpath.markereraser">
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-    <pathelement location="${lib}/commons-cli-1.1.jar" />
-    <pathelement location="${lib}/commons-codec-1.3.jar" />
-    <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-    <pathelement location="${lib}/jdom.jar" />
-  </path>
-  
-  <path id="classpath.adminservlet">
-    <pathelement location="${lib}/servlet-api.jar" />
-    <pathelement location="${lib}/myfaces-api-1.2.3.jar" />
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-    <pathelement location="${lib}/catalina.jar" />
-    <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-    <pathelement location="${lib}/commons-cli-1.1.jar" />
-    <pathelement location="${lib}/commons-codec-1.3.jar" />
-    <pathelement location="${lib}/jdom.jar" />
-  </path>
-  
-  <path id="classpath.findnbrowse">
-    <pathelement location="${lib}/servlet-api.jar" />
-    <pathelement location="${lib}/myfaces-api-1.2.3.jar" />
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-    <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-    <pathelement location="${lib}/commons-cli-1.1.jar" />
-    <pathelement location="${lib}/commons-codec-1.3.jar" />
-    <pathelement location="${lib}/commons-lang-2.3.jar" />
-    <pathelement location="${lib}/jdom.jar" />
-  </path>
-  
-  <path id="jre.libs" description="Java runtime libraries">
-	<pathelement location="${java.home}/lib" />
-  </path>	
-	
-  <path id="classpath.oaipmh">
-    <pathelement location="${lib}/servlet-api.jar" />
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-    <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-    <pathelement location="${lib}/commons-codec-1.3.jar" />
-    <pathelement location="${lib}/commons-lang-2.3.jar" />
-  </path>
-  
-  <path id="classpath.rssfeed">
-	 <pathelement location="${lib}/jconn3.jar" />
-	 <pathelement location="${lib}/commons-cli-1.1.jar" />
-     <pathelement location="${lib}/servlet-api.jar" />
-     <pathelement location="${lib}/log4j-1.2.15.jar" />
-     <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-     <pathelement location="${lib}/commons-codec-1.3.jar" />
-     <pathelement location="${lib}/commons-lang-2.3.jar" />
-     <pathelement location="${lib}/rome-1.0RC1.jar" />
-     <pathelement location="${lib}/jdom.jar" />
-  </path>	
-  
-  <path id="classpath.bibexport">
-	 <pathelement location="${lib}/jconn3.jar" />
-	 <pathelement location="${lib}/commons-cli-1.1.jar" />
-	 <pathelement location="${lib}/servlet-api.jar" />
-	 <pathelement location="${lib}/log4j-1.2.15.jar" />
-	 <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-	 <pathelement location="${lib}/commons-codec-1.3.jar" />
-	 <pathelement location="${lib}/commons-lang-2.3.jar" />
-	 <pathelement location="${lib}/javabib-bin.jar" />
-	 <pathelement location="${lib}/jdom.jar" />
-  </path>	
-	
-  <path id="classpath.indexeraccess">
-  	 <pathelement location="${lib}/jconn3.jar" />
-  	 <pathelement location="${lib}/commons-cli-1.1.jar" />
-	 <pathelement location="${lib}/servlet-api.jar" />
-	 <pathelement location="${lib}/log4j-1.2.15.jar" />
-	 <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-	 <pathelement location="${lib}/commons-codec-1.3.jar" />
-     <pathelement location="${lib}/commons-lang-2.3.jar" />
-  	 <pathelement location="${lib}/jdom.jar" />
-  </path>	
+	<path id="classpath.server">
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/jconn3.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/tomcat-dbcp.jar" />
+		<pathelement location="${lib}/servlet-api.jar" />
+		<pathelement location="${lib}/commons-lang-2.3.jar" />
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+	</path>
 
-  <path id="classpath.oadminrealm">
-    <pathelement location="${lib}/catalina.jar" />
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-    <pathelement location="${lib}/commons-httpclient-3.1.jar" />
-    <pathelement location="${lib}/commons-codec-1.3.jar" />
-    <pathelement location="${lib}/jdom.jar" />
-  </path>
-  
-  <path id="classpath.resourcerealm">
-    <pathelement location="${lib}/catalina.jar" />
-    <pathelement location="${lib}/log4j-1.2.15.jar" />
-  </path>
-  
-  <target name="init">
-    <mkdir dir="${build}" />
-    <mkdir dir="${build.server}" />
-  	<mkdir dir="${build.server_readonly}" />
-    <mkdir dir="${build.harvester}" />
-    <mkdir dir="${build.oidgetter}" />
-  	<mkdir dir="${build.openrestclient}" />
-    <mkdir dir="${build.aggregator}" />
-    <mkdir dir="${build.inspector}" />
-    <mkdir dir="${build.markereraser}" />
-    <mkdir dir="${build.adminservlet}" />
-    <mkdir dir="${build.oadminrealm}" />
-    <mkdir dir="${build.resourcerealm}" />
-    <mkdir dir="${build.findnbrowse}" />
-    <mkdir dir="${build.oaipmh}" />
-    <mkdir dir="${build.rssfeed}" />
-  	<mkdir dir="${build.indexeraccess}" />
-    <mkdir dir="${build.bibexport}" />
-  </target>
-  
-  <target name="initArch">
-    <tstamp />
-    <mkdir dir="${archive}" />
-  </target>
-  
-  <target name="tarSourceAll" depends="initArch">
-    <tar destfile="${archive}/oa-netzwerk-${DSTAMP}.tar">
-      <tarfileset dir="${src}/de" prefix="de">
-        <include name="**/*.java" />
-        <include name="**/*.xsd" />
-        <exclude name="**/*.svn" />
-        <exclude name="**/*.properties" />
-        <exclude name="**/*.class" />
-        <exclude name="**/*.html" />
-        <exclude name="**/*.txt" />
-      </tarfileset>
-    </tar>
-  </target>
-  
-  <target name="compileAll" depends="compileHarvester,compileAggregator,compileServer,compileServer_ReadOnly">
-    <tstamp />
-    <javac srcdir="${src}" destdir="${build}">
-      <classpath refid="classpath" />
-    </javac>
-  </target>
-  
-  <target name="compileServer" depends="init">
-    <tstamp />
-    <javac destdir="${build.server}" debug="true" debuglevel="lines,vars,source">
-      <classpath refid="classpath.server" />
-      <src path="${src}/de/dini/oanetzwerk/codec" />
-      <src path="${src}/de/dini/oanetzwerk/server" />
-      <src path="${src}/de/dini/oanetzwerk/utils" />
-      <!--<include name="${src}/de/dini/oanetzwerk/servicemodule/RestClient.java" />-->
-      <src path="${src}/de/dini/oanetzwerk/servicemodule" />    	
-      <exclude name="**/harvester/*" />
-      <exclude name="**/aggregator/*" />
-  	  <exclude name="**/examples/*" />
-      <exclude name="**/markerAndEraser/*" />
-      <exclude name="**/dcgenerator/*.java" />
-      <exclude name="**/ResourceRealm.java" />
-      <exclude name="**/InspectorServlet.java" />
-      <exclude name="**/Test*.java" />
-      <exclude name="**/oai/**/*" />
-    </javac>
-  </target>
-  
- <target name="compileServer_ReadOnly" depends="init">
-   <tstamp />
-   <javac destdir="${build.server_readonly}" debug="true" debuglevel="lines,vars,source">
-     <classpath refid="classpath.server_readonly" />
-     <src path="${src}/de/dini/oanetzwerk/codec" />
-     <src path="${src}/de/dini/oanetzwerk/server" />
-     <src path="${src}/de/dini/oanetzwerk/utils" />
-     <src path="${src}/de/dini/oanetzwerk/servicemodule" />    	
-     <exclude name="**/harvester/*" />
-     <exclude name="**/aggregator/*" />
- 	 <exclude name="**/examples/*" />
-     <exclude name="**/markerAndEraser/*" />
-     <exclude name="**/dcgenerator/*.java" />
-     <exclude name="**/ResourceRealm.java" />
-     <exclude name="**/InspectorServlet.java" />
-     <exclude name="**/Test*.java" />
-     <exclude name="**/oai/**/*" />
-   </javac>
-  </target>
-	
-  <target name="compileInspector" depends="init">
-    <tstamp />
-    <javac destdir="${build.inspector}" debug="true" debuglevel="lines,vars,source">
-      <classpath refid="classpath.inspector" />
-      <src path="${src}/de/dini/oanetzwerk/codec" />
-      <src path="${src}/de/dini/oanetzwerk/utils" />
-      <src path="${src}/de/dini/oanetzwerk/servicemodule" />    	
-      <exclude name="**/servicemodule/harvester/*" />
-      <exclude name="**/servicemodule/aggregator/*" />
-  	  <exclude name="**/servicemodule/examples/*" />
-      <exclude name="**/servicemodule/markerAndEraser/*" />
-      <exclude name="**/servicemodule/dcgenerator/DCGenerator.java" />
-      <exclude name="**/Test*.java" />
-      <exclude name="**/SQL2DB.java" />
-      <exclude name="**/oai/**/*" />
-    </javac>
-  </target>
-  
-  <target name="compileHarvester" depends="init">
-    <javac destdir="${build.harvester}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-      <classpath refid="classpath.harvester" />
-      <include name="**/harvester/*.java" />
-      <include name="**/codec/*.java" />
-      <include name="**/RestClient.java" />
-      <include name="**/exceptions/*.java" />
-      <include name="**/HelperMethods.java" />
-      <exclude name="**/server/" />
-      <exclude name="**/Test*" />
-    </javac>  
-  </target>
-	
-  <target name="compileOIDGetter" depends="init">
-    <javac destdir="${build.oidgetter}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-      <classpath refid="classpath.oidgetter" />
-      <include name="**/examples/OIDGetter.java" />
-      <include name="**/codec/*.java" />
-      <include name="**/RestClient.java" />
-      <include name="**/exceptions/*.java" />
-      <include name="**/HelperMethods.java" />
-      <exclude name="**/server/" />
-      <exclude name="**/Test*" />
-    </javac>
-  </target>
-  
-	  <target name="jarOIDGetter" depends="compileOIDGetter">
-	    <property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
-	    <jar jarfile="OIDGetter.jar">
-	      <fileset dir="${build.oidgetter}" />
-	      <manifest>
-	        <attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.examples.OIDGetter" />
-	        <attribute name="Class-Path" value="${cp}" />
-	      </manifest>
-	    </jar>
-	  </target>
-	
-  <target name="compileOpenRestClient" depends="init">
-    <javac destdir="${build.openrestclient}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-      <classpath refid="classpath.openrestclient" />
-      <include name="**/examples/OIDGetter.java" />
-      <include name="**/examples/OpenRestClientExample.java" />
-      <include name="**/codec/*.java" />
-      <include name="**/RestClient.java" />
-      <include name="**/utils/exceptions/*.java" />
-      <include name="**/utils/imf/*.java" />
-      <include name="**/HelperMethods.java" />
-      <exclude name="**/server/" />
-      <exclude name="**/Test*" />
-    </javac>
-  </target>	
+	<path id="classpath.server_readonly">
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/jconn3.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+		<pathelement location="${lib}/commons-dbcp-1.2.2.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/servlet-api.jar" />
+		<pathelement location="${lib}/commons-lang-2.3.jar" />
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+	</path>
 
-  <target name="jarOpenRestClient" depends="compileOpenRestClient">
-    <property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar lib/commons-lang-2.3.jar ." />
-    <jar jarfile="oanetzwerk-openrestclient.jar">
-      <fileset dir="${build.openrestclient}" />
-      <manifest>
-        <attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.examples.OpenRestClientExample" />
-        <attribute name="Class-Path" value="${cp}" />
-      </manifest>
-    </jar>
-  </target>
+	<path id="classpath.harvester">
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-logging-1.1.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+	</path>
 
-  <target name="distOpenRestClient" depends="jarOpenRestClient">
-  	<mkdir dir="${dist.openrestclient}" />
-  	<copy todir="${dist.openrestclient}">
-  		<fileset dir="conf_openrestclient" />
-  		<fileset dir="." includes="oanetzwerk-openrestclient.jar" /> 
-  		<fileset dir="${src}/de/dini/oanetzwerk/servicemodule/examples/" includes="OpenRestClientExample.java" />
-  		<fileset dir="${lib}">
-  			<include name="commons-cli-1.1.jar" />
-  			<include name="log4j-1.2.15.jar" />
-  			<include name="commons-httpclient-3.1.jar" />
-  			<include name="jdom.jar" />
-  			<include name="commons-logging-1.1.jar" />
-  			<include name="commons-codec-1.3.jar" />
-  			<include name="commons-lang-2.3.jar" />
-  		</fileset>
-  	</copy>
-  	<zip destfile="openrestclient.zip">
-  		<fileset dir="${dist.openrestclient}"></fileset>
-  	</zip>
-  </target>		
+	<path id="classpath.oidgetter">
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-logging-1.1.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+	</path>
+
+	<path id="classpath.openrestclient">
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-lang-2.3.jar" />
+		<pathelement location="${lib}/commons-logging-1.1.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+	</path>
+
+	<path id="classpath.aggregator">
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-lang-2.3.jar" />
+		<pathelement location="${lib}/commons-logging-1.1.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+	</path>
+
+	<path id="classpath.markereraser">
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+	</path>
+
+	<path id="classpath.adminservlet">
+		<pathelement location="${lib}/servlet-api.jar" />
+		<pathelement location="${lib}/myfaces-api-1.2.3.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/catalina.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+	</path>
+
+	<path id="classpath.findnbrowse">
+		<pathelement location="${lib}/servlet-api.jar" />
+		<pathelement location="${lib}/myfaces-api-1.2.3.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-lang-2.3.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+	</path>
+
+	<path id="jre.libs" description="Java runtime libraries">
+		<pathelement location="${java.home}/lib" />
+	</path>
+
+	<path id="classpath.oaipmh">
+		<pathelement location="${lib}/servlet-api.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-lang-2.3.jar" />
+		<!-- pathelement location="${lib}/jaxb-impl.jar" /-->
+		<pathelement location="${lib}/jibx-bind.jar" />
+		<pathelement location="${lib}/jibx-run.jar" />
+		<pathelement location="${lib}/bcel.jar" />
+		<pathelement location="${lib}/jconn3.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+		<pathelement location="${lib}/tomcat-dbcp.jar" />
+		<pathelement location="${lib}/servlet-api.jar" />
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+	</path>
+
+	<path id="classpath.rssfeed">
+		<pathelement location="${lib}/jconn3.jar" />
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+		<pathelement location="${lib}/servlet-api.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-lang-2.3.jar" />
+		<pathelement location="${lib}/rome-1.0RC1.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+	</path>
+
+	<path id="classpath.bibexport">
+		<pathelement location="${lib}/jconn3.jar" />
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+		<pathelement location="${lib}/servlet-api.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-lang-2.3.jar" />
+		<pathelement location="${lib}/javabib-bin.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+	</path>
+
+	<path id="classpath.indexeraccess">
+		<pathelement location="${lib}/jconn3.jar" />
+		<pathelement location="${lib}/commons-cli-1.1.jar" />
+		<pathelement location="${lib}/servlet-api.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-lang-2.3.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+	</path>
+
+	<path id="classpath.oadminrealm">
+		<pathelement location="${lib}/catalina.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/jdom.jar" />
+	</path>
+
+	<path id="classpath.resourcerealm">
+		<pathelement location="${lib}/catalina.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+	</path>
+
+	<target name="init">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build.server}" />
+		<mkdir dir="${build.server_readonly}" />
+		<mkdir dir="${build.harvester}" />
+		<mkdir dir="${build.oidgetter}" />
+		<mkdir dir="${build.openrestclient}" />
+		<mkdir dir="${build.aggregator}" />
+		<mkdir dir="${build.inspector}" />
+		<mkdir dir="${build.markereraser}" />
+		<mkdir dir="${build.adminservlet}" />
+		<mkdir dir="${build.oadminrealm}" />
+		<mkdir dir="${build.resourcerealm}" />
+		<mkdir dir="${build.findnbrowse}" />
+		<mkdir dir="${build.oaipmh}" />
+		<mkdir dir="${build.rssfeed}" />
+		<mkdir dir="${build.indexeraccess}" />
+		<mkdir dir="${build.bibexport}" />
+	</target>
+
+	<target name="initArch">
+		<tstamp />
+		<mkdir dir="${archive}" />
+	</target>
+
+	<target name="checkForJibxLibs">
+		<condition property="binding-jars-found">
+			<and>
+				<available file="${lib.dir}/jibx-bind.jar" />
+				<available file="${lib.dir}/jibx-run.jar" />
+			</and>
+		</condition>
+		<fail unless="binding-jars-found">Required JiBX binding jar jibx-bind.jar or
+         jibx-run.jar was not found in lib directory (${lib.dir})</fail>
+	</target>
+         	
+	<target name="tarSourceAll" depends="initArch">
+		<tar destfile="${archive}/oa-netzwerk-${DSTAMP}.tar">
+			<tarfileset dir="${src}/de" prefix="de">
+				<include name="**/*.java" />
+				<include name="**/*.xsd" />
+				<exclude name="**/*.svn" />
+				<exclude name="**/*.properties" />
+				<exclude name="**/*.class" />
+				<exclude name="**/*.html" />
+				<exclude name="**/*.txt" />
+			</tarfileset>
+		</tar>
+	</target>
+
+	<target name="compileAll" depends="compileHarvester,compileAggregator,compileServer,compileServer_ReadOnly">
+		<tstamp />
+		<javac srcdir="${src}" destdir="${build}">
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<target name="compileServer" depends="init">
+		<tstamp />
+		<javac destdir="${build.server}" debug="true" debuglevel="lines,vars,source">
+			<classpath refid="classpath.server" />
+			<src path="${src}/de/dini/oanetzwerk/codec" />
+			<src path="${src}/de/dini/oanetzwerk/server" />
+			<src path="${src}/de/dini/oanetzwerk/utils" />
+			<!--<include name="${src}/de/dini/oanetzwerk/servicemodule/RestClient.java" />-->
+			<src path="${src}/de/dini/oanetzwerk/servicemodule" />
+			<exclude name="**/harvester/*" />
+			<exclude name="**/aggregator/*" />
+			<exclude name="**/examples/*" />
+			<exclude name="**/markerAndEraser/*" />
+			<exclude name="**/dcgenerator/*.java" />
+			<exclude name="**/ResourceRealm.java" />
+			<exclude name="**/InspectorServlet.java" />
+			<exclude name="**/Test*.java" />
+			<exclude name="**/oai/**/*" />
+		</javac>
+	</target>
+
+	<target name="compileServer_ReadOnly" depends="init">
+		<tstamp />
+		<javac destdir="${build.server_readonly}" debug="true" debuglevel="lines,vars,source">
+			<classpath refid="classpath.server_readonly" />
+			<src path="${src}/de/dini/oanetzwerk/codec" />
+			<src path="${src}/de/dini/oanetzwerk/server" />
+			<src path="${src}/de/dini/oanetzwerk/utils" />
+			<src path="${src}/de/dini/oanetzwerk/servicemodule" />
+			<exclude name="**/harvester/*" />
+			<exclude name="**/aggregator/*" />
+			<exclude name="**/examples/*" />
+			<exclude name="**/markerAndEraser/*" />
+			<exclude name="**/dcgenerator/*.java" />
+			<exclude name="**/ResourceRealm.java" />
+			<exclude name="**/InspectorServlet.java" />
+			<exclude name="**/Test*.java" />
+			<exclude name="**/oai/**/*" />
+		</javac>
+	</target>
+
+	<target name="compileInspector" depends="init">
+		<tstamp />
+		<javac destdir="${build.inspector}" debug="true" debuglevel="lines,vars,source">
+			<classpath refid="classpath.inspector" />
+			<src path="${src}/de/dini/oanetzwerk/codec" />
+			<src path="${src}/de/dini/oanetzwerk/utils" />
+			<src path="${src}/de/dini/oanetzwerk/servicemodule" />
+			<exclude name="**/servicemodule/harvester/*" />
+			<exclude name="**/servicemodule/aggregator/*" />
+			<exclude name="**/servicemodule/examples/*" />
+			<exclude name="**/servicemodule/markerAndEraser/*" />
+			<exclude name="**/servicemodule/dcgenerator/DCGenerator.java" />
+			<exclude name="**/Test*.java" />
+			<exclude name="**/SQL2DB.java" />
+			<exclude name="**/oai/**/*" />
+		</javac>
+	</target>
+
+	<target name="compileHarvester" depends="init">
+		<javac destdir="${build.harvester}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.harvester" />
+			<include name="**/harvester/*.java" />
+			<include name="**/codec/*.java" />
+			<include name="**/RestClient.java" />
+			<include name="**/exceptions/*.java" />
+			<include name="**/HelperMethods.java" />
+			<exclude name="**/server/" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<target name="compileOIDGetter" depends="init">
+		<javac destdir="${build.oidgetter}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.oidgetter" />
+			<include name="**/examples/OIDGetter.java" />
+			<include name="**/codec/*.java" />
+			<include name="**/RestClient.java" />
+			<include name="**/exceptions/*.java" />
+			<include name="**/HelperMethods.java" />
+			<exclude name="**/server/" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<target name="jarOIDGetter" depends="compileOIDGetter">
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
+		<jar jarfile="${build}/OIDGetter.jar">
+			<fileset dir="${build.oidgetter}" />
+			<manifest>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.examples.OIDGetter" />
+				<attribute name="Class-Path" value="${cp}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="compileOpenRestClient" depends="init">
+		<javac destdir="${build.openrestclient}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.openrestclient" />
+			<include name="**/examples/OIDGetter.java" />
+			<include name="**/examples/OpenRestClientExample.java" />
+			<include name="**/codec/*.java" />
+			<include name="**/RestClient.java" />
+			<include name="**/utils/exceptions/*.java" />
+			<include name="**/utils/imf/*.java" />
+			<include name="**/HelperMethods.java" />
+			<exclude name="**/server/" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<target name="jarOpenRestClient" depends="compileOpenRestClient">
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar lib/commons-lang-2.3.jar ." />
+		<jar jarfile="${build}/oanetzwerk-openrestclient.jar">
+			<fileset dir="${build.openrestclient}" />
+			<manifest>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.examples.OpenRestClientExample" />
+				<attribute name="Class-Path" value="${cp}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="distOpenRestClient" depends="jarOpenRestClient">
+		<mkdir dir="${dist.openrestclient}" />
+		<copy todir="${dist.openrestclient}">
+			<fileset dir="conf_openrestclient" />
+			<fileset dir="${build}" includes="oanetzwerk-openrestclient.jar" />
+			<fileset dir="${src}/de/dini/oanetzwerk/servicemodule/examples/" includes="OpenRestClientExample.java" />
+			<fileset dir="${lib}">
+				<include name="commons-cli-1.1.jar" />
+				<include name="log4j-1.2.15.jar" />
+				<include name="commons-httpclient-3.1.jar" />
+				<include name="jdom.jar" />
+				<include name="commons-logging-1.1.jar" />
+				<include name="commons-codec-1.3.jar" />
+				<include name="commons-lang-2.3.jar" />
+			</fileset>
+		</copy>
+		<zip destfile="openrestclient.zip">
+			<fileset dir="${dist.openrestclient}">
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="jarHarvester" depends="compileHarvester">
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
+		<jar jarfile="${build}/Harvester.jar">
+			<fileset dir="${build.harvester}" />
+			<manifest>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.RunHarvester" />
+				<attribute name="Class-Path" value="${cp}" />
+			</manifest>
+		</jar>
+	</target>
+
+
+
+	<target name="distHarvester" depends="jarHarvester">
+		<tar destfile="${dist}/Harvester.tar">
+			<!--tarfileset dir="." prefix="harvester" includes="lib/**"-->
+			<tarfileset dir="." prefix="harvester">
+				<include name="${build}/Harvester.jar" />
+			</tarfileset>
+			<tarfileset dir="${lib}" prefix="harvester/lib">
+				<include name="commons-cli-1.1.jar" />
+				<include name="log4j-1.2.15.jar" />
+				<include name="commons-httpclient-3.1.jar" />
+				<include name="jdom.jar" />
+				<include name="commons-logging-1.1.jar" />
+				<include name="commons-codec-1.3.jar" />
+			</tarfileset>
+			<tarfileset dir="${ress}" prefix="harvester">
+				<include name="log4j.xml" />
+				<include name="harvesterprop.xml" />
+				<include name="restclientprop.xml" />
+			</tarfileset>
+		</tar>
+	</target>
+
+	<target name="compileAggregator" depends="init">
+		<javac destdir="${build.aggregator}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.aggregator" />
+			<include name="**/aggregator/*.java" />
+			<include name="**/codec/*.java" />
+			<include name="**/RestClient.java" />
+			<include name="**/exceptions/*.java" />
+			<include name="**/imf/*.java" />
+			<include name="**/utils/ISO*.java" />
+			<include name="**/utils/DDCMatcher_DINI.java" />
+			<include name="**/utils/MetadataFormatType.java" />
+			<include name="**/HelperMethods.java" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<target name="jarAggregator" depends="compileAggregator">
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/jdom.jar lib/commons-httpclient-3.1.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar lib/commons-lang-2.3.jar ." />
+		<jar jarfile="${build}/Aggregator.jar">
+			<fileset dir="${build.aggregator}" />
+			<manifest>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.aggregator.RunAggregator" />
+				<attribute name="Class-Path" value="${cp}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="distAggregator" depends="jarAggregator">
+		<tar destfile="${dist}/Aggregator.tar">
+			<tarfileset dir="." prefix="aggregator">
+				<include name="${build}/Aggregator.jar" />
+			</tarfileset>
+			<tarfileset dir="${lib}" prefix="aggregator/lib">
+				<include name="commons-cli-1.1.jar" />
+				<include name="log4j-1.2.15.jar" />
+				<include name="commons-httpclient-3.1.jar" />
+				<include name="jdom.jar" />
+				<include name="commons-logging-1.1.jar" />
+				<include name="commons-lang-2.3.jar" />
+				<include name="commons-codec-1.3.jar" />
+			</tarfileset>
+			<tarfileset dir="${ress}" prefix="aggregator">
+				<include name="log4j.xml" />
+				<include name="aggregatorprop.xml" />
+				<include name="restclientprop.xml" />
+			</tarfileset>
+		</tar>
+	</target>
+
+	<target name="compileMarkerAndEraser" depends="init">
+		<javac destdir="${build.markereraser}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.markereraser" />
+			<include name="**/markerAndEraser/*.java" />
+			<include name="**/codec/*.java" />
+			<include name="**/RestClient.java" />
+			<include name="**/HelperMethods.java" />
+			<exclude name="**/server/**" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<target name="jarMarkerAndEraser" depends="compileMarkerAndEraser">
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
+		<jar  jarfile="${build}/MarkerAndEraser.jar">
+			<fileset dir="${build.markereraser}" />
+			<manifest>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.markerAndEraser.RunMarkerAndEraser" />
+				<attribute name="Class-Path" value="${cp}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="distMarkerAndEraser" depends="jarMarkerAndEraser">
+		<tar destfile="${dist}/MarkerAndEraser.tar">
+			<tarfileset dir="." prefix="markereraser">
+				<include name="${build}/MarkerAndEraser.jar" />
+			</tarfileset>
+			<tarfileset dir="${lib}" prefix="markereraser/lib">
+				<include name="commons-cli-1.1.jar" />
+				<include name="log4j-1.2.15.jar" />
+				<include name="commons-httpclient-3.1.jar" />
+				<include name="jdom.jar" />
+				<include name="commons-logging-1.1.jar" />
+				<include name="commons-codec-1.3.jar" />
+			</tarfileset>
+			<tarfileset dir="${ress}" prefix="markereraser">
+				<include name="log4j.xml" />
+				<include name="restclientprop.xml" />
+				<include name="markereraserprop.xml" />
+			</tarfileset>
+		</tar>
+	</target>
+
+	<target name="warServer" depends="compileServer">
+		<war destfile="${dist}/restserver.war" webxml="conf/web.xml">
+			<!--war destfile="${build}/restserver.war"-->
+			<lib dir="${lib}">
+				<include name="commons-cli-1.1.jar" />
+				<include name="commons-httpclient-3.1.jar" />
+				<include name="jdom.jar" />
+				<include name="commons-codec-1.3.jar" />
+				<include name="commons-lang-2.3.jar" />
+			</lib>
+			<webinf dir="conf">
+				<include name="serverprop.xml" />
+			</webinf>
+			<metainf dir="conf">
+				<include name="context.xml" />
+			</metainf>
+			<classes dir="${build.server}">
+				<exclude name="**/technotest/**" />
+			</classes>
+		</war>
+	</target>
+
+	<target name="warServer_ReadOnly" depends="compileServer_ReadOnly">
+		<war destfile="${dist}/rest.war" webxml="conf_readonly/web.xml">
+			<lib dir="${lib}">
+				<include name="commons-cli-1.1.jar" />
+				<include name="commons-httpclient-3.1.jar" />
+				<include name="jdom.jar" />
+				<include name="commons-codec-1.3.jar" />
+				<include name="commons-lang-2.3.jar" />
+			</lib>
+			<webinf dir="conf_readonly">
+				<include name="serverprop.xml" />
+			</webinf>
+			<metainf dir="conf_readonly">
+				<include name="context.xml" />
+			</metainf>
+			<classes dir="${build.server_readonly}">
+				<exclude name="**/technotest/**" />
+			</classes>
+		</war>
+	</target>
+
+	<target name="warInspector" depends="compileInspector">
+		<war destfile="${dist}/restinspector.war" webxml="conf_inspector/web.xml">
+			<lib dir="${buildlib}" />
+			<webinf dir="conf_inspector">
+				<include name="restclientprop.xml" />
+				<include name="log4j.xml" />
+			</webinf>
+			<classes dir="${build.inspector}">
+				<exclude name="**/technotest/**" />
+			</classes>
+			<zipfileset dir="img_inspector/" prefix="img" />
+		</war>
+	</target>
+
+	<target name="compileAdminServlet" depends="init">
+		<javac destdir="${build.adminservlet}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.adminservlet" />
+			<include name="**/admin/**" />
+			<include name="**/codec/*.java" />
+			<include name="**/RestClient.java" />
+			<include name="**/HelperMethods.java" />
+			<exclude name="**/technotest*" />
+			<exclude name="**/OAdmiNRealm.java" />
+			<exclude name="**/server/**" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<target name="compileOAdminRealm" depends="init">
+		<javac destdir="${build.oadminrealm}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.oadminrealm" />
+			<include name="**/OAdmiNRealm.java" />
+			<include name="**/codec/*.java" />
+			<exclude name="**/server/**" />
+			<exclude name="**/Test*" />
+			<exclude name="**/technotest/**" />
+		</javac>
+	</target>
+
+	<target name="jarOAdminRealm" depends="compileOAdminRealm">
+		<property name="cp" value="catalina.jar log4j-1.2.15.jar commons-httpclient-3.1.jar commons-codec-1.3.jar jdom.jar" />
+		<jar jarfile="${lib}/oadminrealm.jar">
+			<fileset dir="${build.oadminrealm}">
+				<include name="**/OAdmiNRealm*" />
+				<include name="**/codec/**" />
+			</fileset>
+			<manifest>
+				<attribute name="Class-Path" value="${cp}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="compileResourceRealm" depends="init">
+		<javac destdir="${build.resourcerealm}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.resourcerealm" />
+			<include name="**/ResourceRealm.java" />
+			<exclude name="**/codec/**" />
+			<!--exclude name="**/server/**"/-->
+			<exclude name="**/Test*" />
+			<exclude name="**/technotest/**" />
+		</javac>
+	</target>
+
+	<target name="jarResourceRealm" depends="compileResourceRealm">
+		<property name="cp" value="catalina.jar log4j-1.2.15.jar" />
+		<jar jarfile="${lib}/resourcerealm.jar">
+			<fileset dir="${build.resourcerealm}">
+				<include name="**/ResourceRealm*" />
+			</fileset>
+			<manifest>
+				<attribute name="Class-Path" value="${cp}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="warAdminServlet" depends="compileAdminServlet">
+		<war destfile="${dist}/adminservlet.war" webxml="myfaces-root/admin-gui/WEB-INF/web.xml">
+			<lib dir="${lib}">
+				<include name="myfaces-api-1.2.3.jar" />
+				<include name="myfaces-impl-1.2.3.jar" />
+				<include name="commons-beanutils-1.7.0.jar" />
+				<include name="commons-codec-1.3.jar" />
+				<include name="commons-collections-3.2.jar" />
+				<include name="commons-digester-1.8.jar" />
+				<include name="commons-discovery-0.4.jar" />
+				<include name="commons-logging-1.1.jar" />
+				<include name="jstl.jar" />
+				<include name="standard.jar" />
+				<include name="log4j-1.2.15.jar" />
+			</lib>
+			<metainf dir="myfaces-root/admin-gui/META-INF/">
+				<include name="context.xml" />
+			</metainf>
+			<webinf dir="myfaces-root/admin-gui/WEB-INF/">
+				<include name="faces-config.xml" />
+				<include name="admingui.xml" />
+				<include name="restclientprop.xml" />
+			</webinf>
+			<classes dir="${build.adminservlet}" />
+			<zipfileset dir="myfaces-root/admin-gui/">
+				<include name="*.jsp" />
+			</zipfileset>
+			<zipfileset dir="myfaces-root/admin-gui/messages/" prefix="WEB-INF/classes/admin/" />
+			<zipfileset dir="myfaces-root/admin-gui/css/" prefix="css/" />
+			<zipfileset dir="myfaces-root/admin-gui/pages/" prefix="pages/" />
+		</war>
+	</target>
+
+	<target name="compileFindnBrowse" depends="init">
+		<javac destdir="${build.findnbrowse}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.findnbrowse" />
+			<include name="**/finddummy/**" />
+			<include name="**/userfrontend/**" />
+			<include name="**/search/**" />
+			<include name="**/RedirectionFilter.java" />
+			<include name="**/codec/*.java" />
+			<include name="**/RestClient.java" />
+			<include name="**/HelperMethods.java" />
+			<include name="**/RepositoryConfig.java" />
+			<include name="**/ISO*.java" />
+			<include name="**/utils/imf/**" />
+			<exclude name="**/technotest*" />
+			<exclude name="**/OAdmiNRealm.java" />
+			<exclude name="**/server/**" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<target name="warFindnBrowse" depends="compileFindnBrowse">
+		<war destfile="${dist}/findnbrowse.war" webxml="myfaces-root/userfrontend-gui/WEB-INF/web.xml">
+			<lib dir="${lib}">
+				<include name="myfaces-api-1.2.3.jar" />
+				<include name="myfaces-impl-1.2.3.jar" />
+				<include name="commons-beanutils-1.7.0.jar" />
+				<include name="commons-codec-1.3.jar" />
+				<include name="commons-collections-3.2.jar" />
+				<include name="commons-digester-1.8.jar" />
+				<include name="commons-discovery-0.4.jar" />
+				<include name="commons-logging-1.1.jar" />
+				<include name="commons-lang-2.3.jar" />
+				<include name="jstl.jar" />
+				<include name="standard.jar" />
+				<include name="log4j-1.2.15.jar" />
+				<include name="tomahawk.jar" />
+				<!--include name="oadminrealm.jar"/-->
+			</lib>
+			<metainf dir="myfaces-root/admin-gui/META-INF/">
+				<!--include name="context.xml"/-->
+			</metainf>
+			<webinf dir="myfaces-root/userfrontend-gui/WEB-INF/">
+				<include name="faces-config.xml" />
+				<include name="userfrontend_gui.xml" />
+				<include name="searchclientprop.xml" />
+				<include name="restclientprop.xml" />
+				<include name="ddc_names_de.xml" />
+				<include name="log4j.xml" />
+			</webinf>
+			<classes dir="${build.findnbrowse}" />
+			<zipfileset dir="myfaces-root/userfrontend-gui/">
+				<include name="*.jsp" />
+			</zipfileset>
+			<zipfileset dir="myfaces-root/userfrontend-gui/messages/" prefix="WEB-INF/classes/finddummy/" />
+			<zipfileset dir="myfaces-root/userfrontend-gui/css/" prefix="css/" />
+			<zipfileset dir="myfaces-root/userfrontend-gui/img/" prefix="img/" />
+			<zipfileset dir="myfaces-root/userfrontend-gui/pages/" prefix="pages/" />
+		</war>
+	</target>
+
+	<target name="compileOAIPMH" depends="init">
+		<javac destdir="${build.oaipmh}" debug="true" verbose="yes" debuglevel="lines,vars,source" srcdir="${src}" >
+			<classpath refid="classpath.oaipmh" />
+			<include name="**/oaipmh/**" />
+			<include name="**/server/database/*.java" />
+			<exclude name="**/server/*.java" />
+			<exclude name="**/_2/*.java" />
+			<exclude name="**/technotest*" />
+			<exclude name="**/OAdmiNRealm.java" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
 	
-  <target name="jarHarvester" depends="compileHarvester">
-    <property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
-    <jar jarfile="Harvester.jar">
-      <fileset dir="${build.harvester}" />
-      <manifest>
-        <attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.RunHarvester" />
-        <attribute name="Class-Path" value="${cp}" />
-      </manifest>
-    </jar>
-  </target>
-  
+	<target name="jibxBindOAIPMH" depends="checkForJibxLibs, compileOAIPMH">
+		<echo message="Running JiBX binding compiler" />
+		<bind verbose="true">
+			<classpath refid="compile.classpath" />
+			<bindingfileset dir="${basedir}">
+				<include name="oaipmh_binding.xml" />
+			</bindingfileset>
+		</bind>
+	</target>
 
-  
-  <target name="distHarvester" depends="jarHarvester">
-    <tar destfile="Harvester.tar">
-      <!--tarfileset dir="." prefix="harvester" includes="lib/**"-->
-      <tarfileset dir="." prefix="harvester">
-        <include name="Harvester.jar" />
-      </tarfileset>
-      <tarfileset dir="${lib}" prefix="harvester/lib">
-        <include name="commons-cli-1.1.jar" />
-        <include name="log4j-1.2.15.jar" />
-        <include name="commons-httpclient-3.1.jar" />
-        <include name="jdom.jar" />
-        <include name="commons-logging-1.1.jar" />
-        <include name="commons-codec-1.3.jar" />
-      </tarfileset>
-      <tarfileset dir="${ress}" prefix="harvester">
-        <include name="log4j.xml" />
-        <include name="harvesterprop.xml" />
-        <include name="restclientprop.xml" />
-      </tarfileset>
-    </tar>
-  </target>
-  
-  <target name="compileAggregator" depends="init">
-    <javac destdir="${build.aggregator}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-      <classpath refid="classpath.aggregator" />
-      <include name="**/aggregator/*.java" />
-      <include name="**/codec/*.java" />
-      <include name="**/RestClient.java" />
-      <include name="**/exceptions/*.java" />
-      <include name="**/imf/*.java" />
-      <include name="**/utils/ISO*.java" />
-      <include name="**/utils/DDCMatcher_DINI.java" />
-      <include name="**/utils/MetadataFormatType.java" />
-      <include name="**/HelperMethods.java" />
-      <exclude name="**/Test*" />
-    </javac>
-  </target>
-  
-  <target name="jarAggregator" depends="compileAggregator">
-    <property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/jdom.jar lib/commons-httpclient-3.1.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar lib/commons-lang-2.3.jar ." />
-    <jar jarfile="Aggregator.jar">
-      <fileset dir="${build.aggregator}" />
-      <manifest>
-        <attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.aggregator.RunAggregator" />
-        <attribute name="Class-Path" value="${cp}" />
-      </manifest>
-    </jar>
-  </target>
-  
-  <target name="distAggregator" depends="jarAggregator">
-    <tar destfile="Aggregator.tar">
-      <tarfileset dir="." prefix="aggregator">
-        <include name="Aggregator.jar" />
-      </tarfileset>
-      <tarfileset dir="${lib}" prefix="aggregator/lib">
-        <include name="commons-cli-1.1.jar" />
-        <include name="log4j-1.2.15.jar" />
-        <include name="commons-httpclient-3.1.jar" />
-        <include name="jdom.jar" />
-        <include name="commons-logging-1.1.jar" />
-        <include name="commons-lang-2.3.jar" />
-        <include name="commons-codec-1.3.jar" />
-      </tarfileset>
-      <tarfileset dir="${ress}" prefix="aggregator">
-        <include name="log4j.xml" />
-        <include name="aggregatorprop.xml" />
-        <include name="restclientprop.xml" />
-      </tarfileset>
-    </tar>
-  </target>
-  
-  <target name="compileMarkerAndEraser" depends="init">
-    <javac destdir="${build.markereraser}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-      <classpath refid="classpath.markereraser" />
-      <include name="**/markerAndEraser/*.java" />
-      <include name="**/codec/*.java" />
-      <include name="**/RestClient.java" />
-      <include name="**/HelperMethods.java" />
-      <exclude name="**/server/**" />
-      <exclude name="**/Test*" />
-    </javac>
-  </target>
-  
-  <target name="jarMarkerAndEraser" depends="compileMarkerAndEraser">
-    <property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
-    <jar jarfile="MarkerAndEraser.jar">
-      <fileset dir="${build.markereraser}" />
-      <manifest>
-        <attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.markerAndEraser.RunMarkerAndEraser" />
-        <attribute name="Class-Path" value="${cp}" />
-      </manifest>
-    </jar>
-  </target>
-  
-  <target name="distMarkerAndEraser" depends="jarMarkerAndEraser">
-    <tar destfile="MarkerAndEraser.tar">
-      <tarfileset dir="." prefix="markereraser">
-        <include name="MarkerAndEraser.jar" />
-      </tarfileset>
-      <tarfileset dir="${lib}" prefix="markereraser/lib">
-        <include name="commons-cli-1.1.jar" />
-        <include name="log4j-1.2.15.jar" />
-        <include name="commons-httpclient-3.1.jar" />
-        <include name="jdom.jar" />
-        <include name="commons-logging-1.1.jar" />
-        <include name="commons-codec-1.3.jar" />
-      </tarfileset>
-      <tarfileset dir="${ress}" prefix="markereraser">
-        <include name="log4j.xml" />
-        <include name="restclientprop.xml" />
-        <include name="markereraserprop.xml" />
-      </tarfileset>
-    </tar>
-  </target>
-  
-  <target name="warServer" depends="compileServer">
-    <war destfile="${build}/restserver.war" webxml="conf/web.xml">
-      <!--war destfile="${build}/restserver.war"-->
-      <lib dir="${lib}">
-        <include name="commons-cli-1.1.jar" />
-        <include name="commons-httpclient-3.1.jar" />
-        <include name="jdom.jar" />
-        <include name="commons-codec-1.3.jar" />
-        <include name="commons-lang-2.3.jar" />
-      </lib>
-      <webinf dir="conf">
-      	<include name="serverprop.xml" />
-      </webinf>
-      <metainf dir="conf">
-        <include name="context.xml" />
-      </metainf>
-      <classes dir="${build.server}">
-        <exclude name="**/technotest/**" />
-      </classes>
-    </war>
-  </target>
-
-	  <target name="warServer_ReadOnly" depends="compileServer_ReadOnly">
-	    <war destfile="${build}/rest.war" webxml="conf_readonly/web.xml">
-	      <lib dir="${lib}">
-	        <include name="commons-cli-1.1.jar" />
-	        <include name="commons-httpclient-3.1.jar" />
-	        <include name="jdom.jar" />
-	        <include name="commons-codec-1.3.jar" />
-	        <include name="commons-lang-2.3.jar" />
-	      </lib>
-	      <webinf dir="conf_readonly">
-	      	<include name="serverprop.xml" />
-	      </webinf>
-	      <metainf dir="conf_readonly">
-	        <include name="context.xml" />
-	      </metainf>
-	      <classes dir="${build.server_readonly}">
-	        <exclude name="**/technotest/**" />
-	      </classes>
-	    </war>
-	  </target>	
-	
-  <target name="warInspector" depends="compileInspector">
-    <war destfile="${build}/restinspector.war" webxml="conf_inspector/web.xml">
-      <lib dir="${buildlib}" />
-      <webinf dir="conf_inspector">
-        <include name="restclientprop.xml" />
-        <include name="log4j.xml" />
-      </webinf>
-      <classes dir="${build.inspector}">
-        <exclude name="**/technotest/**" />
-      </classes>
-      <zipfileset dir="img_inspector/" prefix="img" />
-    </war>
-  </target>
-  
-  <target name="compileAdminServlet" depends="init">
-    <javac destdir="${build.adminservlet}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-      <classpath refid="classpath.adminservlet" />
-      <include name="**/admin/**" />
-      <include name="**/codec/*.java" />
-      <include name="**/RestClient.java" />
-      <include name="**/HelperMethods.java" />
-      <exclude name="**/technotest*" />
-      <exclude name="**/OAdmiNRealm.java" />
-      <exclude name="**/server/**" />
-      <exclude name="**/Test*" />
-    </javac>
-  </target>
-  
-  <target name="compileOAdminRealm" depends="init">
-    <javac destdir="${build.oadminrealm}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-      <classpath refid="classpath.oadminrealm" />
-      <include name="**/OAdmiNRealm.java" />
-      <include name="**/codec/*.java" />
-      <exclude name="**/server/**" />
-      <exclude name="**/Test*" />
-      <exclude name="**/technotest/**" />
-    </javac>
-  </target>
-  
-  <target name="jarOAdminRealm" depends="compileOAdminRealm">
-    <property name="cp" value="catalina.jar log4j-1.2.15.jar commons-httpclient-3.1.jar commons-codec-1.3.jar jdom.jar" />
-    <jar jarfile="${lib}/oadminrealm.jar">
-      <fileset dir="${build.oadminrealm}">
-        <include name="**/OAdmiNRealm*" />
-        <include name="**/codec/**" />
-      </fileset>
-      <manifest>
-        <attribute name="Class-Path" value="${cp}" />
-      </manifest>
-    </jar>
-  </target>
-  
-  <target name="compileResourceRealm" depends="init">
-    <javac destdir="${build.resourcerealm}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-      <classpath refid="classpath.resourcerealm" />
-      <include name="**/ResourceRealm.java" />
-      <exclude name="**/codec/**" />
-      <!--exclude name="**/server/**"/-->
-      <exclude name="**/Test*" />
-      <exclude name="**/technotest/**" />
-    </javac>
-  </target>
-  
-  <target name="jarResourceRealm" depends="compileResourceRealm">
-    <property name="cp" value="catalina.jar log4j-1.2.15.jar" />
-    <jar jarfile="${lib}/resourcerealm.jar">
-      <fileset dir="${build.resourcerealm}">
-        <include name="**/ResourceRealm*" />
-      </fileset>
-      <manifest>
-        <attribute name="Class-Path" value="${cp}" />
-      </manifest>
-    </jar>
-  </target>
-  
-  <target name="warAdminServlet" depends="compileAdminServlet">
-    <war destfile="${build}/adminservlet.war" webxml="myfaces-root/admin-gui/WEB-INF/web.xml">
-      <lib dir="${lib}">
-        <include name="myfaces-api-1.2.3.jar" />
-        <include name="myfaces-impl-1.2.3.jar" />
-        <include name="commons-beanutils-1.7.0.jar" />
-        <include name="commons-codec-1.3.jar" />
-        <include name="commons-collections-3.2.jar" />
-        <include name="commons-digester-1.8.jar" />
-        <include name="commons-discovery-0.4.jar" />
-        <include name="commons-logging-1.1.jar" />
-        <include name="jstl.jar" />
-        <include name="standard.jar" />
-        <include name="log4j-1.2.15.jar" />
-      </lib>
-      <metainf dir="myfaces-root/admin-gui/META-INF/">
-        <include name="context.xml" />
-      </metainf>
-      <webinf dir="myfaces-root/admin-gui/WEB-INF/">
-        <include name="faces-config.xml" />
-        <include name="admingui.xml" />
-        <include name="restclientprop.xml" />
-      </webinf>
-      <classes dir="${build.adminservlet}" />
-      <zipfileset dir="myfaces-root/admin-gui/">
-        <include name="*.jsp" />
-      </zipfileset>
-      <zipfileset dir="myfaces-root/admin-gui/messages/" prefix="WEB-INF/classes/admin/" />
-      <zipfileset dir="myfaces-root/admin-gui/css/" prefix="css/" />
-      <zipfileset dir="myfaces-root/admin-gui/pages/" prefix="pages/" />
-    </war>
-  </target>
-  
-  <target name="compileFindnBrowse" depends="init">
-    <javac destdir="${build.findnbrowse}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-      <classpath refid="classpath.findnbrowse" />
-      <include name="**/finddummy/**" />
-      <include name="**/userfrontend/**" />
-      <include name="**/search/**" />
-      <include name="**/RedirectionFilter.java" />
-      <include name="**/codec/*.java" />
-      <include name="**/RestClient.java" />
-      <include name="**/HelperMethods.java" />
-      <include name="**/RepositoryConfig.java" />
-      <include name="**/ISO*.java" />
-      <include name="**/utils/imf/**" />
-      <exclude name="**/technotest*" />
-      <exclude name="**/OAdmiNRealm.java" />
-      <exclude name="**/server/**" />
-      <exclude name="**/Test*" />
-    </javac>
-  </target>
-  
-  <target name="warFindnBrowse" depends="compileFindnBrowse">
-    <war destfile="${build}/findnbrowse.war" webxml="myfaces-root/userfrontend-gui/WEB-INF/web.xml">
-      <lib dir="${lib}">
-        <include name="myfaces-api-1.2.3.jar" />
-        <include name="myfaces-impl-1.2.3.jar" />
-        <include name="commons-beanutils-1.7.0.jar" />
-        <include name="commons-codec-1.3.jar" />
-        <include name="commons-collections-3.2.jar" />
-        <include name="commons-digester-1.8.jar" />
-        <include name="commons-discovery-0.4.jar" />
-        <include name="commons-logging-1.1.jar" />
-      	<include name="commons-lang-2.3.jar" />
-        <include name="jstl.jar" />
-        <include name="standard.jar" />
-        <include name="log4j-1.2.15.jar" />
-        <include name="tomahawk.jar" />
-        <!--include name="oadminrealm.jar"/-->
-      </lib>
-      <metainf dir="myfaces-root/admin-gui/META-INF/">
-        <!--include name="context.xml"/-->
-      </metainf>
-      <webinf dir="myfaces-root/userfrontend-gui/WEB-INF/">
-        <include name="faces-config.xml" />
-        <include name="userfrontend_gui.xml" />
-      	<include name="searchclientprop.xml" />
-        <include name="restclientprop.xml" />
-        <include name="ddc_names_de.xml" />
-	    <include name="log4j.xml" />
-      </webinf>
-      <classes dir="${build.findnbrowse}" />
-      <zipfileset dir="myfaces-root/userfrontend-gui/">
-        <include name="*.jsp" />
-      </zipfileset>
-      <zipfileset dir="myfaces-root/userfrontend-gui/messages/" prefix="WEB-INF/classes/finddummy/" />
-      <zipfileset dir="myfaces-root/userfrontend-gui/css/" prefix="css/" />
-      <zipfileset dir="myfaces-root/userfrontend-gui/img/" prefix="img/" />
-      <zipfileset dir="myfaces-root/userfrontend-gui/pages/" prefix="pages/" />
-    </war>
-  </target>
-  
-  <target name="compileOAIPMH" depends="init">
-    <javac bootclasspathref="jre.libs" destdir="${build.oaipmh}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-      <classpath refid="classpath.oaipmh" />
-      <include name="**/_2/*.java" />
-      <include name="**/oaipmh/*.java" />
-      <exclude name="**/technotest*" />
-      <exclude name="**/OAdmiNRealm.java" />
-      <exclude name="**/server/**" />
-      <exclude name="**/Test*" />
-    </javac>
-  </target>
-  
-  <target name="warOAIPMH" depends="compileOAIPMH">
-    <war destfile="${build}/oaipmh.war" webxml="conf_oaipmh/web.xml">
-      <lib dir="${lib}">
-        <include name="log4j-1.2.15.jar" />
-      </lib>
-      <metainf dir="conf">
-        <include name="context.xml" />
-      </metainf>
-      <classes dir="${build.oaipmh}" />
-    </war>
-  </target>
+	<target name="warOAIPMH" depends="jibxBindOAIPMH">
+		<war destfile="${dist}/oaipmh.war" webxml="conf_oaipmh/web.xml">
+			<fileset file="conf_oaipmh/oaipmh.properties" />
+			<lib dir="${lib}">
+				<include name="log4j-1.2.15.jar" />
+				<include name="jibx-run.jar" />
+				<include name="commons-lang-2.3.jar" />
+			</lib>
+			<metainf dir="conf">
+				<include name="context.xml" />
+			</metainf>
+			<classes dir="${build.oaipmh}" />
+		</war>
+	</target>
 
 	<target name="compileRSSFeed" depends="init">
-	    <javac destdir="${build.rssfeed}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-	      <classpath refid="classpath.rssfeed" />
-	      <include name="**/rssfeed/*.java" />
-	      <include name="**/database/*.java" />
-	    	<include name="**/utils/**" />
-	      <exclude name="**/technotest*" />
-	      <exclude name="**/OAdmiNRealm.java" />
-	      <exclude name="**/handler/**" />
-	      <exclude name="**/ResourceRealm.java" />
-	      <exclude name="**/RestServer.java" />
-	      <exclude name="**/Test*" />
-	    </javac>
-	  </target>
-	  
-	  <target name="warRSSFeed" depends="compileRSSFeed">
-	    <war destfile="${build}/rssfeed.war" webxml="conf_rssfeed/web.xml">
-	      <lib dir="${lib}">
-	        <include name="log4j-1.2.15.jar" />
-	      	<include name="rome-1.0RC1.jar" />
-	      	<include name="commons-lang-2.3.jar" />
-	      	<include name="jdom.jar" />
-	      </lib>
-	      <metainf dir="conf_rssfeed">
-	    	 <include name="context.xml" />
-	      </metainf>
-	      <classes dir="${build.rssfeed}" />
-	      <webinf dir="conf_rssfeed/">
-	    	 <include name="searchclientprop.xml" />
-	      </webinf>
-	    </war>
-	  </target>
+		<javac destdir="${build.rssfeed}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.rssfeed" />
+			<include name="**/rssfeed/*.java" />
+			<include name="**/database/*.java" />
+			<include name="**/utils/**" />
+			<exclude name="**/technotest*" />
+			<exclude name="**/OAdmiNRealm.java" />
+			<exclude name="**/handler/**" />
+			<exclude name="**/ResourceRealm.java" />
+			<exclude name="**/RestServer.java" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<target name="warRSSFeed" depends="compileRSSFeed">
+		<war destfile="${dist}/rssfeed.war" webxml="conf_rssfeed/web.xml">
+			<lib dir="${lib}">
+				<include name="log4j-1.2.15.jar" />
+				<include name="rome-1.0RC1.jar" />
+				<include name="commons-lang-2.3.jar" />
+				<include name="jdom.jar" />
+			</lib>
+			<metainf dir="conf_rssfeed">
+				<include name="context.xml" />
+			</metainf>
+			<classes dir="${build.rssfeed}" />
+			<webinf dir="conf_rssfeed/">
+				<include name="searchclientprop.xml" />
+			</webinf>
+		</war>
+	</target>
 
 	<target name="compileIndexerAccess" depends="init">
-	    <javac destdir="${build.indexeraccess}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-	      <classpath refid="classpath.indexeraccess" />
-	      <include name="**/indexeraccess/*.java" />
-		      <include name="**/database/*.java" />
-	    	  <include name="**/utils/**" />
-		      <exclude name="**/technotest*" />
-		      <exclude name="**/OAdmiNRealm.java" />
-		      <exclude name="**/handler/**" />
-		      <exclude name="**/ResourceRealm.java" />
-		      <exclude name="**/RestServer.java" />
-		      <exclude name="**/Test*" />
-	    </javac>
-	  </target>
-	  
-	  <target name="warIndexerAccess" depends="compileIndexerAccess">
-	    <war destfile="${build}/indexeraccess.war" webxml="conf_indexeraccess/web.xml">
-	      <lib dir="${lib}">
-	        <include name="log4j-1.2.15.jar" />
-	      	<include name="commons-lang-2.3.jar" />
-	      </lib>
-	    	<metainf dir="conf_indexeraccess">
-	    	        <include name="context.xml" />
-	    	</metainf>
-	      <classes dir="${build.indexeraccess}" />
-	    </war>
-	  </target>
-	
+		<javac destdir="${build.indexeraccess}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.indexeraccess" />
+			<include name="**/indexeraccess/*.java" />
+			<include name="**/database/*.java" />
+			<include name="**/utils/**" />
+			<exclude name="**/technotest*" />
+			<exclude name="**/OAdmiNRealm.java" />
+			<exclude name="**/handler/**" />
+			<exclude name="**/ResourceRealm.java" />
+			<exclude name="**/RestServer.java" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<target name="warIndexerAccess" depends="compileIndexerAccess">
+		<war destfile="${dist}/indexeraccess.war" webxml="conf_indexeraccess/web.xml">
+			<lib dir="${lib}">
+				<include name="log4j-1.2.15.jar" />
+				<include name="commons-lang-2.3.jar" />
+			</lib>
+			<metainf dir="conf_indexeraccess">
+				<include name="context.xml" />
+			</metainf>
+			<classes dir="${build.indexeraccess}" />
+		</war>
+	</target>
+
 	<target name="compileBibExport" depends="init">
-		    <javac destdir="${build.bibexport}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
-		      <classpath refid="classpath.bibexport" />
-		      <include name="**/bibexport/*.java" />
-		      <include name="**/database/*.java" />
-		      <include name="**/utils/**" />
-		      <exclude name="**/technotest*" />
-		      <exclude name="**/OAdmiNRealm.java" />
-		      <exclude name="**/handler/**" />
-		      <exclude name="**/ResourceRealm.java" />
-		      <exclude name="**/RestServer.java" />
-		      <exclude name="**/Test*" />
-		    </javac>
-	 </target>
-		  
-	 <target name="warBibExport" depends="compileBibExport">
-		    <war destfile="${build}/bibexport.war" webxml="conf_bibexport/web.xml">
-		      <lib dir="${lib}">
-		        <include name="log4j-1.2.15.jar" />
-		      	<include name="javabib-bin.jar" />
-		      	<include name="commons-lang-2.3.jar" />
-		      	<include name="jdom.jar" />
-		      </lib>
-		      <metainf dir="conf_bibexport">
-		    	 <include name="context.xml" />
-		      </metainf>
-		      <classes dir="${build.bibexport}" />
-		    </war>
-	 </target>
-	
-	
-  <target name="deployServer" depends="warServer" description="Install restserver">
-    <deploy url="${url}" username="${username}" password="${password}" path="${path}" war="file:${build}/restserver.war" update="true" />
-  </target>
-  
-  <target name="reloadServer" description="Reload restserver">
-    <reload url="${url}" username="${username}" password="${password}" path="${path}" />
-  </target>
-  
-  <target name="undeployServer" description="Undeploy restserver">
-    <undeploy url="${url}" username="${username}" password="${password}" path="${path}" />
-  </target>
-  
-  <target name="clean">
-    <delete dir="${build.harvester}" />
-    <delete dir="${build.inspector}" />
-    <delete dir="${build.aggregator}" />
-    <delete dir="${build.server}" />
-    <delete dir="${build.markereraser}" />
-    <delete dir="${build.adminservlet}" />
-    <delete dir="${build.oadminrealm}" />
-    <delete dir="${build.findnbrowse}" />
-  </target>
+		<javac destdir="${build.bibexport}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.bibexport" />
+			<include name="**/bibexport/*.java" />
+			<include name="**/database/*.java" />
+			<include name="**/utils/**" />
+			<exclude name="**/technotest*" />
+			<exclude name="**/OAdmiNRealm.java" />
+			<exclude name="**/handler/**" />
+			<exclude name="**/ResourceRealm.java" />
+			<exclude name="**/RestServer.java" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<target name="warBibExport" depends="compileBibExport">
+		<war destfile="${dist}/bibexport.war" webxml="conf_bibexport/web.xml">
+			<lib dir="${lib}">
+				<include name="log4j-1.2.15.jar" />
+				<include name="javabib-bin.jar" />
+				<include name="commons-lang-2.3.jar" />
+				<include name="jdom.jar" />
+			</lib>
+			<metainf dir="conf_bibexport">
+				<include name="context.xml" />
+			</metainf>
+			<classes dir="${build.bibexport}" />
+		</war>
+	</target>
+
+
+	<target name="deployServer" depends="warServer" description="Install restserver">
+		<deploy url="${url}" username="${username}" password="${password}" path="${path}" war="file:${build}/restserver.war" update="true" />
+	</target>
+
+	<target name="reloadServer" description="Reload restserver">
+		<reload url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+
+	<target name="undeployServer" description="Undeploy restserver">
+		<undeploy url="${url}" username="${username}" password="${password}" path="${path}" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.harvester}" />
+		<delete dir="${build.inspector}" />
+		<delete dir="${build.aggregator}" />
+		<delete dir="${build.server}" />
+		<delete dir="${build.markereraser}" />
+		<delete dir="${build.adminservlet}" />
+		<delete dir="${build.oadminrealm}" />
+		<delete dir="${build.findnbrowse}" />
+	</target>
 </project>

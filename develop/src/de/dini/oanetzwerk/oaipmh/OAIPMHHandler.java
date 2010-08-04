@@ -13,9 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
+import de.dini.oanetzwerk.oaipmh.OAIPMHVerbs;
+
 
 /**
+ * @author Sammy David
  * @author Michael K&uuml;hn
  *
  */
@@ -34,11 +36,6 @@ public class OAIPMHHandler extends HttpServlet {
 	
 	private static Logger logger = Logger.getLogger (OAIPMHHandler.class);
 	
-	/**
-	 * 
-	 */
-	
-	public OAIPMHHandler ( ) { }
 	
 	/**
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
@@ -46,8 +43,10 @@ public class OAIPMHHandler extends HttpServlet {
 	@Override
 	public void init (ServletConfig config) throws ServletException {
 		
+		logger.info("Initializing OAIPMH-Handler");
+		
 		super.init (config);
-		new File ("webapps/oaipmh/resumtionToken").mkdirs ( );
+		new File (ResumptionTokenManager.RESUMPTION_TOKEN_STORAGE_PATH).mkdirs ( );
 	}
 	
 	/**
@@ -56,6 +55,8 @@ public class OAIPMHHandler extends HttpServlet {
 	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
+		logger.info("Incoming GET-Request...");
+
 		req.setCharacterEncoding ("UTF-8");
 		resp.setCharacterEncoding ("UTF-8");
 		
@@ -125,7 +126,7 @@ public class OAIPMHHandler extends HttpServlet {
 	
 	private String getErrorMessage (Exception exception, int httpStatus) {
 		
-		return new OAIPMHError (OAIPMHerrorcodeType.BAD_VERB).toString ( );
+		return new OAIPMHError (OAIPMHErrorcodeType.BAD_VERB).toString ( );
 	}
 
 	/**

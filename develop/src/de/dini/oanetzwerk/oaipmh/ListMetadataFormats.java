@@ -1,114 +1,86 @@
 package de.dini.oanetzwerk.oaipmh;
 
+import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.GregorianCalendar;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import org.apache.commons.lang.StringUtils;
+import org.jibx.runtime.BindingDirectory;
+import org.jibx.runtime.IBindingFactory;
+import org.jibx.runtime.IMarshallingContext;
+import org.jibx.runtime.JiBXException;
 
-import org.apache.log4j.Logger;
-
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
-
-import de.dini.oanetzwerk.oaipmh.oaipmh.ListMetadataFormatsType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.MetadataFormatType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHObjectFactory;
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHtype;
-import de.dini.oanetzwerk.oaipmh.oaipmh.RequestType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.VerbType;
+import de.dini.oanetzwerk.oaipmh.DataConnection;
 
 /**
- * @author Michael K&uuml;hn
- *
+ * @author Sammy David
+ * @author Michael Kühn
+ * 
  */
 
-public class ListMetadataFormats implements OAIPMHVerbs {
-	
-	/**
-	 * 
-	 */
-	
-	private static Logger logger = Logger.getLogger (ListMetadataFormats.class);
-	
-	/**
-	 * 
-	 */
-	
-	private ConnectionToolkit dataConnectionToolkit;
-	
-	/**
-	 * 
-	 */
-	
-	//TODO: load ConnectionType from property file
-	private DataConnectionType conType = DataConnectionType.DB;
-	
-	/**
-	 * @see de.dini.oanetzwerk.oaipmh.OAIPMHVerbs#processRequest()
-	 */
-	
-	public String processRequest (Map <String, String [ ]> parameter) {
+public class ListMetadataFormats extends AbstractOAIPMHVerb  {
+
+
+	public String processRequest(Map<String, String[]> parameter) {
+
+		RequestType reqType = new RequestType();
+		reqType.setVerb(VerbType.LIST_METADATA_FORMATS);
+
+		String errorMsg = checkForBadArguments(parameter);
+		if (StringUtils.isNotEmpty(errorMsg)) {
+			return errorMsg;
+		}
 		
-		OAIPMHObjectFactory obfac = new OAIPMHObjectFactory ( );
-		
-		RequestType reqType = obfac.createRequestType ( );
-		reqType.setValue ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
-		reqType.setVerb (VerbType.LIST_METADATA_FORMATS);
-		
-		if (parameter.size ( ) > 1) {
-			
-			if (parameter.size ( ) == 2 && parameter.containsKey ("identifier")) {
-				
-				String identifier = parameter.get ("identifier") [0];
-				
-				this.dataConnectionToolkit = ConnectionToolkit.getFactory (this.conType);
-				
-				DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection ( );
-				
-				if (dataConnection.existsIdentifier (identifier))
-					reqType.setIdentifier (identifier);
-				
+		if (parameter != null && parameter.size() == 2) {
+
+			if (parameter.size() == 2 && parameter.containsKey("identifier")) {
+
+				String identifier = parameter.get("identifier")[0];
+
+				DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection();
+
+				if (dataConnection.existsIdentifier(identifier))
+					reqType.setIdentifier(identifier);
+
 				else {
-					return new OAIPMHError (OAIPMHerrorcodeType.ID_DOES_NOT_EXIST).toString ( );
+					return new OAIPMHError(OAIPMHErrorcodeType.ID_DOES_NOT_EXIST).toString();
 				}
-				
-			} else
-				return new OAIPMHError (OAIPMHerrorcodeType.BAD_ARGUMENT).toString ( );
+			}
 		}
 		
-		ListMetadataFormatsType metaDataFormatsList = obfac.createListMetadataFormatsType ( );
-		MetadataFormatType metaDataFormat = new MetadataFormatType ( );
-		metaDataFormat.setMetadataPrefix ("oai_dc");
-		metaDataFormat.setSchema ("http://www.openarchives.org/OAI/2.0/dc.xsd");
-		metaDataFormat.setMetadataNamespace ("http://purl.org/dc/elements/1.1/");
-		
-		metaDataFormatsList.getMetadataFormat ( ).add (metaDataFormat);
-		
-		OAIPMHtype oaipmhMsg = obfac.createOAIPMHtype ( );
-		oaipmhMsg.setResponseDate (new XMLGregorianCalendarImpl (new GregorianCalendar ( )));
-		oaipmhMsg.setRequest (reqType);
-		oaipmhMsg.setListMetadataFormats (metaDataFormatsList);
-		
-		Writer w = new StringWriter ( );
-		
+
+		ListMetadataFormatsType metaDataFormatsList = new ListMetadataFormatsType();
+		MetadataFormatType metaDataFormat = new MetadataFormatType();
+		metaDataFormat.setMetadataPrefix("oai_dc");
+		metaDataFormat.setSchema("http://www.openarchives.org/OAI/2.0/oai_dc.xsd");
+		metaDataFormat.setMetadataNamespace("http://www.openarchives.org/OAI/2.0/oai_dc");
+
+		metaDataFormatsList.getMetadataFormats().add(metaDataFormat);
+
+		OAIPMHtype oaipmhMsg = new OAIPMHtype(reqType);
+		oaipmhMsg.setListMetadataFormats(metaDataFormatsList);
+
+		Writer w = new StringWriter();
+
 		try {
-			
-			JAXBContext context = JAXBContext.newInstance (OAIPMHtype.class);
-			Marshaller m = context.createMarshaller ( );
-			m.setProperty (Marshaller.JAXB_ENCODING, "UTF-8");
-			m.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.setProperty (Marshaller.JAXB_SCHEMA_LOCATION, "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd");
-			m.marshal (obfac.createOAIPMH (oaipmhMsg), w);
-			
-		} catch (JAXBException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ), ex);
+			// IBindingFactory identifierFactory =
+			// BindingDirectory.getFactory(OaiIdentifierType.class);
+			IBindingFactory oaipmhFactory = BindingDirectory.getFactory(OAIPMHtype.class);
+
+			// marshal object back out to document in memory
+			IMarshallingContext mctx = oaipmhFactory.createMarshallingContext();
+			mctx.setIndent(2);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			mctx.setOutput(bos, "UTF-8");
+			mctx.marshalDocument(oaipmhMsg, "UTF-8", null, w);
+
+		} catch (JiBXException e) {
+
+			System.err.println(e.getLocalizedMessage() + e);
 		}
-		
-		return w.toString ( );
+
+		System.out.println(w.toString());
+		return w.toString();
 	}
 }

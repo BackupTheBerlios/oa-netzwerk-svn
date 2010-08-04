@@ -1,475 +1,440 @@
 package de.dini.oanetzwerk.oaipmh;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.UUID;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
-import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+import org.jibx.runtime.BindingDirectory;
+import org.jibx.runtime.IBindingFactory;
+import org.jibx.runtime.IMarshallingContext;
+import org.jibx.runtime.JiBXException;
 
 import de.dini.oanetzwerk.oaipmh.oaidc.OAIDCType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.HeaderType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.ListRecordsType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.MetadataType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHObjectFactory;
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHerrorcodeType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.OAIPMHtype;
-import de.dini.oanetzwerk.oaipmh.oaipmh.RecordType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.RequestType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.ResumptionTokenType;
-import de.dini.oanetzwerk.oaipmh.oaipmh.VerbType;
+
 
 /**
- * @author Michael K&uuml;hn
- *
+ * @author Sammy David
+ * @author Michael Kühn
  */
 
-public class ListRecords implements OAIPMHVerbs {
-	
-	/**
-	 * 
-	 */
-	
-	private static Logger logger = Logger.getLogger (ListRecords.class);
-	
-	/**
-	 * 
-	 */
-	
-	private ConnectionToolkit dataConnectionToolkit;
-	
-	/**
-	 * 
-	 */
-	//TODO: load ConnectionType from property file
-	private DataConnectionType conType = DataConnectionType.DB;
-	
-	/**
-	 * 
-	 */
+public class ListRecords extends AbstractOAIPMHVerb {
+
+	private static Logger logger = Logger.getLogger(ListRecords.class);
+
+	private static final String ID_PREFIX = "oai:oanet.de:";
+
+	private static final String ERROR_MISSING_METADATAPREFIX = "Sorry! The 'metadataPrefix' parameter is missing!";
+
+	private static final String ERROR_DATE_INVALID = "The format of the 'from'/'until' parameter is not valid!";
+
+	private static final String ERROR_UNTIL_BEFORE_FROM = "The 'until' value must not be before the 'from' value!";
+
 	
 	private String metadataPrefix;
-	
-	/**
-	 * 
-	 */
-	
-	private String resumptionToken = "";
-	
-	/**
-	 * 
-	 */
-	
+
+
 	private String from;
-	
-	/**
-	 * 
-	 */
-	
+
 	private String until;
-	
-	/**
-	 * 
-	 */
-	
+
 	private String set;
-	
-	/**
-	 * 
-	 */
-	
+
 	private BigInteger completeListSize;
-	
-	/**
-	 * 
-	 */
-	
-	private BigInteger resumptionTokenCursor;
-	
-	/**
-	 * @see de.dini.oanetzwerk.oaipmh.OAIPMHVerbs#processRequest(java.util.Map)
-	 */
-	
-	public String processRequest (Map <String, String [ ]> parameter) {
-		
-		if (parameter.size ( ) < 2)
-			return new OAIPMHError (OAIPMHerrorcodeType.BAD_ARGUMENT).toString ( );
-		
-		if (parameter.containsKey ("resumptionToken")) {
-			
-			this.resumptionToken = parameter.get ("resumptionToken") [0];
-			
-		} else if (!parameter.containsKey ("metadataPrefix"))
-			return new OAIPMHError (OAIPMHerrorcodeType.BAD_ARGUMENT).toString ( );
-		
-		else if (!parameter.get ("metadataPrefix") [0].equalsIgnoreCase ("oai_dc"))
-			return new OAIPMHError (OAIPMHerrorcodeType.CANNOT_DISSEMINATE_FORMAT).toString ( );
-		
-		else
-			this.setMetadataPrefix (parameter.get ("metadataPrefix") [0]);
-		
-		if (parameter.containsKey ("from"))
-			this.setFrom (parameter.get ("from") [0]);
-		
-		if (parameter.containsKey ("until"))
-			this.setUntil (parameter.get ("until") [0]);
-		
-		if (parameter.containsKey ("set"))
-			this.setSet (parameter.get ("set") [0]);
-		
-		OAIPMHObjectFactory obfac = new OAIPMHObjectFactory ( );
-		RequestType reqType = obfac.createRequestType ( );
-		
-		ListRecordsType listRecord = obfac.createListRecordsType ( );
-		
-		ArrayList <RecordType> records = this.getRecords ( );
-		
-		if (records.size ( ) == 0)
-			return new OAIPMHError (OAIPMHerrorcodeType.NO_RECORDS_MATCH).toString ( );
-		
-		listRecord.getRecord ( ).addAll (records);
-		
-		if (this.resumptionToken != null) {
-			
-//			ResumptionTokenType resToType = new ResumptionTokenType ( );
-			ResumptionTokenType resToType = obfac.createResumptionTokenType ( );
-			
-			GregorianCalendar cal = new GregorianCalendar ( );
-			cal.add (GregorianCalendar.DAY_OF_MONTH, 1);
-			
-			resToType.setExpirationDate (new XMLGregorianCalendarImpl (cal));
-			resToType.setValue (this.resumptionToken);
-			resToType.setCompleteListSize (this.completeListSize);
-			resToType.setCursor (this.resumptionTokenCursor);
-			
-			listRecord.setResumptionToken (resToType);
+
+	private String resumptionToken = "";
+	private BigInteger resumptionTokenCursor = BigInteger.valueOf(0);
+	private boolean resumptionTokenExpired = false;
+	private boolean resumptionTokenInvalid = false;
+	private ResumptionToken token = null;
+
+
+	public String processRequest(Map<String, String[]> parameter) {
+
+
+		String errorMsg = checkForBadArguments(parameter);
+		if (StringUtils.isNotEmpty(errorMsg)) {
+			return errorMsg;
 		}
 		
-//		RecordType record = new RecordType ( );
-//		
-//		HeaderType header = new HeaderType ( );
-//		header.setIdentifier ("oai:oanet:1234");
-//		header.setDatestamp ("2002-07-29");
-//		header.getSetSpec ( ).add ("ddc:610");
-//		header.getSetSpec ( ).add ("dini:3");
-//		header.getSetSpec ( ).add ("dnb:33");
-//		header.getSetSpec ( ).add ("other:1");
-//		header.getSetSpec ( ).add ("other:9");
-//		header.getSetSpec ( ).add ("other:10");
-//		
-//		record.setHeader (header);
+		if (parameter.size() < 2) {
+
+			return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, ERROR_MISSING_METADATAPREFIX).toString();
+		}
+
+		// minimum requirement: verb and at least metadataPrefix or
+		// resumptionToken
+		if (parameter.containsKey("resumptionToken")) {
+
+			this.resumptionToken = parameter.get("resumptionToken")[0];
+
+		} else if (!parameter.containsKey("metadataPrefix")) {
+
+			return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, ERROR_MISSING_METADATAPREFIX).toString();
+		}
+
+		// check if unsupported metadata type is requested
+		else if (!parameter.get("metadataPrefix")[0].equalsIgnoreCase("oai_dc")) {
+
+			return new OAIPMHError(OAIPMHErrorcodeType.CANNOT_DISSEMINATE_FORMAT).toString();
+		}
+
+		// set oai_dc as metadataPrefix
+		else {
+			this.setMetadataPrefix(parameter.get("metadataPrefix")[0]);
+		}
+
+		// check if optional parameters have been supplied
+		if (parameter.containsKey("from")) {
+			this.setFrom(parameter.get("from")[0]);
+		}
+		if (parameter.containsKey("until")) {
+			this.setUntil(parameter.get("until")[0]);
+		}
+		if (parameter.containsKey("set")) {
+			this.setSet(parameter.get("set")[0]);
 		
-//		MetadataType metadata = new MetadataType ( );
-//		
-//		OAIDCType oaidctype = new OAIDCType ( );
-//		
-//		oaidctype.getTitle ( ).add ("Gastrointestinaler Sauerstofftransport und Laktatstoffwechsel während des normothermen kardiopulmonalen Bypasses beim Menschen");
-//		oaidctype.getCreator ( ).add ("Jürgen Birnbaum");
-//		oaidctype.getPublisher ( ).add ("Medizinische Fakultät - Universitätsklinikum Charité");
-//		oaidctype.getDate ( ).add ("1998-03-02");
-//		oaidctype.getIdentifier ( ).add ("http://edoc.hu-berlin.de/dissertationen/medizin/birnbaum-juergen/PDF/Birnbaum.pdf");
-//		
-//		metadata.setAny (oaidctype);
+			if (StringUtils.isNotEmpty(this.getSet()) && !this.getSet().startsWith("ddc:") && !this.getSet().startsWith("dnb:") && !this.getSet().startsWith("pub-type:"))
+			{
+				return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, 
+				"The specified set '" + this.getSet() + "' is not supported by this service!").toString();
+			}
+		}
+
+		// retrieve requested results
 		
-//		record.setMetadata (metadata);
-//		
-//		listRecord.getRecord ( ).add (record);
-		
-		OAIPMHtype oaipmhMsg = obfac.createOAIPMHtype ( );
-		oaipmhMsg.setResponseDate (new XMLGregorianCalendarImpl (new GregorianCalendar ( )));
-		
-		reqType.setValue ("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
-		reqType.setVerb (VerbType.LIST_RECORDS);
-		
-		if (!this.getMetadataPrefix ( ).equals (""))
-			reqType.setMetadataPrefix (this.getMetadataPrefix ( ));
-		
-		if (!this.getFrom ( ).equals (""))
-			reqType.setFrom (this.getFrom ( ));
-		
-		if (!this.getUntil ( ).equals (""))
-			reqType.setUntil (this.getUntil ( ));
-		
-		if (!this.getSet ( ).equals (""))
-			reqType.setSet (this.getSet ( ));
-		
-		if (parameter.containsKey ("resumptionToken"))
-			reqType.setResumptionToken (parameter.get ("resumptionToken") [0]);
-		
-		oaipmhMsg.setRequest (reqType);
-		oaipmhMsg.setListRecords (listRecord);
-		
-		Writer w = new StringWriter ( );
+		ArrayList<RecordType> records = null;
 		
 		try {
 			
-			JAXBContext context = JAXBContext.newInstance (OAIDCType.class, OAIPMHtype.class);
-			Marshaller m = context.createMarshaller ( );
-			m.setProperty (Marshaller.JAXB_ENCODING, "UTF-8");
-			m.setProperty (Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.setProperty (Marshaller.JAXB_SCHEMA_LOCATION, "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd");
-			m.marshal (obfac.createOAIPMH (oaipmhMsg), w);
+			records = this.getRecords();
 			
-		} catch (JAXBException ex) {
-			
-			logger.error (ex.getLocalizedMessage ( ), ex);
+			// check for resumptionToken errors
+			if (resumptionTokenExpired) {
+				return new OAIPMHError(OAIPMHErrorcodeType.BAD_RESUMPTION_TOKEN, 
+				"The specified resumption token expired!").toString();
+			} else if (resumptionTokenInvalid) {
+				return new OAIPMHError(OAIPMHErrorcodeType.BAD_RESUMPTION_TOKEN, 
+				"The specified resumption token is not valid!").toString();
+			}
+		} catch (IllegalArgumentException e) {
+			System.out.println("error: " + e.getMessage());
+			return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, ERROR_UNTIL_BEFORE_FROM.equals(e.getMessage()) 
+					? e.getMessage() : ERROR_DATE_INVALID).toString();
 		}
-		
-		return w.toString ( );
+		System.out.println("results: " + records.size());
+
+		if (records.size() == 0) {
+			return new OAIPMHError(OAIPMHErrorcodeType.NO_RECORDS_MATCH).toString();
+		}
+
+		ListRecordsType listRecord = new ListRecordsType();
+		listRecord.getRecords().addAll(records);
+
+		if (this.resumptionToken != null && token != null) {
+
+			ResumptionTokenType resToType = new ResumptionTokenType();
+			resToType.setExpirationDate(token.getExpirationDate());
+			resToType.setValue(token.getId());
+			resToType.setCompleteListSize(token.getCompleteListSize());
+			resToType.setCursor(token.getResumptionTokenCursor());
+
+			listRecord.setResumptionToken(resToType);
+		}
+
+
+		RequestType reqType = new RequestType();
+		OAIPMHtype oaipmhMsg = new OAIPMHtype(reqType);
+		reqType.setVerb(VerbType.LIST_RECORDS);
+
+		// set request parameters for response
+		if (StringUtils.isNotEmpty(this.getMetadataPrefix()))
+			reqType.setMetadataPrefix(this.getMetadataPrefix());
+
+		if (StringUtils.isNotEmpty(this.getFrom()))
+			reqType.setFrom(this.getFrom());
+
+		if (StringUtils.isNotEmpty(this.getUntil()))
+			reqType.setUntil(this.getUntil());
+
+		if (StringUtils.isNotEmpty(this.getSet()))
+			reqType.setSet(this.getSet());
+
+		if (parameter.containsKey("resumptionToken"))
+			reqType.setResumptionToken(parameter.get("resumptionToken")[0]);
+
+		oaipmhMsg.setListRecords(listRecord);
+
+
+		Writer w = new StringWriter();
+
+		// create xml response
+		try {
+			IBindingFactory oaipmhFactory = BindingDirectory.getFactory(OAIPMHtype.class);
+			IMarshallingContext mctx = oaipmhFactory.createMarshallingContext();
+			mctx.setIndent(2);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			mctx.setOutput(bos, "UTF-8");
+			mctx.marshalDocument(oaipmhMsg, "UTF-8", false, w);
+
+			return w.toString();
+		} catch (JiBXException e) {
+
+			logger.error(e.getLocalizedMessage() + e);
+		}
+
+		return w.toString();
 	}
 
 	/**
 	 * @return
 	 */
-	
-	@SuppressWarnings("unchecked")
-	private ArrayList <RecordType> getRecords ( ) {
+	private ArrayList<RecordType> getRecords() {
 
-		LinkedList <Record> recordList;
-		int token = 0;
+		LinkedList<Record> recordList;
+
+		BigInteger idOffset = BigInteger.valueOf(0);
+
+		if (this.resumptionToken.equals("")) {
+			
+			//query for completeListSize
+
+		} else {
+
+			// load resumptiontoken if resumptiontoken parameter specified
+			System.out.println("resumption token: " + this.resumptionToken);
+
+			ResumptionToken token = (ResumptionToken) ResumptionTokenManager.loadResumptionToken(this.resumptionToken);
+
+			if (token == null) {
+				// invalid resumptionToken
+				this.resumptionTokenInvalid = true;
+				return null;
+			}	
+			
+			if (token.getExpirationDate().before(new Date())) {
+				// expired resumptionToken
+				this.resumptionTokenExpired = true;
+				return null;
+			}
+			
+			idOffset = token.getIdOffset();
+			this.resumptionTokenCursor = token.getResumptionTokenCursor().add(BigInteger.valueOf(1));
+			this.completeListSize = token.getCompleteListSize();
+			
+			HashMap<String, Object> map = token.getParameters();
+			this.from 	= (String) map.get("from");
+			this.until	= (String) map.get("until");
+			this.set	= (String) map.get("set");
+			this.metadataPrefix	= (String) map.get("metadataPrefix");
+//			System.out.println(from);
+//			System.out.println(until);
+//			System.out.println(set);
+//			System.out.println(metadataPrefix);
+		}
+
 		
-		if (this.resumptionToken.equals ("")) {
-		
-			this.dataConnectionToolkit = ConnectionToolkit.getFactory (this.conType);
-			DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection ( );
+		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection();
+
+		// actual query
+		long start = System.currentTimeMillis();
+		recordList = dataConnection.getRecordList(this.getFrom(), this.getUntil(), this.getSet(), idOffset, getMaxResults());
+		logger.info("ListRecords DB-Query time ... " + Long.toString(System.currentTimeMillis() - start));
+		logger.info("List size : " + recordList.size());
+
+		if (recordList.size() == 0) {
+			return new ArrayList<RecordType>();
+		}
+		if (recordList.size() >= getMaxResults()) {
+
+			// create new resumption token
 			
-			recordList = dataConnection.getRecordList (this.getFrom ( ), this.getUntil ( ), this.getSet ( ));
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("from", from);
+			map.put("until", until);
+			map.put("set", set);
+			map.put("metadataPrefix", metadataPrefix);
+//			System.out.println(recordList.get(recordList.size() - 1).getHeader().getIdentifier());
+			idOffset = BigInteger.valueOf(Integer.parseInt(
+					recordList.get(recordList.size() - 1).getHeader().getIdentifier()));
 			
-			if (recordList.size ( ) == 0)
-				return new ArrayList <RecordType> ( );
+			this.resumptionToken = ResumptionTokenManager.createNewResumptionToken();
 			
-			if (recordList.size ( ) > 10) {			//TODO: get this value from propertyfile
-				
-				this.resumptionToken = "oanetToken" + UUID.randomUUID ( ).hashCode ( );
-				
-				this.completeListSize = BigInteger.valueOf (recordList.size ( ));
-				
-				try {
-					
-					ObjectOutputStream oos = new ObjectOutputStream (new FileOutputStream ("webapps/oaipmh/resumtionToken/" + this.resumptionToken));
-					oos.writeObject (recordList);
-					
-				} catch (FileNotFoundException ex) {
-					
-					logger.error (ex.getLocalizedMessage ( ), ex);
-					recordList = new LinkedList <Record> ( );
-					
-				} catch (IOException ex) {
-					
-					logger.error (ex.getLocalizedMessage ( ), ex);
-					recordList = new LinkedList <Record> ( );
-				}
-				
-			} else
-				this.resumptionToken = null;
-			
+			// store resumption token
+			token = ResumptionTokenManager.storeResumptionToken(this.resumptionToken, idOffset, completeListSize, resumptionTokenCursor, map);
+
 		} else {
 			
-			token = Integer.parseInt (this.resumptionToken.substring (resumptionToken.length ( ) - 2, resumptionToken.length ( )));
-			
-			logger.debug ("Token: " + token);
-			this.resumptionTokenCursor = BigInteger.valueOf (token * 10);	//TODO: get this value from propertyfile
-			
-			this.resumptionToken = this.resumptionToken.substring (0, resumptionToken.length ( ) - 3);
-			
-			try {
-				
-				ObjectInputStream ois = new ObjectInputStream (new FileInputStream ("webapps/oaipmh/resumtionToken/" + this.resumptionToken));
-				recordList = (LinkedList <Record>) ois.readObject ( );
-				
-			} catch (FileNotFoundException ex) {
-
-				logger.error (ex.getLocalizedMessage ( ), ex);
-				recordList = new LinkedList <Record> ( );
-				
-			} catch (IOException ex) {
-
-				logger.error (ex.getLocalizedMessage ( ), ex);
-				recordList = new LinkedList <Record> ( );
-				
-			} catch (ClassNotFoundException ex) {
-
-				logger.error (ex.getLocalizedMessage ( ), ex);
-				recordList = new LinkedList <Record> ( );
-			}
-		}		
-		
-		this.completeListSize = BigInteger.valueOf (recordList.size ( ));
-		
-		ArrayList <RecordType> records = new ArrayList <RecordType> ( );
-		
-		for (int i = token * 10; i < recordList.size ( ) && i < token * 10 + 10; i++) { //TODO: get this value from propertyfile
-			
-			if (i == 0)
-				continue;
-			
-			logger.debug ("i = " + i);
-			Record recordItem = recordList.get (i);
-			
-			RecordType record = new RecordType ( );
-			HeaderType header = new HeaderType ( );
-			MetadataType metadata = new MetadataType ( );
-			
-			OAIDCType oaidctype = new OAIDCType ( );
-			
-			header.setIdentifier ("oai:oanet:" + recordItem.getHeader ( ).getIdentifier ( ));
-			
-			header.setDatestamp (recordItem.getHeader ( ).getDatestamp ( ));
-			
-			for (String set : recordItem.getHeader ( ).getSet ( ))
-				header.getSetSpec ( ).add (set);
-			
-			record.setHeader (header);
-			
-			if (recordItem.getMetaData ( ).getTitle ( ).size ( ) != 0)
-				for (String title : recordItem.getMetaData ( ).getTitle ( ))
-					oaidctype.getTitle ( ).add (title);
-			
-			if (recordItem.getMetaData ( ).getCreator ( ).size ( ) != 0)
-				for (String creator : recordItem.getMetaData ( ).getCreator ( ))
-					oaidctype.getCreator ( ).add (creator);
-			
-			if (recordItem.getMetaData ( ).getSubject ( ).size ( ) != 0)
-				for (String subject : recordItem.getMetaData ( ).getSubject ( ))
-					oaidctype.getSubject ( ).add (subject);
-			
-			if (recordItem.getMetaData ( ).getDescription ( ).size ( ) != 0)
-				for (String description : recordItem.getMetaData ( ).getDescription ( ))
-					oaidctype.getDescription ( ).add (description);
-			
-			if (recordItem.getMetaData ( ).getDate ( ).size ( ) != 0)
-				for (String date : recordItem.getMetaData ( ).getDate ( ))
-					oaidctype.getDate ( ).add (date);
-			
-			if (recordItem.getMetaData ( ).getType ( ).size ( ) != 0)
-				for (String type : recordItem.getMetaData ( ).getType ( ))
-					oaidctype.getType ( ).add (type);
-			
-			if (recordItem.getMetaData ( ).getFormat ( ).size ( ) != 0)
-				for (String format : recordItem.getMetaData ( ).getFormat ( ))
-					oaidctype.getFormat ( ).add (format);
-			
-			if (recordItem.getMetaData ( ).getIdentifier ( ).size ( ) != 0)
-				for (String identifier : recordItem.getMetaData ( ).getIdentifier ( ))
-					oaidctype.getIdentifier ( ).add (identifier);
-			
-			if (recordItem.getMetaData ( ).getLanguage ( ).size ( ) != 0)
-				for (String language : recordItem.getMetaData ( ).getLanguage ( ))
-					oaidctype.getLanguage ( ).add (language);
-			
-			metadata.setAny (oaidctype);
-			
-			record.setMetadata (metadata);
-			
-			records.add (record);
+			this.resumptionToken = null;
 		}
 		
-		if (((token + 1) * 10) > recordList.size ( ))	//TODO: get this value from propertyfile
-			this.resumptionToken = "";
-		
-		else
-			this.resumptionToken = this.resumptionToken + "." + String.format ("%2d", ++token).replace (' ', '0');
-		
+		// create results
+
+		ArrayList<RecordType> records = new ArrayList<RecordType>();
+
+		RecordType record;
+		HeaderType header;
+		MetadataType metadata;
+		OAIDCType oaidctype;
+
+		for (Record recordItem : recordList) {
+
+			record = new RecordType();
+			header = new HeaderType();
+			metadata = new MetadataType();
+			oaidctype = new OAIDCType();
+
+			header.setIdentifier(ID_PREFIX + recordItem.getHeader().getIdentifier());
+			header.setDatestamp(recordItem.getHeader().getDatestamp());
+
+			for (String set : recordItem.getHeader().getSet())
+				header.getSetSpecs().add("ddc:" + set);
+
+			record.setHeader(header);
+
+			if (recordItem.getMetaData().getTitle().size() != 0)
+				for (String title : recordItem.getMetaData().getTitle())
+					oaidctype.getTitle().add(title);
+
+			if (recordItem.getMetaData().getCreator().size() != 0)
+				for (String creator : recordItem.getMetaData().getCreator())
+					oaidctype.getCreator().add(creator);
+
+			if (recordItem.getMetaData().getSubject().size() != 0)
+				for (String subject : recordItem.getMetaData().getSubject())
+					oaidctype.getSubject().add(subject);
+
+			if (recordItem.getMetaData().getDescription().size() != 0)
+				for (String description : recordItem.getMetaData().getDescription())
+					oaidctype.getDescription().add(description);
+
+			if (recordItem.getMetaData().getPublisher().size() != 0)
+				for (String publisher : recordItem.getMetaData().getPublisher())
+					oaidctype.getPublisher().add(publisher);
+
+			if (recordItem.getMetaData().getDate().size() != 0)
+				for (String date : recordItem.getMetaData().getDate())
+					oaidctype.getDate().add(date);
+
+			if (recordItem.getMetaData().getType().size() != 0)
+				for (String type : recordItem.getMetaData().getType())
+					oaidctype.getType().add(type);
+
+			if (recordItem.getMetaData().getFormat().size() != 0)
+				for (String format : recordItem.getMetaData().getFormat())
+					oaidctype.getFormat().add(format);
+
+			if (recordItem.getMetaData().getIdentifier().size() != 0)
+				for (String identifier : recordItem.getMetaData().getIdentifier())
+					oaidctype.getIdentifier().add(identifier);
+
+			if (recordItem.getMetaData().getLanguage().size() != 0)
+				for (String language : recordItem.getMetaData().getLanguage())
+					oaidctype.getLanguage().add(language);
+
+			metadata.setAny(oaidctype);
+			record.setMetadata(metadata);
+
+			records.add(record);
+		}
+
 		return records;
 	}
-	
+
+	/******************************* Getter & Setter *******************************/
+
 	/**
 	 * @return the metadataPrefix
 	 */
-	
-	public final String getMetadataPrefix ( ) {
-		
+
+	public final String getMetadataPrefix() {
+
 		if (this.metadataPrefix == null)
 			this.metadataPrefix = "";
-		
+
 		return this.metadataPrefix;
 	}
-	
+
 	/**
-	 * @param metadataPrefix the metadataPrefix to set
+	 * @param metadataPrefix
+	 *            the metadataPrefix to set
 	 */
-	
-	public final void setMetadataPrefix (String metadataPrefix) {
-		
+
+	public final void setMetadataPrefix(String metadataPrefix) {
+
 		this.metadataPrefix = metadataPrefix;
 	}
-	
+
 	/**
 	 * @return the from
 	 */
-	
-	public final String getFrom ( ) {
-		
+
+	public final String getFrom() {
+
 		if (this.from == null)
 			this.from = "";
-		
+
 		return this.from;
 	}
-	
+
 	/**
-	 * @param from the from to set
+	 * @param from
+	 *            the from to set
 	 */
-	
-	public final void setFrom (String from) {
-		
+
+	public final void setFrom(String from) {
+
 		this.from = from;
 	}
-	
+
 	/**
 	 * @return the until
 	 */
-	
-	public final String getUntil ( ) {
-		
+
+	public final String getUntil() {
+
 		if (this.until == null)
 			this.until = "";
-		
+
 		return this.until;
 	}
-	
+
 	/**
-	 * @param until the until to set
+	 * @param until
+	 *            the until to set
 	 */
-	
-	public final void setUntil (String until) {
-		
+
+	public final void setUntil(String until) {
+
 		this.until = until;
 	}
-	
+
 	/**
 	 * @return the set
 	 */
-	
-	public final String getSet ( ) {
-		
+
+	public final String getSet() {
+
 		if (this.set == null)
 			this.set = "";
-		
+
 		return this.set;
 	}
-	
+
 	/**
-	 * @param set the set to set
+	 * @param set
+	 *            the set to set
 	 */
-	
-	public final void setSet (String set) {
-	
+
+	public final void setSet(String set) {
+
 		this.set = set;
 	}
 }
