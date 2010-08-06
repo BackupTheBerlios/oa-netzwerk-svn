@@ -783,7 +783,7 @@
 				<include name="jibx-run.jar" />
 				<include name="commons-lang-2.3.jar" />
 			</lib>
-			<metainf dir="conf">
+			<metainf dir="conf/dev">
 				<include name="context.xml" />
 			</metainf>
 			<classes dir="${build.oaipmh}" />

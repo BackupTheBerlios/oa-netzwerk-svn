@@ -130,12 +130,18 @@ public class ListIdentifiers extends AbstractOAIPMHVerb {
 		if (this.resumptionToken != null && token != null) {
 
 			ResumptionTokenType resToType = new ResumptionTokenType();
-
-			resToType.setExpirationDate(token.getExpirationDate());
-			resToType.setValue(token.getId());
-			resToType.setCompleteListSize(token.getCompleteListSize());
-			resToType.setCursor(token.getResumptionTokenCursor());
-
+			
+			if (this.resumptionTokenCursor.intValue() + getMaxResults() >= this.completeListSize.intValue()) {
+				
+				resToType.setCompleteListSize(token.getCompleteListSize());
+				resToType.setCursor(this.resumptionTokenCursor);
+			} else {
+				
+				resToType.setExpirationDate(token.getExpirationDate());
+				resToType.setValue(token.getId());
+				resToType.setCompleteListSize(token.getCompleteListSize());
+				resToType.setCursor(token.getResumptionTokenCursor());	
+			}
 			listIdents.setResumptionToken(resToType);
 		}
 
@@ -185,18 +191,18 @@ public class ListIdentifiers extends AbstractOAIPMHVerb {
 	private ArrayList<HeaderType> getHeaders2(){
 
 		LinkedList<Record> recordList;
-
 		BigInteger idOffset = BigInteger.valueOf(0);
+		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection();
 
 		if (this.resumptionToken.equals("")) {
 			
 			//query for completeListSize
-
+			this.completeListSize = BigInteger.valueOf(dataConnection.getRecordListSize(this.getFrom(), this.getUntil(), this.getSet()));
 		} else {
 
 			logger.info("Resumption token: " + this.resumptionToken);
 
-			ResumptionToken token = (ResumptionToken) ResumptionTokenManager.loadResumptionToken(this.resumptionToken);
+			token = (ResumptionToken) ResumptionTokenManager.loadResumptionToken(this.resumptionToken);
 			
 			if (token == null || token.getExpirationDate() == null) {
 				// invalid resumptionToken
@@ -204,9 +210,6 @@ public class ListIdentifiers extends AbstractOAIPMHVerb {
 				return null;
 			}	
 			
-
-//			logger.info("ResumptionToken: now: " + new Date());
-//			logger.info("ResumptionToken: now: " + token.getExpirationDate());
 			
 			if (token.getExpirationDate().before(new Date())) {
 				// expired resumptionToken
@@ -215,22 +218,15 @@ public class ListIdentifiers extends AbstractOAIPMHVerb {
 			}
 			
 			idOffset = token.getIdOffset();
-			this.resumptionTokenCursor = token.getResumptionTokenCursor().add(BigInteger.valueOf(1));
-			this.completeListSize = token.getCompleteListSize();
 			
 			HashMap<String, Object> map = token.getParameters();
 			this.from 	= (String) map.get("from");
 			this.until	= (String) map.get("until");
 			this.set	= (String) map.get("set");
 			this.metadataPrefix	= (String) map.get("metadataPrefix");
-//			System.out.println(from);
-//			System.out.println(until);
-//			System.out.println(set);
-//			System.out.println(metadataPrefix);
+			this.completeListSize = token.getCompleteListSize();
+			this.resumptionTokenCursor = token.getResumptionTokenCursor().add(BigInteger.valueOf(getMaxResults()));
 		}
-
-		
-		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection();
 
 		// actual query
 		long start = System.currentTimeMillis();
@@ -250,23 +246,18 @@ public class ListIdentifiers extends AbstractOAIPMHVerb {
 			map.put("until", until);
 			map.put("set", set);
 			map.put("metadataPrefix", metadataPrefix);
-//			System.out.println(recordList.get(recordList.size() - 1).getHeader().getIdentifier());
 			idOffset = BigInteger.valueOf(Integer.parseInt(
 					recordList.get(recordList.size() - 1).getHeader().getIdentifier()));
 			
 			this.resumptionToken = ResumptionTokenManager.createNewResumptionToken();
-			
+
 			// store resumption token
 			token = ResumptionTokenManager.storeResumptionToken(this.resumptionToken, idOffset, completeListSize, resumptionTokenCursor, map);
 
-		} else {
-			
-			this.resumptionToken = null;
-		}
+		} 
 		
 		// create results
 
-		this.completeListSize = BigInteger.valueOf(recordList.size());
 		ArrayList<HeaderType> headers = new ArrayList<HeaderType>();
 
 		HeaderType header;

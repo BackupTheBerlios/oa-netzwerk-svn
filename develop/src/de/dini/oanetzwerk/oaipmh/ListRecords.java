@@ -19,7 +19,6 @@ import org.jibx.runtime.JiBXException;
 
 import de.dini.oanetzwerk.oaipmh.oaidc.OAIDCType;
 
-
 /**
  * @author Sammy David
  * @author Michael Kühn
@@ -37,9 +36,7 @@ public class ListRecords extends AbstractOAIPMHVerb {
 
 	private static final String ERROR_UNTIL_BEFORE_FROM = "The 'until' value must not be before the 'from' value!";
 
-	
 	private String metadataPrefix;
-
 
 	private String from;
 
@@ -55,15 +52,13 @@ public class ListRecords extends AbstractOAIPMHVerb {
 	private boolean resumptionTokenInvalid = false;
 	private ResumptionToken token = null;
 
-
 	public String processRequest(Map<String, String[]> parameter) {
-
 
 		String errorMsg = checkForBadArguments(parameter);
 		if (StringUtils.isNotEmpty(errorMsg)) {
 			return errorMsg;
 		}
-		
+
 		if (parameter.size() < 2) {
 
 			return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, ERROR_MISSING_METADATAPREFIX).toString();
@@ -100,36 +95,34 @@ public class ListRecords extends AbstractOAIPMHVerb {
 		}
 		if (parameter.containsKey("set")) {
 			this.setSet(parameter.get("set")[0]);
-		
-			if (StringUtils.isNotEmpty(this.getSet()) && !this.getSet().startsWith("ddc:") && !this.getSet().startsWith("dnb:") && !this.getSet().startsWith("pub-type:"))
-			{
-				return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, 
-				"The specified set '" + this.getSet() + "' is not supported by this service!").toString();
+
+			if (StringUtils.isNotEmpty(this.getSet()) && !this.getSet().startsWith("ddc:") && !this.getSet().startsWith("dnb:")
+					&& !this.getSet().startsWith("pub-type:")) {
+				return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, "The specified set '" + this.getSet()
+						+ "' is not supported by this service!").toString();
 			}
 		}
 
 		// retrieve requested results
-		
+
 		ArrayList<RecordType> records = null;
-		
+
 		try {
-			
+
 			records = this.getRecords();
-			
+
 			// check for resumptionToken errors
 			if (resumptionTokenExpired) {
-				return new OAIPMHError(OAIPMHErrorcodeType.BAD_RESUMPTION_TOKEN, 
-				"The specified resumption token expired!").toString();
+				return new OAIPMHError(OAIPMHErrorcodeType.BAD_RESUMPTION_TOKEN, "The specified resumption token expired!").toString();
 			} else if (resumptionTokenInvalid) {
-				return new OAIPMHError(OAIPMHErrorcodeType.BAD_RESUMPTION_TOKEN, 
-				"The specified resumption token is not valid!").toString();
+				return new OAIPMHError(OAIPMHErrorcodeType.BAD_RESUMPTION_TOKEN, "The specified resumption token is not valid!").toString();
 			}
 		} catch (IllegalArgumentException e) {
 			System.out.println("error: " + e.getMessage());
-			return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, ERROR_UNTIL_BEFORE_FROM.equals(e.getMessage()) 
-					? e.getMessage() : ERROR_DATE_INVALID).toString();
+			return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, ERROR_UNTIL_BEFORE_FROM.equals(e.getMessage()) ? e.getMessage()
+					: ERROR_DATE_INVALID).toString();
 		}
-		System.out.println("results: " + records.size());
+
 
 		if (records.size() == 0) {
 			return new OAIPMHError(OAIPMHErrorcodeType.NO_RECORDS_MATCH).toString();
@@ -141,14 +134,20 @@ public class ListRecords extends AbstractOAIPMHVerb {
 		if (this.resumptionToken != null && token != null) {
 
 			ResumptionTokenType resToType = new ResumptionTokenType();
-			resToType.setExpirationDate(token.getExpirationDate());
-			resToType.setValue(token.getId());
-			resToType.setCompleteListSize(token.getCompleteListSize());
-			resToType.setCursor(token.getResumptionTokenCursor());
-
+			
+			if (this.resumptionTokenCursor.intValue() + getMaxResults() >= this.completeListSize.intValue()) {
+				
+				resToType.setCompleteListSize(token.getCompleteListSize());
+				resToType.setCursor(this.resumptionTokenCursor);
+			} else {
+				
+				resToType.setExpirationDate(token.getExpirationDate());
+				resToType.setValue(token.getId());
+				resToType.setCompleteListSize(token.getCompleteListSize());
+				resToType.setCursor(token.getResumptionTokenCursor());	
+			}
 			listRecord.setResumptionToken(resToType);
 		}
-
 
 		RequestType reqType = new RequestType();
 		OAIPMHtype oaipmhMsg = new OAIPMHtype(reqType);
@@ -171,7 +170,6 @@ public class ListRecords extends AbstractOAIPMHVerb {
 			reqType.setResumptionToken(parameter.get("resumptionToken")[0]);
 
 		oaipmhMsg.setListRecords(listRecord);
-
 
 		Writer w = new StringWriter();
 
@@ -199,49 +197,43 @@ public class ListRecords extends AbstractOAIPMHVerb {
 	private ArrayList<RecordType> getRecords() {
 
 		LinkedList<Record> recordList;
-
 		BigInteger idOffset = BigInteger.valueOf(0);
+		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection();
 
 		if (this.resumptionToken.equals("")) {
-			
-			//query for completeListSize
+
+			// query for completeListSize
+			this.completeListSize = BigInteger.valueOf(dataConnection.getRecordListSize(this.getFrom(), this.getUntil(), this.getSet()));
 
 		} else {
 
 			// load resumptiontoken if resumptiontoken parameter specified
-			System.out.println("resumption token: " + this.resumptionToken);
+			logger.debug("resumption token: " + this.resumptionToken);
 
-			ResumptionToken token = (ResumptionToken) ResumptionTokenManager.loadResumptionToken(this.resumptionToken);
+			token = (ResumptionToken) ResumptionTokenManager.loadResumptionToken(this.resumptionToken);
 
 			if (token == null) {
 				// invalid resumptionToken
 				this.resumptionTokenInvalid = true;
 				return null;
-			}	
-			
+			}
+
 			if (token.getExpirationDate().before(new Date())) {
 				// expired resumptionToken
 				this.resumptionTokenExpired = true;
 				return null;
 			}
-			
-			idOffset = token.getIdOffset();
-			this.resumptionTokenCursor = token.getResumptionTokenCursor().add(BigInteger.valueOf(1));
-			this.completeListSize = token.getCompleteListSize();
-			
-			HashMap<String, Object> map = token.getParameters();
-			this.from 	= (String) map.get("from");
-			this.until	= (String) map.get("until");
-			this.set	= (String) map.get("set");
-			this.metadataPrefix	= (String) map.get("metadataPrefix");
-//			System.out.println(from);
-//			System.out.println(until);
-//			System.out.println(set);
-//			System.out.println(metadataPrefix);
-		}
 
-		
-		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection();
+			idOffset = token.getIdOffset();
+
+			HashMap<String, Object> map = token.getParameters();
+			this.from = (String) map.get("from");
+			this.until = (String) map.get("until");
+			this.set = (String) map.get("set");
+			this.metadataPrefix = (String) map.get("metadataPrefix");
+			this.completeListSize = token.getCompleteListSize();
+			this.resumptionTokenCursor = token.getResumptionTokenCursor().add(BigInteger.valueOf(getMaxResults()));
+		}
 
 		// actual query
 		long start = System.currentTimeMillis();
@@ -255,26 +247,28 @@ public class ListRecords extends AbstractOAIPMHVerb {
 		if (recordList.size() >= getMaxResults()) {
 
 			// create new resumption token
-			
+
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("from", from);
 			map.put("until", until);
 			map.put("set", set);
 			map.put("metadataPrefix", metadataPrefix);
-//			System.out.println(recordList.get(recordList.size() - 1).getHeader().getIdentifier());
-			idOffset = BigInteger.valueOf(Integer.parseInt(
-					recordList.get(recordList.size() - 1).getHeader().getIdentifier()));
-			
-			this.resumptionToken = ResumptionTokenManager.createNewResumptionToken();
-			
-			// store resumption token
-			token = ResumptionTokenManager.storeResumptionToken(this.resumptionToken, idOffset, completeListSize, resumptionTokenCursor, map);
+			// System.out.println(recordList.get(recordList.size() -
+			// 1).getHeader().getIdentifier());
+			idOffset = BigInteger.valueOf(Integer.parseInt(recordList.get(recordList.size() - 1).getHeader().getIdentifier()));
 
-		} else {
-			
-			this.resumptionToken = null;
+			this.resumptionToken = ResumptionTokenManager.createNewResumptionToken();
+
+			// store resumption token
+			token = ResumptionTokenManager.storeResumptionToken(this.resumptionToken, idOffset, completeListSize, resumptionTokenCursor,
+					map);
+
 		}
-		
+		// else {
+		//			
+		// this.resumptionToken = null;
+		// }
+
 		// create results
 
 		ArrayList<RecordType> records = new ArrayList<RecordType>();

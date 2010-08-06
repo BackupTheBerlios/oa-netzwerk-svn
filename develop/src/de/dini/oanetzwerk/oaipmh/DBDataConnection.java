@@ -16,6 +16,7 @@ import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.StatementConnection;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
@@ -86,14 +87,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-				if (stmtconn != null && !stmtconn.connection.isClosed()) {
-					stmtconn.close();
-				}
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return eartliestDate;
@@ -167,14 +161,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return false;
@@ -232,14 +219,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return setList;
@@ -363,14 +343,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return classifications;
@@ -431,14 +404,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return date;
@@ -508,14 +474,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return creators;
@@ -577,14 +536,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return subjects;
@@ -646,14 +598,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return titles;
@@ -715,14 +660,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return dates;
@@ -784,14 +722,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return descriptions;
@@ -853,14 +784,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return formats;
@@ -922,14 +846,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return identifieres;
@@ -991,14 +908,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return languages;
@@ -1060,14 +970,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return publishers;
@@ -1129,14 +1032,7 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return types;
@@ -1185,7 +1081,7 @@ class DBDataConnection extends DataConnection {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
 
-			stmtconn.loadStatement(SelectFromDB.AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, idOffset, maxResults));
+			stmtconn.loadStatement(SelectFromDB.AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, idOffset, maxResults, false));
 			QueryResult idQueryResult = stmtconn.execute();
 			
 			List<BigDecimal> ids = new ArrayList<BigDecimal>();
@@ -1197,6 +1093,8 @@ class DBDataConnection extends DataConnection {
 			
 			logger.info("ID-Query results: " + ids.size());
 
+			closeStatementConnection(stmtconn);
+			
 			// skip final query, if there have no ids been found for the query
 			if (ids == null || ids.size() == 0) {
 				return recordList;
@@ -1229,8 +1127,6 @@ class DBDataConnection extends DataConnection {
 				
 				ResultSet rs = queryresult.getResultSet();
 				oid = rs.getBigDecimal("object_id");
-//				oid = queryresult.getResultSet().getBigDecimal(1);
-//				System.out.println("OID: " + oid.toPlainString());
 
 				if (!record.getHeader().getIdentifier().equals(oid.toPlainString())) {
 
@@ -1287,6 +1183,81 @@ class DBDataConnection extends DataConnection {
 			if (record != null && record.getHeader() != null && StringUtils.isNotEmpty(record.getHeader().getIdentifier()) ) {
 				recordList.add(record);
 			}
+			
+			closeStatementConnection(stmtconn);
+			
+		} catch (SQLException ex) {
+
+			logger.error(ex.getLocalizedMessage(), ex);
+
+		} catch (WrongStatementException ex) {
+
+			logger.error(ex.getLocalizedMessage(), ex);
+
+		} 
+		finally {
+
+			closeStatementConnection(stmtconn);
+		}
+
+		return recordList;
+	}
+
+	
+	public Integer getRecordListSize(String from, String until, String set) {
+		
+		Date fromDate;
+		Date untilDate;
+		
+		SingleStatementConnection stmtconn = null;
+
+		try {
+
+			if (StringUtils.isNotEmpty(from)) {
+				fromDate = Date.valueOf(from);
+			}
+			else {
+				fromDate = null;
+			}
+			if (StringUtils.isNotEmpty(until)) {
+				untilDate = Date.valueOf(until);
+			}
+			else {
+				untilDate = null;
+			}
+			if (fromDate != null && untilDate != null) {
+
+				if (untilDate.before(fromDate)) {
+					throw new IllegalArgumentException("The 'until' value must not be before the 'from' value!");
+				}	
+			}	
+		} catch (IllegalArgumentException ex) {
+
+			logger.warn(ex.getLocalizedMessage());
+			throw ex;
+		}
+
+		Integer result = null;
+		try {
+
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
+
+			stmtconn.loadStatement(SelectFromDB.AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, BigInteger.valueOf(0), 0, true));
+			QueryResult queryResult = stmtconn.execute();
+
+			if (queryResult.getWarning() != null) {
+
+				for (Throwable warning : queryResult.getWarning()) {
+
+					logger.warn(warning.getLocalizedMessage());
+				}
+			}
+			if (queryResult.getResultSet().next())
+			{
+				result = queryResult.getResultSet().getInt("size");
+			}
+
+
 		} catch (SQLException ex) {
 
 			logger.error(ex.getLocalizedMessage(), ex);
@@ -1297,20 +1268,12 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				if (stmtconn != null)
-					stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
-
-		return recordList;
+		return result;
 	}
-
+		
+		
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getRecordList(java.lang.String,
 	 *      java.lang.String, java.lang.String)
@@ -1354,7 +1317,7 @@ class DBDataConnection extends DataConnection {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
 
-			stmtconn.loadStatement(SelectFromDB.AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, idOffset, maxResults));
+			stmtconn.loadStatement(SelectFromDB.AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, idOffset, maxResults, false));
 			QueryResult idQueryResult = stmtconn.execute();
 			
 			List<BigDecimal> ids = new ArrayList<BigDecimal>();
@@ -1366,6 +1329,8 @@ class DBDataConnection extends DataConnection {
 			
 			logger.info("list size: " + ids.size());
 
+			closeStatementConnection(stmtconn);
+			
 			// skip final query, if there have no ids been found for the query
 			if (ids == null || ids.size() == 0) {
 				return recordList;
@@ -1388,15 +1353,12 @@ class DBDataConnection extends DataConnection {
 			DCHeader h = record.getHeader();
 			DCMetaData m = record.getMetaData();
 
-			// BigDecimal currentId = new BigDecimal(-1);
 
-			logger.info("fetch size: " + queryresult.getResultSet().getFetchSize());
 
 			while (queryresult.getResultSet().next()) {
 
 				ResultSet rs = queryresult.getResultSet();
 				oid = rs.getBigDecimal("object_id");
-//				System.out.println("OID: " + oid.toPlainString());
 
 				if (!record.getHeader().getIdentifier().equals(oid.toPlainString())) {
 
@@ -1525,17 +1487,24 @@ class DBDataConnection extends DataConnection {
 
 		} finally {
 
-			try {
-
-				stmtconn.close();
-
-			} catch (SQLException ex) {
-
-				logger.error(ex.getLocalizedMessage(), ex);
-			}
+			closeStatementConnection(stmtconn);
 		}
 
 		return recordList;
+	}
+	
+	
+	private void closeStatementConnection(StatementConnection stmtconn) {
+		
+		try {
+
+			if (stmtconn != null)
+				stmtconn.close();
+
+		} catch (SQLException ex) {
+
+			logger.error(ex.getLocalizedMessage(), ex);
+		}
 	}
 
 	private String safeValueOf(BigDecimal dec) {

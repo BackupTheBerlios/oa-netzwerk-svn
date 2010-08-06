@@ -2,6 +2,7 @@ package de.dini.oanetzwerk.server.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,6 +119,7 @@ public class DBAccessNG {
 		connection = pool.get(currentPoolCursor);
 
 		if (connection == null || connection.isClosed()) {
+
 			connection = createConnection();
 			pool.remove(currentPoolCursor);
 			pool.add(currentPoolCursor, connection);
@@ -149,7 +151,7 @@ public class DBAccessNG {
 		if (logger.isDebugEnabled())
 			logger.debug("Creating new SingleStatementConnection...");
 
-		if (connection == null) {
+		if (connection == null || connection.isClosed()) {
 			throw new SQLException("Connection based on the given data source not available!");
 		} 
 
@@ -175,6 +177,35 @@ public class DBAccessNG {
 		return new MultipleStatementConnection(connection);
 	}
 
+	
+//	public PreparedStatement safelyCreatePreparedStatement(Connection connection, String sql) {
+//		
+//		boolean ok = false;
+//		PreparedStatement preparedstmt = null;
+//		int retryAttempts = 0;
+//		
+//		while (!ok && retryAttempts < 100)
+//		{
+//			try {
+//				if (connection == null || connection.isClosed())
+//				{
+//					System.out.println("Connection is null or closed! This should not happen!");
+//				}
+//				preparedstmt = connection.prepareStatement(sql.toString());
+//				ok = true;
+//			} catch (SQLException e) {
+//				logger.info("Error while creating PreparedStatement! Trying again...");
+//				try {
+//					connection = getConnection();
+//				} catch (SQLException ex) {
+//					logger.info("Error getting connection from pool! Trying again...");
+//				}
+//			}
+//			
+//		}
+//		return preparedstmt;
+//	}
+	
 	/**
 	 * 
 	 * @return QueryResult

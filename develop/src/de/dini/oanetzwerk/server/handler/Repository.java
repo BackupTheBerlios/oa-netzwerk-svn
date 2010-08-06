@@ -158,15 +158,22 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 					this.rms.setStatus (RestStatusEnum.OK);
 					
 					if (logger.isDebugEnabled ( ))
-						logger.debug ("DB returned: \n\tRepository_ID = " + this.result.getResultSet ( ).getBigDecimal ("repository_id") +
-								"\n\tRepository name = " + this.result.getResultSet ( ).getString ("name") + 
-								"\n\tRepository URL = " + this.result.getResultSet ( ).getString ("url"));
+						logger.debug ("DB returned: \n\tRepository name = " + this.result.getResultSet ( ).getString ("name") +
+								"\n\tRepository URL = " + this.result.getResultSet ( ).getString ("url") +
+								"\n\tRepository OAI-URL = " + this.result.getResultSet ( ).getString ("oai_url") +
+								"\n\tTest Data = " + this.result.getResultSet ( ).getBoolean ("test_data") + 
+								"\n\tAmount = " + this.result.getResultSet ( ).getInt ("harvest_amount") +
+								"\n\tSleep = " + this.result.getResultSet ( ).getInt ("harvest_pause"));	
 					
 					res = new RestEntrySet ( );
 					
 					res.addEntry ("repository_id", this.result.getResultSet ( ).getBigDecimal ("repository_id").toPlainString ( ));
 					res.addEntry ("name", this.result.getResultSet ( ).getString ("name"));
 					res.addEntry ("url", this.result.getResultSet ( ).getString ("url"));
+					res.addEntry ("oai_url", this.result.getResultSet ( ).getString ("oai_url"));
+					res.addEntry ("test_data", new Boolean (this.result.getResultSet ( ).getBoolean ("test_data")).toString ( ));
+					res.addEntry ("harvest_amount", Integer.toString (this.result.getResultSet ( ).getInt ("harvest_amount")));
+					res.addEntry ("harvest_pause", Integer.toString (this.result.getResultSet ( ).getInt ("harvest_pause")));
 					
 					this.rms.addEntrySet (res);
 				}

@@ -18,133 +18,134 @@ import org.apache.catalina.util.StringManager;
 import org.apache.log4j.Logger;
 
 /**
- * @author Michael K&uuml;hn
- *
+ * @author Michael K&uuml;hn, Sammy David
+ * 
  */
 
 public class ResourceRealm extends RealmBase {
-	
+
 	/**
 	 * 
 	 */
-	
-	private static Logger logger = Logger.getLogger (ResourceRealm.class);
-	
+
+	private static Logger logger = Logger.getLogger(ResourceRealm.class);
+
 	/**
 	 * 
 	 */
-	
-	private Properties props = new Properties ( );
-	
+
+	private Properties props = new Properties();
+
 	/**
 	 * 
 	 */
-	
-	private static StringManager sm = StringManager.getManager (Constants.Package);
-	
+
+	private static StringManager sm = StringManager.getManager(Constants.Package);
+
 	/**
 	 * 
 	 */
-	
+
 	private String pathname = "conf/resource.conf";
-	
+
 	/**
 	 * 
 	 */
 
 	private File configFile;
-	
-	
-	public ResourceRealm ( ) {
-		
-		super ( );
+
+	public ResourceRealm() {
+
+		super();
 	}
-	
+
 	/**
 	 * @see org.apache.catalina.realm.RealmBase#start()
 	 */
-	
-	public synchronized void start ( ) throws LifecycleException {
-		
-		super.start ( );
-		configFile = new File (this.pathname);
-		
-		if (!configFile.isAbsolute ( ))
-			configFile = new File (System.getProperty ("catalina.base"), this.pathname);
-		
-		if (!configFile.exists ( ) || !configFile.canRead ( ))
-			throw new LifecycleException (sm.getString ("ResourceRealm.loadExist", configFile.getAbsolutePath ( )));
+	@Override
+	public synchronized void start() throws LifecycleException {
+
+		super.start();
+		configFile = new File(this.pathname);
+		// logger.info(configFile.getAbsolutePath());
+		// logger.info("isAbsolute: " + configFile.isAbsolute());
+
+		if (!configFile.isAbsolute())
+			configFile = new File(System.getProperty("catalina.base"), this.pathname);
+
+		if (!configFile.exists() || !configFile.canRead())
+			throw new LifecycleException(sm.getString("ResourceRealm.loadExist", configFile.getAbsolutePath()));
 	}
-	
+
 	/**
 	 * @see org.apache.catalina.realm.RealmBase#stop()
 	 */
-	
-	public synchronized void stop ( ) throws LifecycleException {
-		
-		super.stop ( );
+
+	public synchronized void stop() throws LifecycleException {
+
+		super.stop();
 	}
-	
+
 	/**
 	 * @see org.apache.catalina.realm.RealmBase#getName()
 	 */
-	
+
 	@Override
-	protected String getName ( ) {
-		
-		return this.getClass ( ).getSimpleName ( );
+	protected String getName() {
+
+		return this.getClass().getSimpleName();
 	}
-	
+
 	/**
 	 * @see org.apache.catalina.realm.RealmBase#getPassword(java.lang.String)
 	 */
-	
+
 	@Override
-	protected String getPassword (final String username) {
-		
+	protected String getPassword(final String username) {
+
 		try {
-			
-			this.props.loadFromXML (new FileInputStream (configFile));
-			
+
+			this.props.loadFromXML(new FileInputStream(configFile));
+
 		} catch (InvalidPropertiesFormatException ex1) {
-			
-			logger.fatal (ex1.getLocalizedMessage ( ), ex1);
+
+			logger.fatal(ex1.getLocalizedMessage(), ex1);
 			return null;
-			
+
 		} catch (FileNotFoundException ex1) {
-			
-			logger.fatal (ex1.getLocalizedMessage ( ), ex1);
+
+			logger.fatal(ex1.getLocalizedMessage(), ex1);
 			return null;
-			
+
 		} catch (IOException ex1) {
-			
-			logger.fatal (ex1.getLocalizedMessage ( ), ex1);
+
+			logger.fatal(ex1.getLocalizedMessage(), ex1);
 			return null;
 		}
-		
-		return this.props.getProperty (username);
+
+		return this.props.getProperty(username);
 	}
-	
+
 	/**
 	 * @see org.apache.catalina.realm.RealmBase#getPrincipal(java.lang.String)
 	 */
-	
-	@Override
-	protected Principal getPrincipal (final String username) {
 
-		return new GenericPrincipal (this, username, getPassword (username), this.getRoles (username));
+	@Override
+	protected Principal getPrincipal(final String username) {
+
+		return new GenericPrincipal(this, username, getPassword(username), this.getRoles(username));
 	}
-	
+
 	/**
-	 * @param username 
+	 * @param username
 	 * @return
 	 */
-	
-	private List <String> getRoles (String username) {
-		
-		List <String> rolelist = new LinkedList <String> ( );
-		
-		rolelist.add ("oanetzwerk");
+
+	private List<String> getRoles(String username) {
+
+		List<String> rolelist = new LinkedList<String>();
+
+		rolelist.add("oanetzwerk");
 		return rolelist;
 	}
 }

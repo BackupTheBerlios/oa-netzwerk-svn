@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.server.database;
 
+import java.awt.image.DataBufferDouble;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -243,7 +244,7 @@ public class SelectFromDB {
 	 */
 	public static PreparedStatement Repository(Connection connection) throws SQLException {
 
-		PreparedStatement preparedstmt = connection.prepareStatement("SELECT repository_id, name, url FROM dbo.Repositories");
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT name, repository_id, url, oai_url, test_data, harvest_amount, harvest_pause FROM dbo.Repositories");
 
 		return preparedstmt;
 	}
@@ -1445,7 +1446,6 @@ public class SelectFromDB {
 			else 
 				sql.append("AND (");
 		
-			System.out.println("siZe: " + ids.size());
 			StringBuffer buf = new StringBuffer();
 			for (BigDecimal id : ids) {
 				buf.append(" o.object_id = ").append(id).append(" OR");
@@ -1462,6 +1462,7 @@ public class SelectFromDB {
 		logger.info(sql.toString());
 
 		PreparedStatement preparedstmt = connection.prepareStatement(sql.toString());
+			//dbng.safelyCreatePreparedStatement(connection, sql.toString());
 
 		int parameterIndex = 1;
 		if (hasSet)
@@ -1480,6 +1481,9 @@ public class SelectFromDB {
 
 		return preparedstmt;
 	}
+	
+	
+
 
 	/**
 	 * 
@@ -1565,7 +1569,7 @@ public class SelectFromDB {
 	 */
 	
 	public static PreparedStatement AllOIDsByDate(Connection connection, Date from, Date until, String set, BigInteger idOffset,
-			int resultCount) throws SQLException {
+			int resultCount, boolean rowCountOnly) throws SQLException {
 
 		// example query: select TOP 50 o.object_id FROM dbo.Object o LEFT OUTER
 		// JOIN dbo.DDC_Classification ddc ON
@@ -1576,7 +1580,13 @@ public class SelectFromDB {
 
 		PreparedStatement preparedstmt;
 
-		StringBuffer sql = new StringBuffer("SELECT TOP " + resultCount + " o.object_id from dbo.Object o ");
+		StringBuffer sql = new StringBuffer("SELECT ");
+		if (rowCountOnly) {
+			sql.append("COUNT(o.object_id) AS size ");
+		}else {
+			sql.append("TOP " + resultCount + " o.object_id ");
+		}
+		sql.append("from dbo.Object o ");
 
 		HashMap<Integer, Object> params = new HashMap<Integer, Object>();
 		int paramCount = 1;
@@ -1612,7 +1622,6 @@ public class SelectFromDB {
 			params.put(paramCount++, until);
 		}
 
-		System.out.println("Set: " + set);
 		if (set != null) {
 			if (set.startsWith("ddc:")) {
 				sql.append("AND ddc.DDC_Categorie = ?");
@@ -1623,7 +1632,10 @@ public class SelectFromDB {
 			}
 			params.put(paramCount++, set);
 		}
-		sql.append(" ORDER BY o.object_id");
+		if(!rowCountOnly) {
+			
+			sql.append(" ORDER BY o.object_id");
+		}
 
 		logger.info("sql: " + sql.toString());
 
@@ -1632,7 +1644,6 @@ public class SelectFromDB {
 		Object param;
 		for (int i = 1; i <= params.size(); i++) {
 			param = params.get(i);
-			System.out.println(param);
 			if (param instanceof Date)
 				preparedstmt.setDate(i, (Date) param);
 			else if (param instanceof String)
@@ -1719,4 +1730,22 @@ public class SelectFromDB {
 
 		return preparedstmt;
 	}
+	
+	
+	public static PreparedStatement UsageDataOIDs(Connection connection) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT DISTINCT udm.object_id FROM UsageData_Months udm ORDER BY udm.object_id");
+
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement UsageDataOIDsForRepository(Connection connection, Integer repository_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT DISTINCT udm.object_id FROM UsageData_Months udm, Object o WHERE o.repository_id = ? AND o.object_id = udm.object_id ORDER BY udm.object_id");
+		preparedstmt.setInt(1, repository_id);
+		
+		return preparedstmt;
+	}
+	
+	
 }

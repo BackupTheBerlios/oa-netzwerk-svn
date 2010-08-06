@@ -195,7 +195,7 @@
 	<!--     ============================ ResumptionToken Type ======================== -->
 
 	<mapping abstract="true" type-name="oai:resumptionTokenType" class="de.dini.oanetzwerk.oaipmh.ResumptionTokenType">
-		<value style="text" get-method="getValue" set-method="setValue" />
+		<value style="text" get-method="getValue" set-method="setValue" usage="optional"/>
 		<value style="attribute" name="expirationDate" get-method="getExpirationDate" set-method="setExpirationDate"
 			usage="optional" />
 		<value style="attribute" name="completeListSize" get-method="getCompleteListSize" set-method="setCompleteListSize"

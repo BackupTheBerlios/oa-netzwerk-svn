@@ -128,5 +128,8 @@ public abstract class DataConnection {
 	 * @return
 	 */
 	
+	abstract public Integer getRecordListSize (String from, String until, String set);
 	abstract public LinkedList <Record> getRecordList (String from, String until, String set, BigInteger idOffset, int resultCount);
+	
+	
 }
