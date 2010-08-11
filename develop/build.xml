@@ -18,6 +18,7 @@
 	<property name="build.findnbrowse" value="build/findnbrowse" />
 	<property name="build.oadminrealm" value="build/oadminrealm" />
 	<property name="build.resourcerealm" value="build/resourcerealm" />
+	<property name="build.tokencleaner" value="build/tokencleaner" />
 	<property name="build.oaipmh" value="build/oaipmh" />
 	<property name="build.rssfeed" value="build/rssfeed" />
 	<property name="build.bibexport" value="build/bibexport" />
@@ -147,6 +148,10 @@
 		<pathelement location="${java.home}/lib" />
 	</path>
 
+	<path id="classpath.tokencleaner">
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+	</path>
+		
 	<path id="classpath.oaipmh">
 		<pathelement location="${lib}/servlet-api.jar" />
 		<pathelement location="${lib}/log4j-1.2.15.jar" />
@@ -226,6 +231,7 @@
 		<mkdir dir="${build.oadminrealm}" />
 		<mkdir dir="${build.resourcerealm}" />
 		<mkdir dir="${build.findnbrowse}" />
+		<mkdir dir="${build.tokencleaner}" />
 		<mkdir dir="${build.oaipmh}" />
 		<mkdir dir="${build.rssfeed}" />
 		<mkdir dir="${build.indexeraccess}" />
@@ -752,11 +758,34 @@
 		</war>
 	</target>
 
+	
+	<target name="compileTokenCleaner" depends="init">
+		<javac destdir="${build.tokencleaner}" debug="true" verbose="yes" debuglevel="lines,vars,source" srcdir="${src}" >
+			<classpath refid="classpath.tokencleaner" />
+			<include name="**/tokencleaner/**" />
+		</javac>
+	</target>
+	
+	<target name="jarTokenCleaner" depends="compileTokenCleaner">
+		<property name="cp" value="lib/log4j-1.2.15.jar" />
+		<jar jarfile="${dist}/tokencleaner.jar">
+			<fileset dir="${build.tokencleaner}">
+				<include name="**/TokenCleaner*" />
+			</fileset>
+			<!--fileset file="conf_tokencleaner/.properties" /-->
+			<manifest>
+				<attribute name="Class-Path" value="${cp}" />
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.oaipmh.tokencleaner.TokenCleaner"/>
+			</manifest>
+		</jar>
+	</target>
+	
 	<target name="compileOAIPMH" depends="init">
 		<javac destdir="${build.oaipmh}" debug="true" verbose="yes" debuglevel="lines,vars,source" srcdir="${src}" >
 			<classpath refid="classpath.oaipmh" />
 			<include name="**/oaipmh/**" />
 			<include name="**/server/database/*.java" />
+			<exclude name="**/oaipmh/tokencleaner/**"/>
 			<exclude name="**/server/*.java" />
 			<exclude name="**/_2/*.java" />
 			<exclude name="**/technotest*" />
@@ -783,7 +812,7 @@
 				<include name="jibx-run.jar" />
 				<include name="commons-lang-2.3.jar" />
 			</lib>
-			<metainf dir="conf/dev">
+			<metainf dir="conf">
 				<include name="context.xml" />
 			</metainf>
 			<classes dir="${build.oaipmh}" />

@@ -172,6 +172,12 @@ public class RestDataConnection extends DataConnection {
 		return null;
 	}
 
+	@Override
+	public Integer getRecordListSize(String from, String until, String set) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getRecordList(java.lang.String, java.lang.String, java.lang.String)
 	 */
