@@ -225,6 +225,7 @@ public class SearchBean
 
   private String parseOneSlotSearchField2()
   {
+	logger.debug(this.strOneSlot);
     logger.debug("parseOneSlotSearchField");
     if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
       String strQuery = new String(this.strOneSlot);

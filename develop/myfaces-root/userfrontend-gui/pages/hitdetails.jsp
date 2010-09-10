@@ -3,10 +3,11 @@
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="t" %>
 
-<f:loadBundle basename="finddummy.index" var="index"/>
 
 <html>
-<f:view>
+	<f:view>
+	<f:loadBundle basename="messages" var="msg"/>
+	
 	<head>
 		<%@ include file="components/header.htm" %>
 		<title>Found</title>
@@ -19,7 +20,7 @@
 			<h:form>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
                 <span class="span_selected_ddc">Kategorie: <h:commandLink value="#{searchBean.browse.selectedDDCCatName}" action="browse_ddc"/></span>
-				<h:commandButton value="#{index.find}" action="#{searchBean.actionSearchButton}"/>
+				<h:commandButton value="#{msg.find}" action="#{searchBean.actionSearchButton}"/>
                 <t:div id="div_search_error" rendered='#{searchBean.strErrorLastSearch != ""}'>
 					Beim angeschlossenen Suchdienst ist leider ein Fehler aufgetreten:<br />
 					<small>(<h:outputText value="#{searchBean.strErrorLastSearch}" />)</small>					
@@ -29,7 +30,7 @@
 
 		<div id="div_hitdetails_navi">
 			<h:form>
-				<span class="backlink"><h:commandLink value="#{index.linkname_close_details}" action="close_details"/></span>		
+				<span class="backlink"><h:commandLink value="#{msg.linkname_close_details}" action="close_details"/></span>		
 			</h:form>
 		</div>
 

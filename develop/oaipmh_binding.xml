@@ -263,7 +263,7 @@
 	<!-- ===================================================================== -->
 
 	<mapping name="dc" class="de.dini.oanetzwerk.oaipmh.oaidc.OAIDCType" extends="de.dini.oanetzwerk.oaipmh.AbstractMetadataType">
-		<namespace uri="http://www.openarchives.org/OAI/2.0/oai_dc" default="elements" prefix="oai_dc" />
+		<namespace uri="http://www.openarchives.org/OAI/2.0/oai_dc/" default="elements" prefix="oai_dc" />
 		<namespace uri="http://purl.org/dc/elements/1.1/" default="attributes" prefix="dc" />
 		<namespace uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi" />
 		<value style="attribute" ns="http://www.w3.org/2001/XMLSchema-instance" name="schemaLocation" field="schemaLocation" />
@@ -274,7 +274,7 @@
 	<!-- abstract="true" type-name="oai_dcType"  -->
 	<mapping abstract="true" type-name="oai_dcType" class="de.dini.oanetzwerk.oaipmh.oaidc.OAIDCType" extends="de.dini.oanetzwerk.oaipmh.AbstractMetadataType">
 	
-		<namespace uri="http://www.openarchives.org/OAI/2.0/oai_dc" default="none" prefix="oai_dc" />
+		<namespace uri="http://www.openarchives.org/OAI/2.0/oai_dc/" default="none" prefix="oai_dc" />
 		<namespace uri="http://purl.org/dc/elements/1.1/" default="elements" prefix="dc" />
 
 		<collection field="title" type="java.util.ArrayList" usage="optional">

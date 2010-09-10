@@ -79,7 +79,7 @@ public class RSSFeedServlet extends HttpServlet {
 		
       super.init (config);
       try {
-   	    search_props = HelperMethods.loadPropertiesFromFile ("webapps/findnbrowse/WEB-INF/searchclientprop.xml");
+   	    search_props = HelperMethods.loadPropertiesFromFileWithinWebcontainer("webapps/findnbrowse/WEB-INF/searchclientprop.xml");
    	    mySearchClient = new SearchClient(search_props);
       } catch (IOException ioex) {
     	  throw new ServletException("Error at setup of search service client, ", ioex);

@@ -2,10 +2,10 @@
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
 
-<f:loadBundle basename="admin.mainadmin" var="msg"/>
 
 <html>
 	<f:view>
+	<f:loadBundle basename="admin.mainadmin" var="msg"/>
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 			<title><h:outputText value="#{msg.mainPageTitle}"/></title>

@@ -2,9 +2,9 @@
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
 
-<f:loadBundle basename="admin.repositories" var="msg"/>
 
 <f:view>
+<f:loadBundle basename="admin.repositories" var="msg"/>
 	<html>
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

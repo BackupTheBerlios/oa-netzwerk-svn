@@ -3,10 +3,11 @@
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="t" %>
 
-<f:loadBundle basename="finddummy.index" var="index"/>
 
 <html>
-<f:view>
+	<f:view>
+	<f:loadBundle basename="messages" var="msg"/>
+	
 	<head>
 		<%@ include file="components/header.htm" %>
 		<title>Found</title>
@@ -19,8 +20,8 @@
 			<h:form>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
                 <span class="span_selected_ddc">Kategorie: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/>&nbsp;&nbsp;<h:commandLink value="Kategorie ändern" action="browse_ddc"/></span>
-				<h:commandButton value="#{index.find_meta}" action="#{searchBean.actionSearch2Button}"/>&nbsp;
-				<h:commandButton value="#{index.find}" action="#{searchBean.actionSearchButton}"/>&nbsp;
+				<h:commandButton value="#{msg.find_meta}" action="#{searchBean.actionSearch2Button}"/>&nbsp;
+				<h:commandButton value="#{msg.find}" action="#{searchBean.actionSearchButton}"/>&nbsp;
                 
 				<h:outputLink value="#{searchBean.linkForSearchFeed}" target="_blank" title="Die letzte Suche nach '#{searchBean.strOneSlot}' als RSS-Feed abonieren."><img src="../img/feed-icon-28x28.png"/></h:outputLink> <small>*) Das RSS-Alerting-Feature ist noch in der Beta-Phase.</small>
                 <t:div id="div_search_error" rendered='#{searchBean.strErrorLastSearch != ""}'>

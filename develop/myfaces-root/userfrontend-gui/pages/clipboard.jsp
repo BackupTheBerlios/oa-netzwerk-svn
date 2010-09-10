@@ -3,10 +3,10 @@
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="t" %>
 
-<f:loadBundle basename="finddummy.index" var="index"/>
 
 <html>
-<f:view>
+	<f:view>
+	<f:loadBundle basename="messages" var="msg"/>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<link rel="stylesheet" href="../css/teststyle.css" type="text/css"/>
@@ -15,9 +15,9 @@
 	<body>
 			<div id="div_general_links">
 			<h:form>
-				<h:commandLink value="#{index.linkname_start}" action="start"/>&nbsp;
-                <h:commandLink value="#{index.linkname_projekt}" action="projekt"/>&nbsp;
-                <h:commandLink value="#{index.linkname_impressum}" action="impressum"/>&nbsp; 
+				<h:commandLink value="#{msg.linkname_start}" action="start"/>&nbsp;
+                <h:commandLink value="#{msg.linkname_projekt}" action="projekt"/>&nbsp;
+                <h:commandLink value="#{msg.linkname_impressum}" action="impressum"/>&nbsp; 
                 <h:commandLink value="Teilnehmende Repositorien" action="repositories"/>&nbsp;
                 <h:outputLink value="http://oanetzwerk.wordpress.com" target="_blank">Blog</h:outputLink>&nbsp;
                 <h:outputLink value="http://oanetzwerk.wordpress.com/2009/07/03/worum-geht-es-eigentlich/" target="_blank">About</h:outputLink>&nbsp;
@@ -27,7 +27,7 @@
 		<div id="div_flat_search">
 			<h:form>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
-				<h:commandButton value="#{index.find}" action="#{searchBean.actionSearchButton}"/>
+				<h:commandButton value="#{msg.find}" action="#{searchBean.actionSearchButton}"/>
 			</h:form>
 			</div>
 	
@@ -88,5 +88,5 @@
 </h:form>
 
 	</body>
-</f:view>
+	</f:view>
 </html>

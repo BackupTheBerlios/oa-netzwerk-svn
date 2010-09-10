@@ -3,10 +3,11 @@
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="t" %>
 
-<f:loadBundle basename="finddummy.index" var="index"/>
 
 <html>
-<f:view>
+	<f:view>
+	<f:loadBundle basename="messages" var="msg"/>
+	
 	<head>
 		<%@ include file="components/header.htm" %>
 		<title>Found</title>
@@ -104,5 +105,5 @@
 
 
 	</body>
-</f:view>
+	</f:view>
 </html>
