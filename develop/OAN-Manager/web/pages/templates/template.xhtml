@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk"
+   xmlns:u="http://oanet.cms.hu-berlin.de/jsf-utils">
+
+<head>
+<title>#{pageTitle}</title>
+<ui:include src="../components/head_declarations.xhtml"></ui:include>
+</head>
+
+<body>
+<!-- ================ Header ============== -->
+
+<ui:decorate template="../components/header.xhtml"></ui:decorate>
+
+
+<!-- =========== Debugging Switch ==========-->
+
+<ui:debug hotkey="m" rendered="#{initParam['oanmanager.DEBUG_MODE']}" />
+
+
+<!-- ================= Main =============== -->
+
+<table id="main-table" class="watermark" width="100%" height="450" border="0">
+   <tr>
+
+      <!-- =========== Left Navigation =========== -->
+
+      <td id="side-panel" width="20%">
+      <div style="margin-left: 20px; margin-right: 20px; border-top: 1px solid #bbb"></div>
+
+      <div id="navigation"><ui:insert name="menu" /></div>
+      </td>
+
+      <!-- =========== Content =========== -->
+
+      <td id="main-panel" width="60%" height="100%"><ui:insert name="content" /></td>
+
+      <td id="empty-panel" width="20%" height="100%"></td>
+
+   </tr>
+</table>
+
+
+<!-- ============== Footer ============== -->
+
+<ui:include src="../components/footer.xhtml"></ui:include>
+
+
+</body>
+
+</html>

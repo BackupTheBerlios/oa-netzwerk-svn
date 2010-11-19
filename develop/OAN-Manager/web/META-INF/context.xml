@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+	<Resource name="jdbc/oanetztest"
+		auth="Container"
+		type="javax.sql.DataSource"
+		username="oanetdbo"
+		password="U7%wD8e4"
+		driverClassName="net.sourceforge.jtds.jdbc.Driver"
+		url="jdbc:jtds:sybase://themis.cms.hu-berlin.de:2025;DatabaseName=oanetzwerktest"
+		maxActive="8"
+		maxIdle="4"/>
+		
+</Context>

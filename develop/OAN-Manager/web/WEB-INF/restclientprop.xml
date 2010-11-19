@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
+<properties> 
+<comment></comment>
+<entry key="url">oanet.cms.hu-berlin.de</entry>
+<entry key="NonSSLPort">80</entry>
+<entry key="SSLPort">443</entry>
+<entry key="servletPath">restserver/server/</entry>
+<entry key="trustStore"></entry>
+<entry key="keystorepassword">tomcat</entry>
+</properties>

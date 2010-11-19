@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+
+<ui:composition template="templates/template.xhtml">
+
+   <ui:param name="pageTitle" value="Dienste - OA-Netzwerk Manager" />
+   
+   <ui:define name="navigation">
+      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml">Dienste</a>
+   </ui:define>
+
+   <ui:define name="menu">
+      <div id="tasks">
+
+      <div class="task"><img height="24" style="margin: 2px;" alt=""
+         width="24" src="../images/24x24/new-package.gif" /><a href="repositories_main.faces">Repositorien
+      verwalten</a></div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/setting.gif" /><a href="services_main.faces"><b>Dienste verwalten</b></a>
+
+      <div class="subtasks">
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/setting.gif" /><a href="services_harvester.faces">Harvester</a></div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/setting.gif" /><a href="services_aggregator.faces">Aggregator</a></div>
+
+      </div>
+      </div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/setting.gif" /><a href="users_main.faces">Benutzer verwalten</a></div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/notepad.gif" /><a href="reports.faces">Reports</a></div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/notepad.gif" /><a href="livelog.faces">Live Log</a></div>
+
+      </div>
+
+   </ui:define>
+
+   <ui:define name="content">
+
+      Über dieses Portal ist die gesamte
+      Dienstekette des OA-Netzwerks steuerbar und ermöglicht den Ablauf der Dienste zu überwachen oder mögliche
+      Fehlersituationen schnell zu überblicken! Darüber hinaus lassen sich die OAN zugrundeliegenden Repositorien (Data
+      Provider) verwalten. Zusätzliche Funktionen wie der Live-Service-Log oder aufbereitete Reports erleichtern den
+      Einblick und geben einen Status über die Arbeit der OAN-Dienste.<br />
+      <br />
+
+      <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
+
+      <table width="100%">
+
+         <tr>
+            <th>Status</th>
+            <th>Dienst</th>
+            <th>Letzter erfolgreicher Durchlauf</th>
+            <th>Letzter erfolgloser Durchlauf</th>
+            <th>Dauer des letzten Durchlaufs</th>
+            <th>Intervall</th>
+            <th>Aktion</th>
+         </tr>
+
+         <tr>
+            <td><img src="../images/24x24/status_green.png" width="18" height="18" /></td>
+            <td>Harvester</td>
+            <td>TODO</td>
+            <td>TODO</td>
+            <td>TODO</td>
+            <td>TODO</td>
+            <td><a href="">Starten</a><br />
+            <a href="">Stoppen</a></td>
+         </tr>
+
+      </table>
+
+
+
+      </div>
+      </div>
+
+</ui:define>
+
+</ui:composition>
+
+</body>
+
+</html>
