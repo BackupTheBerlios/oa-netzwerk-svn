@@ -119,7 +119,7 @@ public class HelperMethods {
 	}
 	
 	public static Properties loadPropertiesFromFileWithinWTPWebcontainer (String file) throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
-		final String wtpPath = "C:/eclipse-servers/wtpwebapps"; 
+		final String wtpPath = System.getProperty("catalina.home") + "/webapps"; 
 		Properties props = new Properties ( );
 		
 		if (logger.isDebugEnabled ( ))
