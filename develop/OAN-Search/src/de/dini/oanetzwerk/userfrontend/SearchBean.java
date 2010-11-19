@@ -49,7 +49,7 @@ public class SearchBean
   public SearchBean()
     throws InvalidPropertiesFormatException, FileNotFoundException, IOException
   {
-    this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
+    this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
 
     this.hitlist = new HitlistBean();
     this.hitlist.setParentSearchBean(this);
@@ -62,7 +62,7 @@ public class SearchBean
     this.strRepositoryFilterRID = request.getParameter("filterForRID");
     setupRepositoryFilterByRID(this.strRepositoryFilterRID);
 
-    this.search_props = HelperMethods.loadPropertiesFromFileWithinWebcontainer("webapps/findnbrowse/WEB-INF/searchclientprop.xml");
+    this.search_props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(Utils.getWebappPath() + "/WEB-INF/searchclientprop.xml");
     this.mySearchClient = new SearchClient(this.search_props);
   }
 

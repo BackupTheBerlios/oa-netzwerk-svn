@@ -34,7 +34,8 @@
    			    <h:form>
 				<span class="center">
                 <img src="../img/Logo_oan_rgb_micro.png" />
-				
+                <div style="height: 25px;"></div>
+                
 				<div id="div_option_tabs">
 					<div>
 						<h:outputText value="#{msg.linkname_search}" />

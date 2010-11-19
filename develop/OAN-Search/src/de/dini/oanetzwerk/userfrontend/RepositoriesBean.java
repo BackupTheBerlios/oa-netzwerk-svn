@@ -32,7 +32,7 @@ public class RepositoriesBean implements Serializable {
 	
     public RepositoriesBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException  {
     	    	
-		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
+		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer (Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
 		listRepositoryConfig = new ArrayList<RepositoryConfig>();		
 		
 		initListRepositoryConfig();

@@ -31,7 +31,7 @@ public class CachingMetadataHashMap extends HashMap<BigDecimal,CompleteMetadata>
 	public CachingMetadataHashMap() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		super();
 		
-		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
+		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer (Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
 		this.cmMarsh = CompleteMetadataJAXBMarshaller.getInstance();
 		
 	}

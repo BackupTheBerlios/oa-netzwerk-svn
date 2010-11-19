@@ -45,7 +45,7 @@ public class BrowseBean {
     
 	public BrowseBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		
-		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
+		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer (Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
 		//this.props = HelperMethods.loadPropertiesFromFile ("userfrontend_gui.xml");
 		
 		//mapDDCSums = new HashMap<String, String>();

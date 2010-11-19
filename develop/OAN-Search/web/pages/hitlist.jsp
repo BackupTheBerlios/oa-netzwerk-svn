@@ -10,7 +10,7 @@
 	
 	<head>
 		<%@ include file="components/header.htm" %>
-		<title>Found</title>
+		<title>Ergebnisse - Open Access Netzwerk (OAN)</title>
 	</head>
 	<body>
 			<!-- include link navigation -->	         
@@ -19,7 +19,7 @@
 		<div id="div_flat_search">
 			<h:form>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
-                <span class="span_selected_ddc">Kategorie: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/>&nbsp;&nbsp;<h:commandLink value="Kategorie ändern" action="browse_ddc"/></span>
+                <span class="span_selected_ddc">Kategorie: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/>&nbsp;&nbsp;<a href="browse_ddc"><h:outputLabel value="Kategorie ändern" /></a>&nbsp;</span>
 				<h:commandButton value="#{msg.find_meta}" action="#{searchBean.actionSearch2Button}"/>&nbsp;
 				<h:commandButton value="#{msg.find}" action="#{searchBean.actionSearchButton}"/>&nbsp;
                 

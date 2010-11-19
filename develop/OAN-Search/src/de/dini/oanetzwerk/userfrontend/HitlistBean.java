@@ -43,8 +43,9 @@ public class HitlistBean implements Serializable {
 	private TreeSet<BigDecimal> setClipboardOID;
 	
 	public HitlistBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
-		
-		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer ("webapps/findnbrowse/WEB-INF/userfrontend_gui.xml");
+		String serverPath = Utils.getWebappPath();
+		System.out.println("testing");
+		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(serverPath + "/WEB-INF/userfrontend_gui.xml");
 		this.cmMarsh = CompleteMetadataJAXBMarshaller.getInstance();
 		
 		this.listHitOID = new ArrayList<BigDecimal>();
