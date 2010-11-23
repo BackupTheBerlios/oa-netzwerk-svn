@@ -1,4 +1,4 @@
-package de.dini.oanetzwerk.utils;
+package src.de.dini.oanetzwerk.utils;
 
 import java.text.MessageFormat;
 import java.util.Locale;

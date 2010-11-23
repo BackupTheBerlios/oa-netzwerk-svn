@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.dini.oanetzwerk.admin.utils;
+package src.de.dini.oanetzwerk.admin.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
