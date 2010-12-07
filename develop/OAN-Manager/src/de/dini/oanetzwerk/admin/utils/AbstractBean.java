@@ -31,7 +31,7 @@ public abstract class AbstractBean {
 
 	protected RestClient prepareRestTransmission(String resource) {
 
-		return RestClient.createRestClient(new File("C:/eclipse-servers" + this.props.getProperty("restclientpropfile")), resource,
+		return RestClient.createRestClient(new File(System.getProperty("cataline.home") + this.props.getProperty("restclientpropfile")), resource,
 				this.props.getProperty("username"), this.props.getProperty("password"));
 		// TODO: switch back return RestClient.createRestClient (new File
 		// (System.getProperty ("catalina.base") + this.props.getProperty
