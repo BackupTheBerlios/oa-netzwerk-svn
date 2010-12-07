@@ -13,7 +13,7 @@ public class HarvesterJob implements Job {
 
 	
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		System.out.println("HarvesterJob is executing.");
+		//System.out.println("HarvesterJob is executing.");
 	}
 	
 	public static int progress()
