@@ -127,4 +127,20 @@ public class UpdateInDB {
 		return preparedstmt;
 	}
 	
+	public static PreparedStatement Repository (final Connection connection,
+			final Long repository_id, final boolean active) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Updating Repository: UPDATE dbo.Repositories SET active = " + active +
+					" WHERE repository_id = " + repository_id);
+		}
+
+		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.Repositories SET active = ? WHERE repository_id = ?");
+		preparedstmt.setBoolean(1, active);
+		preparedstmt.setLong(2, repository_id);
+		
+		return preparedstmt;
+	}
+	
 }

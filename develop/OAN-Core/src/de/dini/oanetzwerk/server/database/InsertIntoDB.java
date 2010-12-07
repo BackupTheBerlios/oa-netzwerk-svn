@@ -832,4 +832,28 @@ public class InsertIntoDB {
 		return preparedstmt;
 	}
 	
+	public static PreparedStatement Repository (Connection connection, String name, String url, String oaiUrl, 
+			Integer harvestAmount, Integer harvestPause, boolean listRecords, boolean testData, boolean active) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {			
+			logger.debug ("Insert Repository:");
+		}
+		
+		PreparedStatement preparedstmt = 
+			connection.prepareStatement( "INSERT INTO dbo.Repositories (name, url, oai_url, test_data, harvest_amount, harvest_pause, listrecords, active) "
+					                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+		
+		preparedstmt.setString (1, name);
+		preparedstmt.setString (2, url);
+		preparedstmt.setString (3, oaiUrl);
+		preparedstmt.setBoolean(4, testData);
+		preparedstmt.setInt(5, harvestAmount);
+		preparedstmt.setInt(6, harvestPause);
+		preparedstmt.setBoolean(7, listRecords);
+		preparedstmt.setBoolean(8, active);
+		
+		
+		return preparedstmt;
+	}
+	
 }
