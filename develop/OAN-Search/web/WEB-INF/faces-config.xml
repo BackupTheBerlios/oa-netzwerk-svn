@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd"
+	version="1.2">
+
+
+	<!-- General Config  -->
+	
+	<!-- application>
+		<locale-config>
+			<default-locale>de</default-locale>
+			<supported-locale>de</supported-locale>
+			<supported-locale>en</supported-locale>
+		</locale-config>
+		<message-bundle>messages</message-bundle>
+	</application-->
+
+
+	<!-- Navigation Rules -->
+	
+	<navigation-rule>
+		<from-view-id>/*</from-view-id>
+		<navigation-case>
+			<from-outcome>start</from-outcome>
+			<to-view-id>/pages/start.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>projekt</from-outcome>
+			<to-view-id>/pages/projekt.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>impressum</from-outcome>
+			<to-view-id>/pages/impressum.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/pages/hitlist.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>repositories</from-outcome>
+			<to-view-id>/pages/repositories.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contact</from-outcome>
+			<to-view-id>/pages/contact.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>browse_ddc</from-outcome>
+			<to-view-id>/pages/browse_ddc.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/pages/start.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/pages/hitlist.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/pages/hitlist.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/pages/hitlist.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>details_clicked</from-outcome>
+			<to-view-id>/pages/hitdetails.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>show_clipboard</from-outcome>
+			<to-view-id>/pages/clipboard.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>clipboard_export_htmllist</from-outcome>
+			<to-view-id>/pages/clipboard_export_htmllist.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/pages/hitdetails.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>close_details</from-outcome>
+			<to-view-id>/pages/hitlist.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/pages/hitlist.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>details_clicked</from-outcome>
+			<to-view-id>/pages/hitdetails.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>search4keyword_clicked</from-outcome>
+			<to-view-id>/pages/hitlist.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/pages/clipboard.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>close_clipboard</from-outcome>
+			<to-view-id>/pages/hitlist.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/pages/hitlist.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>details_clicked</from-outcome>
+			<to-view-id>/pages/hitdetails.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>clipboard_export_htmllist</from-outcome>
+			<to-view-id>/pages/clipboard_export_htmllist.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- BEANS  -->
+	<managed-bean>
+		<managed-bean-name>metadataLoaderBean</managed-bean-name>
+		<managed-bean-class>de.dini.oanetzwerk.userfrontend.MetadataLoaderBean</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>repositoriesBean</managed-bean-name>
+		<managed-bean-class>de.dini.oanetzwerk.userfrontend.RepositoriesBean</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>searchBean</managed-bean-name>
+		<managed-bean-class>de.dini.oanetzwerk.userfrontend.SearchBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>mdLoaderBean</property-name>
+			<property-class>de.dini.oanetzwerk.userfrontend.MetadataLoaderBean</property-class>
+			<value>#{metadataLoaderBean}</value>
+		</managed-property>
+	</managed-bean>
+
+</faces-config>
