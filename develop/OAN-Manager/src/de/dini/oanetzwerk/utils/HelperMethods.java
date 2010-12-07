@@ -1,4 +1,4 @@
-package src.de.dini.oanetzwerk.utils;
+package de.dini.oanetzwerk.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
