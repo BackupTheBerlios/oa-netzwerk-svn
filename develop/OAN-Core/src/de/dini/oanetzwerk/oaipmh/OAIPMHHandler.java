@@ -86,12 +86,17 @@ public class OAIPMHHandler extends HttpServlet {
 	private String getResponse (HttpServletRequest req, HttpServletResponse resp) {
 		
 		String verb = req.getParameter ("verb");
+
+		Map<String, String[]> parameterMap = req.getParameterMap();
+		StringBuffer paramChain = new StringBuffer("?");
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("Verb: " + verb);
-		
-		Map parameterMap = req.getParameterMap ( );
-		
+		for (String key : parameterMap.keySet()) {
+			paramChain.append(key).append("=").append(req.getParameter(key)).append("&");
+		}
+
+		String parameters = paramChain.substring(0, paramChain.length() - 1); // cut off the last '&' from chaining
+		logger.info("Request: " + req.getRequestURL() + parameters);
+				
 		String classname = "de.dini.oanetzwerk.oaipmh." + verb;
 		
 		try {

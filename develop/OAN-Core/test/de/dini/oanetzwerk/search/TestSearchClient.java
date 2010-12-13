@@ -10,7 +10,6 @@ import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.dini.oanetzwerk.userfrontend.SearchClientException;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class TestSearchClient {

@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
@@ -451,17 +452,36 @@ class DBDataConnection extends DataConnection {
 				}
 			}
 
+			String firstName;
+			String lastName;
+			String title; 
+			
+			String author;
+			
 			while (queryresult.getResultSet().next()) {
 
 				// TODO: more generic please, add email and institution as well,
 				// when not null
 
-				if (queryresult.getResultSet().getString(4) == null || queryresult.getResultSet().getString(4).equals(""))
-					creators.add(queryresult.getResultSet().getString(2) + " " + queryresult.getResultSet().getString(3));
+				firstName 	= queryresult.getResultSet().getString(2);
+				lastName	= queryresult.getResultSet().getString(3);
+				title 		= queryresult.getResultSet().getString(4);
+				
+				// format according to Driver Guidelines v2.0
 
-				else
-					creators.add(queryresult.getResultSet().getString(4) + " " + queryresult.getResultSet().getString(2) + " "
-							+ queryresult.getResultSet().getString(3));
+
+				author = DriverCompliance.getAuthor(firstName, lastName);
+				
+				creators.add(
+						//(StringUtils.isEmpty(title) ? "" : title + " ") +  // title omitted
+						author);
+				
+//				if (queryresult.getResultSet().getString(4) == null || queryresult.getResultSet().getString(4).equals(""))
+//					creators.add(queryresult.getResultSet().getString(2) + " " + queryresult.getResultSet().getString(3));
+//
+//				else
+//					creators.add(queryresult.getResultSet().getString(4) + " " + queryresult.getResultSet().getString(2) + " "
+//							+ queryresult.getResultSet().getString(3));
 			}
 
 		} catch (SQLException ex) {
@@ -1038,6 +1058,7 @@ class DBDataConnection extends DataConnection {
 		return types;
 	}
 
+	
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getIdentifier(java.lang.String,
 	 *      java.lang.String, java.lang.String)

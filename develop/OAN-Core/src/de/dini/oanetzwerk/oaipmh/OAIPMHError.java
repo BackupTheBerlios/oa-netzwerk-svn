@@ -61,35 +61,37 @@ public class OAIPMHError {
 		switch (this.error) {
 			case BAD_ARGUMENT:
 				oaiError.setCode (OAIPMHErrorcodeType.BAD_ARGUMENT);
-				oaiError.setValue ("Sorry! One argument in the request is not valid.");
+				oaiError.setValue ("One argument in the request is not valid.");
 				break;
 			
 			case BAD_VERB:
 				oaiError.setCode (OAIPMHErrorcodeType.BAD_VERB);
-				oaiError.setValue ("Sorry! The requested verb is illegal.");
+				oaiError.setValue ("The requested verb is illegal.");
 				break;
 			
 			case BAD_RESUMPTION_TOKEN:
 				oaiError.setCode (OAIPMHErrorcodeType.BAD_RESUMPTION_TOKEN);
-				oaiError.setValue ("Sorry! The requested resumptionToken does not exist or has already expired.");
+				oaiError.setValue ("The requested resumptionToken does not exist or has already expired.");
 				break;
 			
 			case CANNOT_DISSEMINATE_FORMAT:
 				oaiError.setCode (OAIPMHErrorcodeType.CANNOT_DISSEMINATE_FORMAT);
+				oaiError.setValue ("The requested metadata format is not supported.");
 				break;
 			
 			case ID_DOES_NOT_EXIST:
 				oaiError.setCode (OAIPMHErrorcodeType.ID_DOES_NOT_EXIST);
-				oaiError.setValue ("Sorry! The requested identifier does not exist.");
+				oaiError.setValue ("The requested identifier does not exist.");
 				break;
 			
 			case NO_METADATA_FORMATS:
 				oaiError.setCode (OAIPMHErrorcodeType.NO_METADATA_FORMATS);
+				oaiError.setValue ("There is no metadata format supplied within your request.");
 				break;
 			
 			case NO_RECORDS_MATCH:
 				oaiError.setCode (OAIPMHErrorcodeType.NO_RECORDS_MATCH);
-				oaiError.setValue ("Sorry! No records matching the request.");
+				oaiError.setValue ("There are no records matching the request.");
 				break;
 			
 			case NO_SET_HIERARCHY:

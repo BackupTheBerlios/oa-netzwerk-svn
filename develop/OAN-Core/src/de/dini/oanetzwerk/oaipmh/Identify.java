@@ -49,7 +49,7 @@ public class Identify extends AbstractOAIPMHVerb {
 		identify.setProtocolVersion(ProtocolVersionType._20);
 		identify.setRepositoryName("OA Netzwerk OAI-PMH Export Interface");
 		identify.setAdminEmails(adminEmails);
-		identify.setDeletedRecord(DeletedRecordType.NO);
+		identify.setDeletedRecord(DeletedRecordType.TRANSIENT);
 
 		OaiIdentifierType oaiIdent = new OaiIdentifierType();
 		oaiIdent.setDelimiter(":");

@@ -42,7 +42,7 @@ import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
-import de.dini.oanetzwerk.userfrontend.SearchClientException;
+import de.dini.oanetzwerk.search.SearchClientException;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 import de.dini.oanetzwerk.utils.imf.Author;

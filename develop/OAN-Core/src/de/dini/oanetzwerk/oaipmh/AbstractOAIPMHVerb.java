@@ -28,7 +28,7 @@ public abstract class AbstractOAIPMHVerb implements OAIPMHVerbs {
 	private static Logger logger = Logger.getLogger(AbstractOAIPMHVerb.class);
 
 	private static Map<String, String[]> allowedArguments;
-	private static final int DEFAULT_MAX_RESULTS = 50;
+	private static final int DEFAULT_MAX_RESULTS = 100;
 	private static final String OAIPMH_CONFIG_PATH = 
 		System.getProperty("catalina.home") + System.getProperty("file.separator") + "webapps/oaipmh/oaipmh.properties";
 	

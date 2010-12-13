@@ -19,7 +19,6 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.userfrontend.SearchClientException;
 
 /**
  * This class wraps a HttpClient that connects to the search service. It offers convenient query-methods

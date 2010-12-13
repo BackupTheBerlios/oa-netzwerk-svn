@@ -37,7 +37,7 @@ public class SingleStatementConnection implements StatementConnection {
 	 * @throws SQLException 
 	 */
 	
-	protected SingleStatementConnection (Connection dataSourceConnection) throws SQLException {
+	public SingleStatementConnection (Connection dataSourceConnection) throws SQLException {
 		
 //		if (logger.isDebugEnabled ( ))
 //			logger.debug ("SingleStatementConnection Instance will be prepared");

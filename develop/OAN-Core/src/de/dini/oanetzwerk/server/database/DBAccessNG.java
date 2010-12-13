@@ -13,6 +13,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -51,6 +52,8 @@ public class DBAccessNG {
 
 		} catch (NamingException ex) {
 
+//			this.datasource = new BasicDataSource();
+//			this.datasource.
 			logger.error(ex.getLocalizedMessage(), ex);
 		}
 	}
@@ -89,7 +92,7 @@ public class DBAccessNG {
 
 		Connection connection;
 		try {
-
+			
 			connection = this.datasource.getConnection();
 			return connection;
 
