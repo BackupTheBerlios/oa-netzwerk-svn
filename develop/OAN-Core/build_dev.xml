@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project name="OA-Netzwerk Developer" basedir=".">
+
+	<!-- ==================================================================== -->
+	<!-- Property Definitions                                                 -->
+	<!-- ==================================================================== -->
+
+
+	<property environment="env" />
+
+	<import file="build.xml" />
+
+	<property name="build.dir" value="build" />
+	<property name="lib.dir" value="lib" />
+	<property name="run" value="run" />
+	<property name="src.dir" value="src" />
+	<property name="web.dir" value="web" />
+	<property name="war.dir" value="war" />
+
+	<property name="web.lib.dir" value="${web.dir}/WEB-INF/lib" />
+	<property name="war.lib.dir" value="${war.dir}/WEB-INF/lib" />
+
+	<property name="war.classes.dir" value="${war.dir}/WEB-INF/classes" />
+
+	<!-- Tomcat Deployer Properties -->
+	<!-- property name="manager.url" value="http://localhost:8080/manager" />
+	<property name="manager.username" value="manager" />
+	<property name="manager.password" value="manager" /-->
+
+	<property name="url" value="http://localhost:8081/manager" />
+	<property name="username" value="manager" />
+	<property name="password" value="manager" />
+
+
+
+
+
+
+	<!-- ==================================================================== -->
+	<!-- Task Defintions                                                      -->
+	<!-- ==================================================================== -->
+
+	<!-- Define Jibx Binding Task -->
+	<taskdef name="bind" classname="org.jibx.binding.ant.CompileTask" classpathref="compile.classpath" />
+
+	
+	
+	<!-- make sure binding jars are present -->
+	<target name="check-binding" description="Checks whether the required jibx libraries are available.">
+		<condition property="binding-jars-found">
+			<and>
+				<available file="${lib.dir}/jibx-bind-1.2.2.jar" />
+				<available file="${lib.dir}/jibx-run-1.2.2.jar" />
+			</and>
+		</condition>
+		<fail unless="binding-jars-found">Required JiBX binding jar jibx-bind.jar or
+         bcel.jar was not found in lib directory (${lib.dir})</fail>
+	</target>
+
+	<path id="classpath.oai">
+		<pathelement location="${lib}/servlet-api.jar" />
+		<pathelement location="${lib}/log4j-1.2.15.jar" />
+		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
+		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-lang-2.3.jar" />
+		<pathelement location="${lib}/jaxb-impl.jar" />
+		<pathelement location="${lib}/jibx-run-1.2.2.jar" />
+		<pathelement location="${lib}/bcel-5.1.jar" />
+	</path>
+
+
+	<target name="compileOAI" depends="init">
+		<javac destdir="${build.oaipmh}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+			<classpath refid="classpath.oai" />
+			<include name="**/_2/*.java" />
+			<include name="**/oaipmh/*.java" />
+			<include name="**/oai/*.java" />
+			<exclude name="**/technotest*" />
+			<exclude name="**/OAdmiNRealm.java" />
+			<exclude name="**/server/**" />
+			<exclude name="**/Test*" />
+		</javac>
+	</target>
+
+	<!-- create and edits class files according to jibx-mapping file -->
+	<target name="jibx-bind" depends="check-binding, compileOAI" description="Runs the jibx binding process.">
+		<echo message="Running JiBX binding compiler" />
+		<bind verbose="true">
+			<classpath refid="compile.classpath" />
+			<bindingfileset dir="${basedir}">
+				<include name="oaipmh_binding.xml" />
+			</bindingfileset>
+		</bind>
+	</target>
+
+	<target name="warOAI" depends="jibx-bind">
+		<war destfile="${dist}/oai.war" webxml="conf_oai/web.xml">
+			<fileset file="conf_oaipmh/oaipmh.properties" />
+			<lib dir="${lib}">
+				<include name="log4j-1.2.15.jar" />
+			</lib>
+			<metainf dir="conf/dev">
+				<include name="context.xml" />
+			</metainf>
+			<classes dir="${build.oaipmh}" />
+		</war>
+	</target>
+
+
+
+
+	<!-- ==================================================================== -->
+	<!-- Specific Project Targets                                                -->
+	<!-- ==================================================================== -->
+
+	<!-- Compile the java source of the project -->
+	<target name="compile" description="Compiles all Java source files">
+		<javac destdir="bin" source="1.5" target="1.5" debug="true" deprecation="false" optimize="false" failonerror="true" encoding="UTF-8">
+			<classpath refid="compile.classpath" />
+			<src path="${src}/org/openarchives/oai" />
+		</javac>
+	</target>
+
+	<!-- Prepare file structure and copy resources to create war file -->
+	<target name="build" depends="compile, jibx-bind" description="Compile main source tree java files into class files, generate jar files">
+
+	</target>
+
+
+	<target name="compileOAN" description="Compiles all Java source files">
+		<javac destdir="bin" source="1.5" target="1.5" debug="true" deprecation="false" optimize="false" failonerror="true" encoding="UTF-8">
+			<classpath refid="compile.classpath" />
+			<src path="${src}" />
+		</javac>
+	</target>
+
+	<target name="jarOAN" depends="compileOAN">
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
+		<jar jarfile="${build}/OAN.jar">
+			<fileset dir="bin" />
+		</jar>
+	</target>
+
+
+
+
+
+
+	<!-- ==================================================================== -->
+	<!-- Web Classpath Definitions                                            -->
+	<!-- ==================================================================== -->
+
+	<!-- Configure the Tomcat Deployer Classpath -->
+	<path id="deployer.classpath">
+		<fileset dir="${env.CATALINA_HOME}/lib">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${env.CATALINA_HOME}/bin">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<path id="compile.classpath">
+		<!-- Include our own classes -->
+		<pathelement location="${build.oaipmh}" />
+
+		<!-- Include jars in the project library directory -->
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+
+
+	<!-- ==================================================================== -->
+	<!-- Web Task Definitions                                                 -->
+	<!-- ==================================================================== -->
+
+
+	<!-- Define the custom Tomcat Ant Tasks -->
+	<taskdef resource="org/apache/catalina/ant/catalina.tasks" classpathref="deployer.classpath" />
+
+
+
+
+	<!-- ==================================================================== -->
+	<!-- Local Deployment Targets                                             -->
+	<!-- ==================================================================== -->
+
+	<!-- Local deployment of war-files. -->
+
+	<target name="local-deploy-findnbrowse" depends="warFindnBrowse" description="Simply deploys the findnbrowse web application">
+		<!--      <deploy alwayslog="false" url="${url}" username="${username}" password="${password}"-->
+		<!--         path="/findnbrowse" war="${build.dir}\findnbrowse.war" update="true" />-->
+		<delete file="${env.CATALINA_HOME}/webapps/findnbrowse.war" />
+		<delete dir="${env.CATALINA_HOME}/webapps/findnbrowse" />
+		<copy file="${dist}\findnbrowse.war" todir="${env.CATALINA_HOME}/webapps" />
+		<antcall target="tomcat-start" />
+	</target>
+
+	<target name="local-deploy-adminservlet" depends="warAdminServlet" description="Simply deploys the oan-manager web application">
+		<!--      <deploy alwayslog="false" url="${url}" username="${username}" password="${password}"-->
+		<!--         path="/findnbrowse" war="${build.dir}\findnbrowse.war" update="true" />-->
+		<delete file="${env.CATALINA_HOME}/webapps/adminservlet.war" />
+		<delete dir="${env.CATALINA_HOME}/webapps/adminservlet" />
+		<copy file="${dist}\adminservlet.war" todir="${env.CATALINA_HOME}/webapps" />
+		<antcall target="tomcat-start" />
+	</target>
+			
+	<target name="local-deploy-resourceRealm" depends="jarResourceRealm" description="Simply deploys the resourceRealm to the lib directory of the servlet container.">
+		<copy file="${lib}\resourceRealm.jar" todir="${env.CATALINA_HOME}/lib" />
+	</target>
+
+	<target name="local-deploy-server" depends="warLocalServer" description="Simply deploys the server web archive">
+		<delete file="${env.CATALINA_HOME}/webapps/restserver.war" />
+		<delete dir="${env.CATALINA_HOME}/webapps/restserver" />
+		<copy file="${dist}\restserver.war" todir="${env.CATALINA_HOME}/webapps" />
+	</target>
+	
+	<target name="local-deploy-liveserver" depends="warServer" description="Simply deploys the server web archive">
+		<delete file="${env.CATALINA_HOME}/webapps/restserver.war" />
+		<delete dir="${env.CATALINA_HOME}/webapps/restserver" />
+		<copy file="${dist}\restserver.war" todir="${env.CATALINA_HOME}/webapps" />
+	</target>
+
+	<target name="local-deploy-oaipmh" depends="warOAIPMH" description="Simply deploys the oaipmh web archive">
+		<delete file="${env.CATALINA_HOME}/webapps/oaipmh.war" />
+		<delete dir="${env.CATALINA_HOME}/webapps/oaipmh" />
+		<copy file="${dist}\oaipmh.war" todir="${env.CATALINA_HOME}/webapps" />
+		<antcall target="tomcat-start" />
+	</target>
+	
+	<target name="local-deploy-oai" depends="warOAI" description="Simply deploys the oaipmh web archive">
+		<delete file="${env.CATALINA_HOME}/webapps/oai.war" />
+		<delete dir="${env.CATALINA_HOME}/webapps/oai" />
+		<copy file="${dist}\oai.war" todir="${env.CATALINA_HOME}/webapps" />
+		<antcall target="tomcat-start" />
+	</target>
+
+	<!-- Local setup of services -->
+
+	<target name="local-setup-harvester" depends="jarHarvester" description="Setup the Harvester on the dev machine.">
+		<copy file="${build}\Harvester.jar" todir="${run}" />
+	</target>
+
+	<target name="local-setup-aggregator" depends="jarAggregator" description="Setup the Aggregator on the dev machine.">
+		<copy file="${build}\Aggregator.jar" todir="${run}" />
+	</target>
+
+	<target name="local-setup-markereraser" depends="jarMarkerAndEraser" description="Setup the MarkerAndEraser on the dev machine.">
+		<!-- untar src="${dist}/MarkerAndEraser.tar" dest="${run}" /-->
+		<copy file="${build}\MarkerAndEraser.jar" todir="${run}" />
+	</target>
+
+	<!-- ==================================================================== -->
+	<!-- Tomcat Control Targets                                               -->
+	<!-- ==================================================================== -->
+
+	<!-- Deploy/Undeploy Application using the Tomcat Deployment Tasks -->
+	<!--   <target name="tomcat-deploy-full" description="Builds the warfile and deploys the web application." depends="warfile">-->
+	<!--      <deploy alwayslog="true" url="${manager.url}" username="${manager.username}" password="${manager.password}"-->
+	<!--         path="${context.path}" war="${basedir}\${dist.dir}\${war.name}.war" update="true" />-->
+	<!--   </target>-->
+
+	<!--   <target name="tomcat-undeploy" description="Undeploy web application">-->
+	<!--      <undeploy url="${manager.url}" username="${manager.username}" password="${manager.password}" path="${context.path}" />-->
+	<!--   </target>-->
+
+	<!--
+      <target name="tomcat-redeploy" description="Redeploy web application" depends="tomcat-undeploy, tomcat-clean,
+      tomcat-deploy-simple" />
+   -->
+
+	<!--   <target name="tomcat-redeploy" description="Redeploy web application" depends="tomcat-clean, tomcat-start, tomcat-deploy-simple" />-->
+
+	<target name="tomcat-clean" description="Delete uvizion-connector webapp from tomcat.">
+		<delete dir="${env.CATALINA_HOME}/webapps/restserver" />
+		<delete file="${env.CATALINA_HOME}/webapps/restserver.war" />
+		<delete dir="${env.CATALINA_HOME}/webapps/findnbrowse" />
+		<delete file="${env.CATALINA_HOME}/webapps/findnbrowse.war" />
+	</target>
+
+	<target name="tomcat-start-clean" description="Start the tomcat servlet container." depends="tomcat-clean">
+		<java jar="${env.CATALINA_HOME}/bin/bootstrap.jar" fork="true">
+			<jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
+		</java>
+	</target>
+
+	<target name="tomcat-start" description="Start the tomcat servlet container.">
+		<java jar="${env.CATALINA_HOME}/bin/bootstrap.jar" fork="true">
+			<jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
+		</java>
+	</target>
+
+	<target name="tomcat-stop" description="Stop the running tomcat servlet">
+		<java jar="${env.CATALINA_HOME}/bin/bootstrap.jar" fork="true">
+			<jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
+			<arg line="stop" />
+		</java>
+	</target>
+
+</project>

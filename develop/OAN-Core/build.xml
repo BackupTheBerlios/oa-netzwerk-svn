@@ -569,6 +569,28 @@
 		</war>
 	</target>
 
+	<target name="warLocalServer" depends="compileServer">
+		<war destfile="${dist}/restserver.war" webxml="conf/web.xml">
+			<!--war destfile="${build}/restserver.war"-->
+			<lib dir="${lib}">
+				<include name="commons-cli-1.1.jar" />
+				<include name="commons-httpclient-3.1.jar" />
+				<include name="jdom.jar" />
+				<include name="commons-codec-1.3.jar" />
+				<include name="commons-lang-2.3.jar" />
+			</lib>
+			<webinf dir="conf">
+				<include name="serverprop.xml" />
+			</webinf>
+			<metainf dir="conf/dev">
+				<include name="context.xml" />
+			</metainf>
+			<classes dir="${build.server}">
+				<exclude name="**/technotest/**" />
+			</classes>
+		</war>
+	</target>
+	
 	<target name="warServer_ReadOnly" depends="compileServer_ReadOnly">
 		<war destfile="${dist}/rest.war" webxml="conf_readonly/web.xml">
 			<lib dir="${lib}">
