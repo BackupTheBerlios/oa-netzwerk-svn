@@ -915,7 +915,7 @@ class DBDataConnection extends DataConnection {
 
 			while (queryresult.getResultSet().next()) {
 
-				languages.add(queryresult.getResultSet().getString("language"));
+				languages.add(queryresult.getResultSet().getString("iso639language"));
 			}
 
 		} catch (SQLException ex) {

@@ -61,39 +61,63 @@ public class GetRecord extends AbstractOAIPMHVerb {
 
 		record.setHeader(header);
 
+		
+		/* TODO: 
+		 * - language mapping to iso codes
+		 * - duplicate subjects 
+		 * - english subjects
+		 * 
+		 */
 		MetadataType metadata = new MetadataType();
 
 		OAIDCType oaidctype = new OAIDCType();
+		
+		final String identifier = parameter.get("identifier")[0]; 
+		
 
-		for (String title : dataConnection.getTitles(parameter.get("identifier")[0]))
+		for (String title : dataConnection.getTitles(identifier))
 			oaidctype.getTitle().add(title);
 
-		for (String creator : dataConnection.getCreators(parameter.get("identifier")[0]))
+		for (String creator : dataConnection.getCreators(identifier))
 			oaidctype.getCreator().add(creator);
 
-		for (String subject : dataConnection.getSubjects(parameter.get("identifier")[0]))
+		for (String subject : dataConnection.getSubjects(identifier))
 			oaidctype.getSubject().add(subject);
 
-		for (String description : dataConnection.getDescriptions(parameter.get("identifier")[0]))
+		for (String description : dataConnection.getDescriptions(identifier))
 			oaidctype.getDescription().add(description);
 
-		for (String publisher : dataConnection.getPublishers(parameter.get("identifier")[0]))
+		for (String publisher : dataConnection.getPublishers(identifier))
 			oaidctype.getPublisher().add(publisher);
 
-		for (String date : dataConnection.getDates(parameter.get("identifier")[0]))
+		for (String date : dataConnection.getDates(identifier))
 			oaidctype.getDate().add(date);
 
-		for (String type : dataConnection.getTypes(parameter.get("identifier")[0]))
-			oaidctype.getType().add(type);
-
-		for (String format : dataConnection.getFormats(parameter.get("identifier")[0]))
+		int i = 0;
+		for (String type : dataConnection.getTypes(identifier)) {
+			System.out.println("Type:  " + type);
+			if (i == 0)
+			{
+				oaidctype.getType().add(DriverCompliance.getTypeForString(type));
+				oaidctype.getType().add(type);
+			}
+			i++;
+		}
+		
+		
+		
+		for (String format : dataConnection.getFormats(identifier))
 			oaidctype.getFormat().add(format);
 
-		for (String identifier : dataConnection.getIdentifiers(parameter.get("identifier")[0]))
-			oaidctype.getIdentifier().add(identifier);
+		for (String identif : dataConnection.getIdentifiers(identifier))
+			oaidctype.getIdentifier().add(identif);
 
-		for (String language : dataConnection.getLanguages(parameter.get("identifier")[0]))
+		
+		
+		for (String language : dataConnection.getLanguages(identifier)) {
 			oaidctype.getLanguage().add(language);
+//			System.out.println("LANG:" + language);
+		}
 
 		metadata.setAny(oaidctype);
 		record.setMetadata(metadata);
@@ -101,7 +125,7 @@ public class GetRecord extends AbstractOAIPMHVerb {
 
 		RequestType reqType = new RequestType();
 		reqType.setVerb(VerbType.GET_RECORD);
-		reqType.setIdentifier(parameter.get("identifier")[0]);
+		reqType.setIdentifier(identifier);
 		reqType.setMetadataPrefix(parameter.get("metadataPrefix")[0]);
 		OAIPMHtype oaipmhMsg = new OAIPMHtype(reqType);
 		oaipmhMsg.setGetRecord(getRecord);
