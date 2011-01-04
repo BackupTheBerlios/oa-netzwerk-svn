@@ -26,9 +26,13 @@ import de.dini.oanetzwerk.search.SearchClientException;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
+
 public class SearchBean
   implements Serializable
 {
+  /**
+	 * 
+	 */  
   private static Logger logger = Logger.getLogger(SearchBean.class);
   private Properties props = null;
   private Properties search_props = null;
@@ -208,6 +212,19 @@ public class SearchBean
     }
     return "search_clicked";
   }
+  private String evalOneSlotAndDDCWithAutoHits() {
+    logger.debug("evalOneSlotAndDDCWithAutoHits");
+    String strDDC = this.browse.getSelectedDDCCatValue();
+    if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
+      String strQuery = new String(this.strOneSlot);
+      strQuery = strQuery.toUpperCase();
+      strQuery = strQuery.trim();
+      searchFor(strQuery, strDDC);
+    } else if (strDDC != null) {
+      searchFor(null, strDDC);
+    }
+    return "search_clicked_with_autohits";
+  }
 
   private String parseOneSlotSearchField() {
     logger.debug("parseOneSlotSearchField");
@@ -327,7 +344,10 @@ public class SearchBean
   public String actionSearchWithDDCButton() {
     return evalOneSlotAndDDC();
   }
-
+  public String actionSearchFromDDCTreeDirectlyWithAutoHits() {
+	setStrOneSlot("___");  
+	return evalOneSlotAndDDCWithAutoHits();
+  }
   public String actionAddAllHitsToClipboard() {
     for (BigDecimal bdOID : this.hitlist.getListHitOID()) {
       this.hitlist.addSetClipboardOID(bdOID);

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd"
+    version="2.5">
+
+  <display-name>MyFaces Application</display-name>
+
+	<!--context-param>
+		<param-name>javax.faces.CONFIG_FILES</param-name>
+		<param-value>
+            /WEB-INF/faces-config.xml
+        </param-value>
+	</context-param-->
+	<context-param>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>client</param-value>
+		<!--<description>
+            State saving method: "client" or "server" (= default)
+            See JSF Specification 2.5.2
+        </description>-->
+	</context-param>
+	<context-param>
+		<param-name>org.apache.myfaces.ALLOW_JAVASCRIPT</param-name>
+		<param-value>true</param-value>
+		<!--<description>
+            This parameter tells MyFaces if javascript code should be allowed in the
+            rendered HTML output.
+            If javascript is allowed, command_link anchors will have javascript code
+            that submits the corresponding form.
+            If javascript is not allowed, the state saving info and nested parameters
+            will be added as url parameters.
+            Default: "true"
+        </description>-->
+	</context-param>
+	<context-param>
+		<param-name>org.apache.myfaces.PRETTY_HTML</param-name>
+		<param-value>true</param-value>
+		<!--<description>
+            If true, rendered HTML code will be formatted, so that it is "human readable".
+            i.e. additional line separators and whitespace will be written, that do not
+            influence the HTML code.
+            Default: "true"
+        </description>-->
+	</context-param>
+	<context-param>
+		<param-name>org.apache.myfaces.DETECT_JAVASCRIPT</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.apache.myfaces.AUTO_SCROLL</param-name>
+		<param-value>true</param-value>
+		<!--<description>
+            If true, a javascript function will be rendered that is able to restore the
+            former vertical scroll on every request. Convenient feature if you have pages
+            with long lists and you do not want the browser page to always jump to the top
+            if you trigger a link or button action that stays on the same page.
+            Default: "false"
+        </description>-->
+	</context-param>
+
+
+  <!-- servlet -->
+  <servlet>
+    <servlet-name>FacesServlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <!-- servlet-mapping -->
+  <servlet-mapping>
+    <servlet-name>FacesServlet</servlet-name>
+    <url-pattern>/oansearch/pages/*</url-pattern> 
+  </servlet-mapping>
+    
+  <servlet-mapping>
+    <servlet-name>FacesServlet</servlet-name>
+    <url-pattern>*.faces</url-pattern>
+  </servlet-mapping>
+  
+  
+	<filter>
+		<filter-name>faces-redirection-filter</filter-name>
+		<filter-class>de.dini.oanetzwerk.userfrontend.RedirectionFilter</filter-class>
+	</filter>
+	
+	
+	<filter-mapping>
+		<filter-name>faces-redirection-filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>	
+	
+	
+	<!--  Extensions Filter -->
+	<filter>
+		<filter-name>extensionsFilter</filter-name>
+		<filter-class>org.apache.myfaces.component.html.util.ExtensionsFilter</filter-class>
+		<init-param>
+			<param-name>uploadMaxFileSize</param-name>
+			<param-value>100m</param-value>
+			<!--<description>Gibt an, wie groß das hochzuladende Fila maximal sein darf. (k kilo m mega g giga)</description>-->
+		</init-param>
+		<init-param>
+			<param-name>uploadThresholdSize</param-name>
+			<param-value>100k</param-value>
+			<!--<description>Gibt an, wie groß das File sien darf, um noch im Speicher gehalten zu werden. (k kilo m mega g giga)</description>-->
+		</init-param>
+		<init-param>
+			<param-name>uploadRepositoryPath</param-name>
+			<param-value>C:/TEMP/</param-value>
+			<!--<description>Gibt den Pfad an, wo die Uploads _temporär_ gespeichert werden.</description>-->
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>extensionsFilter</filter-name>
+		<!-- servlet-name must match the name of your javax.faces.webapp.FacesServlet entry -->
+		<servlet-name>Faces Servlet</servlet-name>
+	</filter-mapping>
+	
+  <!-- The Usual Welcome File List -->
+    <welcome-file-list>
+      <welcome-file>index.jsp</welcome-file>
+      <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+</web-app>

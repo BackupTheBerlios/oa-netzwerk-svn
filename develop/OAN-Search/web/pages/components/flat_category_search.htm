@@ -1,0 +1,8 @@
+		<div id="div_flat_search">
+			<h:form>
+				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
+				<span class="span_selected_ddc">Kategorie: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
+				<h:commandButton value="Finde!" action="#{searchBean.actionSearchWithDDCButton}"/>
+			</h:form>
+		</div>
+		

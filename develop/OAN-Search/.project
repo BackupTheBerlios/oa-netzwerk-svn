@@ -3,6 +3,7 @@
 	<name>OAN-Search</name>
 	<comment></comment>
 	<projects>
+		<project>OAN-Core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

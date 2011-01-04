@@ -56,6 +56,11 @@
 			<to-view-id>/pages/browse_ddc.jsp</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>browse_ddc_with_autohits</from-outcome>
+			<to-view-id>/pages/browse_ddc_with_autohits.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/pages/start.jsp</from-view-id>
@@ -124,8 +129,18 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>search_clicked_with_autohits</from-outcome>
+			<to-view-id>/pages/browse_ddc_with_autohits.jsp</to-view-id>
+		<redirect />			
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>details_clicked</from-outcome>
 			<to-view-id>/pages/hitdetails.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>details_clicked_from_autohit</from-outcome>
+			<to-view-id>/pages/browse_ddc_with_autohits.jsp</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>

@@ -218,6 +218,10 @@ dt {
   float: left;
   width: 30%;	  
 }
+#div_inpageright_box_big {
+  float: left;
+  width: 50%;	  
+}
 #div_opened_inpageright_box {
   margin-left: 40px;
   float: left;
@@ -274,6 +278,9 @@ dt {
 .div_clipboard_hit_details {
 	margin-left:38px;
 }
+/* ---------------------- DDC Search with autohits Splitscreen -------------------- */
+
+
 
 /* ---------------------- hitdetails ---------------------------------------------- */
 
@@ -337,12 +344,15 @@ dt {
   margin-left:5px;
   padding-right:10px;
 }
-
+.categorie_browse{
+	width: 300px;
+	}
 /* BROWSING ------------------------------------------------------------------------------------ */
 #div_simplebrowselist {
   margin-left: 10px;
   margin-top: 30px;
   margin-right: 10px;
+
 }
 #div_simplebrowselist li {
   margin-left: 10px;

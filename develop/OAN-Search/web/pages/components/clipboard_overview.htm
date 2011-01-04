@@ -1,0 +1,16 @@
+			        <div id="div_clipboard_overview">
+			            <t:dataList id="clipboard_overview" value="#{searchBean.hitlist.listClipboardOID}" var="clipboardOID" layout="unorderedList" first="0" dir="LTR">
+			               <span class="command_link_lupe">
+			               <h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.png"/></h:commandLink>
+			               </span>
+			               <span class="command_link_minus">
+			               <h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionVerwerfenLink}" title="Objekt aus der Merkliste entfernen"><img src="../img/16x16_minus.png"/></h:commandLink>
+			               </span>		
+						   <span class="details_link">
+						   <h:outputLink value="#{searchBean.hitlist.mapHitBean[clipboardOID].bestLink}" target="_blank" title="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedTitle}">
+			               <t:outputText value="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedClipboardTitle}"/>
+			               </h:outputLink>
+			               </span>
+			               <% // <span class="internal_identifier">(OID: <h:outputText value="#{clipboardOID}"/>)</span> %>
+						</t:dataList>
+			        </div>

@@ -3,7 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f" %>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="t" %>
 
-
 <html>
 <f:view>
 <f:loadBundle basename="messages" var="msg"/>
@@ -11,13 +10,83 @@
 <head>
 	<%@ include file="components/header.htm" %>
 	<title>Found</title>
+	<!-- TODO: nach Testphase in CSS-Datei auslagern -->
+	<style type="text/css">
+	
+		.colStyle1 { 
+			width: 450px;
+			vertical-align:top;
+		}
+		.colStyle2 { 
+			width: 750px;
+			vertical-align:top;
+		}
+	</style>
 </head>
 <body>
+	<!-- TODO: generell alle Ausgabetexte für Internationalisierung in Language-Dateien auslagern -->
+	
 	<!-- include link navigation -->	         
-   	<%@ include file="components/mainnavigation.htm" %>
-   	<!-- include search bar -->
-   	<%@ include file="components/flat_search.htm" %>
-   	<%@ include file="components/hitdetails_navi.htm" %>
+  <%@ include file="components/mainnavigation.htm" %>
+
+	<h:form>
+		<t:panelGrid columns="2" columnClasses="colStyle1,colStyle2">
+		<t:panelGroup >
+			<div id="div_simplebrowselist">
+					<h3>Liste der Fachgebiete nach Dewey-Dezimalklassifikation (DDC)</h3>
+			        <div class="div_howto">
+			            W&auml;hlen Sie eine Kategorie aus, auf die Sie die Suche starten wollen!
+			        </div>	
+					<% /* 
+						<div id="div_ddc_breadcrump">
+			            PFAD:
+			            <t:dataList id="ddc_breadcrump" value="#{searchBean.browse.pathDDCCategories}" var="item" layout="simple">
+							<t:outputText value="#{item}"/> &gt; 
+						</t:dataList>
+						</div>	
+					*/ %>
+		            <div id="div_alle_dcc_cat" >
+		            	<h:commandLink action="#{searchBean.browse.actionUnselectDDCCategoryLink}" title=""><span class="span_ddc_name"><t:outputText value="Alle Kategorien (Keine Einschränkung)"/></span></h:commandLink>
+		            </div>                
+		            <t:dataList id="ddcnavilist_lvl1" value="#{searchBean.browse.listDDCNaviNodes}" var="node_lvl1" layout="unorderedList">	
+		                <t:div rendered="#{node_lvl1.inPath}">
+												<div class="selected_category_wrapper">
+													<span class="span_ddc_num"><t:outputText value="#{node_lvl1.strDDCValue}"/></span>&nbsp;
+													<span class="span_ddc_selected_name"><t:outputText value="#{node_lvl1.strNameDE}"/></span>			
+												</div>
+		                </t:div>	            
+		                <t:div rendered="#{!node_lvl1.inPath}">
+											<span class="span_ddc_num"><t:outputText value="#{node_lvl1.strDDCValue}"/></span>&nbsp;
+											<h:commandLink action="#{node_lvl1.actionSelectDDCCategoryLink}" title=""><span class="span_ddc_name"><t:outputText value="#{node_lvl1.strNameDE}"/></span></h:commandLink>&nbsp;
+		                </t:div>
+		                <t:div rendered="#{node_lvl1.inPath}">
+					            <t:dataList id="ddcnavilist_lvl2" value="#{node_lvl1.listSubnodes}" var="node_lvl2" layout="unorderedList">	
+				                    <t:div rendered="#{node_lvl2.inPath}">
+									   					<div class="selected_category_wrapper">
+																<span class="span_ddc_num"><t:outputText value="#{node_lvl2.strDDCValue}"/></span>&nbsp;
+																<span class="span_ddc_selected_name"><t:outputText value="#{node_lvl2.strNameDE}"/></span>
+																	<br/><h:commandLink value=" Suche starten" action="#{searchBean.actionSearchFromDDCTreeDirectlyWithAutoHits}"/>	
+															</div>
+														</t:div>
+				                    <t:div rendered="#{!node_lvl2.inPath}">
+															<span class="span_ddc_num"><t:outputText value="#{node_lvl2.strDDCValue}"/></span>&nbsp;
+															<h:commandLink action="#{node_lvl2.actionSelectDDCCategoryLink}" title=""><span class="span_ddc_name"><t:outputText value="#{node_lvl2.strNameDE}"/></span></h:commandLink>
+														</t:div>	
+											</t:dataList>
+										</t:div>
+								</t:dataList>			
+		     </div>
+		     </t:panelGroup>
+		     <t:panelGroup>
+				<div id="div_inpagecenter_box_big">			
+					<!-- include hitlist components -->
+			        <%@ include file="components/hitlist_scroller.htm" %>
+			        <%@ include file="components/hitlist_small.htm" %>
+				</div>
+				</t:panelGroup>
+				  <f:facet name="footer">
+		    <t:panelGroup>
+
 	<h:form>
 		<div id="div_hitdetails">	
 	   		<h3>Detailanzeige der Metadaten</h3>	
@@ -200,6 +269,11 @@
 	               %>
 			</table>
 		</div>	
+	</h:form>
+		    </t:panelGroup>
+  </f:facet>
+				
+			</t:panelGrid> 	
 	</h:form>
 </body>
 </f:view>

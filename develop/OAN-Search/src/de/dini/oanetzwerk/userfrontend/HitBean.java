@@ -371,6 +371,14 @@ public class HitBean implements Serializable {
 		}
 		return "details_clicked";
 	}
+	public String actionDetailsLinkOnSamePage() {
+		this.parentHitlistBean.setSelectedDetailsOID(this.getCompleteMetadata().getOid());
+		for(DuplicateProbability dupPro : this.getCompleteMetadata().getDuplicateProbabilityList()) {
+			this.parentHitlistBean.addHitbeanToMap(dupPro.getReferToOID());			
+		}
+		return "details_clicked_from_autohit";
+	}
+	
 
 	public String actionMerkenLink() {
 		this.parentHitlistBean.addSetClipboardOID(this.getCompleteMetadata().getOid());
