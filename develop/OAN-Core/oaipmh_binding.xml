@@ -227,12 +227,14 @@
 
 	<!--    ============================ Set Type ======================== -->
 
-	<mapping abstract="true" type-name="oai:setType" class="de.dini.oanetzwerk.oaipmh.SetType">
+	<mapping abstract="true" type-name="oai:setType" class="de.dini.oanetzwerk.oaipmh.SetType" >
 		<value style="element" name="setSpec" get-method="getSetSpec" set-method="setSetSpec" />
 		<value style="element" name="setName" get-method="getSetName" set-method="setSetName" />
-		<collection get-method="getSetDescriptions" set-method="setSetDescriptions" create-type="java.util.ArrayList">
-			<structure map-as="oai:descriptionType" name="setDescription" />
-		</collection>
+<!--		<collection get-method="getSetDescriptions" set-method="setSetDescriptions" create-type="java.util.ArrayList">-->
+<!--			<structure map-as="oai:descriptionType" name="setDescription" />-->
+<!--		</collection>-->
+		<structure map-as="oai:metadataType" get-method="getMetadata" set-method="setMetadata" usage="optional"
+			name="setDescription" />
 	</mapping>
 
 	<!-- ===================================================================== -->
@@ -325,6 +327,25 @@
 		<collection field="identifier" type="java.util.ArrayList" usage="optional">
 			<value name="identifier" type="java.lang.String" />
 		</collection>
+	</mapping>
+	
+	<mapping name="dc " class="de.dini.oanetzwerk.oaipmh.oaidc.OAIDCDescriptionType" extends="de.dini.oanetzwerk.oaipmh.AbstractMetadataType">
+		<namespace uri="http://www.openarchives.org/OAI/2.0/oai_dc/" default="elements" prefix="oai_dc" />
+		<namespace uri="http://purl.org/dc/elements/1.1/" default="attributes" prefix="dc" />
+		<namespace uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi" />
+		<value style="attribute" ns="http://www.w3.org/2001/XMLSchema-instance" name="schemaLocation" field="schemaLocation" />
+		<structure map-as="oai_dcDescriptionType" />
+	</mapping>
+
+	<mapping abstract="true" type-name="oai_dcDescriptionType" class="de.dini.oanetzwerk.oaipmh.oaidc.OAIDCDescriptionType" extends="de.dini.oanetzwerk.oaipmh.AbstractMetadataType">
+	
+		<namespace uri="http://www.openarchives.org/OAI/2.0/oai_dc/" default="none" prefix="oai_dc" />
+		<namespace uri="http://purl.org/dc/elements/1.1/" default="elements" prefix="dc" />
+
+		<collection field="description" type="java.util.ArrayList" usage="optional">
+			<value name="description" type="java.lang.String" />
+		</collection>
+
 	</mapping>
 
 
