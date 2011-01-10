@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,7 +15,7 @@ import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.JiBXException;
 
-import de.dini.oanetzwerk.oaipmh.DataConnection;
+import de.dini.oanetzwerk.oaipmh.oaidc.OAIDCDescriptionType;
 
 
 /**
@@ -88,8 +89,19 @@ public class ListSets extends AbstractOAIPMHVerb {
 			SetType testSet = new SetType ( );
 			testSet.setSetSpec (strings [0]);
 			testSet.setSetName (strings [1]);
+			if (strings[0].endsWith("_OAN")) {
+				System.out.println("yes " + strings[0]);
+				List descriptions = new ArrayList<String>();
+				descriptions.add("Records from the repository/institution '" + strings[1] + "'");
+				
+				MetadataType mdType = new MetadataType();
+				OAIDCDescriptionType descriptionType = new OAIDCDescriptionType();
+				descriptionType.setDescription(descriptions);
+				mdType.setAny(descriptionType);
+				testSet.setMetadata(mdType);
+			}
 			
-			setArray.add (testSet);
+			setArray.add(testSet);
 		}
 		
 		return setArray;

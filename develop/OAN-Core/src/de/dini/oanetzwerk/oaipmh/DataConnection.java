@@ -1,7 +1,9 @@
 package de.dini.oanetzwerk.oaipmh;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 
 /**
@@ -11,6 +13,8 @@ import java.util.LinkedList;
 
 public abstract class DataConnection {
 
+	abstract public BigDecimal getInternalIdentifier (String repository_identifier);
+	
 	/**
 	 * @return
 	 */
@@ -23,6 +27,13 @@ public abstract class DataConnection {
 	 */
 	
 	abstract public boolean existsIdentifier (String identifier);
+	
+	/**
+	 * @param identifier
+	 * @return
+	 */
+	
+	abstract public boolean existsRepositoryIdentifier (String identifier);
 
 	/**
 	 * @return
@@ -129,7 +140,9 @@ public abstract class DataConnection {
 	 */
 	
 	abstract public Integer getRecordListSize (String from, String until, String set);
-	abstract public LinkedList <Record> getRecordList (String from, String until, String set, BigInteger idOffset, int resultCount);
+	
+	
+	abstract public LinkedList<Record> getRecordList (String from, String until, String set, BigInteger idOffset, int resultCount);
 	
 	
 }

@@ -3,6 +3,7 @@ package de.dini.oanetzwerk.oaipmh;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,26 +42,19 @@ public class GetRecord extends AbstractOAIPMHVerb {
 
 		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection();
 
-		if (parameter.get("identifier")[0] == null || !parameter.get("identifier")[0].startsWith("oai:oanet.de")) {
+		if (parameter.get("identifier")[0] == null ) { // || !parameter.get("identifier")[0].startsWith("oai:oanet.de")
 			return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, "The specified identifier is not valid!").toString();
 		}
 		
-		if (!dataConnection.existsIdentifier(parameter.get("identifier")[0]))
+		if (!dataConnection.existsRepositoryIdentifier(parameter.get("identifier")[0]))
 			return new OAIPMHError(OAIPMHErrorcodeType.ID_DOES_NOT_EXIST).toString();
 
 		GetRecordType getRecord = new GetRecordType();
 		RecordType record = new RecordType();
 		HeaderType header = new HeaderType();
 
-		header.setIdentifier(parameter.get("identifier")[0]);
-		header.setDatestamp(dataConnection.getDateStamp(parameter.get("identifier")[0]));
-
-		for (String classification : dataConnection.getClassifications(parameter.get("identifier")[0])) {
-			header.getSetSpecs().add(classification);
-		}
-
 		record.setHeader(header);
-
+		
 		
 		/* TODO: 
 		 * - language mapping to iso codes
@@ -69,12 +63,21 @@ public class GetRecord extends AbstractOAIPMHVerb {
 		 * 
 		 */
 		MetadataType metadata = new MetadataType();
-
+		
 		OAIDCType oaidctype = new OAIDCType();
 		
-		final String identifier = parameter.get("identifier")[0]; 
-		
+		String id = parameter.get("identifier")[0]; 
+		System.out.println("ID1 " + id);
+		final String identifier = dataConnection.getInternalIdentifier(id).toString();
+		System.out.println("ID2 " + identifier);
 
+		header.setIdentifier(id);
+		header.setDatestamp(dataConnection.getDateStamp(identifier));
+
+		for (String classification : dataConnection.getClassifications(identifier)) {
+			header.getSetSpecs().add(classification);
+		}
+		
 		for (String title : dataConnection.getTitles(identifier))
 			oaidctype.getTitle().add(title);
 
@@ -125,7 +128,7 @@ public class GetRecord extends AbstractOAIPMHVerb {
 
 		RequestType reqType = new RequestType();
 		reqType.setVerb(VerbType.GET_RECORD);
-		reqType.setIdentifier(identifier);
+		reqType.setIdentifier(id);
 		reqType.setMetadataPrefix(parameter.get("metadataPrefix")[0]);
 		OAIPMHtype oaipmhMsg = new OAIPMHtype(reqType);
 		oaipmhMsg.setGetRecord(getRecord);

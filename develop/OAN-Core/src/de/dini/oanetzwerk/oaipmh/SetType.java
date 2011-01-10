@@ -3,6 +3,8 @@ package de.dini.oanetzwerk.oaipmh;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.dini.oanetzwerk.oaipmh.oaidc.OAIDCDescriptionType;
+
 /** 
  * Schema fragment(s) for this class:
  * <pre>
@@ -17,10 +19,13 @@ import java.util.List;
  */
 public class SetType
 {
+	
     private String setSpec;
     private String setName;
-    private List<DescriptionType> setDescriptionList = new ArrayList<DescriptionType>();
-
+    private MetadataType metadata;
+    
+//    private List<DescriptionType> setDescriptionList = new ArrayList<DescriptionType>();
+    
     /** 
      * Get the 'setSpec' element value.
      * 
@@ -57,21 +62,13 @@ public class SetType
         this.setName = setName;
     }
 
-    /** 
-     * Get the list of 'setDescription' element items.
-     * 
-     * @return list
-     */
-    public List<DescriptionType> getSetDescriptions() {
-        return setDescriptionList;
-    }
+	public MetadataType getMetadata() {
+		return metadata;
+	}
 
-    /** 
-     * Set the list of 'setDescription' element items.
-     * 
-     * @param list
-     */
-    public void setSetDescriptions(List<DescriptionType> list) {
-        setDescriptionList = list;
-    }
+	public void setMetadata(MetadataType metadata) {
+		this.metadata = metadata;
+	}
+
+    
 }

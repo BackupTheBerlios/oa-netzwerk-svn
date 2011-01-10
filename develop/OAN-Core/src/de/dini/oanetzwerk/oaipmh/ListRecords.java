@@ -28,8 +28,6 @@ public class ListRecords extends AbstractOAIPMHVerb {
 
 	private static Logger logger = Logger.getLogger(ListRecords.class);
 
-	private static final String ID_PREFIX = "oai:oanet.de:";
-
 	private static final String ERROR_MISSING_METADATAPREFIX = "Sorry! The 'metadataPrefix' parameter is missing!";
 
 	private static final String ERROR_DATE_INVALID = "The format of the 'from'/'until' parameter is not valid!";
@@ -97,7 +95,7 @@ public class ListRecords extends AbstractOAIPMHVerb {
 			this.setSet(parameter.get("set")[0]);
 
 			if (StringUtils.isNotEmpty(this.getSet()) && !this.getSet().startsWith("ddc:") && !this.getSet().startsWith("dnb:")
-					&& !this.getSet().startsWith("pub-type:")) {
+					&& !this.getSet().startsWith("pub-type:") && !this.getSet().endsWith("_OAN")) {
 				return new OAIPMHError(OAIPMHErrorcodeType.BAD_ARGUMENT, "The specified set '" + this.getSet()
 						+ "' is not supported by this service!").toString();
 			}
@@ -255,7 +253,7 @@ public class ListRecords extends AbstractOAIPMHVerb {
 			map.put("metadataPrefix", metadataPrefix);
 			// System.out.println(recordList.get(recordList.size() -
 			// 1).getHeader().getIdentifier());
-			idOffset = BigInteger.valueOf(Integer.parseInt(recordList.get(recordList.size() - 1).getHeader().getIdentifier()));
+			idOffset = BigInteger.valueOf(recordList.get(recordList.size() - 1).getHeader().getInternalIdentifier().intValue());
 
 			this.resumptionToken = ResumptionTokenManager.createNewResumptionToken();
 
@@ -285,11 +283,11 @@ public class ListRecords extends AbstractOAIPMHVerb {
 			metadata = new MetadataType();
 			oaidctype = new OAIDCType();
 
-			header.setIdentifier(ID_PREFIX + recordItem.getHeader().getIdentifier());
+			header.setIdentifier(recordItem.getHeader().getIdentifier()); // ID_PREFIX + 
 			header.setDatestamp(recordItem.getHeader().getDatestamp());
 
 			for (String set : recordItem.getHeader().getSet())
-				header.getSetSpecs().add("ddc:" + set);
+				header.getSetSpecs().add(set);
 
 			record.setHeader(header);
 
@@ -317,10 +315,21 @@ public class ListRecords extends AbstractOAIPMHVerb {
 				for (String date : recordItem.getMetaData().getDate())
 					oaidctype.getDate().add(date);
 
-			if (recordItem.getMetaData().getType().size() != 0)
-				for (String type : recordItem.getMetaData().getType())
-					oaidctype.getType().add(type);
-
+			if (recordItem.getMetaData().getType().size() != 0) {
+				int i = 0;
+				for (String type : recordItem.getMetaData().getType()) {
+					if (DriverCompliance.isDriverComplianceEnabled()) {
+						
+						if (i == 0) {
+							oaidctype.getType().add(DriverCompliance.getTypeForString(type));
+							oaidctype.getType().add(type);
+						}
+						i++;
+					} else {
+						oaidctype.getType().add(type);
+					}
+				}
+			}
 			if (recordItem.getMetaData().getFormat().size() != 0)
 				for (String format : recordItem.getMetaData().getFormat())
 					oaidctype.getFormat().add(format);

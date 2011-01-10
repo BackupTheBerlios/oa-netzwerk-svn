@@ -6,15 +6,24 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 public class DriverCompliance {
-
+	
 	/*
 	 * 
 	 * Creator-Field Syntax Construction according to the Driver Guidelines v2.0, 
 	 * see page 73f.
 	 * 
 	 */
+
+	private static boolean driverComplianceEnabled = true;
 	
+
+
 	public static String getAuthor(String firstName, String lastName) {
+		
+		if (!driverComplianceEnabled) 
+		{
+			return firstName + " " + lastName;
+		}
 		
 		String[] firstNames;
 		String firstNameInitials = "";
@@ -224,5 +233,9 @@ public class DriverCompliance {
 			
 			return TYPE_OTHER;
 		}
+	}
+	
+	public static boolean isDriverComplianceEnabled() {
+		return driverComplianceEnabled;
 	}
 }

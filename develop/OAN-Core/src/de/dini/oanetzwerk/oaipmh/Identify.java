@@ -51,16 +51,16 @@ public class Identify extends AbstractOAIPMHVerb {
 		identify.setAdminEmails(adminEmails);
 		identify.setDeletedRecord(DeletedRecordType.TRANSIENT);
 
-		OaiIdentifierType oaiIdent = new OaiIdentifierType();
-		oaiIdent.setDelimiter(":");
-		oaiIdent.setRepositoryIdentifier("oanet.de");
-		oaiIdent.setSampleIdentifier("oai:oanet.de:152");
-		oaiIdent.setScheme("oai");
+//		OaiIdentifierType oaiIdent = new OaiIdentifierType();
+//		oaiIdent.setDelimiter(":");
+//		oaiIdent.setRepositoryIdentifier("oanet.de");
+//		oaiIdent.setSampleIdentifier("oai:oanet.de:152");
+//		oaiIdent.setScheme("oai");
+//
+//		DescriptionType descr = new DescriptionType();
+//		descr.setObject(oaiIdent);
 
-		DescriptionType descr = new DescriptionType();
-		descr.setObject(oaiIdent);
-
-		identify.getDescriptions().add(descr);
+//		identify.getDescriptions().add(descr);
 		RequestType reqType = new RequestType();
 		reqType.setVerb(VerbType.IDENTIFY);
 		OAIPMHtype oaipmhMsg = new OAIPMHtype(reqType);

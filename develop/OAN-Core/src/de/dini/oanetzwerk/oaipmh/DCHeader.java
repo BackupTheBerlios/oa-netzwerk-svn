@@ -4,6 +4,7 @@
 package de.dini.oanetzwerk.oaipmh;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.LinkedList;
 
 
@@ -24,6 +25,12 @@ public class DCHeader implements Serializable {
 	 * 
 	 */
 	
+	private BigDecimal internalIdentifier;
+	
+	/**
+	 * 
+	 */
+	
 	private String identifier;
 	
 	/**
@@ -38,6 +45,17 @@ public class DCHeader implements Serializable {
 	
 	private LinkedList <String> set;
 	
+	
+	
+	public BigDecimal getInternalIdentifier() {
+		return internalIdentifier;
+	}
+
+	
+	public void setInternalIdentifier(BigDecimal internalIdentifier) {
+		this.internalIdentifier = internalIdentifier;
+	}
+
 	/**
 	 * @return the identifier
 	 */

@@ -27,6 +27,8 @@ public abstract class AbstractOAIPMHVerb implements OAIPMHVerbs {
 
 	private static Logger logger = Logger.getLogger(AbstractOAIPMHVerb.class);
 
+	public static final String ID_PREFIX = "oai:oanet.de:";
+	
 	private static Map<String, String[]> allowedArguments;
 	private static final int DEFAULT_MAX_RESULTS = 100;
 	private static final String OAIPMH_CONFIG_PATH = 

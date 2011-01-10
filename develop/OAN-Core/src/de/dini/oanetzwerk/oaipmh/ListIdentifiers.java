@@ -35,8 +35,6 @@ import de.dini.oanetzwerk.oaipmh.oaidc.OAIDCType;
 public class ListIdentifiers extends AbstractOAIPMHVerb {
 
 	private static Logger logger = Logger.getLogger(ListIdentifiers.class);
-
-	private static final String ID_PREFIX = "oai:oanet.de:";
 	
 	private static final String ERROR_DATE_INVALID = "The format of the 'from' and/or 'until' parameter is not valid!";
 
@@ -246,8 +244,7 @@ public class ListIdentifiers extends AbstractOAIPMHVerb {
 			map.put("until", until);
 			map.put("set", set);
 			map.put("metadataPrefix", metadataPrefix);
-			idOffset = BigInteger.valueOf(Integer.parseInt(
-					recordList.get(recordList.size() - 1).getHeader().getIdentifier()));
+			idOffset = BigInteger.valueOf(recordList.get(recordList.size() - 1).getHeader().getInternalIdentifier().intValue());
 			
 			this.resumptionToken = ResumptionTokenManager.createNewResumptionToken();
 
@@ -265,7 +262,7 @@ public class ListIdentifiers extends AbstractOAIPMHVerb {
 		for (Record record : recordList) {
 
 			header = new HeaderType();
-			header.setIdentifier(ID_PREFIX + record.getHeader().getIdentifier());
+			header.setIdentifier(record.getHeader().getIdentifier()); // ID_PREFIX + 
 			header.setDatestamp(record.getHeader().getDatestamp());
 
 			for (String set : record.getHeader().getSet()) {

@@ -26,6 +26,25 @@ public class SelectFromDB {
 	private static Logger logger = Logger.getLogger(SelectFromDB.class);
 
 	/**
+	 * Fetch the internal object id for an original repository_identifier.
+	 * 
+	 * 
+	 * @param connection
+	 * @param repository_identifier
+	 * @return
+	 * @throws SQLException
+	 */	
+	public static PreparedStatement InternalID(Connection connection, String repository_identifier) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT o.object_id FROM dbo.Object o WHERE o.repository_identifier = ?");
+
+		preparedstmt.setString(1, repository_identifier);
+
+		return preparedstmt;
+	}
+	
+	
+	/**
 	 * Fetch all information for the object specified by "object_id"
 	 * 
 	 * 
@@ -34,12 +53,29 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException
 	 */
-
 	public static PreparedStatement ObjectEntry(Connection connection, BigDecimal object_id) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement("SELECT * FROM dbo.Object o WHERE o.object_id = ?");
 
 		preparedstmt.setBigDecimal(1, object_id);
+
+		return preparedstmt;
+	}
+	
+	/**
+	 * Fetch all information for the object specified by "repository_identifier"
+	 * 
+	 * 
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException
+	 */
+	public static PreparedStatement ObjectEntry(Connection connection, String repository_identifier) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT * FROM dbo.Object o WHERE o.repository_identifier = ?");
+
+		preparedstmt.setString(1, repository_identifier);
 
 		return preparedstmt;
 	}
@@ -763,6 +799,87 @@ public class SelectFromDB {
 
 		return preparedstmt;
 	}
+	
+	/**
+	 * Combined search for multiple Set-Classifications (DINI,DNB,DDC and Repository-Association) of the object specified
+	 * by the object_id
+	 * 
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException
+	 */
+	public static PreparedStatement AllClassifications(Connection connection, BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection
+				.prepareStatement("SELECT name, 'ddc:' + D.DDC_Categorie AS \"set\" FROM dbo.DDC_Classification D JOIN dbo.DDC_Categories C ON D.DDC_Categorie = C.DDC_Categorie WHERE D.object_id = ?" +
+									" UNION " +
+								"SELECT name, 'dnb:' + D2.DNB_Categorie AS \"set\" FROM dbo.DNB_Classification D2 JOIN dbo.DNB_Categories C2 ON D2.DNB_Categorie = C2.DNB_Categorie WHERE D2.object_id = ?" +
+									" UNION " +
+								"SELECT name, 'dini:' + convert(univarchar, D3.DINI_set_id) AS \"set\" FROM dbo.DINI_Set_Classification D3 JOIN dbo.DINI_Set_Categories C3 ON D3.DINI_set_id = C3.DINI_set_id WHERE D3.object_id = ?" +
+									" UNION " +
+								"SELECT rs.name , rs.name AS \"set\" FROM dbo.Repository_Sets rs JOIN dbo.Object o ON rs.repository_id = o.repository_id WHERE o.object_id = ?");
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setBigDecimal(2, object_id);
+		preparedstmt.setBigDecimal(3, object_id);
+		preparedstmt.setBigDecimal(4, object_id);
+
+		return preparedstmt;
+	}
+
+	public static PreparedStatement AllClassifications(Connection connection, List<BigDecimal> ids) throws SQLException {
+
+		if (ids == null || ids.isEmpty())
+		{
+			logger.warn("Couldn't prepare query to fetch all classifications, as ID-List was empty!");
+			return null;
+		}
+		
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT D.object_id, name, 'ddc:' + D.DDC_Categorie AS \"set\" FROM dbo.DDC_Classification D JOIN dbo.DDC_Categories C ON D.DDC_Categorie = C.DDC_Categorie WHERE ");
+
+		for (int i = 0; i< ids.size(); i++) {
+			sql.append("D.object_id = ? OR ");
+		}
+		sql.delete(sql.length()- 3, sql.length()); // cut off last 'OR '
+		
+		sql.append(" UNION " +
+					"SELECT D2.object_id, name, 'dnb:' + D2.DNB_Categorie AS \"set\" FROM dbo.DNB_Classification D2 JOIN dbo.DNB_Categories C2 ON D2.DNB_Categorie = C2.DNB_Categorie WHERE ");
+		
+		for (int i = 0; i< ids.size(); i++) {
+			sql.append("D2.object_id = ? OR ");
+		}
+		sql.delete(sql.length()- 3, sql.length());
+		
+		sql.append(" UNION " +
+					"SELECT D3.object_id, convert(univarchar, D3.DINI_set_id), 'dini:' + name AS \"set\" FROM dbo.DINI_Set_Classification D3 JOIN dbo.DINI_Set_Categories C3 ON D3.DINI_set_id = C3.DINI_set_id WHERE ");
+		
+		for (int i = 0; i< ids.size(); i++) {
+			sql.append("D3.object_id = ? OR ");
+		}
+		sql.delete(sql.length()- 3, sql.length());
+		
+		sql.append(" UNION " +
+					"SELECT o.object_id, rs.name , rs.name AS \"set\" FROM dbo.Repository_Sets rs JOIN dbo.Object o ON rs.repository_id = o.repository_id WHERE ");
+		
+		for (int i = 0; i< ids.size(); i++) {
+			sql.append("o.object_id = ? OR ");
+		}
+		sql.delete(sql.length()- 3, sql.length());
+		System.out.println(sql.toString());
+		PreparedStatement preparedstmt = connection.prepareStatement(sql.toString());
+				
+		for (int x = 0; x < 4; x++) {
+			
+			for (int y = 1; y <= ids.size(); y++) {
+//				System.out.println("Generated Statement ID: " + Integer.toString(ids.size() * x + y));
+				preparedstmt.setBigDecimal(ids.size() * x + y, ids.get(y-1));
+				
+			}
+		}
+	
+		return preparedstmt;
+	}
 
 	/**
 	 * Fetches the Keyword information of the object specified by the object_id
@@ -1116,6 +1233,8 @@ public class SelectFromDB {
 						+ " SELECT 'ddc:' + d.DDC_Categorie as \"Name\", d.name as \"setName\" FROM dbo.DDC_Categories d JOIN dbo.DDC_Classification dc ON d.DDC_Categorie = dc.DDC_Categorie GROUP BY d.name"
 						+ " UNION "
 						+ " SELECT 'dnb:' + d.DNB_Categorie as \"Name\",  d.name as \"setName\"  FROM dbo.DNB_Categories d JOIN dbo.DNB_Classification dc ON d.DNB_Categorie = dc.DNB_Categorie GROUP BY d.name"
+						+ " UNION " 
+						+ " SELECT rs.name,  r.name as \"setName\"  FROM dbo.Repository_Sets rs JOIN dbo.Repositories r ON rs.repository_id = r.repository_id"						
 						+ " ORDER BY d.name");
 
 		return preparedstmt;
@@ -1385,43 +1504,43 @@ public class SelectFromDB {
 		boolean hasUntil	= false;
 		
 		//bla
-		StringBuffer sql = new StringBuffer("SELECT o.object_id, o.repository_datestamp, ddc.DDC_Categorie AS ddc, dnb.DNB_Categorie AS dnb, d.name AS dini FROM dbo.Object o ");
+		StringBuffer sql = new StringBuffer("SELECT o.object_id, o.repository_identifier, o.repository_datestamp, ddc.DDC_Categorie AS ddc, dnb.DNB_Categorie AS dnb, d.name AS dini , rs.name as repo_set FROM dbo.Object o ");
 		sql.append("LEFT OUTER JOIN dbo.DDC_Classification ddc ON o.object_id = ddc.object_id ");
 		sql.append("LEFT OUTER JOIN dbo.DNB_Classification dnb ON o.object_id = dnb.object_id ");
 		sql.append("LEFT OUTER JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id ");
 		sql.append("LEFT OUTER JOIN dbo.DINI_Set_Categories d ON dsc.DINI_set_id = d.DINI_set_id ");
-
+		sql.append("LEFT OUTER JOIN dbo.Repository_Sets rs ON rs.repository_id = o.repository_id ");
 		StringBuffer setFromUntil = new StringBuffer("");
 
-		if (set != null && !set.equals("")) {
-
-			hasSet = true;
-			if (set.startsWith("pubtype:"))
-				sql.append("WHERE d.name = ? ");
-
-			else if (set.startsWith("ddc:"))
-				sql.append("WHERE ddc.DDC_Categorie = ? ");
-			
-			else if (set.startsWith("dnb:"))
-				sql.append("WHERE dnb.DNB_Categorie = ? ");
-			
-			else
-				hasSet = false;// wrong set type
-
-		} else
-			set = null;
+//		if (set != null && !set.equals("")) {
+//
+//			hasSet = true;
+//			if (set.startsWith("pubtype:"))
+//				sql.append("WHERE d.name = ? ");
+//
+//			else if (set.startsWith("ddc:"))
+//				sql.append("WHERE ddc.DDC_Categorie = ? ");
+//			
+//			else if (set.startsWith("dnb:"))
+//				sql.append("WHERE dnb.DNB_Categorie = ? ");
+//			
+//			else
+//				hasSet = false;// wrong set type
+//
+//		} else
+//			set = null;
 
 		if (from != null) {
 
 			hasFrom = true;
 			
-			if (hasSet)
-				setFromUntil.append("AND o.repository_datestamp > ? ");
-
-			else {
+//			if (hasSet)
+//				setFromUntil.append("AND o.repository_datestamp > ? ");
+//
+//			else {
 
 				setFromUntil.append("WHERE o.repository_datestamp > ? ");
-			}
+//			}
 		}
 
 		if (until != null) {
@@ -1465,11 +1584,11 @@ public class SelectFromDB {
 			//dbng.safelyCreatePreparedStatement(connection, sql.toString());
 
 		int parameterIndex = 1;
-		if (hasSet)
-		{
-			String setNumber = set.startsWith("ddc:") || set.startsWith("dnb:") ? set.split(":")[1] : set;
-			preparedstmt.setString(parameterIndex++, setNumber);
-		}
+//		if (hasSet)
+//		{
+//			String setNumber = set.startsWith("ddc:") || set.startsWith("dnb:") ? set.split(":")[1] : set;
+//			preparedstmt.setString(parameterIndex++, setNumber);
+//		}
 		if (hasFrom)
 		{
 			preparedstmt.setDate(parameterIndex++, from);
@@ -1500,7 +1619,7 @@ public class SelectFromDB {
 	public static PreparedStatement OAIListAll(Connection connection, String set, Date fromDate, Date untilDate, 
 			List<BigDecimal> ids) throws SQLException {
 
-		StringBuffer sql = new StringBuffer("SELECT o.object_id, t.title, o.repository_datestamp, ") // Title
+		StringBuffer sql = new StringBuffer("SELECT o.object_id, o.repository_identifier, t.title, o.repository_datestamp, ") // Title
 				.append("p1.firstname AS author_firstname, p1.lastname AS author_lastname, ") // Author
 				.append("p2.firstname AS editor_firstname, p2.lastname AS editor_lastname, ") // Editor
 				.append("p3.firstname AS contributor_firstname, p3.lastname AS contributor_lastname, ") // Contributor
@@ -1510,8 +1629,9 @@ public class SelectFromDB {
 				.append("k.keyword, k.lang, ") // Keywords
 				.append("tv.value AS type, ") // TypeValue
 				.append("ftl.mimeformat, ftl.link, ") // FullTextLinks
-				.append("pu.name AS publisher, ") // Publisher
-				.append("ddc.DDC_Categorie AS ddc ").append("FROM dbo.Object o ").append(
+				.append("pu.name AS publisher ") // Publisher
+				//.append(", ddc.DDC_Categorie AS ddc ")
+				.append("FROM dbo.Object o ").append(
 						"LEFT OUTER JOIN dbo.Titles t ON o.object_id = t.object_id ").append(
 						"LEFT OUTER JOIN dbo.Object2Author o2a ON o.object_id = o2a.object_id ").append(
 						"LEFT OUTER JOIN dbo.Person p1 ON o2a.person_id = p1.person_id ").append(
@@ -1528,7 +1648,8 @@ public class SelectFromDB {
 						"LEFT OUTER JOIN dbo.TypeValue tv ON o.object_id = tv.object_id ").append(
 						"LEFT OUTER JOIN dbo.FullTextLinks ftl ON o.object_id = ftl.object_id ").append(
 						"LEFT OUTER JOIN dbo.Publisher pu ON o.object_id = pu.object_id ").append(
-						"LEFT OUTER JOIN dbo.DDC_Classification ddc ON o.object_id = ddc.object_id ").append("WHERE");
+						//"LEFT OUTER JOIN dbo.DDC_Classification ddc ON o.object_id = ddc.object_id ").append(
+						"WHERE");
 
 		StringBuffer buf = new StringBuffer();
 
@@ -1600,7 +1721,9 @@ public class SelectFromDB {
 				sql.append("LEFT OUTER JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id ");
 				sql.append("LEFT OUTER JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id ");
 			} else {
-				set = null;
+				// 'X_OAN'-Sets
+				sql.append("LEFT OUTER JOIN dbo.Repository_Sets rs ON o.repository_id = rs.repository_id ");
+//				sql.append("LEFT OUTER JOIN dbo.Repository_Set rs ON o.repository_id = rs.repository_id ");
 			}
 		}
 
@@ -1629,6 +1752,8 @@ public class SelectFromDB {
 				sql.append("AND dnb.DNB_Categorie = ?");
 			} else if (set.startsWith("pub-type:")) {
 				sql.append("AND d.name = ?");
+			} else {
+				sql.append("AND rs.name = ?");
 			}
 			params.put(paramCount++, set);
 		}
@@ -1637,7 +1762,7 @@ public class SelectFromDB {
 			sql.append(" ORDER BY o.object_id");
 		}
 
-		logger.info("sql: " + sql.toString());
+		logger.info("sql: " + sql.toString() + "   using offset value " + idOffset);
 
 		preparedstmt = connection.prepareStatement(sql.toString());
 
@@ -1647,7 +1772,7 @@ public class SelectFromDB {
 			if (param instanceof Date)
 				preparedstmt.setDate(i, (Date) param);
 			else if (param instanceof String)
-				preparedstmt.setString(i, set.startsWith("pub-type:") ? set : set.split(":")[1]);
+				preparedstmt.setString(i, set.startsWith("pub-type:") ? set : set.endsWith("_OAN") ? set : set.split(":")[1]);
 			else
 				preparedstmt.setInt(i, ((BigInteger) param).intValue());
 		}

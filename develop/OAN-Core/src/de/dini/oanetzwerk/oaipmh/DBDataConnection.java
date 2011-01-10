@@ -6,6 +6,9 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
@@ -52,6 +54,54 @@ class DBDataConnection extends DataConnection {
 	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getEarliestDataStamp()
 	 */
 
+	@Override
+	public BigDecimal getInternalIdentifier (String repository_identifier) {
+		
+		BigDecimal id;
+
+
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult = null;
+
+		try {
+
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
+			stmtconn.loadStatement(SelectFromDB.InternalID(stmtconn.connection, repository_identifier));
+
+			queryresult = stmtconn.execute();
+
+			if (queryresult.getWarning() != null) {
+
+				for (Throwable warning : queryresult.getWarning()) {
+
+					logger.warn(warning.getLocalizedMessage());
+				}
+			}
+
+			String identifier = null;
+			
+			if (queryresult.getResultSet().next()) {
+				identifier = queryresult.getResultSet().getBigDecimal("object_id") != null ? queryresult.getResultSet().getBigDecimal("object_id").toString() :null;
+			}
+
+			return new BigDecimal(identifier);
+			
+		} catch (SQLException ex) {
+
+			logger.error(ex.getLocalizedMessage(), ex);
+
+		} catch (WrongStatementException ex) {
+
+			logger.error(ex.getLocalizedMessage(), ex);
+
+		} finally {
+
+			closeStatementConnection(stmtconn);
+		}
+		return null;
+	}
+	
+	
 	@Override
 	public String getEarliestDataStamp() {
 
@@ -167,6 +217,63 @@ class DBDataConnection extends DataConnection {
 
 		return false;
 	}
+	
+	
+	/**
+	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#existsIdentifier(java.lang.String)
+	 */
+
+	@Override
+	public boolean existsRepositoryIdentifier(String identifier) {
+
+
+		SingleStatementConnection stmtconn = null;
+		QueryResult queryresult = null;
+
+		try {
+
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
+			stmtconn.loadStatement(SelectFromDB.ObjectEntry(stmtconn.connection, identifier));
+
+			queryresult = stmtconn.execute();
+
+			if (queryresult.getWarning() != null) {
+
+				for (Throwable warning : queryresult.getWarning()) {
+
+					logger.warn(warning.getLocalizedMessage());
+				}
+			}
+
+			if (queryresult.getWarning() != null) {
+
+				for (Throwable warning : queryresult.getWarning()) {
+
+					logger.warn(warning.getLocalizedMessage());
+				}
+			}
+
+			if (queryresult.getResultSet().next()) {
+
+				if (!queryresult.getResultSet().getString("repository_identifier").equals(null) && queryresult.getResultSet().getString("repository_identifier").equals(identifier))
+					return true;
+			}
+
+		} catch (SQLException ex) {
+
+			logger.error(ex.getLocalizedMessage(), ex);
+
+		} catch (WrongStatementException ex) {
+
+			logger.error(ex.getLocalizedMessage(), ex);
+
+		} finally {
+
+			closeStatementConnection(stmtconn);
+		}
+
+		return false;
+	}
 
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getSets()
@@ -234,13 +341,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getClassifications(String identifier) {
 
 		ArrayList<String> classifications = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -253,9 +360,9 @@ class DBDataConnection extends DataConnection {
 		QueryResult queryresult = null;
 
 		try {
-
+			
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDB.DDCClassification(stmtconn.connection, bdID));
+			stmtconn.loadStatement(SelectFromDB.AllClassifications(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -267,72 +374,92 @@ class DBDataConnection extends DataConnection {
 				}
 			}
 
+			System.out.println("yep new method used!");
 			while (queryresult.getResultSet().next()) {
 
-				classifications.add("ddc:" + queryresult.getResultSet().getString(2));
+				classifications.add(queryresult.getResultSet().getString(2));
 			}
-
-			stmtconn.close();
-
-			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDB.DINISetClassification(stmtconn.connection, bdID));
-
-			queryresult = stmtconn.execute();
-
-			if (queryresult.getWarning() != null) {
-
-				for (Throwable warning : queryresult.getWarning()) {
-
-					logger.warn(warning.getLocalizedMessage());
-				}
-			}
-
-			while (queryresult.getResultSet().next()) {
-
-				classifications.add("dini:" + queryresult.getResultSet().getString(2));
-				logger.debug(queryresult.getResultSet().getString(1) + " / " + queryresult.getResultSet().getString(2));
-			}
-
-			stmtconn.close();
-
-			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDB.DNBClassification(stmtconn.connection, bdID));
-
-			queryresult = stmtconn.execute();
-
-			if (queryresult.getWarning() != null) {
-
-				for (Throwable warning : queryresult.getWarning()) {
-
-					logger.warn(warning.getLocalizedMessage());
-				}
-			}
-
-			while (queryresult.getResultSet().next()) {
-
-				classifications.add("dnb:" + queryresult.getResultSet().getString(2));
-			}
-
-			stmtconn.close();
-
-			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDB.OtherClassification(stmtconn.connection, bdID));
-
-			queryresult = stmtconn.execute();
-
-			if (queryresult.getWarning() != null) {
-
-				for (Throwable warning : queryresult.getWarning()) {
-
-					logger.warn(warning.getLocalizedMessage());
-				}
-			}
-
-			while (queryresult.getResultSet().next()) {
-
-				classifications.add("other:" + queryresult.getResultSet().getString(2));
-				logger.debug(queryresult.getResultSet().getString(1) + " / " + queryresult.getResultSet().getString(2));
-			}
+			
+//
+//			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
+//			stmtconn.loadStatement(SelectFromDB.DDCClassification(stmtconn.connection, bdID));
+//
+//			queryresult = stmtconn.execute();
+//
+//			if (queryresult.getWarning() != null) {
+//
+//				for (Throwable warning : queryresult.getWarning()) {
+//
+//					logger.warn(warning.getLocalizedMessage());
+//				}
+//			}
+//
+//			while (queryresult.getResultSet().next()) {
+//
+//				classifications.add("ddc:" + queryresult.getResultSet().getString(2));
+//			}
+//
+//			stmtconn.close();
+//
+//			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
+//			stmtconn.loadStatement(SelectFromDB.DINISetClassification(stmtconn.connection, bdID));
+//
+//			queryresult = stmtconn.execute();
+//
+//			if (queryresult.getWarning() != null) {
+//
+//				for (Throwable warning : queryresult.getWarning()) {
+//
+//					logger.warn(warning.getLocalizedMessage());
+//				}
+//			}
+//
+//			while (queryresult.getResultSet().next()) {
+//
+//				classifications.add("dini:" + queryresult.getResultSet().getString(2));
+//				logger.debug(queryresult.getResultSet().getString(1) + " / " + queryresult.getResultSet().getString(2));
+//			}
+//
+//			stmtconn.close();
+//
+//			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
+//			stmtconn.loadStatement(SelectFromDB.DNBClassification(stmtconn.connection, bdID));
+//
+//			queryresult = stmtconn.execute();
+//
+//			if (queryresult.getWarning() != null) {
+//
+//				for (Throwable warning : queryresult.getWarning()) {
+//
+//					logger.warn(warning.getLocalizedMessage());
+//				}
+//			}
+//
+//			while (queryresult.getResultSet().next()) {
+//
+//				classifications.add("dnb:" + queryresult.getResultSet().getString(2));
+//			}
+//
+//			stmtconn.close();
+//
+//			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
+//			stmtconn.loadStatement(SelectFromDB.OtherClassification(stmtconn.connection, bdID));
+//
+//			queryresult = stmtconn.execute();
+//
+//			if (queryresult.getWarning() != null) {
+//
+//				for (Throwable warning : queryresult.getWarning()) {
+//
+//					logger.warn(warning.getLocalizedMessage());
+//				}
+//			}
+//
+//			while (queryresult.getResultSet().next()) {
+//
+//				classifications.add("other:" + queryresult.getResultSet().getString(2));
+//				logger.debug(queryresult.getResultSet().getString(1) + " / " + queryresult.getResultSet().getString(2));
+//			}
 
 		} catch (SQLException ex) {
 
@@ -358,12 +485,12 @@ class DBDataConnection extends DataConnection {
 	public String getDateStamp(String identifier) {
 
 		String date = "1646-07-01";
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -419,13 +546,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getCreators(String identifier) {
 
 		ArrayList<String> creators = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -508,13 +635,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getSubjects(String identifier) {
 
 		ArrayList<String> subjects = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -570,13 +697,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getTitles(String identifier) {
 
 		ArrayList<String> titles = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier); // id[2]
 
 		} catch (NumberFormatException ex) {
 
@@ -632,13 +759,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getDates(String identifier) {
 
 		ArrayList<String> dates = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -694,13 +821,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getDescriptions(String identifier) {
 
 		ArrayList<String> descriptions = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -756,13 +883,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getFormats(String identifier) {
 
 		ArrayList<String> formats = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -818,13 +945,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getIdentifiers(String identifier) {
 
 		ArrayList<String> identifieres = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -880,13 +1007,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getLanguages(String identifier) {
 
 		ArrayList<String> languages = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -942,13 +1069,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getPublishers(String identifier) {
 
 		ArrayList<String> publishers = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -1004,13 +1131,13 @@ class DBDataConnection extends DataConnection {
 	public ArrayList<String> getTypes(String identifier) {
 
 		ArrayList<String> types = new ArrayList<String>();
-		String id[] = identifier.split(":");
+//		String id[] = identifier.split(":");
 
 		BigDecimal bdID;
 
 		try {
 
-			bdID = new BigDecimal(id[2]);
+			bdID = new BigDecimal(identifier);
 
 		} catch (NumberFormatException ex) {
 
@@ -1135,7 +1262,7 @@ class DBDataConnection extends DataConnection {
 			}
 
 			Record record = new Record();
-			BigDecimal oid = new BigDecimal(0);
+			String id = new String();
 			DCHeader h = record.getHeader();
 			DCMetaData m = record.getMetaData();
 			
@@ -1147,9 +1274,9 @@ class DBDataConnection extends DataConnection {
 
 				
 				ResultSet rs = queryresult.getResultSet();
-				oid = rs.getBigDecimal("object_id");
+				id = rs.getString("repository_identifier");
 
-				if (!record.getHeader().getIdentifier().equals(oid.toPlainString())) {
+				if (!record.getHeader().getIdentifier().equals(id)) {
 
 					// new id, save last record
 
@@ -1168,7 +1295,8 @@ class DBDataConnection extends DataConnection {
 						m = record.getMetaData();
 					}
 
-					h.setIdentifier(safeValueOf(rs.getBigDecimal("object_id")));
+					h.setInternalIdentifier(rs.getBigDecimal("object_id"));
+					h.setIdentifier(rs.getString("repository_identifier"));
 					h.setDatestamp(safeValueOf(rs.getDate("repository_datestamp")));
 
 
@@ -1177,7 +1305,9 @@ class DBDataConnection extends DataConnection {
 					if (StringUtils.isNotEmpty(rs.getString("dnb")) )
 						h.getSet().add(notNullValue("dnb:" + rs.getString("dnb")));
 					if (StringUtils.isNotEmpty(rs.getString("dini")) )
-						h.getSet().add(notNullValue(rs.getString("dini")));
+						h.getSet().add(notNullValue("dini:" + rs.getString("dini")));
+					if (StringUtils.isNotEmpty(rs.getString("repo_set")) )
+						h.getSet().add(notNullValue(rs.getString("repo_set")));
 					
 				} else {
 
@@ -1194,13 +1324,18 @@ class DBDataConnection extends DataConnection {
 					}
 					if (StringUtils.isNotEmpty(rs.getString("dini")) ) {
 						if (!h.getSet().contains(rs.getString("dini"))) {
-							h.getSet().add(notNullValue(rs.getString("dini")));
+							h.getSet().add(notNullValue("dini:" + rs.getString("dini")));
+						}
+					}
+					if (StringUtils.isNotEmpty(rs.getString("repo_set")) ) {
+						if (!h.getSet().contains(rs.getString("repo_set"))) {
+							h.getSet().add(notNullValue(rs.getString("repo_set")));
 						}
 					}
 				}
 			}
 			
-			//store final record
+			//store last record
 			if (record != null && record.getHeader() != null && StringUtils.isNotEmpty(record.getHeader().getIdentifier()) ) {
 				recordList.add(record);
 			}
@@ -1302,7 +1437,7 @@ class DBDataConnection extends DataConnection {
 
 	public LinkedList<Record> getRecordList(String from, String until, String set, BigInteger idOffset, int maxResults) {
 
-		LinkedList<Record> recordList = new LinkedList<Record>();
+		HashMap<BigDecimal, Record> recordMap = new HashMap<BigDecimal, Record>();
 		Date fromDate;
 		Date untilDate;
 		
@@ -1354,7 +1489,7 @@ class DBDataConnection extends DataConnection {
 			
 			// skip final query, if there have no ids been found for the query
 			if (ids == null || ids.size() == 0) {
-				return recordList;
+				return new LinkedList<Record>();
 			}
 			
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
@@ -1370,134 +1505,123 @@ class DBDataConnection extends DataConnection {
 			}
 
 			Record record = new Record();
-			BigDecimal oid = new BigDecimal(-1);
+			String repoId = new String();
 			DCHeader h = record.getHeader();
 			DCMetaData m = record.getMetaData();
+			BigDecimal internalId = new BigDecimal(-1);
 
-
-
+			int y = 1;
+			int q = 1;
 			while (queryresult.getResultSet().next()) {
 
+				
 				ResultSet rs = queryresult.getResultSet();
-				oid = rs.getBigDecimal("object_id");
-
-				if (!record.getHeader().getIdentifier().equals(oid.toPlainString())) {
-
+				repoId = rs.getString("repository_identifier");
+				internalId = rs.getBigDecimal("object_id");
+				
+				if (y ==1)
+					System.out.println("first record " + repoId  + "    " + internalId);
+				
+				if (!record.getHeader().getIdentifier().equals(repoId)) {
+					
+					System.out.println(y + "      " + record.getHeader().getIdentifier() + "   :   " + repoId);
 					// new id, save last record
 
-					if (recordList.size() == maxResults)
+					if (recordMap.size() == maxResults)
 					{
+						System.out.println("break out");
 						// enough results fetched, skip the rest
 						break;
 					}
 					
-					if (!record.getHeader().getIdentifier().equals("")) {
-
-						recordList.add(record);
+					if (!"".equals(record.getHeader().getIdentifier())) {
+						
+						recordMap.put(record.getHeader().getInternalIdentifier(), record);
+						System.out.println("put " + record.getHeader().getInternalIdentifier() + "   " +record.getHeader().getIdentifier() ); 
+						//reset record
 						record = new Record();
 						h = record.getHeader();
 						m = record.getMetaData();
 					}
 
-					h.setIdentifier(safeValueOf(rs.getBigDecimal("object_id")));
+					h.setInternalIdentifier(rs.getBigDecimal("object_id"));
+					h.setIdentifier(rs.getString("repository_identifier"));
 					h.setDatestamp(safeValueOf(rs.getDate("repository_datestamp")));
 
-					if (rs.getString("title") != null)
-						m.getTitle().add(rs.getString("title"));
-					if (rs.getString("author_firstname") != null || rs.getString("author_lastname") != null)
-						m.getCreator().add(rs.getString("author_firstname") + " " + rs.getString("author_lastname"));
-					if (rs.getString("keyword") != null)
-						m.getSubject().add(notNullValue(rs.getString("keyword")));
-					if (rs.getString("abstract") != null)
-						m.getDescription().add(notNullValue(rs.getString("abstract")));
-					if (rs.getString("publisher") != null)
-						m.getPublisher().add(notNullValue(rs.getString("publisher")));
-					if (rs.getString("date") != null)
-						m.getDate().add(safeValueOf(rs.getDate("date")));
-					if (rs.getString("type") != null)
-						m.getType().add(notNullValue(rs.getString("type")));
-					if (rs.getString("mimeFormat") != null)
-						m.getFormat().add(notNullValue(rs.getString("mimeformat")));
-					if (rs.getString("link") != null)
-						m.getIdentifier().add(notNullValue(rs.getString("link")));
-					if (rs.getString("language") != null)
-						m.getLanguage().add(notNullValue(rs.getString("language")));
-					if (rs.getString("ddc") != null)
-						h.getSet().add(notNullValue(rs.getString("ddc")));
+					aggregateRecordData(m, rs);
+					y++;
 				} else {
 
+					if (repoId != null) {
 					// additional data, --> aggregate
-					if (rs.getString("title") != null) {
-						if (!m.getTitle().contains(rs.getString("title"))) {
-							m.getTitle().add(notNullValue(rs.getString("title")));
-						}
-					}
-					if (rs.getString("author_firstname") != null || rs.getString("author_lastname") != null) {
-						if (!m.getCreator().contains(rs.getString("author_firstname") + " " + rs.getString("author_lastname"))) {
-							m.getCreator().add(
-									notNullValue(rs.getString("author_firstname")) + " " + notNullValue(rs.getString("author_lastname")));
-
-						}
-					}
-					if (rs.getString("keyword") != null) {
-						if (!m.getSubject().contains(rs.getString("keyword"))) {
-							m.getSubject().add(notNullValue(rs.getString("keyword")));
-
-						}
-					}
-					if (rs.getString("abstract") != null) {
-						if (!m.getDescription().contains(rs.getString("abstract"))) {
-							m.getDescription().add(notNullValue(rs.getString("abstract")));
-
-						}
-					}
-					if (rs.getString("publisher") != null) {
-						if (!m.getPublisher().contains(rs.getString("publisher"))) {
-							m.getPublisher().add(notNullValue(rs.getString("publisher")));
-
-						}
-					}
-					if (rs.getString("date") != null) {
-						if (!m.getDate().contains(safeValueOf(rs.getDate("date")))) {
-							m.getDate().add(safeValueOf((rs.getDate("date"))));
-
-						}
-					}
-					if (rs.getString("type") != null) {
-						if (!m.getType().contains(rs.getString("type"))) {
-							m.getType().add(notNullValue(rs.getString("type")));
-
-						}
-					}
-					if (rs.getString("mimeFormat") != null) {
-						if (!m.getFormat().contains(rs.getString("mimeFormat"))) {
-							m.getFormat().add(notNullValue(rs.getString("mimeFormat")));
-
-						}
-					}
-					if (rs.getString("link") != null) {
-						if (!m.getIdentifier().contains(rs.getString("link"))) {
-							m.getIdentifier().add(notNullValue(rs.getString("link")));
-
-						}
-					}
-					if (rs.getString("language") != null) {
-						if (!m.getLanguage().contains(rs.getString("language"))) {
-							m.getLanguage().add(notNullValue(rs.getString("language")));
-
-						}
-					}
-					if (rs.getString("ddc") != null) {
-						if (!h.getSet().contains(rs.getString("ddc"))) {
-							h.getSet().add(notNullValue(rs.getString("ddc")));
-
-						}
+						aggregateRecordData(m, rs);
 					}
 				}
+				
+				
+				
 			}
+			System.out.println("size before last record: " + recordMap.size());
 			if (record != null && record.getHeader() != null && StringUtils.isNotEmpty(record.getHeader().getIdentifier()) ) {
-				recordList.add(record);
+				if (recordMap.containsKey(internalId))
+					System.out.println("already there");
+				System.out.println("int: " + internalId); 
+				recordMap.put(internalId, record);
+				System.out.println("last record: " + record.getHeader().getInternalIdentifier() + ": " + record.getHeader().getIdentifier());
 			}
+			System.out.println("size after last record: " + recordMap.size());
+			int d = 1;
+			for (Record r : recordMap.values()) {
+				System.out.println(d + "   " + r.getHeader().getInternalIdentifier());
+				d++;
+			}
+			//
+			// add sets 
+			//
+			
+			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
+			stmtconn.loadStatement(SelectFromDB.AllClassifications(stmtconn.connection, ids));
+
+			queryresult = stmtconn.execute();
+
+			if (queryresult.getWarning() != null) {
+
+				for (Throwable warning : queryresult.getWarning()) {
+
+					logger.warn(warning.getLocalizedMessage());
+				}
+			}
+
+			System.out.println("IDS: ");
+			for (BigDecimal i : ids) 
+			{
+				System.out.println(i + ", ");
+			}
+			
+			BigDecimal oid = new BigDecimal(-1); 
+			String oai_set = null;
+			while (queryresult.getResultSet().next()) {
+
+				ResultSet rs = queryresult.getResultSet();
+				oid = rs.getBigDecimal("object_id");
+				oai_set = rs.getString("set");
+				
+				if (recordMap.containsKey(oid)) {
+					System.out.println(oid);
+					recordMap.get(oid).getHeader().getSet().add(notNullValue(oai_set));
+				}
+				//classifications.add(queryresult.getResultSet().getString(2));
+			}
+			System.out.println("RecordMapSize1: " + recordMap.size());
+			LinkedList<Record> records = new LinkedList<Record>(recordMap.values());
+			
+			for (Record rec : records) {
+				System.out.println("RR: " + rec.getHeader().getIdentifier() + ":" + rec.getHeader().getInternalIdentifier());
+			}
+			
+			Collections.sort(records);
+			return records;
+			
 		} catch (SQLException ex) {
 
 			logger.error(ex.getLocalizedMessage(), ex);
@@ -1511,7 +1635,69 @@ class DBDataConnection extends DataConnection {
 			closeStatementConnection(stmtconn);
 		}
 
-		return recordList;
+		return new LinkedList<Record>();
+	}
+
+	private void aggregateRecordData(DCMetaData m, ResultSet rs)
+			throws SQLException {
+		if (rs.getString("title") != null) {
+			if (!m.getTitle().contains(rs.getString("title"))) {
+				m.getTitle().add(notNullValue(rs.getString("title")));
+			}
+		}
+		if (rs.getString("author_firstname") != null || rs.getString("author_lastname") != null) {
+			if (!m.getCreator().contains(DriverCompliance.getAuthor(rs.getString("author_firstname"), rs.getString("author_lastname")))) {
+				m.getCreator().add(DriverCompliance.getAuthor(rs.getString("author_firstname"), rs.getString("author_lastname")));
+			}
+		}
+		if (rs.getString("keyword") != null) {
+			if (!m.getSubject().contains(rs.getString("keyword"))) {
+				m.getSubject().add(notNullValue(rs.getString("keyword")));
+
+			}
+		}
+		if (rs.getString("abstract") != null) {
+			if (!m.getDescription().contains(rs.getString("abstract"))) {
+				m.getDescription().add(notNullValue(rs.getString("abstract")));
+
+			}
+		}
+		if (rs.getString("publisher") != null) {
+			if (!m.getPublisher().contains(rs.getString("publisher"))) {
+				m.getPublisher().add(notNullValue(rs.getString("publisher")));
+
+			}
+		}
+		if (rs.getString("date") != null) {
+			if (!m.getDate().contains(safeValueOf(rs.getDate("date")))) {
+				m.getDate().add(safeValueOf((rs.getDate("date"))));
+
+			}
+		}
+		if (rs.getString("type") != null) {
+			if (!m.getType().contains(rs.getString("type"))) {
+				m.getType().add(notNullValue(rs.getString("type")));
+
+			}
+		}
+		if (rs.getString("mimeFormat") != null) {
+			if (!m.getFormat().contains(rs.getString("mimeFormat"))) {
+				m.getFormat().add(notNullValue(rs.getString("mimeFormat")));
+
+			}
+		}
+		if (rs.getString("link") != null) {
+			if (!m.getIdentifier().contains(rs.getString("link"))) {
+				m.getIdentifier().add(notNullValue(rs.getString("link")));
+
+			}
+		}
+		if (rs.getString("language") != null) {
+			if (!m.getLanguage().contains(rs.getString("language"))) {
+				m.getLanguage().add(notNullValue(rs.getString("language")));
+
+			}
+		}
 	}
 	
 	

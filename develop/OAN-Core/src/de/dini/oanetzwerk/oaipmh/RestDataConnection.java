@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.oaipmh;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,6 +15,12 @@ public class RestDataConnection extends DataConnection {
 	/**
 	 * @see de.dini.oanetzwerk.oaipmh.DataConnection#getEarliestDataStamp()
 	 */
+	
+	@Override
+	public BigDecimal getInternalIdentifier (String repository_identifier) {
+		//TODO: implement
+		return null;
+	}
 	
 	@Override
 	public String getEarliestDataStamp ( ) {
