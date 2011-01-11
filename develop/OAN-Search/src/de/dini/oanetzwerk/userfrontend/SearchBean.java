@@ -38,6 +38,7 @@ public class SearchBean
   private Properties search_props = null;
   private MetadataLoaderBean mdLoaderBean;
   private String strOneSlot = "";
+  private final String fStrFreeSearch = "___";
   private BigDecimal directOID = null;
   private String strRepositoryFilterRID = null;
   private String strRepositoryFilterName = null;
@@ -212,18 +213,12 @@ public class SearchBean
     }
     return "search_clicked";
   }
-  private String evalOneSlotAndDDCWithAutoHits() {
-    logger.debug("evalOneSlotAndDDCWithAutoHits");
+  private String freeSearchAndDDC() {
+    logger.debug("freeSearchAndDDC");
     String strDDC = this.browse.getSelectedDDCCatValue();
-    if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
-      String strQuery = new String(this.strOneSlot);
-      strQuery = strQuery.toUpperCase();
-      strQuery = strQuery.trim();
-      searchFor(strQuery, strDDC);
-    } else if (strDDC != null) {
-      searchFor(null, strDDC);
-    }
-    return "search_clicked_with_autohits";
+    searchFor(fStrFreeSearch, strDDC);
+    setStrOneSlot("");
+    return "search_clicked";
   }
 
   private String parseOneSlotSearchField() {
@@ -344,9 +339,8 @@ public class SearchBean
   public String actionSearchWithDDCButton() {
     return evalOneSlotAndDDC();
   }
-  public String actionSearchFromDDCTreeDirectlyWithAutoHits() {
-	setStrOneSlot("___");  
-	return evalOneSlotAndDDCWithAutoHits();
+  public String actionSearchFromDDCTreeDirectlyWithAutoHits() { 
+	return freeSearchAndDDC();
   }
   public String actionAddAllHitsToClipboard() {
     for (BigDecimal bdOID : this.hitlist.getListHitOID()) {
