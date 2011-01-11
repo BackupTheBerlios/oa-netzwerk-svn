@@ -101,7 +101,7 @@ public class GetRecord extends AbstractOAIPMHVerb {
 			System.out.println("Type:  " + type);
 			if (i == 0)
 			{
-				oaidctype.getType().add(DriverCompliance.getTypeForString(type));
+				oaidctype.getType().add(DriverCompliance.getDriverDCTypeForString(type));
 				oaidctype.getType().add(type);
 			}
 			i++;

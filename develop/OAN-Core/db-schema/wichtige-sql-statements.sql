@@ -29,7 +29,21 @@ GROUP BY object_id
 -- DDC_Browsing_Help
 
 
--- Funktion, die alle Werte und in Ã¼bergebener und in der Unterkategorie zÃ¤hlt
+-- Funktion, die alle Werte in der spezifischen Kategorie zählt
+CREATE FUNCTION fnDDCDirectCount (@ddc UNIVARCHAR(10))
+RETURNS INT
+AS
+BEGIN
+    DECLARE @count int
+    SELECT @count = COUNT(*) FROM dbo.DDC_Classification d WHERE d.DDC_Categorie = @ddc 
+    RETURN @count
+END
+
+-- Update der Direct-Count-Werte
+
+UPDATE dbo.DDC_Browsing_Help set direct_count = dbo.fnDDCDirectCount(DDC_Categorie);
+
+-- Funktion, die alle Werte und in übergebener und in der Unterkategorie zählt
 CREATE FUNCTION fnDDCCount (@ddc UNIVARCHAR(10))
 RETURNS INT
 AS

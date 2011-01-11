@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="OA-Netzwerk" default="warServer">
 
+	
+	<property name="mode" value="DEVELOPMENT" /><!-- DEVELOPMENT or PRODUCTION -->
+	
 	<property environment="env"/>
 	<property name="src" value="./src" />
 	<property name="ress" value="resources" />
@@ -291,6 +294,7 @@
 			<exclude name="**/dcgenerator/*.java" />
 			<exclude name="**/ResourceRealm.java" />
 			<exclude name="**/InspectorServlet.java" />
+			<exclude name="**/Statistics.java" />
 			<exclude name="**/Test*.java" />
 			<exclude name="**/oai/**/*" />
 		</javac>
@@ -837,7 +841,8 @@
 				<include name="jibx-run-1.2.2.jar" />
 				<include name="commons-lang-2.3.jar" />
 			</lib>
-			<metainf dir="conf">
+	
+			<metainf dir="conf/dev">
 				<include name="context.xml" />
 			</metainf>
 			<classes dir="${build.oaipmh}" />

@@ -194,4 +194,10 @@ public class RestDataConnection extends DataConnection {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public boolean existsRepositoryIdentifier(String identifier) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
