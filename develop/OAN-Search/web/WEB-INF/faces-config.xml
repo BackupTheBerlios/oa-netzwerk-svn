@@ -61,6 +61,11 @@
 			<to-view-id>/pages/browse_ddc_with_autohits.jsp</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>browse_ddc_version3</from-outcome>
+			<to-view-id>/pages/browse_ddc_version3.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/pages/start.jsp</from-view-id>
@@ -129,11 +134,6 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>search_clicked_with_autohits</from-outcome>
-			<to-view-id>/pages/browse_ddc_with_autohits.jsp</to-view-id>
-		<redirect />			
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>details_clicked</from-outcome>
 			<to-view-id>/pages/hitdetails.jsp</to-view-id>
 			<redirect />
@@ -149,7 +149,45 @@
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
-
+	<navigation-rule>
+		<from-view-id>/pages/browse_ddc_with_autohits.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/pages/browse_ddc_with_autohits.jsp</to-view-id>
+		<redirect />			
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>details_clicked</from-outcome>
+			<to-view-id>/pages/browse_ddc_with_autohits.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+		<navigation-rule>
+		<from-view-id>/pages/browse_ddc_version3.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/pages/browse_ddc_version3.jsp</to-view-id>
+		<redirect />			
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>details_clicked</from-outcome>
+			<to-view-id>/pages/metadata.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+	<from-view-id>/pages/metadata.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>close_details</from-outcome>
+			<to-view-id>/pages/browse_ddc_version3.jsp</to-view-id>
+		<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/pages/browse_ddc_version3.jsp</to-view-id>
+		<redirect />
+		</navigation-case>
+	</navigation-rule>
 	<!-- BEANS  -->
 	<managed-bean>
 		<managed-bean-name>metadataLoaderBean</managed-bean-name>

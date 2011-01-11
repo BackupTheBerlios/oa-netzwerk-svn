@@ -46,6 +46,9 @@
 					<div>
 						<h:commandLink value="#{msg.linkname_browse_ddc_with_autohits}" action="browse_ddc_with_autohits"/>
 					</div>
+					<div>
+						<h:commandLink value="#{msg.linkname_browse_ddc_version3}" action="browse_ddc_version3"/>
+					</div>
 				</div>
 
 				<div id="div_search_widgets">

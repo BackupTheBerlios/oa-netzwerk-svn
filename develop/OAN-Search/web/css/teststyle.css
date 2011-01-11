@@ -90,7 +90,18 @@ dt {
   margin-left:40px;
   padding:5px;
 }
-
+#box_grey{
+	background-color: #DDDDDD;
+	width: 100%;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+#box_light_grey{
+	background-color: #EEEEEE;
+	width: 100%;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
 #div_flat_search {
   margin-top: 10px;
   margin-left: 10px;
@@ -113,7 +124,7 @@ dt {
 }
 #div_hitlist_scroller {
   margin-left: 10px;
-  margin-top: 30px;
+  margin-top: 10px;
   margin-right: 10px;	  		
 }
 #div_hitlist_scroller table {
@@ -350,7 +361,7 @@ dt {
 /* BROWSING ------------------------------------------------------------------------------------ */
 #div_simplebrowselist {
   margin-left: 10px;
-  margin-top: 30px;
+  margin-top: 10px;
   margin-right: 10px;
 
 }
@@ -361,7 +372,7 @@ dt {
   list-style: none;
 }
 #div_simplebrowselist li li {
-  margin-left: 20px;
+  margin-left: 10px;
   font-size: 9px;
   list-style: none;
 }
@@ -410,7 +421,7 @@ dt {
 }
 #div_alle_dcc_cat {
   margin-top: 10px;
-  margin-left: 10px;
+  margin-left: 5px;
   font-size: 14px;
   font-weight: bold;	
   margin-bottom: 5px;

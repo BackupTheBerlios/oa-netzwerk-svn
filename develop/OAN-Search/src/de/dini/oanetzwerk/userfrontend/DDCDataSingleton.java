@@ -291,8 +291,8 @@ private List<String[]> generateDirectDDCCategorySums(List<String[]> listSimpleSu
 					String strCategory_lvl3 = "" + i + j + k;
 					DDCNaviNode node_lvl3 = getDDCNaviNodeForCat(strCategory_lvl3);
 					
-					/*
-					for(int l = 1; l < 10; l++) {
+					
+					/*for(int l = 1; l < 10; l++) {
 						
 						String strCategory_lvl4 = "" + i + j + k + "." + l;
 						DDCNaviNode node_lvl4 = getDDCNaviNodeForCat(strCategory_lvl4);
