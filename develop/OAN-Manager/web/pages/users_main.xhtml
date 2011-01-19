@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+
+<f:view>
+   <f:loadBundle basename="messages.repositories" var="msg" />
+
+
+   <ui:composition template="templates/template.xhtml">
+
+      <ui:param name="pageTitle" value="Repositories - OA-Netzwerk Manager" />
+
+      <ui:define name="navigation">
+         <a href="/oanadmin/">OA-Netzwerk</a> » <a href="repositories_main.xhtml">Repositorien</a>
+      </ui:define>
+
+      <ui:define name="menu">
+         <div id="tasks">
+
+         <div class="task"><img height="24" style="margin: 2px;" alt=""
+            width="24" src="../images/24x24/new-package.gif" /><a href="repositories_main.xhtml"><b>Repositorien
+         verwalten</b></a>
+
+         <div class="subtasks">
+         <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+            src="../images/24x24/setting.gif" /> <a href="repositories_add.xhtml">Repository hinzufügen</a></div>
+
+         </div>
+         </div>
+
+         <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+            src="../images/24x24/setting.gif" /><a href="services_main.faces">Dienste verwalten</a></div>
+
+         <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+            src="../images/24x24/setting.gif" /><a href="users_main.faces">Benutzer verwalten</a></div>
+
+         <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+            src="../images/24x24/notepad.gif" /><a href="reports.faces">Reports</a></div>
+
+         <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+            src="../images/24x24/notepad.gif" /><a href="livelog.faces">Live Log</a></div>
+         </div>
+
+
+      </ui:define>
+
+      <ui:define name="content">
+         <!--      <form action="createItem" method="post">-->
+         
+        <div style="padding: 20px; background-color: #f5f9f4;">
+		<div style="background-color: #f5f9f4;">
+		
+		<h2>Benutzer</h2>
+         <table width="100%">
+            <tr>
+               <td class="setting-leftspace"></td>
+
+               <td>
+
+               <table id="executors" class="pane">
+                  <tr>
+                     <td colspan="8" class="pane-header"><a href='computer/'>-Übersicht</a><br />
+                     </td>
+                  </tr>
+                  <tr>
+                     <td colspan="8" class="pane-header"><br />
+                     </td>
+                  </tr>
+                  <tr>
+                     <td><h:form>
+                        <t:dataTable value="#{userList.users}" var="row" frame="above" headerClass="pane"
+                           columnClasses="pane, pane, pane, pane, pane"
+                           style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
+                           <t:column width="230">
+                              <f:facet name="header">
+                                 <h:outputText value="Benutzername" />
+                              </f:facet>
+                              <!--                           <h:form>-->
+                              <a href="repository_view.xhtml?rid=#{row.username}">#{row.username}</a>
+                              <!--                           </h:form>-->
+                           </t:column>
+                           <t:column width="250">
+                              <f:facet name="header">
+                                 <h:outputText value="Name" />
+                              </f:facet>
+                              <h:outputText value="#{row.name}" />
+                           </t:column>
+                           <t:column width="200">
+                              <f:facet name="header">
+                                 <h:outputText value="E-Mail" />
+                              </f:facet>
+                              <a href="mailto:"><h:outputText value="#{row.email}" /></a>
+                           </t:column>
+                           <t:column width="150">
+                              <f:facet name="header">
+                                 <h:outputText value="Berechtigungen" />
+                              </f:facet>
+                              <h:outputText value="#{row.rights}" />
+                           </t:column>
+                           <t:column width="40">
+                              <f:facet name="header">
+                                 <h:outputText value="Letzter Login" />
+                              </f:facet>
+                              <h:outputText value="#{row.lastLogin}" />
+                           </t:column>
+                        </t:dataTable>
+                     </h:form></td>
+                  </tr>
+               </table>
+               </td>
+            </tr>
+
+            <tr class="validation-error-area">
+               <td colspan="2"></td>
+               <td></td>
+            </tr>
+            <tr>
+               <td colspan="3"><input type="radio" name="mode" value="dummy1" style="display: none" /><input
+                  type="radio" name="mode" value="dummy2" style="display: none" /><input type="submit" name="Submit"
+                  value="OK" id="ok" style="margin-left: 5em" /></td>
+            </tr>
+         </table>
+         <!--      </form>-->
+         
+         </div>
+         </div>
+      </ui:define>
+   </ui:composition>
+
+</f:view>
+
+</body>
+
+</html>

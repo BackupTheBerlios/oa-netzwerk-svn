@@ -3,6 +3,7 @@
 	<name>OAN-Manager</name>
 	<comment></comment>
 	<projects>
+		<project>OAN</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

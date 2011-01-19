@@ -328,6 +328,8 @@ div.dashboard {
 .pane  {
   margin-top: 4px;
   white-space: nowrap;
+  height: 50px;
+  width: 20%;
 }
 .pane td {
   padding: 4px 4px 3px 4px;
@@ -343,7 +345,11 @@ td.pane {
   border: 1px #bbb solid;
   padding: 3px 4px 3px 4px;
   vertical-align: middle;
+  height: 50px;
+  width: 20%;  
 }
+
+
 
 td.pane-header {
   border: 1px #bbb solid;
@@ -351,6 +357,7 @@ td.pane-header {
   border-left: none;
   background-color: #f0f0f0;
   font-weight: bold;
+  width: 20%;
 }
 
 th.pane {

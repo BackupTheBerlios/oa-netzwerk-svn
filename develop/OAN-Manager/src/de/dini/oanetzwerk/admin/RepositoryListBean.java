@@ -62,7 +62,6 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 //		if (true)
 //			return new ArrayList<RepositoryBean>();
 		
-		System.out.println("blabla" + new Random().nextInt());
 		String result = this.prepareRestTransmission("Repository/").GetData();
 		List<RepositoryBean> repoList = new ArrayList<RepositoryBean>();
 		RestMessage rms = RestXmlCodec.decodeRestMessage(result);

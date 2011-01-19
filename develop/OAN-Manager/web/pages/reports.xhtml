@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
 
 <head></head>
 
@@ -10,47 +10,108 @@
 
 <ui:composition template="templates/template.xhtml">
 
-   <ui:param name="pageTitle" value="Reports - OA-Netzwerk Manager" />
-   
-   <ui:define name="navigation">
-      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="reports.xhtml">Reports</a>
-   </ui:define>
+	<ui:param name="pageTitle" value="Reports - OA-Netzwerk Manager" />
 
-   <ui:define name="menu">
-      <div id="tasks">
+	<ui:define name="navigation">
+		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="reports.xhtml">Reports</a>
+	</ui:define>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt=""
-         width="24" src="../images/24x24/new-package.gif" /><a href="repositories_main.faces">Repositorien
-      verwalten</a>
+	<ui:define name="menu">
+		<div id="tasks">
 
-      <div class="subtasks"></div>
-      </div>
+		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a href="repositories_main.faces">Repositorien
+		verwalten</a>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="services_main.faces">Dienste verwalten</a></div>
+		<div class="subtasks"></div>
+		</div>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="users_main.faces">Benutzer verwalten</a></div>
+		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a href="services_main.faces">Dienste
+		verwalten</a></div>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="reports.faces">Reports</a></div>
+		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a href="users_main.faces">Benutzer
+		verwalten</a></div>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="livelog.faces">Live Log</a></div>
-      </div>
+		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a href="reports.faces">Reports</a></div>
 
-   </ui:define>
+		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a href="livelog.faces">Live Log</a></div>
+		</div>
 
-   <ui:define name="content">
-      
-      Über dieses Portal ist die gesamte Dienstekette des OA-Netzwerks steuerbar und ermöglicht den Ablauf der Dienste zu überwachen oder mögliche Fehlersituationen schnell zu überblicken! Darüber hinaus lassen sich die OAN zugrundeliegenden Repositorien (Data Provider) verwalten.
-      Zusätzliche Funktionen wie der Live-Service-Log oder aufbereitete Reports erleichtern den Einblick und geben einen Status über die Arbeit der OAN-Dienste.<br />
-      <br />
+	</ui:define>
 
-      <p />
-      <br />
-      <br />
-   </ui:define>
+	<ui:define name="content">
+
+		<t:messages layout="table"></t:messages>
+
+		<p />
+		<br />
+
+		<div style="padding: 20px; background-color: #f5f9f4;">
+		<div style="background-color: #f5f9f4;">
+		<h2>Reports</h2>
+		<p />
+		<br />
+		Nachfolgend sind diverse Reports zu den verschieden Diensten gelistet. Diese enthalten Details zu eventuellen Problemen und liefern einen Status über die
+		absolvierten Aufgaben der einzelnen Dienste.
+		<p />
+
+		<table width="100%" >
+
+			<f:view>
+				<h:form>
+					<tr>
+						<td width="300">
+						<h4>Validation-Reports</h4>
+						</td>
+						<td charoff="10"><h4>Typ</h4></td>
+						<td charoff="10"><h4>erstellt am</h4></td>
+						
+					</tr>
+					<tr>
+						<td width="140"><a href="#">Validation Report - EDOC HU-Berlin</a></td>
+						<td charoff="10">manuell</td>
+						<td charoff="10">14.01.2011</td>
+					</tr>
+					<tr>
+						<td width="140"><a href="#">Validation Report - SSOAR</a></td>
+						<td charoff="10">automatisch</td>
+						<td charoff="10">12.01.2011</td>
+					</tr>
+				</h:form>
+			</f:view>
+		</table>
+		<table width="100%" >
+
+			<f:view>
+				<h:form>
+					<tr>
+						<td width="300">
+						<h4>Harvesting-Reports</h4>
+						</td>
+						<td charoff="10"><h4>Typ</h4></td>
+						<td charoff="10"><h4>erstellt am</h4></td>
+						
+					</tr>
+					<tr>
+						<td width="140"><a href="#">EDOC HU-Berlin</a></td>
+						<td charoff="10">automatisch</td>
+						<td charoff="10">10.01.2011</td>
+					</tr>
+					<tr>
+						<td width="140"><a href="#">Fraunhofer</a></td>
+						<td charoff="10">automatisch</td>
+						<td charoff="10">10.01.2011</td>
+					</tr>
+				</h:form>
+			</f:view>
+		</table>
+		</div>
+		</div>
+
+
+		<p />
+		<br />
+		<br />
+	</ui:define>
 
 </ui:composition>
 

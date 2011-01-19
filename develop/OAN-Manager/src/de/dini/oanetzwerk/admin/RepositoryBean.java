@@ -246,7 +246,6 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 	}
 
 	public void setName(String name) {
-		System.out.println("yess");
 		this.name = name;
 	}
 
