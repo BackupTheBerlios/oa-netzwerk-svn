@@ -346,23 +346,44 @@ td.pane {
   padding: 3px 4px 3px 4px;
   vertical-align: middle;
   height: 50px;
-  width: 20%;  
+   
 }
 
 
 
 td.pane-header {
-  border: 1px #bbb solid;
+
   border-right: none;
   border-left: none;
   background-color: #f0f0f0;
   font-weight: bold;
-  width: 20%;
+  
+}
+
+th.pane-header {
+
+  border-right: none;
+  border-left: none;
+  background-color: #d4e6d1;
+  font-weight: bold;
+  
 }
 
 th.pane {
   border: 1px #bbb solid;
   font-weight: bold;
+  background-color: #f0f0f0;
+}
+
+
+tr.odd {
+	background-color:#FFFFFF;
+   
+}
+
+tr.even {
+	background-color:#f5f9f4;;
+   
 }
 
 .bigtable tr {
