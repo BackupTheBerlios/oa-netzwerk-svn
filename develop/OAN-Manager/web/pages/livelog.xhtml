@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:t="http://myfaces.apache.org/tomahawk">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
 
 <head></head>
 
@@ -14,38 +11,32 @@
 <ui:composition template="templates/template.xhtml">
 
 	<ui:param name="pageTitle" value="Live Log - OA-Netzwerk Manager" />
-
+	<ui:param name="onLoadJS" value="updateBox();" />
+	
 	<ui:define name="navigation">
-		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="livelog.xhtml">Live
-		Log</a>
+		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="livelog.xhtml">Live Log</a>
 	</ui:define>
 
 
 	<ui:define name="menu">
 		<div id="tasks">
 
-		<div class="task"><img height="24" style="margin: 2px;" alt=""
-			width="24" src="../images/24x24/new-package.gif" /><a
-			href="repositories_main.faces">Repositorien verwalten</a></div>
+		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a href="repositories_main.faces">Repositorien
+		verwalten</a></div>
 
 		<div class="subtasks"></div>
 
 
-		<div class="task"><img height="24" style="margin: 2px;" alt=""
-			width="24" src="../images/24x24/setting.gif" /><a
-			href="services_main.faces">Dienste verwalten</a></div>
+		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a href="services_main.faces">Dienste
+		verwalten</a></div>
 
-		<div class="task"><img height="24" style="margin: 2px;" alt=""
-			width="24" src="../images/24x24/setting.gif" /><a
-			href="users_main.faces">Benutzer verwalten</a></div>
+		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a href="users_main.faces">Benutzer
+		verwalten</a></div>
 
-		<div class="task"><img height="24" style="margin: 2px;" alt=""
-			width="24" src="../images/24x24/notepad.gif" /><a
-			href="reports.faces">Reports</a></div>
+		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a href="reports.faces">Reports</a></div>
 
-		<div class="task"><img height="24" style="margin: 2px;" alt=""
-			width="24" src="../images/24x24/notepad.gif" /><a
-			href="livelog.faces"><b>Live Log</b></a></div>
+		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a href="livelog.faces"><b>Live
+		Log</b></a></div>
 
 		</div>
 	</ui:define>
@@ -56,32 +47,20 @@
 
 		<h2>Live Log</h2>
 		<br />
-		Diese Anzeige dient zum Beobachten der tatsächlich aktuell
-		ausgeführten Dienste auf Metadatensatzebene. <!--</>b><i>Hinweis: </i></b-->
-		<br />
+		Diese Anzeige dient zum Beobachten der tatsächlich aktuell ausgeführten Dienste auf Metadatensatzebene. <!--</>b><i>Hinweis: </i></b--> <br />
 
 		<p />
 		<br />
-		<t:inputTextarea id="ita" value="" cols="150" rows="70"
-			wrap="physical" title="inputTextarea example" rendered="true"
-			required="false" /> <br />
-		
-		<table border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td width="100%">
-				<form name="slideshow">
-				<div align="center">
-				<center>
-				<p><b>What's On Update</b><br />
-				<textarea rows="5" name="S1" cols="30"></textarea><br />
-				<input type="button" value="Take me there!" name="B1"
-					onclick="window.location=messagelinks[curmsg]" /></p>
-				</center>
-				</div>
-				</form>
-				</td>
-			</tr>
-		</table>
+
+		<h:outputScript name="jsf.js" library="javax.faces" target="head" />
+		<h:form prependId="false">
+
+			<t:inputTextarea id="out" value="#{log.update}" cols="150" rows="70" wrap="physical" title="inputTextarea example" rendered="true" required="false" />
+			<br />
+
+			<h:commandButton id="updateButton" value="Update" type="button" onclick="jsf.ajax.request(this, event, {execute: '', render: 'out'}); return false;" />
+
+		</h:form>
 
 		</div>
 		</div>
