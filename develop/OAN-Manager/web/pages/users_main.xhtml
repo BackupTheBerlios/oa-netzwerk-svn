@@ -65,7 +65,7 @@
 			<div style="background-color: #f5f9f4;">
 
 			<h2>Benutzerverwaltung</h2>
-			<table width="120%">
+			<table width="100%">
 				<tr>
 					<td class="setting-leftspace"></td>
 
@@ -83,9 +83,10 @@
 						<tr>
 							<td><h:form>
 								<t:dataTable value="#{userList.users}" var="row"
-									headerClass="pane-header" rowClasses="odd, even">
+									headerClass="pane-header" rowClasses="odd, even"
+									style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
 									<t:column
-										style="width: 22%; vertical-align: middle; height: 70px;">
+										style="width: 22%; vertical-align: middle; padding-left: 15px; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Benutzername" />
 										</f:facet>
@@ -94,14 +95,14 @@
 										<!--                           </h:form>-->
 									</t:column>
 									<t:column
-										style="width: 22%; vertical-align: middle; height: 70px;">
+										style="width: 22%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Name" />
 										</f:facet>
 										<h:outputText value="#{row.name}" />
 									</t:column>
 									<t:column
-										style="width: 27%; vertical-align: middle; height: 70px;">
+										style="width: 27%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="E-Mail" />
 										</f:facet>

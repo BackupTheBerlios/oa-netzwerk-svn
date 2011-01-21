@@ -366,6 +366,8 @@ th.pane-header {
   border-left: none;
   background-color: #d4e6d1;
   font-weight: bold;
+  vertical-align: middle; 
+  height: 30px;"
   
 }
 

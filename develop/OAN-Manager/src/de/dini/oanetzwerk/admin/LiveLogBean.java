@@ -31,7 +31,7 @@ public class LiveLogBean extends AbstractBean implements Serializable {
 
 
 	private Long id = null;
-	private String update = "Crazy!";
+	private String update = "Currently no service in progress...";
 	
 	
 	public String getUpdate() {
