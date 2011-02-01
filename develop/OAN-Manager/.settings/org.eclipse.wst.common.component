@@ -3,6 +3,9 @@
     <wb-module deploy-name="OAN-Manager">
         <wb-resource deploy-path="/" source-path="/web"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <dependent-module archiveName="OAN-Core.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/OAN-Core/OAN-Core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/OAN Manager/build/classes"/>
         <property name="context-root" value="oanadmin"/>
     </wb-module>
