@@ -1,9 +1,5 @@
 package de.dini.oanetzwerk.oaipmh;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import de.dini.oanetzwerk.oaipmh.oaidc.OAIDCDescriptionType;
 
 /** 
  * Schema fragment(s) for this class:

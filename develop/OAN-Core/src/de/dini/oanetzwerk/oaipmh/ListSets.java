@@ -15,8 +15,6 @@ import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.JiBXException;
 
-import de.dini.oanetzwerk.oaipmh.oaidc.OAIDCDescriptionType;
-
 
 /**
  * @author Sammy David
@@ -95,9 +93,9 @@ public class ListSets extends AbstractOAIPMHVerb {
 				descriptions.add("Records from the repository/institution '" + strings[1] + "'");
 				
 				MetadataType mdType = new MetadataType();
-				OAIDCDescriptionType descriptionType = new OAIDCDescriptionType();
-				descriptionType.setDescription(descriptions);
-				mdType.setAny(descriptionType);
+//				OAIDCDescriptionType descriptionType = new OAIDCDescriptionType();
+//				descriptionType.setDescription(descriptions);
+//				mdType.setAny(descriptionType);
 				testSet.setMetadata(mdType);
 			}
 			
