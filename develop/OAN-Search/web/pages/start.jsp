@@ -49,6 +49,9 @@
 					<div>
 						<h:commandLink value="#{msg.linkname_browse_ddc_version3}" action="browse_ddc_version3"/>
 					</div>
+					<div>
+						<h:commandLink value="#{msg.linkname_browse_ddc_version4}" action="browse_ddc_version4"/>
+					</div>	
 				</div>
 
 				<div id="div_search_widgets">

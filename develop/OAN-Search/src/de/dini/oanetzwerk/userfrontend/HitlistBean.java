@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.TreeSet;
 
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -44,10 +47,31 @@ public class HitlistBean implements Serializable {
 	
 	public HitlistBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		String serverPath = Utils.getWebappPath();
-		System.out.println("testing");
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();		
+		
+		String query = request.getParameter("query");
+
+		//init search bean
+//		if (parentSearchBean == null) {
+//			
+//			System.out.println("Calling class: " + new Throwable().fillInStackTrace().getStackTrace()[1].getClassName()
+//);
+//			System.out.println("Init SearchBean from HitlistBean...");
+//			parentSearchBean = new SearchBean(this);
+//			parentSearchBean.setStrOneSlot(query);
+//			parentSearchBean.actionSearchButton();
+//		}
+		
+		
+		
+		//read props
 		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(serverPath + "/WEB-INF/userfrontend_gui.xml");
+		
+		//init xml marshaller
 		this.cmMarsh = CompleteMetadataJAXBMarshaller.getInstance();
 		
+		// new list of oids (hits)
 		this.listHitOID = new ArrayList<BigDecimal>();
 		
 		//this.mapHitBean = new HashMap<BigDecimal, HitBean>();
@@ -61,6 +85,8 @@ public class HitlistBean implements Serializable {
 				return title1.compareTo(title2);
 			}
 		});
+		
+		
 		
 		//this.fakefillListHitOID();
 		//this.updateHitlistMetadata();

@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<faces-config xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd"
 	version="1.2">
 
 
-	<!-- General Config  -->
-	
-	<!-- application>
-		<locale-config>
-			<default-locale>de</default-locale>
-			<supported-locale>de</supported-locale>
-			<supported-locale>en</supported-locale>
-		</locale-config>
-		<message-bundle>messages</message-bundle>
-	</application-->
+	<!-- General Config -->
+
+	<!-- application> <locale-config> <default-locale>de</default-locale> <supported-locale>de</supported-locale> 
+		<supported-locale>en</supported-locale> </locale-config> <message-bundle>messages</message-bundle> 
+		</application -->
 
 
 	<!-- Navigation Rules -->
-	
+
+<!--	<lifecycle>-->
+<!--		<phase-listener>-->
+<!--			de.dini.oanetzwerk.userfrontend.RestoreViewPhaseListener-->
+<!--		</phase-listener>-->
+<!--	</lifecycle>-->
+
+
 	<navigation-rule>
 		<from-view-id>/*</from-view-id>
 		<navigation-case>
@@ -66,6 +69,11 @@
 			<to-view-id>/pages/browse_ddc_version3.jsp</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>browse_ddc_version4</from-outcome>
+			<to-view-id>/pages/browse_ddc_version4.jsp</to-view-id>
+			<redirect />
+		</navigation-case>		
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/pages/start.jsp</from-view-id>
@@ -154,7 +162,7 @@
 		<navigation-case>
 			<from-outcome>search_clicked</from-outcome>
 			<to-view-id>/pages/browse_ddc_with_autohits.jsp</to-view-id>
-		<redirect />			
+			<redirect />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>details_clicked</from-outcome>
@@ -162,33 +170,60 @@
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
-		<navigation-rule>
+	<navigation-rule>
 		<from-view-id>/pages/browse_ddc_version3.jsp</from-view-id>
 		<navigation-case>
 			<from-outcome>search_clicked</from-outcome>
 			<to-view-id>/pages/browse_ddc_version3.jsp</to-view-id>
-		<redirect />			
+			<redirect />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>details_clicked</from-outcome>
 			<to-view-id>/pages/metadata.jsp</to-view-id>
 			<redirect />
+		</navigation-case>		
+	</navigation-rule>
+		<navigation-rule>
+		<from-view-id>/pages/browse_ddc_version4.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/pages/browse_ddc_version4.jsp</to-view-id>
+			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>details_clicked</from-outcome>
+			<to-view-id>/pages/metadata_v4.jsp</to-view-id>
+			<redirect />
+		</navigation-case>		
 	</navigation-rule>
 	<navigation-rule>
-	<from-view-id>/pages/metadata.jsp</from-view-id>
+		<from-view-id>/pages/metadata.jsp</from-view-id>
 		<navigation-case>
 			<from-outcome>close_details</from-outcome>
 			<to-view-id>/pages/browse_ddc_version3.jsp</to-view-id>
-		<redirect />
+			<redirect />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>search_clicked</from-outcome>
 			<to-view-id>/pages/browse_ddc_version3.jsp</to-view-id>
-		<redirect />
+			<redirect />
 		</navigation-case>
 	</navigation-rule>
-	<!-- BEANS  -->
+	<navigation-rule>
+		<from-view-id>/pages/metadata_v4.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>close_details</from-outcome>
+			<to-view-id>/pages/browse_ddc_version4.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/pages/browse_ddc_version4.jsp</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>	
+	
+	<!-- BEANS -->
 	<managed-bean>
 		<managed-bean-name>metadataLoaderBean</managed-bean-name>
 		<managed-bean-class>de.dini.oanetzwerk.userfrontend.MetadataLoaderBean</managed-bean-class>

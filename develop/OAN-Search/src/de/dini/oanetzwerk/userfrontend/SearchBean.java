@@ -26,326 +26,366 @@ import de.dini.oanetzwerk.search.SearchClientException;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
-
-public class SearchBean
-  implements Serializable
-{
-  /**
+public class SearchBean implements Serializable {
+	/**
 	 * 
-	 */  
-  private static Logger logger = Logger.getLogger(SearchBean.class);
-  private Properties props = null;
-  private Properties search_props = null;
-  private MetadataLoaderBean mdLoaderBean;
-  private String strOneSlot = "";
-  private final String fStrFreeSearch = "___";
-  private BigDecimal directOID = null;
-  private String strRepositoryFilterRID = null;
-  private String strRepositoryFilterName = null;
-  private String strRepositoryFilterURL = null;
+	 */
+	private static Logger logger = Logger.getLogger(SearchBean.class);
+	private Properties props = null;
+	private Properties search_props = null;
+	private MetadataLoaderBean mdLoaderBean;
+	private String strOneSlot = "";
+	private final String fStrFreeSearch = "___";
+	private BigDecimal directOID = null;
+	private String strRepositoryFilterRID = null;
+	private String strRepositoryFilterName = null;
+	private String strRepositoryFilterURL = null;
 
-  private SearchClient mySearchClient = null;
+	private SearchClient mySearchClient = null;
 
-  private HitlistBean hitlist = null;
-  private BrowseBean browse = null;
+	private HitlistBean hitlist = null;
+	private BrowseBean browse = null;
 
-  private boolean bErrorLastSearch = false;
-  private String strErrorLastSearch = "";
+	private boolean bErrorLastSearch = false;
+	private String strErrorLastSearch = "";
 
-  public SearchBean()
-    throws InvalidPropertiesFormatException, FileNotFoundException, IOException
-  {
-    this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
+	public SearchBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
+		this.hitlist = new HitlistBean();
 
-    this.hitlist = new HitlistBean();
-    this.hitlist.setParentSearchBean(this);
+		init();
+	}
 
-    this.browse = new BrowseBean();
-    this.browse.setParentSearchBean(this);
+	public SearchBean(HitlistBean hitlistBean) throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
+		this.hitlist = hitlistBean;
 
-    FacesContext context = FacesContext.getCurrentInstance();
-    HttpServletRequest request = (HttpServletRequest)context.getExternalContext().getRequest();
-    this.strRepositoryFilterRID = request.getParameter("filterForRID");
-    setupRepositoryFilterByRID(this.strRepositoryFilterRID);
+		init();
+	}
 
-    this.search_props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(Utils.getWebappPath() + "/WEB-INF/searchclientprop.xml");
-    this.mySearchClient = new SearchClient(this.search_props);
-  }
+	private void init() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
+		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
 
-  public MetadataLoaderBean getMdLoaderBean()
-  {
-    return this.mdLoaderBean;
-  }
+		// this.hitlist = new HitlistBean();
+		// this.hitlist.setParentSearchBean(this);
+		this.hitlist.setParentSearchBean(this);
 
-  public void setMdLoaderBean(MetadataLoaderBean mdLoaderBean) {
-    this.mdLoaderBean = mdLoaderBean;
-  }
+		this.browse = new BrowseBean();
+		this.browse.setParentSearchBean(this);
 
-  public String getStrOneSlot() {
-    return this.strOneSlot;
-  }
+		FacesContext context = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
 
-  public void setStrOneSlot(String strOneSlot) {
-    this.strOneSlot = strOneSlot;
-  }
+		this.strRepositoryFilterRID = request.getParameter("filterForRID");
+		setupRepositoryFilterByRID(this.strRepositoryFilterRID);
 
-  public BigDecimal getDirectOID() {
-    return this.directOID;
-  }
+		this.search_props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(Utils.getWebappPath() + "/WEB-INF/searchclientprop.xml");
+		this.mySearchClient = new SearchClient(this.search_props);
 
-  public void setDirectOID(BigDecimal directOID) {
-    this.directOID = directOID;
-  }
+		String query = request.getParameter("query");
 
-  public String getStrRepositoryFilterRID() {
-    return this.strRepositoryFilterRID;
-  }
+		if (query != null && query.length() > 0) {
 
-  public void setStrRepositoryFilterRID(String strRepositoryFilterRID) {
-    this.strRepositoryFilterRID = strRepositoryFilterRID;
-  }
+			this.strOneSlot = query;
+			actionSearchButton();
+		}
 
-  public String getStrRepositoryFilterName() {
-    return this.strRepositoryFilterName;
-  }
+	}
 
-  public void setStrRepositoryFilterName(String strRepositoryFilterName) {
-    this.strRepositoryFilterName = strRepositoryFilterName;
-  }
+	public MetadataLoaderBean getMdLoaderBean() {
+		return this.mdLoaderBean;
+	}
 
-  public String getStrRepositoryFilterURL() {
-    return this.strRepositoryFilterURL;
-  }
+	public void setMdLoaderBean(MetadataLoaderBean mdLoaderBean) {
+		this.mdLoaderBean = mdLoaderBean;
+	}
 
-  public void setStrRepositoryFilterURL(String strRepositoryFilterURL) {
-    this.strRepositoryFilterURL = strRepositoryFilterURL;
-  }
+	public String getStrOneSlot() {
+		return this.strOneSlot;
+	}
 
-  public BrowseBean getBrowse() {
-    return this.browse;
-  }
+	public void setStrOneSlot(String strOneSlot) {
+		this.strOneSlot = strOneSlot;
+	}
 
-  public void setBrowse(BrowseBean browse) {
-    this.browse = browse;
-  }
+	public BigDecimal getDirectOID() {
+		return this.directOID;
+	}
 
-  public HitlistBean getHitlist() {
-    return this.hitlist;
-  }
+	public void setDirectOID(BigDecimal directOID) {
+		this.directOID = directOID;
+	}
 
-  public void setHitlist(HitlistBean hitlist) {
-    this.hitlist = hitlist;
-  }
+	public String getStrRepositoryFilterRID() {
+		return this.strRepositoryFilterRID;
+	}
 
-  public boolean isBErrorLastSearch() {
-    return this.bErrorLastSearch;
-  }
+	public void setStrRepositoryFilterRID(String strRepositoryFilterRID) {
+		this.strRepositoryFilterRID = strRepositoryFilterRID;
+	}
 
-  public void setBErrorLastSearch(boolean errorLastSearch)
-  {
-    this.bErrorLastSearch = errorLastSearch;
-  }
+	public String getStrRepositoryFilterName() {
+		return this.strRepositoryFilterName;
+	}
 
-  public String getStrErrorLastSearch()
-  {
-    return this.strErrorLastSearch;
-  }
+	public void setStrRepositoryFilterName(String strRepositoryFilterName) {
+		this.strRepositoryFilterName = strRepositoryFilterName;
+	}
 
-  public void setStrErrorLastSearch(String strErrorLastSearch)
-  {
-    this.strErrorLastSearch = strErrorLastSearch;
-  }
+	public String getStrRepositoryFilterURL() {
+		return this.strRepositoryFilterURL;
+	}
 
-  public void searchFor(String strQuery, String strDDC)
-  {
-    List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
-    try {
-      listOIDs = this.mySearchClient.querySearchService(strQuery, strDDC);
-      this.bErrorLastSearch = false;
-      this.strErrorLastSearch = "";
-    } catch (SearchClientException scex) {
-      logger.error("SearchClientException: " + scex);
-      this.bErrorLastSearch = true;
-      this.strErrorLastSearch = ("Fehler: " + scex.getMessage());
-    }
-    this.hitlist.setListHitOID(listOIDs);
-    this.hitlist.updateHitlistMetadata();
-  }
+	public void setStrRepositoryFilterURL(String strRepositoryFilterURL) {
+		this.strRepositoryFilterURL = strRepositoryFilterURL;
+	}
 
-  public void searchFor2(String strQuery, String strDDC) {
-    List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
-    try {
-      listOIDs = this.mySearchClient.querySearchService2(strQuery, strDDC);
-      this.bErrorLastSearch = false;
-      this.strErrorLastSearch = "";
-    } catch (SearchClientException scex) {
-      logger.error("SearchClientException: " + scex);
-      this.bErrorLastSearch = true;
-      this.strErrorLastSearch = ("Fehler: " + scex.getMessage());
-    }
-    this.hitlist.setListHitOID(listOIDs);
-    this.hitlist.updateHitlistMetadata();
-  }
+	public BrowseBean getBrowse() {
+		return this.browse;
+	}
 
-  public String getLinkForSearchFeed()
-  {
-    String sLink = "";
-    try {
-      if ((this.strOneSlot != null) && (this.strOneSlot.trim().length() > 0))
-        sLink = "http://oanet.cms.hu-berlin.de/rssfeed/feed?search=" + URLEncoder.encode(this.strOneSlot.trim(), "UTF-8");
-    }
-    catch (UnsupportedEncodingException ex)
-    {
-    }
-    return sLink;
-  }
+	public void setBrowse(BrowseBean browse) {
+		this.browse = browse;
+	}
 
-  private String evalOneSlotAndDDC() {
-    logger.debug("evalOneSlotAndDDC");
-    String strDDC = this.browse.getSelectedDDCCatValue();
-    if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
-      String strQuery = new String(this.strOneSlot);
-      strQuery = strQuery.toUpperCase();
-      strQuery = strQuery.trim();
-      searchFor(strQuery, strDDC);
-    } else if (strDDC != null) {
-      searchFor(null, strDDC);
-    }
-    return "search_clicked";
-  }
-  private String freeSearchAndDDC() {
-    logger.debug("freeSearchAndDDC");
-    String strDDC = this.browse.getSelectedDDCCatValue();
-    searchFor(fStrFreeSearch, strDDC);
-    setStrOneSlot("");
-    return "search_clicked";
-  }
+	public HitlistBean getHitlist() {
+		return this.hitlist;
+	}
 
-  private String parseOneSlotSearchField() {
-    logger.debug("parseOneSlotSearchField");
-    if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
-      String strQuery = new String(this.strOneSlot);
-      strQuery = strQuery.toUpperCase();
-      strQuery = strQuery.trim();
-      if (strQuery.startsWith("OID:")) {
-        return parseOneSlotForDirectOID(strQuery);
-      }
-      return parseOneSlotForQueryString(strQuery);
-    }
+	public void setHitlist(HitlistBean hitlist) {
+		this.hitlist = hitlist;
+	}
 
-    return "error";
-  }
+	public boolean isBErrorLastSearch() {
+		return this.bErrorLastSearch;
+	}
 
-  private String parseOneSlotSearchField2()
-  {
-	logger.debug(this.strOneSlot);
-    logger.debug("parseOneSlotSearchField");
-    if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
-      String strQuery = new String(this.strOneSlot);
-      strQuery = strQuery.toUpperCase();
-      strQuery = strQuery.trim();
-      if (strQuery.startsWith("OID:")) {
-        return parseOneSlotForDirectOID(strQuery);
-      }
-      return parseOneSlotForQueryString2(strQuery);
-    }
+	public void setBErrorLastSearch(boolean errorLastSearch) {
+		this.bErrorLastSearch = errorLastSearch;
+	}
 
-    return "error";
-  }
+	public String getStrErrorLastSearch() {
+		return this.strErrorLastSearch;
+	}
 
-  private String parseOneSlotForQueryString(String strQuery)
-  {
-    logger.debug("parseOneSlotForQueryString");
+	public void setStrErrorLastSearch(String strErrorLastSearch) {
+		this.strErrorLastSearch = strErrorLastSearch;
+	}
 
-    searchFor(strQuery, null);
-    return "search_clicked";
-  }
+	public void searchFor(String strQuery, String strDDC) {
+		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
+		try {
+			listOIDs = this.mySearchClient.querySearchService(strQuery, strDDC);
+			this.bErrorLastSearch = false;
+			this.strErrorLastSearch = "";
+		} catch (SearchClientException scex) {
+			logger.error("SearchClientException: " + scex);
+			this.bErrorLastSearch = true;
+			this.strErrorLastSearch = ("Fehler: " + scex.getMessage());
+		}
+		this.hitlist.setListHitOID(listOIDs);
+		this.hitlist.updateHitlistMetadata();
+	}
 
-  private String parseOneSlotForQueryString2(String strQuery) {
-    logger.debug("parseOneSlotForQueryString");
+	public void searchFor2(String strQuery, String strDDC) {
+		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
+		try {
+			listOIDs = this.mySearchClient.querySearchService2(strQuery, strDDC);
+			this.bErrorLastSearch = false;
+			this.strErrorLastSearch = "";
+		} catch (SearchClientException scex) {
+			logger.error("SearchClientException: " + scex);
+			this.bErrorLastSearch = true;
+			this.strErrorLastSearch = ("Fehler: " + scex.getMessage());
+		}
+		this.hitlist.setListHitOID(listOIDs);
+		this.hitlist.updateHitlistMetadata();
 
-    searchFor2(strQuery, null);
-    return "search_clicked";
-  }
+	}
 
-  private String parseOneSlotForDirectOID(String strTest) {
-    logger.debug("parseOneSlotForDirectOID");
-    try {
-      String[] oids = strTest.substring(strTest.indexOf("OID:") + 4).split(":");
-      ArrayList<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
-      if ((oids != null) && (oids.length > 0)) {
-        for (String strOid : oids) {
-          BigDecimal oid = new BigDecimal(strOid);
+	public String getLinkForSearchFeed() {
+		String sLink = "";
+		try {
+			if ((this.strOneSlot != null) && (this.strOneSlot.trim().length() > 0))
+				sLink = "http://oanet.cms.hu-berlin.de/rssfeed/feed?search=" + URLEncoder.encode(this.strOneSlot.trim(), "UTF-8");
+		} catch (UnsupportedEncodingException ex) {
+		}
+		return sLink;
+	}
 
-          listOIDs.add(oid);
-        }
-        this.hitlist.setListHitOID(listOIDs);
-        this.hitlist.updateHitlistMetadata();
-        return "search_clicked";
-      }
-      this.hitlist.fakefillListHitOID();
-      this.hitlist.updateHitlistMetadata();
-      return "search_clicked";
-    }
-    catch (NumberFormatException ex)
-    {
-      this.hitlist.fakefillListHitOID();
-      this.hitlist.updateHitlistMetadata();
-    }return "error";
-  }
+	private String evalOneSlotAndDDC() {
+		logger.debug("evalOneSlotAndDDC");
+		String strDDC = this.browse.getSelectedDDCCatValue();
+		if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
+			String strQuery = new String(this.strOneSlot);
+			strQuery = strQuery.toUpperCase();
+			strQuery = strQuery.trim();
+			searchFor(strQuery, strDDC);
+		} else if (strDDC != null) {
+			searchFor(null, strDDC);
+		}
+		return "search_clicked";
+	}
 
-  private RestClient prepareRestTransmission(String resource)
-  {
-    return RestClient.createRestClient(new File(System.getProperty("catalina.base") + this.props.getProperty("restclientpropfile")), resource, this.props.getProperty("username"), this.props.getProperty("password"));
-  }
+	private String evalOneSlotAndDDCV4() {
+		logger.debug("evalOneSlotAndDDC");
+		String strDDC = this.browse.getSelectedDDCCatValue();
+		if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
+			String strQuery = new String(this.strOneSlot);
+			strQuery = strQuery.toUpperCase();
+			strQuery = strQuery.trim();
+			searchFor(strQuery, strDDC);
+		} else if (strDDC != null) {
+			searchFor(null, strDDC);
+		}
+		return "search_clicked_v4";
+	}
 
-  private void setupRepositoryFilterByRID(String strRID)
-  {
-    if (this.strRepositoryFilterRID == null) {
-      this.strRepositoryFilterRID = "";
-      return;
-    }
+	private String freeSearchAndDDCV4() {
+		logger.debug("freeSearchAndDDC");
+		String strDDC = this.browse.getSelectedDDCCatValue();
+		searchFor(fStrFreeSearch, strDDC);
+		setStrOneSlot("");
+		return "search_clicked_v4";
+	}
 
-    RestMessage rms = prepareRestTransmission("Repository/" + strRID).sendGetRestMessage();
-    if ((rms == null) || (rms.getListEntrySets().isEmpty()) || (rms.getStatus() != RestStatusEnum.OK)) {
-      logger.warn("received no repository data entry for rid " + strRID + ", status: " + rms.getStatus() + " : " + rms.getStatusDescription());
-      this.strRepositoryFilterRID = "";
-      return;
-    }
+	private String freeSearchAndDDC() {
+		logger.debug("freeSearchAndDDC");
+		String strDDC = this.browse.getSelectedDDCCatValue();
+		searchFor(fStrFreeSearch, strDDC);
+		setStrOneSlot("");
+		return "search_clicked";
+	}
 
-    for (RestEntrySet res : rms.getListEntrySets()) {
-      Iterator it = res.getKeyIterator();
-      String key = "";
-      while (it.hasNext()) {
-        key = (String)it.next();
-        if (key.equalsIgnoreCase("name"))
-          this.strRepositoryFilterName = res.getValue(key);
-        if (key.equalsIgnoreCase("url"));
-        this.strRepositoryFilterURL = res.getValue(key);
-      }
-    }
-  }
+	private String parseOneSlotSearchField() {
+		logger.debug("parseOneSlotSearchField");
+		if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
+			String strQuery = new String(this.strOneSlot);
+			strQuery = strQuery.toUpperCase();
+			strQuery = strQuery.trim();
+			if (strQuery.startsWith("OID:")) {
+				return parseOneSlotForDirectOID(strQuery);
+			}
+			return parseOneSlotForQueryString(strQuery);
+		}
 
-  public String actionSearchButton()
-  {
-    return parseOneSlotSearchField();
-  }
+		return "error";
+	}
 
-  public String actionSearch2Button()
-  {
-    return parseOneSlotSearchField2();
-  }
+	private String parseOneSlotSearchField2() {
+		logger.debug(this.strOneSlot);
+		logger.debug("parseOneSlotSearchField");
+		if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
+			String strQuery = new String(this.strOneSlot);
+			strQuery = strQuery.toUpperCase();
+			strQuery = strQuery.trim();
+			if (strQuery.startsWith("OID:")) {
+				return parseOneSlotForDirectOID(strQuery);
+			}
+			return parseOneSlotForQueryString2(strQuery);
+		}
 
-  public String actionSearchWithDDCButton() {
-    return evalOneSlotAndDDC();
-  }
-  public String actionSearchFromDDCTreeDirectlyWithAutoHits() { 
-	return freeSearchAndDDC();
-  }
-  public String actionAddAllHitsToClipboard() {
-    for (BigDecimal bdOID : this.hitlist.getListHitOID()) {
-      this.hitlist.addSetClipboardOID(bdOID);
-    }
-    return "";
-  }
+		return "error";
+	}
+
+	private String parseOneSlotForQueryString(String strQuery) {
+		logger.debug("parseOneSlotForQueryString");
+		searchFor(strQuery, null);
+		return "search_clicked";
+	}
+
+	private String parseOneSlotForQueryString2(String strQuery) {
+		logger.debug("parseOneSlotForQueryString");
+
+		searchFor2(strQuery, null);
+		return "search_clicked";
+	}
+
+	private String parseOneSlotForDirectOID(String strTest) {
+		logger.debug("parseOneSlotForDirectOID");
+		try {
+			String[] oids = strTest.substring(strTest.indexOf("OID:") + 4).split(":");
+			ArrayList<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
+			if ((oids != null) && (oids.length > 0)) {
+				for (String strOid : oids) {
+					BigDecimal oid = new BigDecimal(strOid);
+
+					listOIDs.add(oid);
+				}
+				this.hitlist.setListHitOID(listOIDs);
+				this.hitlist.updateHitlistMetadata();
+				return "search_clicked";
+			}
+			this.hitlist.fakefillListHitOID();
+			this.hitlist.updateHitlistMetadata();
+			return "search_clicked";
+		} catch (NumberFormatException ex) {
+			this.hitlist.fakefillListHitOID();
+			this.hitlist.updateHitlistMetadata();
+		}
+		return "error";
+	}
+
+	private RestClient prepareRestTransmission(String resource) {
+		return RestClient.createRestClient(new File(System.getProperty("catalina.base") + this.props.getProperty("restclientpropfile")),
+		                resource, this.props.getProperty("username"), this.props.getProperty("password"));
+	}
+
+	private void setupRepositoryFilterByRID(String strRID) {
+		if (this.strRepositoryFilterRID == null) {
+			this.strRepositoryFilterRID = "";
+			return;
+		}
+
+		RestMessage rms = prepareRestTransmission("Repository/" + strRID).sendGetRestMessage();
+		if ((rms == null) || (rms.getListEntrySets().isEmpty()) || (rms.getStatus() != RestStatusEnum.OK)) {
+			logger.warn("received no repository data entry for rid " + strRID + ", status: " + rms.getStatus() + " : "
+			                + rms.getStatusDescription());
+			this.strRepositoryFilterRID = "";
+			return;
+		}
+
+		for (RestEntrySet res : rms.getListEntrySets()) {
+			Iterator it = res.getKeyIterator();
+			String key = "";
+			while (it.hasNext()) {
+				key = (String) it.next();
+				if (key.equalsIgnoreCase("name"))
+					this.strRepositoryFilterName = res.getValue(key);
+				if (key.equalsIgnoreCase("url"))
+					;
+				this.strRepositoryFilterURL = res.getValue(key);
+			}
+		}
+	}
+
+	public String actionSearchButton() {
+		return parseOneSlotSearchField();
+	}
+
+	public String actionSearch2Button() {
+		return parseOneSlotSearchField2();
+	}
+
+	public String actionSearchWithDDCButton() {
+		return evalOneSlotAndDDC();
+	}
+
+	public String actionSearchFromDDCTreeDirectlyWithAutoHits() {
+		return freeSearchAndDDC();
+	}
+
+	public String actionSearchWithDDCButtonV4() {
+		return evalOneSlotAndDDCV4();
+	}
+
+
+	public String actionSearchFromDDCTreeDirectlyWithAutoHitsV4() {
+		return freeSearchAndDDCV4();
+	}
+
+	public String actionAddAllHitsToClipboard() {
+		for (BigDecimal bdOID : this.hitlist.getListHitOID()) {
+			this.hitlist.addSetClipboardOID(bdOID);
+		}
+		return "";
+	}
 }
