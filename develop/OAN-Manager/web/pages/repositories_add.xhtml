@@ -79,6 +79,31 @@
                      <div class="help_box" id="help_url">Geben Sie die Internetseite des neuen Repositories an auf der allgemeine Informationen zum Repository zu finden sind. (http://...)</div>
                   </td>
                </tr>
+               
+               <tr>
+                  <td>Verantwortlicher&nbsp;
+                  (<a href="#" onclick="javascript:toggle_help('help_owner'); return false;">Help</a>)
+                  </td>
+               </tr>
+               <tr>
+                  <td class="form"><t:inputText id="repo_owner" size="80" value="#{repo.owner}" />
+                     <div class="help_box" id="help_owner">Geben Sie hier den Namen des Verantwortlichen für das Repository ein.</div>
+                  </td>
+                  
+               </tr>
+               
+               <tr>
+                  <td>E-Mail&nbsp;
+                  (<a href="#" onclick="javascript:toggle_help('help_ownerEmail'); return false;">Help</a>)
+                  </td>
+               </tr>
+               <tr>
+                  <td class="form"><t:inputText id="repo_ownerEmail" size="80" value="#{repo.name}" />
+                     <div class="help_box" id="help_ownerEmail">Geben Sie hier die E-Mail-Adresse des Verantwortlichen für das Repository ein.</div>
+                  </td>
+                  
+               </tr>
+               
                <tr>
                   <td>OAI-PMH Schnittstelle
                      (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)
@@ -128,7 +153,8 @@
                   <td class="form"><t:selectBooleanCheckbox id="active" value="#{repo.active}" />
                      <div class="help_box" id="help_active">Legt fest ob das neue Repository nach dem Hinzufügen vom Diensteprozess berücksichtigt werden soll. (kann auch später aktiviert werden)</div>
                   </td>
-               </tr>               
+               </tr> 
+                             
                <tr>
                   <td align="center"><t:commandButton type="reset" value="Zurücksetzen"></t:commandButton> <h:commandButton
                      type="submit"  action="#{repo.storeRepository}" value="Hinzufügen"></h:commandButton></td>

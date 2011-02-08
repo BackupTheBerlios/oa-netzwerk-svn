@@ -95,7 +95,7 @@ public class HelperMethods {
 	 */
 	
 	public static Properties loadPropertiesFromFile (String file) throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
-		
+		System.out.println(file);
 		Properties props = new Properties ( );
 		
 		if (logger.isDebugEnabled ( ))
@@ -376,12 +376,13 @@ public class HelperMethods {
 	 * @return
 	 */
 	
+	//TODO: cleanup 
 	public static RestClient prepareRestTransmission (String resource, Properties properties) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("prepareRestTransmission");
-		
-		return RestClient.createRestClient (properties.getProperty ("host"), resource, properties.getProperty ("username"), properties.getProperty ("password"));
+		return RestClient.createRestClient ("oanet.cms.hu-berlin.de", resource, "Harvester", "retsevrah");
+//		return RestClient.createRestClient (properties.getProperty ("host"), resource, properties.getProperty ("username"), properties.getProperty ("password"));
 	}
 	
 	public static String getRestFailureMessage(final RestKeyword keyword, final RestStatusEnum status,  final String description) {
