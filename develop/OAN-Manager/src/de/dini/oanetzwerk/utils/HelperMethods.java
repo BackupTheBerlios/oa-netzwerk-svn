@@ -39,7 +39,23 @@ public class HelperMethods {
 	
 	private static Logger logger = Logger.getLogger (HelperMethods.class);;
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-	
+//	private static Properties restClientProps;
+//	
+//	static {
+//		System.out.println(new File("test.bla").getAbsolutePath());
+//		try {
+//	        restClientProps = HelperMethods.loadPropertiesFromFileWithinWebcontainer(Utils.getWebappPath() + "/WEB-INF/admingui.xml");
+//        } catch (InvalidPropertiesFormatException e) {
+//	        // TODO Auto-generated catch block
+//	        e.printStackTrace();
+//        } catch (FileNotFoundException e) {
+//	        // TODO Auto-generated catch block
+//	        e.printStackTrace();
+//        } catch (IOException e) {
+//	        // TODO Auto-generated catch block
+//	        e.printStackTrace();
+//        }
+//	}
 	
 	/**
 	 * This method converts an InputStream into a String.
@@ -48,6 +64,7 @@ public class HelperMethods {
 	 * @return the converted stream as String
 	 * @throws IOException
 	 */
+	
 	
 	public static String stream2String (InputStream stream) throws IOException {
 		
@@ -118,14 +135,14 @@ public class HelperMethods {
 		return props;
 	}
 	
-	public static Properties loadPropertiesFromFileWithinWTPWebcontainer (String file) throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
-		final String wtpPath = System.getProperty("catalina.home") + "/webapps"; 
+	public static Properties loadPropertiesFromFileWithinWebcontainerWebapps(String file) throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
+		final String webappsPath = System.getProperty("catalina.home") + "/webapps"; 
 		Properties props = new Properties ( );
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug (new File (file).getAbsoluteFile ( ));
 			
-		props.loadFromXML (new FileInputStream (wtpPath + System.getProperty("file.separator") + file));
+		props.loadFromXML (new FileInputStream (webappsPath + System.getProperty("file.separator") + file));
 		
 		return props;
 	}
@@ -381,8 +398,8 @@ public class HelperMethods {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("prepareRestTransmission");
-		return RestClient.createRestClient ("oanet.cms.hu-berlin.de", resource, "Harvester", "retsevrah");
-//		return RestClient.createRestClient (properties.getProperty ("host"), resource, properties.getProperty ("username"), properties.getProperty ("password"));
+
+		return RestClient.createRestClient (properties.getProperty ("host"), resource, properties.getProperty ("username"), properties.getProperty ("password"));
 	}
 	
 	public static String getRestFailureMessage(final RestKeyword keyword, final RestStatusEnum status,  final String description) {

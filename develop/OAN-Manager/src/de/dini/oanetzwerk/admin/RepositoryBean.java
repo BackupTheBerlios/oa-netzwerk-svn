@@ -199,12 +199,13 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 			res.addEntry("islistRecords", "true");
 		} else{
 			res.addEntry("isListRecords", "false");
-		}											
+		}	
+		
+		rms.addEntrySet(res);
 		
 		
 		try {
-			result = HelperMethods.prepareRestTransmission("Repository/",
-					null).sendPutRestMessage(rms);
+			result = prepareRestTransmission("Repository/").sendPutRestMessage(rms);
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
