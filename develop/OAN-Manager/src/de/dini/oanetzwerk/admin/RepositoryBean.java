@@ -205,7 +205,7 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 		
 		
 		try {
-			result = prepareRestTransmission("Repository/").sendPutRestMessage(rms);
+			result = prepareRestTransmission("Repository/").sendPostRestMessage(rms);
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
