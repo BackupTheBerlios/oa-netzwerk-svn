@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk" xmlns:u="http://oanet.cms.hu-berlin.de/jsf-utils">
+<head>
+<title>Footer</title>
+</head>
+<body>
+<ui:composition>
+   <table width="100%">
+      <tr>
+         <td id="footer"><span style="padding-right: 2em; color: gray"> Erzeugung dieser Seite: {u:now()}</span>OAN-Manager ver. #{initParam['oanmanager.MANAGER_VERSION']}</td>
+      </tr>
+   </table>
+</ui:composition>
+</body>
+</html>

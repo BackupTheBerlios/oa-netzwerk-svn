@@ -1,0 +1,33 @@
+@CHARSET "UTF-8";
+.HEADING {
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 14px;
+	color: black;
+	background-color: silver;
+	text-align: center;
+}
+.COL1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: blue;
+	background-color: white;
+	text-indent: 10px;
+	text-align: left;
+}
+.COL2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: black;
+	background-color: white;
+	text-indent: 10px;
+	text-align: center;
+}
+.COL3 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: red;
+	background-color: white;
+	text-indent: 10px;
+	text-align: right;
+}
