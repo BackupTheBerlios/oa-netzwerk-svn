@@ -80,6 +80,7 @@ public class SearchClient {
 	
     public List<BigDecimal> querySearchService(String strQuery, String strDDC) throws SearchClientException {
 		
+    	System.out.println("querySearchService");
 		byte[] baResponseBody = null;
 		List<BigDecimal> listResultOIDs = new ArrayList<BigDecimal>();
 		

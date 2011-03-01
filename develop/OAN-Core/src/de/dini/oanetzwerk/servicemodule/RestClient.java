@@ -140,7 +140,6 @@ public class RestClient {
 		this.password = pwd;
 		
 		try {
-			
 			this.props = HelperMethods.loadPropertiesFromFile ("restclientprop.xml");
 			
 		} catch (InvalidPropertiesFormatException ex) {

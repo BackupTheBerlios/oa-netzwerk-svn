@@ -209,7 +209,7 @@
 	</target>
 			
 	<target name="local-deploy-resourceRealm" depends="jarResourceRealm" description="Simply deploys the resourceRealm to the lib directory of the servlet container.">
-		<copy file="${lib}\resourceRealm.jar" todir="${env.CATALINA_HOME}/lib" />
+		<copy file="${lib}\resourcerealm.jar" todir="${env.CATALINA_HOME}/lib" />
 	</target>
 
 	<target name="local-deploy-server" depends="warLocalServer" description="Simply deploys the server web archive">
