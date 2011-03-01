@@ -381,9 +381,6 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 			}
 		}
 
-		System.out.println(name);
-		System.out.println(url);
-		System.out.println(oaiUrl);
 		try {
 			if (name == null || name.length() == 0 || url == null || url.length() == 0 || oaiUrl == null || oaiUrl.length() == 0) {
 				logger.error("An error occured while processing Put Repository: Name, Url and OAI-Url must be provided!");
