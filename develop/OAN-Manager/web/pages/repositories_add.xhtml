@@ -2,171 +2,162 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
 
 <head></head>
 
 <body>
 
 <ui:composition template="templates/template.xhtml">
-   
-   <ui:param name="pageTitle" value="Neues Repository hinzufügen - OA-Netzwerk Manager" />
-   
-   <ui:define name="navigation">
-      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="repositories_main.xhtml">Repositorien</a> » <a href="repositories_add.xhtml">Hinzufügen</a>
-   </ui:define>
 
-   <ui:define name="menu">
-      <div id="tasks">
+  <ui:param name="pageTitle" value="Neues Repository hinzufügen - OA-Netzwerk Manager" />
 
-      <div class="task"><img height="24" style="margin: 2px;" alt=""
-         width="24" src="../images/24x24/new-package.gif" /><a href="repositories_main.faces">Repositorien
-      verwalten</a></div>
+  <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="repositories_main.xhtml">Repositorien</a> » <a href="repositories_add.xhtml">Hinzufügen</a>
+  </ui:define>
 
-      <div class="subtasks">
-            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="repositories_add.faces"><b>Repository hinzufügen</b></a></div>
-      </div>
+  <ui:define name="menu">
+    <div id="tasks">
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /> <a href="services_main.faces">Dienste verwalten</a></div>
-         
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="users_main.faces">Benutzer verwalten</a></div>         
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
+      href="repositories_main.faces">Repositorien verwalten</a></div>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="reports.faces">Reports</a></div>
+    <div class="subtasks">
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="repositories_add.faces"><b>Repository hinzufügen</b></a></div>
+    </div>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="livelog.faces">Live Log</a></div>
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
+      href="services_main.faces">Dienste verwalten</a></div>
 
-      </div>
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="users_main.faces">Benutzer verwalten</a></div>
 
-   </ui:define>
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="reports.faces">Reports</a></div>
 
-   <ui:define name="content">
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="livelog.faces">Live Log</a></div>
 
-      
-      <div style="padding: 20px; background-color: #f5f9f4;">
-      <div style="background-color: #f5f9f4;">
-      <h2>Neues Repository hinzufügen</h2>
+    </div>
 
-      <table width="100%">
+  </ui:define>
+
+  <ui:define name="content">
 
 
-         <f:view>
-            <h:form id="bla" action="#{repo.storeRepository}">
+    <div style="padding: 20px; background-color: #f5f9f4;">
+    <div style="background-color: #f5f9f4;">
+    <h2>Neues Repository hinzufügen</h2>
 
-               <tr>
-                  <td>Name des Repositories&nbsp;
-                  (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)
-                  </td>
-               </tr>
-               <tr>
-                  <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.name}" />
-                     <div class="help_box" id="help_name">Geben Sie hier den Namen des neuen Repositoriums ein.</div>
-                  </td>
-                  
-               </tr>
-               
-               <tr>
-                  <td>URL
-                     (<a href="#" onclick="javascript:toggle_help('help_url'); return false;">Help</a>)
-                  </td>
-               </tr>
-               <tr>
-                  <td class="form"><t:inputText id="url" size="80" value="#{repo.url}" />
-                     <div class="help_box" id="help_url">Geben Sie die Internetseite des neuen Repositories an auf der allgemeine Informationen zum Repository zu finden sind. (http://...)</div>
-                  </td>
-               </tr>
-               
-               <tr>
-                  <td>Verantwortlicher&nbsp;
-                  (<a href="#" onclick="javascript:toggle_help('help_owner'); return false;">Help</a>)
-                  </td>
-               </tr>
-               <tr>
-                  <td class="form"><t:inputText id="repo_owner" size="80" value="#{repo.owner}" />
-                     <div class="help_box" id="help_owner">Geben Sie hier den Namen des Verantwortlichen für das Repository ein.</div>
-                  </td>
-                  
-               </tr>
-               
-               <tr>
-                  <td>E-Mail&nbsp;
-                  (<a href="#" onclick="javascript:toggle_help('help_ownerEmail'); return false;">Help</a>)
-                  </td>
-               </tr>
-               <tr>
-                  <td class="form"><t:inputText id="repo_ownerEmail" size="80" value="#{repo.name}" />
-                     <div class="help_box" id="help_ownerEmail">Geben Sie hier die E-Mail-Adresse des Verantwortlichen für das Repository ein.</div>
-                  </td>
-                  
-               </tr>
-               
-               <tr>
-                  <td>OAI-PMH Schnittstelle
-                     (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)
-                  </td>
-               </tr>
-               <tr>
-                  <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.oaiUrl}" />
-                     <div class="help_box" id="help_oaipmh">Geben Sie die URL der OAI-PMH Schnittstelle des neuen Repositories an. (http://...)</div>
-                  </td>
-               </tr>
-               <tr>
-                  <td>Harvest Batch-Size
-                     (<a href="#" onclick="javascript:toggle_help('help_size'); return false;">Help</a>)
-                  </td>
-               </tr>
-               <tr>
-                  <td class="form"><t:inputText id="harvest_batch" size="20" value="#{repo.harvestAmount}" />
-                     <div class="help_box" id="help_size">Geben Sie hier die Anzahl der Records an, die bei einem einzelnen Harvesting-Request vom Repository zur Bearbeitung geladen werden soll.</div>
-                  </td>
-               </tr>
-               <tr>
-                  <td>Harvest Pause in ms
-                     (<a href="#" onclick="javascript:toggle_help('help_pause'); return false;">Help</a>)
-                  </td>
-               </tr>
-               <tr>
-                  <td class="form"><t:inputText id="harvest_pause" size="20" value="#{repo.harvestPause}" />
-                     <div class="help_box" id="help_pause">Geben Sie die Zeit der Pause zwischen den Harvesting-Requests während eines Harvestings in Millisekunden an. (1000ms = 1s)</div>
-                  </td>
-               </tr>
-               <tr>
-                  <td>listrecords-Modus
-                     (<a href="#" onclick="javascript:toggle_help('help_listrec'); return false;">Help</a>)
-                  </td>
-               </tr>
-               <tr>
-                  <td class="form"><t:inputText id="listrecords" size="20" value="#{repo.listRecords}" />
-                     <div class="help_box" id="help_listrec">Soll das Harvesting bevorzugt den ListRecords-Modus verwenden.</div>
-                  </td>
-               </tr>
-               <tr>
-                  <td>aktiv
-                     (<a href="#" onclick="javascript:toggle_help('help_active'); return false;">Help</a>)
-                  </td>
-               </tr>
-               <tr>
-                  <td class="form"><t:selectBooleanCheckbox id="active" value="#{repo.active}" />
-                     <div class="help_box" id="help_active">Legt fest ob das neue Repository nach dem Hinzufügen vom Diensteprozess berücksichtigt werden soll. (kann auch später aktiviert werden)</div>
-                  </td>
-               </tr> 
-                             
-               <tr>
-                  <td align="center"><t:commandButton type="reset" value="Zurücksetzen"></t:commandButton> <h:commandButton
-                     type="submit"  action="#{repo.storeRepository}" value="Hinzufügen"></h:commandButton></td>
-               </tr>
-            </h:form>
-         </f:view>
+    <table width="100%">
 
-      </table>
-      </div>
-      </div>
 
-   </ui:define>
+      <f:view>
+        <h:form id="bla" action="#{repo.storeRepository}">
+
+          <tr>
+            <td><h:outputText id="nameError" value="#{repo.nameError}" style="color: red;font-style: italic;" /></td>
+          </tr>
+          <tr>
+            <td>Name des Repositories&nbsp; (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)</td>
+          </tr>
+          <tr>
+
+            <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.name}" valueChangeListener="#{repo.validateName}>
+            <f:ajax event="blur" render="nameError" />
+            </t:inputText>
+            <div class="help_box" id="help_name">Geben Sie hier den Namen des neuen Repositoriums ein.</div>
+            </td>
+
+          </tr>
+
+          <tr>
+            <td>URL (<a href="#" onclick="javascript:toggle_help('help_url'); return false;">Help</a>)</td>
+          </tr>
+          <tr>
+            <td class="form"><t:inputText id="url" size="80" value="#{repo.url}" />
+            <div class="help_box" id="help_url">Geben Sie die Internetseite des neuen Repositories an auf der allgemeine Informationen
+            zum Repository zu finden sind. (http://...)</div>
+            </td>
+          </tr>
+
+          <tr>
+            <td>Verantwortlicher&nbsp; (<a href="#" onclick="javascript:toggle_help('help_owner'); return false;">Help</a>)</td>
+          </tr>
+          <tr>
+            <td class="form"><t:inputText id="repo_owner" size="80" value="#{repo.owner}" />
+            <div class="help_box" id="help_owner">Geben Sie hier den Namen des Verantwortlichen für das Repository ein.</div>
+            </td>
+
+          </tr>
+
+          <tr>
+            <td>E-Mail&nbsp; (<a href="#" onclick="javascript:toggle_help('help_ownerEmail'); return false;">Help</a>)</td>
+          </tr>
+          <tr>
+            <td class="form"><t:inputText id="repo_ownerEmail" size="80" value="#{repo.ownerEmail}" />
+            <div class="help_box" id="help_ownerEmail">Geben Sie hier die E-Mail-Adresse des Verantwortlichen für das Repository ein.</div>
+            </td>
+
+          </tr>
+
+          <tr>
+            <td>OAI-PMH Schnittstelle (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)</td>
+          </tr>
+          <tr>
+            <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.oaiUrl}" />
+            <div class="help_box" id="help_oaipmh">Geben Sie die URL der OAI-PMH Schnittstelle des neuen Repositories an. (http://...)</div>
+            </td>
+          </tr>
+          <tr>
+            <td>Harvest Batch-Size (<a href="#" onclick="javascript:toggle_help('help_size'); return false;">Help</a>)</td>
+          </tr>
+          <tr>
+            <td class="form"><t:inputText id="harvest_batch" size="20" value="#{repo.harvestAmount}" />
+            <div class="help_box" id="help_size">Geben Sie hier die Anzahl der Records an, die bei einem einzelnen Harvesting-Request
+            vom Repository zur Bearbeitung geladen werden soll.</div>
+            </td>
+          </tr>
+          <tr>
+            <td>Harvest Pause in ms (<a href="#" onclick="javascript:toggle_help('help_pause'); return false;">Help</a>)</td>
+          </tr>
+          <tr>
+            <td class="form"><t:inputText id="harvest_pause" size="20" value="#{repo.harvestPause}" />
+            <div class="help_box" id="help_pause">Geben Sie die Zeit der Pause zwischen den Harvesting-Requests während eines
+            Harvestings in Millisekunden an. (1000ms = 1s)</div>
+            </td>
+          </tr>
+          <tr>
+            <td>listrecords-Modus (<a href="#" onclick="javascript:toggle_help('help_listrec'); return false;">Help</a>)</td>
+          </tr>
+          <tr>
+            <td class="form"><t:inputText id="listrecords" size="20" value="#{repo.listRecords}" />
+            <div class="help_box" id="help_listrec">Soll das Harvesting bevorzugt den ListRecords-Modus verwenden.</div>
+            </td>
+          </tr>
+          <tr>
+            <td>aktiv (<a href="#" onclick="javascript:toggle_help('help_active'); return false;">Help</a>)</td>
+          </tr>
+          <tr>
+            <td class="form"><t:selectBooleanCheckbox id="active" value="#{repo.active}" />
+            <div class="help_box" id="help_active">Legt fest ob das neue Repository nach dem Hinzufügen vom Diensteprozess
+            berücksichtigt werden soll. (kann auch später aktiviert werden)</div>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center"><t:commandButton type="reset" value="Zurücksetzen"></t:commandButton> <h:commandButton type="submit"
+              action="#{repo.storeRepository}" value="Hinzufügen"></h:commandButton></td>
+          </tr>
+        </h:form>
+      </f:view>
+
+    </table>
+    </div>
+    </div>
+
+  </ui:define>
 </ui:composition>
 
 </body>
