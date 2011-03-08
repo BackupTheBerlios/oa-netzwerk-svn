@@ -9,7 +9,7 @@
 
 <head>
 	<%@ include file="components/header.htm" %>
-	<title>Found</title>
+	<title><h:outputText value="#{msg.title_browse_ddc}" /></title>
 	<!-- TODO: nach Testphase in CSS-Datei auslagern -->
 	<style type="text/css">
 	
@@ -34,8 +34,8 @@
 			<h:form>
 				<H3><h:outputText value="#{msg.linkname_search}"/></H3>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
-				<span class="span_selected_ddc">Kategorie: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
-				<h:commandButton value="Finde!" action="#{searchBean.actionSearchWithDDCButton}"/>
+				<span class="span_selected_ddc"><h:outputText value="#{msg.category}"/>: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
+				<h:commandButton value="#{msg.start_search}" action="#{searchBean.actionSearchWithDDCButton}"/>
 			</h:form>
 		</div>
 	</div>
@@ -46,7 +46,7 @@
 				<div id="box_light_grey">
 				
 					<div id="div_simplebrowselist">
-							<b>Liste der Fachgebiete nach Dewey-Dezimalklassifikation (DDC)</b>
+							<b><h:outputText value="#{msg.title_list_of_DDC}"/></b>
 			
 							<% /* 
 								<div id="div_ddc_breadcrump">
@@ -57,7 +57,7 @@
 								</div>	
 							*/ %>
 		            <div id="div_alle_dcc_cat" >
-		            	<h:commandLink action="#{searchBean.browse.actionUnselectDDCCategoryLink}" title=""><span class="span_ddc_name"><t:outputText value="Alle Kategorien (Keine Einschränkung)"/></span></h:commandLink>
+		            	<h:commandLink action="#{searchBean.browse.actionUnselectDDCCategoryLink}" title=""><span class="span_ddc_name"><t:outputText value="#{msg.all_categories_no_restrictions}"/></span></h:commandLink>
 		            </div>                
 		            <t:dataList id="ddcnavilist_lvl1" value="#{searchBean.browse.listDDCNaviNodes}" var="node_lvl1" layout="unorderedList">	
 		                <t:div rendered="#{node_lvl1.inPath}">
@@ -76,7 +76,7 @@
 									   					<div class="selected_category_wrapper">
 																<span class="span_ddc_num"><t:outputText value="#{node_lvl2.strDDCValue}"/></span>&nbsp;
 																<span class="span_ddc_selected_name"><t:outputText value="#{node_lvl2.strNameDE}"/></span>
-																	<br/><h:commandLink value=" Suche starten" action="#{searchBean.actionSearchFromDDCTreeDirectlyWithAutoHits}"/>	
+																	<br/><h:commandLink value="#{msg.start_search}" action="#{searchBean.actionSearchFromDDCTreeDirectlyWithAutoHits}"/>	
 															</div>
 														</t:div>
 				                    <t:div rendered="#{!node_lvl2.inPath}">

@@ -2,7 +2,7 @@
         <h:dataTable id="hitlist" value="#{searchBean.hitlist.listHitOID}" var="hitOID" columnClasses="colHit" rows="10">
 				<h:column>
         	<div class="div_hit_header">
-						<span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionDetailsLink}" title="Metadaten des Objektes betrachten"><img src="../img/16x16_lupe.png"/></h:commandLink></span>
+						<span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionDetailsLink}" title="#{msg.show_meta_data_of_object}"><img src="../img/16x16_lupe.png"/></h:commandLink></span>
             <!-- <span class="command_link_plus"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionMerkenLink}" title="Objekt zur Merkliste hinzuf�gen"><img src="../img/16x16_plus.png"/></h:commandLink></span>-->
 						<h:graphicImage url="../img/flags/#{searchBean.hitlist.mapHitBean[hitOID].flagIMG}" alt="#{searchBean.hitlist.mapHitBean[hitOID].flagALT}" title="#{searchBean.hitlist.mapHitBean[hitOID].flagALT}"/>         
             <span class="list-identifier">

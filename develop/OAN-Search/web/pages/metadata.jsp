@@ -34,8 +34,8 @@
 			<h:form>
 				<H3><h:outputText value="#{msg.linkname_search}"/></H3>
 				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
-				<span class="span_selected_ddc">Kategorie: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
-				<h:commandButton value="Finde!" action="#{searchBean.actionSearchWithDDCButton}"/>
+				<span class="span_selected_ddc"><h:outputText value="#{msg.category}"/>: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
+				<h:commandButton value="#{msg.start_search}" action="#{searchBean.actionSearchWithDDCButton}"/>
 			</h:form>
 		</div>
 	</div>
@@ -43,14 +43,14 @@
 
 	<h:form>
 		<div id="div_hitdetails">
-			<h3>Detailanzeige der Metadaten</h3>	
+			<h3><h:outputText value="#{msg.overview_of_meta_data}"/></h3>	
 			<span class="internal_identifier">(OID: <h:outputText value="#{searchBean.hitlist.selectedDetailsOID}"/>)</span>
 			<table>
 				<tr>
 					<td>
 					<table>
 						<tr>
-							<td class="hitlist_head">Titel:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.title}"/>:</td>
 							<td class="hitlist_content">
 								<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.titleList}" 
 				                            var="titleItem" layout="unorderedList" first="0" dir="LTR" styleClass="title_li">
@@ -59,7 +59,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="hitlist_head">Autoren:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.authors}"/>:</td>
 							<td class="hitlist_content">		
 								<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.authorList}" 
 				                            var="author" layout="unorderedList" first="0"	dir="LTR">
@@ -68,7 +68,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="hitlist_head">Mitwirkende:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.performers}"/>:</td>
 							<td class="hitlist_content">	
 								<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.contributorList}" 
 				                            var="contributor" layout="unorderedList" first="0"	dir="LTR">
@@ -77,7 +77,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="hitlist_head">Herausgeber/Institution:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.publisher}"/>/<h:outputText value="#{msg.institution}"/>:</td>
 							<td class="hitlist_content">			
 								<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.publisherList}" 
 				                            var="publisher" layout="unorderedList" first="0"	dir="LTR">
@@ -86,7 +86,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="hitlist_head">Zusammenfassung:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.summary}"/>:</td>
 							<td class="hitlist_content">			
 								<div id="div_hitdetails_abstract">
 									<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.descriptionList}" 
@@ -99,7 +99,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="hitlist_head">Klassifikation:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.classification}"/>:</td>
 							<td class="hitlist_content">			
 								<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedClassificationList}" 
 				                            var="classif" layout="unorderedList" first="0"	dir="LTR">
@@ -108,7 +108,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="hitlist_head">Datum:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.date}"/>:</td>
 							<td class="hitlist_content">			
 								<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.dateValueList}" 
 				                            var="item" layout="unorderedList" first="0" dir="LTR">
@@ -117,7 +117,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="hitlist_head">Format:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.format}"/>:</td>
 							<td class="hitlist_content">			
 								<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.formatList}" 
 				                            var="item" layout="unorderedList" first="0" dir="LTR">
@@ -126,7 +126,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="hitlist_head">Type:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.type}"/>:</td>
 							<td class="hitlist_content">			
 								<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.typeValueList}" 
 				                            var="item" layout="unorderedList" first="0" dir="LTR">
@@ -135,7 +135,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="hitlist_head">Sprache:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.language}"/>:</td>
 							<td class="hitlist_content">			
 								<%	//<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.languageList}  var="item" layout="unorderedList" first="0" dir="LTR"> <t:outputText value="#{item.language}"></t:outputText>&nbsp;  </t:dataList>
 								%>
@@ -146,7 +146,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="hitlist_head">Identifier:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.identifier}"/>:</td>
 							<td class="hitlist_content">			
 								<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.identifierList}" 
 				                            var="identifier" layout="unorderedList" first="0" dir="LTR">
@@ -156,7 +156,7 @@
 						</tr>
 			
 						<tr>
-							<td class="hitlist_head">Volltext:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.full_text}"/>:</td>
 							<td class="hitlist_content">	
 								<ul><li>		
 									<h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].bestLink}" target="_blank">
@@ -167,7 +167,7 @@
 							</td>
 						</tr>	
 						<tr>
-							<td class="hitlist_head">Herkunft aus Repository:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.origin_from_repo}"/>:</td>
 							<td class="hitlist_content">		
 				                 <ul><li>
 					                 &nbsp;<h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
@@ -178,7 +178,7 @@
 							</td>
 						</tr>	
 						<tr>
-							<td class="hitlist_head">Ähnlichkeiten:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.similarities}"/>:</td>
 							<td class="hitlist_content">			
 								<t:dataList value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedDuplicateProbabilityList}" 
 				                            var="item" layout="unorderedList" first="0" dir="LTR">								                               
@@ -192,7 +192,7 @@
 							</td>
 						</tr>	
 						<tr>
-							<td class="hitlist_head">OAI/PMH-Record:</td>
+							<td class="hitlist_head"><h:outputText value="#{msg.oai_pmh_record}"/>:</td>
 							<td class="hitlist_content">
 								<ul><li>
 									&nbsp;<h:outputLink value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedFullOAIURL}" target="_blank">
@@ -208,21 +208,21 @@
 				                    var="item"  dir="LTR" rowClasses="TableRow1,TableRow2" columnClasses="TableColumn" 
 				                    styleClass="keyword_table" headerClass="TableHeader" footerClass="TableFooter">
 				    		      <f:facet name="header">
-												<h:outputText value="Schlagworte:" />
+												<h:outputText value="#{msg.keywords}" />
 								      </f:facet>
 				    		<t:column>
 										<f:facet name="header">
-										   <t:outputText value="Schlagwort" />
+										   <t:outputText value="#{msg.keyword}" />
 										</f:facet>
 										<t:outputText value="#{item[0]}"></t:outputText>
 					      </t:column>
 				    		<t:column>
 										<f:facet name="header">
-										   <t:outputText value="externe Suche" />
+										   <t:outputText value="#{msg.search_external}" />
 										</f:facet>
-										<h:outputLink value="#{item[1]}" target="_blank" title="diesen Begriff bei Google suchen"><img src="../img/google_G.png"/></h:outputLink>
+										<h:outputLink value="#{item[1]}" target="_blank" title="#{msg.search_at_google}"><img src="../img/google_G.png"/></h:outputLink>
 										&nbsp;
-										<h:outputLink value="#{item[2]}" target="_blank" title="diesen Begriff bei Wikipedia nachschlagen"><img src="../img/wikipedia_W.png"/></h:outputLink>
+										<h:outputLink value="#{item[2]}" target="_blank" title="#{msg.search_at_wiki}"><img src="../img/wikipedia_W.png"/></h:outputLink>
 					      </t:column>
 						</t:dataTable>					
 					</td>
