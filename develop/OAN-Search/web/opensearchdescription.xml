@@ -5,5 +5,5 @@
  <Description>Use Google to search OAN-Search</Description>
  <Tags>OAN-Search</Tags>
  <Url type="text/html" 
-      template="http://www.google.com/search?as_sitesearch=/pages/hitlist.faces;q={searchTerms}"/>
+      template="http://oanet.cms.hu-berlin.de/findnbrowse/pages/hitlist.faces;query={searchTerms}"/>
 </OpenSearchDescription>

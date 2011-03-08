@@ -17,7 +17,7 @@
 	
 	<head>
 		<%@ include file="components/header.htm" %>
-		<link rel="search" href="http://localhost:8080/opensearchdescription.xml" type="application/opensearchdescription+xml" title="OAN-Search" />
+		<link rel="search" href="http://oanet.cms.hu-berlin.de/oan/opensearchdescription.xml" type="application/opensearchdescription+xml" title="OAN-Search" />
 		<meta name="google-site-verification" content="mG0nzduAbIGfgT0sD-vRqMpsGvB07hhdbtp-iLwGUm0" />
 		<meta name="description" content="Über diese Suchmaschine können sie nach wissenschaftlichen Publikationen (Diplomarbeiten, Dissertationen und sonstige Veröffentlichungen) suchen. " />
 		<meta name="keywords" content="Open Access Netzwerk, OAN, Wissenschaftliche Publikationen, Diplomarbeiten, Dissertationen, Artikel" />

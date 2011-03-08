@@ -90,7 +90,7 @@
 			</t:panelGroup>
 			<t:panelGroup>
 				<div style="height: 121px;"></div>
-				<img src="../img/column_separator.PNG" />
+				<img src="../img/column_separator.png" />
 			</t:panelGroup>
 			<t:panelGroup>
 				<div style="height: 25px;"></div>
