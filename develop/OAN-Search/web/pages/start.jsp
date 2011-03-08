@@ -41,16 +41,7 @@
 								<h:outputText value="#{msg.linkname_search}" />
 							</div>
 							<div>
-								<h:commandLink value="#{msg.linkname_browse_ddc}" action="browse_ddc"/>
-							</div>
-							<div>
-								<h:commandLink value="#{msg.linkname_browse_ddc_with_autohits}" action="browse_ddc_with_autohits"/>
-							</div>
-							<div>
-								<h:commandLink value="#{msg.linkname_browse_ddc_version3}" action="browse_ddc_version3"/>
-							</div>
-							<div>
-								<h:commandLink value="#{msg.linkname_browse_ddc_version4}" action="browse_ddc_version4"/>
+								<h:commandLink value="#{msg.linkname_browse_ddc}" action="browse_ddc_version3"/>
 							</div>
 						</div>
 		
@@ -58,6 +49,19 @@
 							<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}" />
 							<h:commandButton value="#{msg.find_meta}" action="#{searchBean.actionSearch2Button}" />
 						  <h:commandButton value="#{msg.find}" action="#{searchBean.actionSearchButton}" />
+						</div>
+						
+						<div id="div_option_alternativ_tabs">
+							Andere Varianten
+							<div>
+								<h:commandLink value="#{msg.linkname_browse_ddc_version1}" action="browse_ddc"/>
+							</div>
+							<div>
+								<h:commandLink value="#{msg.linkname_browse_ddc_version2}" action="browse_ddc_with_autohits"/>
+							</div>
+							<div>
+								<h:commandLink value="#{msg.linkname_browse_ddc_version4}" action="browse_ddc_version4"/>
+							</div>
 						</div>
 		
 						<t:div rendered='#{searchBean.strRepositoryFilterRID != ""}'>

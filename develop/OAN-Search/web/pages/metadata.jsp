@@ -10,18 +10,7 @@
 <head>
 	<%@ include file="components/header.htm" %>
 	<title>Found</title>
-	<!-- TODO: nach Testphase in CSS-Datei auslagern -->
-	<style type="text/css">
-	
-		.colStyle1 { 
-			width: 800px;
-			vertical-align:top;
-		}
-		.colStyle2 { 
-			width: 200px;
-			vertical-align:top;
-		}
-	</style>
+
 </head>
 <body>
 	<!-- TODO: generell alle Ausgabetexte für Internationalisierung in Language-Dateien auslagern -->
@@ -29,18 +18,8 @@
 	<!-- include link navigation -->	         
   <%@ include file="components/mainnavigation.htm" %>
 
-	<div id="box_grey">
-		<div id="div_flat_search">
-			<h:form>
-				<H3><h:outputText value="#{msg.linkname_search}"/></H3>
-				<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}"/>
-				<span class="span_selected_ddc"><h:outputText value="#{msg.category}"/>: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
-				<h:commandButton value="#{msg.start_search}" action="#{searchBean.actionSearchWithDDCButton}"/>
-			</h:form>
-		</div>
-	</div>
+	<%@ include file="components/flat_category_search.htm" %>
 	<%@ include file="components/hitdetails_navi.htm" %>
-
 	<h:form>
 		<div id="div_hitdetails">
 			<h3><h:outputText value="#{msg.overview_of_meta_data}"/></h3>	

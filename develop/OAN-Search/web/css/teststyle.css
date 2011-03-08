@@ -20,6 +20,30 @@ h1, h2, h3, h4, h5 {
 
 /*allgemeines*/
 
+.colStyle800 { 
+	width: 800px;
+	vertical-align:top;
+}
+.colStyle200 { 
+	width: 200px;
+	vertical-align:top;
+}
+.colStyle10 {
+	width: 10px;
+	vertical-align: top;
+}
+.colStyle340 { 
+	width: 340px;
+	vertical-align:top;
+}
+.colStyle760_b { 
+	width: 760px;
+	vertical-align:bottom;
+}
+.colStyle750 { 
+	width: 750px;
+	vertical-align:top;
+}
 a:link {
    color: #0000AA;
    text-decoration: underline;
@@ -69,6 +93,10 @@ dt {
 #div_option_tabs {
   font-size:14px;
   padding-left: 50px;
+}
+#div_option_alternativ_tabs {
+  font-size:10px;
+  margin-top: 50px;
 }
 #div_option_tabs div {
   background:#EEEEEE none repeat scroll 0 50%;
@@ -296,9 +324,9 @@ dt {
 /* ---------------------- hitdetails ---------------------------------------------- */
 
 #div_hitdetails_navi {
-  margin-left: 10px;
-  margin-top: 30px;
-  margin-right: 10px;	  				
+	text-align: center;
+  margin-top: 5px;
+  margin-bottom: 0px;
 }
 .backlink {
 	font-size: 11px;
@@ -306,8 +334,8 @@ dt {
 }
 #div_hitdetails {
   margin-left: 10px;
-  margin-top: 30px;
-  margin-right: 10px;	  				
+  margin-top: 5px;
+  margin-right: 5px;	  				
 }
 #div_hitdetails table {
 	border: thin;
@@ -340,7 +368,7 @@ dt {
   margin-right: 5px;	
   float: left;
   width: 300px;
-  font-size: 14px;
+  font-size: 12px;
 }
 .title_li li {
   font-size: 14px;
@@ -363,7 +391,13 @@ dt {
   margin-left: 10px;
   margin-top: 10px;
   margin-right: 10px;
-
+}
+#div_seperator_right{
+	border-right: 1px solid silver;
+}
+#div_seperator_bottom{
+	padding-bottom: 10px;
+	border-bottom: 1px solid silver;
 }
 #div_simplebrowselist li {
   margin-left: 10px;
@@ -393,10 +427,18 @@ dt {
 	border-bottom: 1px solid grey;	
 }
 */
-.span_ddc_num {
-  font-size: 10px;
-  color: silver;   
+#div_dcc_list{
+	margin-left: -8px;
+	margin-top: 15px;
 }
+.span_ddc_num {
+  font-size: 12px;
+  color: white;
+  background-color:#8F8F8F;
+  padding:1px 20px;
+
+}
+
 .span_ddc_name {
   font-size: 12px;
   /*font-weight: bold;*/	  
@@ -412,12 +454,17 @@ dt {
 }
 .span_selected_ddc {
   background-color:#F0F0FF;
-  border:1px solid black;
-  line-height:12px;
+  border:1px solid silver;
+  font-size: 14px;
+  line-height: 30px;
   padding:2px 10px;
 }
+.span_selected_ddc input{
+	margin-bottom: 5px;
+}
 #div_ddc_breadcrump {
-  margin-top: 10px;	
+  margin-top: 10px;
+
 }
 #div_alle_dcc_cat {
   margin-top: 10px;
