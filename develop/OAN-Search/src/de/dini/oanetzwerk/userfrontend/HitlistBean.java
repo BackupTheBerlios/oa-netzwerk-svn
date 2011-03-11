@@ -176,6 +176,13 @@ public class HitlistBean implements Serializable {
 	public int getSizeListHitOID() {
 		return listHitOID.size();
 	}
+	public Boolean getBooleanListHitOIDEmpty() {
+		return listHitOID.size()<1;
+	}
+	public Boolean getBooleanListHitOIDNotEmpty() {
+		return listHitOID.size()>0;
+	}
+
 	
 	public void fakefillListHitOID() {
 		listHitOID = new ArrayList<BigDecimal>();

@@ -44,6 +44,7 @@ public class SearchBean implements Serializable {
 	private SearchClient mySearchClient = null;
 
 	private HitlistBean hitlist = null;
+	private RankingBean ranking = null;
 	private BrowseBean browse = null;
 
 	private boolean bErrorLastSearch = false;
@@ -70,6 +71,9 @@ public class SearchBean implements Serializable {
 
 		this.browse = new BrowseBean();
 		this.browse.setParentSearchBean(this);
+		
+		this.ranking = new RankingBean();
+		this.ranking.setParentSearchBean(this);
 
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
@@ -224,6 +228,11 @@ public class SearchBean implements Serializable {
 		}
 		return "search_clicked";
 	}
+	
+	private String getRanking() {
+		logger.debug("getRanking");
+		return "search_clicked";
+	}
 
 	private String evalOneSlotAndDDCV4() {
 		logger.debug("evalOneSlotAndDDC");
@@ -254,6 +263,7 @@ public class SearchBean implements Serializable {
 		setStrOneSlot("");
 		return "search_clicked";
 	}
+	
 
 	private String parseOneSlotSearchField() {
 		logger.debug("parseOneSlotSearchField");
@@ -380,6 +390,10 @@ public class SearchBean implements Serializable {
 
 	public String actionSearchFromDDCTreeDirectlyWithAutoHitsV4() {
 		return freeSearchAndDDCV4();
+	}
+	
+	public String actionGetRanking() {
+		return getRanking();
 	}
 
 	public String actionAddAllHitsToClipboard() {

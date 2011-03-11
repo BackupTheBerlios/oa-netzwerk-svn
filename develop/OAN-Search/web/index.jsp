@@ -1,1 +1,1 @@
-<% response.sendRedirect("pages/start.faces"); %>
+<% response.sendRedirect("pages/start_new.faces"); %>

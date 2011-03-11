@@ -45,7 +45,7 @@ public class RedirectionFilter implements Filter {
 		String uri = httpservreq.getRequestURI();
 
 		if (uri.equals(DEFAULT_PATH + "/") || uri.equals(DEFAULT_PATH)) {
-			httpservres.sendRedirect(DEFAULT_PATH + "/start.faces");
+			httpservres.sendRedirect(DEFAULT_PATH + "/browse_ddc_version3.faces");
 			return;
 		}
 
