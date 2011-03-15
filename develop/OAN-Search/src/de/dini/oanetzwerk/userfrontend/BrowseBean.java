@@ -42,7 +42,11 @@ public class BrowseBean {
     private List<String> pathDDCCategories = null; 
 	private String selectedDDCCatValue = null;
 	private String selectedDDCCatName = "Alles";
+	
+	private Boolean showDDCNums;
     
+
+
 	public BrowseBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		
 		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer (Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
@@ -61,6 +65,7 @@ public class BrowseBean {
 		//generateListDDCNaviNodes(simpleDDCCategorySums);
 		
 		this.pathDDCCategories = new ArrayList<String>();
+		this.showDDCNums = false;
 	}
 
 	///// auto generated /////////////////////////////////////////////////////////////////////////
@@ -136,6 +141,15 @@ public class BrowseBean {
 		this.selectedDDCCatName = selectedDDCCatName;
 	}
 	
+	public Boolean getShowDDCNums() {
+		return showDDCNums;
+	}
+
+	public void setShowDDCNums(Boolean showDDCNums) {
+		this.showDDCNums = showDDCNums;
+	}
+	
+	
 	///////////////////////////////////////////////////////////////////////////////
 	
 	private void setupMapDDCNames() {
@@ -188,6 +202,10 @@ public class BrowseBean {
 		this.setSelectedDDCCatValue(null);
 		this.setSelectedDDCCatName("Alles");
 		return "ddc_category_selected";
+	}
+	public String actionChangeVisibilityOfDDCCategoryNums() {
+		this.setShowDDCNums(!this.showDDCNums);
+		return "ddc_category_nums_visibility_changed";
 	}
 	
 	

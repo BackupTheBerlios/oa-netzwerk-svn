@@ -283,8 +283,8 @@ public class SearchBean implements Serializable {
 		char hunderter = strDDC.charAt(0), zehner = strDDC.charAt(1), einer = strDDC.charAt(2);
 		switch (ddcLevel) {
 			case EINS: zehner = einer = '0'; break;
-					
-			case ZWEI: einer = '0'; break;
+			// DDC Number 004 is of level type two 		
+			case ZWEI: if(!strDDC.equals("004")){einer = '0';}; break;
 			case DREI: break;					     
 			default:   break;
 		}
