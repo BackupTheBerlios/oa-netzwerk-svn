@@ -232,6 +232,9 @@ public class SearchBean implements Serializable {
 	
 	private String getRanking() {
 		logger.debug("getRanking");
+		browse.setPathDDCCategories(new ArrayList<String>());
+		browse.setSelectedDDCCatValue(null);
+		browse.setSelectedDDCCatName("Alles");
 		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
 		listOIDs = this.ranking.getListHitOID();
 /*		try {
