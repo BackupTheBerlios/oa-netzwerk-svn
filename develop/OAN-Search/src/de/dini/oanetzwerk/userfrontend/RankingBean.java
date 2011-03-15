@@ -45,9 +45,10 @@ public class RankingBean {
 		// new list of oids (hits)
 		this.listHitOID = new ArrayList<BigDecimal>();
 		
-		//this.fakefillListHitOID();
+		this.fakefillListHitOID();
 		
 	}
+
 	/**
 	 * Pseudodaten zu Testzwecken
 	 */
@@ -68,6 +69,11 @@ public class RankingBean {
 	public void setParentSearchBean(SearchBean parentSearchBean) {
 		this.parentSearchBean = parentSearchBean;
 	}
-
+	public List<BigDecimal> getListHitOID() {
+		return listHitOID;
+	}
+	public void setListHitOID(List<BigDecimal> listHitOID) {
+		this.listHitOID = listHitOID;
+	}
 	
 }

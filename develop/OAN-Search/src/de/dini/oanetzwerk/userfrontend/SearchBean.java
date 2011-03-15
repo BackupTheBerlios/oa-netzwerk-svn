@@ -231,6 +231,19 @@ public class SearchBean implements Serializable {
 	
 	private String getRanking() {
 		logger.debug("getRanking");
+		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
+		listOIDs = this.ranking.getListHitOID();
+/*		try {
+			listOIDs = this.mySearchClient.querySearchService(strQuery, strDDC);
+			this.bErrorLastSearch = false;
+			this.strErrorLastSearch = "";
+		} catch (SearchClientException scex) {
+			logger.error("SearchClientException: " + scex);
+			this.bErrorLastSearch = true;
+			this.strErrorLastSearch = ("Fehler: " + scex.getMessage());
+		}*/
+		this.hitlist.setListHitOID(listOIDs);
+		this.hitlist.updateHitlistMetadata();
 		return "search_clicked";
 	}
 

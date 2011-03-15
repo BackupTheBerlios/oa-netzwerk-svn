@@ -433,9 +433,9 @@ dt {
 }
 .span_ddc_num {
   font-size: 12px;
-  color: white;
-  background-color:#8F8F8F;
-  padding:1px 20px;
+  color: black;
+  background-color:#AFAFAF;
+  padding:1px 10px;
 
 }
 

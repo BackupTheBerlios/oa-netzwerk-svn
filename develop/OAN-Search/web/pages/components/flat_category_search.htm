@@ -13,6 +13,9 @@
 				<h:commandButton value="#{msg.start_search}" action="#{searchBean.actionSearchWithDDCButton}" /><br />
 				<span class="span_selected_ddc"><h:outputText value="#{msg.category}"/>: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
 			</h:form>
+			<h:form>
+  			<h:commandButton value="Ranking" action="#{searchBean.actionGetRanking}" /><br />
+			</h:form>
 		</div>
 	</t:panelGroup>
 </t:panelGrid> 
