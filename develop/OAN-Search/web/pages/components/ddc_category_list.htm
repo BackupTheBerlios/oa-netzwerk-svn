@@ -1,4 +1,7 @@
-
+<t:div rendered="#{searchBean.browse.booleanListDDCNaviNodesIsEmpty}">
+	<t:outputText value="#{msg.ddc_not_aviable}"/>
+</t:div>
+<t:div rendered="#{!searchBean.browse.booleanListDDCNaviNodesIsEmpty}">
 <div id="div_alle_dcc_cat" >
 	<h:commandLink action="#{searchBean.browse.actionUnselectDDCCategoryLink}" title=""><span class="span_ddc_name"><t:outputText value="#{msg.all_categories_no_restrictions}"/></span></h:commandLink>
 </div> 
@@ -51,5 +54,6 @@
 			</t:dataList>
 		</t:div>
 	</t:dataList>
-</div>		
+</div>
+</t:div>	
  

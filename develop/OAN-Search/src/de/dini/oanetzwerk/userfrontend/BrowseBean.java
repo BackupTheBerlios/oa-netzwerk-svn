@@ -95,6 +95,10 @@ public class BrowseBean {
 		//if(listDDCNaviNodes == null) this.listDDCNaviNodes = generateListDDCNaviNodes(simpleDDCCategorySums);
 		return listDDCNaviNodes;
 	}
+	public Boolean getBooleanListDDCNaviNodesIsEmpty(){
+		//logger.info("listDDCNaviNodes = " + listDDCNaviNodes.size() + "");
+		return listDDCNaviNodes.size() == 0;
+	}
 
 	public void setListDDCNaviNodes(List<DDCNaviNode> listDDCNaviNodes) {
 		this.listDDCNaviNodes = listDDCNaviNodes;
