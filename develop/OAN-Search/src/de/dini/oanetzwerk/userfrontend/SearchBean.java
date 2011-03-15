@@ -49,6 +49,7 @@ public class SearchBean implements Serializable {
 
 	private boolean bErrorLastSearch = false;
 	private String strErrorLastSearch = "";
+	
 
 	public SearchBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		this.hitlist = new HitlistBean();
@@ -276,7 +277,22 @@ public class SearchBean implements Serializable {
 		setStrOneSlot("");
 		return "search_clicked";
 	}
-	
+	private String freeSearchAndDDCLevel(ET_DDCLevel ddcLevel) {
+		logger.debug("freeSearchAndDDCLevel: " + ddcLevel + "");
+		String strDDC = this.browse.getSelectedDDCCatValue();
+		char hunderter = strDDC.charAt(0), zehner = strDDC.charAt(1), einer = strDDC.charAt(2);
+		switch (ddcLevel) {
+			case EINS: zehner = einer = '0'; break;
+					
+			case ZWEI: einer = '0'; break;
+			case DREI: break;					     
+			default:   break;
+		}
+		strDDC = String.valueOf(hunderter) + String.valueOf(zehner) + String.valueOf(einer);
+		searchFor(fStrFreeSearch, strDDC);
+		setStrOneSlot("");
+		return "search_clicked";
+	}	
 
 	private String parseOneSlotSearchField() {
 		logger.debug("parseOneSlotSearchField");
@@ -394,6 +410,15 @@ public class SearchBean implements Serializable {
 
 	public String actionSearchFromDDCTreeDirectlyWithAutoHits() {
 		return freeSearchAndDDC();
+	}
+	public String actionSearchFromDDCTreeDirectlyWithAutoHitsLevelEINS() {
+		return freeSearchAndDDCLevel(ET_DDCLevel.EINS);
+	}
+	public String actionSearchFromDDCTreeDirectlyWithAutoHitsLevelZWEI() {
+		return freeSearchAndDDCLevel(ET_DDCLevel.ZWEI);
+	}
+	public String actionSearchFromDDCTreeDirectlyWithAutoHitsLevelDREI() {
+		return freeSearchAndDDCLevel(ET_DDCLevel.DREI);
 	}
 
 	public String actionSearchWithDDCButtonV4() {
