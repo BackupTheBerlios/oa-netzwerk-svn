@@ -249,7 +249,7 @@ public class RepositoryValidator {
 		
 			Node docRoot = doc.getFirstChild();
 			System.out.println("Doc: " + docRoot.getNodeName());
-			
+
 			Node newValidationResult = doc.createElement("validationResult");
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
@@ -459,7 +459,51 @@ public class RepositoryValidator {
 		validateServer(valiData);
 	}
 
-	
+	public void deleteTest(int testOffset) {
+		// testOffset = 0 --> lösche alle Datensätze
+		// testOffset > 0 --> lösche Datensatz
+		System.out.println("deleteTest("+testOffset+")");
+		try {
+			if (testOffset == 0) {
+				File f = new File(validationResults);
+				if (f.exists()) {
+					f.delete();
+					System.out.println("Datei gelöscht");
+				}
+				return;
+			}
+			
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Document doc = null;
+		Node result = null;
+		try {
+			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
+				new InputSource(
+					new StringReader(
+						this.read(validationResults, "UTF-8")
+					)
+				)
+			);
+		
+			result = (Node) xpath.evaluate("validationResults/validationResult["+testOffset+"]", doc, XPathConstants.NODE);
+			Node docRoot = doc.getFirstChild();	
+			docRoot.removeChild(result);
+			Transformer t = TransformerFactory.newInstance().newTransformer();
+		    t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+		    t.setOutputProperty(OutputKeys.INDENT, "yes");
+		    File f = new File(validationResults); 
+		    StreamResult sr = new StreamResult(f);
+		    t.transform(new DOMSource(docRoot), sr);
+		}
+		catch(Exception e) {
+			System.out.println("Fehler beim Löschen: "+e.getMessage());
+			e.printStackTrace();
+		}
+	}
 	
 
 }

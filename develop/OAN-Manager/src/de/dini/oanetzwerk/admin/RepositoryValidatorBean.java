@@ -94,18 +94,13 @@ public class RepositoryValidatorBean extends AbstractBean implements Serializabl
 		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
 		String testOffset = request.getParameter("testOffset");
 		String subTestOffset = request.getParameter("subTestOffset");
-		
-		Enumeration params = request.getParameterNames();
-		while (params.hasMoreElements()) {
-	         System.out.println("Parameter: "+params.nextElement());
-	     }
-		
-		
+		String delete = request.getParameter("delete");
 		
 		System.out.println("Test Offset: "+testOffset);
 		if (testOffset != null && !testOffset.isEmpty()) {
 			System.out.println("Parameter gefunden");
 			this.testOffset = Integer.parseInt(testOffset);
+			System.out.println("TestOffset: "+this.testOffset);
 			if (subTestOffset != null && !subTestOffset.isEmpty()) {
 				// zwingend notwendig, da das XPath Prädikat bei 1 losgeht und man die 0 hier gut als Markierung verwenden kann dass alle Teiltests durchlaufen werden sollen
 				// Leider ist die t:dataList Komponente zu dämlich den Laufindex bei 1 starten zu lassen, daher die Verwirrung hier
@@ -114,7 +109,13 @@ public class RepositoryValidatorBean extends AbstractBean implements Serializabl
 			else {
 				this.subTestOffset = 0;
 			}
-			rv.rerunTest(this.testOffset, this.subTestOffset);
+			if (delete != null && !delete.isEmpty() && Integer.parseInt(delete) == 1) {
+				System.out.println("Lösche Testset Nr. "+this.testOffset);
+				rv.deleteTest(this.testOffset);
+			}
+			else {
+				rv.rerunTest(this.testOffset, this.subTestOffset);
+			}
 		}
 		
 	}
@@ -178,7 +179,7 @@ public class RepositoryValidatorBean extends AbstractBean implements Serializabl
 	
 	public ValidationResultBean[] getResults() {
 		ValidationResultBean[] data = rv.getResults(0);
-		///*
+		/*
 		for (int i = 0; i < data.length; i++) {
 			System.out.println("Timestamp = "+data[i].getTimestamp());
 			System.out.println("Serveralias = "+data[i].getServerAlias());
@@ -187,7 +188,7 @@ public class RepositoryValidatorBean extends AbstractBean implements Serializabl
 				System.out.println("	Parameter = "+data[i].getParameters()[j]);
 			}
 		}
-		//*/
+		*/
 		return data;
 	}
 	

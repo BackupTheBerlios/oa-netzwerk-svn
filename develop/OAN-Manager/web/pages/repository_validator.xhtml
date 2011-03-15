@@ -144,6 +144,13 @@
 							</h:outputLink> 
 						</t:dataList>
 					</t:column>
+					<t:column style="width: 5%; vertical-align: middle;">
+						<h:outputLink value="./repository_validator.xhtml">
+							<h:outputText value="Delete Testset" />
+							<f:param name="testOffset" value="#{row.testOffset}" />
+							<f:param name="delete" value="1" />
+						</h:outputLink>
+					</t:column>
 				</t:dataTable>
 				
 			</div>
