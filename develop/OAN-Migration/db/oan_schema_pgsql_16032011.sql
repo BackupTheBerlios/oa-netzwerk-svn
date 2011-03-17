@@ -116,7 +116,7 @@ DROP TABLE IF EXISTS "public"."Keywords";
 CREATE TABLE "public"."Keywords" (
 "keyword_id" numeric(38,0) NOT NULL CONSTRAINT keyword_id PRIMARY KEY,
 "keyword" varchar(256) NOT NULL,
-"lang" char
+"lang" varchar(3)
 )
 WITH (OIDS=FALSE);
 
