@@ -48,17 +48,17 @@ public class ValidatorControlBean implements JobListener {
 		SgParameters params = new SgParameters();
 		
 		
-		params.addParam(FieldNames.JOB_GENERAL_USER, "sdavid");
-		params.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Usage Validation");
-		params.addParam(FieldNames.JOB_OAIUSAGE_BASEURL, baseUrl);
+//		params.addParam(FieldNames.JOB_GENERAL_USER, "sdavid");
+//		params.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Usage Validation");
+//		params.addParam(FieldNames.JOB_OAIUSAGE_BASEURL, baseUrl);
 		
 		// general job definition
-//		params.addParam(FieldNames.JOB_GENERAL_USER, "testuser");
-//		params.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Content Validation");
-//		params.addParam(FieldNames.JOB_OAICONTENT_BASEURL, baseUrl);
-//		params.addParam(FieldNames.JOB_OAICONTENT_RANDOM, "false");
-//		params.addParam(FieldNames.JOB_OAICONTENT_RECORDS, "200");
-//		params.addParam(FieldNames.JOB_OAICONTENT_SET, "driver");
+		params.addParam(FieldNames.JOB_GENERAL_USER, "testuser");
+		params.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Content Validation");
+		params.addParam(FieldNames.JOB_OAICONTENT_BASEURL, baseUrl);
+		params.addParam(FieldNames.JOB_OAICONTENT_RANDOM, "false");
+		params.addParam(FieldNames.JOB_OAICONTENT_RECORDS, "200");
+		params.addParam(FieldNames.JOB_OAICONTENT_SET, "driver");
 
 		// rule definition		
 		List<Integer> ruleIds = new ArrayList<Integer>();
@@ -72,6 +72,7 @@ public class ValidatorControlBean implements JobListener {
 			IJob job = val.addNewJob(params, ruleIds);
 			job.addListener(this);
 			val.startJob(job);
+			
 
         } catch (Exception e) {
 	        e.printStackTrace();
