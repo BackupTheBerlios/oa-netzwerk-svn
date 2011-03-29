@@ -56,16 +56,16 @@
       <f:view>
         <h:form id="bla" action="#{repo.storeRepository}">
 
-          <tr>
-            <td><h:outputText id="nameError" value="#{repo.nameError}" style="color: red;font-style: italic;" /></td>
-          </tr>
+<!--          <tr>-->
+<!--            <td><h:outputText id="nameError" value="#{repo.nameError}" style="color: red;font-style: italic;" /></td>-->
+<!--          </tr>-->
           <tr>
             <td>Name des Repositories&nbsp; (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)</td>
           </tr>
           <tr>
 
-            <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.name}" valueChangeListener="#{repo.validateName}>
-            <f:ajax event="blur" render="nameError" />
+            <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.name}"  >
+            <f:validateBean />   
             </t:inputText>
             <div class="help_box" id="help_name">Geben Sie hier den Namen des neuen Repositoriums ein.</div>
             </td>

@@ -68,9 +68,16 @@
             <h:form>
             Testan
             
-                <t:radio id="type_once_a_month" index="1" for="#{scheduler.months}"  >An jedem bla <t:selectItems itemLabel="blabla" itemValue="#{scheduler.months}"/></t:radio>
                 
+                <h:selectOneMenu id="menu1" value="#{scheduler.selectedMonth}">
+                	<t:selectItems value="#{scheduler.months}" var="month" itemLabel="#{month}" itemValue="#{month}" />
+                </h:selectOneMenu>
                 
+                <br />
+                
+                <h:selectOneMenu id="menu3" value="#{scheduler.selectedIntervalType}">
+                  <t:selectItems value="#{scheduler.intervalTypes}" var="type" itemLabel="#{type}" itemValue="#{type}" />
+                </h:selectOneMenu>                
             </h:form>
          </f:view>
 

@@ -13,6 +13,7 @@ import java.util.Iterator;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,12 +28,9 @@ import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.DeleteFromDB;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.server.database.UpdateInDB;
 import de.dini.oanetzwerk.utils.DBHelper;
-import de.dini.oanetzwerk.utils.HelperMethods;
-import de.dini.oanetzwerk.utils.MessageUtils;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
@@ -49,15 +47,22 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 	FacesContext ctx = FacesContext.getCurrentInstance();
 	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(
 			false);
-
+	
+	@ManagedProperty(value="#{restconnector}")
+	private RestConnector connector;	
+	
 	private boolean deactivated = false;
 	private boolean deleted = false;
 	private boolean stored = false;
 
 	private Long id = null;
+	
+//	@Size(min = 8, message = "Please enter the Email")
 	private String name;
 	private String owner;
 	private String ownerEmail;
+	
+//	@NotNull
 	private String url;
 	private String oaiUrl;
 	private String harvestAmount = "10";
@@ -66,6 +71,7 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 	private String testData;
 	private boolean listRecords;
 	private boolean active = true;
+
 
 	public RepositoryBean() {
 		super();
@@ -131,7 +137,7 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 
 	public HashMap<String, String> getDetails() {
 
-		String result = this.prepareRestTransmission(
+		String result = connector.prepareRestTransmission(
 				"Repository/" + Long.toString(id)).GetData();
 
 		HashMap<String, String> details = new HashMap<String, String>();
@@ -189,26 +195,25 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 		res.addEntry("lastFullHarvestBegin", this.getLastFullHarvestBegin());
 		res.addEntry("harvestPause", this.getHarvestPause());
 		res.addEntry("testData", this.getTestData());
-		
-		if(this.isActive() == true){
-			res.addEntry("isActive", "true");
-		} else{
-			res.addEntry("isActive", "false");
-		}
-		if(this.isListRecords() == true){
-			res.addEntry("islistRecords", "true");
-		} else{
-			res.addEntry("isListRecords", "false");
-		}	
+		res.addEntry("active", Boolean.toString(isActive()));
+		res.addEntry("listRecords", Boolean.toString(isListRecords()));
+			
 		
 		rms.addEntrySet(res);
 		
 		
 		try {
-			result = prepareRestTransmission("Repository/").sendPostRestMessage(rms);
+			result = connector.prepareRestTransmission("Repository/").sendPutRestMessage(rms);
+			
+			if (rms.getStatus() != RestStatusEnum.OK) {
+
+				logger.error("/Repository response failed: " + rms.getStatus() + "("
+						+ rms.getStatusDescription() + ")");
+				return "failed";
+			}
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return "failed";
 		}
 		
 		logger.info("PUT sent to /Repository");
@@ -378,4 +383,7 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 		this.active = active;
 	}
 
+	public void setConnector(RestConnector connector) {
+    	this.connector = connector;
+    }
 }

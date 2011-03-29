@@ -23,9 +23,14 @@
 
 
 
-	<managed-bean>
+	<!--managed-bean>
 		<managed-bean-name>validator</managed-bean-name>
 		<managed-bean-class>de.dini.oanetzwerk.validator.ValidatorControlBean</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>restconnector</managed-bean-name>
+		<managed-bean-class>de.dini.oanetzwerk.admin.RestConnector</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean-->
 </faces-config>
