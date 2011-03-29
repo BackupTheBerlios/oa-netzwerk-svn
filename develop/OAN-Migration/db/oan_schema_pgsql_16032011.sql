@@ -445,11 +445,11 @@ WITH (OIDS=FALSE);
 
 
 -- ----------------------------
--- Table structure for "public"."Object2Keyword"
+-- Table structure for "public"."Object2Keywords"
 -- ----------------------------
 
-DROP TABLE IF EXISTS "public"."Object2Keyword";
-CREATE TABLE "public"."Object2Keyword" (
+DROP TABLE IF EXISTS "public"."Object2Keywords";
+CREATE TABLE "public"."Object2Keywords" (
 "object_id" numeric(38,0) NOT NULL CONSTRAINT fk_oid REFERENCES "Object"(object_id),
 "keyword_id" numeric(38,0) NOT NULL CONSTRAINT fk_keywordid REFERENCES "Keywords"(keyword_id),
 CONSTRAINT pk_obj2keyw PRIMARY KEY(object_id, keyword_id)

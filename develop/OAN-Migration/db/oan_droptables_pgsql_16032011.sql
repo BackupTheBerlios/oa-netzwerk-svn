@@ -34,7 +34,7 @@ DROP TABLE IF EXISTS "public"."Object2Editor";
 
 DROP TABLE IF EXISTS "public"."Object2Iso639Language";
 
-DROP TABLE IF EXISTS "public"."Object2Keyword";
+DROP TABLE IF EXISTS "public"."Object2Keywords";
 
 DROP TABLE IF EXISTS "public"."Object2Language";
 
