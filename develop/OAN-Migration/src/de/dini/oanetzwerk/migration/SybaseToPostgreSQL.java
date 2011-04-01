@@ -1,8 +1,6 @@
 package de.dini.oanetzwerk.migration;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,19 +8,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
-import org.apache.tomcat.dbcp.dbcp.DelegatingResultSet;
-
 
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
-import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.server.database.StatementConnection;
 
 public class SybaseToPostgreSQL {
@@ -88,8 +79,8 @@ public class SybaseToPostgreSQL {
 			String url = "jdbc:postgresql://localhost:5432/oanetdb";
 			
 			Properties props = new Properties();
-			props.put("user", "USERNAME");
-			props.put("password", "PASSWORT");
+			props.put("user", "postgres");
+			props.put("password", "12345");
 			props.put("charSet", "UTF-8");
 			conn = DriverManager.getConnection(url, props);
 			
@@ -250,8 +241,8 @@ public class SybaseToPostgreSQL {
 
 			
 			Properties props = new Properties();
-			props.put("user", "imrael");
-			props.put("password", "fd6zaw9c");
+			props.put("user", "postgres");
+			props.put("password", "12345");
 			props.put("charSet", "UTF-8");
 			conn = DriverManager.getConnection(url, props);
 			conn.setAutoCommit(false);
@@ -302,7 +293,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setString(1, rs.getString(1));
 			pStatement.setString(2, rs.getString(2));
@@ -322,7 +313,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -343,7 +334,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setString(1, rs.getString(1));
 			pStatement.setString(2, rs.getString(2));
@@ -362,7 +353,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -383,7 +374,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setString(1, rs.getString(1));
 			pStatement.setString(2, rs.getString(2));
@@ -402,7 +393,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -423,7 +414,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -442,7 +433,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -462,7 +453,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -481,7 +472,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setString(1, rs.getString(1));
 			pStatement.setString(2, rs.getString(2));
@@ -502,7 +493,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -525,7 +516,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -553,7 +544,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -572,7 +563,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -591,7 +582,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			// TODO
 			pStatement.setInt(1, rs.getInt(1));
@@ -619,7 +610,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setTimestamp(2, rs.getTimestamp(2));
@@ -634,11 +625,11 @@ public class SybaseToPostgreSQL {
 		return connection.prepareStatement("SELECT object_id, number, value, originalValue FROM DateValues");
 	}
 	public PreparedStatement DateValues(QueryResult qr, Connection conn) throws SQLException {
-		String sql = "INSERT INTO \"DateValues\" (object_id, number, value, originalValue) VALUES(?,?,?,?)";
+		String sql = "INSERT INTO \"DateValues\" (object_id, number, value, \"originalValue\") VALUES(?,?,?,?)";
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -659,7 +650,7 @@ public class SybaseToPostgreSQL {
 	    String sql = "INSERT INTO \"DDC_Browsing_Help\" (\"DDC_Categorie\", name_deu, name_eng, direct_count, sub_count, \"parent_DDC\") VALUES(?,?,?,?,?,?)";
 	    PreparedStatement prest = conn.prepareStatement(sql);
 	    int i = 0;
-	    while (qs.getResultSet().next()) {
+	    while (i < batchSize && qs.getResultSet().next()) {
 	    	ResultSet rs = qs.getResultSet();
 	    	prest.setString(1, rs.getString(1));
 	        prest.setString(2, rs.getString(2));
@@ -682,7 +673,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -701,7 +692,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -723,7 +714,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -742,7 +733,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -761,7 +752,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -781,7 +772,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -801,7 +792,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -821,7 +812,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setTimestamp(2, rs.getTimestamp(2));
@@ -841,7 +832,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -861,7 +852,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -881,7 +872,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -901,7 +892,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -921,7 +912,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -940,7 +931,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -960,7 +951,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -979,7 +970,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -998,7 +989,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -1018,7 +1009,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			//System.out.println("Tabelle RawData Iteration "+(i+1));
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
@@ -1045,7 +1036,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setString(1, rs.getString(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -1064,7 +1055,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setTimestamp(2, rs.getTimestamp(2));
@@ -1086,10 +1077,10 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
-			pStatement.setInt(2, rs.getInt(2));
+			pStatement.setObject(2, new Integer(0).equals(rs.getInt(2)) ? null : rs.getInt(2));
 			pStatement.addBatch();
 			i++;
 		}
@@ -1105,7 +1096,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setString(2, rs.getString(2));
@@ -1126,7 +1117,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -1146,7 +1137,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -1167,7 +1158,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -1188,7 +1179,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			pStatement.setInt(2, rs.getInt(2));
@@ -1209,7 +1200,7 @@ public class SybaseToPostgreSQL {
 		PreparedStatement pStatement = conn.prepareStatement(sql);
 		
 		int i = 0;
-		while (qr.getResultSet().next()) {
+		while (i < batchSize && qr.getResultSet().next()) {
 			ResultSet rs = qr.getResultSet();
 			pStatement.setInt(1, rs.getInt(1));
 			System.out.println("Parameter1: "+rs.getInt(1));

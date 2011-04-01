@@ -175,7 +175,7 @@ CREATE TABLE "public"."Repositories" (
 "name" varchar(256) NOT NULL,
 "url" varchar(256) NOT NULL,
 "oai_url" varchar(256) NOT NULL,
-"testdata" boolean NOT NULL DEFAULT true,
+"test_data" boolean NOT NULL DEFAULT true,
 "harvest_amount" int NOT NULL DEFAULT 10,
 "harvest_pause" int NOT NULL DEFAULT 5000,
 "last_full_harvest_begin" timestamp,
