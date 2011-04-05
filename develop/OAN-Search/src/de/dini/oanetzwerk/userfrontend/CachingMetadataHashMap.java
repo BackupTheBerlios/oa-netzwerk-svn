@@ -25,13 +25,11 @@ import de.dini.oanetzwerk.utils.imf.FullTextLink;
 public class CachingMetadataHashMap extends HashMap<BigDecimal,CompleteMetadata> {
 
 	private static Logger logger = Logger.getLogger (CachingMetadataHashMap.class);
-	private Properties props = null;
 	private CompleteMetadataJAXBMarshaller cmMarsh = null;
 	
 	public CachingMetadataHashMap() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		super();
 		
-		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer (Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
 		this.cmMarsh = CompleteMetadataJAXBMarshaller.getInstance();
 		
 	}
@@ -57,15 +55,10 @@ public class CachingMetadataHashMap extends HashMap<BigDecimal,CompleteMetadata>
 		return cm; 
 	}
 
-	
-    private RestClient prepareRestTransmission (String resource) {
-		
-		return RestClient.createRestClient (new File (System.getProperty ("catalina.base") + this.props.getProperty ("restclientpropfile")), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-	}
 
 	private CompleteMetadata fetchCompleteMetadataByOID(BigDecimal oid) {
 						
-		RestMessage rms = this.prepareRestTransmission ("CompleteMetadataEntry/" + oid).sendGetRestMessage();
+		RestMessage rms = WebUtils.prepareRestTransmission ("CompleteMetadataEntry/" + oid).sendGetRestMessage();
 		CompleteMetadata cm = new CompleteMetadata();
 		cm.setOid(oid);
 		

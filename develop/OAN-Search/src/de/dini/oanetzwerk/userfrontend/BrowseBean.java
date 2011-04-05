@@ -27,7 +27,6 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 public class BrowseBean {
 
 	private static Logger logger = Logger.getLogger (BrowseBean.class);
-	private Properties props = null;
 	
 	private SearchBean parentSearchBean = null;
 
@@ -48,10 +47,7 @@ public class BrowseBean {
 
 
 	public BrowseBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
-		
-		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer (Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
-		//this.props = HelperMethods.loadPropertiesFromFile ("userfrontend_gui.xml");
-		
+				
 		//mapDDCSums = new HashMap<String, String>();
 		myDDCNameResolver = new DDCNameResolver();
 		setupMapDDCNames();
@@ -158,11 +154,7 @@ public class BrowseBean {
 			mapDDCNames_de.put(key, DDCNameResolver.getCategoryName(key, "de"));
 		}
 	}
-	
-	private RestClient prepareRestTransmission (String resource) {
-		
-		return RestClient.createRestClient (new File (System.getProperty ("catalina.base") + this.props.getProperty ("restclientpropfile")), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-	}
+
 	
 	private class CategoryNumberComparator implements Comparator<String[]> {
 

@@ -1,13 +1,9 @@
 package de.dini.oanetzwerk.userfrontend;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -17,16 +13,12 @@ import org.apache.log4j.Logger;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
-import de.dini.oanetzwerk.servicemodule.RestClient;
-import de.dini.oanetzwerk.utils.HelperMethods;
 
 public final class DDCDataSingleton {
 
 	private static Logger logger = Logger.getLogger(DDCDataSingleton.class);
 
 	private static final DDCDataSingleton INSTANCE = new DDCDataSingleton();
-
-	private Properties frontendProps = null;
 
 	DDCNameResolver myDDCNameResolver = null;
 	private HashMap mapDDCNames_de = null;
@@ -43,16 +35,7 @@ public final class DDCDataSingleton {
 		try {
 			myDDCNameResolver = new DDCNameResolver();
 			setupMapDDCNames();
-			try {
-				this.frontendProps = HelperMethods
-						.loadPropertiesFromFileWithinWebcontainer(Utils
-								.getWebappPath()
-								+ "/WEB-INF/userfrontend_gui.xml");
-			} catch (Exception ex) {
-				// to test this external from server context
-				this.frontendProps = HelperMethods
-						.loadPropertiesFromFile("userfrontend_gui.xml");
-			}
+			
 			simpleDDCCategorySums = generateSimpleDDCCategorySums();
 			directDDCCategorySums = new ArrayList(); // generateDirectDDCCategorySums(simpleDDCCategorySums);
 			listDDCNaviNodes = generateListDDCNaviNodes(simpleDDCCategorySums);
@@ -125,7 +108,7 @@ public final class DDCDataSingleton {
 	private List<String[]> generateSimpleDDCCategorySums() {
 
 		ArrayList<String[]> listDDCCategoriesAndSum = new ArrayList<String[]>();
-		RestMessage rms = this.prepareRestTransmission("DDCCategories/")
+		RestMessage rms = WebUtils.prepareRestTransmission("DDCCategories/")
 				.sendGetRestMessage();
 
 		if (rms == null || rms.getListEntrySets().isEmpty()) {
@@ -185,7 +168,7 @@ public final class DDCDataSingleton {
 			wildcardCategory = wildcardCategory.replaceAll("00$", "x");
 			wildcardCategory = wildcardCategory.replaceAll("0$", "x");
 
-			RestMessage rms = this.prepareRestTransmission(
+			RestMessage rms = WebUtils.prepareRestTransmission(
 					"DDCCategories/" + wildcardCategory).sendGetRestMessage();
 
 			if (rms == null || rms.getListEntrySets().isEmpty()) {
@@ -227,7 +210,7 @@ public final class DDCDataSingleton {
 
 		String sum = "";
 
-		RestMessage rms = this.prepareRestTransmission(
+		RestMessage rms = WebUtils.prepareRestTransmission(
 				"DDCCategories/" + strWildcardCategory).sendGetRestMessage();
 
 		if (rms == null || rms.getListEntrySets().isEmpty()) {
@@ -421,18 +404,7 @@ public final class DDCDataSingleton {
 		return nodeList;
 	}
 
-	/**************************** Utility ************************/
 
-	private RestClient prepareRestTransmission(String resource) {
-
-		return RestClient
-				.createRestClient(
-						new File(System.getProperty("catalina.base")
-								+ this.frontendProps
-										.getProperty("restclientpropfile")),
-						resource, this.frontendProps.getProperty("username"),
-						this.frontendProps.getProperty("password"));
-	}
 
 	/************************ Getter & Setter ********************/
 

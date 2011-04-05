@@ -33,7 +33,6 @@ import de.dini.oanetzwerk.utils.imf.InternalMetadata;
 public class HitlistBean implements Serializable {
 	
 	private static Logger logger = Logger.getLogger (HitlistBean.class);
-	private Properties props = null;
 	private CompleteMetadataJAXBMarshaller cmMarsh = null;
 	
 	private SearchBean parentSearchBean = null;
@@ -53,7 +52,7 @@ public class HitlistBean implements Serializable {
 
 	
 	public HitlistBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
-		String serverPath = Utils.getWebappPath();
+		String serverPath = WebUtils.getWebappPath();
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();		
 		
@@ -70,11 +69,7 @@ public class HitlistBean implements Serializable {
 //			parentSearchBean.actionSearchButton();
 //		}
 		
-		
-		
-		//read props
-		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(serverPath + "/WEB-INF/userfrontend_gui.xml");
-		
+				
 		//init xml marshaller
 		this.cmMarsh = CompleteMetadataJAXBMarshaller.getInstance();
 		
@@ -274,10 +269,6 @@ public class HitlistBean implements Serializable {
 	}
 	
 	/*
-	private RestClient prepareRestTransmission (String resource) {
-		
-		return RestClient.createRestClient (new File (System.getProperty ("catalina.base") + this.props.getProperty ("restclientpropfile")), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-	}
 
 	private CompleteMetadata fetchCompleteMetadataByOID(BigDecimal oid) {
 						

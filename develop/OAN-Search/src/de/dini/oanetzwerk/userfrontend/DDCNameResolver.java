@@ -20,7 +20,7 @@ public class DDCNameResolver {
 
 	public DDCNameResolver() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		try {
-		  this.propNames_de = HelperMethods.loadPropertiesFromFileWithinWebcontainer (Utils.getWebappPath() + "/WEB-INF/ddc_names_de.xml");
+		  this.propNames_de = HelperMethods.loadPropertiesFromFileWithinWebcontainer (WebUtils.getWebappPath() + "/WEB-INF/ddc_names_de.xml");
 		} catch(Exception ex) {
   		  this.propNames_de = HelperMethods.loadPropertiesFromFile ("ddc_names_de.xml");
 		}

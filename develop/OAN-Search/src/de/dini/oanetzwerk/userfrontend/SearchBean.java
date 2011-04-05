@@ -31,7 +31,6 @@ public class SearchBean implements Serializable {
 	 * 
 	 */
 	private static Logger logger = Logger.getLogger(SearchBean.class);
-	private Properties props = null;
 	private Properties search_props = null;
 	private MetadataLoaderBean mdLoaderBean;
 	private String strOneSlot = "";
@@ -64,7 +63,6 @@ public class SearchBean implements Serializable {
 	}
 
 	private void init() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
-		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
 
 		// this.hitlist = new HitlistBean();
 		// this.hitlist.setParentSearchBean(this);
@@ -82,7 +80,7 @@ public class SearchBean implements Serializable {
 		this.strRepositoryFilterRID = request.getParameter("filterForRID");
 		setupRepositoryFilterByRID(this.strRepositoryFilterRID);
 
-		this.search_props = HelperMethods.loadPropertiesFromFileWithinWebcontainer(Utils.getWebappPath() + "/WEB-INF/searchclientprop.xml");
+		this.search_props = WebUtils.getSearchClientProperties();
 		this.mySearchClient = new SearchClient(this.search_props);
 
 		String query = request.getParameter("query");
@@ -361,10 +359,6 @@ public class SearchBean implements Serializable {
 		return "error";
 	}
 
-	private RestClient prepareRestTransmission(String resource) {
-		return RestClient.createRestClient(new File(System.getProperty("catalina.base") + this.props.getProperty("restclientpropfile")),
-		                resource, this.props.getProperty("username"), this.props.getProperty("password"));
-	}
 
 	private void setupRepositoryFilterByRID(String strRID) {
 		if (this.strRepositoryFilterRID == null) {
@@ -372,7 +366,7 @@ public class SearchBean implements Serializable {
 			return;
 		}
 
-		RestMessage rms = prepareRestTransmission("Repository/" + strRID).sendGetRestMessage();
+		RestMessage rms = WebUtils.prepareRestTransmission("Repository/" + strRID).sendGetRestMessage();
 		if ((rms == null) || (rms.getListEntrySets().isEmpty()) || (rms.getStatus() != RestStatusEnum.OK)) {
 			logger.warn("received no repository data entry for rid " + strRID + ", status: " + rms.getStatus() + " : "
 			                + rms.getStatusDescription());

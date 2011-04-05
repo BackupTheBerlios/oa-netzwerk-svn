@@ -28,7 +28,7 @@ import de.dini.oanetzwerk.utils.HelperMethods;
  * 
  * @author schoenfa
  * 
- * RankingBean ermittelt die am meisten gelesenen Einträge anhand der Daten von OA-Statistik.
+ * RankingBean ermittelt die am meisten gelesenen Eintrï¿½ge anhand der Daten von OA-Statistik.
  *
  */
 public class RankingBean {
@@ -52,7 +52,7 @@ public class RankingBean {
 	 */
 	public RankingBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		
-		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer (Utils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
+		this.props = HelperMethods.loadPropertiesFromFileWithinWebcontainer (WebUtils.getWebappPath() + "/WEB-INF/userfrontend_gui.xml");
 		
 		// new list of oids (hits)
 		this.listHitOID = new ArrayList<BigDecimal>();
