@@ -319,14 +319,11 @@ public class HitlistBean implements Serializable {
 	}
 */	
 	
-	private RestClient prepareRestTransmission(String resource) {
-		return RestClient.createRestClient(new File(System.getProperty("catalina.base") + this.props.getProperty("restclientpropfile")),
-		                resource, this.props.getProperty("username"), this.props.getProperty("password"));
-	}
+
 
 	public void setHitStatisticstoMapHitBean() {
 		for(BigDecimal bdOID : listHitOID) {
-			RestMessage rms = prepareRestTransmission("UsageStatistics/"+ bdOID).sendGetRestMessage();
+			RestMessage rms = WebUtils.prepareRestTransmission("UsageStatistics/"+ bdOID).sendGetRestMessage();
 			if ((rms == null) ||((rms.getListEntrySets().isEmpty()) && (rms.getStatus() != RestStatusEnum.OK))|| (rms.getStatus() != RestStatusEnum.OK)) {
 				logger.warn("received no UsageData_Ranking data ");
 				return;

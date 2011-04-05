@@ -75,14 +75,10 @@ public class RankingBean {
 
 	}
 	
-	private RestClient prepareRestTransmission(String resource) {
-		return RestClient.createRestClient(new File(System.getProperty("catalina.base") + this.props.getProperty("restclientpropfile")),
-		                resource, this.props.getProperty("username"), this.props.getProperty("password"));
-	}
 
 	private void setupRankingList() {
 
-		RestMessage rms = prepareRestTransmission("UsageStatistics/").sendGetRestMessage();
+		RestMessage rms = WebUtils.prepareRestTransmission("UsageStatistics/").sendGetRestMessage();
 		if ((rms == null) || (rms.getListEntrySets().isEmpty()) || (rms.getStatus() != RestStatusEnum.OK)) {
 			logger.warn("received no UsageData_Ranking data ");
 			return;
