@@ -1872,5 +1872,18 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
+	public static PreparedStatement UsageData_Ranking(Connection connection) throws SQLException {
+		// TODO Anpassen der Datumsanfrage wenn die Statistik DB es erlaubt.
+		PreparedStatement preparedstmt = connection.prepareStatement("Select distinct top 10 object_id, counter, counted_for_date FROM UsageData_Months where counted_for_date in (SELECT max(counted_for_date) from UsageData_Months where counted_for_date <(SELECT max(counted_for_date) from UsageData_Months)) Order by counter desc");
+		return preparedstmt;
+	}
+	
+	public static PreparedStatement UsageData_Counter_ForOID(Connection connection, BigDecimal object_id) throws SQLException {
+		// TODO Anpassen der Datumsanfrage wenn die Statistik DB es erlaubt.
+		PreparedStatement preparedstmt = connection.prepareStatement("Select distinct object_id, counter, counted_for_date FROM UsageData_Months where object_id=? and counted_for_date in (SELECT max(counted_for_date) from UsageData_Months where counted_for_date <(SELECT max(counted_for_date) from UsageData_Months))");
+		preparedstmt.setBigDecimal(1, object_id);
+		return preparedstmt;
+	}
+	
 	
 }
