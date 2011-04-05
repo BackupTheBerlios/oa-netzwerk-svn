@@ -188,8 +188,10 @@ public class SearchBean implements Serializable {
 		}
 		this.hitlist.setListHitOID(listOIDs);
 		this.hitlist.updateHitlistMetadata();
+		//To slow
+		//this.hitlist.setHitStatisticstoMapHitBean();
 	}
-
+	//This ingenious name is the search for metadata
 	public void searchFor2(String strQuery, String strDDC) {
 		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
 		try {
@@ -203,6 +205,8 @@ public class SearchBean implements Serializable {
 		}
 		this.hitlist.setListHitOID(listOIDs);
 		this.hitlist.updateHitlistMetadata();
+		//To slow
+		//this.hitlist.setHitStatisticstoMapHitBean();
 
 	}
 
@@ -237,15 +241,6 @@ public class SearchBean implements Serializable {
 		browse.setSelectedDDCCatName("Alles");
 		List<BigDecimal> listOIDs = new ArrayList<BigDecimal>();
 		listOIDs = this.ranking.getListHitOID();
-/*		try {
-			listOIDs = this.mySearchClient.querySearchService(strQuery, strDDC);
-			this.bErrorLastSearch = false;
-			this.strErrorLastSearch = "";
-		} catch (SearchClientException scex) {
-			logger.error("SearchClientException: " + scex);
-			this.bErrorLastSearch = true;
-			this.strErrorLastSearch = ("Fehler: " + scex.getMessage());
-		}*/
 		this.hitlist.setListHitOID(listOIDs);
 		this.hitlist.updateHitlistMetadata();
 		return "search_clicked";

@@ -31,11 +31,14 @@
      <!-- Trennspalte -->
 		 </t:panelGroup>
 		<t:panelGroup>
-				<div id="div_inpagecenter_box_big">			
-					<!-- include hitlist components -->
+				<t:div id="div_inpagecenter_box_big" rendered="#{!searchBean.hitlist.booleanShowSearchHelpNotice}">			
 			        <%@ include file="components/hitlist_button_assisted_scroller.htm" %>
 			        <%@ include file="components/hitlist_medium.htm" %>
-				</div>
+				</t:div>
+				<t:div rendered="#{searchBean.hitlist.booleanShowSearchHelpNotice}">
+							<br />
+			        <t:outputText value="#{msg.hitlist_scroller_searchnotice}"/>
+				</t:div>
 		</t:panelGroup>
 				  <f:facet name="footer"><t:panelGroup></t:panelGroup></f:facet>				
 		</t:panelGrid>

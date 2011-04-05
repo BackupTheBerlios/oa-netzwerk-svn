@@ -45,6 +45,13 @@ public class HitlistBean implements Serializable {
 	private BigDecimal selectedDetailsOID = null;
 	private TreeSet<BigDecimal> setClipboardOID;
 	
+	private String strUsageStatisticsRID = null;
+	private String strUsageStatisticsName = null;
+	private String strUsageStatisticsURL = null;
+	
+	private boolean sortAscending = true; 
+
+	
 	public HitlistBean() throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
 		String serverPath = Utils.getWebappPath();
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -85,6 +92,7 @@ public class HitlistBean implements Serializable {
 				return title1.compareTo(title2);
 			}
 		});
+
 		
 		
 		
@@ -181,6 +189,9 @@ public class HitlistBean implements Serializable {
 	}
 	public Boolean getBooleanListHitOIDNotEmpty() {
 		return listHitOID.size()>0;
+	}
+	public Boolean getBooleanShowSearchHelpNotice(){
+		return (parentSearchBean.getStrOneSlot() == "" && getBooleanListHitOIDEmpty());
 	}
 
 	
@@ -316,4 +327,72 @@ public class HitlistBean implements Serializable {
 		
 	}
 */	
+	
+	private RestClient prepareRestTransmission(String resource) {
+		return RestClient.createRestClient(new File(System.getProperty("catalina.base") + this.props.getProperty("restclientpropfile")),
+		                resource, this.props.getProperty("username"), this.props.getProperty("password"));
+	}
+
+	public void setHitStatisticstoMapHitBean() {
+		for(BigDecimal bdOID : listHitOID) {
+			RestMessage rms = prepareRestTransmission("UsageStatistics/"+ bdOID).sendGetRestMessage();
+			if ((rms == null) ||((rms.getListEntrySets().isEmpty()) && (rms.getStatus() != RestStatusEnum.OK))|| (rms.getStatus() != RestStatusEnum.OK)) {
+				logger.warn("received no UsageData_Ranking data ");
+				return;
+			}else if((rms.getListEntrySets().isEmpty()) && (rms.getStatus() == RestStatusEnum.OK)){
+				mapHitBean.get(bdOID).setHitcounter(new BigDecimal(0));
+				logger.info("received no UsageData_Ranking data, but Reststatus OK, there are no statistics for this OID: "+bdOID+", its Hitcounter was set to 0.");
+			}else {			
+				for (RestEntrySet res : rms.getListEntrySets()) {
+					Iterator<String> it = res.getKeyIterator();
+					String key = "";
+					while (it.hasNext()) {
+						key = (String) it.next();
+	
+						if ("counter".equals(key)){
+							mapHitBean.get(bdOID).setHitcounter(new BigDecimal(res.getValue(key)));
+							logger.info("Key"+ key + ": " + res.getValue(key) + "");
+						}
+						
+					}
+				}
+			}
+			
+		}
+	}
+//	//sort MapHitBean by OID
+//	public void sortMapHitBeanByOID() {
+// 
+//	   if(sortAscending){
+// 
+//		//ascending order
+//		Collections.sort(orderArrayList, new Comparator<Order>() {
+// 
+//			@Override
+//			public int compare(Order o1, Order o2) {
+// 
+//				return o1.getOrderNo().compareTo(o2.getOrderNo());
+// 
+//			}
+// 
+//		});
+//		sortAscending = false;
+// 
+//	   }else{
+// 
+//		//descending order
+//		Collections.sort(orderArrayList, new Comparator<Order>() {
+// 
+//			@Override
+//			public int compare(Order o1, Order o2) {
+// 
+//				return o2.getOrderNo().compareTo(o1.getOrderNo());
+// 
+//			}
+// 
+//		});
+//		sortAscending = true;
+//	   }
+//	}
+
 }

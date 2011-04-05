@@ -10,11 +10,11 @@
 							<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedTitle}"/></h:outputLink>
             </span>&nbsp;		
            </div>				
-                        <div class="div_hit_overview"><nosp>
-                          <span class="hit-creators"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedCreators}"/> (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedDate}"/>):</span>
-                          <span class="hit-keywords"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedKeywords}"/></span><br/>
-						  <span class="hit-url"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}"/></span><br/>
-						  <span class="hit-url">							
+              <div class="div_hit_overview"><nosp>
+              	<span class="hit-creators"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedCreators}"/> (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedDate}"/>):</span>
+              	<span class="hit-keywords"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedKeywords}"/></span><br/>
+						  	<span class="hit-url"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}"/></span><br/>
+						  	<span class="hit-url">							
 						  <% /* <h:graphicImage url="#{searchBean.hitlist.mapHitBean[hitOID].urlIRIcon}" alt="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" title="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" width="16" height="16"/> */ %>
                           <span class="command_link_bibtex"><h:outputLink value="http://oanet.cms.hu-berlin.de/bibexport?type=bibtex&OIDs=#{hitOID}" title="Bibtex-Eintrag des Objekts anzeigen">[bibtex]</h:outputLink></span>&nbsp;
 						  <h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
@@ -25,4 +25,4 @@
 						</div>
 				</h:column>
 			</h:dataTable>
-        </div> 
+    </div> 

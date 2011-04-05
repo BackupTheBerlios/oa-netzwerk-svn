@@ -183,26 +183,20 @@
 					</table>
 					</td>
 					<td>
-						<t:dataTable value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].trimmedKeywordList}" 
-				                    var="item"  dir="LTR" rowClasses="TableRow1,TableRow2" columnClasses="TableColumn" 
-				                    styleClass="keyword_table" headerClass="TableHeader" footerClass="TableFooter">
+						<t:dataTable value="#{searchBean.hitlist.mapHitBean[searchBean.hitlist.selectedDetailsOID].filteredKeywordList}" 
+				                    var="item"  dir="LTR" columnClasses="KeywordsCol2,KeywordsCol1,KeywordsCol2" >
 				    		      <f:facet name="header">
 												<h:outputText value="#{msg.keywords}" />
 								      </f:facet>
-				    		<t:column>
-										<f:facet name="header">
-										   <t:outputText value="#{msg.keyword}" />
-										</f:facet>
-										<t:outputText value="#{item[0]}"></t:outputText>
-					      </t:column>
-				    		<t:column>
-										<f:facet name="header">
-										   <t:outputText value="#{msg.search_external}" />
-										</f:facet>
+				    		<td class="hitlist_content"><t:column>
+				    		<t:outputText value="#{item[0]}"></t:outputText>
+					      </t:column></td>
+				    		<td class="hitlist_content"><t:column>
 										<h:outputLink value="#{item[1]}" target="_blank" title="#{msg.search_at_google}"><img src="../img/google_G.png"/></h:outputLink>
-										&nbsp;
+								</t:column></td>
+				    		<td class="hitlist_content"><t:column>
 										<h:outputLink value="#{item[2]}" target="_blank" title="#{msg.search_at_wiki}"><img src="../img/wikipedia_W.png"/></h:outputLink>
-					      </t:column>
+					      </t:column></td>
 						</t:dataTable>					
 					</td>
 				</tr>

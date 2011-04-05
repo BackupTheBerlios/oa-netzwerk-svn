@@ -354,6 +354,9 @@ dt {
 	background-color: #EEEEFF;
 	font-size: 11px;	
 }
+
+
+
 #div_hitdetails ul {
   float: left;
   list-style: none;
@@ -652,3 +655,16 @@ td.tabContent {
 #div_contact_main p {
   margin-left: 10px;
 }
+
+
+
+
+.KeywordsCol1{
+	background-color: #EEEEFF;
+	font-size: 11px;
+	width:100px;
+}
+.KeywordsCol2{
+	background-color: #DDDDEE;
+}
+

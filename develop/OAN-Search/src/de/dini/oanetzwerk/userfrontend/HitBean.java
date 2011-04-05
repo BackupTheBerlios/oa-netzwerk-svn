@@ -39,7 +39,14 @@ public class HitBean implements Serializable {
 
 	private HitlistBean parentHitlistBean = null;
 	private BigDecimal bdOID = null;
+	private final String googleStartURIRart 	= "http://www.google.de/search?q=%22",
+						 wikipediaStartURIPart 	= "http://de.wikipedia.org/wiki/Spezial:Search?search=%22",
+						 endURIPart 			= "%22";
+
 	private CompleteMetadata completeMetadata;
+	
+	// For sorting by hit statistics
+	private BigDecimal hitcounter = null;
 	
 	public HitBean() {
 		
@@ -284,8 +291,8 @@ public class HitBean implements Serializable {
 			Object[] s = new Object[4];
 			s[0] = keyword_val;
 			if(keyword.getLanguage() != null && keyword.getLanguage().length() > 0) s[0] = keyword_val + " (" + keyword.getLanguage() + ")";
-			s[1] = "http://www.google.de/search?q=%22" + keyword_val + "%22";
-			s[2] = "http://de.wikipedia.org/wiki/Spezial:Search?search=%22" + keyword_val + "%22";
+			s[1] = googleStartURIRart + keyword_val + endURIPart;
+			s[2] = wikipediaStartURIPart + keyword_val + endURIPart;
 			KeywordBean kb = new KeywordBean();
 			kb.setParentHitBean(this);
 			kb.setKeyword(keyword);
@@ -293,6 +300,66 @@ public class HitBean implements Serializable {
 			trimmedKeywords.add(s);
 		}
 		return trimmedKeywords;
+	}
+	
+
+	public List<Object[]> getFilteredKeywordList() {
+		List<Object[]> filteredKeywordList = new ArrayList<Object[]>();
+		List<Object[]> trimmedKeywordList = getTrimmedKeywordList();
+		final String komma 		= ",",
+					 semikolon 	= ";",
+					 punkt 		= ".";
+		for(Object[] keywordObject : trimmedKeywordList) {
+			
+			//keyword = keywordObject[0].toString();
+			List<String> keywords = new ArrayList<String>();
+			if (keywordObject[0].toString().indexOf(komma) == -1 && 
+					keywordObject[0].toString().indexOf(semikolon) == -1 && 
+						keywordObject[0].toString().indexOf(punkt) == -1){
+				keywords.add(keywordObject[0].toString());
+			} else {
+				if (keywordObject[0].toString().indexOf(komma) != -1){
+					String[] tempString = keywordObject[0].toString().split(komma);
+					for (String tempSubString : tempString){
+						keywords.add(tempSubString);
+					}
+				}
+				if (keywordObject[0].toString().indexOf(semikolon) != -1){
+					String[] tempString = keywordObject[0].toString().split(semikolon);
+					for (String tempSubString : tempString){
+						keywords.add(tempSubString);
+					}
+				} 
+				if (keywordObject[0].toString().indexOf(punkt) != -1){
+					String[] tempString = keywordObject[0].toString().split(punkt);
+					for (String tempSubString : tempString){
+						keywords.add(tempSubString);
+					}
+				}
+			}
+			if (keywords.size() > 1){
+				KeywordBean kb = (KeywordBean) keywordObject[3];
+				for (String keyword : keywords){
+					if (!keyword.matches("\\d+")){
+						Object[] s = new Object[4];
+						s[0] = keyword;
+						s[1] = googleStartURIRart + keyword + endURIPart;
+						s[2] = wikipediaStartURIPart + keyword + endURIPart;
+						KeywordBean newkb = new KeywordBean();
+						newkb.setParentHitBean(kb.getParentHitBean());
+						newkb.setKeyword(new Keyword(keyword, kb.getKeyword().getLanguage()));
+						s[3] = newkb;
+						filteredKeywordList.add(s);						
+					}
+
+				}
+			} else if (keywords.size() == 1){
+				if (!keywords.get(0).matches("\\d+")){					
+					filteredKeywordList.add(keywordObject);
+				}
+			}			
+		}
+		return filteredKeywordList;
 	}
 	
 	public String getMetadatastring() {
@@ -388,6 +455,14 @@ public class HitBean implements Serializable {
 	public String actionVerwerfenLink() {
 		this.parentHitlistBean.removeSetClipboardOID(this.getCompleteMetadata().getOid());
 		return "verwerfen_clicked";
+	}
+
+	public void setHitcounter(BigDecimal hitcounter) {
+		this.hitcounter = hitcounter;
+	}
+
+	public BigDecimal getHitcounter() {
+		return hitcounter;
 	}	
 	
 }
