@@ -6,5 +6,5 @@
 	<entry key="username">Harvester</entry>
 	<!-- the proper password for the user above must be entered below -->
 	<entry key="password">retsevrah</entry>
-	<entry key="restclientpropfile">/webapps/OAN-Search/WEB-INF/restclientprop.xml</entry>
+	<entry key="restclientpropfile">/WEB-INF/restclientprop.xml</entry>
 </properties>
