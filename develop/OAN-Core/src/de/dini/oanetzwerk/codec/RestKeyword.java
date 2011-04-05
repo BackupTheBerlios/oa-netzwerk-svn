@@ -20,5 +20,6 @@ public enum RestKeyword {
 	OAIExportCache,
 	UnneededData,
 	InterpolatedDDC,
-	UsageData
+	UsageData,
+	UsageStatistics
 }
