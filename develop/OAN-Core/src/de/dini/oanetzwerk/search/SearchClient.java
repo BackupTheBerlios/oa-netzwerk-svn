@@ -61,8 +61,8 @@ public class SearchClient {
 		//newclient.getState ( ).setCredentials (new AuthScope (this.strSearchServiceBaseURL  + "?search=bar", this.strPort, "OA-Netzwerk"), defaultcreds);
 		newclient.getState ( ).setCredentials (AuthScope.ANY, defaultcreds);
 		
-		//newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
-		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "iso-8859-1");
+		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
+		//newclient.getParams ( ).setParameter ("http.protocol.content-charset", "iso-8859-1");
 		//newclient.getParams ( ).setParameter ("http.authentication.credential-provider", "");
 		
 		if (logger.isDebugEnabled ( ))
@@ -171,7 +171,7 @@ public class SearchClient {
 			for(String line : lines) {				
 				String[] items = line.split(";");
 				String strOID = items[0]; // the first semicolon separated item should be the OID
-				logger.info("splitted result line : " + Arrays.asList(items));
+				logger.debug("splitted result line : " + Arrays.asList(items));
 				try {
 				    BigDecimal bdOID = new BigDecimal(strOID);
 				    listResultOIDs.add(bdOID);
@@ -261,7 +261,7 @@ public class SearchClient {
         for (String line : lines) {
           String[] items = line.split(";");
           String strOID = items[0];
-          logger.info("splitted result line : " + Arrays.asList(items));
+          logger.debug("splitted result line : " + Arrays.asList(items));
           try {
             BigDecimal bdOID = new BigDecimal(strOID);
             listResultOIDs.add(bdOID);
