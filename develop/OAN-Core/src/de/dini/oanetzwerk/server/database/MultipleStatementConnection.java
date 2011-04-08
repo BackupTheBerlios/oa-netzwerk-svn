@@ -41,7 +41,7 @@ public class MultipleStatementConnection implements StatementConnection {
 	 * @throws SQLException 
 	 */
 	
-	protected MultipleStatementConnection (Connection dataSourceConnection) throws SQLException {
+	public MultipleStatementConnection (Connection dataSourceConnection) throws SQLException {
 		
 //		if (logger.isDebugEnabled ( ))
 //			logger.debug ("MultipleStatementConnection Instance will be prepared");

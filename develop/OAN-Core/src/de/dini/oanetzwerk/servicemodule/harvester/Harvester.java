@@ -162,6 +162,13 @@ public class Harvester {
 	private String httpResponseCharSet = "UTF-8";
 	
 	/**
+	 * 
+	 */
+	
+	private boolean stopped = false;
+	
+	
+	/**
 	 * Standard Constructor. It does nothing beside constructing the object
 	 * instance. To configure the created harvester call  {@link #prepareHarvester(int)}
 	 * 
@@ -307,148 +314,6 @@ public class Harvester {
 		return harvester;
 	}
 	
-	/**
-	 * Getter method for repositoryURL
-	 * 
-	 * @return the repositoryURL
-	 */
-	
-	public final String getRepositoryURL ( ) {
-
-		return this.repositoryURL;
-	}
-	
-	/**
-	 * Setter method for the RepositoryURL
-	 * 
-	 * @param repositoryURL the repositoryURL to set
-	 */
-	
-	public final void setRepositoryURL (String repositoryURL) {
-
-		this.repositoryURL = repositoryURL;
-	}
-	
-	/**
-	 * Getter method for repositoryID
-	 * 
-	 * @return the repositoryID
-	 */
-	
-	public final int getRepositoryID ( ) {
-
-		return this.repositoryID;
-	}
-	
-	/**
-	 * Getter method for the fullharvest
-	 * 
-	 * @return the fullharvest (true if full, false if update)
-	 */
-	
-	public final boolean isFullharvest ( ) {
-
-		return this.fullharvest;
-	}
-	
-	/**
-	 * Setter method for the fullharvest
-	 * 
-	 * @param fullharvest the fullharvest to set (true if full, false if update)
-	 */
-	
-	public final void setFullharvest (boolean fullharvest) {
-
-		this.fullharvest = fullharvest;
-	}
-	
-	/**
-	 * Getter method for the date
-	 * 
-	 * @return the date
-	 */
-	
-	public final String getDate ( ) {
-
-		return this.date;
-	}
-	
-	/**
-	 * Setter method for the date
-	 * 
-	 * @param date the date to set
-	 */
-	
-	public final void setDate (String date) {
-
-		this.date = date;
-	}
-	
-	/**
-	 * Getter method for the amount
-	 * 
-	 * @return the amount
-	 */
-	
-	public final int getAmount ( ) {
-
-		return this.amount;
-	}
-	
-	/**
-	 * Setter method for the amount
-	 * 
-	 * @param amount the amount to set
-	 */
-	
-	public final void setAmount (int amount) {
-
-		this.amount = amount;
-	}
-	
-	/**
-	 * Getter method for the interval
-	 * 
-	 * @return the interval
-	 */
-	
-	public final int getInterval ( ) {
-
-		return this.interval;
-	}
-	
-	/**
-	 * Setter method for the interval
-	 * 
-	 * @param interval the interval to set
-	 */
-	
-	public final void setInterval (int interval) {
-
-		this.interval = interval;
-	}
-	
-	/**
-	 * Getter method for the testdata
-	 * 
-	 * @return the testData
-	 */
-	
-	public final boolean isTestData ( ) {
-
-		return this.testData;
-	}
-	
-	/**
-	 * Setter method for the testdata-parameter
-	 * 
-	 * @param testData the testData to set
-	 */
-	
-	public final void setTestData (boolean testData) {
-
-		this.testData = testData;
-	}
 	
 	/**
 	 * Getter method for the propertyfile
@@ -2340,4 +2205,161 @@ public class Harvester {
 		
 		return optionValue;
 	}
+	
+	
+	/********************************* Getter & Setter ***********************************/
+	
+
+	/**
+	 * Getter method for repositoryURL
+	 * 
+	 * @return the repositoryURL
+	 */
+	
+	public final String getRepositoryURL ( ) {
+
+		return this.repositoryURL;
+	}
+	
+	/**
+	 * Setter method for the RepositoryURL
+	 * 
+	 * @param repositoryURL the repositoryURL to set
+	 */
+	
+	public final void setRepositoryURL (String repositoryURL) {
+
+		this.repositoryURL = repositoryURL;
+	}
+	
+	/**
+	 * Getter method for repositoryID
+	 * 
+	 * @return the repositoryID
+	 */
+	
+	public final int getRepositoryID ( ) {
+
+		return this.repositoryID;
+	}
+	
+	/**
+	 * Getter method for the fullharvest
+	 * 
+	 * @return the fullharvest (true if full, false if update)
+	 */
+	
+	public final boolean isFullharvest ( ) {
+
+		return this.fullharvest;
+	}
+	
+	/**
+	 * Setter method for the fullharvest
+	 * 
+	 * @param fullharvest the fullharvest to set (true if full, false if update)
+	 */
+	
+	public final void setFullharvest (boolean fullharvest) {
+
+		this.fullharvest = fullharvest;
+	}
+	
+	/**
+	 * Getter method for the date
+	 * 
+	 * @return the date
+	 */
+	
+	public final String getDate ( ) {
+
+		return this.date;
+	}
+	
+	/**
+	 * Setter method for the date
+	 * 
+	 * @param date the date to set
+	 */
+	
+	public final void setDate (String date) {
+
+		this.date = date;
+	}
+	
+	/**
+	 * Getter method for the amount
+	 * 
+	 * @return the amount
+	 */
+	
+	public final int getAmount ( ) {
+
+		return this.amount;
+	}
+	
+	/**
+	 * Setter method for the amount
+	 * 
+	 * @param amount the amount to set
+	 */
+	
+	public final void setAmount (int amount) {
+
+		this.amount = amount;
+	}
+	
+	/**
+	 * Getter method for the interval
+	 * 
+	 * @return the interval
+	 */
+	
+	public final int getInterval ( ) {
+
+		return this.interval;
+	}
+	
+	/**
+	 * Setter method for the interval
+	 * 
+	 * @param interval the interval to set
+	 */
+	
+	public final void setInterval (int interval) {
+
+		this.interval = interval;
+	}
+	
+	/**
+	 * Getter method for the testdata
+	 * 
+	 * @return the testData
+	 */
+	
+	public final boolean isTestData ( ) {
+
+		return this.testData;
+	}
+	
+	/**
+	 * Setter method for the testdata-parameter
+	 * 
+	 * @param testData the testData to set
+	 */
+	
+	public final void setTestData (boolean testData) {
+
+		this.testData = testData;
+	}
+
+	public boolean isStopped() {
+    	return stopped;
+    }
+
+	public void setStopped(boolean stopped) {
+    	this.stopped = stopped;
+    }
+	
+	
 }

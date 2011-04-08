@@ -73,7 +73,8 @@ public class Aggregator {
 	private boolean testing = false; // if set to true, aggregator stores data, but no update to workflow is saved
 
 	private BigDecimal serviceID;
-	
+		
+	private boolean stopped = false;
 	
 	private final Properties getProps ( ) {
 		
@@ -897,5 +898,12 @@ public class Aggregator {
 		return value;
 	}
 	
+	public boolean isStopped() {
+    	return stopped;
+    }
+
+	public void setStopped(boolean stopped) {
+    	this.stopped = stopped;
+    }
 	
 }
