@@ -14,7 +14,7 @@
 <ui:composition template="templates/template.xhtml">
 
 
-  <ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
+  <ui:param name="pageTitle" value="Validation - Ergebnisse/OAI-PMH" />
 
   <ui:define name="navigation">
     <a href="/oanadmin/">OA-Netzwerk</a>
@@ -41,20 +41,16 @@
   </ui:define>
 
   <ui:define name="content">
-    <h2>Validator</h2>
-        
-        Das ist der Validator-Service von OA-Netzwerk.
-        <br />
-
-    <h:form>
-      <h:inputText id="baseUrl" size="80" value="#{validator.baseUrl}" />
-      <br /><br />
-      <h:commandButton type="submit" value="Klicken" action="#{validator.validate}">
-      </h:commandButton>
-    </h:form>
+  	<h2>
+   OAI-PMH
+   </h2>
+   Auf dieser Seite können die Abragen des Validators im Einzelnen eingesehen werden.
     <br />
-
-  </ui:define>
+    <br />
+  
+  
+  
+</ui:define>
 </ui:composition>
 
 </body>

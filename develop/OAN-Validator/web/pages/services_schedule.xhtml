@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:rich="http://richfaces.org/rich">
+
+<head></head>
+
+<body>
+
+<ui:debug hotkey="m" rendered="true" />
+
+<ui:composition template="templates/template.xhtml">
+
+
+  <ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
+
+  <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a>
+  </ui:define>
+
+  <ui:define name="menu">
+    <div id="tasks">
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
+      href="repositories_main.xhtml">Repositorien verwalten</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="services_main.faces">Dienste verwalten</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="users_main.faces">Benutzer verwalten</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="reports.faces">Reports</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="livelog.faces">Live Log</a></div>
+    </div>
+  </ui:define>
+
+  <ui:define name="content">
+  
+  <script type="text/javascript">
+	function fold1 () {
+	if (document.getElementById)
+		document.getElementById("ablaufplan").style.display="none";
+		}
+
+	function unfold1 () {
+		if (document.getElementById)
+			document.getElementById("ablaufplan").style.display="inline";
+			}
+
+	function fold2 () {
+		if (document.getElementById)
+			document.getElementById("aenderungsmenu").style.display="none";
+			}
+
+	function unfold2 () {
+		if (document.getElementById)
+			document.getElementById("aenderungsmenu").style.display="inline";
+			}
+
+	function invisible () {
+		if (document.getElementById)
+			document.getElementById("Aendern").style.visibility="hidden";
+			}
+
+	function visible () {
+		if (document.getElementById)
+			document.getElementById("Aendern").style.visibility="visible";
+			}		
+	
+	</script>
+  
+  <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
+    		
+    		
+    		<div id="aenderungsmenu" style="display:none">
+			<h2>Änderungen an Dienst vornehmen</h2>
+    		Für eine erfolgreiche Änderung muss der zu ändernde Dienst sowie eine selbstgewählte Zeit- periode ausgewählt werden.
+    		
+    		<br />
+        	<br />
+        
+        Dienst auswählen
+        <h:selectOneMenu id="service_choice" value="#{service_choice}">
+        	<f:selectItem id="item1" itemLabel="Testeintrag" itemValue="1" />
+        	<f:selectItem id="item2" itemLabel="Testeintrag2" itemValue="2" />
+        </h:selectOneMenu>
+        
+        <br />
+        <br />
+        <br />
+ 
+ 		
+        <table>
+        	<tr>
+        		<td><h:selectBooleanCheckbox id="month" value="#{month_bool}"/></td> 
+       			<td>monthly at the</td> 
+        		<td><h:selectOneMenu id="choose_monthly" value="#{month}" style=" width : 103px;">
+        			<f:selectItem id="item1" itemLabel="1." itemValue="1" />
+        			<f:selectItem id="item2" itemLabel="2." itemValue="2" />
+        			<f:selectItem id="item3" itemLabel="3." itemValue="3" />
+        			<f:selectItem id="item4" itemLabel="4." itemValue="4" />
+        			<f:selectItem id="item5" itemLabel="5." itemValue="5" />
+        			<f:selectItem id="item6" itemLabel="6." itemValue="6" />
+        			<f:selectItem id="item7" itemLabel="7." itemValue="7" />
+        			<f:selectItem id="item8" itemLabel="8." itemValue="8" />
+        			<f:selectItem id="item9" itemLabel="9." itemValue="9" />
+        			<f:selectItem id="item10" itemLabel="10." itemValue="10" />
+        			<f:selectItem id="item11" itemLabel="11." itemValue="11" />
+        			<f:selectItem id="item12" itemLabel="12." itemValue="12" />
+        			<f:selectItem id="item13" itemLabel="13." itemValue="13" />
+        			<f:selectItem id="item14" itemLabel="14." itemValue="14" />
+        			<f:selectItem id="item15" itemLabel="15." itemValue="15" />
+        			<f:selectItem id="item16" itemLabel="16." itemValue="16" />
+        			<f:selectItem id="item17" itemLabel="17." itemValue="17" />
+        			<f:selectItem id="item18" itemLabel="18." itemValue="18" />
+        			<f:selectItem id="item19" itemLabel="19." itemValue="19" />
+        			<f:selectItem id="item20" itemLabel="20." itemValue="20" />
+        			<f:selectItem id="item21" itemLabel="21." itemValue="21" />
+        			<f:selectItem id="item22" itemLabel="22." itemValue="22" />
+        			<f:selectItem id="item23" itemLabel="23." itemValue="23" />
+        			<f:selectItem id="item24" itemLabel="24." itemValue="24" />
+        			<f:selectItem id="item25" itemLabel="25." itemValue="25" />
+        			<f:selectItem id="item26" itemLabel="26." itemValue="26" />
+        			<f:selectItem id="item27" itemLabel="27." itemValue="27" />
+        			<f:selectItem id="item28" itemLabel="28." itemValue="28" />
+        			<f:selectItem id="item29" itemLabel="29." itemValue="29" />
+        			<f:selectItem id="item30" itemLabel="30." itemValue="30" />
+        			<f:selectItem id="item31" itemLabel="31." itemValue="31" />
+        		</h:selectOneMenu></td>
+        		<td>[1-31]</td>
+        		<td>(<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Hinweis</a>)</td>
+        		<td><div class="help_box" id="help_name">Hat ein Monat weniger Tage als gewählt, so erfolgt die Durchführung am Letzten des Monats.</div></td>
+        	</tr>
+        
+        <tr>
+        		<td><h:selectBooleanCheckbox id="week" value="#{week_bool}"/></td> 
+       			<td>weekly on</td> 
+        		<td><h:selectOneMenu id="choose_weekly" value="#{week}" style=" width : 105px;">
+        			<f:selectItem id="item1" itemLabel="monday" itemValue="1" />
+        			<f:selectItem id="item2" itemLabel="tuesday" itemValue="2" />
+        			<f:selectItem id="item3" itemLabel="wednesday" itemValue="3" />
+        			<f:selectItem id="item4" itemLabel="thursday" itemValue="4" />
+        			<f:selectItem id="item5" itemLabel="friday" itemValue="5" />
+        			<f:selectItem id="item6" itemLabel="saturday" itemValue="6" />
+        			<f:selectItem id="item7" itemLabel="sunday" itemValue="7" />
+        		</h:selectOneMenu></td>
+        		<td>[Mo-So]</td>
+        		<td>
+        		<br />
+        		<br />
+        		<br />
+        		</td>
+        </tr>
+          
+       <tr>
+        		<td><h:selectBooleanCheckbox id="day" value="#{day_bool}"/></td> 
+       			<td>every</td> 
+        		<td><h:selectOneMenu id="choose_dayly" value="#{day}" style=" width : 103px;">
+        			<f:selectItem id="item1" itemLabel="1" itemValue="1" />
+        			<f:selectItem id="item2" itemLabel="2" itemValue="2" />
+        			<f:selectItem id="item3" itemLabel="3" itemValue="3" />
+        			<f:selectItem id="item4" itemLabel="4" itemValue="4" />
+        			<f:selectItem id="item5" itemLabel="5" itemValue="5" />
+        			<f:selectItem id="item6" itemLabel="6" itemValue="6" />
+        			<f:selectItem id="item7" itemLabel="7" itemValue="7" />
+        			<f:selectItem id="item8" itemLabel="8" itemValue="8" />
+        			<f:selectItem id="item9" itemLabel="9" itemValue="9" />
+        			<f:selectItem id="item10" itemLabel="10" itemValue="10" />
+        			<f:selectItem id="item11" itemLabel="15" itemValue="11" />
+        			<f:selectItem id="item12" itemLabel="20" itemValue="12" />
+        			<f:selectItem id="item13" itemLabel="25" itemValue="13" />
+        			<f:selectItem id="item14" itemLabel="30" itemValue="14" />
+        		</h:selectOneMenu></td>
+        		<td>day(s)</td>
+        		
+       </tr>
+        
+        </table>
+        
+        	<br />
+        	<br />
+        
+        	<div align="right">
+        		<h:selectBooleanCheckbox id="change_job" value="#{change_job}"/>bestehenden Job ändern
+        	</div>
+        
+       		<br />
+        	<br />
+        	<br />
+        
+        	<div align="right">
+        		<button name="Zurück" onclick="fold2(); unfold1(); visible()">Zurück</button>
+        		<button name="Speichern">Speichern</button>
+        	</div>
+		
+		</div>
+    		
+		<div id="ablaufplan" style="visibility:visible">
+		<h2>Dienstablaufplan</h2>
+        
+        Auf dieser Seite können Veränderungen an der zeitlichen Arbeitsweise einzelner Dienste von OA-Netzwerk vorgenommen werden.
+        <br />
+        <br />
+			<table id="jobs" >
+				<h:dataTable value="#{sersche.informations}" var="row"
+				headerClass="pane-header" rowClasses="odd, even"
+				style="border-collapse: collapse; border: 2px #bbb solid; width : 571px;">
+					<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="Dienst" />
+						</f:facet>
+							<h:outputText value="#{row.service}" />
+					</h:column>
+									
+					<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="Typ" />
+						</f:facet>
+							<h:outputText value="#{row.type}" />
+					</h:column>
+									
+					<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="Intervall" />
+						</f:facet>
+							<h:outputText value="#{row.interval}" />
+					</h:column>
+									
+					<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="Zusatzinformationen" />
+						</f:facet>
+							<h:outputText value="#{row.add_info}" />
+					</h:column>
+				</h:dataTable>
+			</table>
+			<div align="right">
+			<button id="Aendern" onclick="fold1(); unfold2(); invisible()">Änderungen vornehmen</button>
+            </div>
+        </div>
+		
+           
+       </div> 
+ 	</div>
+  </ui:define>
+</ui:composition>
+
+</body>
+
+</html>

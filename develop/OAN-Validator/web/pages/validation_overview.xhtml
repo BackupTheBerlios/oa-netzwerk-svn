@@ -14,7 +14,7 @@
 <ui:composition template="templates/template.xhtml">
 
 
-  <ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
+  <ui:param name="pageTitle" value="Validation - Übersicht" />
 
   <ui:define name="navigation">
     <a href="/oanadmin/">OA-Netzwerk</a>
@@ -41,20 +41,57 @@
   </ui:define>
 
   <ui:define name="content">
-    <h2>Validator</h2>
-        
-        Das ist der Validator-Service von OA-Netzwerk.
-        <br />
-
-    <h:form>
-      <h:inputText id="baseUrl" size="80" value="#{validator.baseUrl}" />
-      <br /><br />
-      <h:commandButton type="submit" value="Klicken" action="#{validator.validate}">
-      </h:commandButton>
-    </h:form>
+  
+   <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
+   
+   <h2>
+   Validation - Übersicht
+   </h2>
+   Auf dieser Seite können Informationen über laufende Validations eingesehen werden.
+    <br />
     <br />
 
-  </ui:define>
+    <table id="executors" >
+
+						<tr>
+							<td><h:form>
+							<table width="100%">
+								<h:dataTable value="#{valiList.repositories}" var="row"
+									headerClass="pane-header" rowClasses="odd, even"
+									style="border-collapse: collapse; border: 1px #bbb solid; width : 507px;">
+									
+									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+										<f:facet name="header">
+											<h:outputText value="OAI-Url" />
+										</f:facet>
+										<h:outputText value="#{row.oaiUrl}" />
+									</h:column>
+									
+									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+										<f:facet name="header">
+											<h:outputText value="Datum" />
+										</f:facet>
+										<h:outputText value="#{row.date}" />
+									</h:column>
+									
+									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+										<f:facet name="header">
+											<h:outputText value="Status" />
+										</f:facet>
+										<a href="validation_results.xhtml"><h:outputText value="#{row.state}" /></a>
+									</h:column>
+									
+								</h:dataTable>
+								</table>
+							</h:form></td>
+						</tr>
+					</table>
+					
+	</div>
+	</div>
+
+</ui:define>
 </ui:composition>
 
 </body>

@@ -8,15 +8,14 @@
 <head></head>
 
 <body>
-
 <ui:debug hotkey="m" rendered="true" />
 
 <ui:composition template="templates/template.xhtml">
 
 
-  <ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
+  <ui:param name="pageTitle" value="Validation - Ergebnisse" />
 
-  <ui:define name="navigation">
+ <ui:define name="navigation">
     <a href="/oanadmin/">OA-Netzwerk</a>
   </ui:define>
 
@@ -39,24 +38,33 @@
       href="livelog.faces">Live Log</a></div>
     </div>
   </ui:define>
-
+  
   <ui:define name="content">
-    <h2>Validator</h2>
-        
-        Das ist der Validator-Service von OA-Netzwerk.
-        <br />
-
-    <h:form>
-      <h:inputText id="baseUrl" size="80" value="#{validator.baseUrl}" />
-      <br /><br />
-      <h:commandButton type="submit" value="Klicken" action="#{validator.validate}">
-      </h:commandButton>
-    </h:form>
+   
+   <h2>
+   Details
+   </h2>
+   Der erste Link liefert Informationen zur Einhaltung des OAI-Protokolls. Content führt zu einer detaillierteren Ansicht des gewählten Validation-Jobs.
     <br />
+    <br />
+    
+    <table width="100%" style="width: 50%; border-collapse: collapse; border: 1px #bbb solid;">
 
-  </ui:define>
+         <tr>
+            <th class="pane-header">OAI-PMH</th>
+            <th class="pane-header">Content</th>
+           
+         </tr>
+
+         <tr class="odd">
+            <td style="vertical-align: middle; text-align: center;"><a href="validation_results_oaipmh.xhtml">Folge Link</a></td>
+            <td style="vertical-align: middle; text-align: center;"><a href="validation_results_content.xhtml">Folge Link</a></td>
+         </tr>
+      </table>	
+
+</ui:define>
+
 </ui:composition>
-
 </body>
 
 </html>
