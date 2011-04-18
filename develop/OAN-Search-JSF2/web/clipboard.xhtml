@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+<body>
+<ui:composition template="templates/template.xhtml">
+<ui:define name="contentheader">
+	<ui:include src="components/flat_category_search.xhtml" />
+</ui:define>
+<ui:define name="content">
+		<h:form>
+			<table >
+				<tr >
+					<td class="colStyle340">
+						<div id="div_seperator_right">	
+							<div id="div_simplebrowselist">
+						    <ui:include src="components/ddc_category_list.xhtml" />
+							</div> 
+						</div>
+					</td>
+					<td class="colStyle10">
+						<!-- Trennspalte -->
+					</td>
+					<td class="colStyle750">
+						<t:div rendered="#{searchBean.hitlist.sizeListClipboardOID > 0}">
+							<div class="closelink">
+								<h:commandLink value="#{msg.linkname_close_clipboard}" action="close_clipboard"/>
+							</div>			
+			        <ui:include src="components/clipboard.xhtml" />
+						</t:div>
+						<t:div rendered="#{!(searchBean.hitlist.sizeListClipboardOID > 0)}">
+							<br />
+			        <t:outputText value="#{msg.clipboard_no_entries}"/>
+						</t:div>							
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<!-- Footer -->
+					</td>
+				</tr>
+			</table>
+		</h:form>
+</ui:define>
+</ui:composition>
+</body>
+</html>

@@ -33,7 +33,7 @@
 					<t:div rendered="#{searchBean.browse.showDDCNums}"><span class="span_ddc_num"><t:outputText value="#{node_lvl1.strDDCValue}"/></span>&nbsp;<br /></t:div>
 					<span class="span_ddc_selected_name"><t:outputText value="#{node_lvl1.strNameDE}"/></span>
 					(<t:outputText value="#{node_lvl1.longItemCount}"/>|<t:outputText value="#{node_lvl1.longItemSubCount}"/>)
-					<br/><h:commandLink value="#{msg.start_search}" action="#{searchBean.actionSearchFromDDCTreeDirectlyWithAutoHitsLevelEINS}"/>				
+					<br/><h:commandLink value="#{msg.start_search}" action="#{searchBean.actionSearchFromDDCTreeDirectlyWithAutoHitsLevelEINS}"/> 
 				</div>
 			</t:div>	            
 			<t:div rendered="#{!node_lvl1.inPath}">
@@ -47,7 +47,7 @@
 							<t:div rendered="#{searchBean.browse.showDDCNums}"><span class="span_ddc_num"><t:outputText value="#{node_lvl2.strDDCValue}"/></span>&nbsp;<br /></t:div>
 							<span class="span_ddc_selected_name"><t:outputText value="#{node_lvl2.strNameDE}"/></span>
 							(<t:outputText value="#{node_lvl2.longItemCount}"/>|<t:outputText value="#{node_lvl2.longItemSubCount}"/>)
-								<br/><h:commandLink value="#{msg.start_search}" action="#{searchBean.actionSearchFromDDCTreeDirectlyWithAutoHitsLevelZWEI}"/>	
+								<br/><h:commandLink value="#{msg.start_search}" action="#{searchBean.actionSearchFromDDCTreeDirectlyWithAutoHitsLevelZWEI}"/>
 						</div>
 					</t:div>
 					<t:div rendered="#{!node_lvl2.inPath}">

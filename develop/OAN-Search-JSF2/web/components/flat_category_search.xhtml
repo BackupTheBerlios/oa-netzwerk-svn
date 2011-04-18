@@ -11,24 +11,38 @@
 <body>
 <ui:composition>	
 <div id="div_seperator_bottom">
- <t:panelGrid columns="2" columnClasses="colStyle340,colStyle760_b">
+ <t:panelGrid columns="3" columnClasses="colStyle340,colStyle500_b,colStyle340_b">
 	<t:panelGroup >
 		<div style="margin-left: 70px; margin-top: 30px;">
-			<h:graphicImage name="img/Logo_oan_rgb_micro.png" />
+			<h:graphicImage library="img" name="Logo_oan_rgb_micro.png" />
 		</div>
 	</t:panelGroup>
 	<t:panelGroup>
 		<div id="div_flat_search">
 			<h:form>
   			<h3><h:outputText value="#{msg.linkname_search}"/></h3>
-				<h:inputText maxlength="2048" size="45" title="OAN-Suche" value="#{searchBean.strOneSlot}" />
-				<h:commandButton value="#{msg.start_search}" action="#{searchBean.actionSearchWithDDCButton}" /><br />
+				<h:inputText maxlength="2048" size="70" title="#{msg.title_browse_ddc}" value="#{searchBean.strOneSlot}" /><br />
+				<table>
+				<tr>
+				<td><h:commandButton value="#{msg.start_search}" action="#{searchBean.actionSearchWithDDCButton}" /></td>
+				<td><h:commandButton value="#{msg.start_metasearch}" action="#{searchBean.actionMetaSearchWithDDCButton}" /></td>
+				<td><h:commandButton styleclass="rankingbutton" value="#{msg.list_ranking}" action="#{searchBean.actionGetRanking}" /></td>
+				</tr>
+				</table>			
 				<span class="span_selected_ddc"><h:outputText value="#{msg.category}"/>: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
 			</h:form>
-			<h:form>
-  			<h:commandButton value="Ranking" action="#{searchBean.actionGetRanking}" /><br />
-			</h:form>
 		</div>
+	</t:panelGroup>
+	<t:panelGroup>
+		<t:div rendered="#{searchBean.hitlist.sizeListClipboardOID > 0}">
+    	<div id="div_clipboard_header">
+	    	<h:form>    		
+	         	<h:commandLink action="show_clipboard" title="#{msg.open_clipboard}">
+	         		<h:outputText value="#{msg.open_clipboard}" />
+	         	</h:commandLink>
+				</h:form>
+			</div>
+		</t:div>
 	</t:panelGroup>
 </t:panelGrid> 
 </div>

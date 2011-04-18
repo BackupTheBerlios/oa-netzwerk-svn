@@ -20,6 +20,9 @@ h1, h2, h3, h4, h5 {
 
 /*allgemeines*/
 
+.rankingbutton{
+		font-size: 24px;	
+}
 .colStyle800 { 
 	width: 800px;
 	vertical-align:top;
@@ -35,6 +38,14 @@ h1, h2, h3, h4, h5 {
 .colStyle340 { 
 	width: 340px;
 	vertical-align:top;
+}
+.colStyle340_ { 
+	width: 340px;
+	vertical-align:bottom;
+}
+.colStyle500_b { 
+	width: 500px;
+	vertical-align:bottom;
 }
 .colStyle760_b { 
 	width: 760px;
@@ -189,8 +200,8 @@ dt {
   line-height: 18px;	
 }
 .command_link {
-  font-size: 9px;
-  /*font-weight: bold;*/
+  font-size: 11px;
+  font-weight: bold;
 }
 
 /*
@@ -270,18 +281,14 @@ dt {
 /* Clipboard in Hitlist */
 
 #div_clipboard_header {
-  border-top:1px solid black;
-  border-left:1px solid black;
-  border-right:1px solid black;
+  border:1px solid black;
   padding: 10px;
   background-color: #f0f0ff;
   margin-top: 30px;
-  margin-right: 10px;
+  margin-left: 10px;
 }
 #div_clipboard_overview {
-  border-top:1px solid black;
-  border-left:1px solid black;
-  border-right:1px solid black;
+  border-top:1px solid grey;
   padding: 10px;
   margin-right: 10px;
 }
@@ -289,8 +296,9 @@ dt {
   list-style: none;		
 }
 #div_clipboard_footer {
-  border: 1px solid black;
-  padding: 10px; 
+  border-top: 1px solid grey;
+  padding: 10px;
+  margin-top: 10px; 
   margin-right: 10px;
 }
 
@@ -331,6 +339,13 @@ dt {
 .backlink {
 	font-size: 11px;
 	font-weight: bold;
+}
+.closelink {
+	font-size: 11px;
+	font-weight: bold;
+	padding:5px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 #div_hitdetails {
   margin-left: 10px;

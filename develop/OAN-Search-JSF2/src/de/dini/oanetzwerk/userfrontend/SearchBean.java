@@ -218,14 +218,15 @@ public class SearchBean implements Serializable {
 		return sLink;
 	}
 
-	private String evalOneSlotAndDDC() {
+	private String evalOneSlotAndDDC(Boolean metasearch) {
 		logger.debug("evalOneSlotAndDDC");
 		String strDDC = this.browse.getSelectedDDCCatValue();
 		if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
 			String strQuery = new String(this.strOneSlot);
 			strQuery = strQuery.toUpperCase();
 			strQuery = strQuery.trim();
-			searchFor(strQuery, strDDC);
+			if(metasearch) searchFor(strQuery, strDDC);
+			else searchFor2(strQuery, strDDC);
 		} else if (strDDC != null) {
 			searchFor(null, strDDC);
 		}
@@ -244,32 +245,11 @@ public class SearchBean implements Serializable {
 		return "search_clicked";
 	}
 
-	private String evalOneSlotAndDDCV4() {
-		logger.debug("evalOneSlotAndDDC");
-		String strDDC = this.browse.getSelectedDDCCatValue();
-		if ((this.strOneSlot != null) && (this.strOneSlot.length() > 0)) {
-			String strQuery = new String(this.strOneSlot);
-			strQuery = strQuery.toUpperCase();
-			strQuery = strQuery.trim();
-			searchFor(strQuery, strDDC);
-		} else if (strDDC != null) {
-			searchFor(null, strDDC);
-		}
-		return "search_clicked_v4";
-	}
-
-	private String freeSearchAndDDCV4() {
+	private String freeSearchAndDDC(Boolean metasearch) {
 		logger.debug("freeSearchAndDDC");
 		String strDDC = this.browse.getSelectedDDCCatValue();
-		searchFor(fStrFreeSearch, strDDC);
-		setStrOneSlot("");
-		return "search_clicked_v4";
-	}
-
-	private String freeSearchAndDDC() {
-		logger.debug("freeSearchAndDDC");
-		String strDDC = this.browse.getSelectedDDCCatValue();
-		searchFor(fStrFreeSearch, strDDC);
+		if (metasearch) searchFor2(fStrFreeSearch, strDDC);
+		else searchFor(fStrFreeSearch, strDDC);
 		setStrOneSlot("");
 		return "search_clicked";
 	}
@@ -329,7 +309,6 @@ public class SearchBean implements Serializable {
 
 	private String parseOneSlotForQueryString2(String strQuery) {
 		logger.debug("parseOneSlotForQueryString");
-
 		searchFor2(strQuery, null);
 		return "search_clicked";
 	}
@@ -397,11 +376,14 @@ public class SearchBean implements Serializable {
 	}
 
 	public String actionSearchWithDDCButton() {
-		return evalOneSlotAndDDC();
+		return evalOneSlotAndDDC(false);
+	}
+	public String actionMetaSearchWithDDCButton() {
+		return evalOneSlotAndDDC(true);
 	}
 
 	public String actionSearchFromDDCTreeDirectlyWithAutoHits() {
-		return freeSearchAndDDC();
+		return freeSearchAndDDC(false);
 	}
 	public String actionSearchFromDDCTreeDirectlyWithAutoHitsLevelEINS() {
 		return freeSearchAndDDCLevel(ET_DDCLevel.EINS);
@@ -412,16 +394,10 @@ public class SearchBean implements Serializable {
 	public String actionSearchFromDDCTreeDirectlyWithAutoHitsLevelDREI() {
 		return freeSearchAndDDCLevel(ET_DDCLevel.DREI);
 	}
-
-	public String actionSearchWithDDCButtonV4() {
-		return evalOneSlotAndDDCV4();
+	public String actionMetaSearchFromDDCTreeDirectlyWithAutoHits() {
+		return freeSearchAndDDC(true);
 	}
 
-
-	public String actionSearchFromDDCTreeDirectlyWithAutoHitsV4() {
-		return freeSearchAndDDCV4();
-	}
-	
 	public String actionGetRanking() {
 		return getRanking();
 	}

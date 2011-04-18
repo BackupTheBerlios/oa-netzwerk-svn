@@ -26,16 +26,16 @@
 	          paginatorTableClass="paginator"
 	          paginatorActiveColumnStyle="font-weight:bold;">
 			<f:facet name="previous">
-				<h:graphicImage name="img/arrow_previous.png" alt="previous" title="Previous"/>
+				<h:graphicImage library="img" name="arrow_previous.png" alt="previous" title="Previous"/>
 			</f:facet>
 			<f:facet name="next">
-				<h:graphicImage name="img/arrow_next.png" alt="next" title="Next"/>
+				<h:graphicImage library="img" name="arrow_next.png" alt="next" title="Next"/>
 			</f:facet>
 			<f:facet name="fastforward">
-				<h:graphicImage name="img/arrow_fastforward.png" alt="fastforward" title="Fastforward"/>
+				<h:graphicImage library="img" name="arrow_fastforward.png" alt="fastforward" title="Fastforward"/>
 			</f:facet>
 			<f:facet name="fastrewind">
-				<h:graphicImage name="img/arrow_fastrewind.png" alt="fastrewind" title="Fastrewind"/>
+				<h:graphicImage library="img" name="arrow_fastrewind.png" alt="fastrewind" title="Fastrewind"/>
 			</f:facet>
 		</t:dataScroller>
 </div>
@@ -49,20 +49,27 @@
 	rows="10">
 	<h:column>
     <div class="div_hit_header">
-			<span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionDetailsLink}" title="#{msg.show_meta_data_of_object}"><h:graphicImage name="img/16x16_lupe.png"/></h:commandLink></span>
-			<h:graphicImage name="flags/#{searchBean.hitlist.mapHitBean[hitOID].flagIMG}" alt="#{searchBean.hitlist.mapHitBean[hitOID].flagALT}" title="#{searchBean.hitlist.mapHitBean[hitOID].flagALT}"/>         
+			<span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionDetailsLink}" title="#{msg.show_meta_data_of_object}"><h:graphicImage library="img" name="16x16_lupe.png"/></h:commandLink></span>
+			
+			<span class="command_link_plus">
+      		<h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionMerkenLink}" title="#{msg.add_to_clipboard}">
+      			<h:graphicImage library="img" name="16x16_plus.png" />
+      		</h:commandLink>
+      </span>	
+      <h:graphicImage library="flags" name="#{searchBean.hitlist.mapHitBean[hitOID].flagIMG}" alt="#{searchBean.hitlist.mapHitBean[hitOID].flagALT}" title="#{searchBean.hitlist.mapHitBean[hitOID].flagALT}"/>         
       <span class="list-identifier">
 				<h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}" target="_blank">
 				<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedTitle}"/></h:outputLink>
-      </span>&nbsp;		
+      </span>&nbsp;	
+
 		</div>				
 		<div class="div_hit_overview">
 				<span class="hit-creators"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedCreators}"/> (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedDate}"/>):</span>
 				<span class="hit-keywords"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedKeywords}"/></span><br/>
 			  <span class="hit-url"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}"/></span><br/>
 			  <span class="hit-url">							
- <h:graphicImage url="#{searchBean.hitlist.mapHitBean[hitOID].urlIRIcon}" alt="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" title="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" width="16" height="16"/> 
-<span class="command_link_bibtex"><h:outputLink value="http://oanet.cms.hu-berlin.de/bibexport?type=bibtex&amp;OIDs=#{hitOID}" title="Bibtex-Eintrag des Objekts anzeigen">[bibtex]</h:outputLink></span>&nbsp;
+ 				<h:graphicImage url="#{searchBean.hitlist.mapHitBean[hitOID].urlIRIcon}" alt="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" title="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" width="16" height="16"/> 
+				<span class="command_link_bibtex"><h:outputLink value="http://oanet.cms.hu-berlin.de/bibexport?type=bibtex&amp;OIDs=#{hitOID}" title="Bibtex-Eintrag des Objekts anzeigen">[bibtex]</h:outputLink></span>&nbsp;
 			  <h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
         	<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}"/>
 	  	 	 (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}"/>)
@@ -73,11 +80,8 @@
 			</div>
 	</h:column>
 </t:dataTable>
-
 </div>
-
 </t:div>
-
 
 <t:div rendered="#{searchBean.hitlist.booleanListHitOIDEmpty}" id="div_hitlist_scroller">
 		<h3><h:outputText value="#{msg.hitlist_scroller_nohits}"/></h3>

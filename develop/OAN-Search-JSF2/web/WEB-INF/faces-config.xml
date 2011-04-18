@@ -42,6 +42,16 @@
 <!--			<redirect />-->
 <!--		</navigation-case>-->
 		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/search.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>show_clipboard</from-outcome>
+			<to-view-id>/clipboard.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gotoSearch</from-outcome>
 			<to-view-id>/search.xhtml</to-view-id>
 			<redirect />
@@ -54,6 +64,17 @@
 		<from-view-id>/metadata.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>close_details</from-outcome>
+			<to-view-id>/search.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	
+	<!--    	 NAVIGATION RULE /metadata 	-->
+	
+	<navigation-rule>
+		<from-view-id>/clipboard.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>close_clipboard</from-outcome>
 			<to-view-id>/search.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>

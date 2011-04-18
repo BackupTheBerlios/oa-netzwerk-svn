@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf13027903635660" configfile="/OANSearch/web/WEB-INF/faces-config.xml">
-  <nodes xsi:type="pageflow:PFPage" name="*" x="122" y="946" id="pf13028685716040" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf130287591789430" path="/*"/>
-  <nodes xsi:type="pageflow:PFPage" name="pages/browse_ddc_version3" x="122" y="2866" id="pf13028685716048" referenceLink="//@navigationRule.1/@fromViewId|" outlinks="pf130287615342332 pf130287615342333" inlinks="pf130287615342332" path="/search.xhtml"/>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf13027903635660" configfile="/OAN-Search-JSF2/web/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="*" x="122" y="1714" id="pf13028685716040" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf13031275661440 pf13031275661441 pf13031364663873" path="/*"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/browse_ddc_version3" x="338" y="2098" id="pf13028685716048" referenceLink="//@navigationRule.2/@fromViewId|" outlinks="pf130287615342332 pf130287615342333" inlinks="pf130287615342332 pf13031275661440 pf13031275661452 pf13031275661441" path="/search.xhtml"/>
   <nodes xsi:type="pageflow:PFPage" name="start.xhtml" x="122" y="178" id="pf130286857160411" referenceLink="//@navigationRule.1/@fromViewId|" path="start.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="metadata.xhtml" x="338" y="2866" id="pf130286857160412" referenceLink="//@navigationRule.1/@navigationCase.1/@toViewId|" inlinks="pf130287615342333" path="/metadata.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="metadata.xhtml" x="122" y="2098" id="pf130286857160412" referenceLink="//@navigationRule.2/@navigationCase.1/@toViewId|" outlinks="pf13031275661452" inlinks="pf130287615342333" path="/metadata.xhtml"/>
   <nodes xsi:type="pageflow:PFPage" name="pages/projekt.xhtml" x="122" y="562" id="pf130286857160413" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" path="projekt.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="pages/impressum.xhtml" x="122" y="1330" id="pf130286857160414" referenceLink="//@navigationRule.0/@navigationCase.2/@toViewId|" path="impressum.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="pages/hitlist.xhtml" x="122" y="1714" id="pf130286857160415" referenceLink="//@navigationRule.3/@navigationCase.3/@toViewId|" path="hitlist.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="pages/repositories.xhtml" x="122" y="2098" id="pf130286857160422" referenceLink="//@navigationRule.0/@navigationCase.4/@toViewId|" path="repositories.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="pages/contact.xhtml" x="122" y="2482" id="pf130286857160423" referenceLink="//@navigationRule.0/@navigationCase.5/@toViewId|" path="contact.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/impressum.xhtml" x="122" y="946" id="pf130286857160414" referenceLink="//@navigationRule.0/@navigationCase.2/@toViewId|" path="impressum.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/hitlist.xhtml" x="122" y="1330" id="pf130286857160415" referenceLink="//@navigationRule.3/@navigationCase.3/@toViewId|" path="hitlist.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/repositories.xhtml" x="122" y="2482" id="pf130286857160422" referenceLink="//@navigationRule.0/@navigationCase.4/@toViewId|" path="repositories.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/contact.xhtml" x="122" y="2866" id="pf130286857160423" referenceLink="//@navigationRule.0/@navigationCase.5/@toViewId|" path="contact.xhtml"/>
   <nodes xsi:type="pageflow:PFPage" name="pages/browse_ddc_version3.xhtml" x="122" y="3250" id="pf130286857160424" referenceLink="//@navigationRule.0/@navigationCase.6/@toViewId|" path="search.xhtml"/>
   <nodes xsi:type="pageflow:PFPage" name="pages/start.xhtml" x="122" y="3634" id="pf130286857160425" referenceLink="//@navigationRule.1/@fromViewId|" path="start.xhtml"/>
   <nodes xsi:type="pageflow:PFPage" name="pages/hitdetails.xhtml" x="122" y="4018" id="pf130286857160426" referenceLink="//@navigationRule.3/@fromViewId|" path="hitdetails.xhtml"/>
-  <nodes xsi:type="pageflow:PFPage" name="search.xhtml" x="338" y="946" id="pf130287591789431" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" inlinks="pf130287591789430" path="/search.xhtml"/>
-  <links id="pf130287591789430" target="pf130287591789431" source="pf13028685716040" outcome="gotoSearch" redirect="true"/>
+  <nodes xsi:type="pageflow:PFPage" name="search.xhtml" x="122" y="4402" id="pf130287591789431" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" path="/search.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="clipboard.xhtml" x="338" y="1714" id="pf13031364663884" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" inlinks="pf13031364663873" path="/clipboard.xhtml"/>
   <links id="pf130287615342333" target="pf130286857160412" source="pf13028685716048" outcome="details_clicked" redirect="true"/>
+  <links id="pf13031275661440" target="pf13028685716048" source="pf13028685716040" outcome="search_clicked" redirect="true"/>
+  <links id="pf13031275661452" target="pf13028685716048" source="pf130286857160412" outcome="close_details" redirect="true"/>
+  <links id="pf13031275661441" target="pf13028685716048" source="pf13028685716040" outcome="gotoSearch" redirect="true"/>
+  <links id="pf13031364663873" target="pf13031364663884" source="pf13028685716040" outcome="show_clipboard" redirect="true"/>
   <links id="pf130287615342332" target="pf13028685716048" source="pf13028685716048" outcome="search_clicked" redirect="true">
     <bendPoints d1Height="-36" d2Height="-36"/>
     <bendPoints d1Width="-64" d1Height="-36" d2Width="-64" d2Height="-36"/>
