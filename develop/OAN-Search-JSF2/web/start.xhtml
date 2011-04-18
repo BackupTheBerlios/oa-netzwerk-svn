@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+<body>
+<ui:composition template="templates/template.xhtml">
+<ui:param name="pageTitle" value="#{msg.start_title}"/>
+<ui:define name="content">
+	<div id="div_main_search">
+		<h:form>
+			<span class="center">
+       	<h:graphicImage library="img" name="Logo_oan_rgb_micro.png" />
+				<div style="height: 25px;"></div>
+               
+				<div id="div_option_tabs">
+					<div>
+						<h:outputText value="#{msg.linkname_search}" />
+					</div>
+					<div>
+						<h:commandLink value="#{msg.linkname_browse_ddc}" action="gotoSearch"/>
+					</div>
+				</div>
+
+				<div id="div_search_widgets">
+					<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}" />
+					<h:commandButton value="#{msg.find_meta}" action="#{searchBean.actionSearch2Button}" />
+				  <h:commandButton value="#{msg.find}" action="#{searchBean.actionSearchButton}" />
+				</div>
+
+				<t:div rendered='#{searchBean.strRepositoryFilterRID != ""}'>
+					<small><h:outputText value="#{msg.search_was_restricted}" />: </small><br />
+					<h:outputLink value="#{searchBean.strRepositoryFilterURL}">
+						<h:outputText value="#{searchBean.strRepositoryFilterName}" />
+						<small>(<h:outputText value="#{searchBean.strRepositoryFilterURL}" />)</small>
+					</h:outputLink>
+				</t:div>
+ 
+        <t:div id="div_search_error" rendered='#{searchBean.strErrorLastSearch != ""}'>
+					<h:outputText value="#{msg.search_error_on_searchservice}" /><br />
+					<small>(<h:outputText value="#{searchBean.strErrorLastSearch}" />)</small>		
+				</t:div>
+			</span>
+		</h:form>
+	</div>
+</ui:define>
+</ui:composition>
+</body>
+</html>

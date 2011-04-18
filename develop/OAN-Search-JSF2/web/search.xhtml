@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+<body>
+<ui:composition template="templates/template.xhtml">
+<ui:define name="contentheader">
+	<ui:include src="components/flat_category_search.xhtml" />
+</ui:define>
+<ui:define name="content">
+		<h:form>
+<!-- 
+	TODO: One way to solve the JSF 2.0 DataScroller problem. 
+				In some forums is reported that DataScroller within a Panelgrid should cause problems.
+				So here is it in a standard HTML table an hitlist and scroller in one file 
+				'hitlist_with_scroller.xhtml' imported. 
+ -->
+<!--			<t:panelGrid columns="3" columnClasses="colStyle340,colStyle10,colStyle750">-->
+<!--				<t:panelGroup >-->
+<!--					<div id="div_seperator_right">	-->
+<!--						<div id="div_simplebrowselist">-->
+<!--						    <ui:include src="components/ddc_category_list.xhtml" />-->
+<!--						</div> -->
+<!--					</div>   -->
+<!--	     </t:panelGroup>-->
+<!--	     <t:panelGroup>-->
+<!--	      Trennspalte -->
+<!--			 </t:panelGroup>-->
+<!--			<t:panelGroup>-->
+<!--					<t:div id="div_inpagecenter_box_big" rendered="#{!searchBean.hitlist.booleanShowSearchHelpNotice}">			-->
+<!--		        <ui:include src="components/hitlist_scroller.xhtml" />-->
+<!--						<ui:include src="components/hitlist.xhtml" />-->
+<!--					</t:div>-->
+<!--					<t:div rendered="#{searchBean.hitlist.booleanShowSearchHelpNotice}">-->
+<!--								<br />-->
+<!--				        <t:outputText value="#{msg.hitlist_scroller_searchnotice}"/>-->
+<!--					</t:div>-->
+<!--			</t:panelGroup>-->
+<!--					  <f:facet name="footer"><t:panelGroup></t:panelGroup></f:facet>				-->
+<!--			</t:panelGrid>-->
+			<table >
+				<tr >
+					<td class="colStyle340">
+						<div id="div_seperator_right">	
+							<div id="div_simplebrowselist">
+						    <ui:include src="components/ddc_category_list.xhtml" />
+							</div> 
+						</div>
+					</td>
+					<td class="colStyle10">
+						<!-- Trennspalte -->
+					</td>
+					<td class="colStyle750">
+						<t:div id="div_inpagecenter_box_big" rendered="#{!searchBean.hitlist.booleanShowSearchHelpNotice}">			
+			        <ui:include src="components/hitlist_with_scroller.xhtml" />
+						</t:div>
+						<t:div rendered="#{searchBean.hitlist.booleanShowSearchHelpNotice}">
+							<br />
+			        <t:outputText value="#{msg.hitlist_scroller_searchnotice}"/>
+						</t:div>							
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<!-- Footer -->
+					</td>
+				</tr>
+			</table>
+		</h:form>
+</ui:define>
+
+
+
+</ui:composition>
+</body>
+</html>

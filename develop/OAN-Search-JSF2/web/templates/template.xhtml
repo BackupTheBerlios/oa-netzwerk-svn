@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+			xmlns:f="http://java.sun.com/jsf/core" 
+			xmlns:h="http://java.sun.com/jsf/html"
+   		xmlns:ui="http://java.sun.com/jsf/facelets" 
+   		xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<h:head>
+<link rel="search" href="http://oanet.cms.hu-berlin.de/oan/opensearchdescription.xml" type="application/opensearchdescription+xml" title="OAN-Search" />
+<meta name="google-site-verification" content="mG0nzduAbIGfgT0sD-vRqMpsGvB07hhdbtp-iLwGUm0" />
+<meta name="description" content="Über diese Suchmaschine können sie nach wissenschaftlichen Publikationen (Diplomarbeiten, Dissertationen und sonstige Veröffentlichungen) suchen. " />
+<meta name="keywords" content="Open Access Netzwerk, OAN, Wissenschaftliche Publikationen, Diplomarbeiten, Dissertationen, Artikel" />
+<link rel="shortcut icon" type="image/x-icon" href="img/oan.png" />
+<title>#{pageTitle}</title>
+<h:outputScript library="js" name="oamHelper.js" />
+</h:head>
+
+<h:body>
+<h:outputStylesheet library="css" name="style.css"/>
+<f:loadBundle basename="messages" var="msg"/>
+<div id="div_general_links">
+	<h:form>
+    <a href="start.xhtml"><h:outputLabel value="#{msg.linkname_start}" /></a>&nbsp;
+    <a href="projekt.xhtml"><h:outputLabel value="#{msg.linkname_projekt}" /></a>&nbsp;
+    <a href="impressum.xhtml"><h:outputLabel value="#{msg.linkname_impressum}" /></a>&nbsp;
+    <a href="repositories.xhtml"><h:outputLabel value="#{msg.linkname_participating_repositories}" /></a>&nbsp;
+    <a href="http://oanetzwerk.wordpress.com" target="_blank">Blog</a>&nbsp;
+    <a href="http://oanetzwerk.wordpress.com/2009/07/03/worum-geht-es-eigentlich/" target="_blank">About</a>&nbsp;
+    <a href="contact.xhtml"><h:outputLabel value="#{msg.linkname_contact}" /></a>&nbsp;
+	</h:form>
+</div>
+<ui:insert name="contentheader" />
+<ui:insert name="content" />
+</h:body>
+
+</html>

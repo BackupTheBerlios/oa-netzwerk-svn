@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+			xmlns:f="http://java.sun.com/jsf/core" 
+			xmlns:h="http://java.sun.com/jsf/html"
+   		xmlns:ui="http://java.sun.com/jsf/facelets" 
+   		xmlns:t="http://myfaces.apache.org/tomahawk">
+<head></head>
+
+<body>
+<ui:composition>	
+<div id="div_seperator_bottom">
+ <t:panelGrid columns="2" columnClasses="colStyle340,colStyle760_b">
+	<t:panelGroup >
+		<div style="margin-left: 70px; margin-top: 30px;">
+			<h:graphicImage name="img/Logo_oan_rgb_micro.png" />
+		</div>
+	</t:panelGroup>
+	<t:panelGroup>
+		<div id="div_flat_search">
+			<h:form>
+  			<h3><h:outputText value="#{msg.linkname_search}"/></h3>
+				<h:inputText maxlength="2048" size="45" title="OAN-Suche" value="#{searchBean.strOneSlot}" />
+				<h:commandButton value="#{msg.start_search}" action="#{searchBean.actionSearchWithDDCButton}" /><br />
+				<span class="span_selected_ddc"><h:outputText value="#{msg.category}"/>: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
+			</h:form>
+			<h:form>
+  			<h:commandButton value="Ranking" action="#{searchBean.actionGetRanking}" /><br />
+			</h:form>
+		</div>
+	</t:panelGroup>
+</t:panelGrid> 
+</div>
+</ui:composition>
+</body>
+</html>		

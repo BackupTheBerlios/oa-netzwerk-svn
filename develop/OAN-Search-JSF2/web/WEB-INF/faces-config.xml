@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+    version="2.0">
+
+    	<!-- NAVIGATION RULES -->  
+ 
+<!--    	 NAVIGATION RULE /*   -->
+ <navigation-rule>
+		<from-view-id>/*</from-view-id>
+<!--		<navigation-case>-->
+<!--			<from-outcome>start</from-outcome>-->
+<!--			<to-view-id>start.xhtml</to-view-id>-->
+<!--			<redirect />-->
+<!--		</navigation-case>-->
+<!--		<navigation-case>-->
+<!--			<from-outcome>projekt</from-outcome>-->
+<!--			<to-view-id>projekt.xhtml</to-view-id>-->
+<!--			<redirect />-->
+<!--		</navigation-case>-->
+<!--		<navigation-case>-->
+<!--			<from-outcome>impressum</from-outcome>-->
+<!--			<to-view-id>impressum.xhtml</to-view-id>-->
+<!--			<redirect />-->
+<!--		</navigation-case>-->
+<!--		<navigation-case>-->
+<!--			<from-outcome>search_clicked</from-outcome>-->
+<!--			<to-view-id>hitlist.xhtml</to-view-id>-->
+<!--			<redirect />-->
+<!--		</navigation-case>-->
+<!--		<navigation-case>-->
+<!--			<from-outcome>repositories</from-outcome>-->
+<!--			<to-view-id>repositories.xhtml</to-view-id>-->
+<!--			<redirect />-->
+<!--		</navigation-case>-->
+<!--		<navigation-case>-->
+<!--			<from-outcome>contact</from-outcome>-->
+<!--			<to-view-id>contact.xhtml</to-view-id>-->
+<!--			<redirect />-->
+<!--		</navigation-case>-->
+		<navigation-case>
+			<from-outcome>gotoSearch</from-outcome>
+			<to-view-id>/search.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	
+<!--    	 NAVIGATION RULE /metadata 	-->
+	
+	<navigation-rule>
+		<from-view-id>/metadata.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>close_details</from-outcome>
+			<to-view-id>/search.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	
+<!--    	 NAVIGATION RULE /hitdetails -->
+<!--    		-->
+<!--	<navigation-rule>-->
+<!--		<from-view-id>hitdetails.xhtml</from-view-id>-->
+<!--		<navigation-case>-->
+<!--			<from-outcome>close_details</from-outcome>-->
+<!--			<to-view-id>hitlist.xhtml</to-view-id>-->
+<!--			<redirect />-->
+<!--		</navigation-case>-->
+<!--		<navigation-case>-->
+<!--			<from-outcome>search_clicked</from-outcome>-->
+<!--			<to-view-id>hitlist.xhtml</to-view-id>-->
+<!--			<redirect />-->
+<!--		</navigation-case>-->
+<!--		<navigation-case>-->
+<!--			<from-outcome>details_clicked</from-outcome>-->
+<!--			<to-view-id>hitdetails.xhtml</to-view-id>-->
+<!--			<redirect />-->
+<!--		</navigation-case>-->
+<!--		<navigation-case>-->
+<!--			<from-outcome>search4keyword_clicked</from-outcome>-->
+<!--			<to-view-id>hitlist.xhtml</to-view-id>-->
+<!--			<redirect />-->
+<!--		</navigation-case>-->
+<!--	</navigation-rule>-->
+<!---->
+<!--    	 NAVIGATION RULE /search -->
+
+	<navigation-rule>
+		<from-view-id>/search.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>search_clicked</from-outcome>
+			<to-view-id>/search.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>details_clicked</from-outcome>
+			<to-view-id>/metadata.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>		
+	</navigation-rule>
+	    
+    	<!-- BEANS -->
+	<managed-bean>
+		<managed-bean-name>metadataLoaderBean</managed-bean-name>
+		<managed-bean-class>de.dini.oanetzwerk.userfrontend.MetadataLoaderBean</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>repositoriesBean</managed-bean-name>
+		<managed-bean-class>de.dini.oanetzwerk.userfrontend.RepositoriesBean</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>searchBean</managed-bean-name>
+		<managed-bean-class>de.dini.oanetzwerk.userfrontend.SearchBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>mdLoaderBean</property-name>
+			<property-class>de.dini.oanetzwerk.userfrontend.MetadataLoaderBean</property-class>
+			<value>#{metadataLoaderBean}</value>
+		</managed-property>
+	</managed-bean>
+
+</faces-config>

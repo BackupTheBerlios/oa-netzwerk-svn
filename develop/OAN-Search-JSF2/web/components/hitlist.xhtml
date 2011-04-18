@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+			xmlns:f="http://java.sun.com/jsf/core" 
+			xmlns:h="http://java.sun.com/jsf/html"
+   		xmlns:ui="http://java.sun.com/jsf/facelets" 
+   		xmlns:t="http://myfaces.apache.org/tomahawk">
+<head></head>
+
+<body>
+<ui:composition>	
+<div id="div_hitlist_medium">
+<h:dataTable id="hitlist" value="#{searchBean.hitlist.listHitOID}" var="hitOID" columnClasses="colHit" rows="10">
+	<h:column>
+    <div class="div_hit_header">
+			<span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionDetailsLink}" title="#{msg.show_meta_data_of_object}"><h:graphicImage name="img/16x16_lupe.png"/></h:commandLink></span>
+			<h:graphicImage name="flags/#{searchBean.hitlist.mapHitBean[hitOID].flagIMG}" alt="#{searchBean.hitlist.mapHitBean[hitOID].flagALT}" title="#{searchBean.hitlist.mapHitBean[hitOID].flagALT}"/>         
+      <span class="list-identifier">
+				<h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}" target="_blank">
+				<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedTitle}"/></h:outputLink>
+      </span>&nbsp;		
+		</div>				
+		<div class="div_hit_overview">
+			<nosp>
+				<span class="hit-creators"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedCreators}"/> (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedDate}"/>):</span>
+				<span class="hit-keywords"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].trimmedKeywords}"/></span><br/>
+			  <span class="hit-url"><t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].bestLink}"/></span><br/>
+			  <span class="hit-url">							
+ <h:graphicImage url="#{searchBean.hitlist.mapHitBean[hitOID].urlIRIcon}" alt="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" title="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}" width="16" height="16"/> 
+<span class="command_link_bibtex"><h:outputLink value="http://oanet.cms.hu-berlin.de/bibexport?type=bibtex&amp;OIDs=#{hitOID}" title="Bibtex-Eintrag des Objekts anzeigen">[bibtex]</h:outputLink></span>&nbsp;
+			  <h:outputLink value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}" target="_blank">	
+        	<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryName}"/>
+	  	 	 (<t:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.repositoryData.repositoryURL}"/>)
+		    </h:outputLink>
+		</span><br/>	
+			  <span class="internal_identifier">(OID: <h:outputText value="#{searchBean.hitlist.mapHitBean[hitOID].completeMetadata.oid}"/>)</span>						
+			</nosp>
+			</div>
+	</h:column>
+</h:dataTable>
+</div>
+</ui:composition>
+</body>
+</html>	

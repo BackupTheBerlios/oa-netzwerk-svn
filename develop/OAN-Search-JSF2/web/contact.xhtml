@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+<body>
+<ui:composition template="templates/template.xhtml">
+<ui:param name="pageTitle" value="#{msg.linkname_contact} - #{msg.project_name}"/>
+	<ui:define name="content">
+	
+		<div id="div_contact_main">
+		<h2>Kontakt</h2>
+		<h4>Unter folgender E-Mail Adresse können Sie uns erreichen:</h4>
+		<p>E-Mail: oan(at)dini.de</p>
+		<br />
+	
+		<!--<h4>Bei technischen Fragen wenden Sie sich bitte an:</h4>
+					<p>
+					<b>Sammy David</b><br />
+					HU Berlin, Computer- und Medienservice (CMS)<br />
+					E-Mail: sammy.david(at)cms.hu-berlin.de<br />
+	 				Telefon: 030 2093 70041
+					</p>-->
+		</div>
+	</ui:define>
+</ui:composition>
+</body>
+</html>

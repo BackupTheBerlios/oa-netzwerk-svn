@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+<body>
+<ui:composition template="templates/template.xhtml">
+<ui:param name="pageTitle" value="#{msg.linkname_participating_repositories} - #{msg.project_name}"/>
+	<ui:define name="content">
+		<h:form>
+			<div id="div_repositories">
+	            <div id="div_repositories_list">
+	    			<h2>Im Open Access Netzwerk nehmen zurzeit <t:outputText value="#{repositoriesBean.repoCount}"/> Repositories teil:</h2>
+				
+					<t:dataList value="#{repositoriesBean.listRepositoryConfig}" 
+				                            var="repoConfig" layout="unorderedList" first="0" dir="LTR">
+						<span class="span_reponame"><t:outputText value="#{repoConfig.repositoryName}" /></span><br/>
+	                    <h:outputLink value="#{repoConfig.repositoryURL}"><t:outputText value="#{repoConfig.repositoryURL}"/></h:outputLink><br/>                                
+	                	<span class="span_testbetrieb"><t:outputText value="(im Testbetrieb)" rendered="#{repoConfig.repositoryTEST_DATA}" /></span><br/>
+					</t:dataList>
+	        	</div>
+	        </div>     
+			<div id="div_repositories_footer">
+			  <hr/>
+			  <p><small>(Diese Übersicht wurde automatisiert aus der Datenbank des OA-Netzwerk-Systems erstellt. Stand: <t:outputText value="#{repositoriesBean.fromDate}"/>)</small></p>
+	        </div>
+		</h:form>
+
+	</ui:define>
+</ui:composition>
+</body>
+</html>
