@@ -29,7 +29,7 @@ public class WebUtils {
 	private static String webappDir 				= "/webapps";
 	private static String webappDirFallback			= "/wtpwebapps";
 	private static String contextPath 				= "/oansearch";
-	private static String contextPathFallback		= "/OAN-Search";
+	private static String contextPathFallback		= "/OAN-Search-JSF2";
 	
 	
 	static {
