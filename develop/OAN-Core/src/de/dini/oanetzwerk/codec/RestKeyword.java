@@ -14,6 +14,7 @@ public enum RestKeyword {
 	FullTextLinks,
 	ObjectServiceStatus,
 	ServiceNotifier,
+	ServiceJob,
 	LoginData,
 	DDCCategories,
 	DuplicateProbabilities,

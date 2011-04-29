@@ -662,7 +662,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.commit ( );
-			stmtconn.loadStatement (SelectFromDB.ObjectEntry (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			stmtconn.loadStatement (SelectFromDB.ObjectEntry (stmtconn.connection, repository_id, repository_datestamp, repository_identifier));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getResultSet ( ).next ( )) {
@@ -820,7 +820,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			}
 			
 			stmtconn.commit ( );
-			stmtconn.loadStatement (SelectFromDB.ObjectEntry (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			stmtconn.loadStatement (SelectFromDB.ObjectEntry (stmtconn.connection, repository_id, repository_datestamp, repository_identifier));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)

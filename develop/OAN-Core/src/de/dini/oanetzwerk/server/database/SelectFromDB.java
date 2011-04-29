@@ -80,37 +80,6 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
-	/**
-	 * 
-	 * This method is deprecated. It's signature does not correspond to the
-	 * task!
-	 * 
-	 * Find the object_id of an object with the given information
-	 * "repository_id", "repository_identifier" and "repository_datestamp"
-	 * 
-	 * @param connection
-	 * @param repository_id
-	 * @param harvested
-	 * @param repository_datestamp
-	 * @param repository_identifier
-	 * @param testdata
-	 * @param failureCounter
-	 * @return
-	 * @throws SQLException
-	 */
-	@Deprecated
-	public static PreparedStatement ObjectEntry(Connection connection, BigDecimal repository_id, Date harvested, Date repository_datestamp,
-			String repository_identifier, boolean testdata, int failureCounter) throws SQLException {
-
-		PreparedStatement preparedstmt = connection
-				.prepareStatement("SELECT object_id FROM dbo.Object WHERE repository_id = ? AND repository_identifier = ? AND repository_datestamp = ?");
-
-		preparedstmt.setBigDecimal(1, repository_id);
-		preparedstmt.setString(2, repository_identifier);
-		preparedstmt.setDate(3, repository_datestamp);
-
-		return preparedstmt;
-	}
 
 	/**
 	 * 
@@ -303,24 +272,24 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
-	/**
-	 * @param connection
-	 * @param predecessor_id
-	 * @param service_id
-	 * @return
-	 * @throws SQLException
-	 */
-	public static PreparedStatement Workflow(Connection connection, BigDecimal predecessor_id, BigDecimal service_id) throws SQLException {
-
-		PreparedStatement preparedstmt = connection
-				.prepareStatement("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? "
-						+ "WHERE (w1.time > (SELECT MAX(time) FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id) "
-						+ "OR w1.object_id NOT IN (SELECT object_id FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id)) GROUP BY w1.object_id");
-
-		preparedstmt.setBigDecimal(1, service_id);
-
-		return preparedstmt;
-	}
+//	/**
+//	 * @param connection
+//	 * @param predecessor_id
+//	 * @param service_id
+//	 * @return
+//	 * @throws SQLException
+//	 */
+//	public static PreparedStatement Workflow(Connection connection, BigDecimal predecessor_id, BigDecimal service_id) throws SQLException {
+//
+//		PreparedStatement preparedstmt = connection
+//				.prepareStatement("SELECT w1.object_id FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id AND so.service_id = ? "
+//						+ "WHERE (w1.time > (SELECT MAX(time) FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id) "
+//						+ "OR w1.object_id NOT IN (SELECT object_id FROM dbo.WorkflowDB WHERE object_id = w1.object_id AND service_id = so.service_id)) GROUP BY w1.object_id");
+//
+//		preparedstmt.setBigDecimal(1, service_id);
+//
+//		return preparedstmt;
+//	}
 
 	/**
 	 * Fetch all "RawRecord"-data for the specified object_id ("internalOID")
@@ -436,21 +405,21 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 
-	/**
-	 * @param connection
-	 * @param service_id
-	 * @return
-	 * @throws SQLException
-	 */
-	public static PreparedStatement WorkflowDBTimeAsString(Connection connection, BigDecimal service_id) throws SQLException {
-
-		PreparedStatement preparedstmt = connection
-				.prepareStatement("SELECT w1.object_id, CAST(max(w1.time) FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id");
-
-		preparedstmt.setBigDecimal(1, service_id);
-
-		return preparedstmt;
-	}
+//	/**
+//	 * @param connection
+//	 * @param service_id
+//	 * @return
+//	 * @throws SQLException
+//	 */
+//	public static PreparedStatement WorkflowDBTimeAsString(Connection connection, BigDecimal service_id) throws SQLException {
+//
+//		PreparedStatement preparedstmt = connection
+//				.prepareStatement("SELECT w1.object_id, CAST(max(w1.time) FROM dbo.WorkflowDB w1 JOIN dbo.ServicesOrder so ON w1.service_id = so.predecessor_id  WHERE so.service_id = ? GROUP BY w1.object_id");
+//
+//		preparedstmt.setBigDecimal(1, service_id);
+//
+//		return preparedstmt;
+//	}
 
 	/**
 	 * @param connection
@@ -1303,188 +1272,188 @@ public class SelectFromDB {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static PreparedStatement OAIListSetsbyID(Connection connection, String set, Date from, Date until) throws SQLException {
-
-		boolean aND = false;
-
-		StringBuffer sql = new StringBuffer("SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie FROM dbo.Object o ");
-		sql.append("JOIN dbo.DNB_Classification dsc ON o.object_id = dsc.object_id ");
-		sql.append("JOIN dbo.DNB_Categories d ON d.DNB_Categorie = dsc.DNB_Categorie ");
-
-		StringBuffer setFromUntil = new StringBuffer("");
-
-		if (set != null && !set.equals("")) {
-
-			sql.append("WHERE dsc.DNB_Categorie = ? ");
-			aND = true;
-
-		} else
-			set = null;
-
-		if (from != null) {
-
-			if (aND)
-				setFromUntil.append("AND o.repository_datestamp > ? ");
-
-			else {
-
-				aND = true;
-				setFromUntil.append("WHERE o.repository_datestamp > ? ");
-			}
-		}
-
-		if (until != null) {
-
-			if (aND)
-				setFromUntil.append("AND o.repository_datestamp < ? ");
-
-			else
-				setFromUntil.append("WHERE o.repository_datestamp < ? ");
-		}
-
-		sql.append(setFromUntil);
-		sql.append("UNION ");
-		sql.append("SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o ");
-		sql.append("JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id ");
-		sql.append("JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id ");
-
-		if (set != null && !set.equals(""))
-			sql.append("WHERE d.name = ? ");
-
-		sql.append(setFromUntil);
-		sql.append("UNION ");
-		sql.append("SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie FROM dbo.Object o ");
-		sql.append("JOIN dbo.DDC_Classification dsc ON o.object_id = dsc.object_id ");
-		sql.append("JOIN dbo.DDC_Categories d ON d.DDC_Categorie = dsc.DDC_Categorie ");
-
-		if (set != null && !set.equals(""))
-			sql.append("WHERE dsc.DDC_Categorie = ? ");
-
-		sql.append(setFromUntil);
-		sql.append("ORDER BY o.object_id");
-
-		logger.debug(sql.toString());
-
-		PreparedStatement preparedstmt = connection.prepareStatement(sql.toString());
-
-		if (set != null) {
-
-			preparedstmt.setString(1, set);
-
-			if (from != null && until != null) {
-
-				preparedstmt.setDate(2, from);
-				preparedstmt.setDate(3, until);
-				preparedstmt.setString(4, set);
-				preparedstmt.setDate(5, from);
-				preparedstmt.setDate(6, until);
-				preparedstmt.setString(7, set);
-				preparedstmt.setDate(8, from);
-				preparedstmt.setDate(9, until);
-
-			} else if (from == null && until == null) {
-
-				preparedstmt.setString(2, set);
-				preparedstmt.setString(3, set);
-
-			} else {
-
-				preparedstmt.setString(3, set);
-				preparedstmt.setString(5, set);
-
-				if (until == null) {
-
-					preparedstmt.setDate(2, from);
-					preparedstmt.setDate(4, from);
-					preparedstmt.setDate(6, from);
-
-				} else {
-
-					preparedstmt.setDate(2, until);
-					preparedstmt.setDate(4, until);
-					preparedstmt.setDate(6, until);
-				}
-			}
-
-		} else if (until != null || from != null) {
-
-			if (until == null) {
-
-				preparedstmt.setDate(1, from);
-				preparedstmt.setDate(2, from);
-				preparedstmt.setDate(3, from);
-
-			} else if (from == null) {
-
-				preparedstmt.setDate(1, until);
-				preparedstmt.setDate(2, until);
-				preparedstmt.setDate(3, until);
-
-			} else {
-
-				preparedstmt.setDate(1, from);
-				preparedstmt.setDate(2, until);
-				preparedstmt.setDate(3, from);
-				preparedstmt.setDate(4, until);
-				preparedstmt.setDate(5, from);
-				preparedstmt.setDate(6, until);
-			}
-
-		} else
-			;
-
-		return preparedstmt;
-
-		/*
-		 * SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie
-		 * FROM dbo.Object o JOIN dbo.DNB_Classification dsc ON o.object_id =
-		 * dsc.object_id JOIN dbo.DNB_Categories d ON d.DNB_Categorie =
-		 * dsc.DNB_Categorie -- WHERE o.repository_datestamp > '2008-01-01'
-		 * 
-		 * 
-		 * UNION
-		 * 
-		 * SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o
-		 * JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id
-		 * JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id --
-		 * WHERE o.repository_datestamp > '2008-01-01'
-		 * 
-		 * UNION
-		 * 
-		 * SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie
-		 * FROM dbo.Object o JOIN dbo.DDC_Classification dsc ON o.object_id =
-		 * dsc.object_id JOIN dbo.DDC_Categories d ON d.DDC_Categorie =
-		 * dsc.DDC_Categorie -- WHERE o.repository_datestamp > '2008-01-01'
-		 * 
-		 * ORDER BY o.object_id
-		 * 
-		 * 
-		 * -- Abfrage 2
-		 * 
-		 * SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie
-		 * FROM dbo.Object o JOIN dbo.DNB_Classification dsc ON o.object_id =
-		 * dsc.object_id JOIN dbo.DNB_Categories d ON d.DNB_Categorie =
-		 * dsc.DNB_Categorie WHERE dsc.DNB_Categorie = '000'
-		 * 
-		 * 
-		 * UNION
-		 * 
-		 * SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o
-		 * JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id
-		 * JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id
-		 * WHERE d.name = '000' -- WHERE o.repository_datestamp > '2008-01-01'
-		 * 
-		 * UNION
-		 * 
-		 * SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie
-		 * FROM dbo.Object o JOIN dbo.DDC_Classification dsc ON o.object_id =
-		 * dsc.object_id JOIN dbo.DDC_Categories d ON d.DDC_Categorie =
-		 * dsc.DDC_Categorie WHERE dsc.DDC_Categorie = '000' -- WHERE
-		 * o.repository_datestamp > '2008-01-01'
-		 * 
-		 * ORDER BY o.object_id
-		 */
-	}
+//	public static PreparedStatement OAIListSetsbyID(Connection connection, String set, Date from, Date until) throws SQLException {
+//
+//		boolean aND = false;
+//
+//		StringBuffer sql = new StringBuffer("SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie FROM dbo.Object o ");
+//		sql.append("JOIN dbo.DNB_Classification dsc ON o.object_id = dsc.object_id ");
+//		sql.append("JOIN dbo.DNB_Categories d ON d.DNB_Categorie = dsc.DNB_Categorie ");
+//
+//		StringBuffer setFromUntil = new StringBuffer("");
+//
+//		if (set != null && !set.equals("")) {
+//
+//			sql.append("WHERE dsc.DNB_Categorie = ? ");
+//			aND = true;
+//
+//		} else
+//			set = null;
+//
+//		if (from != null) {
+//
+//			if (aND)
+//				setFromUntil.append("AND o.repository_datestamp > ? ");
+//
+//			else {
+//
+//				aND = true;
+//				setFromUntil.append("WHERE o.repository_datestamp > ? ");
+//			}
+//		}
+//
+//		if (until != null) {
+//
+//			if (aND)
+//				setFromUntil.append("AND o.repository_datestamp < ? ");
+//
+//			else
+//				setFromUntil.append("WHERE o.repository_datestamp < ? ");
+//		}
+//
+//		sql.append(setFromUntil);
+//		sql.append("UNION ");
+//		sql.append("SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o ");
+//		sql.append("JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id ");
+//		sql.append("JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id ");
+//
+//		if (set != null && !set.equals(""))
+//			sql.append("WHERE d.name = ? ");
+//
+//		sql.append(setFromUntil);
+//		sql.append("UNION ");
+//		sql.append("SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie FROM dbo.Object o ");
+//		sql.append("JOIN dbo.DDC_Classification dsc ON o.object_id = dsc.object_id ");
+//		sql.append("JOIN dbo.DDC_Categories d ON d.DDC_Categorie = dsc.DDC_Categorie ");
+//
+//		if (set != null && !set.equals(""))
+//			sql.append("WHERE dsc.DDC_Categorie = ? ");
+//
+//		sql.append(setFromUntil);
+//		sql.append("ORDER BY o.object_id");
+//
+//		logger.debug(sql.toString());
+//
+//		PreparedStatement preparedstmt = connection.prepareStatement(sql.toString());
+//
+//		if (set != null) {
+//
+//			preparedstmt.setString(1, set);
+//
+//			if (from != null && until != null) {
+//
+//				preparedstmt.setDate(2, from);
+//				preparedstmt.setDate(3, until);
+//				preparedstmt.setString(4, set);
+//				preparedstmt.setDate(5, from);
+//				preparedstmt.setDate(6, until);
+//				preparedstmt.setString(7, set);
+//				preparedstmt.setDate(8, from);
+//				preparedstmt.setDate(9, until);
+//
+//			} else if (from == null && until == null) {
+//
+//				preparedstmt.setString(2, set);
+//				preparedstmt.setString(3, set);
+//
+//			} else {
+//
+//				preparedstmt.setString(3, set);
+//				preparedstmt.setString(5, set);
+//
+//				if (until == null) {
+//
+//					preparedstmt.setDate(2, from);
+//					preparedstmt.setDate(4, from);
+//					preparedstmt.setDate(6, from);
+//
+//				} else {
+//
+//					preparedstmt.setDate(2, until);
+//					preparedstmt.setDate(4, until);
+//					preparedstmt.setDate(6, until);
+//				}
+//			}
+//
+//		} else if (until != null || from != null) {
+//
+//			if (until == null) {
+//
+//				preparedstmt.setDate(1, from);
+//				preparedstmt.setDate(2, from);
+//				preparedstmt.setDate(3, from);
+//
+//			} else if (from == null) {
+//
+//				preparedstmt.setDate(1, until);
+//				preparedstmt.setDate(2, until);
+//				preparedstmt.setDate(3, until);
+//
+//			} else {
+//
+//				preparedstmt.setDate(1, from);
+//				preparedstmt.setDate(2, until);
+//				preparedstmt.setDate(3, from);
+//				preparedstmt.setDate(4, until);
+//				preparedstmt.setDate(5, from);
+//				preparedstmt.setDate(6, until);
+//			}
+//
+//		} else
+//			;
+//
+//		return preparedstmt;
+//
+//		/*
+//		 * SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie
+//		 * FROM dbo.Object o JOIN dbo.DNB_Classification dsc ON o.object_id =
+//		 * dsc.object_id JOIN dbo.DNB_Categories d ON d.DNB_Categorie =
+//		 * dsc.DNB_Categorie -- WHERE o.repository_datestamp > '2008-01-01'
+//		 * 
+//		 * 
+//		 * UNION
+//		 * 
+//		 * SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o
+//		 * JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id
+//		 * JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id --
+//		 * WHERE o.repository_datestamp > '2008-01-01'
+//		 * 
+//		 * UNION
+//		 * 
+//		 * SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie
+//		 * FROM dbo.Object o JOIN dbo.DDC_Classification dsc ON o.object_id =
+//		 * dsc.object_id JOIN dbo.DDC_Categories d ON d.DDC_Categorie =
+//		 * dsc.DDC_Categorie -- WHERE o.repository_datestamp > '2008-01-01'
+//		 * 
+//		 * ORDER BY o.object_id
+//		 * 
+//		 * 
+//		 * -- Abfrage 2
+//		 * 
+//		 * SELECT o.object_id, o.repository_datestamp, 'dnb:'+ d.DNB_Categorie
+//		 * FROM dbo.Object o JOIN dbo.DNB_Classification dsc ON o.object_id =
+//		 * dsc.object_id JOIN dbo.DNB_Categories d ON d.DNB_Categorie =
+//		 * dsc.DNB_Categorie WHERE dsc.DNB_Categorie = '000'
+//		 * 
+//		 * 
+//		 * UNION
+//		 * 
+//		 * SELECT o.object_id, o.repository_datestamp, d.name FROM dbo.Object o
+//		 * JOIN dbo.DINI_Set_Classification dsc ON o.object_id = dsc.object_id
+//		 * JOIN dbo.DINI_Set_Categories d ON d.DINI_set_id = dsc.DINI_set_id
+//		 * WHERE d.name = '000' -- WHERE o.repository_datestamp > '2008-01-01'
+//		 * 
+//		 * UNION
+//		 * 
+//		 * SELECT o.object_id, o.repository_datestamp, 'ddc:'+ d.DDC_Categorie
+//		 * FROM dbo.Object o JOIN dbo.DDC_Classification dsc ON o.object_id =
+//		 * dsc.object_id JOIN dbo.DDC_Categories d ON d.DDC_Categorie =
+//		 * dsc.DDC_Categorie WHERE dsc.DDC_Categorie = '000' -- WHERE
+//		 * o.repository_datestamp > '2008-01-01'
+//		 * 
+//		 * ORDER BY o.object_id
+//		 */
+//	}
 
 	/**
 	 * OAIPMH-Export ListIdentifiers
@@ -1885,5 +1854,10 @@ public class SelectFromDB {
 		return preparedstmt;
 	}
 	
-	
+	public static PreparedStatement ServicesScheduling(Connection connection) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT * FROM ServicesScheduling");
+
+		return preparedstmt;
+	}
 }
