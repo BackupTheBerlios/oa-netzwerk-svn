@@ -12,6 +12,7 @@ import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.dini.oanetzwerk.migration.DeleteFromDBPostgres;
 import de.dini.oanetzwerk.migration.InsertIntoDBPostgres;
 import de.dini.oanetzwerk.migration.SelectFromDBPostgres;
 import de.dini.oanetzwerk.server.database.DeleteFromDB;
@@ -61,28 +62,27 @@ public class InsertIntoDBTests {
 			msPostgres.loadStatement(postgresQuery);
 			
 			long executionTime = System.currentTimeMillis();
-			QueryResult qr = msPostgres.execute();
-			ResultSet rs = qr.getResultSet();
-			rs.first();
-			if (!rs.rowInserted()) {
-				System.out.println("Keine Zeile eingefügt");
-				Assert.assertEquals(false,false);
-			}
+			msPostgres.execute();
+			msPostgres.commit();
+			
 			executionTime = System.currentTimeMillis() - executionTime;
 			System.out.println("Execution Time Postgres: "+executionTime+" ms");
 			
 			// DELETE THE INPUT AGAIN
-			PreparedStatement whichID = postgres.prepareStatement("SELECT max(object_id) FROM \"Object\"");
+			PreparedStatement whichID = postgres.prepareStatement("SELECT * FROM \"Object\" WHERE repository_identifier = 'this_is_just_a_dummy_entry:testing:01'");
 			msPostgres.loadStatement(whichID);
 			QueryResult whichIDResult = msPostgres.execute();
+			msPostgres.commit();
 			ResultSet whichIDResultSet = whichIDResult.getResultSet();
 
-			if(!whichIDResultSet.first()) {
+			if(!whichIDResultSet.next()) {
 				Assert.assertEquals(false, false);
 			}
 			BigDecimal object_id = whichIDResultSet.getBigDecimal(1);
-			
-			PreparedStatement pgDelete = DeleteFromDB.Object(postgres, object_id);
+			PreparedStatement pgDelete = DeleteFromDBPostgres.Object(postgres, object_id);
+			msPostgres.loadStatement(pgDelete);
+			msPostgres.execute();
+			msPostgres.commit();
 			Assert.assertEquals(true,true);
 		}
 		catch (Exception e) {
@@ -90,4 +90,6 @@ public class InsertIntoDBTests {
 			Assert.assertEquals(false, false);
 		}
 	}
+	
+	
 }
