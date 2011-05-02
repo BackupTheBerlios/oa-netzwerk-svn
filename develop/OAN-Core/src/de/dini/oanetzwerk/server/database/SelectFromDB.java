@@ -1860,4 +1860,12 @@ public class SelectFromDB {
 
 		return preparedstmt;
 	}
+	
+	public static PreparedStatement ServicesScheduling(Connection connection, int jobId) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT * FROM ServicesScheduling WHERE job_id = ?");
+
+		preparedstmt.setInt(1, jobId);
+		return preparedstmt;
+	}
 }
