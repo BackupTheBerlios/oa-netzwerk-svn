@@ -428,7 +428,8 @@
 		<jar jarfile="${build}/Harvester.jar">
 			<fileset dir="${build.harvester}" />
 			<manifest>
-				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.RunHarvester" />
+				<!--attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.RunHarvester" /-->
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.HarvesterRMI" />
 				<attribute name="Class-Path" value="${cp}" />
 			</manifest>
 		</jar>

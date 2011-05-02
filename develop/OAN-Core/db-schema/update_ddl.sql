@@ -149,9 +149,9 @@ CREATE INDEX REPO_IDENTIFIER_IDX ON dbo.Object(repository_identifier);
 
 ALTER TABLE dbo.DDC_Categories ADD name_en UNIVARCHAR(255) DEFAULT '';
 
-INSERT INTO dbo.DDC_Categories VALUES ('333.7', 'Natürliche Ressourcen, Energie, Umwelt', 'Natural ressources, energy and environment');
+INSERT INTO dbo.DDC_Categories VALUES ('333.7', 'Natï¿½rliche Ressourcen, Energie, Umwelt', 'Natural ressources, energy and environment');
 INSERT INTO dbo.DDC_Categories VALUES ('790', 'Freizeitgestaltung, Darstellende Kunst', 'Recreational & performing arts');
-INSERT INTO dbo.DDC_Categories VALUES ('990', 'Geschichte der übrigen Welt', 'General history of other areas');
+INSERT INTO dbo.DDC_Categories VALUES ('990', 'Geschichte der ï¿½brigen Welt', 'General history of other areas');
 
 UPDATE DDC_Categories SET name_en = 'Generalities, Science' WHERE DDC_Categorie = '000';
 UPDATE DDC_Categories SET name_en = 'Data processing, Computer science' WHERE DDC_Categorie = '004';
@@ -251,3 +251,39 @@ UPDATE DDC_Categories SET name_en = 'General history of South America' WHERE DDC
 UPDATE DDC_Categories SET name_en = 'General history of other areas ' WHERE DDC_Categorie = '990';
 
     
+
+-- 29.04.2011
+-- ServicesScheduling Table
+
+-- add table for sybase
+CREATE TABLE dbo.ServicesScheduling (
+	   job_id int NOT NULL,
+       service_id numeric(38,0) NOT NULL,
+       name UNIVARCHAR(256) NOT NULL,
+       status UNIVARCHAR(100) NOT NULL,
+       info univarchar(512),
+       periodic BIT NOT NULL,
+       nonperiodic_date DATETIME,
+       periodic_interval_type univarchar(20),
+       periodic_interval_day tinyint,
+       
+       PRIMARY KEY (job_id),
+       FOREIGN KEY (service_id) REFERENCES dbo.Services (service_id)
+);
+
+-- ServiceScheduling Table for PostgreSQL
+
+DROP TABLE IF EXISTS "public"."ServicesScheduling";
+CREATE TABLE "public"."ServicesScheduling" (
+	   job_id serial CONSTRAINT servicesscheduling_job_id PRIMARY KEY,
+       service_id bigserial CONSTRAINT servicesscheduling_repo_id REFERENCES "Repositories"(repository_id),
+       name varchar(256) NOT NULL,
+       status varchar(100) NOT NULL,
+       info varchar(512),
+       periodic bool NOT NULL,
+       nonperiodic_date timestamp,
+       periodic_interval_type varchar(30),
+       periodic_interval_day smallint
+) WITH (OIDS=FALSE);
+
+

@@ -46,7 +46,7 @@ public class HarvesterRMI implements IService {
 			// writer.flush();
 			// writer.close();
 
-			HarvesterRMI server = new HarvesterRMI();
+			IService server = new HarvesterRMI();
 			IService stub = (IService) UnicastRemoteObject.exportObject(server, 0);
 			registry = getRegistry();
 
