@@ -31,10 +31,12 @@ public abstract class AbstractServiceJob implements Job {
 	private String additionalInfo;	
 	
 	
+	
 	public AbstractServiceJob() {
 	    super();
     }
 		
+	
 
 //	@Override
 //    public void execute(JobExecutionContext arg0) throws JobExecutionException {

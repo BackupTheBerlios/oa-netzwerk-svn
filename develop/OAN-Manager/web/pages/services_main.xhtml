@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
 
 <head></head>
 
@@ -10,103 +10,116 @@
 
 <ui:composition template="templates/template.xhtml">
 
-   <ui:param name="pageTitle" value="Dienste - OA-Netzwerk Manager" />
-   
-   <ui:define name="navigation">
-      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml">Dienste</a>
-   </ui:define>
+  <ui:param name="pageTitle" value="Dienste - OA-Netzwerk Manager" />
 
-   <ui:define name="menu">
-      <div id="tasks">
+  <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml">Dienste</a>
+  </ui:define>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt=""
-         width="24" src="../images/24x24/new-package.gif" /><a href="repositories_main.faces">Repositorien
-      verwalten</a></div>
+  <ui:define name="menu">
+    <div id="tasks">
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="services_main.faces"><b>Dienste verwalten</b></a>
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
+      href="repositories_main.faces">Repositorien verwalten</a></div>
 
-      <div class="subtasks">
-            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="services_schedule.faces">Ablaufplan</a></div>
-      
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="services_harvester.faces">Harvester</a></div>
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="services_main.faces"><b>Dienste verwalten</b></a>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="services_aggregator.faces">Aggregator</a></div>
+    <div class="subtasks">
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="services_schedule.faces">Ablaufplan</a></div>
 
-      </div>
-      </div>
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="services_harvester.faces">Harvester</a></div>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="users_main.faces">Benutzer verwalten</a></div>
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="services_aggregator.faces">Aggregator</a></div>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="reports.faces">Reports</a></div>
+    </div>
+    </div>
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="livelog.faces">Live Log</a></div>
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="users_main.faces">Benutzer verwalten</a></div>
 
-      </div>
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="reports.faces">Reports</a></div>
 
-   </ui:define>
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="livelog.faces">Live Log</a></div>
 
-   <ui:define name="content">
+    </div>
 
+  </ui:define>
+
+  <ui:define name="content">
+
+  <f:view>
       Über dieses Portal ist die gesamte
       Dienstekette des OA-Netzwerks steuerbar und ermöglicht den Ablauf der Dienste zu überwachen oder mögliche
       Fehlersituationen schnell zu überblicken! Darüber hinaus lassen sich die OAN zugrundeliegenden Repositorien (Data
       Provider) verwalten. Zusätzliche Funktionen wie der Live-Service-Log oder aufbereitete Reports erleichtern den
       Einblick und geben einen Status über die Arbeit der OAN-Dienste.<br />
-      <br />
+    <br />
+
+      Status: <h:outputLabel for="#{services.harvesterStatus}">
+
+    </h:outputLabel>
+
+    <div style="padding: 20px; background-color: #f5f9f4;">
+    <div style="background-color: #f5f9f4;">
+
+    <h:form>
+    <table width="100%" style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
+
+      <tr>
+        <th class="pane-header">Status</th>
+        <th class="pane-header">Dienst</th>
+        <th class="pane-header">Letzter erfolgreicher Durchlauf</th>
+        <th class="pane-header">Letzter erfolgloser Durchlauf</th>
+        <th class="pane-header">Dauer des letzten Durchlaufs</th>
+        <th class="pane-header">Intervall</th>
+        <th class="pane-header">Aktion</th>
+      </tr>
+
+      <tr class="odd">
+        <td style="vertical-align: middle; text-align: center; height: 70px;"><img src="../images/24x24/status_green.png" width="18"
+          height="18" /></td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">Harvester</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">vor 7 Tagen</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">-</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">2h 15min</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">wöchentlich</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">
+        <h:commandLink
+          action="#{services.startHarvester}" title="Starten" >Starten
+<!--          <h:graphicImage library="img" name="16x16_plus.png" />-->
+        </h:commandLink> 
+        <br />
+<!--        <a href="do">Stoppen</a>-->
+        </td>
+      </tr>
+      <tr class="even">
+        <td style="vertical-align: middle; text-align: center; height: 70px;"><img src="../images/24x24/status_green.png" width="18"
+          height="18" /></td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">Aggregator</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">vor 6 Tagen</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">-</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">7min</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">wöchentlich</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;"><a href="do">Starten</a><br />
+        <a href="do">Stoppen</a></td>
+      </tr>
 
 
-      <div style="padding: 20px; background-color: #f5f9f4;">
-      <div style="background-color: #f5f9f4;">
-
-      <table width="100%" style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
-
-         <tr>
-            <th class="pane-header">Status</th>
-            <th class="pane-header">Dienst</th>
-            <th class="pane-header">Letzter erfolgreicher Durchlauf</th>
-            <th class="pane-header">Letzter erfolgloser Durchlauf</th>
-            <th class="pane-header">Dauer des letzten Durchlaufs</th>
-            <th class="pane-header">Intervall</th>
-            <th class="pane-header">Aktion</th>
-         </tr>
-
-         <tr class="odd">
-            <td style="vertical-align: middle; text-align: center; height: 70px;"><img src="../images/24x24/status_green.png" width="18" height="18" /></td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;">Harvester</td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;">vor 7 Tagen</td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;">-</td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;">2h 15min</td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;">wöchentlich</td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;"><a href="do">Starten</a><br />
-            <a href="do">Stoppen</a></td>
-         </tr>
-         <tr class="even">
-            <td style="vertical-align: middle; text-align: center; height: 70px;"><img src="../images/24x24/status_green.png" width="18" height="18" /></td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;">Aggregator</td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;">vor 6 Tagen</td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;">-</td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;">7min</td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;">wöchentlich</td>
-            <td style="vertical-align: middle; text-align: center; height: 70px;"><a href="do">Starten</a><br />
-            <a href="do">Stoppen</a></td>
-         </tr>
-               
-
-      </table>
-      
+    </table>
+    </h:form>
 
 
-      </div>
-      </div>
+    </div>
+    </div>
 
-</ui:define>
+  </f:view>
+  </ui:define>
 
 </ui:composition>
 
