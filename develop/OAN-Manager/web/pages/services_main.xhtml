@@ -61,7 +61,7 @@
       Einblick und geben einen Status über die Arbeit der OAN-Dienste.<br />
     <br />
 
-      Status: <h:outputLabel for="#{services.harvesterStatus}">
+      Status: <h:outputLabel for="harvesterStatus" value="#{services.harvesterStatus}">
 
     </h:outputLabel>
 
@@ -69,47 +69,107 @@
     <div style="background-color: #f5f9f4;">
 
     <h:form>
-    <table width="100%" style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
+    <table width="80%" style="width: 80%; border-collapse: collapse; border: 1px #bbb solid;">
 
       <tr>
         <th class="pane-header">Status</th>
         <th class="pane-header">Dienst</th>
-        <th class="pane-header">Letzter erfolgreicher Durchlauf</th>
-        <th class="pane-header">Letzter erfolgloser Durchlauf</th>
+        <th class="pane-header">Letzter Durchlauf</th>
         <th class="pane-header">Dauer des letzten Durchlaufs</th>
         <th class="pane-header">Intervall</th>
         <th class="pane-header">Aktion</th>
       </tr>
 
       <tr class="odd">
-        <td style="vertical-align: middle; text-align: center; height: 70px;"><img src="../images/24x24/status_green.png" width="18"
-          height="18" /></td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">
+       		<t:div rendered="#{services.harvesterStarted}">
+				<img src="../images/24x24/status_green.png" width="18" height="18" />
+            </t:div>
+            <t:div rendered="#{services.harvesterBusy}">
+				<img src="../images/24x24/status_yellow.png" width="18" height="18" />
+            </t:div>
+       		<t:div rendered="#{not services.harvesterStarted and not services.harvesterBusy}">
+				<img src="../images/24x24/status_red.png" width="18" height="18" />
+            </t:div>            
+        </td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">Harvester</td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">vor 7 Tagen</td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">-</td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">2h 15min</td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">wöchentlich</td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">
-        <h:commandLink
-          action="#{services.startHarvester}" title="Starten" >Starten
-<!--          <h:graphicImage library="img" name="16x16_plus.png" />-->
-        </h:commandLink> 
+        
+        <t:div rendered="#{not services.harvesterStarted and not services.harvesterBusy}">
+        	<h:commandLink action="#{services.startHarvesterService}" title="Starten" >Starten</h:commandLink>
+        </t:div> 
+        
         <br />
-<!--        <a href="do">Stoppen</a>-->
+        
+        <t:div rendered="#{services.harvesterStarted or services.harvesterBusy}">
+        	<h:commandLink action="#{services.stopHarvesterService}" title="Stoppen" >Stoppen</h:commandLink> 
+        </t:div> 
+        
         </td>
       </tr>
       <tr class="even">
-        <td style="vertical-align: middle; text-align: center; height: 70px;"><img src="../images/24x24/status_green.png" width="18"
-          height="18" /></td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">
+       		<t:div rendered="#{services.aggregatorStarted}">
+				<img src="../images/24x24/status_green.png" width="18" height="18" />
+            </t:div>
+            <t:div rendered="#{services.aggregatorBusy}">
+				<img src="../images/24x24/status_yellow.png" width="18" height="18" />
+            </t:div>
+       		<t:div rendered="#{not services.aggregatorStarted and not services.aggregatorBusy}">
+				<img src="../images/24x24/status_red.png" width="18" height="18" />
+            </t:div>            
+        </td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">Aggregator</td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">vor 6 Tagen</td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">-</td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">7min</td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">wöchentlich</td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;"><a href="do">Starten</a><br />
-        <a href="do">Stoppen</a></td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">
+        
+        <t:div rendered="#{not services.aggregatorStarted and not services.aggregatorBusy}">
+        	<h:commandLink action="#{services.startAggregatorService}" title="Starten" >Starten</h:commandLink>
+        </t:div> 
+        
+        <br />
+        
+        <t:div rendered="#{services.aggregatorStarted or services.aggregatorBusy}">
+        	<h:commandLink action="#{services.stopAggregatorService}" title="Stoppen" >Stoppen</h:commandLink> 
+        </t:div> 
+        
+        </td>
       </tr>
-
+      <tr class="even">
+        <td style="vertical-align: middle; text-align: center; height: 70px;">
+       		<t:div rendered="#{services.markerStarted}">
+				<img src="../images/24x24/status_green.png" width="18" height="18" />
+            </t:div>
+            <t:div rendered="#{services.markerBusy}">
+				<img src="../images/24x24/status_yellow.png" width="18" height="18" />
+            </t:div>
+       		<t:div rendered="#{not services.markerStarted and not services.markerBusy}">
+				<img src="../images/24x24/status_red.png" width="18" height="18" />
+            </t:div>            
+        </td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">Marker</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">vor 6 Tagen</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">7min</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">wöchentlich</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;">
+        
+        <t:div rendered="#{not services.markerStarted and not services.markerBusy}">
+        	<h:commandLink action="#{services.startMarkerService}" title="Starten" >Starten</h:commandLink>
+        </t:div> 
+        
+        <br />
+        
+        <t:div rendered="#{services.markerStarted or services.markerBusy}">
+        	<h:commandLink action="#{services.stopMarkerService}" title="Stoppen" >Stoppen</h:commandLink> 
+        </t:div> 
+        
+        </td>
+      </tr>
 
     </table>
     </h:form>
