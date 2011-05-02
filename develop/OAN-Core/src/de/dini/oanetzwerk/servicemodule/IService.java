@@ -24,5 +24,5 @@ public interface IService extends Remote {
 	
 	boolean stop() throws RemoteException;
 	
-	
+	boolean stopService() throws RemoteException;
 }

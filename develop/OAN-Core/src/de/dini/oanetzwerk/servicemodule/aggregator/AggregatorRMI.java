@@ -23,6 +23,8 @@ public class AggregatorRMI implements IService {
 
 	private static final Logger logger = Logger.getLogger(AggregatorRMI.class);
 
+	private static final String SERVICE_NAME = "AggregatorService";
+	
 	private Aggregator aggregator = null;
 	private Registry registry = null;
 
@@ -42,7 +44,6 @@ public class AggregatorRMI implements IService {
 	}
 
 	private void startService() {
-		String name = "HarvesterService";
 
 		try {
 			// FileWriter writer = new FileWriter(new
@@ -60,10 +61,10 @@ public class AggregatorRMI implements IService {
 				return;
 			}
 
-			registry.rebind(name, stub);
-			System.out.println(name + " bound");
+			registry.rebind(SERVICE_NAME, stub);
+			System.out.println(SERVICE_NAME + " bound");
 		} catch (Exception e) {
-			System.err.println(name + " could not be bound: ");
+			System.err.println(SERVICE_NAME + " could not be bound: ");
 			e.printStackTrace();
 		}
 
@@ -235,6 +236,18 @@ public class AggregatorRMI implements IService {
 	@Override
 	public void setUpdateInterval(int ms) throws RemoteException {		
 		this.updateInterval = ms;
+	}
+	
+	@Override
+	public boolean stopService() throws RemoteException {
+		logger.info("Unbinding " + SERVICE_NAME + " !");
+		
+		try {
+			registry.unbind(SERVICE_NAME);
+		} catch (NotBoundException e) {
+			logger.info(SERVICE_NAME + " already unbound.");
+		}
+		return true;
 	}
 
 }

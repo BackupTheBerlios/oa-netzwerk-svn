@@ -18,9 +18,13 @@ public class HarvesterRMI implements IService {
 
 	private static final Logger logger = Logger.getLogger(HarvesterRMI.class);
 
+	private static final String SERVICE_NAME = "HarvesterService";
+	
 	private Harvester harvester = null;
 	private Registry registry = null;
 
+	
+	
 	private int updateInterval = 10000;
 	private StringBuffer messages = new StringBuffer();
 
@@ -37,7 +41,6 @@ public class HarvesterRMI implements IService {
 	}
 
 	private void startService() {
-		String name = "HarvesterService";
 
 		try {
 			// FileWriter writer = new FileWriter(new
@@ -55,10 +58,10 @@ public class HarvesterRMI implements IService {
 				return;
 			}
 
-			registry.rebind(name, stub);
-			System.out.println(name + " bound");
+			registry.rebind(SERVICE_NAME, stub);
+			System.out.println(SERVICE_NAME + " bound");
 		} catch (Exception e) {
-			System.err.println(name + " could not be bound: ");
+			System.err.println(SERVICE_NAME + " could not be bound: ");
 			e.printStackTrace();
 		}
 
@@ -66,6 +69,8 @@ public class HarvesterRMI implements IService {
 		publishUpdates();
 	}
 
+	
+	
 	private void publishUpdates() {
 
 		String name = "HarvesterMonitorService";
@@ -211,6 +216,23 @@ public class HarvesterRMI implements IService {
 	@Override
 	public void setUpdateInterval(int ms) throws RemoteException {		
 		this.updateInterval = ms;
+	}
+
+	@Override
+	public boolean stopService() throws RemoteException {
+		logger.info("Unbinding " + SERVICE_NAME + " !");
+		
+		try {
+			System.out.println("registry == null : " + registry == null);
+			if (registry == null)
+			{
+				registry = getRegistry();
+			}
+			registry.unbind(SERVICE_NAME);
+		} catch (NotBoundException e) {
+			logger.info(SERVICE_NAME + " already unbound.");
+		}
+		return true;
 	}
 
 }
