@@ -10,12 +10,20 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
 
 import de.dini.oanetzwerk.servicemodule.IHarvesterMonitor;
 import de.dini.oanetzwerk.servicemodule.IService;
 
 public class HarvesterRMI implements IService {
 
+	static {
+		
+		PropertyConfigurator.configureAndWatch( "log4j.properties", 60*1000 );
+
+	}
+	
 	private static final Logger logger = Logger.getLogger(HarvesterRMI.class);
 
 	private static final String SERVICE_NAME = "HarvesterService";
@@ -25,7 +33,7 @@ public class HarvesterRMI implements IService {
 
 	
 	
-	private int updateInterval = 10000;
+	private int updateInterval = 5000;
 	private StringBuffer messages = new StringBuffer();
 
 	public HarvesterRMI() {
@@ -33,6 +41,10 @@ public class HarvesterRMI implements IService {
 	}
 
 	public static void main(String[] args) {
+		
+		PropertyConfigurator.configureAndWatch( "log4j.properties", 60*1000 );
+
+		
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
@@ -42,6 +54,7 @@ public class HarvesterRMI implements IService {
 
 	private void startService() {
 
+		logger.info("Harvester starting due to rmi call.");
 		try {
 			// FileWriter writer = new FileWriter(new
 			// File("/home/davidsam/Desktop/1234567.txt"));
@@ -96,13 +109,16 @@ public class HarvesterRMI implements IService {
 
 					if (service == null) {
 						service = (IHarvesterMonitor) registry.lookup(name);
+						logger.info("IHarvesterMonitor found!");
 					}
 										
-					// create harvesting settings
-					data.put("progress", String.valueOf(this.getCurrentStatus()));
-					data.put("messages", messages.toString());
-					service.publishServiceUpdates(data);
-
+					if (service != null) {
+						logger.info("Publishing Updates to Harvester monitor.");
+						// create harvesting settings
+						data.put("progress", String.valueOf(this.getCurrentStatus()));
+						data.put("messages", messages.toString());
+						service.publishServiceUpdates(data);
+					}
 					this.wait(updateInterval);
 				}
 			}
@@ -223,7 +239,6 @@ public class HarvesterRMI implements IService {
 		logger.info("Unbinding " + SERVICE_NAME + " !");
 		
 		try {
-			System.out.println("registry == null : " + registry == null);
 			if (registry == null)
 			{
 				registry = getRegistry();

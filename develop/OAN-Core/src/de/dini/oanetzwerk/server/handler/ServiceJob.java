@@ -42,7 +42,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 	public ServiceJob() {
 
-		super(ServiceJob.class.getName(), RestKeyword.Services);
+		super(ServiceJob.class.getName(), RestKeyword.ServiceJob);
 	}
 
 	/**
@@ -67,23 +67,6 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 		if (path.length < 1) {
 
-			int jobId;
-
-			try {
-
-				jobId = Integer.parseInt(path[0]);
-
-			} catch (NumberFormatException ex) {
-
-				logger.error(path[0] + " is NOT a number!");
-
-				this.rms = new RestMessage(RestKeyword.ServiceJob);
-				this.rms.setStatus(RestStatusEnum.WRONG_PARAMETER);
-				this.rms.setStatusDescription(path[0] + " is NOT a number!");
-
-				return RestXmlCodec.encodeRestMessage(this.rms);
-			}
-
 			DBAccessNG dbng = new DBAccessNG(super.getDataSource());
 			SingleStatementConnection stmtconn = null;
 			RestEntrySet res = new RestEntrySet();
@@ -92,7 +75,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 				stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection();
 
-				stmtconn.loadStatement(SelectFromDB.ServicesScheduling(stmtconn.connection, jobId));
+				stmtconn.loadStatement(SelectFromDB.ServicesScheduling(stmtconn.connection));
 				this.result = stmtconn.execute();
 
 				if (this.result.getWarning() != null) {
@@ -520,7 +503,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 		boolean periodic = false;
 		Date nonperiodicTimestamp = null;
 		String periodicInterval = null;
-		int periodicDays = -1;
+		int periodicDays = 0;
 
 		this.rms = RestXmlCodec.decodeRestMessage(data);
 		RestEntrySet res = this.rms.getListEntrySets().get(0);

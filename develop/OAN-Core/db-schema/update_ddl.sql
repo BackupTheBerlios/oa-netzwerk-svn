@@ -257,15 +257,15 @@ UPDATE DDC_Categories SET name_en = 'General history of other areas ' WHERE DDC_
 
 -- add table for sybase
 CREATE TABLE dbo.ServicesScheduling (
-	   job_id int NOT NULL,
+       job_id numeric identity NOT NULL,
        service_id numeric(38,0) NOT NULL,
        name UNIVARCHAR(256) NOT NULL,
        status UNIVARCHAR(100) NOT NULL,
        info univarchar(512),
        periodic BIT NOT NULL,
-       nonperiodic_date DATETIME,
-       periodic_interval_type univarchar(20),
-       periodic_interval_day tinyint,
+       nonperiodic_date DATETIME NULL,
+       periodic_interval_type univarchar(20) NULL,
+       periodic_interval_days tinyint,
        
        PRIMARY KEY (job_id),
        FOREIGN KEY (service_id) REFERENCES dbo.Services (service_id)
@@ -283,7 +283,7 @@ CREATE TABLE "public"."ServicesScheduling" (
        periodic bool NOT NULL,
        nonperiodic_date timestamp,
        periodic_interval_type varchar(30),
-       periodic_interval_day smallint
+       periodic_interval_days smallint
 ) WITH (OIDS=FALSE);
 
 
