@@ -72,35 +72,35 @@
                </tr>
                <tr>
                   <td width="140">Repository-ID:</td>
-                  <td charoff="10">#{repo.id}</td>
+                  <td charoff="10">#{repo.repository.id}</td>
                </tr>
                <tr>
                   <td width="140">Repository-Name:</td>
-                  <td charoff="10">#{repo.name}</td>
+                  <td charoff="10">#{repo.repository.name}</td>
                </tr>
                <tr>
                   <td>URL</td>
-                  <td>#{repo.url}</td>
+                  <td>#{repo.repository.url}</td>
                </tr>
                <tr>
                   <td>OAI-PMH Schnittstelle</td>
-                  <td>#{repo.oaiUrl}</td>
+                  <td>#{repo.repository.oaiUrl}</td>
                </tr>
                <tr>
                   <td>Harvest Batch-Size</td>
-                  <td>#{repo.harvestAmount}</td>
+                  <td>#{repo.repository.harvestAmount}</td>
                </tr>
                <tr>
                   <td>Harvest Pause in ms</td>
-                  <td>#{repo.harvestPause}</td>
+                  <td>#{repo.repository.harvestPause}</td>
                </tr>
                <tr>
                   <td>listrecords-Modus</td>
-                  <td>#{repo.listRecords}</td>
+                  <td>#{repo.repository.listRecords}</td>
                </tr>
                <tr>
                   <td>aktiv</td>
-                  <td>#{repo.active}</td>
+                  <td>#{repo.repository.active}</td>
                </tr>
 
                <tr>
@@ -116,7 +116,7 @@
                <tr>
                   <td colspan="2" align="center">
                   <p />
-                  <t:inputHidden value="#{repo.id}" /> <t:commandButton type="submit" action="#{repo.deactivate}"
+                  <t:inputHidden value="#{repo.repository.id}" /> <t:commandButton type="submit" action="#{repo.deactivate}"
                      value="Deaktivieren" width="200"></t:commandButton> <t:commandButton type="submit"
                      action="#{repo.delete}" value="Endgültig Löschen" size="200"></t:commandButton></td>
                </tr>

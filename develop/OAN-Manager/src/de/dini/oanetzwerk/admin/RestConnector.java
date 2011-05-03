@@ -13,8 +13,8 @@ import org.apache.log4j.Logger;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.PropertyManager;
 
+@ManagedBean(name="restConnector")
 @ApplicationScoped
-@ManagedBean(name="restconnector")
 public class RestConnector implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,6 +26,7 @@ public class RestConnector implements Serializable {
 	
 	public RestConnector() {
 	    super();
+	    System.out.println("RestConnector constructor");
     }
 	
 
@@ -48,5 +49,6 @@ public class RestConnector implements Serializable {
 
 	public void setPropertyManager(PropertyManager propertyManager) {
     	this.propertyManager = propertyManager;
+    	System.out.println("RestConnector propertyManager setter");
     }	
 }

@@ -1,6 +1,5 @@
 package de.dini.oanetzwerk.admin.scheduling;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,12 +9,12 @@ import javax.faces.bean.ManagedProperty;
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 
+import de.dini.oanetzwerk.admin.Repository;
 import de.dini.oanetzwerk.admin.RepositoryBean;
 import de.dini.oanetzwerk.admin.RestConnector;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
-import de.dini.oanetzwerk.servicemodule.RestClient;
 
 public abstract class AbstractServiceJob implements Job {
 
@@ -53,13 +52,13 @@ public abstract class AbstractServiceJob implements Job {
 	}
 
 	
-	public List<RepositoryBean> getRepositories() {
+	public List<Repository> getRepositories() {
 
 //		if (true)
 //			return new ArrayList<RepositoryBean>();
 		
 		String result = connector.prepareRestTransmission("Repository/").GetData();
-		List<RepositoryBean> repoList = new ArrayList<RepositoryBean>();
+		List<Repository> repoList = new ArrayList<Repository>();
 		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
 
 		if (rms == null || rms.getListEntrySets().isEmpty()) {
@@ -72,7 +71,7 @@ public abstract class AbstractServiceJob implements Job {
 
 			Iterator<String> it = res.getKeyIterator();
 			String key = "";
-			RepositoryBean repo = new RepositoryBean();
+			Repository repo = new Repository();
 
 			while (it.hasNext()) {
 

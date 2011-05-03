@@ -56,15 +56,15 @@
       <f:view>
         <h:form id="bla" action="#{repo.storeRepository}">
 
-<!--          <tr>-->
-<!--            <td><h:outputText id="nameError" value="#{repo.nameError}" style="color: red;font-style: italic;" /></td>-->
-<!--          </tr>-->
+
+
+
           <tr>
             <td>Name des Repositories&nbsp; (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)</td>
           </tr>
           <tr>
 
-            <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.name}"  >
+            <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.repository.name}"  >
             <f:validateBean />   
             </t:inputText>
             <div class="help_box" id="help_name">Geben Sie hier den Namen des neuen Repositoriums ein.</div>
@@ -76,7 +76,7 @@
             <td>URL (<a href="#" onclick="javascript:toggle_help('help_url'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:inputText id="url" size="80" value="#{repo.url}" />
+            <td class="form"><t:inputText id="url" size="80" value="#{repo.repository.url}" />
             <div class="help_box" id="help_url">Geben Sie die Internetseite des neuen Repositories an auf der allgemeine Informationen
             zum Repository zu finden sind. (http://...)</div>
             </td>
@@ -86,7 +86,7 @@
             <td>Verantwortlicher&nbsp; (<a href="#" onclick="javascript:toggle_help('help_owner'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:inputText id="repo_owner" size="80" value="#{repo.owner}" />
+            <td class="form"><t:inputText id="repo_owner" size="80" value="#{repo.repository.owner}" />
             <div class="help_box" id="help_owner">Geben Sie hier den Namen des Verantwortlichen für das Repository ein.</div>
             </td>
 
@@ -96,7 +96,7 @@
             <td>E-Mail&nbsp; (<a href="#" onclick="javascript:toggle_help('help_ownerEmail'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:inputText id="repo_ownerEmail" size="80" value="#{repo.ownerEmail}" />
+            <td class="form"><t:inputText id="repo_ownerEmail" size="80" value="#{repo.repository.ownerEmail}" />
             <div class="help_box" id="help_ownerEmail">Geben Sie hier die E-Mail-Adresse des Verantwortlichen für das Repository ein.</div>
             </td>
 
@@ -106,7 +106,7 @@
             <td>OAI-PMH Schnittstelle (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.oaiUrl}" />
+            <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.repository.oaiUrl}" />
             <div class="help_box" id="help_oaipmh">Geben Sie die URL der OAI-PMH Schnittstelle des neuen Repositories an. (http://...)</div>
             </td>
           </tr>
@@ -114,7 +114,7 @@
             <td>Harvest Batch-Size (<a href="#" onclick="javascript:toggle_help('help_size'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:inputText id="harvest_batch" size="20" value="#{repo.harvestAmount}" />
+            <td class="form"><t:inputText id="harvest_batch" size="20" value="#{repo.repository.harvestAmount}" />
             <div class="help_box" id="help_size">Geben Sie hier die Anzahl der Records an, die bei einem einzelnen Harvesting-Request
             vom Repository zur Bearbeitung geladen werden soll.</div>
             </td>
@@ -123,7 +123,7 @@
             <td>Harvest Pause in ms (<a href="#" onclick="javascript:toggle_help('help_pause'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:inputText id="harvest_pause" size="20" value="#{repo.harvestPause}" />
+            <td class="form"><t:inputText id="harvest_pause" size="20" value="#{repo.repository.harvestPause}" />
             <div class="help_box" id="help_pause">Geben Sie die Zeit der Pause zwischen den Harvesting-Requests während eines
             Harvestings in Millisekunden an. (1000ms = 1s)</div>
             </td>
@@ -132,7 +132,7 @@
             <td>listrecords-Modus (<a href="#" onclick="javascript:toggle_help('help_listrec'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:inputText id="listrecords" size="20" value="#{repo.listRecords}" />
+            <td class="form"><t:inputText id="listrecords" size="20" value="#{repo.repository.listRecords}" />
             <div class="help_box" id="help_listrec">Soll das Harvesting bevorzugt den ListRecords-Modus verwenden.</div>
             </td>
           </tr>
@@ -140,7 +140,7 @@
             <td>aktiv (<a href="#" onclick="javascript:toggle_help('help_active'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:selectBooleanCheckbox id="active" value="#{repo.active}" />
+            <td class="form"><t:selectBooleanCheckbox id="active" value="#{repo.repository.active}" />
             <div class="help_box" id="help_active">Legt fest ob das neue Repository nach dem Hinzufügen vom Diensteprozess
             berücksichtigt werden soll. (kann auch später aktiviert werden)</div>
             </td>

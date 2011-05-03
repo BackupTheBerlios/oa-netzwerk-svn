@@ -84,9 +84,12 @@
 										<f:facet name="header">
 											<h:outputText value="Name" />
 										</f:facet>
-										<!--                           <h:form>-->
+<!--										                           <h:form id="testForm">-->
 										<a href="repository_view.xhtml?rid=#{row.id}">#{row.name}</a>
-										<!--                           </h:form>-->
+<!--										<h:inputHidden id="identifier" name="identifier" value="#{row.id}" />-->
+<!--										<input type="hidden" name="identifier" value="#{row.id}" />-->
+<!--										<h:commandButton action="repository_view.xhtml?rid=#{row.id}" value="#{row.name}" />-->
+<!--										                           </h:form>-->
 									</t:column>
 									<t:column style="width: 22%; vertical-align: middle; padding-left: 15px; height: 70px;">
 										<f:facet name="header">
@@ -117,8 +120,8 @@
 										<f:facet name="header">
 											<h:outputText value="Ändern" />
 										</f:facet>
-										<h:commandButton action="bla" value="#{row.id}"
-											image="../images/16x16/document_edit.gif" />
+										<a href="repository_view.xhtml?rid=#{row.id}"><img
+											src="../images/16x16/document_edit.gif" /></a>
 									</t:column>
 									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">

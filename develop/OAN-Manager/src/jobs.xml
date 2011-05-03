@@ -38,7 +38,7 @@
                 <job-name>Harvester</job-name>
                 <job-group>OAN-Jobs</job-group>
                 <repeat-count>-1</repeat-count>
-                <repeat-interval>3000</repeat-interval>
+                <repeat-interval>60000</repeat-interval>
             </simple>
         </trigger>
     </schedule>

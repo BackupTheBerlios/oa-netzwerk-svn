@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -33,11 +32,11 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 	FacesContext ctx = FacesContext.getCurrentInstance();
 	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(false);
 
-	@ManagedProperty(value = "#{restconnector}")
-	private RestConnector connector;
+	@ManagedProperty(value = "#{restConnector}")
+	private RestConnector restConnector;
 
-	private RepositoryBean repo;
-	private List<RepositoryBean> repoList;
+//	private RepositoryBean repo;
+	private List<Repository> repoList;
 
 	public RepositoryListBean() {
 
@@ -46,8 +45,15 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		String result = connector.prepareRestTransmission("Repository/").GetData();
-		repoList = new ArrayList<RepositoryBean>();
+		
+		RepositoryBean.setRestConnector(restConnector);
+		
+		if (repoList != null && !repoList.isEmpty()) {
+			return;
+		}
+		
+		String result = restConnector.prepareRestTransmission("Repository/").GetData();
+		repoList = new ArrayList<Repository>();
 		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
 
 		if (rms == null || rms.getListEntrySets().isEmpty()) {
@@ -60,7 +66,7 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 
 			Iterator<String> it = res.getKeyIterator();
 			String key = "";
-			RepositoryBean repo = new RepositoryBean();
+			Repository repo = new Repository();
 
 			while (it.hasNext()) {
 
@@ -114,7 +120,7 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 
 	}
 
-	public List<RepositoryBean> getRepositories() {
+	public List<Repository> getRepositories() {
 		return repoList;
 	}
 
@@ -123,8 +129,8 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 		return "z";
 	}
 
-	public void setConnector(RestConnector connector) {
-		this.connector = connector;
+	public void setRestConnector(RestConnector restConnector) {
+		this.restConnector = restConnector;
 	}
 
 }

@@ -9,6 +9,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -24,6 +27,7 @@ import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.servicemodule.IService;
 import de.dini.oanetzwerk.utils.PropertyManager;
 
@@ -49,7 +53,7 @@ public class ServiceManagementBean {
 	private String localPathToAggregator = null;
 	private String localPathToMarker = null;
 
-	@ManagedProperty(value="#{restconnector}")
+	@ManagedProperty(value="#{restConnector}")
 	private RestConnector connector;	
 	
 	@ManagedProperty(value = "#{propertyManager}")
@@ -75,11 +79,11 @@ public class ServiceManagementBean {
 		aggregatorStatus = checkServiceStatus("AggregatorService");
 		markerStatus = checkServiceStatus("MarkerService");
 		
-		schedule();
+		storeJob();
 	}
 
 	
-	private String schedule() {
+	private String storeJob() {
 		
 		String name = "TestName";
 		BigDecimal serviceId = new BigDecimal(1);
@@ -137,6 +141,118 @@ public class ServiceManagementBean {
 
 		return "success";
 	}
+	
+	
+	private String updateJob(Integer jobId) {
+		
+		String name = "TestName";
+		BigDecimal serviceId = new BigDecimal(1);
+		String status = "Offen";
+		String info = "25";
+		boolean periodic = false;
+		Date nonperiodicTimestamp = new Date(System.currentTimeMillis());
+		String periodicInterval = null;
+		int periodicDays = 0;
+
+		// REST call
+		RestMessage rms;
+		RestEntrySet res;
+		RestMessage result = null;
+
+		rms = new RestMessage();
+
+		rms.setKeyword(RestKeyword.ServiceJob);
+		rms.setStatus(RestStatusEnum.OK);
+
+		res = new RestEntrySet();
+
+		res.addEntry("name", name);
+		res.addEntry("service_id", serviceId.toString());
+		res.addEntry("status", status);
+		res.addEntry("info", info);
+		res.addEntry("periodic", Boolean.toString(periodic));
+		res.addEntry("nonperiodic_date", nonperiodicTimestamp.toString());
+		res.addEntry("periodic_interval", periodicInterval);
+		res.addEntry("periodic_days", Integer.toString(periodicDays));
+			
+		rms.addEntrySet(res);
+		
+		
+		try {
+			result = connector.prepareRestTransmission("ServiceJob/" + Integer.toString(jobId)).sendPostRestMessage(rms);
+			
+			if (rms.getStatus() != RestStatusEnum.OK) {
+
+				logger.error("/ServiceJob response failed: " + rms.getStatus() + "("
+						+ rms.getStatusDescription() + ")");
+				return "failed";
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return "failed";
+		}
+		
+		logger.info("PUT sent to /ServiceJob");
+
+		
+
+		ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"info.servicejob_stored_success", null));
+
+		return "success";
+	}
+	
+	private void getJobs() {
+		
+
+		String result = connector.prepareRestTransmission("ServiceJob/").GetData();
+		List jobList = new ArrayList<Repository>();
+		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+
+		if (rms == null || rms.getListEntrySets().isEmpty()) {
+
+			logger.error("received no Service job details at all from the server");
+			return;
+		}
+
+		for (RestEntrySet res : rms.getListEntrySets()) {
+
+			Iterator<String> it = res.getKeyIterator();
+			String key = "";
+			Repository repo = new Repository();
+
+			while (it.hasNext()) {
+
+				key = it.next();
+
+				// if (logger.isDebugEnabled ( ))
+				// logger.debug ("key: " + key + " value: " + res.getValue
+				// (key));
+
+				if (key.equalsIgnoreCase("name")) {
+
+					repo.setName(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("url")) {
+
+					repo.setUrl(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("repository_id")) {
+
+					repo.setId(new Long(res.getValue(key)));
+
+				} else
+					// System.out.println("Key: " + key);
+					continue;
+			}
+
+			jobList.add(repo);
+
+		}
+//		System.out.println(repoList.size());
+		
+	}
+	
 	
 	private ServiceStatus checkServiceStatus(String serviceName) {
 

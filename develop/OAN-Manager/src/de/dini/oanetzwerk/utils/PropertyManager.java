@@ -1,8 +1,6 @@
 package de.dini.oanetzwerk.utils;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.InvalidPropertiesFormatException;
+import java.io.Serializable;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -14,7 +12,9 @@ import org.apache.log4j.Logger;
 
 @ManagedBean(name="propertyManager")
 @ApplicationScoped
-public class PropertyManager {
+public class PropertyManager implements Serializable {
+	
+    private static final long serialVersionUID = 1L;
 
 	private final static Logger logger 				= Logger.getLogger(PropertyManager.class);
 	
@@ -33,7 +33,7 @@ public class PropertyManager {
 	
 	public PropertyManager() {
 		super();
-		
+		System.out.println("PropertyManager constructor");
 	}
 
 	@PostConstruct

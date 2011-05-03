@@ -14,6 +14,7 @@ import java.util.Iterator;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -39,65 +40,56 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
  */
 
 @ManagedBean(name = "repo")
+@RequestScoped
 public class RepositoryBean extends AbstractBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(RepositoryBean.class);
 
+	private static RestConnector connector;	
+	
 	FacesContext ctx = FacesContext.getCurrentInstance();
 	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(
 			false);
 	
-	@ManagedProperty(value="#{restconnector}")
-	private RestConnector connector;	
+//	@ManagedProperty(value="#{restConnector}")
+//	private RestConnector restConnector;	
 	
-	private boolean deactivated = false;
-	private boolean deleted = false;
-	private boolean stored = false;
-
-	private Long id = null;
-	
-//	@Size(min = 8, message = "Please enter the Email")
-	private String name;
-	private String owner;
-	private String ownerEmail;
-	
-//	@NotNull
-	private String url;
-	private String oaiUrl;
-	private String harvestAmount = "10";
-	private String harvestPause = "5000";
-	private String lastFullHarvestBegin;
-	private String testData;
-	private boolean listRecords;
-	private boolean active = true;
-
+	private Repository repository;
+	private String repoId;
 
 	public RepositoryBean() {
 		super();
-		initRepositoryBean();
+//		if (restConnector != null) 
+//		{
+//			connector = restConnector;
+//		}
+		System.out.println("RepositoryBean constructor");
+		init();
+		
 	}
 
-	public boolean success() {
-		return deactivated || deleted || stored;
-	}
 
-	// public String message() {
-	// return ctx.getMessages("repositories");
-	// }
+	public String init() {
 
-	private void initRepositoryBean() {
-
+		repository = new Repository();
+		
 		HttpServletRequest request = (HttpServletRequest) ctx
 				.getExternalContext().getRequest();
-		String repoId = request.getParameter("rid");
+		
 
+		String repoId = request.getParameter("rid");
+//		String repoId = FacesContext.getCurrentInstance().
+//		getExternalContext().getRequestParameterMap().get("identifier");
+
+		System.out.println("ID1: " + repoId);
+		System.out.println("ID2: " + this.repoId);
 		if (repoId == null) {
-			return;
+			return null;
 		}
 
 		try {
-			this.id = Long.parseLong(repoId);
+			repository.setId(Long.parseLong(repoId));
 
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
@@ -118,27 +110,32 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 			if (key == null) {
 				continue;
 			} else if (key.equals("name")) {
-				this.name = details.get(key);
+				repository.setName(details.get(key));
 			} else if (key.equals("url")) {
-				this.url = details.get(key);
+				repository.setUrl(details.get(key));
 			} else if (key.equals("oai_url")) {
-				this.oaiUrl = details.get(key);
+				repository.setOaiUrl(details.get(key));
 			} else if (key.equals("harvest_amount")) {
-				this.harvestAmount = details.get(key);
+				repository.setHarvestAmount(details.get(key));
 			} else if (key.equals("last_full_harvest_begin")) {
-				this.lastFullHarvestBegin = details.get(key);
+				repository.setLastFullHarvestBegin(details.get(key));
 			} else if (key.equals("testdata")) {
-				this.testData = details.get(key);
+				repository.setTestData(details.get(key));
 			} else if (key.equals("active")) {
-				this.active = Boolean.parseBoolean(details.get(key));
+				repository.setActive(Boolean.parseBoolean(details.get(key)));
 			}
 		}
+		return "repository_view.xhtml";
 	}
 
 	public HashMap<String, String> getDetails() {
 
+		if (connector == null) 
+		{
+			System.out.println("yes is null");
+		}
 		String result = connector.prepareRestTransmission(
-				"Repository/" + Long.toString(id)).GetData();
+				"Repository/" + Long.toString(repository.getId())).GetData();
 
 		HashMap<String, String> details = new HashMap<String, String>();
 		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
@@ -166,15 +163,11 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 	
 	public String storeRepository() {
 
-		System.out.println("Name: " + name);
-		System.out.println("Url: " + url);
-		System.out.println("" + harvestAmount);
-		logger.warn("jsdfbkj");
-
+		System.out.println("Name: " + repository.getName());
+		System.out.println("Url: " + repository.getUrl());
+		System.out.println("" + repository.getHarvestAmount());
 
 		// REST call
-		
-
 		RestMessage rms;
 		RestEntrySet res;
 		RestMessage result = null;
@@ -186,17 +179,17 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 
 		res = new RestEntrySet();
 
-		res.addEntry("name", this.getName());
-		res.addEntry("url", this.getUrl());
-		res.addEntry("owner", this.getOwner());
-		res.addEntry("ownerEmail", this.getOwnerEmail());
-		res.addEntry("oaiUrl", this.getOaiUrl());
-		res.addEntry("harvestAmount", this.getHarvestAmount());
-		res.addEntry("lastFullHarvestBegin", this.getLastFullHarvestBegin());
-		res.addEntry("harvestPause", this.getHarvestPause());
-		res.addEntry("testData", this.getTestData());
-		res.addEntry("active", Boolean.toString(isActive()));
-		res.addEntry("listRecords", Boolean.toString(isListRecords()));
+		res.addEntry("name", repository.getName());
+		res.addEntry("url", repository.getUrl());
+		res.addEntry("owner", repository.getOwner());
+		res.addEntry("ownerEmail", repository.getOwnerEmail());
+		res.addEntry("oaiUrl", repository.getOaiUrl());
+		res.addEntry("harvestAmount", repository.getHarvestAmount());
+		res.addEntry("lastFullHarvestBegin", repository.getLastFullHarvestBegin());
+		res.addEntry("harvestPause", repository.getHarvestPause());
+		res.addEntry("testData", repository.getTestData());
+		res.addEntry("active", Boolean.toString(repository.isActive()));
+		res.addEntry("listRecords", Boolean.toString(repository.isListRecords()));
 			
 		
 		rms.addEntrySet(res);
@@ -230,16 +223,16 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 
 		System.out.println("delete!");
 
-		System.out.println("Name: " + name);
-		System.out.println("Url: " + url);
-		System.out.println("" + harvestAmount);
-		logger.warn("jsdfbkj");
+		System.out.println("Name: " + repository.getName());
+		System.out.println("Url: " + repository.getUrl());
+		System.out.println("" + repository.getHarvestAmount());
+
 		try {
 
 			SingleStatementConnection stmtconn = (SingleStatementConnection) new DBAccessNG()
 					.getSingleStatementConnection();
 			PreparedStatement statement = DeleteFromDB.Repositories(
-					stmtconn.connection, id);
+					stmtconn.connection, repository.getId());
 
 			new DBHelper().save(stmtconn, statement);
 
@@ -259,15 +252,15 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 
 		System.out.println("deactivate!");
 
-		System.out.println("Name: " + name);
-		System.out.println("Url: " + url);
-		System.out.println("" + harvestAmount);
+		System.out.println("Name: " + repository.getName());
+		System.out.println("Url: " + repository.getUrl());
+		System.out.println("" + repository.getHarvestAmount());
 		try {
 
 			SingleStatementConnection stmtconn = (SingleStatementConnection) new DBAccessNG()
 					.getSingleStatementConnection();
 			PreparedStatement statement = UpdateInDB.Repository(
-					stmtconn.connection, id, false);
+					stmtconn.connection, repository.getId(), false);
 
 			new DBHelper().save(stmtconn, statement);
 
@@ -287,103 +280,25 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 		return "";
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public void setOwner(String owner){
-		this.owner = owner;
+	
+	public Repository getRepository() {
+		return repository;
 	}
 	
-	public String getOwner(){
-		return owner;
-	}
 	
-	public void setOwnerEmail(String ownerEmail){
-		this.ownerEmail = ownerEmail;
-	}
-	
-	public String getOwnerEmail(){
-		return ownerEmail;
-	}
-	
-	public String getOaiUrl() {
-		return oaiUrl;
+
+	public void setRepoId(String repoId) {
+		this.repoId = repoId;
 	}
 
-	public void setOaiUrl(String oaiUrl) {
-		this.oaiUrl = oaiUrl;
-	}
 
-	public String getHarvestAmount() {
-		return harvestAmount;
-	}
+//	public void setRestConnector(RestConnector restConnector) {
+//		this.restConnector = restConnector;
+//		System.out.println("RepositoryBean restConnector setter");
+//	}
 
-	public void setHarvestAmount(String harvestAmount) {
-		this.harvestAmount = harvestAmount;
+	public static void setRestConnector(RestConnector restConnector) {
+		connector = restConnector;
+		System.out.println("RepositoryBean restConnector setter");
 	}
-
-	public String getLastFullHarvestBegin() {
-		return lastFullHarvestBegin;
-	}
-
-	public void setLastFullHarvestBegin(String lastFullHarvestBegin) {
-		this.lastFullHarvestBegin = lastFullHarvestBegin;
-	}
-
-	public String getHarvestPause() {
-		return harvestPause;
-	}
-
-	public void setHarvestPause(String harvestPause) {
-		this.harvestPause = harvestPause;
-	}
-
-	public boolean isListRecords() {
-		return listRecords;
-	}
-
-	public void setListRecords(boolean listRecords) {
-		this.listRecords = listRecords;
-	}
-
-	public String getTestData() {
-		return testData;
-	}
-
-	public void setTestData(String testData) {
-		this.testData = testData;
-	}
-
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-
-	public void setConnector(RestConnector connector) {
-    	this.connector = connector;
-    }
 }
