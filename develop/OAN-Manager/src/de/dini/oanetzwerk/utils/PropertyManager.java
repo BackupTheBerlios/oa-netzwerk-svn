@@ -1,5 +1,8 @@
 package de.dini.oanetzwerk.utils;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +29,7 @@ public class PropertyManager {
 	private static String contextPathFallback		= "/OAN-Manager";
 	
 	private Properties serviceProperties = null;
+	private Properties restProperties = null;
 	
 	public PropertyManager() {
 		super();
@@ -51,7 +55,7 @@ public class PropertyManager {
 		if (!isLoaded)
 			isLoaded = loadServiceProperties(webappDirFallback, contextPathFallback);		
 		
-		
+		loadRestClientProperties(webappDir, contextPath);
 	}	
 	
 	
@@ -70,6 +74,23 @@ public class PropertyManager {
 		} 
 		return false;
 	}
+	
+	private boolean loadRestClientProperties(final String webappDir, final String contextPath) {
+		
+		try {
+			restProperties 	= HelperMethods.loadPropertiesFromFile (CATALINA_BASE + webappDir + contextPath + "/WEB-INF/admingui.xml");
+			PropertyManager.webappDir		= webappDir;
+			PropertyManager.contextPath 	= contextPath;
+			
+			logger.info("Found admingui.xml in '" + CATALINA_BASE + webappDir + contextPath + "/WEB-INF/admingui.xml'");
+			return true;
+		} catch (Exception ex) {
+			
+			logger.warn("Could not fetch admingui.xml in '" + CATALINA_BASE + webappDir + contextPath + "/WEB-INF/admingui.xml'");
+		} 
+		return false;
+	}
+	
 
 	public Properties getServiceProperties() {
 		if (serviceProperties == null) {
@@ -81,5 +102,21 @@ public class PropertyManager {
 	public void setServiceProperties(Properties serviceProperties) {
 		this.serviceProperties = serviceProperties;
 	}
+
+	public Properties getRestProperties() {
+		
+		if (restProperties == null) {
+			init();
+		}
+    	return restProperties;
+    }
+
+	public static String getWebappDir() {
+    	return webappDir;
+    }
+
+	public static String getContextPath() {
+    	return contextPath;
+    }	
 		
 }

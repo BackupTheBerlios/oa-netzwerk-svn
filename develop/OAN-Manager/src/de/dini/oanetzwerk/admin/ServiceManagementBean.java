@@ -2,19 +2,28 @@ package de.dini.oanetzwerk.admin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.sql.Date;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.admin.utils.RMIRegistryHelper;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestKeyword;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.servicemodule.IService;
 import de.dini.oanetzwerk.utils.PropertyManager;
 
@@ -40,9 +49,14 @@ public class ServiceManagementBean {
 	private String localPathToAggregator = null;
 	private String localPathToMarker = null;
 
+	@ManagedProperty(value="#{restconnector}")
+	private RestConnector connector;	
+	
 	@ManagedProperty(value = "#{propertyManager}")
 	private PropertyManager propertyManager;
 
+	FacesContext ctx = FacesContext.getCurrentInstance();
+	
 	public ServiceManagementBean() {
 		super();
 	}
@@ -60,8 +74,70 @@ public class ServiceManagementBean {
 		harvesterStatus = checkServiceStatus("HarvesterService");
 		aggregatorStatus = checkServiceStatus("AggregatorService");
 		markerStatus = checkServiceStatus("MarkerService");
+		
+		schedule();
 	}
 
+	
+	private String schedule() {
+		
+		String name = "TestName";
+		BigDecimal serviceId = new BigDecimal(1);
+		String status = "Offen";
+		String info = "25";
+		boolean periodic = false;
+		Date nonperiodicTimestamp = new Date(System.currentTimeMillis());
+		String periodicInterval = null;
+		int periodicDays = 0;
+
+		// REST call
+		RestMessage rms;
+		RestEntrySet res;
+		RestMessage result = null;
+
+		rms = new RestMessage();
+
+		rms.setKeyword(RestKeyword.ServiceJob);
+		rms.setStatus(RestStatusEnum.OK);
+
+		res = new RestEntrySet();
+
+		res.addEntry("name", name);
+		res.addEntry("service_id", serviceId.toString());
+		res.addEntry("status", status);
+		res.addEntry("info", info);
+		res.addEntry("periodic", Boolean.toString(periodic));
+		res.addEntry("nonperiodic_date", nonperiodicTimestamp.toString());
+		res.addEntry("periodic_interval", periodicInterval);
+		res.addEntry("periodic_days", Integer.toString(periodicDays));
+			
+		rms.addEntrySet(res);
+		
+		
+		try {
+			result = connector.prepareRestTransmission("ServiceJob/").sendPutRestMessage(rms);
+			
+			if (rms.getStatus() != RestStatusEnum.OK) {
+
+				logger.error("/ServiceJob response failed: " + rms.getStatus() + "("
+						+ rms.getStatusDescription() + ")");
+				return "failed";
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return "failed";
+		}
+		
+		logger.info("PUT sent to /ServiceJob");
+
+		
+
+		ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"info.servicejob_stored_success", null));
+
+		return "success";
+	}
+	
 	private ServiceStatus checkServiceStatus(String serviceName) {
 
 		Registry registry = RMIRegistryHelper.getRegistry();
@@ -246,6 +322,10 @@ public class ServiceManagementBean {
 		this.propertyManager = propertyManager;
 	}
 		
+	public void setConnector(RestConnector connector) {
+    	this.connector = connector;
+    }
+
 	public boolean isHarvesterStarted() {
 		return ServiceStatus.Started.equals(harvesterStatus);
 	}
