@@ -80,6 +80,7 @@ public class ServiceManagementBean {
 		markerStatus = checkServiceStatus("MarkerService");
 		
 		storeJob();
+		updateJob(3);
 	}
 
 	
@@ -147,7 +148,7 @@ public class ServiceManagementBean {
 		
 		String name = "TestName";
 		BigDecimal serviceId = new BigDecimal(1);
-		String status = "Offen";
+		String status = "In Bearbeitung";
 		String info = "25";
 		boolean periodic = false;
 		Date nonperiodicTimestamp = new Date(System.currentTimeMillis());
@@ -202,10 +203,9 @@ public class ServiceManagementBean {
 		return "success";
 	}
 	
-	private void getJobs() {
+	private void getJobs(int jobId) {
 		
-
-		String result = connector.prepareRestTransmission("ServiceJob/").GetData();
+		String result = connector.prepareRestTransmission("ServiceJob/" + (jobId > 0 ? Integer.toString(jobId) : "")).GetData();
 		List jobList = new ArrayList<Repository>();
 		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
 

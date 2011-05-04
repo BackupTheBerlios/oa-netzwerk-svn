@@ -29,6 +29,7 @@ public class PropertyManager implements Serializable {
 	private static String contextPathFallback		= "/OAN-Manager";
 	
 	private Properties serviceProperties = null;
+	private Properties adminProperties = null;
 	private Properties restProperties = null;
 	
 	public PropertyManager() {
@@ -55,6 +56,7 @@ public class PropertyManager implements Serializable {
 		if (!isLoaded)
 			isLoaded = loadServiceProperties(webappDirFallback, contextPathFallback);		
 		
+		loadAdminProperties(webappDir, contextPath);
 		loadRestClientProperties(webappDir, contextPath);
 	}	
 	
@@ -75,10 +77,10 @@ public class PropertyManager implements Serializable {
 		return false;
 	}
 	
-	private boolean loadRestClientProperties(final String webappDir, final String contextPath) {
+	private boolean loadAdminProperties(final String webappDir, final String contextPath) {
 		
 		try {
-			restProperties 	= HelperMethods.loadPropertiesFromFile (CATALINA_BASE + webappDir + contextPath + "/WEB-INF/admingui.xml");
+			adminProperties 	= HelperMethods.loadPropertiesFromFile (CATALINA_BASE + webappDir + contextPath + "/WEB-INF/admingui.xml");
 			PropertyManager.webappDir		= webappDir;
 			PropertyManager.contextPath 	= contextPath;
 			
@@ -87,6 +89,22 @@ public class PropertyManager implements Serializable {
 		} catch (Exception ex) {
 			
 			logger.warn("Could not fetch admingui.xml in '" + CATALINA_BASE + webappDir + contextPath + "/WEB-INF/admingui.xml'");
+		} 
+		return false;
+	}
+	
+	private boolean loadRestClientProperties(final String webappDir, final String contextPath) {
+		
+		try {
+			restProperties 	= HelperMethods.loadPropertiesFromFile (CATALINA_BASE + webappDir + contextPath + "/WEB-INF/restclientprop.xml");
+			PropertyManager.webappDir		= webappDir;
+			PropertyManager.contextPath 	= contextPath;
+			
+			logger.info("Found restclientprop.xml in '" + CATALINA_BASE + webappDir + contextPath + "/WEB-INF/restclientprop.xml'");
+			return true;
+		} catch (Exception ex) {
+			
+			logger.warn("Could not fetch restclientprop.xml in '" + CATALINA_BASE + webappDir + contextPath + "/WEB-INF/restclientprop.xml'");
 		} 
 		return false;
 	}
@@ -103,6 +121,14 @@ public class PropertyManager implements Serializable {
 		this.serviceProperties = serviceProperties;
 	}
 
+	public Properties getAdminProperties() {
+		
+		if (adminProperties == null) {
+			init();
+		}
+    	return adminProperties;
+    }
+	
 	public Properties getRestProperties() {
 		
 		if (restProperties == null) {
@@ -117,6 +143,10 @@ public class PropertyManager implements Serializable {
 
 	public static String getContextPath() {
     	return contextPath;
+    }	
+	
+	public static String getWebApplicationRootDirectory() {
+    	return CATALINA_BASE + webappDir + contextPath;
     }	
 		
 }

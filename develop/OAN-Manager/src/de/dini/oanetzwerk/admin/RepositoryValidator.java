@@ -13,7 +13,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -45,10 +47,16 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import de.dini.oanetzwerk.utils.PropertyManager;
 
+@ManagedBean
+@RequestScoped
 public class RepositoryValidator {
+	
+	@ManagedProperty(value = "#{propertyManager}")
+	private PropertyManager propertyManager;
+	
 	private static String schemaFileFallback = "http://oanet.cms.hu-berlin.de/xsd/OANRESTMessage.xsd";
-	private static String serverFile = "/home/imrael/workspace/OAN-Manager/web/WEB-INF/server.xml";
 	private static String serverFileFallback = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		+"<serverList>"
 		+"<server>"
@@ -61,7 +69,9 @@ public class RepositoryValidator {
 		+"</parameters>"
 		+"</server>"
 		+"</serverList>";
-	private static String validationResults = "/home/imrael/workspace/OAN-Manager/web/WEB-INF/validationResults.xml";
+//	private static String validationResults = "/home/imrael/workspace/OAN-Manager/web/WEB-INF/validationResults.xml";
+	private String serverFile = propertyManager.getWebApplicationRootDirectory() + "/WEB-INF/server.xml";
+	private String validationResults = propertyManager.getWebApplicationRootDirectory() + "/WEB-INF/validationResults.xml";
 	private String serverXML;
 	private NodeList serverList;
 	private XPath xpath;
@@ -505,5 +515,7 @@ public class RepositoryValidator {
 		}
 	}
 	
-
+	public void setPropertyManager(PropertyManager propertyManager) {
+		this.propertyManager = propertyManager;
+	}
 }

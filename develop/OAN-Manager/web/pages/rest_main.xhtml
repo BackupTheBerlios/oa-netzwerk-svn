@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+
+<ui:composition template="templates/template.xhtml">
+
+  <ui:param name="pageTitle" value="Dienste - OA-Netzwerk Manager" />
+
+  <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml">Dienste</a>
+  </ui:define>
+
+  <ui:define name="menu">
+    <div id="tasks">
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
+      href="repositories_main.faces">Repositorien verwalten</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="services_main.faces">Dienste verwalten</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="rest_main.faces"><b>REST-Server</b></a>
+    <div class="subtasks">
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
+      href="rest_validator.xhtml">REST-Server validieren</a></div>
+    </div>
+    </div>
+    
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="users_main.faces">Benutzer verwalten</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="reports.faces">Reports</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="livelog.faces">Live Log</a></div>
+
+    </div>
+
+  </ui:define>
+
+  <ui:define name="content">
+
+    <f:view>
+      <br />
+
+      <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;"><h:form>
+        <table width="80%" style="width: 80%; border-collapse: collapse; border: 1px #bbb solid;">
+
+          <tr>
+            <th class="pane-header">Status</th>
+            <th class="pane-header">Dienst</th>
+            <th class="pane-header">URL</th>
+            <th class="pane-header">Aktion</th>
+          </tr>
+
+          <tr class="odd">
+            <td style="vertical-align: middle; text-align: center; height: 70px;"><t:div rendered="#{rest.restServerAvailable}">
+              <img src="../images/24x24/status_green.png" width="18" height="18" title="REST-Server ist online" />
+            </t:div> <t:div rendered="#{not rest.restServerAvailable}">
+              <img src="../images/24x24/status_red.png" width="18" height="18" title="REST-Server ist nicht erreichbar" />
+            </t:div></td>
+            <td style="vertical-align: middle; text-align: center; height: 70px;">REST-Server</td>
+            <td style="vertical-align: middle; text-align: center; height: 70px;">#{rest.url}</td>
+            <td style="vertical-align: middle; text-align: center; height: 70px;">
+              <h:commandLink action="#{rest.checkStatus}" title="Starten">Status erneut prüfen</h:commandLink>
+            </td>
+          </tr>
+
+        </table>
+      </h:form></div>
+      </div>
+
+    </f:view>
+  </ui:define>
+
+</ui:composition>
+
+</body>
+
+</html>

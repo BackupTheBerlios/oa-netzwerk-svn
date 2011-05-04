@@ -33,7 +33,7 @@ public class RestConnector implements Serializable {
 	
 	public RestClient prepareRestTransmission(String resource) {
 
-		Properties props = propertyManager.getRestProperties();
+		Properties props = propertyManager.getAdminProperties();
 		
 		if (props == null) {
 			logger.warn("Property file has not been initialized correctly, cannot prepare REST transmission!");

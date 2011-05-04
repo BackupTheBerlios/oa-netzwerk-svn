@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+
+<f:view>
+  <f:loadBundle basename="messages.repositories" var="msg" />
+
+
+  <ui:composition template="templates/template.xhtml">
+
+    <ui:param name="pageTitle" value="Repository Validator - OA-Netzwerk Manager" />
+    <ui:define name="navigation">
+      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="rest_validator.xhtml">REST Validator</a>
+    </ui:define>
+
+    <ui:define name="menu">
+      <div id="tasks">
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /> <a
+        href="repositories_main.xhtml">Repositorien verwalten</a></div>
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
+        href="services_main.faces">Dienste verwalten</a></div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+        href="rest_main.faces"><b>REST-Server</b></a>
+      <div class="subtasks">
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
+        href="rest_validator.xhtml"><b>REST-Server validieren</b></a></div>
+      </div>
+      </div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
+        href="users_main.faces">Benutzer verwalten</a></div>
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /> <a
+        href="reports.faces">Reports</a></div>
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /> <a
+        href="livelog.faces">Live Log</a></div>
+      </div>
+    </ui:define>
+
+
+    <ui:define name="content">
+      <div style="padding: 20px; background-color: #f5f9f4;">
+      <h2>Repository Validator</h2>
+      <h:form id="serverValidation" method="POST" action="#{repoValidator.validateFromForm}">
+        <table width="100%" style="border: 1px solid black; margin-bottom: 3em; padding: 1em 0px;">
+          <tr>
+            <th width="50%">Vordefinierten Server validieren</th>
+            <th width="50%">Eigenen Server validieren</th>
+          </tr>
+          <tr>
+            <td style="vertical-align: middle; padding-left: 10em;"><t:selectOneListbox value="#{repoValidator.serverName}">
+              <t:selectItems value="#{repoValidator.servers}" />
+            </t:selectOneListbox> <br />
+            <br />
+            Mit eigenem Parameter testen (optional) <br />
+            <t:inputText id="input_parameter" value="#{repoValidator.parameter}" label="Parameter" /></td>
+            <td style="padding-left: 10em;">
+            <table>
+              <tr>
+                <td width="50%">Server URL</td>
+                <td><t:inputText id="input_serverurl" value="#{repoValidator.serverToValidate}" label="Server URL" /></td>
+              </tr>
+              <tr>
+                <td>Username (Optional)</td>
+                <td><t:inputText id="input_username" value="#{repoValidator.username}" label="Username (optional)" /></td>
+              </tr>
+              <tr>
+                <td>Passwort (Optional)</td>
+                <td><t:inputText id="input_password" value="#{repoValidator.password}" label="Password (optional)" /></td>
+              </tr>
+              <tr>
+                <td>Parameter</td>
+                <td><t:inputText id="input_parameter2" value="#{repoValidator.parameter2}" label="Parameter2" /></td>
+              </tr>
+            </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" style="text-align: center;"><t:commandButton style="width: 50%;" type="submit"
+              value="Validiere diesen Server" action="#{repoValidator.validateFromForm}" /></td>
+          </tr>
+        </table>
+      </h:form> <t:dataTable value="#{repoValidator.results}" var="row" headerClass="pane-header" rowClasses="odd, even"
+        style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
+        <t:column style="width: 5%; vertical-align: middle; height: 70px;">
+          <f:facet name="header">
+            <h:outputText value="Datum - Zeit" />
+          </f:facet>
+          <h:outputText value="#{row.timestamp}" />
+        </t:column>
+        <t:column style="width: 10%; vertical-align: middle; padding-left: 15px; height: 70px;">
+          <f:facet name="header">
+            <h:outputText value="Server" />
+          </f:facet>
+          <h:outputText value="#{row.serverAlias}" />
+          <br />
+          <h:outputLink value="./rest_validator.xhtml">
+            <h:outputText value="Rerun Testset" />
+            <f:param name="testOffset" value="#{row.testOffset}" />
+          </h:outputLink>
+        </t:column>
+        <t:column style="width: 30%; vertical-align: middle; height: 70px;">
+          <f:facet name="header">
+            <h:outputText value="Testergebnis" />
+          </f:facet>
+          <t:dataList layout="unorderedList" value="#{row.validationResults}" var="validationResults">
+            <h:outputText value="#{validationResults}" />
+          </t:dataList>
+        </t:column>
+
+        <t:column style="width: 20%; vertical-align: middle; height: 70px;">
+          <f:facet name="header">
+            <h:outputText value="Parameter" />
+          </f:facet>
+          <t:dataList rowIndexVar="subTestIndex" layout="unorderedList" value="#{row.parameters}" var="parameters">
+            <h:outputLink value="./rest_validator.xhtml">
+              <h:outputText value="#{parameters}" />
+              <f:param name="testOffset" value="#{row.testOffset}" />
+              <f:param name="subTestOffset" value="#{subTestIndex}" />
+            </h:outputLink>
+          </t:dataList>
+        </t:column>
+        <t:column style="width: 5%; vertical-align: middle;">
+          <h:outputLink value="./rest_validator.xhtml">
+            <h:outputText value="Delete Testset" />
+            <f:param name="testOffset" value="#{row.testOffset}" />
+            <f:param name="delete" value="1" />
+          </h:outputLink>
+        </t:column>
+      </t:dataTable></div>
+    </ui:define>
+
+  </ui:composition>
+
+
+</f:view>
+
+</body>
+
+</html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+
+<ui:composition template="templates/template.xhtml">
+   <ui:define name="title">
+      <title>Repository bearbeiten - OA-Netzwerk Manager</title>
+      <script language="JavaScript" type="text/JavaScript" src="../js/form_help_box.js" />
+   </ui:define>
+
+   <ui:define name="menu">
+      <div id="tasks">
+
+      <div class="task"><img height="24" style="margin: 2px;" alt=""
+         width="24" src="../images/24x24/new-package.gif" /><a href="repositories_main.faces">Repositorien
+      verwalten</a></div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/setting.gif" /><a href="services_main.faces">Dienste verwalten</a>
+         
+        <div class="subtasks">
+          <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+            src="../images/24x24/setting.gif" /><b><a href="services_schedule.faces">Ablaufplan</a></b></div>
+      
+          <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+            src="../images/24x24/setting.gif" /><a href="services_harvester.faces">Harvester</a></div>
+    
+          <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+            src="../images/24x24/setting.gif" /><a href="services_aggregator.faces">Aggregator</a></div>
+
+        </div>         
+         
+      </div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/setting.gif" /><a href="users_main.faces">Benutzer verwalten</a></div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/notepad.gif" /><a href="reports.faces">Reports</a></div>
+
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/notepad.gif" /><a href="livelog.faces">Live Log</a></div>
+      </div>
+
+   </ui:define>
+   
+   <ui:define name="content">
+
+
+      <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
+      <h2>Repository bearbeiten</h2>
+
+
+  
+
+      <form action="createItem" method="post">
+      <table width="100%">
+      
+
+         <f:view>
+            <h:form>
+            Testan
+            
+                
+                <h:selectOneMenu id="menu1" value="#{scheduler.selectedMonth}">
+                	<t:selectItems value="#{scheduler.months}" var="month" itemLabel="#{month}" itemValue="#{month}" />
+                </h:selectOneMenu>
+                
+                <br />
+                
+                <h:selectOneMenu id="menu3" value="#{scheduler.selectedIntervalType}">
+                  <t:selectItems value="#{scheduler.intervalTypes}" var="type" itemLabel="#{type}" itemValue="#{type}" />
+                </h:selectOneMenu>                
+            </h:form>
+         </f:view>
+
+      </table>
+      </form>
+      </div>
+      </div>
+
+   </ui:define>
+</ui:composition>
+
+</body>
+
+</html>
