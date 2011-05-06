@@ -79,7 +79,8 @@
       <div style="background-color: #f5f9f4;">
     		
     		
-    		<div id="aenderungsmenu" style="display:none">
+    		<div id="aenderungsmenu" >
+<!--      style="display:none"  -->
 			<h2>Änderungen an Dienst vornehmen</h2>
     		Für eine erfolgreiche Änderung muss der zu ändernde Dienst sowie eine selbstgewählte Zeit- periode ausgewählt werden.
     		
@@ -96,11 +97,12 @@
         <br />
         <br />
  
- 		
+ 		<h:selectOneRadio value="#{scheduling.intervalType}">
         <table>
         	<tr>
-        		<td><h:selectBooleanCheckbox id="month" value="#{month_bool}"/></td> 
-       			<td>monthly at the</td> 
+        		<td>
+              	    <f:selectItem itemValue="monthly" itemLabel="monthly at the" />
+                </td> 
         		<td><h:selectOneMenu id="choose_monthly" value="#{month}" style=" width : 103px;">
         			<f:selectItem id="item1" itemLabel="1." itemValue="1" />
         			<f:selectItem id="item2" itemLabel="2." itemValue="2" />
@@ -140,9 +142,11 @@
         	</tr>
         
         <tr>
-        		<td><h:selectBooleanCheckbox id="week" value="#{week_bool}"/></td> 
-       			<td>weekly on</td> 
-        		<td><h:selectOneMenu id="choose_weekly" value="#{week}" style=" width : 105px;">
+        		<f:selectItem itemValue="weekly" itemLabel="weekly on" />
+       			 
+        		<td>
+
+                    <h:selectOneMenu id="choose_weekly" value="#{week}" style=" width : 105px;">
         			<f:selectItem id="item1" itemLabel="monday" itemValue="1" />
         			<f:selectItem id="item2" itemLabel="tuesday" itemValue="2" />
         			<f:selectItem id="item3" itemLabel="wednesday" itemValue="3" />
@@ -160,8 +164,8 @@
         </tr>
           
        <tr>
-        		<td><h:selectBooleanCheckbox id="day" value="#{day_bool}"/></td> 
-       			<td>every</td> 
+        		<td><f:selectItem itemValue="day" itemLabel="every" /></td> 
+
         		<td><h:selectOneMenu id="choose_dayly" value="#{day}" style=" width : 103px;">
         			<f:selectItem id="item1" itemLabel="1" itemValue="1" />
         			<f:selectItem id="item2" itemLabel="2" itemValue="2" />
@@ -183,6 +187,7 @@
        </tr>
         
         </table>
+        </h:selectOneRadio>
         
         	<br />
         	<br />

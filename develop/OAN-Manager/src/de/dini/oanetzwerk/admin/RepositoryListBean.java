@@ -124,10 +124,6 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 		return repoList;
 	}
 
-	public String toBetested() {
-
-		return "z";
-	}
 
 	public void setRestConnector(RestConnector restConnector) {
 		this.restConnector = restConnector;
