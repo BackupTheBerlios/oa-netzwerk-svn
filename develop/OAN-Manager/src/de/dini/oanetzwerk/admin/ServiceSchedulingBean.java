@@ -5,8 +5,10 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -42,6 +44,14 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	private List<SchedulingBean> jobList;
 	private SchedulingBean job;
 
+	private String chosenService;
+	private String chosenDayOfMonth;
+	private String chosenDayOfWeek;
+	private String chosenDay;
+	private String chosenHour;
+	private boolean update;
+	private String chosenDate;
+	
 	private String intervalType;
 	private int intervalDay;
 
@@ -125,7 +135,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	}
 	
 
-	public String storeRepository() {
+	public String storeJob() {
 
 		
 
@@ -136,7 +146,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 		rms = new RestMessage();
 
-		rms.setKeyword(RestKeyword.Repository);
+		rms.setKeyword(RestKeyword.ServiceJob);
 		rms.setStatus(RestStatusEnum.OK);
 
 		res = new RestEntrySet();
@@ -203,7 +213,68 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	
 	
 
+	public List<String> getMonthlyDays() {
 
+		List<String> days = new ArrayList<String>();
+		
+		for (int i = 1; i <= 31; i++) {
+			days.add(Integer.toString(i) + ".");
+		}
+		return days;
+	}
+
+	public List<String> getDays() {
+
+		List<String> days = new ArrayList<String>();
+		
+		for (int i = 1; i <= 14; i++) {
+			days.add(Integer.toString(i) + ".");
+		}
+		return days;
+	}
+	
+	public List<String> getServices() {
+
+		List<String> services = new ArrayList<String>();
+		
+		services.add("Harvester");
+		services.add("Aggregator");
+		services.add("Marker");
+		
+		return services;
+	}
+	
+	public List<String> getHours() {
+
+		List<String> hours = new ArrayList<String>();
+		
+		hours.add("0:00");
+		hours.add("1:00");
+		hours.add("2:00");
+		hours.add("3:00");
+		hours.add("4:00");
+		hours.add("5:00");
+		hours.add("6:00");
+		hours.add("7:00");
+		hours.add("8:00");
+		hours.add("9:00");
+		hours.add("10:00");
+		hours.add("11:00");
+		hours.add("12:00");
+		hours.add("13:00");
+		hours.add("14:00");
+		hours.add("15:00");
+		hours.add("16:00");
+		hours.add("17:00");
+		hours.add("18:00");
+		hours.add("19:00");
+		hours.add("20:00");
+		hours.add("21:00");
+		hours.add("22:00");
+		hours.add("23:00");
+		
+		return hours;
+	}
 
 	public String getIntervalType() {
     	return intervalType;
@@ -217,7 +288,73 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
     	this.job = job;
     }
 
+	
+	
+	
+	
 
+
+	
+	
+
+	public String getChosenDayOfMonth() {
+		return chosenDayOfMonth;
+	}
+
+	public void setChosenDayOfMonth(String chosenDayOfMonth) {
+		this.chosenDayOfMonth = chosenDayOfMonth;
+	}
+
+	public String getChosenDayOfWeek() {
+		return chosenDayOfWeek;
+	}
+
+	public void setChosenDayOfWeek(String chosenDayOfWeek) {
+		this.chosenDayOfWeek = chosenDayOfWeek;
+	}
+
+	public String getChosenDay() {
+		return chosenDay;
+	}
+
+	public void setChosenDay(String chosenDay) {
+		this.chosenDay = chosenDay;
+	}	
+	
+	public String getChosenService() {
+		return chosenService;
+	}
+
+	public void setChosenService(String chosenService) {
+		this.chosenService = chosenService;
+	}
+
+	public String getChosenHour() {
+		return chosenHour;
+	}
+
+	public void setChosenHour(String chosenHour) {
+		this.chosenHour = chosenHour;
+	}
+	
+	
+	
+
+	public String getChosenDate() {
+		return chosenDate;
+	}
+
+	public void setChosenDate(String chosenDate) {
+		this.chosenDate = chosenDate;
+	}
+
+	public boolean isUpdate() {
+		return update;
+	}
+
+	public void setUpdate(boolean update) {
+		this.update = update;
+	}
 
 	public void setChangeJob(boolean s) {
 		this.changeJob = s;
