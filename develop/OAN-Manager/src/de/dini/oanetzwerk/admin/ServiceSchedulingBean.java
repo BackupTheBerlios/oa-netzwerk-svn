@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.admin.SchedulingBean.SchedulingIntervalType;
 import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -60,6 +61,18 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	private boolean deactivated;
 	private boolean deleted;
 	private boolean stored;
+	
+	private String test;
+	
+	
+
+	public String getTest() {
+    	return test;
+    }
+
+	public void setTest(String test) {
+    	this.test = test;
+    }
 
 	public ServiceSchedulingBean() {
 
@@ -118,7 +131,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 					job.setNonperiodicTimestamp(Date.valueOf(res.getValue(key)));
 
 				} else if (key.equalsIgnoreCase("periodic_interval_type")) {
-					job.setPeriodicInterval(res.getValue(key));
+					job.setPeriodicInterval(res.getValue(key) != null ? SchedulingIntervalType.valueOf(res.getValue(key)): null);
 
 				} else if (key.equalsIgnoreCase("periodic_interval_days")) {
 					job.setPeriodicDays(Integer.parseInt(res.getValue(key)));
@@ -131,7 +144,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 			jobList.add(job);
 
 		}
-		System.out.println(jobList.size());
+		System.out.println("Job List: " + jobList.size());
 	}
 	
 
@@ -165,7 +178,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		res.addEntry("service_id", job.getServiceId().toString());
 		res.addEntry("periodic", Boolean.toString(job.isPeriodic()));
 		res.addEntry("nonperiodic_date", job.getNonperiodicTimestamp().toString());
-		res.addEntry("periodic_interval_type", job.getPeriodicInterval());
+		res.addEntry("periodic_interval_type", job.getPeriodicInterval().toString());
 		res.addEntry("periodic_interval_days", Integer.toString(job.getPeriodicDays()));
 			
 		
@@ -196,9 +209,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		return "success";
 	}
 
-	public enum SchedulingIntervalType {
-		Monthly, Weekly, Day;
-	}
+
 	
 	public List<String> getIntervalTypes() {
 

@@ -151,13 +151,14 @@
 				<td></td>
 			</tr>						
 			<tr>
-				<td style="padding-left:10px;">
-					<input type="radio" value="bla1">einmalig</input>
-					<br /><br /><br />  
+				<td colspan="2" style="padding-left:10px;">
+					<h:selectOneRadio disabledClass="selectOneRadio_Disabled"
+                      styleClass="selectOneRadio" id="radio0" layout="lineDirection" onclick="disableSelect('form','radio0','dayOfMonth', 'dayOfWeek', 'day');">
+                      <f:selectItem itemValue="option11" itemLabel="regelmäßig1" />
+                      <f:selectItem itemValue="option22" itemLabel="einmalig1" />
+                    </h:selectOneRadio>
 				</td>
-				<td>
-					<input type="radio" value="bla1">regelmäßig</input>
-				</td>
+
 			</tr>
 			<tr>
 				
@@ -274,36 +275,43 @@
 		einzelner Dienste von OA-Netzwerk vorgenommen werden. <br />
 		<br />
 		<table id="jobs">
-			<h:dataTable value="#{sersche.info}" var="row"
+			<h:dataTable value="#{scheduling.jobList}" var="job"
 				headerClass="pane-header" rowClasses="odd, even"
 				style="border-collapse: collapse; border: 2px #bbb solid; width : 571px;">
 				<h:column style="width: 30%; vertical-align: middle; height: 70px;">
 					<f:facet name="header">
 						<h:outputText value="Dienst" />
 					</f:facet>
-					<h:outputText value="#{row.service}" />
+					<h:outputText value="#{job.serviceId}" />
 				</h:column>
 
 				<h:column style="width: 30%; vertical-align: middle; height: 70px;">
 					<f:facet name="header">
 						<h:outputText value="Typ" />
 					</f:facet>
-					<h:outputText value="#{row.type}" />
+					<h:outputText value="#{job.name}" />
 				</h:column>
 
 				<h:column style="width: 30%; vertical-align: middle; height: 70px;">
 					<f:facet name="header">
 						<h:outputText value="Intervall" />
 					</f:facet>
-					<h:outputText value="#{row.interval}" />
+					<h:outputText value="#{job.interval}" />
 				</h:column>
 
 				<h:column style="width: 30%; vertical-align: middle; height: 70px;">
 					<f:facet name="header">
 						<h:outputText value="Zusatzinformationen" />
 					</f:facet>
-					<h:outputText value="#{row.add_info}" />
+					<h:outputText value="#{job.info}" />
 				</h:column>
+        
+                <h:column style="width: 30%; vertical-align: middle; height: 70px;">
+                  <f:facet name="header">
+                    <h:outputText value="Status" />
+                  </f:facet>
+                  <h:outputText value="#{job.status}" />
+                </h:column>        
 			</h:dataTable>
 		</table>
 		<div align="right">

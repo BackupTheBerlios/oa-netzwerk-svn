@@ -2,6 +2,7 @@ package de.dini.oanetzwerk.admin;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 public class SchedulingBean {
 
@@ -12,7 +13,7 @@ public class SchedulingBean {
 	private String info = null;
 	private boolean periodic = false;
 	private Date nonperiodicTimestamp = null;
-	private String periodicInterval = null;
+	private SchedulingIntervalType periodicInterval = null;
 	private int periodicDays = -1;
 
 	
@@ -20,9 +21,12 @@ public class SchedulingBean {
 		super();
 	}
 
+	public enum SchedulingIntervalType {
+		Monthly, Weekly, Day;
+	}
 	
 	public enum ServiceStatus {
-		Open, InProgress, Done
+		Open, Working, Finished
 	}
 
 	public Integer getJobId() {
@@ -81,11 +85,11 @@ public class SchedulingBean {
 		this.nonperiodicTimestamp = nonperiodicTimestamp;
 	}
 
-	public String getPeriodicInterval() {
+	public SchedulingIntervalType getPeriodicInterval() {
 		return periodicInterval;
 	}
 
-	public void setPeriodicInterval(String periodicInterval) {
+	public void setPeriodicInterval(SchedulingIntervalType periodicInterval) {
 		this.periodicInterval = periodicInterval;
 	}
 
@@ -97,4 +101,25 @@ public class SchedulingBean {
 		this.periodicDays = periodicDays;
 	}
 
+	public String getInterval() {
+
+		String interval = periodic ? "regelmäßig\n" : "einmalig\n";
+		
+		if (periodic) {
+			if (SchedulingIntervalType.Monthly.equals(periodicInterval)) {
+				interval = interval + "jeden " + periodicDays + ". des Monats um" + nonperiodicTimestamp.getHours() + ":" + nonperiodicTimestamp.getMinutes() + "Uhr";;
+			} else if (SchedulingIntervalType.Weekly.equals(periodicInterval)) {
+				interval = interval + "jeden " + periodicDays + " um " + nonperiodicTimestamp.getHours() + ":" + nonperiodicTimestamp.getMinutes() + "Uhr";;
+			} else if (SchedulingIntervalType.Day.equals(periodicInterval)) {
+				if (periodicDays == 1) {
+					interval = interval + "täglich um " + nonperiodicTimestamp.getHours() + ":" + nonperiodicTimestamp.getMinutes() + "Uhr";
+				}
+				interval = interval + "alle " + periodicDays + " Tage";
+			}
+		} else {
+			
+			interval = new SimpleDateFormat("dd.MM.yy hh:mm").format(nonperiodicTimestamp);
+		}
+		return interval;
+    }
 }
