@@ -5,10 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -63,8 +61,11 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	private boolean stored;
 	
 	private String test;
+	private boolean radio1;
 	
+	private List<String> services = new ArrayList<String>();
 	
+
 
 	public String getTest() {
     	return test;
@@ -73,6 +74,16 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	public void setTest(String test) {
     	this.test = test;
     }
+	
+	
+
+	public boolean isRadio1() {
+		return radio1;
+	}
+
+	public void setRadio1(boolean radio1) {
+		this.radio1 = radio1;
+	}
 
 	public ServiceSchedulingBean() {
 
@@ -85,6 +96,16 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	@PostConstruct
 	public void init() {
 
+		// init job object for a new job that might be created
+		job = new SchedulingBean();
+		
+		// create a list of services
+		// TODO should be retrieved from the DB
+		services.add("Harvester");
+		services.add("Aggregator");
+		services.add("Marker");
+		
+		// retrieve the jobs to be displayed
 		if (jobList != null && !jobList.isEmpty()) {
 			return;
 		}
@@ -150,7 +171,8 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 	public String storeJob() {
 
-		
+		System.out.println("test: " + test);
+		System.out.println("radio1: " + radio1);
 
 		// REST call
 		RestMessage rms;
@@ -172,10 +194,12 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		}
 			
 		
+		
+		
 		res.addEntry("name", job.getName());
 		res.addEntry("status", job.getStatus().toString());
 		res.addEntry("info", job.getInfo());
-		res.addEntry("service_id", job.getServiceId().toString());
+//		res.addEntry("service_id", job.getServiceId().toString());
 		res.addEntry("periodic", Boolean.toString(job.isPeriodic()));
 		res.addEntry("nonperiodic_date", job.getNonperiodicTimestamp().toString());
 		res.addEntry("periodic_interval_type", job.getPeriodicInterval().toString());
@@ -246,11 +270,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	
 	public List<String> getServices() {
 
-		List<String> services = new ArrayList<String>();
-		
-		services.add("Harvester");
-		services.add("Aggregator");
-		services.add("Marker");
 		
 		return services;
 	}
@@ -285,6 +304,15 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		hours.add("23:00");
 		
 		return hours;
+	}
+	
+	
+	public enum JobType {
+		Repeatedly, OneTime; 
+	}
+	
+	public JobType[] getJobTypes() {
+		return JobType.values();
 	}
 
 	public String getIntervalType() {

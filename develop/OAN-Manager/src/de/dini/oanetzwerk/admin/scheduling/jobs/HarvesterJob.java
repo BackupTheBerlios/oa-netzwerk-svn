@@ -2,7 +2,6 @@ package de.dini.oanetzwerk.admin.scheduling.jobs;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +15,6 @@ import org.quartz.JobExecutionException;
 import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
 import de.dini.oanetzwerk.admin.utils.RMIRegistryHelper;
 import de.dini.oanetzwerk.servicemodule.IService;
-import de.dini.oanetzwerk.servicemodule.harvester.Harvester;
 
 public class HarvesterJob extends AbstractServiceJob {
 

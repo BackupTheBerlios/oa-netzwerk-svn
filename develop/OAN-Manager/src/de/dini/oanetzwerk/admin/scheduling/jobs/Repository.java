@@ -1,6 +1,5 @@
 package de.dini.oanetzwerk.admin.scheduling.jobs;
 
-import java.math.BigDecimal;
 
 class Repository {
 

@@ -5,14 +5,14 @@
    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk"
    xmlns:u="http://oanet.cms.hu-berlin.de/jsf-utils">
 
-<head>
+<h:head>
 <title>#{pageTitle}</title>
 <ui:include src="../components/head_declarations.xhtml"></ui:include>
-</head>
+</h:head>
 
 
 
-<body onload="#{onLoadJS}">
+<h:body onload="#{onLoadJS}">
 <!-- ================ Header ============== -->
 
 <ui:decorate template="../components/header.xhtml"></ui:decorate>
@@ -51,6 +51,6 @@
 <ui:include src="../components/footer.xhtml"></ui:include>
 
 
-</body>
+</h:body>
 
 </html>

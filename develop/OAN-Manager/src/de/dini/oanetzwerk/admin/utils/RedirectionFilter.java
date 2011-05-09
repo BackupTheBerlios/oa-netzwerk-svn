@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class RedirectionFilter implements Filter {
 	
-	public final static String EXT = "faces";
+	public final static String EXT = "xhtml";
 	
 	/**
 	 * @see javax.servlet.Filter#destroy()
@@ -48,7 +48,7 @@ public class RedirectionFilter implements Filter {
 			httpservres.sendRedirect (newuri);
 			
 		} else
-			httpservres.sendRedirect ("index.faces");
+			httpservres.sendRedirect ("index.xhtml");
 	}
 	
 	/**

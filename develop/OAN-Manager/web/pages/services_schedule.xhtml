@@ -18,6 +18,9 @@
 
 
 	<ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
+<!--	<ui:param name="customHead">-->
+<!---->
+<!--	</ui:param>-->
 
 	<ui:define name="navigation">
 		<a href="/oanadmin/">OA-Netzwerk</a>
@@ -50,6 +53,12 @@
 
 	<ui:define name="content">
 
+	<!-- German -->
+	<input type="hidden" id="DPC_TODAY_TEXT" value="heute"></input>
+	<input type="hidden" id="DPC_BUTTON_TITLE" value="Kalender öffnen..."></input>
+	<input type="hidden" id="DPC_MONTH_NAMES" value="['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']"></input>
+	<input type="hidden" id="DPC_DAY_NAMES" value="['Son', 'Mon', 'Die', 'Mit', 'Don', 'Fre', 'Sam']"></input>
+
 		<script type="text/javascript">
 	function fold1() {
 		if (document.getElementById)
@@ -80,44 +89,39 @@
 		if (document.getElementById)
 			document.getElementById("Aendern").style.visibility = "visible";
 	}
-	
-	function disableSelect(form,radio,select1,select2,select3)
-	{
+
+	function disableSelect(form, radio, select1, select2, select3) {
 		var radio1 = document.getElementById("form:radio1:0").checked;
 		var radio2 = document.getElementById("form:radio1:1").checked;
-		var radio3 = document.getElementById("form:radio1:2").checked;	
-		
-		if(radio1)
-		{
-			document.getElementById(form+":"+select1).disabled = false;
-			document.getElementById(form+":"+select2).disabled = true;
-			document.getElementById(form+":"+select3).disabled = true;
+		var radio3 = document.getElementById("form:radio1:2").checked;
+
+		if (radio1) {
+			document.getElementById(form + ":" + select1).disabled = false;
+			document.getElementById(form + ":" + select2).disabled = true;
+			document.getElementById(form + ":" + select3).disabled = true;
 		}
 
-		if(radio2)
-		{
-			document.getElementById(form+":"+select1).disabled = true;
-			document.getElementById(form+":"+select2).disabled = false;
-			document.getElementById(form+":"+select3).disabled = true;
+		if (radio2) {
+			document.getElementById(form + ":" + select1).disabled = true;
+			document.getElementById(form + ":" + select2).disabled = false;
+			document.getElementById(form + ":" + select3).disabled = true;
 		}
-		
-		if(radio3)
-		{
-			document.getElementById(form+":"+select1).disabled = true;
-			document.getElementById(form+":"+select2).disabled = true;
-			document.getElementById(form+":"+select3).disabled = false;
+
+		if (radio3) {
+			document.getElementById(form + ":" + select1).disabled = true;
+			document.getElementById(form + ":" + select2).disabled = true;
+			document.getElementById(form + ":" + select3).disabled = false;
 		}
 	}
-	
 </script>
 
 		<div style="padding: 20px; background-color: #f5f9f4;">
 		<div style="background-color: #f5f9f4;">
 
 
-		<div id="aenderungsmenu" style="display:none">
+		<div id="aenderungsmenu" style="display: none">
 		<h2>Änderungen an Dienst vornehmen</h2>
-		
+
 		Für eine erfolgreiche Änderung muss der zu ändernde Dienst sowie eine
 		selbstgewählte Zeit- periode ausgewählt werden. <br />
 		<br />
@@ -128,7 +132,14 @@
 
 
 		<h:form styleClass="form" id="form">
-		
+
+      <t:selectOneRadio id="radio0" value="#{scheduling.test}" layout="spread"
+                        border="1" forceId="true" forceIdIndex="false"
+                        style="font-weight:bold; background-color:#99CCFF;">
+			 <f:selectItem itemLabel="regelmäßig" itemValue="#{scheduling.jobTypes[0]}" />
+			 <f:selectItem itemLabel="einmalig" itemValue="#{scheduling.jobTypes[1]}" />
+      </t:selectOneRadio>
+
 		<table>
 			<tr>
 
@@ -151,14 +162,14 @@
 				<td></td>
 			</tr>						
 			<tr>
-				<td colspan="2" style="padding-left:10px;">
-					<h:selectOneRadio disabledClass="selectOneRadio_Disabled"
-                      styleClass="selectOneRadio" id="radio0" layout="lineDirection" onclick="disableSelect('form','radio0','dayOfMonth', 'dayOfWeek', 'day');">
-                      <f:selectItem itemValue="option11" itemLabel="regelmäßig1" />
-                      <f:selectItem itemValue="option22" itemLabel="einmalig1" />
-                    </h:selectOneRadio>
+				<td style="padding-left:10px;">
+<!--                    <input id="bla1" type="radio"  value="#{scheduling.radio1}">regelmäßig</input>-->
+                    <t:radio for="radio0" index="0"></t:radio>
 				</td>
-
+				<td>
+				<t:radio for="radio0" index="1"></t:radio>
+<!--					<input id="bla1" type="radio" value="bla1">einmalig</input>-->
+				</td>
 			</tr>
 			<tr>
 				
@@ -231,15 +242,30 @@
 			</tr>
 			<tr>
 				<td style="padding-left:15px;">
-						<h:outputLabel  value="Uhrzeit" />
+						<h:outputLabel for="hour" value="Uhrzeit" />
 						<h:selectOneMenu id="hour" value="#{scheduling.chosenHour}">
 							<f:selectItems value="#{scheduling.hours}" />
 						</h:selectOneMenu> <br />
 				</td>
 				<td>
 						<h:outputLabel value="Datum" />
-						<t:inputDate id="date" type="date" popupCalendar="true" />
+<!--						<t:inputDate id="date" type="date" popupCalendar="true" />-->
 						
+						<t:inputDate id="date1" value="#{date1}" popupCalendar="true"/>
+						
+						<t:inputCalendar id="secondOne" value="#{Calendar.selectedDate2}"
+						        renderAsPopup="true" 
+						        popupDateFormat="MM/dd/yyyy"
+						        popupTodayDateFormat="dd-MMM-yyyy"
+						        popupWeekString="Week"
+						        popupTodayString="The date today is :"
+						        renderPopupButtonAsImage="true"
+						        popupButtonImageUrl="images/cal.gif"
+						        helpText="MM/DD/YYYY"
+						        forceId="true"/> 
+						<input type="text" name="edit1" id="DPC_edit1"></input>
+						<input type="text" id="DPC_date1" size="14"></input>
+						<input type="text" name="edit1" id="edit1" datepicker="true"></input>
 						<br />
 						<h:outputLabel  value="Uhrzeit" /><br />
 						<h:selectOneMenu id="hour2" value="#{scheduling.chosenHour}">
@@ -249,23 +275,21 @@
 			</tr>
 		</table>
 
+
+			<br />
+
+			<div align="right"><h:selectBooleanCheckbox id="change_job"
+				value="#{scheduling.update}" />bestehenden Job ändern</div>
+
+			<br />
+			<br />
+			<br />
+
+			<div align="right">
+			<button name="Zurück" onclick="fold2(); unfold1(); visible()">Zurück</button>
+			<h:commandButton type="submit" action="#{scheduling.storeJob}"
+				value="Job anlegen" /></div>
 		</h:form>
-		
-
-		<br />
-
-		<div align="right"><h:selectBooleanCheckbox id="change_job"
-			value="#{scheduling.update}" />bestehenden Job ändern</div>
-
-		<br />
-		<br />
-		<br />
-
-		<div align="right">
-		<button name="Zurück" onclick="fold2(); unfold1(); visible()">Zurück</button>
-		<h:commandButton type="submit" action="#{scheduling.storeJob}" value="Job anlegen" />
-		</div>
-
 		</div>
 
 		<div id="ablaufplan" style="visibility: visible">
@@ -305,13 +329,13 @@
 					</f:facet>
 					<h:outputText value="#{job.info}" />
 				</h:column>
-        
-                <h:column style="width: 30%; vertical-align: middle; height: 70px;">
-                  <f:facet name="header">
-                    <h:outputText value="Status" />
-                  </f:facet>
-                  <h:outputText value="#{job.status}" />
-                </h:column>        
+
+				<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+					<f:facet name="header">
+						<h:outputText value="Status" />
+					</f:facet>
+					<h:outputText value="#{job.status}" />
+				</h:column>
 			</h:dataTable>
 		</table>
 		<div align="right">

@@ -14,8 +14,6 @@ import javax.servlet.ServletContextListener;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.servicemodule.IHarvesterMonitor;
-import de.dini.oanetzwerk.servicemodule.IMonitor;
-import de.dini.oanetzwerk.servicemodule.IService;
 
 public class StartupListener implements ServletContextListener, IHarvesterMonitor {
 

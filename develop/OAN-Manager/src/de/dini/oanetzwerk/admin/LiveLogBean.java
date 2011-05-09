@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
@@ -16,8 +15,6 @@ import org.apache.log4j.Logger;
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.admin.utils.RMIRegistryHelper;
 import de.dini.oanetzwerk.servicemodule.IHarvesterMonitor;
-import de.dini.oanetzwerk.servicemodule.IService;
-import de.dini.oanetzwerk.servicemodule.harvester.HarvesterRMI;
 
 /**
  * @author Michael K&uuml;hn

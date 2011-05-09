@@ -5,11 +5,8 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.QueryResult;
-import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.server.database.StatementConnection;
-import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 public class DBHelper {
 

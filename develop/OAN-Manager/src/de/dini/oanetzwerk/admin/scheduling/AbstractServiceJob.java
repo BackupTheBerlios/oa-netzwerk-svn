@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import org.quartz.Job;
 
 import de.dini.oanetzwerk.admin.Repository;
-import de.dini.oanetzwerk.admin.RepositoryBean;
 import de.dini.oanetzwerk.admin.RestConnector;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;

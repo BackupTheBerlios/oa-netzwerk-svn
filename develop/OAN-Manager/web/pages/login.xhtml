@@ -56,6 +56,17 @@
             </tr>
          </table>
          </form>
+         
+         						<t:inputCalendar id="secondOne" value="#{Calendar.selectedDate2}"
+						        renderAsPopup="true" 
+						        popupDateFormat="MM/dd/yyyy"
+						        popupTodayDateFormat="dd-MMM-yyyy"
+						        popupWeekString="Week"
+						        popupTodayString="The date today is :"
+						        renderPopupButtonAsImage="true"
+						        popupButtonImageUrl="images/cal.gif"
+						        helpText="MM/DD/YYYY"
+						        forceId="true"/> 
 
       </ui:define>
    </ui:composition>
