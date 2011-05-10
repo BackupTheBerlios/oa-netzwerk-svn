@@ -33,7 +33,10 @@
       <td id="side-panel" width="20%">
       <div style="margin-left: 50px; margin-right: 20px; border-top: 1px solid #bbb"></div>
 
-      <div id="navigation"><ui:insert name="menu" /></div>
+      <div id="navigation">
+      <!-- <ui:insert name="menu" /-->
+      <ui:decorate template="../components/menu.xhtml"></ui:decorate>
+      </div>
       </td>
 
       <!-- =========== Content =========== -->

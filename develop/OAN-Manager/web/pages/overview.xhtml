@@ -19,32 +19,6 @@
       <a href="/oanadmin/">OA-Netzwerk</a>
    </ui:define>
    
-   <ui:define name="menu">
-      <div id="tasks">
-
-      <div class="task"><img height="24" style="margin: 2px;" alt=""
-         width="24" src="../images/24x24/new-package.gif" /><a href="repositories_main.xhtml">Repositorien
-      verwalten</a>
-
-      </div>
-
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="services_main.faces">Dienste verwalten</a></div>
-
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="rest_main.faces">REST-Server</a></div>
-
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="users_main.faces">Benutzer verwalten</a></div>
-
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="reports.faces">Reports</a></div>
-         
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="livelog.faces">LiveLog</a></div>         
-      </div>
-
-   </ui:define>
 
    <ui:define name="content">
    		
@@ -52,12 +26,6 @@
    		Zusätzliche Funktionen wie der Live-Service-Log oder aufbereitete Reports erleichtern den Einblick und geben einen Status über die Arbeit der OAN-Dienste.<br />
       <br />
 
-            <t:inputCalendar id="thirdOne" monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader" popupButtonStyleClass="standard_bold"
-                currentDayCellClass="currentDayCell" value="#{calendarBean.thirdDate}" renderAsPopup="true"
-                popupTodayString="#{example_messages['popup_today_string']}"
-                popupDateFormat="MM/dd/yyyy" popupWeekString="#{example_messages['popup_week_string']}"
-                helpText="MM/DD/YYYY"
-                    forceId="false"/>
    </ui:define>
 </ui:composition>
 

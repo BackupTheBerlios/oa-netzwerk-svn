@@ -19,29 +19,7 @@
       <a href="/oanadmin/">OA-Netzwerk</a> » <a href="rest_validator.xhtml">REST Validator</a>
     </ui:define>
 
-    <ui:define name="menu">
-      <div id="tasks">
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /> <a
-        href="repositories_main.xhtml">Repositorien verwalten</a></div>
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
-        href="services_main.faces">Dienste verwalten</a></div>
-
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
-        href="rest_main.faces"><b>REST-Server</b></a>
-      <div class="subtasks">
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
-        href="rest_validator.xhtml"><b>REST-Server validieren</b></a></div>
-      </div>
-      </div>
-
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
-        href="users_main.faces">Benutzer verwalten</a></div>
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /> <a
-        href="reports.faces">Reports</a></div>
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /> <a
-        href="livelog.faces">Live Log</a></div>
-      </div>
-    </ui:define>
+    <ui:param name="menu_rest_validation" value="#{true}" /> 
 
 
     <ui:define name="content">

@@ -2,161 +2,115 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk">
 
 <head></head>
 
 <body>
 
 <ui:composition template="templates/template.xhtml">
-   
-   <ui:param name="pageTitle" value="Repository aus OA-Netzwerk entfernen - OA-Netzwerk Manager" />
-   
-   <ui:define name="navigation">
-      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="repositories_main.xhtml">Repositorien</a>
-   </ui:define>
 
-   <ui:define name="menu">
-      <div id="tasks">
+	<ui:param name="pageTitle"
+		value="Repository aus OA-Netzwerk entfernen - OA-Netzwerk Manager" />
 
-      <div class="task"><img height="24" style="margin: 2px;" alt=""
-         width="24" src="../images/24x24/new-package.gif" /><a href="repositories_main.faces">Repositorien
-      verwalten</a></div>
+	<ui:define name="navigation">
+		<a href="/oanadmin/">OA-Netzwerk</a> » <a
+			href="repositories_main.xhtml">Repositorien</a>
+	</ui:define>
 
-      <div class="subtasks">
-            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="repositories_add.faces">Repository hinzufügen</a></div>
-      </div>
+	<ui:param name="menu_repository" value="#{true}" />
 
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="services_main.faces">Dienste verwalten</a></div>
-         
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/setting.gif" /><a href="users_main.faces">Benutzer verwalten</a></div>         
-
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="reports.faces">Reports</a></div>
-
-      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         src="../images/24x24/notepad.gif" /><a href="livelog.faces">Live Log</a></div>
-
-      </div>
-
-   </ui:define>
-
-   <ui:define name="content">
+	<ui:define name="content">
 
 
-      <div style="padding: 20px; background-color: #f5f9f4;">
-      <div style="background-color: #f5f9f4;">
-      <h2>Repository aus OA-Netzwerk entfernen</h2>
+		<div style="padding: 20px; background-color: #f5f9f4;">
+		<div style="background-color: #f5f9f4;">
+		<h2>Repository aus OA-Netzwerk entfernen</h2>
 
 
 
 
 
-      <table width="100%">
+		<table width="100%">
 
 
-         <f:view>
-            <h:form>
+			<f:view>
+				<h:form>
 
-               <tr>
-                  <td colspan="2">
-                  <p /><br />
-                  <b>Soll das folgende Repository wirklich aus dem OA-Netzwerk gelöscht werden?</b><p />
-                  
-                  </td>
-               </tr>
-               <tr>
-                  <td width="140">
-                  Repository-ID: 
-                  </td>
-                  <td charoff="10">
-                  #{repo.id}                  
-                  </td>
-               </tr>
-               <tr>
-                  <td width="140">
-                  Repository-Name: 
-                  </td>
-                  <td charoff="10">
-                  #{repo.name}                  
-                  </td>
-               </tr>
-               <tr>
-                  <td>
-                  URL
-                  </td>
-                  <td>
-                  #{repo.url}
-                  </td>
-               </tr>
-               <tr>
-                  <td>
-                  OAI-PMH Schnittstelle
-                  </td>
-                  <td>
-                  #{repo.oaiUrl}
-                  </td>
-               </tr>
-               <tr>
-                  <td>
-                  Harvest Batch-Size
-                  </td>
-                  <td>
-                  #{repo.harvestAmount}
-                  </td>
-               </tr>
-               <tr>
-                  <td>
-                  Harvest Pause in ms
-                  </td>
-                  <td>
-                  #{repo.harvestPause}
-                  </td>
-               </tr>
-               <tr>
-                  <td>
-                  listrecords-Modus
-                  </td>
-                  <td>
-                  #{repo.listRecords}
-                  </td>
-               </tr>
-               <tr>
-                  <td>
-                  aktiv
-                  </td>
-                  <td>
-                  #{repo.active}
-                  </td>
-               </tr>
-                           
-               <tr>
-                  <td colspan="2">
-                  <p /><br />Hinweis: Sie können das Repository auch temporär deaktivieren, so bleiben sämtliche Inhalte 
-                  des Repositories erhalten, aber das Repository würde bis zu einer erneuten Aktivierung 
-                  nicht mehr bearbeitet (Harvesting, Aggreagation etc.) werden. 
-                  <p />
-                  </td>
-               </tr>
-               <tr>
-                  <td colspan="2" align="center">
-                     <p />
-                     <t:inputHidden value="#{repo.id}" />
-                     <t:commandButton type="submit" action="#{repo.deactivate}" value="Deaktivieren" width="200"></t:commandButton> 
-                     <t:commandButton type="submit" action="#{repo.delete}" value="Endgültig Löschen" size="200"></t:commandButton>
-                  </td>
-               </tr>
-            </h:form>
-         </f:view>
-      </table>
-      </div>
-      </div>
+					<tr>
+						<td colspan="2">
+						<p />
+						<br />
+						<b>Soll das folgende Repository wirklich aus dem OA-Netzwerk
+						gelöscht werden?</b>
+						<p />
 
-   </ui:define>
+						</td>
+					</tr>
+					<tr>
+						<td width="140">Repository-ID:</td>
+						<td charoff="10">#{repo.id}</td>
+					</tr>
+					<tr>
+						<td width="140">Repository-Name:</td>
+						<td charoff="10">#{repo.name}</td>
+					</tr>
+					<tr>
+						<td>URL</td>
+						<td>#{repo.url}</td>
+					</tr>
+					<tr>
+						<td>OAI-PMH Schnittstelle</td>
+						<td>#{repo.oaiUrl}</td>
+					</tr>
+					<tr>
+						<td>Harvest Batch-Size</td>
+						<td>#{repo.harvestAmount}</td>
+					</tr>
+					<tr>
+						<td>Harvest Pause in ms</td>
+						<td>#{repo.harvestPause}</td>
+					</tr>
+					<tr>
+						<td>listrecords-Modus</td>
+						<td>#{repo.listRecords}</td>
+					</tr>
+					<tr>
+						<td>aktiv</td>
+						<td>#{repo.active}</td>
+					</tr>
+
+					<tr>
+						<td colspan="2">
+						<p />
+						<br />
+						Hinweis: Sie können das Repository auch temporär deaktivieren, so
+						bleiben sämtliche Inhalte des Repositories erhalten, aber das
+						Repository würde bis zu einer erneuten Aktivierung nicht mehr
+						bearbeitet (Harvesting, Aggreagation etc.) werden.
+						<p />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2" align="center">
+						<p />
+						<t:inputHidden value="#{repo.id}" /> <t:commandButton
+							type="submit" action="#{repo.deactivate}" value="Deaktivieren"
+							width="200"></t:commandButton> <t:commandButton type="submit"
+							action="#{repo.delete}" value="Endgültig Löschen" size="200"></t:commandButton>
+						</td>
+					</tr>
+				</h:form>
+			</f:view>
+		</table>
+		</div>
+		</div>
+
+	</ui:define>
 </ui:composition>
 
 </body>

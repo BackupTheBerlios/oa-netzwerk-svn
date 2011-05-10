@@ -5,14 +5,18 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
@@ -49,7 +53,10 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	private String chosenDay;
 	private String chosenHour;
 	private boolean update;
+
+	private String chosenRepository;
 	private String chosenDate;
+	private String chosenTime;
 	
 	private String intervalType;
 	private int intervalDay;
@@ -60,20 +67,12 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	private boolean deleted;
 	private boolean stored;
 	
-	private String test;
+
 	private boolean radio1;
 	
-	private List<String> services = new ArrayList<String>();
 	
-
-
-	public String getTest() {
-    	return test;
-    }
-
-	public void setTest(String test) {
-    	this.test = test;
-    }
+	private List<String> services = new ArrayList<String>();
+	private Map<String, Long> repoList;
 	
 	
 
@@ -105,7 +104,13 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		services.add("Aggregator");
 		services.add("Marker");
 		
+		// retrieve list of repositories
+		initRepositories();
+		
 		// retrieve the jobs to be displayed
+		if (true)
+			return;
+		
 		if (jobList != null && !jobList.isEmpty()) {
 			return;
 		}
@@ -171,7 +176,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 	public String storeJob() {
 
-		System.out.println("test: " + test);
 		System.out.println("radio1: " + radio1);
 
 		// REST call
@@ -234,6 +238,77 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	}
 
 
+	public void initRepositories() {
+		
+		RepositoryBean.setRestConnector(restConnector);
+		
+		if (repoList != null && !repoList.isEmpty()) {
+			return;
+		}
+		
+		String result = restConnector.prepareRestTransmission("Repository/").GetData();
+		repoList = new HashMap<String, Long>();
+		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+
+		if (rms == null || rms.getListEntrySets().isEmpty()) {
+
+			logger.error("received no Repository Details at all from the server");
+			return;
+		}
+
+		for (RestEntrySet res : rms.getListEntrySets()) {
+
+			Iterator<String> it = res.getKeyIterator();
+			String key = "";
+			Repository repo = new Repository();
+
+			while (it.hasNext()) {
+
+				key = it.next();
+
+
+				if (key.equalsIgnoreCase("name")) {
+
+					repo.setName(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("url")) {
+
+					repo.setUrl(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("repository_id")) {
+
+					repo.setId(new Long(res.getValue(key)));
+
+				} else
+					// System.out.println("Key: " + key);
+					continue;
+			}
+
+			repoList.put(repo.getName(), repo.getId());
+
+		}
+		System.out.println(repoList.size());
+		
+	}
+
+
+
+	/*********************+ Validations *********************/
+	
+	public void validateType(FacesContext context, UIComponent toValidate, Object value) {
+		System.out.println("VALIDATING");
+		String email = (String) value;
+
+		if (email.indexOf('@') == -1) {
+			((UIInput) toValidate).setValid(false);
+
+			FacesMessage message = new FacesMessage("Invalid Email");
+			context.addMessage(toValidate.getClientId(context), message);
+		}
+
+	}
+
+
 	
 	public List<String> getIntervalTypes() {
 
@@ -279,29 +354,53 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		List<String> hours = new ArrayList<String>();
 		
 		hours.add("0:00");
+		hours.add("0:30");
 		hours.add("1:00");
+		hours.add("1:30");
 		hours.add("2:00");
+		hours.add("2:30");
 		hours.add("3:00");
+		hours.add("3:30");
 		hours.add("4:00");
+		hours.add("4:30");
 		hours.add("5:00");
+		hours.add("5:30");
 		hours.add("6:00");
+		hours.add("6:30");
 		hours.add("7:00");
+		hours.add("7:30");
 		hours.add("8:00");
+		hours.add("8:30");
 		hours.add("9:00");
+		hours.add("9:30");
 		hours.add("10:00");
+		hours.add("10:30");
 		hours.add("11:00");
+		hours.add("11:30");
 		hours.add("12:00");
+		hours.add("12:30");
 		hours.add("13:00");
+		hours.add("13:30");
 		hours.add("14:00");
+		hours.add("14:30");
 		hours.add("15:00");
+		hours.add("15:30");
 		hours.add("16:00");
+		hours.add("16:30");
 		hours.add("17:00");
+		hours.add("17:30");
 		hours.add("18:00");
+		hours.add("18:30");
 		hours.add("19:00");
+		hours.add("19:30");
 		hours.add("20:00");
+		hours.add("20:30");
 		hours.add("21:00");
+		hours.add("21:30");
 		hours.add("22:00");
+		hours.add("22:30");
 		hours.add("23:00");
+		hours.add("23:30");
 		
 		return hours;
 	}
@@ -387,6 +486,16 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		this.chosenDate = chosenDate;
 	}
 
+	
+	
+	public String getChosenTime() {
+		return chosenTime;
+	}
+
+	public void setChosenTime(String chosenTime) {
+		this.chosenTime = chosenTime;
+	}
+
 	public boolean isUpdate() {
 		return update;
 	}
@@ -409,5 +518,17 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 	public void setRestConnector(RestConnector restConnector) {
 		this.restConnector = restConnector;
+	}
+	
+	public Map<String, Long> getRepositories() {
+		return repoList;
+	}
+
+	public String getChosenRepository() {
+		return chosenRepository;
+	}
+
+	public void setChosenRepository(String chosenRepository) {
+		this.chosenRepository = chosenRepository;
 	}
 }

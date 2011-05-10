@@ -18,46 +18,17 @@
 
 
 	<ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
-<!--	<ui:param name="customHead">-->
-<!---->
-<!--	</ui:param>-->
+	<!--	<ui:param name="customHead">-->
+	<!---->
+	<!--	</ui:param>-->
 
 	<ui:define name="navigation">
-		<a href="/oanadmin/">OA-Netzwerk</a>
+		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="services.xhtml">Dienste</a>
 	</ui:define>
 
-	<ui:define name="menu">
-		<div id="tasks">
-
-		<div class="task"><img height="24" style="margin: 2px;" alt=""
-			width="24" src="../images/24x24/new-package.gif" /><a
-			href="repositories_main.xhtml">Repositorien verwalten</a></div>
-
-		<div class="task"><img height="24" style="margin: 2px;" alt=""
-			width="24" src="../images/24x24/setting.gif" /><a
-			href="services_main.faces">Dienste verwalten</a></div>
-
-		<div class="task"><img height="24" style="margin: 2px;" alt=""
-			width="24" src="../images/24x24/setting.gif" /><a
-			href="users_main.faces">Benutzer verwalten</a></div>
-
-		<div class="task"><img height="24" style="margin: 2px;" alt=""
-			width="24" src="../images/24x24/notepad.gif" /><a
-			href="reports.faces">Reports</a></div>
-
-		<div class="task"><img height="24" style="margin: 2px;" alt=""
-			width="24" src="../images/24x24/notepad.gif" /><a
-			href="livelog.faces">Live Log</a></div>
-		</div>
-	</ui:define>
+  	<ui:param name="menu_services_schedule" value="#{true}" /> 
 
 	<ui:define name="content">
-
-	<!-- German -->
-	<input type="hidden" id="DPC_TODAY_TEXT" value="heute"></input>
-	<input type="hidden" id="DPC_BUTTON_TITLE" value="Kalender öffnen..."></input>
-	<input type="hidden" id="DPC_MONTH_NAMES" value="['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']"></input>
-	<input type="hidden" id="DPC_DAY_NAMES" value="['Son', 'Mon', 'Die', 'Mit', 'Don', 'Fre', 'Sam']"></input>
 
 		<script type="text/javascript">
 	function fold1() {
@@ -90,7 +61,8 @@
 			document.getElementById("Aendern").style.visibility = "visible";
 	}
 
-	function disableSelect(form, radio, select1, select2, select3) {
+	function disableSelect(form, select1, select2, select3) {
+
 		var radio1 = document.getElementById("form:radio1:0").checked;
 		var radio2 = document.getElementById("form:radio1:1").checked;
 		var radio3 = document.getElementById("form:radio1:2").checked;
@@ -112,6 +84,43 @@
 			document.getElementById(form + ":" + select2).disabled = true;
 			document.getElementById(form + ":" + select3).disabled = false;
 		}
+
+	}
+	
+	function disableTypeOptions(form, select1, select2, select3) {
+		var radio1 = document.getElementById("radio0:0").checked;
+		var radio2 = document.getElementById("radio0:1").checked;
+
+		if (radio1) {
+			document.getElementById(form + ":" + select1).disabled = false;
+			document.getElementById(form + ":" + select2).disabled = false;
+			document.getElementById(form + ":" + select3).disabled = false;	
+			document.getElementById("form:radio1:0").disabled = false;
+			document.getElementById("form:radio1:1").disabled = false;
+			document.getElementById("form:radio1:2").disabled = false;
+			document.getElementById(form + ":hour").disabled = false;
+			document.getElementById(form + ":repositories").disabled = true;
+			document.getElementById(form + ":date").disabled = true;
+			document.getElementById(form + ":time").disabled = true;
+			disableSelect(form, select1, select2, select3);
+		}
+		
+		if (radio2) {
+			document.getElementById(form + ":" + select1).disabled = true;
+			document.getElementById(form + ":" + select2).disabled = true;
+			document.getElementById(form + ":" + select3).disabled = true;
+			document.getElementById("form:radio1:0").disabled = true;
+			document.getElementById("form:radio1:1").disabled = true;
+			document.getElementById("form:radio1:2").disabled = true;			
+			document.getElementById(form + ":hour").disabled = true;
+			document.getElementById(form + ":repositories").disabled = false;			
+			document.getElementById(form + ":date").disabled = false;
+			document.getElementById(form + ":time").disabled = false;
+		}		
+	}	
+	
+	function clearInput(form, date) {
+		document.getElementById(form + ":" + date).value = "";
 	}
 </script>
 
@@ -119,7 +128,7 @@
 		<div style="background-color: #f5f9f4;">
 
 
-		<div id="aenderungsmenu" style="display: none">
+		<div id="aenderungsmenu" > <!-- style="display: none" -->
 		<h2>Änderungen an Dienst vornehmen</h2>
 
 		Für eine erfolgreiche Änderung muss der zu ändernde Dienst sowie eine
@@ -133,147 +142,163 @@
 
 		<h:form styleClass="form" id="form">
 
-      <t:selectOneRadio id="radio0" value="#{scheduling.test}" layout="spread"
-                        border="1" forceId="true" forceIdIndex="false"
-                        style="font-weight:bold; background-color:#99CCFF;">
-			 <f:selectItem itemLabel="regelmäßig" itemValue="#{scheduling.jobTypes[0]}" />
-			 <f:selectItem itemLabel="einmalig" itemValue="#{scheduling.jobTypes[1]}" />
-      </t:selectOneRadio>
+			<t:selectOneRadio id="radio0" value="#{scheduling.intervalType}"
+				layout="spread" border="1" forceId="true" forceIdIndex="false"
+				style="font-weight:bold; background-color:#99CCFF;" onclick="disableTypeOptions('form','dayOfMonth', 'dayOfWeek', 'day');"
+				required="true" validator="#{scheduling.validateType}">
+				<f:selectItem itemLabel="regelmäßig"
+					itemValue="#{scheduling.jobTypes[0]}" />
+				<f:selectItem itemLabel="einmalig"
+					itemValue="#{scheduling.jobTypes[1]}" />
+			</t:selectOneRadio>
 
-		<table>
-			<tr>
+			<table>
+				<tr>
 
-			</tr>
-			<tr>
-				<td width="50%"> </td>
-			</tr>
-			<tr>
-				<td width="40%"> </td>
-			</tr>
-			<tr>
+				</tr>
+				<tr>
+					<td width="60%"></td>
+				</tr>
+				<tr>
+					<td width="40%"></td>
+				</tr>
+				<tr>
 
-				<td>
-					<h:outputLabel value="Dienst auswählen   " />
-					
-					<h:selectOneMenu id="service" value="#{scheduling.chosenService}">
+					<td><h:outputLabel value="Dienst auswählen   " /> <h:selectOneMenu
+						id="service" value="#{scheduling.chosenService}">
 						<f:selectItems value="#{scheduling.services}" />
-					</h:selectOneMenu> <br /><br /><br />  
-				</td>
-				<td></td>
-			</tr>						
-			<tr>
-				<td style="padding-left:10px;">
-<!--                    <input id="bla1" type="radio"  value="#{scheduling.radio1}">regelmäßig</input>-->
-                    <t:radio for="radio0" index="0"></t:radio>
-				</td>
-				<td>
-				<t:radio for="radio0" index="1"></t:radio>
-<!--					<input id="bla1" type="radio" value="bla1">einmalig</input>-->
-				</td>
-			</tr>
-			<tr>
-				
-				<td>
-					<h:panelGroup>
+					</h:selectOneMenu> <br />
+					<br />
+					<br />
+					</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td style="padding-left: 10px;"><!--                    <input id="bla1" type="radio"  value="#{scheduling.radio1}">regelmäßig</input>-->
+						<t:radio for="radio0" index="0"></t:radio>
+					</td>
+					<td>
+						<t:radio for="radio0" index="1"></t:radio> <!--					<input id="bla1" type="radio" value="bla1">einmalig</input>-->
+					</td>
+				</tr>
+				<tr>
+
+					<td><h:panelGroup>
 						<h:panelGrid columns="8">
 
-														
-					<h:panelGrid columns="1" style="width:160px;">
-						<h:selectOneRadio disabledClass="selectOneRadio_Disabled"
-							styleClass="selectOneRadio" id="radio1" layout="pageDirection" onclick="disableSelect('form','radio1','dayOfMonth', 'dayOfWeek', 'day');">
-							<f:selectItem itemValue="option1" itemLabel="monatlich, jeden" />
-							<f:selectItem itemValue="option2" itemLabel="wöchentlich, jeden" />
-							<f:selectItem itemValue="option3" itemLabel="jeden" />
-						</h:selectOneRadio>
-					</h:panelGrid>
 
-					<h:panelGrid columns="1">
-						<h:selectOneMenu id="dayOfMonth" value="#{scheduling.chosenDayOfMonth}"
-						style=" width : 103px;">
-							<f:selectItems value="#{scheduling.monthlyDays}" />
-						</h:selectOneMenu>
-						<h:selectOneMenu id="dayOfWeek" value="#{scheduling.chosenDayOfWeek}"
-						style=" width : 105px;">
-							<f:selectItem id="item2_1" itemLabel="Montag" itemValue="1" />
-							<f:selectItem id="item2_2" itemLabel="Dienstag" itemValue="2" />
-							<f:selectItem id="item2_3" itemLabel="Mittwoch" itemValue="3" />
-							<f:selectItem id="item2_4" itemLabel="Donnerstag" itemValue="4" />
-							<f:selectItem id="item2_5" itemLabel="Freitag" itemValue="5" />
-							<f:selectItem id="item2_6" itemLabel="Samstag" itemValue="6" />
-							<f:selectItem id="item2_7" itemLabel="Sonntag" itemValue="7" />
-						</h:selectOneMenu>
-						<h:selectOneMenu id="day" value="#{scheduling.chosenDay}"
-						style=" width : 103px;">
-							<f:selectItems value="#{scheduling.days}" />
-						</h:selectOneMenu>
-					</h:panelGrid>
-					
-					<h:panelGrid columns="1" style="width:60px;">
+							<h:panelGrid columns="1" style="width:160px;">
+								<h:selectOneRadio disabledClass="selectOneRadio_Disabled"
+									styleClass="selectOneRadio" id="radio1" layout="pageDirection"
+									onclick="disableSelect('form','radio1','dayOfMonth', 'dayOfWeek', 'day');">
+									<f:selectItem itemValue="option1" itemLabel="monatlich, jeden" />
+									<f:selectItem itemValue="option2"
+										itemLabel="wöchentlich, jeden" />
+									<f:selectItem itemValue="option3" itemLabel="jeden" />
+								</h:selectOneRadio>
+							</h:panelGrid>
 
-						<div style="height:55px"><h:outputText value="Tag" /></div>
-					</h:panelGrid>
-					
+							<h:panelGrid columns="1">
+								<h:selectOneMenu id="dayOfMonth"
+									value="#{scheduling.chosenDayOfMonth}" style=" width : 103px;">
+									<f:selectItems value="#{scheduling.monthlyDays}" />
+								</h:selectOneMenu>
+								<h:selectOneMenu id="dayOfWeek"
+									value="#{scheduling.chosenDayOfWeek}" style=" width : 105px;">
+									<f:selectItem id="item2_1" itemLabel="Montag" itemValue="1" />
+									<f:selectItem id="item2_2" itemLabel="Dienstag" itemValue="2" />
+									<f:selectItem id="item2_3" itemLabel="Mittwoch" itemValue="3" />
+									<f:selectItem id="item2_4" itemLabel="Donnerstag" itemValue="4" />
+									<f:selectItem id="item2_5" itemLabel="Freitag" itemValue="5" />
+									<f:selectItem id="item2_6" itemLabel="Samstag" itemValue="6" />
+									<f:selectItem id="item2_7" itemLabel="Sonntag" itemValue="7" />
+								</h:selectOneMenu>
+								<h:selectOneMenu id="day" value="#{scheduling.chosenDay}"
+									style=" width : 103px;">
+									<f:selectItems value="#{scheduling.days}" />
+								</h:selectOneMenu>
+							</h:panelGrid>
 
-					</h:panelGrid>
-					</h:panelGroup>	
-					
-								
-				</td>
-				
-				<td>
-					<h:panelGroup>
+							<h:panelGrid columns="1" style="width:60px;">
+
+								<div style="height: 55px"><h:outputText value="Tag" /></div>
+							</h:panelGrid>
+
+
+						</h:panelGrid>
+					</h:panelGroup></td>
+
+					<td><h:panelGroup>
 						<h:panelGrid columns="8">
 
-					<h:panelGrid columns="1" style="width:100px;">
-						<h:outputLabel  value="Repository" /><f:selectItem itemValue="option11" />
+							<h:panelGrid columns="1" style="width:100px;">
+								<h:outputLabel value="Repository" />
+<!--								<f:selectItem itemValue="option11" />-->
 
-					</h:panelGrid>
+							</h:panelGrid>
 
 
-					<h:panelGrid columns="1">
-						<h:selectOneMenu id="dayOfMonth1" value="#{scheduling.chosenDayOfMonth}"
-						style=" width : 103px;">
-							<f:selectItems value="#{scheduling.monthlyDays}" />
-						</h:selectOneMenu>
-					</h:panelGrid>
-					</h:panelGrid>
-					</h:panelGroup>				
-				</td>
-			</tr>
-			<tr>
-				<td style="padding-left:15px;">
-						<h:outputLabel for="hour" value="Uhrzeit" />
-						<h:selectOneMenu id="hour" value="#{scheduling.chosenHour}">
-							<f:selectItems value="#{scheduling.hours}" />
-						</h:selectOneMenu> <br />
-				</td>
-				<td>
-						<h:outputLabel value="Datum" />
-<!--						<t:inputDate id="date" type="date" popupCalendar="true" />-->
-						
-						<t:inputDate id="date1" value="#{date1}" popupCalendar="true"/>
-						
-						<t:inputCalendar id="secondOne" value="#{Calendar.selectedDate2}"
-						        renderAsPopup="true" 
-						        popupDateFormat="MM/dd/yyyy"
-						        popupTodayDateFormat="dd-MMM-yyyy"
-						        popupWeekString="Week"
-						        popupTodayString="The date today is :"
-						        renderPopupButtonAsImage="true"
-						        popupButtonImageUrl="images/cal.gif"
-						        helpText="MM/DD/YYYY"
-						        forceId="true"/> 
-						<input type="text" name="edit1" id="DPC_edit1"></input>
-						<input type="text" id="DPC_date1" size="14"></input>
-						<input type="text" name="edit1" id="edit1" datepicker="true"></input>
-						<br />
-						<h:outputLabel  value="Uhrzeit" /><br />
-						<h:selectOneMenu id="hour2" value="#{scheduling.chosenHour}">
-							<f:selectItems value="#{scheduling.hours}" />
-						</h:selectOneMenu> <br />
-				</td>
-			</tr>
-		</table>
+							<h:panelGrid columns="1">
+								<h:selectOneMenu id="repositories"
+									value="#{scheduling.chosenRepository}" style=" width : 200px;">
+									<f:selectItems value="#{scheduling.repositories}" />
+								</h:selectOneMenu>
+							</h:panelGrid>
+						</h:panelGrid>
+					</h:panelGroup>
+					
+					<table>
+						<tr>
+							<td width="103px"> 
+								<h:outputLabel for="date" value="Datum" />
+							</td>
+							<td>
+								<t:inputCalendar
+									id="date" monthYearRowClass="yearMonthHeader"
+									weekRowClass="weekHeader" popupButtonStyleClass="standard_bold"
+									currentDayCellClass="currentDayCell"
+									value="#{scheduling.chosenDate}" renderAsPopup="true"
+									popupTodayString="#{example_messages['popup_today_string']}"
+									popupDateFormat="dd.MM.yyyy"
+									popupWeekString="#{example_messages['popup_week_string']}"
+									helpText="TT.MM.JJJJ" forceId="false" /> 
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<h:outputLabel for="time" value="Uhrzeit" />
+							</td>
+							<td>
+								<h:selectOneMenu id="time" value="#{scheduling.chosenTime}">
+									<f:selectItems value="#{scheduling.hours}" />
+								</h:selectOneMenu> <br />							
+							</td>
+						</tr>
+					</table>					
+					
+					</td>
+				</tr>
+				<tr>
+					<td width="160px" style="padding-left: 15px;">
+					<table>
+						<tr>
+							<td width="150px">
+								<h:outputLabel for="hour" value="Uhrzeit" /> 
+							</td>
+							<td>
+								<h:selectOneMenu id="hour"
+										value="#{scheduling.chosenHour}">
+									<f:selectItems value="#{scheduling.hours}" />
+								</h:selectOneMenu> <br />
+							</td>
+						</tr>
+					</table>
+					</td>
+					
+					<td>					
+					</td>
+				</tr>
+			</table>
 
 
 			<br />
@@ -289,8 +314,7 @@
 			<button name="Zurück" onclick="fold2(); unfold1(); visible()">Zurück</button>
 			<h:commandButton type="submit" action="#{scheduling.storeJob}"
 				value="Job anlegen" /></div>
-		</h:form>
-		</div>
+		</h:form></div>
 
 		<div id="ablaufplan" style="visibility: visible">
 		<h2>Dienstablaufplan</h2>

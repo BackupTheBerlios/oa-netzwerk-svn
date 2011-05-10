@@ -29,7 +29,8 @@
       
       <ui:param name="pageTitle" value="Login - OA-Netzwerk Manager" />
 
-      <ui:define name="menu"></ui:define>
+      <ui:param name="noMenu" value="#{true}" />
+
       <ui:define name="content">
    
             Willkommen im OA-Netzwerk Administrationsportal!<br />
@@ -57,17 +58,6 @@
          </table>
          </form>
          
-         						<t:inputCalendar id="secondOne" value="#{Calendar.selectedDate2}"
-						        renderAsPopup="true" 
-						        popupDateFormat="MM/dd/yyyy"
-						        popupTodayDateFormat="dd-MMM-yyyy"
-						        popupWeekString="Week"
-						        popupTodayString="The date today is :"
-						        renderPopupButtonAsImage="true"
-						        popupButtonImageUrl="images/cal.gif"
-						        helpText="MM/DD/YYYY"
-						        forceId="true"/> 
-
       </ui:define>
    </ui:composition>
    
