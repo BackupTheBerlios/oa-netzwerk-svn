@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk" xmlns:u="http://oanet.cms.hu-berlin.de/jsf-utils">
+<head>
+<title>Menu</title>
+</head>
+<body>
+<ui:composition>
+
+
+	<t:div rendered="#{not noMenu}">
+    
+    <div id="tasks">
+
+	<!-- ********************* Repositories ******************** -->
+
+
+	<t:div rendered="#{not menu_repository}">
+	   	<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
+      		href="repositories_main.xhtml">Repositorien verwalten</a></div>
+	</t:div>		
+		
+	<t:div rendered="#{menu_repository or menu_repository_add}">
+		
+		<t:div rendered="#{menu_repository}">
+	    	<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
+	      		href="repositories_main.xhtml"><b>Repositorien verwalten</b></a></div>
+      	</t:div>
+		
+    	<div class="subtasks">
+		<t:div rendered="#{menu_repository_add}">
+   		 		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      				href="repositories_add.xhtml"><b>Repository hinzufügen</b></a></div>
+    	</t:div>
+		<t:div rendered="#{not menu_repository_add}">
+   		 		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      				href="repositories_add.xhtml">Repository hinzufügen</a></div>
+    	</t:div>    	
+   		</div>
+	</t:div>
+	
+	
+	<!-- ********************* REST-Server ******************** -->
+
+
+	<t:div rendered="#{not menu_rest}">
+	      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         	src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml">REST-Server</a></div>
+	</t:div>		
+		
+	<t:div rendered="#{menu_rest or menu_rest_validation}">
+		
+		<t:div rendered="#{menu_rest}">
+	      	<div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         		src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml"><b>REST-Server</b></a></div>
+      	</t:div>
+		
+    	<div class="subtasks">
+		<t:div rendered="#{menu_rest_validation}">
+      		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
+       			 href="rest_validator.xhtml"><b>REST-Server validieren</b></a></div>
+    	</t:div>
+		<t:div rendered="#{not menu_rest_validation}">
+      		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
+       			 href="rest_validator.xhtml">REST-Server validieren</a></div>
+    	</t:div>    	
+   		</div>
+	</t:div>
+	
+	
+	<!-- ********************* Services ******************** -->
+		
+		
+	<t:div rendered="#{not menu_services}">
+	    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
+	      href="services_main.xhtml">Dienste verwalten</a></div>
+	</t:div>
+	
+	<t:div rendered="#{menu_services or menu_services_schedule}">
+		<t:div rendered="#{menu_services}">	
+			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
+	      		href="services_main.xhtml"><b>Dienste verwalten</b></a></div>
+	    </t:div>  
+	    
+    	<div class="subtasks">
+		<t:div rendered="#{menu_services_schedule}">	    
+		    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      			href="services_schedule.xhtml"><b>Ablaufplan</b></a></div>
+		</t:div>
+		
+		<t:div rendered="#{not menu_services_schedule}">	 
+			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      			href="services_schedule.xhtml">Ablaufplan</a></div>
+		</t:div>
+		</div>
+	</t:div>
+	
+	
+	<!-- ********************* Users ******************** -->
+		
+		
+	<t:div rendered="#{not menu_users}">
+    		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      			href="users_main.xhtml">Benutzer verwalten</a></div>
+	</t:div>
+	
+	<t:div rendered="#{menu_users or menu_users_add}">
+		<t:div rendered="#{menu_users}">	
+    		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      			href="users_main.xhtml"><b>Benutzer verwalten</b></a></div>
+	    </t:div>  
+	    
+    	<div class="subtasks">
+		<t:div rendered="#{menu_user_add}">	    
+		    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      			href="user_add.xhtml"><b>Benutzer hinzufügen</b></a></div>
+		</t:div>
+		
+		<t:div rendered="#{not menu_user_add}">	 
+			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      			href="user_add.xhtml">Benutzer hinzufügen</a></div>
+		</t:div>
+		</div>
+	</t:div>		
+	
+	
+
+<!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a-->
+<!--      href="reports.xhtml">Reports</a></div>-->
+<!---->
+<!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a-->
+<!--      href="livelog.xhtml">Live Log</a></div>-->
+      
+    </div>
+    </t:div>
+    
+</ui:composition>
+</body>
+</html>
