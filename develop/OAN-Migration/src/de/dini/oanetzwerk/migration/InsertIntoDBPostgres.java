@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import de.dini.oanetzwerk.server.database.InsertIntoDB;
 
 public class InsertIntoDBPostgres {
-static Logger logger = Logger.getLogger (InsertIntoDB.class);
+static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 	
 	/**
 	 * This creates the Prepared Statement for inserting a new Object into the Database.
@@ -732,9 +732,9 @@ static Logger logger = Logger.getLogger (InsertIntoDB.class);
 		
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO \"ServiceNotify\" (service_id, inserttime, urgent, complete) VALUES (?, ?, ?, ?)");
 		preparedstmt.setBigDecimal(1, service_id);
-		preparedstmt.setString(2, inserttime);
+		preparedstmt.setDate(2, Date.valueOf(inserttime));
 		preparedstmt.setBoolean(3, urgent);
-		
+		preparedstmt.setBoolean(4, complete);
 		return preparedstmt;
 	}
 
