@@ -5,8 +5,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:t="http://myfaces.apache.org/tomahawk"
-	xmlns:rich="http://richfaces.org/rich">
+	xmlns:t="http://myfaces.apache.org/tomahawk">
 
 <head></head>
 
@@ -66,7 +65,7 @@
 		var radio1 = document.getElementById("form:radio1:0").checked;
 		var radio2 = document.getElementById("form:radio1:1").checked;
 		var radio3 = document.getElementById("form:radio1:2").checked;
-
+        
 		if (radio1) {
 			document.getElementById(form + ":" + select1).disabled = false;
 			document.getElementById(form + ":" + select2).disabled = true;
@@ -142,16 +141,18 @@
 
 		<h:form styleClass="form" id="form">
 
-			<t:selectOneRadio id="radio0" value="#{scheduling.intervalType}"
+            <h:message style="color:red;"/>
+            
+			<t:selectOneRadio id="radio0" value="#{scheduling.jobType}" 
 				layout="spread" border="1" forceId="true" forceIdIndex="false"
 				style="font-weight:bold; background-color:#99CCFF;" onclick="disableTypeOptions('form','dayOfMonth', 'dayOfWeek', 'day');"
-				required="true" validator="#{scheduling.validateType}">
+				required="true" >
 				<f:selectItem itemLabel="regelmäßig"
 					itemValue="#{scheduling.jobTypes[0]}" />
 				<f:selectItem itemLabel="einmalig"
 					itemValue="#{scheduling.jobTypes[1]}" />
 			</t:selectOneRadio>
-
+            
 			<table>
 				<tr>
 
@@ -188,20 +189,20 @@
 
 
 							<h:panelGrid columns="1" style="width:160px;">
-								<h:selectOneRadio disabledClass="selectOneRadio_Disabled"
+								<h:selectOneRadio disabledClass="selectOneRadio_Disabled" value="#{scheduling.intervalType}"
 									styleClass="selectOneRadio" id="radio1" layout="pageDirection"
-									onclick="disableSelect('form','radio1','dayOfMonth', 'dayOfWeek', 'day');">
-									<f:selectItem itemValue="option1" itemLabel="monatlich, jeden" />
-									<f:selectItem itemValue="option2"
+									onclick="disableSelect('form','dayOfMonth', 'dayOfWeek', 'day');">
+									<f:selectItem itemValue="#{scheduling.intervalTypes[0]}" itemLabel="monatlich, jeden" />
+									<f:selectItem itemValue="#{scheduling.intervalTypes[1]}"
 										itemLabel="wöchentlich, jeden" />
-									<f:selectItem itemValue="option3" itemLabel="jeden" />
+									<f:selectItem itemValue="#{scheduling.intervalTypes[2]}" itemLabel="jeden" />
 								</h:selectOneRadio>
 							</h:panelGrid>
 
 							<h:panelGrid columns="1">
 								<h:selectOneMenu id="dayOfMonth"
-									value="#{scheduling.chosenDayOfMonth}" style=" width : 103px;">
-									<f:selectItems value="#{scheduling.monthlyDays}" />
+									value="#{scheduling.chosenDayOfMonth}" style=" width : 103px;" forceIdIndex="true">
+									<f:selectItems value="#{scheduling.monthlyDays}" itemValue="#{index}"/>
 								</h:selectOneMenu>
 								<h:selectOneMenu id="dayOfWeek"
 									value="#{scheduling.chosenDayOfWeek}" style=" width : 105px;">
@@ -230,7 +231,7 @@
 
 					<td><h:panelGroup>
 						<h:panelGrid columns="8">
-
+                            <br />
 							<h:panelGrid columns="1" style="width:100px;">
 								<h:outputLabel value="Repository" />
 <!--								<f:selectItem itemValue="option11" />-->
@@ -239,8 +240,8 @@
 
 
 							<h:panelGrid columns="1">
-								<h:selectOneMenu id="repositories"
-									value="#{scheduling.chosenRepository}" style=" width : 200px;">
+								<h:selectOneMenu id="repositories" disabled="true"
+									value="#{scheduling.chosenRepository}" style=" width : 200px;" >
 									<f:selectItems value="#{scheduling.repositories}" />
 								</h:selectOneMenu>
 							</h:panelGrid>
@@ -261,7 +262,7 @@
 									popupTodayString="#{example_messages['popup_today_string']}"
 									popupDateFormat="dd.MM.yyyy"
 									popupWeekString="#{example_messages['popup_week_string']}"
-									helpText="TT.MM.JJJJ" forceId="false" /> 
+									helpText="TT.MM.JJJJ" forceId="false" validator="#{scheduling.validateDate}" /> 
 							</td>
 						</tr>
 						<tr>

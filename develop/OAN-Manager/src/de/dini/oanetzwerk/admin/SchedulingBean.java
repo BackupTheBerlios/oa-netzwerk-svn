@@ -1,16 +1,16 @@
 package de.dini.oanetzwerk.admin;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 
 public class SchedulingBean {
 
 	private Integer jobId = null;
-	private String name = null;
+	private String name = "";
 	private BigDecimal serviceId = null;
 	private ServiceStatus status = ServiceStatus.Open;
-	private String info = null;
+	private String info = "";
 	private boolean periodic = false;
 	private Date nonperiodicTimestamp = null;
 	private SchedulingIntervalType periodicInterval = null;
