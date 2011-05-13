@@ -11,8 +11,8 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -233,10 +233,10 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );						
 			switch (flag) {
 				case ALL:
-					stmtconn.loadStatement (SelectFromDB.ObjectServiceStatusAll(stmtconn.connection));	
+					stmtconn.loadStatement (SelectFromDBSybase.ObjectServiceStatusAll(stmtconn.connection));	
 					break;
 				case OBJECTID:
-					stmtconn.loadStatement (SelectFromDB.ObjectServiceStatusID(stmtconn.connection, this.objectEntryID));	
+					stmtconn.loadStatement (SelectFromDBSybase.ObjectServiceStatusID(stmtconn.connection, this.objectEntryID));	
 					break;
 //				case FLAG:
 //					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsTest(stmtconn.connection));	

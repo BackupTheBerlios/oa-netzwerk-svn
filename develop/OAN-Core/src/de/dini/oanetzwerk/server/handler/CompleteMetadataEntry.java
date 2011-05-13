@@ -14,7 +14,7 @@ import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 import de.dini.oanetzwerk.utils.imf.CompleteMetadata;
@@ -114,7 +114,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			// DupPro - Abfrage
 			////////////////////////////			
 			
-			stmtconn.loadStatement (SelectFromDB.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
+			stmtconn.loadStatement (SelectFromDBSybase.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
 			QueryResult dupproResult = stmtconn.execute ( );
 			
 			if (dupproResult.getWarning ( ) != null)
@@ -140,7 +140,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			// Fulltextlink - Abfrage
 			//////////////////////////
 			
-			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, cmf.getOid()));
+			stmtconn.loadStatement (SelectFromDBSybase.FullTextLinks (stmtconn.connection, cmf.getOid()));
 			QueryResult ftlResult = stmtconn.execute ( );
 			
 			if (ftlResult.getWarning ( ) != null)
@@ -158,7 +158,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			// RepositoryData - Abfrage
 			////////////////////////////
 			
-			stmtconn.loadStatement (SelectFromDB.RepositoryData(stmtconn.connection, cmf.getOid()));
+			stmtconn.loadStatement (SelectFromDBSybase.RepositoryData(stmtconn.connection, cmf.getOid()));
 			QueryResult repdataResult = stmtconn.execute ( );
 			
 			if (repdataResult.getWarning ( ) != null)
@@ -179,7 +179,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			// InterpolatedDDC - Abfrage
 			//////////////////////////////
 			
-			stmtconn.loadStatement (SelectFromDB.InterpolatedDDCClassification(stmtconn.connection, cmf.getOid()));
+			stmtconn.loadStatement (SelectFromDBSybase.InterpolatedDDCClassification(stmtconn.connection, cmf.getOid()));
 			QueryResult interpolatedDDCResult = stmtconn.execute ( );
 			
 			if (interpolatedDDCResult.getWarning ( ) != null)

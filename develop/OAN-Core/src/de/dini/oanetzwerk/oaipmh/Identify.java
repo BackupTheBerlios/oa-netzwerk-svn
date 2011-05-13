@@ -17,7 +17,7 @@ import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.JiBXException;
 
 import de.dini.oanetzwerk.oaipmh.oaiidentifier.OaiIdentifierType;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 
 /**
  * 

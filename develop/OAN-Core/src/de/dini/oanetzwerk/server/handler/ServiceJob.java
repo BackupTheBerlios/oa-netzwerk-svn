@@ -14,11 +14,11 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
-import de.dini.oanetzwerk.server.database.UpdateInDB;
+import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.UpdateInDBSybase;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -75,7 +75,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 				stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection();
 
-				stmtconn.loadStatement(SelectFromDB.ServicesScheduling(stmtconn.connection));
+				stmtconn.loadStatement(SelectFromDBSybase.ServicesScheduling(stmtconn.connection));
 				this.result = stmtconn.execute();
 
 				if (this.result.getWarning() != null) {
@@ -185,7 +185,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection();
 
-			stmtconn.loadStatement(SelectFromDB.ServicesScheduling(stmtconn.connection, jobId));
+			stmtconn.loadStatement(SelectFromDBSybase.ServicesScheduling(stmtconn.connection, jobId));
 			this.result = stmtconn.execute();
 
 			if (this.result.getWarning() != null) {
@@ -383,7 +383,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
 
-			stmtconn.loadStatement(UpdateInDB.ServicesScheduling(stmtconn.connection, name, serviceId, status, info, periodic,
+			stmtconn.loadStatement(UpdateInDBSybase.ServicesScheduling(stmtconn.connection, name, serviceId, status, info, periodic,
 					nonperiodicTimestamp, periodicInterval, periodicDays, jobId));
 			this.result = stmtconn.execute();
 
@@ -591,7 +591,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
 
-			stmtconn.loadStatement(InsertIntoDB.ServicesScheduling(stmtconn.connection, name, serviceId, status, info, periodic,
+			stmtconn.loadStatement(InsertIntoDBSybase.ServicesScheduling(stmtconn.connection, name, serviceId, status, info, periodic,
 					nonperiodicTimestamp, periodicInterval, periodicDays));
 			this.result = stmtconn.execute();
 

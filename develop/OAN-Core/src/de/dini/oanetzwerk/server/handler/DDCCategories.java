@@ -14,7 +14,7 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -81,7 +81,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 				// list of plain categories 
 				
 				stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
-				stmtconn.loadStatement (SelectFromDB.AllDDCCategories(stmtconn.connection));
+				stmtconn.loadStatement (SelectFromDBSybase.AllDDCCategories(stmtconn.connection));
 				QueryResult allDDCResult = stmtconn.execute ( );
 
 				if (allDDCResult.getWarning ( ) != null)
@@ -124,7 +124,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 				wildcardCategory = wildcardCategory.replaceAll("x", "%");
 				
 				stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
-				stmtconn.loadStatement (SelectFromDB.DDCCategoryWildcard(stmtconn.connection, wildcardCategory));
+				stmtconn.loadStatement (SelectFromDBSybase.DDCCategoryWildcard(stmtconn.connection, wildcardCategory));
 				QueryResult wildcardDDCResult = stmtconn.execute ( );
 
 				if (wildcardDDCResult.getWarning ( ) != null)

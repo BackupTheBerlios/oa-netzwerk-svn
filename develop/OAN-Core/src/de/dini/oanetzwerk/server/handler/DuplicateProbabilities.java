@@ -12,11 +12,11 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.DeleteFromDB;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.sybase.DeleteFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -76,7 +76,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDB.DuplicatePossibilities(stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.DuplicatePossibilities(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -178,7 +178,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (SelectFromDB.DuplicateProbabilities(stmtconn.connection, object_id));
+			stmtconn.loadStatement (SelectFromDBSybase.DuplicateProbabilities(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -340,7 +340,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 
 				res = new RestEntrySet();
 
-				stmtconn.loadStatement(InsertIntoDB.DuplicatePossibilities(
+				stmtconn.loadStatement(InsertIntoDBSybase.DuplicatePossibilities(
 						stmtconn.connection, object_id, duplicate_id,
 						percentage, reverse_percentage));
 				this.result = stmtconn.execute();

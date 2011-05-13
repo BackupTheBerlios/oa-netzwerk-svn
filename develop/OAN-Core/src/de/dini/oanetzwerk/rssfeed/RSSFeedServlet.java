@@ -41,7 +41,7 @@ import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.search.SearchClientException;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -414,7 +414,7 @@ public class RSSFeedServlet extends HttpServlet {
 		// DupPro - Abfrage
 		////////////////////////////			
 		
-		stmtconn.loadStatement (SelectFromDB.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
+		stmtconn.loadStatement (SelectFromDBSybase.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
 		QueryResult dupproResult = stmtconn.execute ( );
 		
 		if (dupproResult.getWarning ( ) != null)
@@ -440,7 +440,7 @@ public class RSSFeedServlet extends HttpServlet {
 		// Fulltextlink - Abfrage
 		//////////////////////////
 		
-		stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, cmf.getOid()));
+		stmtconn.loadStatement (SelectFromDBSybase.FullTextLinks (stmtconn.connection, cmf.getOid()));
 		QueryResult ftlResult = stmtconn.execute ( );
 		
 		if (ftlResult.getWarning ( ) != null)
@@ -458,7 +458,7 @@ public class RSSFeedServlet extends HttpServlet {
 		// RepositoryData - Abfrage
 		////////////////////////////
 		
-		stmtconn.loadStatement (SelectFromDB.RepositoryData(stmtconn.connection, cmf.getOid()));
+		stmtconn.loadStatement (SelectFromDBSybase.RepositoryData(stmtconn.connection, cmf.getOid()));
 		QueryResult repdataResult = stmtconn.execute ( );
 		
 		if (repdataResult.getWarning ( ) != null)
@@ -484,7 +484,7 @@ public class RSSFeedServlet extends HttpServlet {
 
 		Date dateRepo = null;	
 		
-		stmtconn.loadStatement (SelectFromDB.ObjectEntry(stmtconn.connection, bdOID));
+		stmtconn.loadStatement (SelectFromDBSybase.ObjectEntry(stmtconn.connection, bdOID));
 		QueryResult oeResult = stmtconn.execute ( );
 		
 		if (oeResult.getWarning ( ) != null)

@@ -10,8 +10,8 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.DeleteFromDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
+import de.dini.oanetzwerk.server.database.sybase.DeleteFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -48,7 +48,7 @@ public class UnneededData extends AbstractKeyWordHandler implements KeyWord2Data
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDB.PersonWithoutReference (stmtconn.connection));
+			stmtconn.loadStatement (DeleteFromDBSybase.PersonWithoutReference (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -57,21 +57,21 @@ public class UnneededData extends AbstractKeyWordHandler implements KeyWord2Data
 
 			// Diese Anfrage braucht etwa 24 sec und sollte daher sparsam, nach einem Aggregatorlauf im Automodus gefeuert werden
 						
-			stmtconn.loadStatement (DeleteFromDB.KeywordsWithoutReference (stmtconn.connection));
+			stmtconn.loadStatement (DeleteFromDBSybase.KeywordsWithoutReference (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 			for (Throwable warning : result.getWarning ( ))
 				logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.LanguagesWithoutReference(stmtconn.connection));
+			stmtconn.loadStatement (DeleteFromDBSybase.LanguagesWithoutReference(stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 			for (Throwable warning : result.getWarning ( ))
 				logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.Iso639LanguagesWithoutReference(stmtconn.connection));
+			stmtconn.loadStatement (DeleteFromDBSybase.Iso639LanguagesWithoutReference(stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 

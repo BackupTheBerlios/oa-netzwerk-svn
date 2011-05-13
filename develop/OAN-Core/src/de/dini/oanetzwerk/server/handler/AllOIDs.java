@@ -11,8 +11,8 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -205,18 +205,18 @@ public class AllOIDs extends AbstractKeyWordHandler implements KeyWord2DatabaseI
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );						
 			switch (flag) {
 				case ALL:
-					stmtconn.loadStatement (SelectFromDB.AllOIDs(stmtconn.connection));	
+					stmtconn.loadStatement (SelectFromDBSybase.AllOIDs(stmtconn.connection));	
 					break;
 				case FLAG:
-					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsTest(stmtconn.connection));	
-					if("notTest".equals(strFlag) || "productive".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsNotTest(stmtconn.connection));
-					if("hasFulltextlink".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsHasFulltextlink(stmtconn.connection));
+					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDBSybase.AllOIDsMarkAsTest(stmtconn.connection));	
+					if("notTest".equals(strFlag) || "productive".equals(strFlag))stmtconn.loadStatement (SelectFromDBSybase.AllOIDsMarkAsNotTest(stmtconn.connection));
+					if("hasFulltextlink".equals(strFlag))stmtconn.loadStatement (SelectFromDBSybase.AllOIDsMarkAsHasFulltextlink(stmtconn.connection));
 					break;					
 				case FROMREPO:
-					stmtconn.loadStatement (SelectFromDB.AllOIDsFromRepositoryID(stmtconn.connection, repositoryID));	
+					stmtconn.loadStatement (SelectFromDBSybase.AllOIDsFromRepositoryID(stmtconn.connection, repositoryID));	
 					break;
 				case FROMREPO_AND_FLAG:
-					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsFromRepositoryIDMarkAsTest(stmtconn.connection, repositoryID));	
+					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDBSybase.AllOIDsFromRepositoryIDMarkAsTest(stmtconn.connection, repositoryID));	
 					break;										
 			}						
 			this.result = stmtconn.execute ( );

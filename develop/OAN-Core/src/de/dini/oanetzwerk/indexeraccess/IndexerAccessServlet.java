@@ -21,8 +21,8 @@ import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 import de.dini.oanetzwerk.utils.imf.Author;
 import de.dini.oanetzwerk.utils.imf.Classification;
@@ -150,7 +150,7 @@ public class IndexerAccessServlet extends HttpServlet {
 
 			// fetch and execute specific statement 
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
-			stmtconn.loadStatement (SelectFromDB.AllOIDs(stmtconn.connection));	
+			stmtconn.loadStatement (SelectFromDBSybase.AllOIDs(stmtconn.connection));	
 			QueryResult result = stmtconn.execute ( );
 
 			// log warnings
@@ -232,7 +232,7 @@ public class IndexerAccessServlet extends HttpServlet {
 			// DupPro - Abfrage
 			////////////////////////////			
 			
-			stmtconn.loadStatement (SelectFromDB.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
+			stmtconn.loadStatement (SelectFromDBSybase.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
 			QueryResult dupproResult = stmtconn.execute ( );
 			
 			if (dupproResult.getWarning ( ) != null) {
@@ -259,7 +259,7 @@ public class IndexerAccessServlet extends HttpServlet {
 			// FulltextlinkAbfrage
 			///////////////////////
 			
-			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, cmf.getOid()));
+			stmtconn.loadStatement (SelectFromDBSybase.FullTextLinks (stmtconn.connection, cmf.getOid()));
 			QueryResult ftlResult = stmtconn.execute ( );
 			
 			if (ftlResult.getWarning ( ) != null) {
@@ -279,7 +279,7 @@ public class IndexerAccessServlet extends HttpServlet {
 			// RepositoryData - Abfrage
 			////////////////////////////
 			
-			stmtconn.loadStatement (SelectFromDB.RepositoryData(stmtconn.connection, cmf.getOid()));
+			stmtconn.loadStatement (SelectFromDBSybase.RepositoryData(stmtconn.connection, cmf.getOid()));
 			QueryResult repdataResult = stmtconn.execute ( );
 			
 			if (repdataResult.getWarning ( ) != null)
@@ -300,7 +300,7 @@ public class IndexerAccessServlet extends HttpServlet {
 			// InterpolatedDDC - Abfrage
 			//////////////////////////////
 			
-			stmtconn.loadStatement (SelectFromDB.InterpolatedDDCClassification(stmtconn.connection, cmf.getOid()));
+			stmtconn.loadStatement (SelectFromDBSybase.InterpolatedDDCClassification(stmtconn.connection, cmf.getOid()));
 			QueryResult interpolatedDDCResult = stmtconn.execute ( );
 			
 			if (interpolatedDDCResult.getWarning ( ) != null)

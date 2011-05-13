@@ -11,8 +11,8 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -110,7 +110,7 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 		try {
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
-			stmtconn.loadStatement (SelectFromDB.ObjectEntryID (stmtconn.connection, repositoryID, externalOID.toString ( )));
+			stmtconn.loadStatement (SelectFromDBSybase.ObjectEntryID (stmtconn.connection, repositoryID, externalOID.toString ( )));
 			
 			this.result = stmtconn.execute ( );
 			
@@ -139,7 +139,7 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 				if (checkRawData) {
 					
 					stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
-					stmtconn.loadStatement (SelectFromDB.RawRecordData (stmtconn.connection, internalOID));
+					stmtconn.loadStatement (SelectFromDBSybase.RawRecordData (stmtconn.connection, internalOID));
 					
 					this.result = stmtconn.execute ( );
 					

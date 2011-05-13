@@ -11,11 +11,11 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.DeleteFromDB;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.sybase.DeleteFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -78,7 +78,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			
 			// fetch and execute specific statement 
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );						
-			stmtconn.loadStatement (SelectFromDB.LoginData (stmtconn.connection, name));	
+			stmtconn.loadStatement (SelectFromDBSybase.LoginData (stmtconn.connection, name));	
 			this.result = stmtconn.execute ( );
 			
 			// log warnings
@@ -226,7 +226,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );			
 			
 			// 1. Prüfen, ob gewählter Nutzername in anderer Schreibweise schon im System vorhanden ist
-			stmtconn.loadStatement (SelectFromDB.LoginDataLowerCase(stmtconn.connection, name));
+			stmtconn.loadStatement (SelectFromDBSybase.LoginDataLowerCase(stmtconn.connection, name));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -241,7 +241,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			} else {
 			
 				// 2. Speichern der neuen Nutzerdaten
-				stmtconn.loadStatement(InsertIntoDB.LoginData(
+				stmtconn.loadStatement(InsertIntoDBSybase.LoginData(
 						stmtconn.connection, name, password, email));
 				this.result = stmtconn.execute();
 
@@ -252,7 +252,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 				stmtconn.commit();
 
 				// 3. Prüfen, ob korrekt gespeichert wurde
-				stmtconn.loadStatement(SelectFromDB.LoginData(
+				stmtconn.loadStatement(SelectFromDBSybase.LoginData(
 						stmtconn.connection, name));
 
 				this.result = stmtconn.execute();
@@ -344,7 +344,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDB.LoginData(stmtconn.connection, name));
+			stmtconn.loadStatement (DeleteFromDBSybase.LoginData(stmtconn.connection, name));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 

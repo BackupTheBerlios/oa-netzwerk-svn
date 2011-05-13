@@ -12,11 +12,11 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.DeleteFromDB;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.sybase.DeleteFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -67,7 +67,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDB.Interpolated_DDC_Classification(stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Interpolated_DDC_Classification(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -170,7 +170,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (SelectFromDB.InterpolatedDDCClassification(stmtconn.connection, object_id));
+			stmtconn.loadStatement (SelectFromDBSybase.InterpolatedDDCClassification(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -327,7 +327,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 
 				res = new RestEntrySet();
 
-				stmtconn.loadStatement(InsertIntoDB.InterpolatedDDCClassification(
+				stmtconn.loadStatement(InsertIntoDBSybase.InterpolatedDDCClassification(
 						stmtconn.connection, object_id, ddc_value, percentage));
 				this.result = stmtconn.execute();
 				

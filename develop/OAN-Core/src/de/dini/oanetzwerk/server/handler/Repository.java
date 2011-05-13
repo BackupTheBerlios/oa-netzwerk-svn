@@ -18,10 +18,10 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
-import de.dini.oanetzwerk.server.database.UpdateInDB;
+import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.UpdateInDBSybase;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -101,11 +101,11 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			if (repositoryID != null) {
 
-				stmtconn.loadStatement(SelectFromDB.Repository(stmtconn.connection, repositoryID));
+				stmtconn.loadStatement(SelectFromDBSybase.Repository(stmtconn.connection, repositoryID));
 
 			} else {
 
-				stmtconn.loadStatement(SelectFromDB.Repository(stmtconn.connection));
+				stmtconn.loadStatement(SelectFromDBSybase.Repository(stmtconn.connection));
 			}
 
 			this.result = stmtconn.execute();
@@ -266,12 +266,12 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 
 				if (path[1].equals(PATH_HARVESTEDTODAY)) {
 
-					stmtconn.loadStatement(UpdateInDB.Repository(stmtconn.connection, repositoryID, HelperMethods.today(),
+					stmtconn.loadStatement(UpdateInDBSybase.Repository(stmtconn.connection, repositoryID, HelperMethods.today(),
 					                "last_full_harvest_begin"));
 
 				} else if (path[1].equals(PATH_MARKEDTODAY)) {
 
-					stmtconn.loadStatement(UpdateInDB.Repository(stmtconn.connection, repositoryID, HelperMethods.today(),
+					stmtconn.loadStatement(UpdateInDBSybase.Repository(stmtconn.connection, repositoryID, HelperMethods.today(),
 					                "last_markereraser_begin"));
 				}
 
@@ -390,7 +390,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 			}
 
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(InsertIntoDB.Repository(stmtconn.connection, name, url, oaiUrl, owner, ownerEmail,
+			stmtconn.loadStatement(InsertIntoDBSybase.Repository(stmtconn.connection, name, url, oaiUrl, owner, ownerEmail,
 			                Integer.parseInt(harvestAmount), Integer.parseInt(harvestPause), listRecords, testData, active));
 
 			this.result = stmtconn.execute();

@@ -11,8 +11,8 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
@@ -104,11 +104,11 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 				
 				if (service_id == null) {
 			
-					stmtconn.loadStatement (SelectFromDB.Services (stmtconn.connection, name));
+					stmtconn.loadStatement (SelectFromDBSybase.Services (stmtconn.connection, name));
 				
 				} else {
 				
-					stmtconn.loadStatement (SelectFromDB.Services (stmtconn.connection, service_id));
+					stmtconn.loadStatement (SelectFromDBSybase.Services (stmtconn.connection, service_id));
 				}
 				
 			}

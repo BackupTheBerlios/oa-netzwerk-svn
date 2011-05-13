@@ -12,11 +12,11 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.DeleteFromDB;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.server.database.sybase.DeleteFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
@@ -80,7 +80,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDB.FullTextLinks (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.FullTextLinks (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
@@ -186,7 +186,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, object_id));
+			stmtconn.loadStatement (SelectFromDBSybase.FullTextLinks (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
@@ -350,7 +350,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (InsertIntoDB.FullTextLinks (stmtconn.connection, object_id, mimeformat, link));
+			stmtconn.loadStatement (InsertIntoDBSybase.FullTextLinks (stmtconn.connection, object_id, mimeformat, link));
 			
 			this.result = stmtconn.execute ( );
 			
@@ -359,7 +359,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 					logger.warn (warning.getLocalizedMessage ( ));
 			
 			stmtconn.commit ( );
-			stmtconn.loadStatement (SelectFromDB.FullTextLinks (stmtconn.connection, object_id));
+			stmtconn.loadStatement (SelectFromDBSybase.FullTextLinks (stmtconn.connection, object_id));
 			
 			this.result = stmtconn.execute ( );
 			

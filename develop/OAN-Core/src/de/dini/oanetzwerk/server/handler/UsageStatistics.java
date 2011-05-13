@@ -16,10 +16,10 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
-import de.dini.oanetzwerk.server.database.UpdateInDB;
+import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.UpdateInDBSybase;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
@@ -75,7 +75,7 @@ public class UsageStatistics extends AbstractKeyWordHandler implements KeyWord2D
 
 				
 	
-				stmtconn.loadStatement(SelectFromDB.UsageData_Ranking(stmtconn.connection));
+				stmtconn.loadStatement(SelectFromDBSybase.UsageData_Ranking(stmtconn.connection));
 	
 	
 				this.result = stmtconn.execute();
@@ -105,7 +105,7 @@ public class UsageStatistics extends AbstractKeyWordHandler implements KeyWord2D
 					return RestXmlCodec.encodeRestMessage (this.rms);
 				} 
 				BigDecimal oid = new BigDecimal(path[0]);
-				stmtconn.loadStatement(SelectFromDB.UsageData_Counter_ForOID(stmtconn.connection, oid));
+				stmtconn.loadStatement(SelectFromDBSybase.UsageData_Counter_ForOID(stmtconn.connection, oid));
 				this.result = stmtconn.execute();
 				
 				if (this.result.getWarning() != null)

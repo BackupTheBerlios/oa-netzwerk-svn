@@ -15,10 +15,10 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
-import de.dini.oanetzwerk.server.database.UpdateInDB;
+import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.UpdateInDBSybase;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
@@ -127,17 +127,17 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 				}
 				
 				if (loadhistory)
-					stmtconn.loadStatement (SelectFromDB.RawRecordDataHistory (stmtconn.connection, internalOID));
+					stmtconn.loadStatement (SelectFromDBSybase.RawRecordDataHistory (stmtconn.connection, internalOID));
 				
 				else
-					stmtconn.loadStatement (SelectFromDB.RawRecordData (stmtconn.connection, internalOID, repository_timestamp));
+					stmtconn.loadStatement (SelectFromDBSybase.RawRecordData (stmtconn.connection, internalOID, repository_timestamp));
 				
 			} else {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("internal OID = " + internalOID);
 				
-				stmtconn.loadStatement (SelectFromDB.RawRecordData (stmtconn.connection, internalOID));
+				stmtconn.loadStatement (SelectFromDBSybase.RawRecordData (stmtconn.connection, internalOID));
 			}
 			
 			this.result = stmtconn.execute ( );
@@ -266,13 +266,13 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			if (path.length > 2) {
 				
 				String metaDataFormat = path [2];
-				stmtconn.loadStatement (UpdateInDB.PrecleanedData (stmtconn.connection, object_id, repository_timestamp, metaDataFormat, data));
+				stmtconn.loadStatement (UpdateInDBSybase.PrecleanedData (stmtconn.connection, object_id, repository_timestamp, metaDataFormat, data));
 				
 				metaDataFormat = null;
 				
 			} else {
 				
-				stmtconn.loadStatement (UpdateInDB.PrecleanedData (stmtconn.connection, object_id, repository_timestamp, data));
+				stmtconn.loadStatement (UpdateInDBSybase.PrecleanedData (stmtconn.connection, object_id, repository_timestamp, data));
 			}
 				
 			this.result = stmtconn.execute ( );
@@ -390,7 +390,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (InsertIntoDB.RawRecordData (stmtconn.connection, object_id, repository_timestamp, data, metaDataFormat));
+			stmtconn.loadStatement (InsertIntoDBSybase.RawRecordData (stmtconn.connection, object_id, repository_timestamp, data, metaDataFormat));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 

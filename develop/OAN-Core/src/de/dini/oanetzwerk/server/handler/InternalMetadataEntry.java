@@ -13,11 +13,11 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.DeleteFromDB;
-import de.dini.oanetzwerk.server.database.InsertIntoDB;
 import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
-import de.dini.oanetzwerk.server.database.SelectFromDB;
+import de.dini.oanetzwerk.server.database.sybase.DeleteFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
@@ -109,7 +109,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDB.Description (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Description (stmtconn.connection, object_id));
 			logger.debug("BEFORE DeleteFromDB.Description");
 			this.result = stmtconn.execute ( );
 			
@@ -120,7 +120,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			
 			logger.debug("AFTER DeleteFromDB.Description");
 			
-			stmtconn.loadStatement (DeleteFromDB.DateValues (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.DateValues (stmtconn.connection, object_id));
 			logger.debug("BEFORE DeleteFromDB.DateValues");
 			this.result = stmtconn.execute ( );
 			logger.debug("AFTER DeleteFromDB.DateValues");
@@ -129,70 +129,70 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 			
-			stmtconn.loadStatement (DeleteFromDB.Formats (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Formats (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.Identifiers (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Identifiers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.TypeValue (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.TypeValue (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.Titles (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Titles (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.Publishers (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Publishers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.Object2Author (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Object2Author (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.Object2Editor (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Object2Editor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 			
-			stmtconn.loadStatement (DeleteFromDB.Object2Contributor (stmtconn.connection, object_id));
-			this.result = stmtconn.execute ( );
-			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
-
-			stmtconn.loadStatement (DeleteFromDB.Object2Language (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Object2Contributor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.Object2Iso639Language(stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Object2Language (stmtconn.connection, object_id));
+			this.result = stmtconn.execute ( );
+			
+			if (this.result.getWarning ( ) != null) 
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ));
+
+			stmtconn.loadStatement (DeleteFromDBSybase.Object2Iso639Language(stmtconn.connection, object_id));
 			logger.debug("BEFORE DeleteFromDB.Object2Iso639Language");
 			this.result = stmtconn.execute ( );
 			logger.debug("AFTER DeleteFromDB.Object2Iso639Language");
@@ -201,35 +201,35 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.Object2Keywords (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Object2Keywords (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.Other_Classification (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.Other_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.DDC_Classification (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.DDC_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.DNB_Classification (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.DNB_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDB.DINI_Set_Classification (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DeleteFromDBSybase.DINI_Set_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -256,7 +256,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			
 			// TODO: DELETE Languages/Iso639Languages without references !!!
 			
-			stmtconn.loadStatement (DeleteFromDB.Other_Categories (stmtconn.connection));
+			stmtconn.loadStatement (DeleteFromDBSybase.Other_Categories (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -535,7 +535,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						logger.debug("Title-Informationen hinzufügen" + title.toString());
 					}
 					
-					stmtconn.loadStatement (InsertIntoDB.Title (stmtconn.connection, object_id, title.getQualifier(), title.getTitle(), title.getLang()));
+					stmtconn.loadStatement (InsertIntoDBSybase.Title (stmtconn.connection, object_id, title.getQualifier(), title.getTitle(), title.getLang()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -554,7 +554,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							logger.debug("dateValue hinzufügen" + dateValue.toString());
 						}
 						
-						stmtconn.loadStatement (InsertIntoDB.DateValue (stmtconn.connection, object_id, dateValue.getNumber(), HelperMethods.java2sqlDate(dateValue.getDateValue()), dateValue.getStringValue()));
+						stmtconn.loadStatement (InsertIntoDBSybase.DateValue (stmtconn.connection, object_id, dateValue.getNumber(), HelperMethods.java2sqlDate(dateValue.getDateValue()), dateValue.getStringValue()));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getWarning ( ) != null) 
@@ -574,7 +574,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					if (logger.isDebugEnabled()) {
 						logger.debug("format-Informationen hinzufügen" + format.toString());
 					}
-					stmtconn.loadStatement (InsertIntoDB.Format (stmtconn.connection, object_id, format.getNumber(), format.getSchema_f()));
+					stmtconn.loadStatement (InsertIntoDBSybase.Format (stmtconn.connection, object_id, format.getNumber(), format.getSchema_f()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -590,7 +590,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					if (logger.isDebugEnabled()) {
 						logger.debug("identifier-Informationen hinzufügen" + identifier.toString());
 					}
-					stmtconn.loadStatement (InsertIntoDB.Identifier (stmtconn.connection, object_id, identifier.getNumber(), identifier.getIdentifier()));
+					stmtconn.loadStatement (InsertIntoDBSybase.Identifier (stmtconn.connection, object_id, identifier.getNumber(), identifier.getIdentifier()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -605,7 +605,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					if (logger.isDebugEnabled()) {
 						logger.debug("Description-Informationen hinzufügen" + description.toString());
 					}				
-					stmtconn.loadStatement (InsertIntoDB.Description (stmtconn.connection, object_id, description.getNumber(), description.getDescription()));
+					stmtconn.loadStatement (InsertIntoDBSybase.Description (stmtconn.connection, object_id, description.getNumber(), description.getDescription()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -620,7 +620,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					if (logger.isDebugEnabled()) {
 						logger.debug("TypeValue-Informationen hinzufügen" + typeValue.toString());
 					}
-					stmtconn.loadStatement (InsertIntoDB.TypeValue (stmtconn.connection, object_id, typeValue.getTypeValue()));
+					stmtconn.loadStatement (InsertIntoDBSybase.TypeValue (stmtconn.connection, object_id, typeValue.getTypeValue()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -636,7 +636,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					if (logger.isDebugEnabled()) {
 						logger.debug("Publisher-Informationen hinzufügen" + publisher.toString());
 					}
-					stmtconn.loadStatement (InsertIntoDB.Publisher (stmtconn.connection, object_id, publisher.getNumber(), publisher.getName()));
+					stmtconn.loadStatement (InsertIntoDBSybase.Publisher (stmtconn.connection, object_id, publisher.getNumber(), publisher.getName()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -656,7 +656,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					
 					BigDecimal person_id = null;
 					
-					stmtconn.loadStatement (InsertIntoDB.Person (stmtconn.connection, author.getFirstname(),
+					stmtconn.loadStatement (InsertIntoDBSybase.Person (stmtconn.connection, author.getFirstname(),
 							author.getLastname(), author.getTitle(), author
 							.getInstitution(), author.getEmail()));
 					this.result = stmtconn.execute ( );
@@ -665,7 +665,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						for (Throwable warning : result.getWarning ( ))
 							logger.warn (warning.getLocalizedMessage ( ));
 
-					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, author.getFirstname(), author.getLastname()));
+					stmtconn.loadStatement (SelectFromDBSybase.LatestPerson (stmtconn.connection, author.getFirstname(), author.getLastname()));
 					this.result = stmtconn.execute ( );
 
 					if (this.result.getWarning ( ) != null) 
@@ -677,7 +677,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						person_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
 					
-					stmtconn.loadStatement (InsertIntoDB.Object2Author (stmtconn.connection, object_id, person_id, author.getNumber()));
+					stmtconn.loadStatement (InsertIntoDBSybase.Object2Author (stmtconn.connection, object_id, person_id, author.getNumber()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -696,7 +696,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					
 					BigDecimal person_id = null;
 					
-					stmtconn.loadStatement (InsertIntoDB.Person (stmtconn.connection, editor.getFirstname(),
+					stmtconn.loadStatement (InsertIntoDBSybase.Person (stmtconn.connection, editor.getFirstname(),
 							editor.getLastname(), editor.getTitle(), editor
 							.getInstitution(), editor.getEmail()));
 					this.result = stmtconn.execute ( );
@@ -705,7 +705,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						for (Throwable warning : result.getWarning ( ))
 							logger.warn (warning.getLocalizedMessage ( ));
 
-					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, editor.getFirstname(), editor.getLastname()));
+					stmtconn.loadStatement (SelectFromDBSybase.LatestPerson (stmtconn.connection, editor.getFirstname(), editor.getLastname()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -717,7 +717,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						person_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
 					
-					stmtconn.loadStatement (InsertIntoDB.Object2Editor (stmtconn.connection, object_id, person_id, editor.getNumber()));
+					stmtconn.loadStatement (InsertIntoDBSybase.Object2Editor (stmtconn.connection, object_id, person_id, editor.getNumber()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -735,7 +735,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					}
 					BigDecimal person_id = null;
 					
-					stmtconn.loadStatement (InsertIntoDB.Person (stmtconn.connection, contributor.getFirstname(), contributor
+					stmtconn.loadStatement (InsertIntoDBSybase.Person (stmtconn.connection, contributor.getFirstname(), contributor
 							.getLastname(), contributor.getTitle(), contributor
 							.getInstitution(), contributor.getEmail()));
 					this.result = stmtconn.execute ( );
@@ -744,7 +744,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						for (Throwable warning : result.getWarning ( ))
 							logger.warn (warning.getLocalizedMessage ( ));
 					
-					stmtconn.loadStatement (SelectFromDB.LatestPerson (stmtconn.connection, contributor.getFirstname(), contributor.getLastname()));
+					stmtconn.loadStatement (SelectFromDBSybase.LatestPerson (stmtconn.connection, contributor.getFirstname(), contributor.getLastname()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -756,7 +756,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						person_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
 					
-					stmtconn.loadStatement (InsertIntoDB.Object2Editor (stmtconn.connection, object_id, person_id, contributor.getNumber()));
+					stmtconn.loadStatement (InsertIntoDBSybase.Object2Editor (stmtconn.connection, object_id, person_id, contributor.getNumber()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -775,7 +775,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					}
 					BigDecimal keyword_id = null;
 					
-					stmtconn.loadStatement (InsertIntoDB.Keyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
+					stmtconn.loadStatement (InsertIntoDBSybase.Keyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -787,7 +787,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						//warn, error, rollback, nothing????
 					} 
 					
-					stmtconn.loadStatement (SelectFromDB.LatestKeyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
+					stmtconn.loadStatement (SelectFromDBSybase.LatestKeyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
 					if (this.result.getWarning ( ) != null) 
@@ -800,7 +800,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					
 					if(keyword_id != null) {
 					
-						stmtconn.loadStatement (InsertIntoDB.Object2Keyword (stmtconn.connection, object_id, keyword_id));
+						stmtconn.loadStatement (InsertIntoDBSybase.Object2Keyword (stmtconn.connection, object_id, keyword_id));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getWarning ( ) != null) 
@@ -830,7 +830,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					
 						BigDecimal language_id = null;
 
-						stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
+						stmtconn.loadStatement (SelectFromDBSybase.LanguageByName (stmtconn.connection, language.getLanguage()));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getWarning ( ) != null) 
@@ -839,7 +839,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						
 						if (!this.result.getResultSet ( ).next ( )) {
 
-							stmtconn.loadStatement (InsertIntoDB.Language (stmtconn.connection, language.getLanguage()));
+							stmtconn.loadStatement (InsertIntoDBSybase.Language (stmtconn.connection, language.getLanguage()));
 							this.result = stmtconn.execute ( );
 
 							if (this.result.getWarning ( ) != null) 
@@ -848,7 +848,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 
 						}
 
-						stmtconn.loadStatement (SelectFromDB.LanguageByName (stmtconn.connection, language.getLanguage()));
+						stmtconn.loadStatement (SelectFromDBSybase.LanguageByName (stmtconn.connection, language.getLanguage()));
 						this.result = stmtconn.execute ( );
 
 						if (this.result.getWarning ( ) != null) 
@@ -860,7 +860,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							language_id = this.result.getResultSet ( ).getBigDecimal(1);
 						}
 
-						stmtconn.loadStatement (InsertIntoDB.Object2Language (stmtconn.connection, object_id, language_id, language.getNumber()));
+						stmtconn.loadStatement (InsertIntoDBSybase.Object2Language (stmtconn.connection, object_id, language_id, language.getNumber()));
 						this.result = stmtconn.execute ( );
 
 						if (this.result.getWarning ( ) != null) 
@@ -877,7 +877,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					
 					if(language.getIso639language() != null) {
 					
-						stmtconn.loadStatement (SelectFromDB.Iso639LanguageByName (stmtconn.connection, language.getIso639language()));
+						stmtconn.loadStatement (SelectFromDBSybase.Iso639LanguageByName (stmtconn.connection, language.getIso639language()));
 						this.result = stmtconn.execute ( );
 
 						if (this.result.getWarning ( ) != null) 
@@ -886,7 +886,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 
 						if (!this.result.getResultSet ( ).next ( )) {
 
-							stmtconn.loadStatement (InsertIntoDB.Iso639Language (stmtconn.connection, language.getIso639language()));
+							stmtconn.loadStatement (InsertIntoDBSybase.Iso639Language (stmtconn.connection, language.getIso639language()));
 							this.result = stmtconn.execute ( );
 
 							if (this.result.getWarning ( ) != null) 
@@ -895,7 +895,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 
 						}
 
-						stmtconn.loadStatement (SelectFromDB.Iso639LanguageByName (stmtconn.connection, language.getIso639language()));
+						stmtconn.loadStatement (SelectFromDBSybase.Iso639LanguageByName (stmtconn.connection, language.getIso639language()));
 						this.result = stmtconn.execute ( );
 
 						if (this.result.getWarning ( ) != null) 
@@ -908,7 +908,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 
 						}
 						
-						stmtconn.loadStatement (InsertIntoDB.Object2Iso639Language(stmtconn.connection, object_id, iso639language_id, language.getNumber()));
+						stmtconn.loadStatement (InsertIntoDBSybase.Object2Iso639Language(stmtconn.connection, object_id, iso639language_id, language.getNumber()));
 						this.result = stmtconn.execute ( );
 
 						if (this.result.getWarning ( ) != null) 
@@ -927,7 +927,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					if (classification instanceof DDCClassification) {
 						String ddcValue = null;
 						
-						stmtconn.loadStatement (SelectFromDB.DDCCategoriesByCategorie (stmtconn.connection, classification.getValue()));
+						stmtconn.loadStatement (SelectFromDBSybase.DDCCategoriesByCategorie (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getWarning ( ) != null) 
@@ -942,7 +942,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						if (ddcValue != null) {
 							
 							// Daten zuordnen							
-							stmtconn.loadStatement (InsertIntoDB.DDCClassification (stmtconn.connection, object_id, ddcValue));
+							stmtconn.loadStatement (InsertIntoDBSybase.DDCClassification (stmtconn.connection, object_id, ddcValue));
 							this.result = stmtconn.execute ( );
 							
 							if (this.result.getWarning ( ) != null) 
@@ -959,7 +959,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					if (classification instanceof DNBClassification) {
 						String dnbValue = null;
 						
-						stmtconn.loadStatement (SelectFromDB.DNBCategoriesByCategorie (stmtconn.connection, classification.getValue()));
+						stmtconn.loadStatement (SelectFromDBSybase.DNBCategoriesByCategorie (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getWarning ( ) != null) 
@@ -974,7 +974,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						if (dnbValue != null) {
 							
 							// Daten zuordnen
-							stmtconn.loadStatement (InsertIntoDB.DNBClassification (stmtconn.connection, object_id, dnbValue));
+							stmtconn.loadStatement (InsertIntoDBSybase.DNBClassification (stmtconn.connection, object_id, dnbValue));
 							this.result = stmtconn.execute ( );
 							
 							if (this.result.getWarning ( ) != null) 
@@ -993,7 +993,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						
 						BigDecimal DINI_set_id = null;
 						
-						stmtconn.loadStatement (SelectFromDB.DINISetCategoriesByName (stmtconn.connection, classification.getValue()));
+						stmtconn.loadStatement (SelectFromDBSybase.DINISetCategoriesByName (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getWarning ( ) != null) 
@@ -1019,7 +1019,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						} else {
 						
 							// Daten zuordnen
-							stmtconn.loadStatement (InsertIntoDB.DINISetClassification (stmtconn.connection, object_id, DINI_set_id));
+							stmtconn.loadStatement (InsertIntoDBSybase.DINISetClassification (stmtconn.connection, object_id, DINI_set_id));
 							this.result = stmtconn.execute ( );
 						
 							if (this.result.getWarning ( ) != null) 
@@ -1034,7 +1034,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						BigDecimal other_id = null;
 
 						// ID zum Klassifikationswort aus DB suchen 						
-						stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (stmtconn.connection, classification.getValue()));
+						stmtconn.loadStatement (SelectFromDBSybase.LatestOtherCategories (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getWarning ( ) != null) 
@@ -1050,14 +1050,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							// Wort noch nicht vorhanden, neu eintragen
 							// Klassifikation eintragen
 							
-							stmtconn.loadStatement (InsertIntoDB.OtherCategories (stmtconn.connection, classification.getValue()));
+							stmtconn.loadStatement (InsertIntoDBSybase.OtherCategories (stmtconn.connection, classification.getValue()));
 							this.result = stmtconn.execute ( );
 							
 							if (this.result.getWarning ( ) != null) 
 								for (Throwable warning : result.getWarning ( ))
 									logger.warn (warning.getLocalizedMessage ( ));
 
-							stmtconn.loadStatement (SelectFromDB.LatestOtherCategories (stmtconn.connection, classification.getValue()));
+							stmtconn.loadStatement (SelectFromDBSybase.LatestOtherCategories (stmtconn.connection, classification.getValue()));
 							this.result = stmtconn.execute ( );
 							
 							if (this.result.getWarning ( ) != null) 
@@ -1070,7 +1070,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							}
 						}
 						// ID dieser Klassifikation bestimmen und zuordnen
-						stmtconn.loadStatement (InsertIntoDB.OtherClassification (stmtconn.connection, object_id, other_id));
+						stmtconn.loadStatement (InsertIntoDBSybase.OtherClassification (stmtconn.connection, object_id, other_id));
 						this.result = stmtconn.execute ( );
 						
 						if (this.result.getWarning ( ) != null) 
