@@ -48,6 +48,7 @@ public class SybaseToPostgreSQL {
 			"Object2Author",
 			"Object2Contributor",
 			"Object2Editor",
+			"Object2Language",
 			"Object2Iso639Language",
 			"Object2Keywords",
 			"Other_Categories",
@@ -177,7 +178,8 @@ public class SybaseToPostgreSQL {
 			
 			// leere alle Tabellen
 			clearLocalPostgresDB();
-						
+//			System.out.println("Nur leeren, kein neu befüllen");
+//			System.exit(-1);			
 			try{ 
 				for (int i = 0; i < tables.length; i++) {
 				
@@ -212,6 +214,8 @@ public class SybaseToPostgreSQL {
 					migrate(queryresult, tables[i]);
 //					stmtconn.close();
 				}
+				// update Indexes
+				updateIndexes();
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -274,6 +278,72 @@ public class SybaseToPostgreSQL {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void updateIndexes() {
+		MultipleStatementConnection msPostgres;
+		try {
+			System.out.println("Updating Indexes");
+			Connection postgres = null;
+
+			Class.forName("org.postgresql.Driver");
+			String url = "jdbc:postgresql://localhost:5432/oanetdb";
+			
+			Properties props = new Properties();
+			props.put("user", "postgres");
+			props.put("password", "12345");
+			props.put("charSet", "UTF-8");
+			postgres = DriverManager.getConnection(url, props);
+			postgres.setAutoCommit(false);
+			msPostgres = new MultipleStatementConnection(postgres);
+			PreparedStatement updateObject = postgres.prepareStatement(
+					"SELECT setval('\"Object_object_id_seq\"', max(object_id)) FROM \"Object\""
+			);
+			PreparedStatement updateDINI = postgres.prepareStatement(
+				"SELECT setval('\"DINI_Set_Categories_DINI_set_id_seq\"', max(\"DINI_set_id\")) FROM \"DINI_Set_Categories\""
+			);
+			PreparedStatement updateKeywords = postgres.prepareStatement(
+				"SELECT setval('\"Keywords_keyword_id_seq\"', max(keyword_id)) FROM \"Keywords\""
+			);
+			PreparedStatement updateLanguage = postgres.prepareStatement(
+				"SELECT setval('\"Language_language_id_seq\"', max(language_id)) FROM \"Language\""
+			);
+			PreparedStatement updatePerson = postgres.prepareStatement(
+				"SELECT setval('\"Person_person_id_seq\"', max(person_id)) FROM \"Person\""
+			);
+			PreparedStatement updateRepositories = postgres.prepareStatement(
+				"SELECT setval('\"Repositories_repository_id_seq\"', max(repository_id)) FROM \"Repositories\""
+			);
+			PreparedStatement updateServices = postgres.prepareStatement(
+				"SELECT setval('\"Services_service_id_seq\"', max(service_id)) FROM \"Services\""
+			);
+			PreparedStatement updateTypeValue = postgres.prepareStatement(
+				"SELECT setval('\"TypeValue_type_id_seq\"', max(type_id)) FROM \"TypeValue\""
+			);
+			PreparedStatement updateUsageData_Metrics = postgres.prepareStatement(
+				"SELECT setval('\"UsageData_Metrics_metrics_id_seq\"', max(metrics_id)) FROM \"UsageData_Metrics\""
+			);
+			PreparedStatement updateWorkflowDB = postgres.prepareStatement(
+				"SELECT setval('\"WorkflowDB_workflow_id_seq\"', max(workflow_id)) FROM \"WorkflowDB\""
+			);
+			PreparedStatement updateIso639Language = postgres.prepareStatement(
+				"SELECT setval('\"Iso639Language_language_id_seq\"', max(language_id)) FROM \"Iso639Language\""
+			);
+			PreparedStatement[] indexUpdate = {
+				updateObject, updateDINI, updateKeywords, updateLanguage,
+				updatePerson, updateRepositories, updateServices, updateTypeValue,
+				updateUsageData_Metrics, updateWorkflowDB, updateIso639Language
+			};
+			for (int i = 0; i < indexUpdate.length; i++) {
+				msPostgres.loadStatement(indexUpdate[i]);
+				msPostgres.execute();
+				msPostgres.commit();
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 

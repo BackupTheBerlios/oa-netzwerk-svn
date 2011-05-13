@@ -387,14 +387,14 @@ public class DeleteFromDBPostgres {
 		// TODO: hier nachhaken!!
 		PreparedStatement preparedstmt = connection
 				.prepareStatement(
-					"DELETE FROM \"WorkflowDB\" w " +
-					"JOIN dbo.ServicesOrder s ON w.service_id = s.predecessor_id " +
+					"DELETE FROM \"WorkflowDB\" AS w " +
+					"JOIN dbo.ServicesOrder AS s ON w.service_id = s.predecessor_id " +
 					"WHERE w.object_id = ? and w.time <=? and s.service_id=?");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setDate(2, time);
 		preparedstmt.setBigDecimal(3, service_id);
 
-		logger.debug("DELTE-Statement: " + preparedstmt.toString());
+		logger.debug("DELETE-Statement: " + preparedstmt.toString());
 
 		return preparedstmt;
 	}
@@ -423,7 +423,7 @@ public class DeleteFromDBPostgres {
 
 	public static PreparedStatement Object(Connection connection, BigDecimal object_id) throws SQLException {
 
-		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"Object\" where object_id = ? and testdata = 1");
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"Object\" where object_id = ? and testdata = TRUE");
 		preparedstmt.setBigDecimal(1, object_id);
 
 		return preparedstmt;
