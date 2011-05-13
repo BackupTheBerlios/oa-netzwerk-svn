@@ -218,34 +218,34 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 		return "success";
 	}
 
-	public String delete() {
-
-		System.out.println("delete!");
-
-		System.out.println("Name: " + repository.getName());
-		System.out.println("Url: " + repository.getUrl());
-		System.out.println("" + repository.getHarvestAmount());
-
-		try {
-
-			SingleStatementConnection stmtconn = (SingleStatementConnection) new DBAccessNG()
-					.getSingleStatementConnection();
-			PreparedStatement statement = DeleteFromDB.Repositories(
-					stmtconn.connection, repository.getId());
-
-			new DBHelper().save(stmtconn, statement);
-
-			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"info.success_deleted", null));
-
-		} catch (WrongStatementException ex) {
-			logger.error(ex.getLocalizedMessage(), ex);
-		} catch (SQLException ex) {
-			logger.error(ex.getLocalizedMessage(), ex);
-		}
-
-		return "";
-	}
+//	public String delete() {
+//
+//		System.out.println("delete!");
+//
+//		System.out.println("Name: " + repository.getName());
+//		System.out.println("Url: " + repository.getUrl());
+//		System.out.println("" + repository.getHarvestAmount());
+//
+//		try {
+//
+//			SingleStatementConnection stmtconn = (SingleStatementConnection) new DBAccessNG()
+//					.getSingleStatementConnection();
+//			PreparedStatement statement = DeleteFromDB.Repositories(
+//					stmtconn.connection, repository.getId());
+//
+//			new DBHelper().save(stmtconn, statement);
+//
+//			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+//					"info.success_deleted", null));
+//
+//		} catch (WrongStatementException ex) {
+//			logger.error(ex.getLocalizedMessage(), ex);
+//		} catch (SQLException ex) {
+//			logger.error(ex.getLocalizedMessage(), ex);
+//		}
+//
+//		return "";
+//	}
 
 	public String deactivate() {
 

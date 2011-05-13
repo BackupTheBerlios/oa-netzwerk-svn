@@ -13,6 +13,9 @@
 
 
 <h:body onload="#{onLoadJS}">
+<f:view locale="#{language.locale}">
+<f:loadBundle basename="messages" var="msg"/>
+
 <!-- ================ Header ============== -->
 
 <ui:decorate template="../components/header.xhtml"></ui:decorate>
@@ -21,7 +24,6 @@
 <!-- =========== Debugging Switch ==========-->
 
 <ui:debug hotkey="m" rendered="#{initParam['oanmanager.DEBUG_MODE']}" />
-
 
 <!-- ================= Main =============== -->
 
@@ -53,7 +55,7 @@
 
 <ui:include src="../components/footer.xhtml"></ui:include>
 
-
+</f:view>
 </h:body>
 
 </html>
