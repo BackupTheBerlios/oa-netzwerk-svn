@@ -234,7 +234,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 		} else if (JobType.OneTime.toString().equals(jobType)) {
 			try {
-				job.setNonperiodicTimestamp(new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate) + " " + chosenTime));
+				job.setNonperiodicTimestamp(new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(new SimpleDateFormat("dd.MM.yyyy").format(chosenDate) + " " + chosenTime));
 			} catch (ParseException e) {
 				// this should never happen
 				e.printStackTrace();
@@ -267,7 +267,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		res.addEntry("service_id", job.getServiceId().toString());
 		res.addEntry("periodic", Boolean.toString(job.isPeriodic()));
 		res.addEntry("nonperiodic_date", new SimpleDateFormat("dd-MM-yyyy HH:mm").format(job.getNonperiodicTimestamp()));
-		res.addEntry("periodic_interval", job.getPeriodicInterval().toString());
+		res.addEntry("periodic_interval", job.getPeriodicInterval() != null ? job.getPeriodicInterval().toString() : null);
 		res.addEntry("periodic_days", Integer.toString(job.getPeriodicDays()));
 
 		System.out.println("interval: " + job.getPeriodicInterval());

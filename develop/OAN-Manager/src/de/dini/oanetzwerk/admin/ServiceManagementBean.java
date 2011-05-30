@@ -9,6 +9,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -79,8 +80,8 @@ public class ServiceManagementBean {
 		aggregatorStatus = checkServiceStatus("AggregatorService");
 		markerStatus = checkServiceStatus("MarkerService");
 		
-		storeJob();
-		updateJob(3);
+//		storeJob();
+//		updateJob(3);
 	}
 
 	
@@ -112,7 +113,7 @@ public class ServiceManagementBean {
 		res.addEntry("status", status);
 		res.addEntry("info", info);
 		res.addEntry("periodic", Boolean.toString(periodic));
-		res.addEntry("nonperiodic_date", nonperiodicTimestamp.toString());
+		res.addEntry("nonperiodic_date", new SimpleDateFormat("dd-MM-yyyy HH:mm").format(nonperiodicTimestamp));
 		res.addEntry("periodic_interval", periodicInterval);
 		res.addEntry("periodic_days", Integer.toString(periodicDays));
 			
@@ -172,7 +173,7 @@ public class ServiceManagementBean {
 		res.addEntry("status", status);
 		res.addEntry("info", info);
 		res.addEntry("periodic", Boolean.toString(periodic));
-		res.addEntry("nonperiodic_date", nonperiodicTimestamp.toString());
+		res.addEntry("nonperiodic_date", new SimpleDateFormat("dd-MM-yyyy HH:mm").format(nonperiodicTimestamp));
 		res.addEntry("periodic_interval", periodicInterval);
 		res.addEntry("periodic_days", Integer.toString(periodicDays));
 			
@@ -350,6 +351,17 @@ public class ServiceManagementBean {
 				// -Djava.rmi.server.codebase=file:/home/sam/Dev/TestDirectory/services/harvester/Harvester.jar
 				// /home/sam/Dev/TestDirectory/services/harvester/Harvester.jar
 				System.out.println(servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))));
+				
+				
+				
+				if (!checkIfLocalPathToServiceIsValid(servicePath)) {
+					System.out.println("Service with path '" + servicePath + "' does not exist! Failed to start " + serviceName);
+				}
+				
+				
+				System.out.println("Running command: java -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
+								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
+								+ servicePath);
 				Runtime.getRuntime().exec(
 						"java -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
@@ -370,6 +382,7 @@ public class ServiceManagementBean {
 		}
 		return true;
 	}
+	
 
 	public boolean stopService(String serviceName, ServiceStatus serviceStatus) {
 
@@ -403,6 +416,12 @@ public class ServiceManagementBean {
 		return false;
 	}
 
+	
+	private boolean checkIfLocalPathToServiceIsValid(String path) {
+	
+		return new File(path).exists();
+	}
+	
 	public enum ServiceStatus {
 
 		Started, Busy, Stopped
