@@ -515,10 +515,10 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 
 			if (repositoryId != null) {
 				
-				stmtconn.loadStatement(SelectFromDBSybase.UsageDataOIDsForRepository(stmtconn.connection, repositoryId));
+				stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageDataOIDsForRepository(stmtconn.connection, repositoryId));
 			} else {
 				
-				stmtconn.loadStatement(SelectFromDBSybase.UsageDataOIDs(stmtconn.connection));
+				stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageDataOIDs(stmtconn.connection));
 			}
 
 			this.result = stmtconn.execute();
@@ -585,7 +585,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 			throws SQLException {
 
 		Map<String, List<UsageDataMonth>> mapUsageDataMonths = new HashMap<String, List<UsageDataMonth>>();
-		stmtconn.loadStatement(SelectFromDBSybase.UsageData_Metrics_AllNames(stmtconn.connection));
+		stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Metrics_AllNames(stmtconn.connection));
 		this.result = stmtconn.execute();
 
 		if (this.result.getWarning() != null)
@@ -605,7 +605,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 			throws SQLException {
 
 		Map<String, UsageDataOverall> mapUsageDataOveralls = new HashMap<String, UsageDataOverall>();
-		stmtconn.loadStatement(SelectFromDBSybase.UsageData_Metrics_AllNames(stmtconn.connection));
+		stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Metrics_AllNames(stmtconn.connection));
 		this.result = stmtconn.execute();
 
 		if (this.result.getWarning() != null)
@@ -625,7 +625,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 
 		for (String strMetricsName : mapUsageDataMonths.keySet()) {
 
-			stmtconn.loadStatement(SelectFromDBSybase.UsageData_Months_ListForMetricsName(stmtconn.connection, object_id, strMetricsName));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Months_ListForMetricsName(stmtconn.connection, object_id, strMetricsName));
 			this.result = stmtconn.execute();
 
 			if (this.result.getWarning() != null)
@@ -650,7 +650,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 
 		for (String strMetricsName : mapUsageDataOveralls.keySet()) {
 
-			stmtconn.loadStatement(SelectFromDBSybase.UsageData_Overall_ForMetricsName(stmtconn.connection, object_id, strMetricsName));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Overall_ForMetricsName(stmtconn.connection, object_id, strMetricsName));
 			this.result = stmtconn.execute();
 
 			if (this.result.getWarning() != null)
@@ -671,7 +671,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 	}
 
 	private BigDecimal getMetricsId(MultipleStatementConnection stmtconn, String strMetricsName) throws SQLException {
-		stmtconn.loadStatement(SelectFromDBSybase.UsageData_Metrics(stmtconn.connection, strMetricsName));
+		stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Metrics(stmtconn.connection, strMetricsName));
 		this.result = stmtconn.execute();
 
 		if (this.result.getWarning() != null)
@@ -688,14 +688,14 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 	private void doPostOverall(MultipleStatementConnection stmtconn, BigDecimal object_id, BigDecimal metrics_id, long count_overall,
 			Date last_update) throws SQLException, ParseException {
 
-		stmtconn.loadStatement(DeleteFromDBSybase.UsageData_Overall(stmtconn.connection, object_id, metrics_id));
+		stmtconn.loadStatement(DBAccessNG.deleteFromDB().UsageData_Overall(stmtconn.connection, object_id, metrics_id));
 		this.result = stmtconn.execute();
 
 		if (this.result.getWarning() != null)
 			for (Throwable warning : result.getWarning())
 				logger.warn(warning.getLocalizedMessage());
 
-		stmtconn.loadStatement(InsertIntoDBSybase.UsageData_Overall(stmtconn.connection, object_id, metrics_id, count_overall, HelperMethods
+		stmtconn.loadStatement(DBAccessNG.insertIntoDB().UsageData_Overall(stmtconn.connection, object_id, metrics_id, count_overall, HelperMethods
 				.java2sqlDate(last_update)));
 		this.result = stmtconn.execute();
 
@@ -708,7 +708,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 	private void doPostMonth(MultipleStatementConnection stmtconn, BigDecimal object_id, BigDecimal metrics_id, long count_of_month,
 			Date relative_to_date) throws SQLException, ParseException {
 
-		stmtconn.loadStatement(DeleteFromDBSybase.UsageData_Months(stmtconn.connection, object_id, metrics_id, HelperMethods
+		stmtconn.loadStatement(DBAccessNG.deleteFromDB().UsageData_Months(stmtconn.connection, object_id, metrics_id, HelperMethods
 				.java2sqlDate(relative_to_date)));
 		this.result = stmtconn.execute();
 
@@ -716,7 +716,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 			for (Throwable warning : result.getWarning())
 				logger.warn(warning.getLocalizedMessage());
 
-		stmtconn.loadStatement(InsertIntoDBSybase.UsageData_Months(stmtconn.connection, object_id, metrics_id, count_of_month, HelperMethods
+		stmtconn.loadStatement(DBAccessNG.insertIntoDB().UsageData_Months(stmtconn.connection, object_id, metrics_id, count_of_month, HelperMethods
 				.java2sqlDate(relative_to_date)));
 		this.result = stmtconn.execute();
 
@@ -728,14 +728,14 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 
 	private void doDeleteALL(MultipleStatementConnection stmtconn, BigDecimal object_id) throws SQLException {
 
-		stmtconn.loadStatement(DeleteFromDBSybase.UsageData_ALL_Months(stmtconn.connection, object_id));
+		stmtconn.loadStatement(DBAccessNG.deleteFromDB().UsageData_ALL_Months(stmtconn.connection, object_id));
 		this.result = stmtconn.execute();
 
 		if (this.result.getWarning() != null)
 			for (Throwable warning : result.getWarning())
 				logger.warn(warning.getLocalizedMessage());
 
-		stmtconn.loadStatement(DeleteFromDBSybase.UsageData_ALL_Overall(stmtconn.connection, object_id));
+		stmtconn.loadStatement(DBAccessNG.deleteFromDB().UsageData_ALL_Overall(stmtconn.connection, object_id));
 		this.result = stmtconn.execute();
 
 		if (this.result.getWarning() != null)

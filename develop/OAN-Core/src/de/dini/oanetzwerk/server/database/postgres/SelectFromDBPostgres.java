@@ -23,108 +23,7 @@ public class SelectFromDBPostgres implements SelectFromDB {
 
 	
 	private static Logger logger = Logger.getLogger(SelectFromDBPostgres.class);
-		
-	public void main(String[] args) {
-		SelectFromDBPostgres t = new SelectFromDBPostgres();
-		t.compareStatements();
-	}
-
-	private void compareStatements() {
-		Connection connPostgres = null;
-		try {
-			Class.forName("org.postgresql.Driver");
-			String url = "jdbc:postgresql://localhost:5432/oanetdb";
-			
-			Properties props = new Properties();
-			props.put("user", "imrael");
-			props.put("password", "fd6zaw9c");
-			props.put("charSet", "UTF-8");
-			connPostgres = DriverManager.getConnection(url, props);
-			System.out.println("Established Connection to local Postgres Instance");
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		
-		String defaultString = "blakeks";
-		BigDecimal defaultBigDecimal = new BigDecimal(1);
-		Vector<BigDecimal> defaultBigDecimalList = new Vector<BigDecimal>();
-		defaultBigDecimalList.add(new BigDecimal(1));
-		Date defaultDate = new Date(50);
-		Boolean defaultBoolean = true;
-		int defaultInt = 1;
-		MultipleStatementConnection mConn;
-		try {
-			mConn = new MultipleStatementConnection(connPostgres);
-		
-		
-		
-			Class c = this.getClass();
-			Method[] methods = c.getDeclaredMethods();
-			for (int i = 0; i < methods.length; i++) {
-				if (!methods[i].getName().contains("Postgres")) {
-					// schleifendurchlauf überspringen wenn keine der Postgres-Funktionen angesprochen wird
-					continue;
-				}
 				
-				Class[] parameters = methods[i].getParameterTypes();
-	
-				int parameterCount = parameters.length;
-				System.out.println("Methode "+methods[i].getName()+" hat "+parameterCount+" Parameter");
-				System.out.print("Methode "+methods[i].getName()+"(Connection");
-				java.lang.Object[] definierteParameter = new java.lang.Object[parameterCount];
-				definierteParameter[0] = connPostgres;
-				for (int j = 1; j < parameterCount; j++) {
-					if (j < parameterCount ) {
-						System.out.print(", ");
-					}
-					if (parameters[j].getName().equals("java.lang.String")) {
-						System.out.print("String");
-						definierteParameter[j] = defaultString;
-					}
-					else if(parameters[j].getName().equals("java.math.BigDecimal")) {
-						System.out.print("BigDecimal");
-						definierteParameter[j] = defaultBigDecimal;
-					}
-					else if (parameters[j].getName().equals("java.util.List")) {
-						System.out.print("List");
-						definierteParameter[j] = defaultBigDecimalList;
-					}
-					else if (parameters[j].getName().equals("java.sql.Date")) {
-						System.out.print("Date");
-						definierteParameter[j] = defaultDate;
-					}
-					else if (parameters[j].getName().equals("java.lang.Boolean")) {
-						System.out.print("Boolean");
-						definierteParameter[j] = defaultBoolean;
-					}
-					else if (parameters[j].getName().equals("java.lang.Integer")) {
-						System.out.print("int");
-						definierteParameter[j] = defaultInt;
-					}
-					else {
-						System.out.println("foo");
-						System.out.println("Nicht erkannter Parametertyp: "+parameters[j].getName());
-						System.exit(-1);
-					}
-					
-				}
-				System.out.println(")");
-		
-				PreparedStatement stmt = (PreparedStatement) methods[i].invoke(this, definierteParameter);
-				mConn.loadStatement(stmt);
-				mConn.execute();
-				
-			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
-		
-		
 
 	
 	public PreparedStatement InternalID(Connection connection, String repository_identifier) throws SQLException {
@@ -634,6 +533,20 @@ public class SelectFromDBPostgres implements SelectFromDB {
 		return preparedstmt;
 	}
 
+	@Override
+	public PreparedStatement WorkflowDB(Connection connection, BigDecimal object_id, Date time, BigDecimal service_id)
+			throws SQLException {
+
+		PreparedStatement preparedstmt = connection
+				.prepareStatement("SELECT \"WorkflowDB\".workflow_id FROM \"WorkflowDB\" WHERE \"WorkflowDB\".object_id = ? AND \"WorkflowDB\".time = ? AND \"WorkflowDB\".service_id = ?");
+
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setDate(2, time);
+		preparedstmt.setBigDecimal(3, service_id);
+
+		return preparedstmt;
+	}
+	
 	/**
 	 * Fetch the title-information of the object specified by the object_id;
 	 * returns title, qualifier and language
@@ -1868,6 +1781,40 @@ public class SelectFromDBPostgres implements SelectFromDB {
 			sql.append(" LIMIT " + resultCount);
 		}
 
+		return preparedstmt;
+	}
+	
+	//TODO: test
+	@Override
+	public PreparedStatement UsageData_Ranking(Connection connection) throws SQLException {
+		// TODO Anpassen der Datumsanfrage wenn die Statistik DB es erlaubt.
+		PreparedStatement preparedstmt = connection.prepareStatement("Select distinct top 10 object_id, counter, counted_for_date FROM \"UsageData_Months\" where counted_for_date in (SELECT max(counted_for_date) from \"UsageData_Months\" where counted_for_date <(SELECT max(counted_for_date) from \"UsageData_Months\")) Order by counter desc");
+		return preparedstmt;
+	}
+	
+	//TODO: test
+	@Override
+	public PreparedStatement UsageData_Counter_ForOID(Connection connection, BigDecimal object_id) throws SQLException {
+		// TODO Anpassen der Datumsanfrage wenn die Statistik DB es erlaubt.
+		PreparedStatement preparedstmt = connection.prepareStatement("Select distinct object_id, counter, counted_for_date FROM \"UsageData_Months\" where object_id=? and counted_for_date in (SELECT max(counted_for_date) from \"UsageData_Months\" where counted_for_date <(SELECT max(counted_for_date) from \"UsageData_Months\"))");
+		preparedstmt.setBigDecimal(1, object_id);
+		return preparedstmt;
+	}
+	
+	@Override
+	public PreparedStatement ServicesScheduling(Connection connection) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT * FROM \"ServicesScheduling\"");
+
+		return preparedstmt;
+	}
+	
+	@Override
+	public PreparedStatement ServicesScheduling(Connection connection, int jobId) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT * FROM \"ServicesScheduling\" WHERE job_id = ?");
+
+		preparedstmt.setInt(1, jobId);
 		return preparedstmt;
 	}
 }

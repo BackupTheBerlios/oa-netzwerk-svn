@@ -108,7 +108,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			
 			// fetch and execute specific statement 
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );						
-			stmtconn.loadStatement (SelectFromDBSybase.ServiceNotify(stmtconn.connection, service_id));	
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().ServiceNotify(stmtconn.connection, service_id));	
 			this.result = stmtconn.execute ( );
 			
 			// log warnings
@@ -258,7 +258,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (InsertIntoDBSybase.ServiceNotify(stmtconn.connection, service_id, inserttime, urgent, complete));
+			stmtconn.loadStatement (DBAccessNG.insertIntoDB().ServiceNotify(stmtconn.connection, service_id, inserttime, urgent, complete));
 			
 			this.result = stmtconn.execute ( );
 			
@@ -267,7 +267,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 					logger.warn (warning.getLocalizedMessage ( ));
 			
 			stmtconn.commit ( );
-			stmtconn.loadStatement (SelectFromDBSybase.ServiceNotify(stmtconn.connection, service_id));
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().ServiceNotify(stmtconn.connection, service_id));
 			
 			this.result = stmtconn.execute ( );
 			
@@ -363,7 +363,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.ServiceNotify(stmtconn.connection, service_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().ServiceNotify(stmtconn.connection, service_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 

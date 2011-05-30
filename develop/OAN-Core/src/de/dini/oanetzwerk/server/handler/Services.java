@@ -104,11 +104,11 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 				
 				if (service_id == null) {
 			
-					stmtconn.loadStatement (SelectFromDBSybase.Services (stmtconn.connection, name));
+					stmtconn.loadStatement (DBAccessNG.selectFromDB().Services (stmtconn.connection, name));
 				
 				} else {
 				
-					stmtconn.loadStatement (SelectFromDBSybase.Services (stmtconn.connection, service_id));
+					stmtconn.loadStatement (DBAccessNG.selectFromDB().Services (stmtconn.connection, service_id));
 				}
 				
 			}

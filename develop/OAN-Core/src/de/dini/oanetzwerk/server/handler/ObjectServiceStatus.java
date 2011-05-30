@@ -233,10 +233,10 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );						
 			switch (flag) {
 				case ALL:
-					stmtconn.loadStatement (SelectFromDBSybase.ObjectServiceStatusAll(stmtconn.connection));	
+					stmtconn.loadStatement (DBAccessNG.selectFromDB().ObjectServiceStatusAll(stmtconn.connection));	
 					break;
 				case OBJECTID:
-					stmtconn.loadStatement (SelectFromDBSybase.ObjectServiceStatusID(stmtconn.connection, this.objectEntryID));	
+					stmtconn.loadStatement (DBAccessNG.selectFromDB().ObjectServiceStatusID(stmtconn.connection, this.objectEntryID));	
 					break;
 //				case FLAG:
 //					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDB.AllOIDsMarkAsTest(stmtconn.connection));	

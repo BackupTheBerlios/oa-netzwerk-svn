@@ -869,4 +869,54 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 		
 		return preparedstmt;
 	}
+	
+	@Override
+	public PreparedStatement Repository(Connection connection, String name, String url, String oaiUrl, String owner,
+	                String ownerEmail, Integer harvestAmount, Integer harvestPause, boolean listRecords, boolean testData, boolean active)
+	                throws SQLException {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Insert Repository:");
+		}
+
+		PreparedStatement preparedstmt = connection
+		                .prepareStatement("INSERT INTO \"Repositories\" (name, url, oai_url, test_data, harvest_amount, harvest_pause, listrecords, active, owner_technical, email_technical) "
+		                                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		preparedstmt.setString(1, name);
+		preparedstmt.setString(2, url);
+		preparedstmt.setString(3, oaiUrl);
+		preparedstmt.setBoolean(4, testData);
+		preparedstmt.setInt(5, harvestAmount);
+		preparedstmt.setInt(6, harvestPause);
+		preparedstmt.setBoolean(7, listRecords);
+		preparedstmt.setBoolean(8, active);
+		preparedstmt.setString(9, owner);
+		preparedstmt.setString(10, ownerEmail);
+
+		return preparedstmt;
+	}
+
+	
+	@Override
+	public PreparedStatement ServicesScheduling(Connection connection, String name, BigDecimal service_id, String status, String info, boolean periodic, Date nonperiodicDate, String periodicInterval, int periodicDays) throws SQLException {
+
+		if (logger.isDebugEnabled()) {
+
+			logger.debug("Insert ServicesScheduling: INSERT INTO  \"ServicesScheduling\" (name, service_id, status, info, periodic, nonperiodic_date, periodic_interval_type, periodic_interval_days) VALUES " + "(" + name + ", " + service_id
+			                + ", " + status + info + ", " + periodic + ", " + nonperiodicDate + ", " + periodicInterval + ", " + periodicDays + ")");
+		}
+
+		PreparedStatement preparedstmt = connection.prepareStatement("INSERT INTO \"ServicesScheduling\" (name, service_id, status, info, periodic, nonperiodic_date, periodic_interval_type, periodic_interval_days) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+		preparedstmt.setString(1, name);
+		preparedstmt.setBigDecimal(2, service_id);
+		preparedstmt.setString(3, status);
+		preparedstmt.setString(4, info);
+		preparedstmt.setBoolean(5, periodic);
+		preparedstmt.setDate(6, nonperiodicDate);
+		preparedstmt.setString(7, periodicInterval);
+		preparedstmt.setInt(8, periodicDays);
+
+		return preparedstmt;
+	}
 }

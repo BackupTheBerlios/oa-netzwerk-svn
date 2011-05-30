@@ -81,7 +81,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 				// list of plain categories 
 				
 				stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
-				stmtconn.loadStatement (SelectFromDBSybase.AllDDCCategories(stmtconn.connection));
+				stmtconn.loadStatement (DBAccessNG.selectFromDB().AllDDCCategories(stmtconn.connection));
 				QueryResult allDDCResult = stmtconn.execute ( );
 
 				if (allDDCResult.getWarning ( ) != null)
@@ -124,7 +124,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 				wildcardCategory = wildcardCategory.replaceAll("x", "%");
 				
 				stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
-				stmtconn.loadStatement (SelectFromDBSybase.DDCCategoryWildcard(stmtconn.connection, wildcardCategory));
+				stmtconn.loadStatement (DBAccessNG.selectFromDB().DDCCategoryWildcard(stmtconn.connection, wildcardCategory));
 				QueryResult wildcardDDCResult = stmtconn.execute ( );
 
 				if (wildcardDDCResult.getWarning ( ) != null)

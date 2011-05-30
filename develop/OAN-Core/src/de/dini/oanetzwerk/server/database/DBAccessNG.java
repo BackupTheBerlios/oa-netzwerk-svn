@@ -1,8 +1,6 @@
 package de.dini.oanetzwerk.server.database;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +13,14 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 
+import de.dini.oanetzwerk.server.database.postgres.DeleteFromDBPostgres;
+import de.dini.oanetzwerk.server.database.postgres.InsertIntoDBPostgres;
+import de.dini.oanetzwerk.server.database.postgres.SelectFromDBPostgres;
+import de.dini.oanetzwerk.server.database.postgres.UpdateInDBPostgres;
+import de.dini.oanetzwerk.server.database.sybase.DeleteFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
+import de.dini.oanetzwerk.server.database.sybase.UpdateInDBSybase;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
@@ -33,7 +39,15 @@ public class DBAccessNG {
 	private List<Connection> pool = new ArrayList<Connection>();
 
 	private int currentPoolCursor = 0;
-
+	
+	private static final String PG_DRIVER = "";
+	private static final String SYBASE_DRIVER = "";
+	
+	private static SelectFromDB select;
+	private static InsertIntoDB insert;
+	private static UpdateFromDB update;
+	private static DeleteFromDB delete;
+	
 	// private Connection dataSourceConnection;
 	// private StatementConnection statementConnection;
 	// private boolean isSingeleStatementConnection;
@@ -47,9 +61,9 @@ public class DBAccessNG {
 			logger.debug("DBAccessNG Instance will be prepared!");
 
 		try {
-
 			this.datasource = (DataSource) ((Context) new InitialContext().lookup("java:comp/env")).lookup("jdbc/oanetztest");
 
+			initDriverClass();
 		} catch (NamingException ex) {
 
 //			this.datasource = new BasicDataSource();
@@ -70,6 +84,7 @@ public class DBAccessNG {
 
 			this.datasource = (DataSource) ((Context) new InitialContext().lookup("java:comp/env")).lookup(dataSource);
 
+			initDriverClass();
 		} catch (NamingException ex) {
 
 			// logger.error("DataSource could not be loaded. We can't connect to the database. Please enter the correct datasource!");
@@ -77,6 +92,28 @@ public class DBAccessNG {
 		}
 	}
 
+	
+	private void initDriverClass() {
+		
+		BasicDataSource ds = (BasicDataSource) this.datasource;
+		if (SYBASE_DRIVER.equals(ds.getDriverClassName())) {
+			// init sybase driver classes
+			
+			select = new SelectFromDBSybase();
+			insert = new InsertIntoDBSybase();
+			update = new UpdateInDBSybase();
+			delete = new DeleteFromDBSybase();
+		} else {
+			
+			// init postgres driver classes as a default
+			
+			select = new SelectFromDBPostgres();
+			insert = new InsertIntoDBPostgres();
+			update = new UpdateInDBPostgres();
+			delete = new DeleteFromDBPostgres();
+		}
+	}
+	
 	/**
 	 * 
 	 * @return Connection
@@ -228,4 +265,23 @@ public class DBAccessNG {
 		}
 		return result;
 	}
+
+	public static SelectFromDB selectFromDB() {
+    	return select;
+    }
+
+	public static InsertIntoDB insertIntoDB() {
+    	return insert;
+    }
+
+	public static UpdateFromDB updateInDB() {
+    	return update;
+    }
+
+	public static DeleteFromDB deleteFromDB() {
+    	return delete;
+    }
+	
+	
+
 }

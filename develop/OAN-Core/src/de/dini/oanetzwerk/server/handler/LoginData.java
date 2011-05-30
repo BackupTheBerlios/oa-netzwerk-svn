@@ -78,7 +78,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			
 			// fetch and execute specific statement 
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );						
-			stmtconn.loadStatement (SelectFromDBSybase.LoginData (stmtconn.connection, name));	
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().LoginData (stmtconn.connection, name));	
 			this.result = stmtconn.execute ( );
 			
 			// log warnings
@@ -226,7 +226,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );			
 			
 			// 1. Prüfen, ob gewählter Nutzername in anderer Schreibweise schon im System vorhanden ist
-			stmtconn.loadStatement (SelectFromDBSybase.LoginDataLowerCase(stmtconn.connection, name));
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().LoginDataLowerCase(stmtconn.connection, name));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -241,7 +241,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			} else {
 			
 				// 2. Speichern der neuen Nutzerdaten
-				stmtconn.loadStatement(InsertIntoDBSybase.LoginData(
+				stmtconn.loadStatement(DBAccessNG.insertIntoDB().LoginData(
 						stmtconn.connection, name, password, email));
 				this.result = stmtconn.execute();
 
@@ -252,7 +252,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 				stmtconn.commit();
 
 				// 3. Prüfen, ob korrekt gespeichert wurde
-				stmtconn.loadStatement(SelectFromDBSybase.LoginData(
+				stmtconn.loadStatement(DBAccessNG.selectFromDB().LoginData(
 						stmtconn.connection, name));
 
 				this.result = stmtconn.execute();
@@ -344,7 +344,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.LoginData(stmtconn.connection, name));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().LoginData(stmtconn.connection, name));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 

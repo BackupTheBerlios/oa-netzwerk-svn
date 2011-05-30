@@ -205,18 +205,18 @@ public class AllOIDs extends AbstractKeyWordHandler implements KeyWord2DatabaseI
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );						
 			switch (flag) {
 				case ALL:
-					stmtconn.loadStatement (SelectFromDBSybase.AllOIDs(stmtconn.connection));	
+					stmtconn.loadStatement (DBAccessNG.selectFromDB().AllOIDs(stmtconn.connection));	
 					break;
 				case FLAG:
-					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDBSybase.AllOIDsMarkAsTest(stmtconn.connection));	
-					if("notTest".equals(strFlag) || "productive".equals(strFlag))stmtconn.loadStatement (SelectFromDBSybase.AllOIDsMarkAsNotTest(stmtconn.connection));
-					if("hasFulltextlink".equals(strFlag))stmtconn.loadStatement (SelectFromDBSybase.AllOIDsMarkAsHasFulltextlink(stmtconn.connection));
+					if("test".equals(strFlag))stmtconn.loadStatement (DBAccessNG.selectFromDB().AllOIDsMarkAsTest(stmtconn.connection));	
+					if("notTest".equals(strFlag) || "productive".equals(strFlag))stmtconn.loadStatement (DBAccessNG.selectFromDB().AllOIDsMarkAsNotTest(stmtconn.connection));
+					if("hasFulltextlink".equals(strFlag))stmtconn.loadStatement (DBAccessNG.selectFromDB().AllOIDsMarkAsHasFulltextlink(stmtconn.connection));
 					break;					
 				case FROMREPO:
-					stmtconn.loadStatement (SelectFromDBSybase.AllOIDsFromRepositoryID(stmtconn.connection, repositoryID));	
+					stmtconn.loadStatement (DBAccessNG.selectFromDB().AllOIDsFromRepositoryID(stmtconn.connection, repositoryID));	
 					break;
 				case FROMREPO_AND_FLAG:
-					if("test".equals(strFlag))stmtconn.loadStatement (SelectFromDBSybase.AllOIDsFromRepositoryIDMarkAsTest(stmtconn.connection, repositoryID));	
+					if("test".equals(strFlag))stmtconn.loadStatement (DBAccessNG.selectFromDB().AllOIDsFromRepositoryIDMarkAsTest(stmtconn.connection, repositoryID));	
 					break;										
 			}						
 			this.result = stmtconn.execute ( );

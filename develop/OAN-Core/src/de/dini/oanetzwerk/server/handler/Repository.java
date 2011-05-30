@@ -101,11 +101,11 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			if (repositoryID != null) {
 
-				stmtconn.loadStatement(SelectFromDBSybase.Repository(stmtconn.connection, repositoryID));
+				stmtconn.loadStatement(DBAccessNG.selectFromDB().Repository(stmtconn.connection, repositoryID));
 
 			} else {
 
-				stmtconn.loadStatement(SelectFromDBSybase.Repository(stmtconn.connection));
+				stmtconn.loadStatement(DBAccessNG.selectFromDB().Repository(stmtconn.connection));
 			}
 
 			this.result = stmtconn.execute();
@@ -266,12 +266,12 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 
 				if (path[1].equals(PATH_HARVESTEDTODAY)) {
 
-					stmtconn.loadStatement(UpdateInDBSybase.Repository(stmtconn.connection, repositoryID, HelperMethods.today(),
+					stmtconn.loadStatement(DBAccessNG.updateInDB().Repository(stmtconn.connection, repositoryID, HelperMethods.today(),
 					                "last_full_harvest_begin"));
 
 				} else if (path[1].equals(PATH_MARKEDTODAY)) {
 
-					stmtconn.loadStatement(UpdateInDBSybase.Repository(stmtconn.connection, repositoryID, HelperMethods.today(),
+					stmtconn.loadStatement(DBAccessNG.updateInDB().Repository(stmtconn.connection, repositoryID, HelperMethods.today(),
 					                "last_markereraser_begin"));
 				}
 
@@ -390,7 +390,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 			}
 
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(InsertIntoDBSybase.Repository(stmtconn.connection, name, url, oaiUrl, owner, ownerEmail,
+			stmtconn.loadStatement(DBAccessNG.insertIntoDB().Repository(stmtconn.connection, name, url, oaiUrl, owner, ownerEmail,
 			                Integer.parseInt(harvestAmount), Integer.parseInt(harvestPause), listRecords, testData, active));
 
 			this.result = stmtconn.execute();

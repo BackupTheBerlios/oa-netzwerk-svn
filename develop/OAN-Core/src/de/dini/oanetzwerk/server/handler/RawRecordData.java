@@ -127,17 +127,17 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 				}
 				
 				if (loadhistory)
-					stmtconn.loadStatement (SelectFromDBSybase.RawRecordDataHistory (stmtconn.connection, internalOID));
+					stmtconn.loadStatement (DBAccessNG.selectFromDB().RawRecordDataHistory (stmtconn.connection, internalOID));
 				
 				else
-					stmtconn.loadStatement (SelectFromDBSybase.RawRecordData (stmtconn.connection, internalOID, repository_timestamp));
+					stmtconn.loadStatement (DBAccessNG.selectFromDB().RawRecordData (stmtconn.connection, internalOID, repository_timestamp));
 				
 			} else {
 				
 				if (logger.isDebugEnabled ( ))
 					logger.debug ("internal OID = " + internalOID);
 				
-				stmtconn.loadStatement (SelectFromDBSybase.RawRecordData (stmtconn.connection, internalOID));
+				stmtconn.loadStatement (DBAccessNG.selectFromDB().RawRecordData (stmtconn.connection, internalOID));
 			}
 			
 			this.result = stmtconn.execute ( );
@@ -266,13 +266,13 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			if (path.length > 2) {
 				
 				String metaDataFormat = path [2];
-				stmtconn.loadStatement (UpdateInDBSybase.PrecleanedData (stmtconn.connection, object_id, repository_timestamp, metaDataFormat, data));
+				stmtconn.loadStatement (DBAccessNG.updateInDB().PrecleanedData (stmtconn.connection, object_id, repository_timestamp, metaDataFormat, data));
 				
 				metaDataFormat = null;
 				
 			} else {
 				
-				stmtconn.loadStatement (UpdateInDBSybase.PrecleanedData (stmtconn.connection, object_id, repository_timestamp, data));
+				stmtconn.loadStatement (DBAccessNG.updateInDB().PrecleanedData (stmtconn.connection, object_id, repository_timestamp, data));
 			}
 				
 			this.result = stmtconn.execute ( );
@@ -390,7 +390,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (InsertIntoDBSybase.RawRecordData (stmtconn.connection, object_id, repository_timestamp, data, metaDataFormat));
+			stmtconn.loadStatement (DBAccessNG.insertIntoDB().RawRecordData (stmtconn.connection, object_id, repository_timestamp, data, metaDataFormat));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 

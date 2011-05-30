@@ -76,7 +76,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.DuplicatePossibilities(stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DuplicatePossibilities(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -178,7 +178,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (SelectFromDBSybase.DuplicateProbabilities(stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().DuplicateProbabilities(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -340,7 +340,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 
 				res = new RestEntrySet();
 
-				stmtconn.loadStatement(InsertIntoDBSybase.DuplicatePossibilities(
+				stmtconn.loadStatement(DBAccessNG.insertIntoDB().DuplicatePossibilities(
 						stmtconn.connection, object_id, duplicate_id,
 						percentage, reverse_percentage));
 				this.result = stmtconn.execute();

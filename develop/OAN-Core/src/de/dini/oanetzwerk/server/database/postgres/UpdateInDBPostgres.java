@@ -167,4 +167,28 @@ public class UpdateInDBPostgres implements UpdateFromDB {
 		
 		return preparedstmt;
 	}
+	
+	
+	@Override
+	public PreparedStatement ServicesScheduling(Connection connection, String name, BigDecimal service_id, String status, String info, boolean periodic, Date nonperiodicDate, String periodicInterval, int periodicDays, int jobId) throws SQLException {
+
+		if (logger.isDebugEnabled()) {
+
+			logger.debug("Updating ServicesScheduling: UPDATE \"ServicesScheduling\" (name, service_id, status, info, periodic, nonperiodic_date, periodic_interval_type, periodic_interval_days) VALUES " + "(" + name + ", " + service_id
+			                + ", " + status + info + ", " + periodic + ", " + nonperiodicDate + ", " + periodicInterval + ", " + periodicDays + ")");
+		}
+
+		PreparedStatement preparedstmt = connection.prepareStatement("UPDATE \"ServicesScheduling\" SET name = ?, service_id = ?, status = ?, info = ?, periodic = ?, nonperiodic_date = ?, periodic_interval_type = ?, periodic_interval_days = ? WHERE job_id = ?");
+		preparedstmt.setString(1, name);
+		preparedstmt.setBigDecimal(2, service_id);
+		preparedstmt.setString(3, status);
+		preparedstmt.setString(4, info);
+		preparedstmt.setBoolean(5, periodic);
+		preparedstmt.setDate(6, nonperiodicDate);
+		preparedstmt.setString(7, periodicInterval);
+		preparedstmt.setInt(8, periodicDays);
+		preparedstmt.setInt(9, jobId);
+
+		return preparedstmt;
+	}
 }

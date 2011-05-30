@@ -84,140 +84,140 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.DateValues (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DateValues (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.DDC_Classification (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DDC_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Description (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Description (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.DINI_Set_Classification (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DINI_Set_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.DNB_Classification (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DNB_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.DuplicatePossibilities (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DuplicatePossibilities (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Formats (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Formats (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Identifiers (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Identifiers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Object2Author (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Author (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Object2Contributor (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Contributor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Object2Editor (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Editor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Object2Keywords (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Keywords (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Object2Language (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Language (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Other_Classification (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Other_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Publishers (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Publishers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Titles (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Titles (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.TypeValue (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().TypeValue (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.WorkflowDB (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().WorkflowDB (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.RawData (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().RawData (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Object (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getUpdateCount ( ) < 1) {
@@ -322,7 +322,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 				
 				stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 				
-				stmtconn.loadStatement (SelectFromDBSybase.ObjectEntry (stmtconn.connection, repositoryID, oidOffset));
+				stmtconn.loadStatement (DBAccessNG.selectFromDB().ObjectEntry (stmtconn.connection, repositoryID, oidOffset));
 				this.result = stmtconn.execute ( );
 				
 				if (this.result.getWarning ( ) != null) {
@@ -419,7 +419,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (SelectFromDBSybase.ObjectEntry (stmtconn.connection, objectEntryID));
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().ObjectEntry (stmtconn.connection, objectEntryID));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) {
@@ -654,7 +654,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("Updating ObjectEntry " + object_id + " in database");
 			
-			stmtconn.loadStatement (UpdateInDBSybase.Object (stmtconn.connection, object_id, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter, peculiar, outdated, peculiarCounter));
+			stmtconn.loadStatement (DBAccessNG.updateInDB().Object (stmtconn.connection, object_id, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter, peculiar, outdated, peculiarCounter));
 			this.result = stmtconn.execute ( );
 					
 			if (this.result.getWarning ( ) != null)
@@ -662,7 +662,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 					logger.warn (warning.getLocalizedMessage ( ), warning);
 			
 			stmtconn.commit ( );
-			stmtconn.loadStatement (SelectFromDBSybase.ObjectEntry (stmtconn.connection, repository_id, repository_datestamp, repository_identifier));
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().ObjectEntry (stmtconn.connection, repository_id, repository_datestamp, repository_identifier));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getResultSet ( ).next ( )) {
@@ -811,7 +811,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (InsertIntoDBSybase.Object (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
+			stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object (stmtconn.connection, repository_id, harvested, repository_datestamp, repository_identifier, testdata, failureCounter));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getUpdateCount ( ) < 1) {
@@ -820,7 +820,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			}
 			
 			stmtconn.commit ( );
-			stmtconn.loadStatement (SelectFromDBSybase.ObjectEntry (stmtconn.connection, repository_id, repository_datestamp, repository_identifier));
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().ObjectEntry (stmtconn.connection, repository_id, repository_datestamp, repository_identifier));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null)

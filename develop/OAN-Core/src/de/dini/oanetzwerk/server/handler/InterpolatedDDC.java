@@ -67,7 +67,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.Interpolated_DDC_Classification(stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Interpolated_DDC_Classification(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -170,7 +170,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
 			
-			stmtconn.loadStatement (SelectFromDBSybase.InterpolatedDDCClassification(stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().InterpolatedDDCClassification(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -327,7 +327,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 
 				res = new RestEntrySet();
 
-				stmtconn.loadStatement(InsertIntoDBSybase.InterpolatedDDCClassification(
+				stmtconn.loadStatement(DBAccessNG.insertIntoDB().InterpolatedDDCClassification(
 						stmtconn.connection, object_id, ddc_value, percentage));
 				this.result = stmtconn.execute();
 				

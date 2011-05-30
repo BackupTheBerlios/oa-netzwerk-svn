@@ -48,7 +48,7 @@ public class UnneededData extends AbstractKeyWordHandler implements KeyWord2Data
 			
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
 			
-			stmtconn.loadStatement (DeleteFromDBSybase.PersonWithoutReference (stmtconn.connection));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().PersonWithoutReference (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -57,21 +57,21 @@ public class UnneededData extends AbstractKeyWordHandler implements KeyWord2Data
 
 			// Diese Anfrage braucht etwa 24 sec und sollte daher sparsam, nach einem Aggregatorlauf im Automodus gefeuert werden
 						
-			stmtconn.loadStatement (DeleteFromDBSybase.KeywordsWithoutReference (stmtconn.connection));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().KeywordsWithoutReference (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 			for (Throwable warning : result.getWarning ( ))
 				logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDBSybase.LanguagesWithoutReference(stmtconn.connection));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().LanguagesWithoutReference(stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
 			for (Throwable warning : result.getWarning ( ))
 				logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DeleteFromDBSybase.Iso639LanguagesWithoutReference(stmtconn.connection));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Iso639LanguagesWithoutReference(stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 

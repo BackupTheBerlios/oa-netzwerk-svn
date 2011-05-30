@@ -66,7 +66,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.InternalID(stmtconn.connection, repository_identifier));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().InternalID(stmtconn.connection, repository_identifier));
 
 			queryresult = stmtconn.execute();
 
@@ -113,7 +113,7 @@ class DBDataConnection extends DataConnection {
 		try {
 			logger.info("br2");
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.OAIGetOldestDate(stmtconn.connection));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().OAIGetOldestDate(stmtconn.connection));
 
 			queryresult = stmtconn.execute();
 
@@ -176,7 +176,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.ObjectEntry(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().ObjectEntry(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -233,7 +233,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.ObjectEntry(stmtconn.connection, identifier));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().ObjectEntry(stmtconn.connection, identifier));
 
 			queryresult = stmtconn.execute();
 
@@ -290,7 +290,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.OAIListSets(stmtconn.connection));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().OAIListSets(stmtconn.connection));
 
 			queryresult = stmtconn.execute();
 
@@ -362,7 +362,7 @@ class DBDataConnection extends DataConnection {
 		try {
 			
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.AllClassifications(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().AllClassifications(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -505,7 +505,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.ObjectEntry(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().ObjectEntry(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -567,7 +567,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.Authors(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().Authors(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -656,7 +656,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.Keywords(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().Keywords(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -718,7 +718,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.Title(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().Title(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -780,7 +780,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.DateValues(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().DateValues(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -842,7 +842,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.Description(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().Description(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -904,7 +904,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.Format(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().Format(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -966,7 +966,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.Identifier(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().Identifier(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -1028,7 +1028,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.Languages(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().Languages(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -1090,7 +1090,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.Publisher(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().Publisher(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -1152,7 +1152,7 @@ class DBDataConnection extends DataConnection {
 		try {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.TypeValues(stmtconn.connection, bdID));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().TypeValues(stmtconn.connection, bdID));
 
 			queryresult = stmtconn.execute();
 
@@ -1229,7 +1229,7 @@ class DBDataConnection extends DataConnection {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
 
-			stmtconn.loadStatement(SelectFromDBSybase.AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, idOffset, maxResults, false));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, idOffset, maxResults, false));
 			QueryResult idQueryResult = stmtconn.execute();
 			
 			List<BigDecimal> ids = new ArrayList<BigDecimal>();
@@ -1249,7 +1249,7 @@ class DBDataConnection extends DataConnection {
 			}
 			
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.OAIListSetsbyID(stmtconn.connection, set, fromDate, untilDate, ids));			
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().OAIListSetsbyID(stmtconn.connection, set, fromDate, untilDate, ids));			
 
 			queryresult = stmtconn.execute();
 
@@ -1398,7 +1398,7 @@ class DBDataConnection extends DataConnection {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
 
-			stmtconn.loadStatement(SelectFromDBSybase.AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, BigInteger.valueOf(0), 0, true));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, BigInteger.valueOf(0), 0, true));
 			QueryResult queryResult = stmtconn.execute();
 
 			if (queryResult.getWarning() != null) {
@@ -1473,7 +1473,7 @@ class DBDataConnection extends DataConnection {
 
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
 
-			stmtconn.loadStatement(SelectFromDBSybase.AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, idOffset, maxResults, false));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().AllOIDsByDate(stmtconn.connection, fromDate, untilDate, set, idOffset, maxResults, false));
 			QueryResult idQueryResult = stmtconn.execute();
 			
 			List<BigDecimal> ids = new ArrayList<BigDecimal>();
@@ -1493,7 +1493,7 @@ class DBDataConnection extends DataConnection {
 			}
 			
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.OAIListAll(stmtconn.connection, set, fromDate, untilDate, ids));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().OAIListAll(stmtconn.connection, set, fromDate, untilDate, ids));
 			QueryResult queryresult = stmtconn.execute();
 
 			if (queryresult.getWarning() != null) {
@@ -1580,7 +1580,7 @@ class DBDataConnection extends DataConnection {
 			//
 			
 			stmtconn = (SingleStatementConnection) this.dbng.getSingleStatementConnection();
-			stmtconn.loadStatement(SelectFromDBSybase.AllClassifications(stmtconn.connection, ids));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().AllClassifications(stmtconn.connection, ids));
 
 			queryresult = stmtconn.execute();
 

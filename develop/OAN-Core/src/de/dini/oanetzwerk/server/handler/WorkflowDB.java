@@ -115,13 +115,13 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				
 				if (forSpecificRepoOnly) {
 					repository_id = new BigDecimal (path [2]);
-					stmtconn.loadStatement (SelectFromDBSybase.WorkflowDB (stmtconn.connection, service_id, repository_id));
+					stmtconn.loadStatement (DBAccessNG.selectFromDB().WorkflowDB (stmtconn.connection, service_id, repository_id));
 				}
-				stmtconn.loadStatement (SelectFromDBSybase.WorkflowDB (stmtconn.connection, service_id));
+				stmtconn.loadStatement (DBAccessNG.selectFromDB().WorkflowDB (stmtconn.connection, service_id));
 				
 			} else if (complete == true) {
 				// neu zu bearbeitende Daten und schon ehemals bearbeitete Daten laden
-				stmtconn.loadStatement (SelectFromDBSybase.WorkflowDBComplete (stmtconn.connection, service_id));
+				stmtconn.loadStatement (DBAccessNG.selectFromDB().WorkflowDBComplete (stmtconn.connection, service_id));
 			}
 			this.result = stmtconn.execute ( );
 			
@@ -302,7 +302,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			
 			logger.info("PUT WorkflowDB process " + Long.toString(System.currentTimeMillis() - putStart));
-			stmtconn.loadStatement (InsertIntoDBSybase.WorkflowDB (stmtconn.connection, object_id, service_id));
+			stmtconn.loadStatement (DBAccessNG.insertIntoDB().WorkflowDB (stmtconn.connection, object_id, service_id));
 			this.result = stmtconn.execute ( );
 			if (this.result.getWarning ( ) != null) 
 				for (Throwable warning : result.getWarning ( ))
@@ -312,7 +312,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			logger.info("PUT WorkflowDB process2 " + Long.toString(System.currentTimeMillis() - putStart));
 
 			// 2. eingetragenen Zeitwert auslesen
-			stmtconn.loadStatement (SelectFromDBSybase.WorkflowDBInserted(stmtconn.connection, object_id, service_id));
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().WorkflowDBInserted(stmtconn.connection, object_id, service_id));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 
@@ -332,7 +332,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				logger.info("PUT WorkflowDB process3 " + Long.toString(System.currentTimeMillis() - putStart));
 				// 3. Löschen der alten Daten
 				if (newObject == false) {
-					stmtconn.loadStatement (DeleteFromDBSybase.WorkflowDB (stmtconn.connection, object_id, new java.sql.Date(time.getTime()), service_id));
+					stmtconn.loadStatement (DBAccessNG.deleteFromDB().WorkflowDB (stmtconn.connection, object_id, new java.sql.Date(time.getTime()), service_id));
 					this.result = stmtconn.execute();
 					
 					if (this.result.getWarning ( ) != null) 
@@ -350,7 +350,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 				this.rms.setStatusDescription ("No matching WorklflowDB Entry found");
 			}
 			
-			stmtconn.loadStatement (SelectFromDBSybase.WorkflowDBInserted(stmtconn.connection, object_id, service_id));
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().WorkflowDBInserted(stmtconn.connection, object_id, service_id));
 			
 			this.result = stmtconn.execute ( );
 			logger.info("PUT WorkflowDB process5 " + Long.toString(System.currentTimeMillis() - putStart));

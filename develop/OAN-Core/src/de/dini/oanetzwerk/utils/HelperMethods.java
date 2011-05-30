@@ -183,6 +183,8 @@ public class HelperMethods {
 		
 		Date date = null;
 		
+
+		
 		java.util.Date sdf = new SimpleDateFormat ("yyyy-MM-dd").parse (dateString);
 		
 		date = new Date (sdf.getTime ( ));

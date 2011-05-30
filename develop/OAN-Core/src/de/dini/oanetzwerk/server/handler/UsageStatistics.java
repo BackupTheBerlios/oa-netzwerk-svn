@@ -75,7 +75,7 @@ public class UsageStatistics extends AbstractKeyWordHandler implements KeyWord2D
 
 				
 	
-				stmtconn.loadStatement(SelectFromDBSybase.UsageData_Ranking(stmtconn.connection));
+				stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Ranking(stmtconn.connection));
 	
 	
 				this.result = stmtconn.execute();
@@ -105,7 +105,7 @@ public class UsageStatistics extends AbstractKeyWordHandler implements KeyWord2D
 					return RestXmlCodec.encodeRestMessage (this.rms);
 				} 
 				BigDecimal oid = new BigDecimal(path[0]);
-				stmtconn.loadStatement(SelectFromDBSybase.UsageData_Counter_ForOID(stmtconn.connection, oid));
+				stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Counter_ForOID(stmtconn.connection, oid));
 				this.result = stmtconn.execute();
 				
 				if (this.result.getWarning() != null)

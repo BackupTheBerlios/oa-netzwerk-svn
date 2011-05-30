@@ -110,7 +110,7 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 		try {
 			
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
-			stmtconn.loadStatement (SelectFromDBSybase.ObjectEntryID (stmtconn.connection, repositoryID, externalOID.toString ( )));
+			stmtconn.loadStatement (DBAccessNG.selectFromDB().ObjectEntryID (stmtconn.connection, repositoryID, externalOID.toString ( )));
 			
 			this.result = stmtconn.execute ( );
 			
@@ -139,7 +139,7 @@ public class ObjectEntryID extends AbstractKeyWordHandler implements KeyWord2Dat
 				if (checkRawData) {
 					
 					stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection ( );
-					stmtconn.loadStatement (SelectFromDBSybase.RawRecordData (stmtconn.connection, internalOID));
+					stmtconn.loadStatement (DBAccessNG.selectFromDB().RawRecordData (stmtconn.connection, internalOID));
 					
 					this.result = stmtconn.execute ( );
 					

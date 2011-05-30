@@ -5,7 +5,6 @@ import java.text.ParseException;
 
 import org.apache.log4j.Logger;
 
-//import de.dini.oanetzwerk.server.handler.InternalMetadataEntry;
 import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -85,7 +84,7 @@ public class MetadataDBMapper {
 		
 		QueryResult queryResult;
 		
-		stmtconn.loadStatement (SelectFromDBSybase.Title (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().Title (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		// Auswertung der Titel
@@ -101,7 +100,7 @@ public class MetadataDBMapper {
 		hmf.setTitleCounter(hmf.getTitleList().size());
 		
 		// Auswertung der Autoren
-		stmtconn.loadStatement (SelectFromDBSybase.Authors (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().Authors (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -118,7 +117,7 @@ public class MetadataDBMapper {
 		hmf.setAuthorCounter(hmf.getAuthorList().size());
 		
 		// Auswertung der Editoren
-		stmtconn.loadStatement (SelectFromDBSybase.Editors (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().Editors (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -135,7 +134,7 @@ public class MetadataDBMapper {
 		hmf.setEditorCounter(hmf.getEditorList().size());
 		
 		// Auswertung der Bearbeiter
-		stmtconn.loadStatement (SelectFromDBSybase.Contributors (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().Contributors (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -152,7 +151,7 @@ public class MetadataDBMapper {
 		hmf.setContributorCounter(hmf.getContributorList().size());
 	
 		// Auswertung des Formats
-		stmtconn.loadStatement (SelectFromDBSybase.Format (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().Format (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -165,7 +164,7 @@ public class MetadataDBMapper {
 		hmf.setFormatCounter(hmf.getFormatList().size());
 		
 		// Auswertung des Identifiers
-		stmtconn.loadStatement (SelectFromDBSybase.Identifier (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().Identifier (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -180,7 +179,7 @@ public class MetadataDBMapper {
 
 		
 		// Auswertung der Description
-		stmtconn.loadStatement (SelectFromDBSybase.Description (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().Description (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -195,7 +194,7 @@ public class MetadataDBMapper {
 
 
 		// Auswertung der DateValue-Werte
-		stmtconn.loadStatement (SelectFromDBSybase.DateValues (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().DateValues (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -213,7 +212,7 @@ public class MetadataDBMapper {
 
 				
 		// Auswertung der TypeValue-Werte
-		stmtconn.loadStatement (SelectFromDBSybase.TypeValues (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().TypeValues (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -227,7 +226,7 @@ public class MetadataDBMapper {
 
 
 		// Auswertung der Publisher-Werte
-		stmtconn.loadStatement (SelectFromDBSybase.Publisher (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().Publisher (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -241,7 +240,7 @@ public class MetadataDBMapper {
 
 		
 		// Auswertung der DDC-Classifications-Werte
-		stmtconn.loadStatement (SelectFromDBSybase.DDCClassification (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().DDCClassification (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -253,7 +252,7 @@ public class MetadataDBMapper {
 		}
 		
 		// Auswertung der DNB-Classifications-Werte
-		stmtconn.loadStatement (SelectFromDBSybase.DNBClassification (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().DNBClassification (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -265,7 +264,7 @@ public class MetadataDBMapper {
 		}
 
 		// Auswertung der DINI-Set-Classifications-Werte
-		stmtconn.loadStatement (SelectFromDBSybase.DINISetClassification (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().DINISetClassification (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -277,7 +276,7 @@ public class MetadataDBMapper {
 		}
 
 		// Auswertung der Other-Classifications-Werte
-		stmtconn.loadStatement (SelectFromDBSybase.OtherClassification (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().OtherClassification (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -290,7 +289,7 @@ public class MetadataDBMapper {
 		hmf.setClassificationCounter(hmf.getClassificationList().size());
 
 		// Auswertung der Keywords-Werte
-		stmtconn.loadStatement (SelectFromDBSybase.Keywords (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().Keywords (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {
@@ -305,7 +304,7 @@ public class MetadataDBMapper {
 
 		
 		// Auswertung der Language-Werte
-		stmtconn.loadStatement (SelectFromDBSybase.Languages (stmtconn.connection, hmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().Languages (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
 		
 		while (queryResult.getResultSet ( ).next ( )) {

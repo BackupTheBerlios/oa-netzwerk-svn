@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
@@ -75,7 +76,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 				stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection();
 
-				stmtconn.loadStatement(SelectFromDBSybase.ServicesScheduling(stmtconn.connection));
+				stmtconn.loadStatement(DBAccessNG.selectFromDB().ServicesScheduling(stmtconn.connection));
 				this.result = stmtconn.execute();
 
 				if (this.result.getWarning() != null) {
@@ -185,7 +186,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection();
 
-			stmtconn.loadStatement(SelectFromDBSybase.ServicesScheduling(stmtconn.connection, jobId));
+			stmtconn.loadStatement(DBAccessNG.selectFromDB().ServicesScheduling(stmtconn.connection, jobId));
 			this.result = stmtconn.execute();
 
 			if (this.result.getWarning() != null) {
@@ -339,7 +340,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 				try {
 
-					nonperiodicTimestamp = HelperMethods.extract_datestamp(res.getValue(key));
+					nonperiodicTimestamp = new Date(new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(res.getValue(key)).getTime());
 
 				} catch (ParseException ex) {
 
@@ -383,7 +384,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
 
-			stmtconn.loadStatement(UpdateInDBSybase.ServicesScheduling(stmtconn.connection, name, serviceId, status, info, periodic,
+			stmtconn.loadStatement(DBAccessNG.updateInDB().ServicesScheduling(stmtconn.connection, name, serviceId, status, info, periodic,
 					nonperiodicTimestamp, periodicInterval, periodicDays, jobId));
 			this.result = stmtconn.execute();
 
@@ -546,8 +547,8 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 			} else if (key.equalsIgnoreCase("nonperiodic_date")) {
 
 				try {
-
-					nonperiodicTimestamp = HelperMethods.extract_datestamp(res.getValue(key));
+					System.out.println("date:: "+ res.getValue(key));
+					nonperiodicTimestamp = new Date(new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(res.getValue(key)).getTime());
 
 				} catch (ParseException ex) {
 
@@ -591,8 +592,12 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
 
-			stmtconn.loadStatement(InsertIntoDBSybase.ServicesScheduling(stmtconn.connection, name, serviceId, status, info, periodic,
+			stmtconn.loadStatement(DBAccessNG.insertIntoDB().ServicesScheduling(stmtconn.connection, name, serviceId, status, info, periodic,
 					nonperiodicTimestamp, periodicInterval, periodicDays));
+			
+			System.out.println(name + "   " + serviceId + "   " + status + "   " + info + "   " + periodic
+					 + "   " + nonperiodicTimestamp  + "   " + periodicInterval  + "   " +  periodicDays);
+			
 			this.result = stmtconn.execute();
 
 			System.out.println("Update Count: " + this.result.getUpdateCount());

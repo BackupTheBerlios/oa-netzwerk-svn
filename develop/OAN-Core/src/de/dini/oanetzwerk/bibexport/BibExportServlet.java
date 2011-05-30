@@ -192,7 +192,7 @@ public class BibExportServlet extends HttpServlet {
 		// DupPro - Abfrage
 		////////////////////////////			
 		
-		stmtconn.loadStatement (SelectFromDBSybase.DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
 		QueryResult dupproResult = stmtconn.execute ( );
 		
 		if (dupproResult.getWarning ( ) != null)
@@ -218,7 +218,7 @@ public class BibExportServlet extends HttpServlet {
 		// Fulltextlink - Abfrage
 		//////////////////////////
 		
-		stmtconn.loadStatement (SelectFromDBSybase.FullTextLinks (stmtconn.connection, cmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().FullTextLinks (stmtconn.connection, cmf.getOid()));
 		QueryResult ftlResult = stmtconn.execute ( );
 		
 		if (ftlResult.getWarning ( ) != null)
@@ -236,7 +236,7 @@ public class BibExportServlet extends HttpServlet {
 		// RepositoryData - Abfrage
 		////////////////////////////
 		
-		stmtconn.loadStatement (SelectFromDBSybase.RepositoryData(stmtconn.connection, cmf.getOid()));
+		stmtconn.loadStatement (DBAccessNG.selectFromDB().RepositoryData(stmtconn.connection, cmf.getOid()));
 		QueryResult repdataResult = stmtconn.execute ( );
 		
 		if (repdataResult.getWarning ( ) != null)
