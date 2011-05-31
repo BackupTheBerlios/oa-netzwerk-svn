@@ -3,10 +3,10 @@ package de.dini.oanetzwerk.admin;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,10 +23,10 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.quartz.Job;
 
 import de.dini.oanetzwerk.admin.SchedulingBean.SchedulingIntervalType;
 import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
+import de.dini.oanetzwerk.admin.scheduling.SchedulerControl;
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -46,6 +46,9 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 	@ManagedProperty(value = "#{restConnector}")
 	private RestConnector restConnector;
+	
+//	@ManagedProperty(value = "#{schedulerControl}")
+	private SchedulerControl schedulerControl;
 
 	private List<SchedulingBean> jobList;
 	private SchedulingBean job;
@@ -60,7 +63,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	private String chosenRepository;
 	private Date   chosenDate;
 	private String chosenTime;
-
+	private boolean startRightNow = false;
 
 	private String intervalType = SchedulingIntervalType.Day.toString();
 	private String jobType = JobType.Repeatedly.toString();
@@ -97,6 +100,8 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	@PostConstruct
 	public void init() {
 
+		schedulerControl = SchedulerControl.getInstance();
+		
 		// init job object for a new job that might be created
 		job = new SchedulingBean();
 
@@ -596,6 +601,10 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		this.restConnector = restConnector;
 	}
 
+//	public void setSchedulerControl(SchedulerControl schedulerControl) {
+//    	this.schedulerControl = schedulerControl;
+//    }
+
 	public Map<String, Long> getRepositories() {
 		return repoList;
 	}
@@ -607,4 +616,14 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	public void setChosenRepository(String chosenRepository) {
 		this.chosenRepository = chosenRepository;
 	}
+
+	public boolean isStartRightNow() {
+    	return startRightNow;
+    }
+
+	public void setStartRightNow(boolean startRightNow) {
+    	this.startRightNow = startRightNow;
+    }
+	
+	
 }

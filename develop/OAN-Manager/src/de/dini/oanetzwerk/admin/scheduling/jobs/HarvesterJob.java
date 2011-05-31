@@ -33,8 +33,8 @@ public class HarvesterJob extends AbstractServiceJob {
 	}
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		if (true)
-			return;
+//		if (true)
+//			return;
 		
 		System.out.println("Harvester job called");
 
@@ -54,16 +54,24 @@ public class HarvesterJob extends AbstractServiceJob {
 			// create harvesting settings
 			Map<String, String> data = new HashMap<String, String>();
 
-			data.put("repositoryID", "1");
+			data.put("harvestType", "full");
+			data.put("date", null);
+			data.put("url", null);
+			data.put("repositoryId", "4");
+			data.put("amount", "10");
+			data.put("interval", "5000");
+			data.put("testData", "true");
 			data.put("listRecords", "true");
 			// data.put(key, )
 
 			boolean started = service.start(data);
 			System.out.println("Client: " + started);
 
+			synchronized(this) {
 			for (int i = 0; i < 5; i++) {
 				this.wait(3000);
 				System.out.println(service.getCurrentStatus());
+			}
 			}
 			System.out.println("Harvester initiated.");
 

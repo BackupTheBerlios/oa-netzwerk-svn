@@ -8,10 +8,13 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.Properties;
 
+import javax.faces.bean.ManagedBean;
+
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
+import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
 import org.quartz.impl.StdSchedulerFactory;
@@ -21,12 +24,34 @@ import de.dini.oanetzwerk.admin.scheduling.jobs.HarvesterJob;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.Utils;
 
+@ManagedBean(name="schedulerControl")
 public class SchedulerControl {
 
 	private Properties restProperties;
 	
+	private static SchedulerControl instance = null;
+	
+	private SchedulerControl() {
+	    super();
+	    try {
+	        
+	    	initAndStartScheduler();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+    }
+
+
+	public static synchronized SchedulerControl getInstance() {
+		if (instance == null) {
+			instance = new SchedulerControl();
+		}
+		return instance;
+	}
+	
 	public void initAndStartScheduler() throws SchedulerException {
 
+		System.out.println("SchedulerControl initiated!");
 		
 		try {
 			
@@ -67,6 +92,7 @@ public class SchedulerControl {
 	
 	
 	private List<AbstractServiceJob> loadServiceJobsFromDB() {
+		System.out.println("Scheduling job...");
 		
 		List<AbstractServiceJob> persistedJobs = new ArrayList<AbstractServiceJob>();
 		
@@ -76,8 +102,7 @@ public class SchedulerControl {
 		
 		HarvesterJob job1 = new HarvesterJob();
 		job1.setServiceName("harvester");
-		job1.setInterval(123);
-		job1.setRepositoryId(2);
+		job1.setRepositoryId(4);
 		job1.setProcessingType(ProcessingType.SINGLE);
 		job1.setAdditionalInfo("Bla bla");
 		
@@ -88,11 +113,12 @@ public class SchedulerControl {
 	private Trigger getTriggerForJob(AbstractServiceJob job) {
 		
 		
-		
-		Trigger trigger = TriggerUtils.makeSecondlyTrigger();
-		trigger.setStartTime(TriggerUtils.getEvenSecondDate(new Date())); // start on the next even hour
-		trigger.setName("harvesterTrigger");
-		
-		return trigger;
+		return new SimpleTrigger("test", new Date());
+
+//		Trigger trigger = TriggerUtils.makeImmediateTrigger("harvesterTrigger", , repeatInterval)makeSecondlyTrigger();
+//		trigger.setStartTime(TriggerUtils.getEvenSecondDate(new Date())); // start on the next even hour
+//		trigger.setName("harvesterTrigger");
+//		
+//		return trigger;
 	}
 }

@@ -14,7 +14,7 @@ public class SchedulingBean {
 	private boolean periodic = false;
 	private Date nonperiodicTimestamp = null;
 	private SchedulingIntervalType periodicInterval = null;
-	private int periodicDays = -1;
+	private int periodicDays = 0;
 
 	
 	public SchedulingBean() {
