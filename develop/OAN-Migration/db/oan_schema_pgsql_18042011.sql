@@ -652,5 +652,28 @@ CREATE TABLE "public"."Worklist" (
 )
 WITH (OIDS=FALSE);
 
+-- ----------------------------
+-- Table structure for "public"."ServicesScheduling"
+-- ----------------------------
+
+DROP TABLE IF EXISTS "public"."ServicesScheduling";
+CREATE TABLE "public"."ServicesScheduling" (
+	   job_id serial CONSTRAINT servicesscheduling_job_id PRIMARY KEY,
+       service_id bigserial CONSTRAINT servicesscheduling_repo_id REFERENCES "Repositories"(repository_id),
+       name varchar(256) NOT NULL,
+       status varchar(100) NOT NULL,
+       info varchar(512),
+       periodic bool NOT NULL,
+       nonperiodic_date timestamp,
+       periodic_interval_type varchar(30),
+       periodic_interval_days smallint
+) WITH (OIDS=FALSE);
+
+
+
+-- ----------------------------
+-- CREATE INDEXES
+-- ----------------------------
+
 
 
