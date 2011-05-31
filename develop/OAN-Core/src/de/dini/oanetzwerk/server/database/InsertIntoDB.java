@@ -5,10 +5,11 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public interface InsertIntoDB {
 
-	public abstract PreparedStatement ServicesScheduling(Connection connection, String name, BigDecimal service_id, String status, String info, boolean periodic, Date nonperiodicDate,
+	public abstract PreparedStatement ServicesScheduling(Connection connection, String name, BigDecimal service_id, String status, String info, boolean periodic, Timestamp nonperiodicDate,
 			String periodicInterval, int periodicDays) throws SQLException;
 
 	public abstract PreparedStatement Repository(Connection connection, String name, String url, String oaiUrl, String owner, String ownerEmail, Integer harvestAmount,

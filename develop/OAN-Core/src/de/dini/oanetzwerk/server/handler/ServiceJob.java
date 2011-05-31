@@ -3,6 +3,7 @@ package de.dini.oanetzwerk.server.handler;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
@@ -502,7 +503,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 		String status = null;
 		String info = null;
 		boolean periodic = false;
-		Date nonperiodicTimestamp = null;
+		Timestamp nonperiodicTimestamp = null;
 		String periodicInterval = null;
 		int periodicDays = 0;
 
@@ -548,7 +549,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 				try {
 					System.out.println("date:: "+ res.getValue(key));
-					nonperiodicTimestamp = new Date(new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(res.getValue(key)).getTime());
+					nonperiodicTimestamp = new Timestamp(new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(res.getValue(key)).getTime());
 
 				} catch (ParseException ex) {
 

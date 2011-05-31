@@ -35,7 +35,8 @@ public class HarvesterRMI implements IService {
 	
 	private int updateInterval = 5000;
 	private StringBuffer messages = new StringBuffer();
-
+	private boolean working = false;
+	
 	public HarvesterRMI() {
 		super();
 	}
@@ -96,7 +97,7 @@ public class HarvesterRMI implements IService {
 			
 			synchronized (this) {
 
-				while (true) {
+				while (working) {
 
 					if (registry == null)
 						registry = getRegistry();
@@ -181,33 +182,57 @@ public class HarvesterRMI implements IService {
 	@SuppressWarnings("static-access")
 	public boolean start(Map<String, String> data) throws RemoteException {
 
-		// execute Server
-
+		// execute Server		
+		
 		// create a new instance of the harvester and set
-//		harvester = Harvester.getHarvester();
-//		harvester.prepareHarvester(Integer.parseInt(data.get("repositoryId")));
-//
-//		String baseUrl = "";
-//
-//		harvester.filterDate(data.get("date"));
-//		harvester.filterAmount(data.get("amount"));
-//		harvester.filterInterval(data.get("interval"));
-//
-//		harvester.setTestData(Boolean.getBoolean(data.get("testData")));
-//		harvester.setListRecords(Boolean.getBoolean(data.get("listRecords")));
-//
-//
-//		if (logger.isDebugEnabled()) {
-//
-//			logger.debug("Data after processing the CommandLine:");
-//			logger.debug("oai_url: " + harvester.getRepositoryURL());
-//			logger.debug("test_data: " + harvester.isTestData());
-//			logger.debug("harvest_amount: " + harvester.getAmount());
-//			logger.debug("harvest_pause: " + harvester.getInterval());
-//		}
-//
-//		harvester.processRepository();
+		harvester = Harvester.getHarvester();
+		harvester.prepareHarvester(Integer.parseInt(data.get("repositoryId")));
 
+		String baseUrl = "";
+
+		harvester.filterUrl(data.get("url"));
+		//sets the type (full | update)
+		String type = data.get("harvestType"); // can be 'full' or 'update' 
+		
+		if (type != null && (type.equals("full") || type.equals("update"))) {
+			this.harvester.setFullharvest(type.equals("full"));
+			
+			if (type.equals("update") && data.get("date") == null) {
+				logger.warn("Harvester can only run in update mode if a valid date argument is specified!");
+			}
+		} else {
+			logger.warn("Harvest type was not specified! (full or update)");
+		}
+		
+		if (!harvester.isFullharvest ( ))
+			harvester.filterDate(data.get("date"));
+		
+		
+		harvester.filterAmount(data.get("amount"));
+		harvester.filterInterval(data.get("interval"));
+
+		harvester.setTestData(Boolean.getBoolean(data.get("testData")));
+		harvester.setListRecords(Boolean.getBoolean(data.get("listRecords")));
+
+
+		if (logger.isDebugEnabled()) {
+
+			logger.debug("Data after processing the CommandLine:");
+			logger.debug("oai_url: " + harvester.getRepositoryURL());
+			logger.debug("test_data: " + harvester.isTestData());
+			logger.debug("harvest_amount: " + harvester.getAmount());
+			logger.debug("harvest_pause: " + harvester.getInterval());
+		}
+
+		// start the harvester
+		harvester.processRepository();
+		
+		// set to working
+		working = true;
+		
+		// start sending updates to RMI-listener (HarvesterMonitorService)
+		publishUpdates();
+		
 		logger.info("Harvester started...");
 		return true;
 	}
@@ -221,6 +246,7 @@ public class HarvesterRMI implements IService {
 
 		this.harvester.setStopped(true);
 		this.harvester = null;
+		working = false;
 		return true;
 	}
 

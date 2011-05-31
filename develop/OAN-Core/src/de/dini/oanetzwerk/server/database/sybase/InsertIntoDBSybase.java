@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
 
@@ -940,7 +941,7 @@ public class InsertIntoDBSybase implements InsertIntoDB {
 
 	
 	@Override
-	public PreparedStatement ServicesScheduling(Connection connection, String name, BigDecimal service_id, String status, String info, boolean periodic, Date nonperiodicDate, String periodicInterval, int periodicDays) throws SQLException {
+	public PreparedStatement ServicesScheduling(Connection connection, String name, BigDecimal service_id, String status, String info, boolean periodic, Timestamp nonperiodicDate, String periodicInterval, int periodicDays) throws SQLException {
 
 		if (logger.isDebugEnabled()) {
 
@@ -954,7 +955,7 @@ public class InsertIntoDBSybase implements InsertIntoDB {
 		preparedstmt.setString(3, status);
 		preparedstmt.setString(4, info);
 		preparedstmt.setBoolean(5, periodic);
-		preparedstmt.setDate(6, nonperiodicDate);
+		preparedstmt.setTimestamp(6, nonperiodicDate);
 		preparedstmt.setString(7, periodicInterval);
 		preparedstmt.setInt(8, periodicDays);
 
