@@ -142,7 +142,7 @@ public class IndexerAccessServlet extends HttpServlet {
 				
 		List<String> listOIDs = new ArrayList<String>();
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = DBAccessNG.getInstance();
 		SingleStatementConnection stmtconn = null;
 
 		try {
@@ -216,7 +216,7 @@ public class IndexerAccessServlet extends HttpServlet {
 		CompleteMetadata cmf = new CompleteMetadata();
 		cmf.setOid(bdOID);
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = DBAccessNG.getInstance();
 		MultipleStatementConnection stmtconn = null;
 		@SuppressWarnings("unused")
 		RestEntrySet res = new RestEntrySet ( );

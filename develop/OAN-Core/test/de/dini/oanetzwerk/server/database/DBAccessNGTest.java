@@ -57,7 +57,7 @@ public class DBAccessNGTest {
 	@Test
 	public final void testDBAccessNG ( ) {
 		
-		DBAccessNG dbaccess = new DBAccessNG ( );
+		DBAccessNG dbaccess = DBAccessNG.getInstance();
 		
 		assertNotNull (dbaccess);
 		dbaccess = null;
@@ -69,7 +69,7 @@ public class DBAccessNGTest {
 	@Test
 	public final void testDBAccessNGString ( ) {
 
-		DBAccessNG dbaccess = new DBAccessNG ("jdbc/oanetztest");
+		DBAccessNG dbaccess = DBAccessNG.getInstance("jdbc/oanetztest");
 		
 		assertNotNull (dbaccess);
 		
@@ -84,7 +84,7 @@ public class DBAccessNGTest {
 	@Test
 	public final void testGetSingleStatementConnection ( ) throws WrongStatementException {
 
-		DBAccessNG dbaccess = new DBAccessNG ( );
+		DBAccessNG dbaccess = DBAccessNG.getInstance();;
 		
 		try {
 			
@@ -104,7 +104,7 @@ public class DBAccessNGTest {
 	@Test
 	public final void testGetMultipleStatementConnection ( ) throws WrongStatementException {
 
-		DBAccessNG dbaccess = new DBAccessNG ( );
+		DBAccessNG dbaccess = DBAccessNG.getInstance();
 		
 		try {
 			

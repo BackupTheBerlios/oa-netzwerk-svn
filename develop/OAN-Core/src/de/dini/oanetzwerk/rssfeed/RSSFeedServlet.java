@@ -220,7 +220,7 @@ public class RSSFeedServlet extends HttpServlet {
 		
 		
 
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = DBAccessNG.getInstance();
 		MultipleStatementConnection stmtconn = null;
 		List<SyndEntry> listDBEntries = new ArrayList<SyndEntry>();
 		try {
@@ -270,7 +270,7 @@ public class RSSFeedServlet extends HttpServlet {
 		List<SyndEntry> listEntries = new ArrayList<SyndEntry>();	
 		List<BigDecimal> listOIDsToExport = new ArrayList<BigDecimal>();
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = DBAccessNG.getInstance();
 		MultipleStatementConnection stmtconn = null;
 		
 		/////////////////////////////////
@@ -365,7 +365,7 @@ public class RSSFeedServlet extends HttpServlet {
 			return mySyndFeed;
 		}
 		
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = DBAccessNG.getInstance();
 		MultipleStatementConnection stmtconn = null;
 		try {
 

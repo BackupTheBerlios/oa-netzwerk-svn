@@ -32,13 +32,15 @@ public class DBAccessNG {
 
 	private static Logger logger = Logger.getLogger(DBAccessNG.class);
 
-	private static int defaultPoolSize = 3;
+	private static int defaultPoolSize = 5;
 
 	private DataSource datasource;
 
 	private List<Connection> pool = new ArrayList<Connection>();
 
 	private int currentPoolCursor = 0;
+	
+	private static DBAccessNG instance = null;
 	
 	private static final String PG_DRIVER = "";
 	private static final String SYBASE_DRIVER = "";
@@ -55,12 +57,13 @@ public class DBAccessNG {
 	/**
 	 * 
 	 */
-	public DBAccessNG() {
+	private DBAccessNG() {
 
 		if (logger.isDebugEnabled())
 			logger.debug("DBAccessNG Instance will be prepared!");
 
 		try {
+			System.out.println("DBAccessNG - new instance1");
 			this.datasource = (DataSource) ((Context) new InitialContext().lookup("java:comp/env")).lookup("jdbc/oanetztest");
 
 			initDriverClass();
@@ -75,13 +78,13 @@ public class DBAccessNG {
 	/**
 	 * 
 	 */
-	public DBAccessNG(String dataSource) {
+	private DBAccessNG(String dataSource) {
 
 		if (logger.isDebugEnabled())
 			logger.debug("DBAccessNG Instance will be prepared!");
 
 		try {
-
+			System.out.println("DBAccessNG - new instance2");
 			this.datasource = (DataSource) ((Context) new InitialContext().lookup("java:comp/env")).lookup(dataSource);
 
 			initDriverClass();
@@ -92,6 +95,19 @@ public class DBAccessNG {
 		}
 	}
 
+	public static synchronized DBAccessNG getInstance() {
+		if (instance == null) {
+			instance = new DBAccessNG();
+		}
+		return instance;
+	}
+	
+	public static synchronized DBAccessNG getInstance(String dataSource) {
+		if (instance == null) {
+			instance = new DBAccessNG(dataSource);
+		}
+		return instance;
+	}
 	
 	private void initDriverClass() {
 		

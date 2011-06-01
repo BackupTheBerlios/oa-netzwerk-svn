@@ -71,7 +71,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 		this.rms = new RestMessage (RestKeyword.LoginData);
 		RestEntrySet entrySet = new RestEntrySet ( );
 
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -217,7 +217,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 		
 		this.rms = new RestMessage (RestKeyword.LoginData);
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		res = new RestEntrySet ( );
 		
@@ -335,7 +335,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 		
 		String name = new String (path[0]);
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.ServiceNotifier);

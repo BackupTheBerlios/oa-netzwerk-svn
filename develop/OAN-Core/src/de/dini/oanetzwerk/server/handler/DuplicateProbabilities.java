@@ -67,7 +67,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.DuplicateProbabilities);
@@ -171,7 +171,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -291,7 +291,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 		this.rms = RestXmlCodec.decodeRestMessage(data);
 		RestEntrySet res = null;
 
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		
 		String key = "";

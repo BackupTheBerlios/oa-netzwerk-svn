@@ -92,7 +92,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 			}
 		}
 
-		DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 
 		try {
@@ -257,7 +257,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 				                + "/harvestedtoday/ or /markedtoday/ should not contain any data in body! Ignoring data: \n" + data);
 			}
 
-			DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+			DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 			SingleStatementConnection stmtconn = null;
 
 			try {
@@ -328,7 +328,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 			logger.warn("Request contained no data section. Cannot proceed!");
 		}
 
-		DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 
 		RestMessage msg = RestXmlCodec.decodeRestMessage(data);

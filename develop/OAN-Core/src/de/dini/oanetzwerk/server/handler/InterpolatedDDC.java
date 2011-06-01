@@ -58,7 +58,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.InterpolatedDDC);
@@ -163,7 +163,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -282,7 +282,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 		this.rms = RestXmlCodec.decodeRestMessage(data);
 		RestEntrySet res = null;
 
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		
 		String key = "";

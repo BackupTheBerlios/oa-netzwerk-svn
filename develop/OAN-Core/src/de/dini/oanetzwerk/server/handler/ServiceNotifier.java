@@ -101,7 +101,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 		this.rms = new RestMessage (RestKeyword.ServiceNotifier);
 		RestEntrySet entrySet = new RestEntrySet ( );
 
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -250,7 +250,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 		
 		this.rms = new RestMessage (RestKeyword.ServiceNotifier);
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		res = new RestEntrySet ( );
 		
@@ -354,7 +354,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.ServiceNotifier);

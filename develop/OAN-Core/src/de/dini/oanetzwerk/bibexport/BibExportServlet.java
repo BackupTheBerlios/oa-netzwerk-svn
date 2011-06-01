@@ -134,7 +134,7 @@ public class BibExportServlet extends HttpServlet {
 			} catch(Exception ex) {}			
 		}
 				
-		DBAccessNG dbng = new DBAccessNG ( );
+		DBAccessNG dbng = DBAccessNG.getInstance();
 		MultipleStatementConnection stmtconn = null;
 		try {
 

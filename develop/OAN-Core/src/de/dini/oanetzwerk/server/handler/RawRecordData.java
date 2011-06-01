@@ -90,7 +90,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -255,7 +255,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));		
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());	
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
@@ -368,15 +368,15 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));		
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());	
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
-		if (logger.isDebugEnabled ( ))
+		if (logger.isInfoEnabled ( ))
 			
 			try {
 				
-				logger.debug ("The following values will be inserted:\n\tinternal OID = " + object_id +
+				logger.info ("The following values will be inserted:\n\tinternal OID = " + object_id +
 						"\n\tRepository Datestamp = " + repository_timestamp +
 						"\n\tData = " + new String (Base64.decodeBase64((data).getBytes ("UTF-8"))) +
 						"\n\tMetaDataFormat = " + metaDataFormat);

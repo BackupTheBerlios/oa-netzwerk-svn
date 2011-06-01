@@ -40,7 +40,7 @@ public class UnneededData extends AbstractKeyWordHandler implements KeyWord2Data
 	@Override
 	protected String deleteKeyWord (String [ ] path) throws NotEnoughParametersException {
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		

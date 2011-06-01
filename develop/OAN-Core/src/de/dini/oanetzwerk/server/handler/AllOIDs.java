@@ -196,7 +196,7 @@ public class AllOIDs extends AbstractKeyWordHandler implements KeyWord2DatabaseI
 		this.rms = new RestMessage (RestKeyword.AllOIDs);
 		RestEntrySet entrySet = new RestEntrySet ( );
 
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		
 		try {

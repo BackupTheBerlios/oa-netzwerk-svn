@@ -71,7 +71,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 			return RestXmlCodec.encodeRestMessage(this.rms);
 		}
 
-		DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 
 		this.rms = new RestMessage(RestKeyword.UsageData);
@@ -189,7 +189,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 			return RestXmlCodec.encodeRestMessage(this.rms);
 		}
 
-		DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 
 		try {
@@ -326,7 +326,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 		RestEntrySet res = null;
 		List<RestEntrySet> requestEntrySets = this.rms.getListEntrySets();
 
-		DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 
 		String key = "";
@@ -505,7 +505,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 		this.rms = new RestMessage(RestKeyword.UsageData);
 		RestEntrySet entrySet = new RestEntrySet();
 
-		DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 
 		try {

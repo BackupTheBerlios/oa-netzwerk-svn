@@ -69,7 +69,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 		if (path.length < 1) {
 
-			DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+			DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 			SingleStatementConnection stmtconn = null;
 			RestEntrySet res = new RestEntrySet();
 
@@ -179,7 +179,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 			return RestXmlCodec.encodeRestMessage(this.rms);
 		}
 
-		DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet();
 
@@ -297,7 +297,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 		boolean periodic = false;
 		Date nonperiodicTimestamp = null;
 		String periodicInterval = null;
-		int periodicDays = -1;
+		int periodicDays = 0;
 
 		this.rms = RestXmlCodec.decodeRestMessage(data);
 		RestEntrySet res = this.rms.getListEntrySets().get(0);
@@ -375,7 +375,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 			}
 		}
 
-		DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 
 		this.rms = new RestMessage(RestKeyword.ServiceJob);
@@ -583,7 +583,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 			}
 		}
 
-		DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 
 		this.rms = new RestMessage(RestKeyword.ServiceJob);

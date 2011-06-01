@@ -224,7 +224,7 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 		this.rms = new RestMessage (RestKeyword.ObjectServiceStatus);
 		RestEntrySet entrySet = new RestEntrySet ( );
 
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		
 		try {

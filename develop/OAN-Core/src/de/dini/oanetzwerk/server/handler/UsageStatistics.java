@@ -64,7 +64,7 @@ public class UsageStatistics extends AbstractKeyWordHandler implements KeyWord2D
 	@Override
 	protected String getKeyWord(String[] path) throws NotEnoughParametersException {
 
-		DBAccessNG dbng = new DBAccessNG(super.getDataSource());
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet();
 

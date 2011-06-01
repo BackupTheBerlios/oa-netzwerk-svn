@@ -71,7 +71,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.FullTextLinks);
@@ -179,7 +179,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		
 		try {
@@ -342,7 +342,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 		
 		this.rms = new RestMessage (RestKeyword.FullTextLinks);
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());;
 		MultipleStatementConnection stmtconn = null;
 		res = new RestEntrySet ( );
 		

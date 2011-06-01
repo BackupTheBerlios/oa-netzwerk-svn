@@ -89,7 +89,7 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 			}
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		
 		try {

@@ -70,7 +70,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 //		if (path.length < 1)
 //			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the internal object ID");
 				
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		

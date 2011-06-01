@@ -75,7 +75,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.ObjectEntry);
@@ -314,7 +314,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 						path [3] + " is NOT a number!");
 			}
 
-			DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+			DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 			SingleStatementConnection stmtconn = null;
 			RestEntrySet res = new RestEntrySet ( );
 			
@@ -344,8 +344,8 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 					res.addEntry ("repository_identifier", this.result.getResultSet ( ).getString ("repository_identifier"));
 					res.addEntry ("testdata", Boolean.toString (this.result.getResultSet ( ).getBoolean ("testdata")));
 					res.addEntry ("failure_counter", Integer.toString (this.result.getResultSet ( ).getInt ("failure_counter")));
-					res.addEntry ("peculiar", Integer.toString (this.result.getResultSet ( ).getInt ("peculiar")));
-					res.addEntry ("outdated", Integer.toString (this.result.getResultSet ( ).getInt ("outdated")));
+					res.addEntry ("peculiar", Boolean.toString (this.result.getResultSet ( ).getBoolean ("peculiar")));
+					res.addEntry ("outdated", Boolean.toString (this.result.getResultSet ( ).getBoolean ("outdated")));
 					res.addEntry ("peculiar_counter", Integer.toString (this.result.getResultSet ( ).getInt ("peculiar_counter")));
 					this.rms.addEntrySet(res);
 				}
@@ -411,7 +411,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		RestEntrySet res = new RestEntrySet ( );
 		
@@ -444,8 +444,8 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 				res.addEntry ("repository_identifier", this.result.getResultSet ( ).getString ("repository_identifier"));
 				res.addEntry ("testdata", Boolean.toString (this.result.getResultSet ( ).getBoolean ("testdata")));
 				res.addEntry ("failure_counter", Integer.toString (this.result.getResultSet ( ).getInt ("failure_counter")));
-				res.addEntry ("peculiar", Integer.toString (this.result.getResultSet ( ).getInt ("peculiar")));
-				res.addEntry ("outdated", Integer.toString (this.result.getResultSet ( ).getInt ("outdated")));
+				res.addEntry ("peculiar", Boolean.toString (this.result.getResultSet ( ).getBoolean ("peculiar")));
+				res.addEntry ("outdated", Boolean.toString (this.result.getResultSet ( ).getBoolean ("outdated")));
 				
 				this.rms.setStatus (RestStatusEnum.OK);
 				this.rms.addEntrySet (res);
@@ -641,7 +641,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 			harvested = HelperMethods.today ( );
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));		
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());	
 		MultipleStatementConnection stmtconn = null;
 		
 		this.rms = new RestMessage (RestKeyword.ObjectEntry);
@@ -795,7 +795,7 @@ public class ObjectEntry extends AbstractKeyWordHandler implements KeyWord2Datab
 
 		Date harvested = HelperMethods.today ( );
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));		
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());		
 		MultipleStatementConnection stmtconn = null;
 		
 		if (logger.isDebugEnabled ( ))

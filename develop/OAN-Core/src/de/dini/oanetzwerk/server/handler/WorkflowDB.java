@@ -101,7 +101,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		SingleStatementConnection stmtconn = null;
 		
 		BigDecimal repository_id = null;
@@ -292,7 +292,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		
-		DBAccessNG dbng = new DBAccessNG (super.getDataSource ( ));
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 		MultipleStatementConnection stmtconn = null;
 		res = new RestEntrySet ( );
 		

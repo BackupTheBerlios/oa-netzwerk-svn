@@ -47,7 +47,7 @@ class DBDataConnection extends DataConnection {
 
 	public DBDataConnection() {
 
-		this.dbng = new DBAccessNG();
+		this.dbng = DBAccessNG.getInstance();
 	}
 
 	/**
