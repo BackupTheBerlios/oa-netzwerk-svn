@@ -8,12 +8,15 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.log4j.Logger;
+
 @ManagedBean(name = "language")
 @SessionScoped
 public class LanguageSwitcherBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	private static final Logger logger = Logger.getLogger(LanguageSwitcherBean.class);
+	
 	private String localeCode;
 	private Locale locale;
 	
@@ -43,7 +46,7 @@ public class LanguageSwitcherBean implements Serializable {
 	}
 
 	public Locale getLocale() {
-		System.out.println("locale: " + locale);
+		logger.debug("locale: " + locale);
 		return locale == null ? FacesContext.getCurrentInstance().getViewRoot().getLocale() : locale;
 	}
 	

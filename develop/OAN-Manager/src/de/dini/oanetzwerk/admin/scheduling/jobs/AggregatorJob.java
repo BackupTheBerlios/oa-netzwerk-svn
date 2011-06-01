@@ -12,10 +12,11 @@ import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
 import de.dini.oanetzwerk.admin.utils.RMIRegistryHelper;
 import de.dini.oanetzwerk.servicemodule.IService;
 
-public class AggregatorJob {
+public class AggregatorJob extends AbstractServiceJob {
 
 	private static Logger logger = Logger.getLogger(HarvesterJob.class);
 

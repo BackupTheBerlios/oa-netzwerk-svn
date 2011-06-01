@@ -47,7 +47,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	@ManagedProperty(value = "#{restConnector}")
 	private RestConnector restConnector;
 	
-//	@ManagedProperty(value = "#{schedulerControl}")
+	@ManagedProperty(value = "#{schedulerControl}")
 	private SchedulerControl schedulerControl;
 
 	private List<SchedulingBean> jobList;
@@ -100,7 +100,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	@PostConstruct
 	public void init() {
 
-		schedulerControl = SchedulerControl.getInstance();
+//		schedulerControl = SchedulerControl.getInstance();
 		
 		// init job object for a new job that might be created
 		job = new SchedulingBean();
@@ -624,6 +624,11 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	public void setStartRightNow(boolean startRightNow) {
     	this.startRightNow = startRightNow;
     }
+
+	public void setSchedulerControl(SchedulerControl schedulerControl) {
+    	this.schedulerControl = schedulerControl;
+    }
+	
 	
 	
 }

@@ -218,6 +218,7 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 		return "success";
 	}
 
+	// TODO: reimplement
 //	public String delete() {
 //
 //		System.out.println("delete!");
@@ -247,37 +248,37 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 //		return "";
 //	}
 
-	public String deactivate() {
-
-		System.out.println("deactivate!");
-
-		System.out.println("Name: " + repository.getName());
-		System.out.println("Url: " + repository.getUrl());
-		System.out.println("" + repository.getHarvestAmount());
-		try {
-
-			SingleStatementConnection stmtconn = (SingleStatementConnection) new DBAccessNG()
-					.getSingleStatementConnection();
-			PreparedStatement statement = UpdateInDB.Repository(
-					stmtconn.connection, repository.getId(), false);
-
-			new DBHelper().save(stmtconn, statement);
-
-			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"info.success_deactivated", null));
-
-		} catch (WrongStatementException ex) {
-			logger.error(ex.getLocalizedMessage(), ex);
-			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Error", null));
-		} catch (SQLException ex) {
-			logger.error(ex.getLocalizedMessage(), ex);
-			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Error", null));
-		}
-
-		return "";
-	}
+//	public String deactivate() {
+//
+//		System.out.println("deactivate!");
+//
+//		System.out.println("Name: " + repository.getName());
+//		System.out.println("Url: " + repository.getUrl());
+//		System.out.println("" + repository.getHarvestAmount());
+//		try {
+//
+//			SingleStatementConnection stmtconn = (SingleStatementConnection) new DBAccessNG()
+//					.getSingleStatementConnection();
+//			PreparedStatement statement = UpdateInDB.Repository(
+//					stmtconn.connection, repository.getId(), false);
+//
+//			new DBHelper().save(stmtconn, statement);
+//
+//			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+//					"info.success_deactivated", null));
+//
+//		} catch (WrongStatementException ex) {
+//			logger.error(ex.getLocalizedMessage(), ex);
+//			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//					"Error", null));
+//		} catch (SQLException ex) {
+//			logger.error(ex.getLocalizedMessage(), ex);
+//			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//					"Error", null));
+//		}
+//
+//		return "";
+//	}
 
 	
 	public Repository getRepository() {

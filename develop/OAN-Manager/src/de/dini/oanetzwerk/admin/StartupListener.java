@@ -27,8 +27,7 @@ public class StartupListener implements ServletContextListener, IHarvesterMonito
 	@Override
     public void contextInitialized(ServletContextEvent arg0) {
 
-		System.out.println("XXXXXXXXXX");
-		logger.info("XXXXXXXXXXXXXXXXX");
+		logger.info("Initializing rmi-monitoring service ...");
 		// do stuff right on the webapp startup and not just on a page visit
 		// TODO: start the RMI-monitor service 
 		
@@ -60,9 +59,9 @@ public class StartupListener implements ServletContextListener, IHarvesterMonito
 			}
 
 			registry.rebind(SERVICE_NAME, stub);
-			System.out.println(SERVICE_NAME + " bound");
+			logger.info(SERVICE_NAME + " bound");
 		} catch (Exception e) {
-			System.err.println(SERVICE_NAME + " could not be bound: ");
+			logger.warn(SERVICE_NAME + " could not be bound: ");
 			e.printStackTrace();
 		}
 
@@ -95,6 +94,7 @@ public class StartupListener implements ServletContextListener, IHarvesterMonito
 	@Override
     public void contextDestroyed(ServletContextEvent arg0) {
 	    
+		logger.info("Stopping rmi-monitoring service ...");
 	    stopMonitorService();
     }
 	
@@ -102,9 +102,10 @@ public class StartupListener implements ServletContextListener, IHarvesterMonito
 		logger.info("Unbinding " + SERVICE_NAME + " !");
 		
 		try {
-			System.out.println("registry == null : " + registry == null);
+
 			if (registry == null)
 			{
+				logger.info("Creating rmi-registry as there has no running instance been detected.");
 				registry = getRegistry();
 			}
 			registry.unbind(SERVICE_NAME);
