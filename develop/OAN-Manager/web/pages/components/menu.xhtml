@@ -78,7 +78,7 @@
 	      href="services_main.xhtml">Dienste verwalten</a></div>
 	</t:div>
 	
-	<t:div rendered="#{menu_services or menu_services_schedule}">
+	<t:div rendered="#{menu_services or menu_services_schedule or menu_services_schedule_add}">
 		<t:div rendered="#{menu_services}">	
 			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
 	      		href="services_main.xhtml"><b>Dienste verwalten</b></a></div>
@@ -88,12 +88,24 @@
 		<t:div rendered="#{menu_services_schedule}">	    
 		    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
       			href="services_schedule.xhtml"><b>Ablaufplan</b></a></div>
+            
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+                href="services_schedule_add.xhtml">Neuer Job</a></div>            
 		</t:div>
 		
-		<t:div rendered="#{not menu_services_schedule}">	 
+		<t:div rendered="#{menu_services_schedule_add}">	 
 			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
       			href="services_schedule.xhtml">Ablaufplan</a></div>
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+                href="services_schedule_add.xhtml"><b>Neuer Job</b></a></div>              
 		</t:div>
+    
+        <t:div rendered="#{not menu_services_schedule and not menu_services_schedule_add}">   
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+                href="services_schedule.xhtml">Ablaufplan</a></div>
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+                href="services_schedule_add.xhtml">Neuer Job</a></div>              
+        </t:div>    
 		</div>
 	</t:div>
 	

@@ -15,6 +15,8 @@ public class SchedulingBean {
 	private Date nonperiodicTimestamp = null;
 	private SchedulingIntervalType periodicInterval = null;
 	private int periodicDays = 0;
+	private boolean nonperiodicNow = false;
+	
 
 	
 	public SchedulingBean() {
@@ -122,4 +124,14 @@ public class SchedulingBean {
 		}
 		return interval;
     }
+
+	public boolean isNonperiodicNow() {
+    	return nonperiodicNow;
+    }
+
+	public void setNonperiodicNow(boolean nonperiodicNow) {
+    	this.nonperiodicNow = nonperiodicNow;
+    }
+	
+	
 }

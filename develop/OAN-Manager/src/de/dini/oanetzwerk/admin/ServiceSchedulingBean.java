@@ -26,7 +26,6 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.admin.SchedulingBean.SchedulingIntervalType;
 import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
-import de.dini.oanetzwerk.admin.scheduling.SchedulerControl;
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -44,11 +43,11 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	FacesContext ctx = FacesContext.getCurrentInstance();
 	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(false);
 
-	@ManagedProperty(value = "#{restConnector}")
-	private RestConnector restConnector;
-	
 	@ManagedProperty(value = "#{schedulerControl}")
 	private SchedulerControl schedulerControl;
+	
+	@ManagedProperty(value = "#{restConnector}")
+	private RestConnector restConnector;
 
 	private List<SchedulingBean> jobList;
 	private SchedulingBean job;
@@ -63,7 +62,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	private String chosenRepository;
 	private Date   chosenDate;
 	private String chosenTime;
-	private boolean startRightNow = false;
+	private boolean startRightNow;
 
 	private String intervalType = SchedulingIntervalType.Day.toString();
 	private String jobType = JobType.Repeatedly.toString();
@@ -96,7 +95,8 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	public boolean success() {
 		return deactivated || deleted || stored;
 	}
-
+ 
+	
 	@PostConstruct
 	public void init() {
 
@@ -115,8 +115,8 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		initRepositories();
 
 		// retrieve the jobs to be displayed
-		if (true)
-			return;
+//		if (true)
+//			return;
 
 		if (jobList != null && !jobList.isEmpty()) {
 			return;
@@ -219,12 +219,18 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 			}
 
 		} else if (JobType.OneTime.toString().equals(jobType)) {
-			try {
-				job.setNonperiodicTimestamp(new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(new SimpleDateFormat("dd.MM.yyyy").format(chosenDate) + " " + chosenTime));
-			} catch (ParseException e) {
-				// this should never happen
-				e.printStackTrace();
-				return "failure";
+			System.out.println("now: " + startRightNow);
+			if (startRightNow) {
+				job.setNonperiodicNow(true);
+				job.setNonperiodicTimestamp(new Date());
+			} else {
+				try {
+					job.setNonperiodicTimestamp(new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(new SimpleDateFormat("dd.MM.yyyy").format(chosenDate) + " " + chosenTime));
+				} catch (ParseException e) {
+					// this should never happen
+					e.printStackTrace();
+					return "failure";
+				}
 			}
 		}
 		System.out.println("bla");
@@ -340,16 +346,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 	}
 
-	// public List<String> getIntervalTypes() {
-	//
-	// List<String> intervalTypes = new ArrayList<String>();
-	//
-	// intervalTypes.add("monthly");
-	// intervalTypes.add("weekly");
-	// intervalTypes.add("day");
-	//
-	// return intervalTypes;
-	// }
 
 	public List<String> getMonthlyDays() {
 
@@ -556,10 +552,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		this.restConnector = restConnector;
 	}
 
-//	public void setSchedulerControl(SchedulerControl schedulerControl) {
-//    	this.schedulerControl = schedulerControl;
-//    }
-
 	public Map<String, Long> getRepositories() {
 		return repoList;
 	}
@@ -577,13 +569,13 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
     }
 
 	public void setStartRightNow(boolean startRightNow) {
+		System.out.println("setter now : " + startRightNow);
     	this.startRightNow = startRightNow;
     }
 
 	public void setSchedulerControl(SchedulerControl schedulerControl) {
     	this.schedulerControl = schedulerControl;
     }
-	
 	
 	
 }

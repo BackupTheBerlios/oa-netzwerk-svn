@@ -1,12 +1,11 @@
-package de.dini.oanetzwerk.admin.scheduling;
+package de.dini.oanetzwerk.admin;
 
 import static org.quartz.CalendarIntervalScheduleBuilder.calendarIntervalSchedule;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.CronScheduleBuilder.weeklyOnDayAndHourAndMinute;
 import static org.quartz.DateBuilder.tomorrowAt;
+import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
-import static org.quartz.SimpleScheduleBuilder.*;
-import static org.quartz.JobBuilder.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -35,14 +35,12 @@ import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
-import org.quartz.TriggerUtils;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Marker;
 
-import de.dini.oanetzwerk.admin.RestConnector;
-import de.dini.oanetzwerk.admin.SchedulingBean;
 import de.dini.oanetzwerk.admin.SchedulingBean.SchedulingIntervalType;
 import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
-import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob.ProcessingType;
+import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.AggregatorJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.HarvesterJob;
 import de.dini.oanetzwerk.codec.RestEntrySet;
@@ -70,12 +68,12 @@ public class SchedulerControl implements Serializable {
 
 	public SchedulerControl() {
 		super();
-		try {
-
-			initAndStartScheduler();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//
+//			initAndStartScheduler();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	// public static synchronized SchedulerControl getInstance() {
@@ -85,7 +83,8 @@ public class SchedulerControl implements Serializable {
 	// return instance;
 	// }
 
-	public void initAndStartScheduler() throws SchedulerException {
+	@PostConstruct
+	public void initAndStartScheduler() {
 
 		System.out.println("SchedulerControl initiated!");
 
@@ -94,13 +93,6 @@ public class SchedulerControl implements Serializable {
 			this.restProperties = HelperMethods.loadPropertiesFromFileWithinWebcontainerWebapps(Utils.getDefaultContext()
 					+ "/WEB-INF/admingui.xml");
 
-		} catch (InvalidPropertiesFormatException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 		SchedulerFactory factory = new StdSchedulerFactory();
 
@@ -113,10 +105,28 @@ public class SchedulerControl implements Serializable {
 
 		for (AbstractServiceJob job : jobsToSchedule) {
 
+			JobDetail jobDetail = null; 
+			if (job instanceof HarvesterJob) {
+				
+				jobDetail = newJob(HarvesterJob.class).withIdentity("job1", "group1").build();
+			} else if (job instanceof AggregatorJob) {
+				jobDetail = newJob(AggregatorJob.class).withIdentity("job1", "group1").build();
+			} else {
+				System.out.println("else");
+//				jobDetail = newJob(Marker.class).withIdentity("job1", "group1").build();
+			}
 			logger.info("Scheduling job of type " + job.getClass());
-			JobDetail jobDetail = newJob(job.getClass()).withIdentity("job1", "group1").build();
 
 			scheduler.scheduleJob(jobDetail, job.getTrigger());
+		}
+		} catch (InvalidPropertiesFormatException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SchedulerException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -137,7 +147,7 @@ public class SchedulerControl implements Serializable {
 		if (rms == null || rms.getListEntrySets().isEmpty()) {
 
 			logger.error("received no Repository Details at all from the server");
-			return null;
+			return persistedJobs;
 		}
 
 		for (RestEntrySet res : rms.getListEntrySets()) {
@@ -194,6 +204,8 @@ public class SchedulerControl implements Serializable {
 			}
 		}
 
+		System.out.println("null: " + persistedJobs == null);
+		System.out.println("size " + persistedJobs.size());
 		return persistedJobs;
 	}
 
@@ -385,4 +397,9 @@ public class SchedulerControl implements Serializable {
 		this.restConnector = restConnector;
 	}
 
+	public RestConnector getRestConnector() {
+    	return restConnector;
+    }
+
+	
 }
