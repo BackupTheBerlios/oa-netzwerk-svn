@@ -185,25 +185,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		System.out.println("radio1: " + radio1);
 		System.out.println("date: " + chosenDate);
 		System.out.println("time: " + chosenTime);
-		// REST call
-		RestMessage rms;
-		RestEntrySet res;
-		RestMessage result = null;
-
-		rms = new RestMessage();
-
-		rms.setKeyword(RestKeyword.ServiceJob);
-		rms.setStatus(RestStatusEnum.OK);
-
-		res = new RestEntrySet();
-
-		boolean jobIdSpecified = false;
-
-		if (job.getJobId() != null && job.getJobId() > 0) {
-			jobIdSpecified = true;
-			res.addEntry("job_id", job.getJobId().toString());
-		}
-
 		System.out.println("jobType: " + jobType);
 		System.out.println("intervalType: " + intervalType);
 
@@ -266,37 +247,11 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		}
 		System.out.println("date: " + job.getNonperiodicTimestamp());
 
-		res.addEntry("name", job.getName());
-		res.addEntry("status", job.getStatus().toString());
-		res.addEntry("info", job.getInfo());
-		res.addEntry("service_id", job.getServiceId().toString());
-		res.addEntry("periodic", Boolean.toString(job.isPeriodic()));
-		res.addEntry("nonperiodic_date", new SimpleDateFormat("dd-MM-yyyy HH:mm").format(job.getNonperiodicTimestamp()));
-		res.addEntry("periodic_interval", job.getPeriodicInterval() != null ? job.getPeriodicInterval().toString() : null);
-		res.addEntry("periodic_days", Integer.toString(job.getPeriodicDays()));
+		boolean stored = schedulerControl.storeJob(job);
 
-		System.out.println("interval: " + job.getPeriodicInterval());
-		System.out.println("days: " + job.getPeriodicDays());
-		rms.addEntrySet(res);
-
-		try {
-			result = restConnector.prepareRestTransmission("ServiceJob/" + (jobIdSpecified ? job.getJobId().toString() : ""))
-			                .sendPutRestMessage(rms);
-
-			if (rms.getStatus() != RestStatusEnum.OK) {
-
-				logger.error("/ServiceJob response failed: " + rms.getStatus() + "(" + rms.getStatusDescription() + ")");
-				return "failed";
-			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return "failed";
-		}
-
-		logger.info("PUT sent to /ServiceJob");
-
-		ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "info.success_stored", null));
-
+		if (stored)
+			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "info.success_stored", null));
+		
 		return "success";
 	}
 
