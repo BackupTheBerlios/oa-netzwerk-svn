@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -20,6 +23,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.admin.ServiceSchedulingBean.JobType;
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -158,7 +162,33 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 		return details;
 	}
 
-	
+//	public boolean validate()
+//	{
+//		
+//		boolean valid = true;
+//		System.out.println("Vaildating");
+//		FacesContext context = FacesContext.getCurrentInstance();
+//		System.out.println(chosenDate);
+//		if (JobType.OneTime.toString().equals(jobType) && !startRightNow) {
+//			try {
+//				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(new Date()) + " " + chosenHour);
+//				job.setNonperiodicTimestamp(date);
+//
+//				if (System.currentTimeMillis() > date.getTime()) {
+////					((UIInput) toValidate).setValid(false);
+//
+//					FacesMessage message = new FacesMessage("Das gewählte Datum muss in der Zukunft liegen.");
+//					context.addMessage("1", message);
+//					valid = false;
+//				}
+//			} catch (ParseException e) {
+//				FacesMessage message = new FacesMessage("Bitte überprüfen sie das gewählte Datum! (Format: TT.MM.JJJJ)");
+//				context.addMessage("1", message);
+//				valid = false;
+//			}
+//		}
+//		return valid;
+//	}
 	
 	public String storeRepository() {
 

@@ -17,9 +17,7 @@
 
 
 	<ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
-	<!--	<ui:param name="customHead">-->
-	<!---->
-	<!--	</ui:param>-->
+	<ui:param name="onLoadJS" value="showForm(document.getElementById('form:jobtype').selectedIndex);" />
 
 	<ui:define name="navigation">
 		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="services.xhtml">Dienste</a>
@@ -30,37 +28,9 @@
 	<ui:define name="content">
 
 		<script type="text/javascript">
-	function fold1() {
-		if (document.getElementById)
-			document.getElementById("ablaufplan").style.display = "none";
-	}
 
-	function unfold1() {
-		if (document.getElementById)
-			document.getElementById("ablaufplan").style.display = "inline";
-	}
 
-	function fold2() {
-		if (document.getElementById)
-			document.getElementById("aenderungsmenu").style.display = "none";
-	}
-
-	function unfold2() {
-		if (document.getElementById)
-			document.getElementById("aenderungsmenu").style.display = "inline";
-	}
-
-	function invisible() {
-		if (document.getElementById)
-			document.getElementById("Aendern").style.visibility = "hidden";
-	}
-
-	function visible() {
-		if (document.getElementById)
-			document.getElementById("Aendern").style.visibility = "visible";
-	}
-
-	function disableSelect(form, select1, select2, select3) {
+	function disableInterval(form, select1, select2, select3) {
 
 		var radio1 = document.getElementById("form:radio1:0").checked;
 		var radio2 = document.getElementById("form:radio1:1").checked;
@@ -86,41 +56,6 @@
 
 	}
 	
-	function disableTypeOptions(form, select1, select2, select3) {
-		var radio1 = document.getElementById("radio0:0").checked;
-		var radio2 = document.getElementById("radio0:1").checked;
-
-		if (radio1) {
-			document.getElementById(form + ":" + select1).disabled = false;
-			document.getElementById(form + ":" + select2).disabled = false;
-			document.getElementById(form + ":" + select3).disabled = false;	
-			document.getElementById("form:radio1:0").disabled = false;
-			document.getElementById("form:radio1:1").disabled = false;
-			document.getElementById("form:radio1:2").disabled = false;
-			document.getElementById(form + ":hour").disabled = false;
-            document.getElementById(form + ":date2").disabled = false;      
-			document.getElementById(form + ":repositories").disabled = true;
-			document.getElementById(form + ":date").disabled = true;
-			document.getElementById(form + ":time").disabled = true;
-            document.getElementById(form + ":now").disabled = true;      
-			disableSelect(form, select1, select2, select3);
-		}
-		
-		if (radio2) {
-			document.getElementById(form + ":" + select1).disabled = true;
-			document.getElementById(form + ":" + select2).disabled = true;
-			document.getElementById(form + ":" + select3).disabled = true;
-			document.getElementById("form:radio1:0").disabled = true;
-			document.getElementById("form:radio1:1").disabled = true;
-			document.getElementById("form:radio1:2").disabled = true;
-            document.getElementById(form + ":date2").disabled = true;      			
-			document.getElementById(form + ":hour").disabled = true;
-			document.getElementById(form + ":repositories").disabled = false;			
-			document.getElementById(form + ":date").disabled = false;
-			document.getElementById(form + ":time").disabled = false;
-			document.getElementById(form + ":now").disabled = false;
-		}		
-	}	
 
 	function now(form) {
 		var now = document.getElementById(form + ":now").checked;
@@ -137,46 +72,61 @@
 	function clearInput(form, date) {
 		document.getElementById(form + ":" + date).value = "";
 	}
+	
+	function showForm(index)
+	{
+		if (index==0) {
+	   		document.getElementById("repeatedly").style.visibility = "hidden";
+	   		document.getElementById("onetime").style.visibility = "hidden";
+		} else if (index==1) {
+	   		document.getElementById("repeatedly").style.visibility = "visible";
+	   		document.getElementById("onetime").style.visibility = "hidden";
+		} else if (index==2) {
+	   		document.getElementById("repeatedly").style.visibility = "hidden";
+	   		document.getElementById("onetime").style.visibility = "visible";
+		}
+	}
 </script>
 
 		<div style="padding: 20px; background-color: #f5f9f4;">
 		<div style="background-color: #f5f9f4;">
 
 
-		<div id="aenderungsmenu" > <!-- style="display: none" -->
-		<h2>Änderungen an Dienst vornehmen</h2>
+		<h2>Neuen Dienst planen</h2>
 
-		Für eine erfolgreiche Änderung muss der zu ändernde Dienst sowie eine
-		selbstgewählte Zeit- periode ausgewählt werden. <br />
+		<div style="margin-left:40px;" id="aenderungsmenu" > <!-- style="display: none" -->
+
+		Mit dem folgenden Formular können sie einen Dienst planen. Dabei können sie selbst festlegen ob der Dienst regelmäßig oder einmalig arbeiten soll sowie weitere Einstellungen vornehmen. 		
 		<br />
-
-
-
 		<br />
 
 
 		<h:form styleClass="form" id="form">
-
-            <h:message style="color:red;"/>
             
-			<t:selectOneRadio id="radio0" value="#{scheduling.jobType}" 
-				layout="spread" border="1" forceId="true" forceIdIndex="false"
-				style="font-weight:bold; background-color:#99CCFF;" onclick="disableTypeOptions('form','dayOfMonth', 'dayOfWeek', 'day');"
-				required="true" >
-				<f:selectItem itemLabel="regelmäßig"
-					itemValue="#{scheduling.jobTypes[0]}" />
-				<f:selectItem itemLabel="einmalig"
-					itemValue="#{scheduling.jobTypes[1]}" />
-			</t:selectOneRadio>
+<!--			<t:selectOneRadio id="radio0" value="#{scheduling.jobType}" -->
+<!--				layout="spread" border="1" forceId="true" forceIdIndex="false"-->
+<!--				style="font-weight:bold; background-color:#99CCFF;" onclick="disableTypeOptions('form','dayOfMonth', 'dayOfWeek', 'day');"-->
+<!--				required="true" >-->
+<!--				<f:selectItem itemLabel="regelmäßig"-->
+<!--					itemValue="#{scheduling.jobTypes[0]}" />-->
+<!--				<f:selectItem itemLabel="einmalig"-->
+<!--					itemValue="#{scheduling.jobTypes[1]}" />-->
+<!--			</t:selectOneRadio>-->
             
 			<table>
 
                 <tr>
-                  <td width ="60%"></td>
+                  <td width ="60%">
+                  </td>
                   <td width ="40%"></td>
                 </tr>
+                <tr>
+                	<td colspan="2">
+                		<h:messages style="color:red" />
+                	</td>
+                </tr>
 				<tr>            
-          
+          		
                      <td colspan="2" ><br />Bitte wählen sie den auszuführenden Dienst aus.
                      
 					<br />
@@ -188,191 +138,188 @@
                         <tr>
                           <td width="150px"></td>
                           <td><h:selectOneMenu id="service" value="#{scheduling.chosenService}">
-                            <f:selectItems value="#{scheduling.services}" />
+                            <f:selectItem itemLabel="Bitte wählen" itemValue="null" />
+                            <f:selectItem itemLabel="Harvester" itemValue="1" />
+                            <f:selectItem itemLabel="Aggregator" itemValue="2" />
+                            <f:selectItem itemLabel="Marker" itemValue="3" />
                           </h:selectOneMenu> <br />
                           <br />
                           </td>
                         </tr>
-                      </table>
-                    </td>
-				</tr>
-                <tr>
-                  <td colspan="2">Bitte wählen sie ob der Dienst regelmäßig oder einmalig ausgeführt werden soll.</td>
-                </tr>
-				<tr>
-					<td style="padding-left: 10px;" >
-          <!--                    <input id="bla1" type="radio"  value="#{scheduling.radio1}">regelmäßig</input>-->
-			            
-            			<t:radio for="radio0" index="0"></t:radio>
-					</td>
-					<td>
-						<t:radio for="radio0" index="1"></t:radio> <!--					<input id="bla1" type="radio" value="bla1">einmalig</input>-->
-					</td>
-				</tr>
-                <tr>
-                  <td>
-                    <br />
-                    Bitte legen sie das Interval für die Dienstausführung fest.
-                  </td>
-                  <td>
-                    <br />
-                    Bitte bestimmen ein zu bearbeitendes Repository.
-                  </td>
-                </tr>        
-				<tr>
-
-					<td><h:panelGroup>
-						<h:panelGrid columns="8">
-							<h:panelGrid columns="1" style="width:160px;">
-								<h:selectOneRadio disabledClass="selectOneRadio_Disabled" value="#{scheduling.intervalType}"
-									styleClass="selectOneRadio" id="radio1" layout="pageDirection"
-									onclick="disableSelect('form','dayOfMonth', 'dayOfWeek', 'day');">
-									<f:selectItem itemValue="#{scheduling.intervalTypes[0]}" itemLabel="monatlich, jeden" />
-									<f:selectItem itemValue="#{scheduling.intervalTypes[1]}"
-										itemLabel="wöchentlich, jeden" />
-									<f:selectItem itemValue="#{scheduling.intervalTypes[2]}" itemLabel="jeden" />
-								</h:selectOneRadio>
-							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<h:selectOneMenu id="dayOfMonth"
-									value="#{scheduling.chosenDayOfMonth}" style=" width : 103px;" forceIdIndex="true">
-									<f:selectItems value="#{scheduling.monthlyDays}" itemValue="#{index}"/>
-								</h:selectOneMenu>
-								<h:selectOneMenu id="dayOfWeek"
-									value="#{scheduling.chosenDayOfWeek}" style=" width : 105px;">
-									<f:selectItem id="item2_1" itemLabel="Montag" itemValue="1" />
-									<f:selectItem id="item2_2" itemLabel="Dienstag" itemValue="2" />
-									<f:selectItem id="item2_3" itemLabel="Mittwoch" itemValue="3" />
-									<f:selectItem id="item2_4" itemLabel="Donnerstag" itemValue="4" />
-									<f:selectItem id="item2_5" itemLabel="Freitag" itemValue="5" />
-									<f:selectItem id="item2_6" itemLabel="Samstag" itemValue="6" />
-									<f:selectItem id="item2_7" itemLabel="Sonntag" itemValue="7" />
-								</h:selectOneMenu>
-								<h:selectOneMenu id="day" value="#{scheduling.chosenDay}"
-									style=" width : 103px;">
-									<f:selectItems value="#{scheduling.days}" />
-								</h:selectOneMenu>
-							</h:panelGrid>
-
-							<h:panelGrid columns="1" style="width:60px;">
-
-								<div style="height: 55px"><h:outputText value="Tag" /></div>
-							</h:panelGrid>
-
-
-						</h:panelGrid>
-					</h:panelGroup></td>
-
-					<td><h:panelGroup>
-						<h:panelGrid columns="8">
-                            <br />
-							<h:panelGrid columns="1" style="width:100px;">
-<!--								<h:outputLabel value="Repository" />-->
-<!--								<f:selectItem itemValue="option11" />-->
-
-							</h:panelGrid>
-
-
-							<h:panelGrid columns="1">
-								<h:selectOneMenu id="repositories" disabled="true"
-									value="#{scheduling.chosenRepository}" style=" width : 200px;" >
-									<f:selectItems value="#{scheduling.repositories}" />
-								</h:selectOneMenu>
-							</h:panelGrid>
-						</h:panelGrid>
-					</h:panelGroup>
-					<br />
-                    Bitte wählen sie wann der Dienst ausgeführt werden soll. 
-                    <br />  
-					<table>
                         <tr>
-                          <td>
-                            sofort    
-                          </td>
-                          <td>
-                              <t:selectBooleanCheckbox id="now" value="#{scheduling.startRightNow}" disabled="true" onclick="now('form');" />
+                  			<td colspan="2">Bitte wählen sie ob der Dienst regelmäßig oder einmalig ausgeführt werden soll.</td>
+                		</tr>
+	                    <tr>
+                          <td width="150px"></td>
+                          <td><h:selectOneMenu id="jobtype" value="#{scheduling.jobType}" onchange="showForm(this.selectedIndex);disableInterval('form','dayOfMonth', 'dayOfWeek', 'day');" required="true" requiredMessage="Bitte wählen sie ob der Dienst einmalig oder wiederholt ausgeführt werden soll."  >
+                            <f:selectItem itemLabel="Bitte wählen" itemValue="null" />
+                            <f:selectItem itemLabel="regelmäßig" itemValue="#{scheduling.jobTypes[0]}" />
+                            <f:selectItem itemLabel="einmalig" itemValue="#{scheduling.jobTypes[1]}" />
+                          </h:selectOneMenu> <br />
+                          <br />
                           </td>
                         </tr>
+                        <tr>
+                        	<td colspan="2">
+                        	
+                        	<!-- *********************** Repeatedly ************************ --> 
+                        	
+                        	<div id="repeatedly" style="visibility:hidden;height:0px" >
+                        	
+                        	  <br />
+                    			Bitte legen sie das Interval für die Dienstausführung fest.<br />
+                        	<h:panelGroup>
+								<h:panelGrid columns="8">
+									<h:panelGrid columns="1" style="width:160px;">
+										<h:selectOneRadio disabledClass="selectOneRadio_Disabled" value="#{scheduling.intervalType}"
+											styleClass="selectOneRadio" id="radio1" layout="pageDirection"
+											onclick="disableInterval('form','dayOfMonth', 'dayOfWeek', 'day');">
+											<f:selectItem itemValue="#{scheduling.intervalTypes[0]}" itemLabel="monatlich, jeden" />
+											<f:selectItem itemValue="#{scheduling.intervalTypes[1]}"
+												itemLabel="wöchentlich, jeden" />
+											<f:selectItem itemValue="#{scheduling.intervalTypes[2]}" itemLabel="jeden" />
+										</h:selectOneRadio>
+									</h:panelGrid>
+		
+									<h:panelGrid columns="1">
+										<h:selectOneMenu id="dayOfMonth"
+											value="#{scheduling.chosenDayOfMonth}" style=" width : 103px;" forceIdIndex="true">
+											<f:selectItems value="#{scheduling.monthlyDays}" itemValue="#{index}"/>
+										</h:selectOneMenu>
+										<h:selectOneMenu id="dayOfWeek"
+											value="#{scheduling.chosenDayOfWeek}" style=" width : 105px;">
+											<f:selectItem id="item2_1" itemLabel="Montag" itemValue="1" />
+											<f:selectItem id="item2_2" itemLabel="Dienstag" itemValue="2" />
+											<f:selectItem id="item2_3" itemLabel="Mittwoch" itemValue="3" />
+											<f:selectItem id="item2_4" itemLabel="Donnerstag" itemValue="4" />
+											<f:selectItem id="item2_5" itemLabel="Freitag" itemValue="5" />
+											<f:selectItem id="item2_6" itemLabel="Samstag" itemValue="6" />
+											<f:selectItem id="item2_7" itemLabel="Sonntag" itemValue="7" />
+										</h:selectOneMenu>
+										<h:selectOneMenu id="day" value="#{scheduling.chosenDay}"
+											style=" width : 103px;">
+											<f:selectItems value="#{scheduling.days}" />
+										</h:selectOneMenu>
+									</h:panelGrid>
+		
+									<h:panelGrid columns="1" style="width:60px;">
+		
+										<div style="height: 55px"><h:outputText value="Tag" /></div>
+									</h:panelGrid>
+		
+		
+								</h:panelGrid>
+							</h:panelGroup>
+					
+					
+							<table>
+		                      <tr>
+		                        <td width="150px" colspan="2">regelmäßiger Zeitpunkt für die Ausführung <br />
+		                        </td>
+		          
+		                      </tr>
+		                      <tr>
+		                        <td width="150px"></td>
+		                        <td><br /><h:selectOneMenu id="hour" value="#{scheduling.chosenHour}">
+		                          <f:selectItems value="#{scheduling.hours}" />
+		                        </h:selectOneMenu> <br />
+		                        <br />
+		                        </td>
+		                      </tr>
+		                      <tr>
+		                        <td width="150px"><div style="margin-top: 5px;">beginnend ab dem</div></td>
+		                        <td><t:inputCalendar id="date2" monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+		                          popupButtonStyleClass="standard_bold" currentDayCellClass="currentDayCell" value="#{scheduling.chosenDate}"
+		                          renderAsPopup="true" popupTodayString="#{example_messages['popup_today_string']}" popupDateFormat="dd.MM.yyyy"
+		                          popupWeekString="#{example_messages['popup_week_string']}" helpText="TT.MM.JJJJ" forceId="false" /></td>
+		                      </tr>
+		
+		                    </table>
                         
-						<tr>
-							<td width="103px"> 
-								<div style="margin-top: 3px;"><h:outputLabel for="date" value="Datum" /></div>
-							</td>
-							<td>
-								<t:inputCalendar
-									id="date" monthYearRowClass="yearMonthHeader"
-									weekRowClass="weekHeader" popupButtonStyleClass="standard_bold"
-									currentDayCellClass="currentDayCell"
-									value="#{scheduling.chosenDate}" renderAsPopup="true"
-									popupTodayString="#{example_messages['popup_today_string']}"
-									popupDateFormat="dd.MM.yyyy"
-									popupWeekString="#{example_messages['popup_week_string']}"
-									helpText="TT.MM.JJJJ" forceId="false" validator="#{scheduling.validateDate}" disabled="true"/> 
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<div style="margin-top: 2px;"><h:outputLabel for="time" value="Uhrzeit" /></div>
-							</td>
-							<td>
-								<h:selectOneMenu id="time" value="#{scheduling.chosenTime}" disabled="true">
-									<f:selectItems value="#{scheduling.hours}" />
-								</h:selectOneMenu> <br />							
-							</td>
-						</tr>
-					</table>					
+                    	<!-- *********************** One Time ************************ -->    
 					
-					</td>
-				</tr>
-				<tr>
-					<td width="160px" style="padding-left: 15px;">
-                    <table>
-                      <tr>
-                        <td width="150px" colspan="2">regelmäßiger Zeitpunkt für die Ausführung <br />
-                        </td>
-          
-                      </tr>
-                      <tr>
-                        <td width="150px"></td>
-                        <td><br /><h:selectOneMenu id="hour" value="#{scheduling.chosenHour}">
-                          <f:selectItems value="#{scheduling.hours}" />
-                        </h:selectOneMenu> <br />
+						</div>
+                        <div id="onetime" style="visibility:hidden;">
+                        	
                         <br />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td width="150px"><div style="margin-top: 5px;">beginnend ab dem</div></td>
-                        <td><t:inputCalendar id="date2" monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
-                          popupButtonStyleClass="standard_bold" currentDayCellClass="currentDayCell" value="#{scheduling.chosenDate}"
-                          renderAsPopup="true" popupTodayString="#{example_messages['popup_today_string']}" popupDateFormat="dd.MM.yyyy"
-                          popupWeekString="#{example_messages['popup_week_string']}" helpText="TT.MM.JJJJ" forceId="false"
-                          validator="#{scheduling.validateDate}" /></td>
-                      </tr>
-
-                    </table>
+		                    Bitte wählen sie ein zu bearbeitendes Repository. Alternativ können auch alle Repositorien gewählt werden.
+		                    
+		                    <h:panelGroup>
+								<h:panelGrid columns="8">
+		                            <br />
+									<h:panelGrid columns="1" style="width:100px;">
+		<!--								<h:outputLabel value="Repository" />-->
+		<!--								<f:selectItem itemValue="option11" />-->
+		
+									</h:panelGrid>
+		
+		
+									<h:panelGrid columns="1">
+										<h:selectOneMenu id="repositories"
+											value="#{scheduling.chosenRepository}" style=" width : 200px;" >
+											<f:selectItems value="#{scheduling.repositories}" var="repo" itemLabel="#{repo.name}" itemValue="#{repo.id}" />
+										</h:selectOneMenu>
+									</h:panelGrid>
+								</h:panelGrid>
+							</h:panelGroup>
+							<br />
+		                    Bitte wählen sie wann der Dienst ausgeführt werden soll. 
+		                    <br />  
+							<table>
+		                        <tr>
+		                          <td>
+		                            sofort    
+		                          </td>
+		                          <td>
+		                              <t:selectBooleanCheckbox id="now" value="#{scheduling.startRightNow}" onclick="now('form');" />
+		                          </td>
+		                        </tr>
+		                        
+								<tr>
+									<td width="103px"> 
+										<div style="margin-top: 3px;"><h:outputLabel for="date" value="Datum" /></div>
+									</td>
+									<td>
+										<t:inputCalendar
+											id="date" monthYearRowClass="yearMonthHeader"
+											weekRowClass="weekHeader" popupButtonStyleClass="standard_bold"
+											currentDayCellClass="currentDayCell"
+											value="#{scheduling.chosenDate}" renderAsPopup="true"
+											popupTodayString="#{example_messages['popup_today_string']}"
+											popupDateFormat="dd.MM.yyyy"
+											popupWeekString="#{example_messages['popup_week_string']}"
+											helpText="TT.MM.JJJJ" forceId="false" /> 
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div style="margin-top: 2px;"><h:outputLabel for="time" value="Uhrzeit" /></div>
+									</td>
+									<td>
+										<h:selectOneMenu id="time" value="#{scheduling.chosenTime}">
+											<f:selectItems value="#{scheduling.hours}" />
+										</h:selectOneMenu> <br />							
+									</td>
+								</tr>
+							</table>
+                    
+                        	</div>
+                        	
+                        	</td>
+                        </tr>
+                      </table>
                     </td>
-					
-					<td>					
-					</td>
 				</tr>
 			</table>
 
 
-			<br />
-
-			<div align="right"><h:selectBooleanCheckbox id="change_job"
-				value="#{scheduling.update}" />bestehenden Job ändern</div>
-
-			<br />
-			<br />
-			<br />
-
 			<div align="right">
-			<button name="Zurück" onclick="fold2(); unfold1(); visible()">Zurück</button>
+			<button name="Zurück">Zurück</button>
 			<h:commandButton type="submit" action="#{scheduling.storeJob}"
 				value="Job anlegen" /></div>
-		</h:form></div>
+		</h:form>
+		
+		</div>
 
 		</div>
 		</div>

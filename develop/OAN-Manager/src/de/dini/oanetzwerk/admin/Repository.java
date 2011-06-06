@@ -3,9 +3,9 @@ package de.dini.oanetzwerk.admin;
 public class Repository {
 
 	
-	private boolean deactivated = false;
-	private boolean deleted = false;
-	private boolean stored = false;
+//	private boolean deactivated = false;
+//	private boolean deleted = false;
+//	private boolean stored = false;
 
 	private Long id = null;
 	
@@ -25,9 +25,9 @@ public class Repository {
 	private boolean active = true;
 	
 	
-	public boolean success() {
-		return deactivated || deleted || stored;
-	}
+//	public boolean success() {
+//		return deactivated || deleted || stored;
+//	}
 	
 	/***************************** Getter & Setter ****************************/
 	

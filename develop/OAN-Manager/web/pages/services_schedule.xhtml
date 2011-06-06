@@ -33,46 +33,59 @@
 		<div style="background-color: #f5f9f4;">
 
 
-		<div id="aenderungsmenu" > <!-- style="display: none" -->
+
+		<div id="main" style="height:400px;width:700px;" > <!-- style="display: none" -->
+
+		<h:messages style="color:#33B300" /><br />
+
+
 		<h2>Dienstablaufplan</h2>
 
 		Auf dieser Seite kann der Ablauf und der Fortschritt der Dienste verfolgt werden.
 		<br />
+		<br />
 
+		<br />
+		<t:div rendered="#{jobList.jobListEmpty}">
+			<br /><b>Bisher wurden keine Dienste geplant.</b>
+		</t:div>
+        
+        <t:div rendered="#{not jobList.jobListEmpty}">
         <table id="jobs" >
-            <h:dataTable value="#{sersche.info}" var="row"
+            <h:dataTable value="#{jobList.jobList}" var="row"
             headerClass="pane-header" rowClasses="odd, even"
             style="border-collapse: collapse; border: 2px #bbb solid; width : 571px;">
               <h:column style="width: 30%; vertical-align: middle; height: 70px;">
                 <f:facet name="header">
                   <h:outputText value="Dienst" />
                 </f:facet>
-                  <h:outputText value="#{row.service}" />
+                  <h:outputText value="#{row.serviceId}" />
               </h:column>
                       
-              <h:column style="width: 30%; vertical-align: middle; height: 70px;">
+              <h:column style="width: 30%; vertical-align: middle; horizontal-align: middle;height: 70px;">
                 <f:facet name="header">
                   <h:outputText value="Typ" />
                 </f:facet>
-                  <h:outputText value="#{row.type}" />
+                  <h:outputText value="#{row.periodic ? 'Periodisch' : 'Einmalig'}" />
               </h:column>
                       
               <h:column style="width: 30%; vertical-align: middle; height: 70px;">
                 <f:facet name="header">
                   <h:outputText value="Intervall" />
                 </f:facet>
-                  <h:outputText value="#{row.interval}" />
+                  <h:outputText value="#{row.periodic ? 'row.interval' : row.nonperiodicTimestamp}" />
               </h:column>
                       
               <h:column style="width: 30%; vertical-align: middle; height: 70px;">
                 <f:facet name="header">
                   <h:outputText value="Zusatzinformationen" />
                 </f:facet>
-                  <h:outputText value="#{row.add_info}" />
+                  <h:outputText value="#{row.info}" />
               </h:column>
             </h:dataTable>
 
         </table>
+        </t:div>
         </div>
 		</div>
 		</div>

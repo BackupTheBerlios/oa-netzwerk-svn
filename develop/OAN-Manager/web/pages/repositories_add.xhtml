@@ -50,18 +50,19 @@
     <table width="100%">
 
 
+
       <f:view>
         <h:form id="bla" action="#{repo.storeRepository}">
 
-
+		  <h:messages style="color:red;"/>
 
 
           <tr>
-            <td>Name des Repositories&nbsp; (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)</td>
+            <td>Name des Repositories*&nbsp; (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)</td>
           </tr>
           <tr>
 
-            <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.repository.name}"  >
+            <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.repository.name}" required="true" requiredMessage="Bitte geben sie einen Namen für das Repository ein!" >
             <f:validateBean />   
             </t:inputText>
             <div class="help_box" id="help_name">Geben Sie hier den Namen des neuen Repositoriums ein.</div>
@@ -100,10 +101,10 @@
           </tr>
 
           <tr>
-            <td>OAI-PMH Schnittstelle (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)</td>
+            <td>OAI-PMH Schnittstelle* (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.repository.oaiUrl}" />
+            <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.repository.oaiUrl}" required="true" requiredMessage="Bitte geben sie die URL der OAI/PMH-Schnittstelle ein!"/>
             <div class="help_box" id="help_oaipmh">Geben Sie die URL der OAI-PMH Schnittstelle des neuen Repositories an. (http://...)</div>
             </td>
           </tr>
@@ -149,8 +150,8 @@
           </tr>
         </h:form>
       </f:view>
-
     </table>
+    * Pflichtfelder
     </div>
     </div>
 

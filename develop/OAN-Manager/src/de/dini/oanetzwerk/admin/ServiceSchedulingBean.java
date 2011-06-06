@@ -1,7 +1,6 @@
 package de.dini.oanetzwerk.admin;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +19,7 @@ import javax.faces.bean.RequestScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -28,9 +28,7 @@ import de.dini.oanetzwerk.admin.SchedulingBean.SchedulingIntervalType;
 import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.codec.RestEntrySet;
-import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
-import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 
 @ManagedBean(name = "scheduling")
@@ -48,59 +46,59 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	
 	@ManagedProperty(value = "#{restConnector}")
 	private RestConnector restConnector;
+	
 
 	private List<SchedulingBean> jobList;
 	private SchedulingBean job;
 
+	/* form */
+	
+	// service
+	private Map<String, Integer> services = new HashMap<String, Integer>();
 	private String chosenService;
+	
+	// repeatedly or once only
+	private String jobType;
+	
+	// case repeatedly
+	private String intervalType = SchedulingIntervalType.Day.toString();
 	private String chosenDayOfMonth;
 	private String chosenDayOfWeek;
 	private String chosenDay;
-	private String chosenHour;
-	private boolean update;
+	private String chosenHour = "20:00";
 
+	
+	// case once only
+	private List<Repository> repoList;
 	private String chosenRepository;
-	private Date   chosenDate;
-	private String chosenTime;
+	private Date   chosenDate = new Date();
+	private String chosenTime = "20:00";
 	private boolean startRightNow;
 
-	private String intervalType = SchedulingIntervalType.Day.toString();
-	private String jobType = JobType.Repeatedly.toString();
+	// error messages	
+	private String error;
 
-	private int intervalDay;
-
-	private boolean changeJob;
-
-	private boolean deactivated;
-	private boolean deleted;
-	private boolean stored;
-
-	private boolean radio1;
-
-	private Map<String, Integer> services = new HashMap<String, Integer>();
-	private Map<String, Long> repoList;
-
-	public boolean isRadio1() {
+	private String radio1;
+	
+	
+	
+	public String getRadio1() {
 		return radio1;
 	}
 
-	public void setRadio1(boolean radio1) {
+
+	public void setRadio1(String radio1) {
 		this.radio1 = radio1;
 	}
 
+
 	public ServiceSchedulingBean() {
 
-	}
-
-	public boolean success() {
-		return deactivated || deleted || stored;
 	}
  
 	
 	@PostConstruct
 	public void init() {
-
-//		schedulerControl = SchedulerControl.getInstance();
 		
 		// init job object for a new job that might be created
 		job = new SchedulingBean();
@@ -114,11 +112,243 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		// retrieve list of repositories
 		initRepositories();
 
-		// retrieve the jobs to be displayed
-//		if (true)
-//			return;
+//		// retrieve the jobs to be displayed
+//		initJobs();
+	}
+	
+	
+	/********************* Validations *********************/
 
-		if (jobList != null && !jobList.isEmpty()) {
+	public boolean validate()
+	{
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean valid = true;
+
+		System.out.println("Validating");
+		System.out.println("service: " + chosenService);
+		System.out.println("jobtype: " + jobType);
+		System.out.println("date: " + chosenDate);
+
+		// TODO: externalize strings , --> message codes
+		
+		if ("null".equals(chosenService)) {
+			context.addMessage("1", new FacesMessage("Bitte wählen sie einen Dienst aus."));
+			valid = false;
+		}
+		
+		if ("null".equals(jobType)) {
+			context.addMessage("1", new FacesMessage("Bitte geben sie an, ob der Dienst wiederholt oder einmalig ausgeführt werden soll."));
+			valid = false;
+			return valid;
+		}		
+		
+		
+		if (JobType.OneTime.toString().equals(jobType) && !startRightNow) {
+			try {
+				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate) + " " + chosenHour);
+				job.setNonperiodicTimestamp(date);
+
+				System.out.println(System.currentTimeMillis());
+				System.out.println(new Date());
+				System.out.println(date.getTime());
+				System.out.println(date);
+				if (System.currentTimeMillis() > date.getTime()) {
+//					((UIInput) toValidate).setValid(false);
+
+					FacesMessage message = new FacesMessage("Das gewählte Datum muss in der Zukunft liegen.");
+					context.addMessage("1", message);
+					valid = false;
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+				FacesMessage message = new FacesMessage("Bitte überprüfen sie das gewählte Datum! (Format: TT.MM.JJJJ)");
+				context.addMessage("1", message);
+				valid = false;
+			}
+		}
+		
+		
+		return valid;
+	}
+	
+//	public void validateDate(FacesContext context, UIComponent toValidate, Object value) {
+//		System.out.println("VALIDATING");
+//
+//		// TODO
+////		if (true)
+////			return;
+//
+//		Date chosenDate = (Date) value;
+//		System.out.println("date: " + chosenDate);
+//		Date date = null;
+//		if (date == null) {
+//
+//			FacesMessage message = new FacesMessage("Bitte geben sie das Datum in einem gültigen Format an. (tt.mm.jjjj)");
+//			context.addMessage(toValidate.getClientId(context), message);
+//			return;
+//		}
+//
+//	}
+
+	public String storeJob() {
+
+		
+//		System.out.println("radio1: " + radio1);
+		System.out.println("date: " + chosenDate);
+		System.out.println("time: " + chosenTime);
+		System.out.println("jobType: " + jobType);
+		System.out.println("intervalType: " + intervalType);
+
+		boolean valid = validate();
+		
+		System.out.println("form valid: " + valid);
+		
+		if (!valid) {
+			return "failed";
+		}
+		
+		
+		if (JobType.Repeatedly.toString().equals(jobType)) {
+			try {
+				System.out.println("break1");
+				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate) + " " + chosenHour);
+				job.setNonperiodicTimestamp(date);
+				System.out.println("break2");
+			} catch (ParseException e) {
+				// this should never happen
+				e.printStackTrace();
+				return "failed";
+			}
+
+			job.setPeriodicInterval(SchedulingIntervalType.valueOf(intervalType));
+			try {
+				if (SchedulingIntervalType.Monthly.toString().equals(intervalType)) {
+
+					job.setPeriodicDays(Integer.parseInt(chosenDayOfMonth.substring(0, chosenDayOfMonth.length() - 1)));
+				} else if (SchedulingIntervalType.Weekly.toString().equals(intervalType)) {
+
+					job.setPeriodicDays(Integer.parseInt(chosenDayOfWeek));
+				} else if (SchedulingIntervalType.Day.toString().equals(intervalType)) {
+
+					job.setPeriodicDays(Integer.parseInt(chosenDay.substring(0, chosenDay.length() - 1)));
+				}
+			} catch (NumberFormatException e) {
+				// this should never happen
+				e.printStackTrace();
+				return "failure";
+			}
+
+		} else if (JobType.OneTime.toString().equals(jobType)) {
+			System.out.println("now: " + startRightNow);
+			if (startRightNow) {
+				job.setNonperiodicNow(true);
+				job.setNonperiodicTimestamp(new Date());
+			} else {
+				try {
+					job.setNonperiodicTimestamp(new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(new SimpleDateFormat("dd.MM.yyyy").format(chosenDate) + " " + chosenTime));
+				} catch (ParseException e) {
+					// this should never happen
+					e.printStackTrace();
+					return "failure";
+				}
+			}
+		}
+
+		if (chosenService != null) {
+			try {
+				job.setServiceId(new BigDecimal(chosenService));
+			} catch (NumberFormatException e) {
+				// this should never happen
+				e.printStackTrace();
+				return "failure";
+			}
+		}
+
+		if (chosenRepository != null) {
+			if (chosenRepository.equals(0)) {
+				job.setInfo("All");
+			} else {
+				job.setInfo("Repository mit ID " + chosenRepository);
+			}
+		}
+		System.out.println("date: " + job.getNonperiodicTimestamp());
+
+		boolean stored = schedulerControl.storeJob(job);
+
+		if (stored) {
+			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Der Dienst wurde erfolgreich in die Planung aufgenommen!", null));
+			return "success";
+		}
+		
+		ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Dienst konnte nicht gespeichert werden. Bitte schauen sie in die Logs für Details.", null));
+		return "failed";
+	}
+	
+	
+	/************************* Bean Initialization ***************************/
+	
+
+	private void initRepositories() {
+
+		RepositoryBean.setRestConnector(restConnector);
+
+		if (repoList != null && !repoList.isEmpty()) {
+			return;
+		}
+
+		
+		String result = restConnector.prepareRestTransmission("Repository/").GetData();
+		repoList = new ArrayList<Repository>();
+		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+
+		if (rms == null || rms.getListEntrySets().isEmpty()) {
+
+			logger.error("received no Repository Details at all from the server");
+			return;
+		}
+
+		// prepare 'all' entry
+		Repository repoAll = new Repository();
+		repoAll.setName("Alle");
+		repoAll.setId(new Long(0));
+		repoList.add(repoAll);
+
+		for (RestEntrySet res : rms.getListEntrySets()) {
+
+			Iterator<String> it = res.getKeyIterator();
+			String key = "";
+			Repository repo = new Repository();
+
+			while (it.hasNext()) {
+
+				key = it.next();
+
+				if (key.equalsIgnoreCase("name")) {
+
+					repo.setName(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("url")) {
+
+					repo.setUrl(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("repository_id")) {
+
+					repo.setId(new Long(res.getValue(key)));
+
+				} else
+					// System.out.println("Key: " + key);
+					continue;
+			}
+
+			repoList.add(repo);
+
+		}
+		System.out.println(repoList.size());
+
+	}
+	
+	private void initJobs() {
+		if (jobList == null || jobList.isEmpty()) {
 			return;
 		}
 
@@ -179,173 +409,10 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		}
 		System.out.println("Job List: " + jobList.size());
 	}
-
-	public String storeJob() {
-
-		System.out.println("radio1: " + radio1);
-		System.out.println("date: " + chosenDate);
-		System.out.println("time: " + chosenTime);
-		System.out.println("jobType: " + jobType);
-		System.out.println("intervalType: " + intervalType);
-
-		if (JobType.Repeatedly.toString().equals(jobType)) {
-			try {
-				System.out.println("break1");
-				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(new Date()) + " " + chosenHour);
-				job.setNonperiodicTimestamp(date);
-				System.out.println("break2");
-			} catch (ParseException e) {
-				// this should never happen
-				e.printStackTrace();
-				return "failure";
-			}
-
-			job.setPeriodicInterval(SchedulingIntervalType.valueOf(intervalType));
-			try {
-				if (SchedulingIntervalType.Monthly.toString().equals(intervalType)) {
-
-					job.setPeriodicDays(Integer.parseInt(chosenDayOfMonth.substring(0, chosenDayOfMonth.length() - 1)));
-				} else if (SchedulingIntervalType.Weekly.toString().equals(intervalType)) {
-
-					job.setPeriodicDays(Integer.parseInt(chosenDayOfWeek));
-				} else if (SchedulingIntervalType.Day.toString().equals(intervalType)) {
-
-					job.setPeriodicDays(Integer.parseInt(chosenDay.substring(0, chosenDay.length() - 1)));
-				}
-			} catch (NumberFormatException e) {
-				// this should never happen
-				e.printStackTrace();
-				return "failure";
-			}
-
-		} else if (JobType.OneTime.toString().equals(jobType)) {
-			System.out.println("now: " + startRightNow);
-			if (startRightNow) {
-				job.setNonperiodicNow(true);
-				job.setNonperiodicTimestamp(new Date());
-			} else {
-				try {
-					job.setNonperiodicTimestamp(new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(new SimpleDateFormat("dd.MM.yyyy").format(chosenDate) + " " + chosenTime));
-				} catch (ParseException e) {
-					// this should never happen
-					e.printStackTrace();
-					return "failure";
-				}
-			}
-		}
-		System.out.println("bla");
-		if (chosenService != null) {
-			try {
-				job.setServiceId(new BigDecimal(chosenService));
-			} catch (NumberFormatException e) {
-				// this should never happen
-				e.printStackTrace();
-				return "failure";
-			}
-		}
-
-		if (chosenRepository != null) {
-			if (chosenRepository.equals(0)) {
-				job.setInfo("All");
-			} else {
-				job.setInfo("Repository mit ID " + chosenRepository);
-			}
-		}
-		System.out.println("date: " + job.getNonperiodicTimestamp());
-
-		boolean stored = schedulerControl.storeJob(job);
-
-		if (stored)
-			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "info.success_stored", null));
-		
-		return "success";
-	}
-
-	public void initRepositories() {
-
-		RepositoryBean.setRestConnector(restConnector);
-
-		if (repoList != null && !repoList.isEmpty()) {
-			return;
-		}
-
-		String result = restConnector.prepareRestTransmission("Repository/").GetData();
-		repoList = new HashMap<String, Long>();
-		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
-
-		if (rms == null || rms.getListEntrySets().isEmpty()) {
-
-			logger.error("received no Repository Details at all from the server");
-			return;
-		}
-
-		repoList.put("Alle", new Long(0));
-
-		for (RestEntrySet res : rms.getListEntrySets()) {
-
-			Iterator<String> it = res.getKeyIterator();
-			String key = "";
-			Repository repo = new Repository();
-
-			while (it.hasNext()) {
-
-				key = it.next();
-
-				if (key.equalsIgnoreCase("name")) {
-
-					repo.setName(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("url")) {
-
-					repo.setUrl(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("repository_id")) {
-
-					repo.setId(new Long(res.getValue(key)));
-
-				} else
-					// System.out.println("Key: " + key);
-					continue;
-			}
-
-			repoList.put(repo.getName(), repo.getId());
-
-		}
-		System.out.println(repoList.size());
-
-	}
-
-	/********************* + Validations *********************/
-
-	public void validateDate(FacesContext context, UIComponent toValidate, Object value) {
-		System.out.println("VALIDATING");
-
-		// TODO
-		if (true)
-			return;
-
-		String chosenDate = (String) value;
-
-		Date date = null;
-		try {
-			date = new SimpleDateFormat("dd.MM.yyyy").parse(chosenDate);
-		} catch (ParseException e) {
-			((UIInput) toValidate).setValid(false);
-
-			FacesMessage message = new FacesMessage("Bitte geben sie das Datum in einem gültigen Format an. (tt.mm.jjjj)");
-			context.addMessage(toValidate.getClientId(context), message);
-			return;
-		}
-
-		if (System.currentTimeMillis() > date.getTime()) {
-			((UIInput) toValidate).setValid(false);
-
-			FacesMessage message = new FacesMessage("Das gewählte Datum muss in der Zukunft liegen.");
-			context.addMessage(toValidate.getClientId(context), message);
-		}
-
-	}
-
+	
+	
+	/******************************* Form Preparations *******************************/
+	
 
 	public List<String> getMonthlyDays() {
 
@@ -376,54 +443,12 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 		List<String> hours = new ArrayList<String>();
 
-		hours.add("0:00");
-		hours.add("0:30");
-		hours.add("1:00");
-		hours.add("1:30");
-		hours.add("2:00");
-		hours.add("2:30");
-		hours.add("3:00");
-		hours.add("3:30");
-		hours.add("4:00");
-		hours.add("4:30");
-		hours.add("5:00");
-		hours.add("5:30");
-		hours.add("6:00");
-		hours.add("6:30");
-		hours.add("7:00");
-		hours.add("7:30");
-		hours.add("8:00");
-		hours.add("8:30");
-		hours.add("9:00");
-		hours.add("9:30");
-		hours.add("10:00");
-		hours.add("10:30");
-		hours.add("11:00");
-		hours.add("11:30");
-		hours.add("12:00");
-		hours.add("12:30");
-		hours.add("13:00");
-		hours.add("13:30");
-		hours.add("14:00");
-		hours.add("14:30");
-		hours.add("15:00");
-		hours.add("15:30");
-		hours.add("16:00");
-		hours.add("16:30");
-		hours.add("17:00");
-		hours.add("17:30");
-		hours.add("18:00");
-		hours.add("18:30");
-		hours.add("19:00");
-		hours.add("19:30");
-		hours.add("20:00");
-		hours.add("20:30");
-		hours.add("21:00");
-		hours.add("21:30");
-		hours.add("22:00");
-		hours.add("22:30");
-		hours.add("23:00");
-		hours.add("23:30");
+		for (int i = 0; i < 24; i++) {
+			hours.add(i + ":00");
+			hours.add(i + ":15");
+			hours.add(i + ":30");
+			hours.add(i + ":45");
+		}
 
 		return hours;
 	}
@@ -440,14 +465,9 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		return JobType.values();
 	}
 
-	public int getIntervalDay() {
-		return intervalDay;
-	}
 
-	public void setIntervalDay(int intervalDay) {
-		this.intervalDay = intervalDay;
-	}
-
+	/*********************** Getter & Setter ***********************/
+	
 	public void setIntervalType(String intervalType) {
 		this.intervalType = intervalType;
 	}
@@ -528,31 +548,17 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		this.chosenTime = chosenTime;
 	}
 
-	public boolean isUpdate() {
-		return update;
-	}
-
-	public void setUpdate(boolean update) {
-		this.update = update;
-	}
-
-	public void setChangeJob(boolean s) {
-		this.changeJob = s;
-	}
-
-	public boolean getChangeJob() {
-		return this.changeJob;
-	}
-
 	public List<SchedulingBean> getJobList() {
 		return jobList;
 	}
-
-	public void setRestConnector(RestConnector restConnector) {
-		this.restConnector = restConnector;
+	
+	public boolean isJobListEmpty() {
+//		System.out.println(jobList == null );
+//		System.out.println("la: " +jobList == null || jobList.isEmpty());
+		return jobList == null || jobList.isEmpty();
 	}
 
-	public Map<String, Long> getRepositories() {
+	public List<Repository> getRepositories() {
 		return repoList;
 	}
 
@@ -573,9 +579,20 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
     	this.startRightNow = startRightNow;
     }
 
+	public void setRestConnector(RestConnector restConnector) {
+		this.restConnector = restConnector;
+	}
+
 	public void setSchedulerControl(SchedulerControl schedulerControl) {
     	this.schedulerControl = schedulerControl;
     }
-	
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
 	
 }
