@@ -79,5 +79,7 @@ public interface DeleteFromDB {
 	public abstract PreparedStatement DateValues(Connection connection, BigDecimal object_id) throws SQLException;
 
 	public abstract PreparedStatement Description(Connection connection, BigDecimal object_id) throws SQLException;
+	
+	public abstract PreparedStatement ServicesScheduling(Connection connection, BigDecimal jobId) throws SQLException;
 
 }

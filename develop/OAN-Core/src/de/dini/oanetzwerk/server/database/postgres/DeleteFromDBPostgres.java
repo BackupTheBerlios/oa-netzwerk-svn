@@ -532,4 +532,12 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 
 		return preparedstmt;
 	}
+	
+	public PreparedStatement ServicesScheduling(Connection connection, BigDecimal jobId) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"ServicesScheduling\" WHERE job_id = ?");
+		preparedstmt.setBigDecimal(1, jobId);
+
+		return preparedstmt;
+	}
 }

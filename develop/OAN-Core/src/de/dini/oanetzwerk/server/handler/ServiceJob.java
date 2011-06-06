@@ -52,12 +52,93 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 	 */
 
 	@Override
-	protected String deleteKeyWord(String[] path) {
+	protected String deleteKeyWord(String[] path) throws NotEnoughParametersException {
 
-		this.rms = new RestMessage(RestKeyword.ServiceJob);
-		this.rms.setStatus(RestStatusEnum.NOT_IMPLEMENTED_ERROR);
-		this.rms.setStatusDescription("DELETE-method is not implemented for ressource '" + RestKeyword.Services + "'.");
-		return RestXmlCodec.encodeRestMessage(this.rms);
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 2 parameters: the keyword and the job ID");
+		
+		BigDecimal jobId;
+		
+		try {
+			
+			jobId = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number!");
+			
+			this.rms = new RestMessage (RestKeyword.ServiceJob);
+			this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription (path [0] + " is NOT a number!");
+			
+			return RestXmlCodec.encodeRestMessage (this.rms);
+		}
+		
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
+		MultipleStatementConnection stmtconn = null;
+		
+		this.rms = new RestMessage (RestKeyword.ServiceJob);
+		
+		try {
+			
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection ( );
+			
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().ServicesScheduling(stmtconn.connection, jobId));
+			this.result = stmtconn.execute ( );
+						
+			if (this.result.getWarning ( ) != null)
+				for (Throwable warning : result.getWarning ( ))
+					logger.warn (warning.getLocalizedMessage ( ), warning);
+						
+			if (this.result.getUpdateCount ( ) < 1) {
+				
+				stmtconn.rollback ( );
+				throw new SQLException ("Job could not be deleted");
+				
+			} else {
+				
+				stmtconn.commit ( );
+			}
+			
+			RestEntrySet res = new RestEntrySet ( );
+			
+			res.addEntry ("job_id", jobId.toPlainString ( ));
+			
+			this.rms.addEntrySet (res);
+			
+		} catch (SQLException ex) {
+			
+			logger.error ("An error occured while processing Delete ServiceJob: " + ex.getLocalizedMessage ( ), ex);
+			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} catch (WrongStatementException ex) {
+			
+			logger.error ("An error occured while processing Delete ServiceJob: " + ex.getLocalizedMessage ( ), ex);
+			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
+			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
+			
+		} finally {
+			
+			if (stmtconn != null) {
+				
+				try {
+					
+					stmtconn.close ( );
+					stmtconn = null;
+					
+				} catch (SQLException ex) {
+					
+					ex.printStackTrace ( );
+					logger.error (ex.getLocalizedMessage ( ), ex);
+				}
+			}
+			
+			this.result = null;
+			dbng = null;
+		}
+				
+		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
 
 	/**
@@ -104,7 +185,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 					res.addEntry("status", this.result.getResultSet().getString("status"));
 					res.addEntry("info", this.result.getResultSet().getString("info"));
 					res.addEntry("periodic", Boolean.toString(this.result.getResultSet().getBoolean("periodic")));
-					res.addEntry("nonperiodic_date", this.result.getResultSet().getDate("nonperiodic_date").toString());
+					res.addEntry("nonperiodic_date", this.result.getResultSet().getTimestamp("nonperiodic_date").toString());
 					res.addEntry("periodic_interval_type", this.result.getResultSet().getString("periodic_interval_type"));
 					res.addEntry("periodic_interval_days", Integer.toString(this.result.getResultSet().getInt("periodic_interval_days")));
 
