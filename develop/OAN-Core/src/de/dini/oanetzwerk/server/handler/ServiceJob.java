@@ -152,7 +152,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
 			SingleStatementConnection stmtconn = null;
-			RestEntrySet res = new RestEntrySet();
+			RestEntrySet res;
 
 			try {
 
@@ -170,12 +170,12 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 				boolean foundOne = false;
 				while (this.result.getResultSet().next()) {
 					foundOne = true;
-					RestEntrySet entrySet = new RestEntrySet();
+					res = new RestEntrySet();
 
 					if (logger.isDebugEnabled())
 						logger.debug("DB returned: \n\tjob_id = " + this.result.getResultSet().getInt(1) + "\n\tname = "
-								+ this.result.getResultSet().getString(2) + "\n\tservice_id = "
-								+ this.result.getResultSet().getBigDecimal(3).toString() + "\n\tstatus = "
+								+ this.result.getResultSet().getString(3) + "\n\tservice_id = "
+								+ this.result.getResultSet().getBigDecimal(2).toString() + "\n\tstatus = "
 								+ this.result.getResultSet().getString(4).toString() + "\n\tinfo = "
 								+ this.result.getResultSet().getString(5));
 
@@ -197,7 +197,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 				if (!foundOne) {
 
 					this.rms.setStatus(RestStatusEnum.NO_OBJECT_FOUND_ERROR);
-					this.rms.setStatusDescription("No matching ObjectEntry found");
+					this.rms.setStatusDescription("No matching ServiceJob found");
 				}
 
 			} catch (SQLException ex) {
@@ -208,7 +208,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			} catch (WrongStatementException ex) {
 
-				logger.error("An error occured while processing Get ObjectEntry: " + ex.getLocalizedMessage(), ex);
+				logger.error("An error occured while processing Get ServiceJob: " + ex.getLocalizedMessage(), ex);
 				this.rms.setStatus(RestStatusEnum.WRONG_STATEMENT);
 				this.rms.setStatusDescription(ex.getLocalizedMessage());
 
@@ -232,16 +232,9 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 				this.result = null;
 				dbng = null;
 			}
-
 			return RestXmlCodec.encodeRestMessage(this.rms);
-
 		}
-		// //////////////////////////
 
-		//
-		// if (path.length < 1)
-		// throw new
-		// NotEnoughParametersException("This method needs at least 2 parameters: the keyword and the internal object ID");
 
 		int jobId;
 
