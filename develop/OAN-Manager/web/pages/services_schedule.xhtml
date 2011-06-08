@@ -52,38 +52,42 @@
         
         <t:div rendered="#{not jobList.jobListEmpty}">
         <table id="jobs" >
-            <h:dataTable value="#{jobList.jobList}" var="row"
+          <tr>
+        	<td>
+            <t:dataTable value="#{jobList.jobList}" var="row"
             headerClass="pane-header" rowClasses="odd, even"
-            style="border-collapse: collapse; border: 2px #bbb solid; width : 571px;">
-              <h:column style="width: 30%; vertical-align: middle; height: 70px;">
+            style="border-collapse: collapse; border: 1px #bbb solid; width : 700px;">
+            
+              <t:column style="width: 22%;text-align:center;vertical-align:middle;height: 50px;">
                 <f:facet name="header">
                   <h:outputText value="Dienst" />
                 </f:facet>
-                  <h:outputText value="#{row.serviceId}" />
-              </h:column>
+                  <h:outputText value="#{row.serviceId == 1 ? 'Harvester' : row.serviceId == 2 ? 'Aggregator' : row.serviceId == 3 ? 'Marker' : Unknown}" />
+              </t:column>
                       
-              <h:column style="width: 30%; vertical-align: middle; horizontal-align: middle;height: 70px;">
+              <t:column style="width: 30%; vertical-align: middle; text-align: center; height: 50px;">
                 <f:facet name="header">
-                  <h:outputText value="Typ" />
+                  <h:outputText value="Zeitpunkt/Intervall" />
                 </f:facet>
-                  <h:outputText value="#{row.periodic ? 'Periodisch' : 'Einmalig'}" />
-              </h:column>
+                  <h:outputText value="#{row.interval}" />
+              </t:column>
                       
-              <h:column style="width: 30%; vertical-align: middle; height: 70px;">
-                <f:facet name="header">
-                  <h:outputText value="Intervall" />
-                </f:facet>
-                  <h:outputText value="#{row.periodic ? 'row.interval' : row.nonperiodicTimestamp}" />
-              </h:column>
-                      
-              <h:column style="width: 30%; vertical-align: middle; height: 70px;">
+              <t:column style="width: 30%; vertical-align: middle; text-align: center; height: 50px;">
                 <f:facet name="header">
                   <h:outputText value="Zusatzinformationen" />
                 </f:facet>
                   <h:outputText value="#{row.info}" />
-              </h:column>
-            </h:dataTable>
-
+              </t:column>
+            
+              <t:column style="width: 30%; vertical-align: middle; text-align: center; height: 50px;">
+                <f:facet name="header">
+                  <h:outputText value="Status" />
+                </f:facet>
+                  <h:outputText value="#{row.status}" />
+              </t:column>
+            </t:dataTable>            
+			</td>
+		  </tr>
         </table>
         </t:div>
         </div>

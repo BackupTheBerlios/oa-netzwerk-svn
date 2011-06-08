@@ -24,7 +24,8 @@ public abstract class AbstractServiceJob implements Job {
 	private RestConnector connector;
 
 	private Trigger trigger;
-
+	private String name;
+	
 	private String serviceName;
 	private ProcessingType processingType;
 	private int repositoryId;
@@ -156,5 +157,15 @@ public abstract class AbstractServiceJob implements Job {
 	public void setTrigger(Trigger trigger) {
 		this.trigger = trigger;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
 
 }

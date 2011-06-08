@@ -120,7 +120,7 @@ public class SchedulingBean {
 			}
 		} else {
 			
-			interval = new SimpleDateFormat("dd.MM.yy hh:mm").format(nonperiodicTimestamp);
+			interval = interval + new SimpleDateFormat("dd.MM.yy HH:mm").format(nonperiodicTimestamp);
 		}
 		return interval;
     }

@@ -54,7 +54,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	/* form */
 	
 	// service
-	private Map<String, Integer> services = new HashMap<String, Integer>();
+//	private Map<String, Integer> services = new HashMap<String, Integer>();
 	private String chosenService;
 	
 	// repeatedly or once only
@@ -105,15 +105,17 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 		// create a list of services
 		// TODO should be retrieved from the DB
-		services.put("Harvester", 1);
-		services.put("Aggregator", 2);
-		services.put("Marker", 3);
+//		services.put("Harvester", 1);
+//		services.put("Aggregator", 2);
+//		services.put("Marker", 3);
 
 		// retrieve list of repositories
 		initRepositories();
 
 //		// retrieve the jobs to be displayed
 //		initJobs();
+		
+		schedulerControl.listJobs();
 	}
 	
 	
@@ -434,10 +436,10 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		return days;
 	}
 
-	public Map<String, Integer> getServices() {
-
-		return services;
-	}
+//	public Map<String, Integer> getServices() {
+//
+//		return services;
+//	}
 
 	public List<String> getHours() {
 
