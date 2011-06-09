@@ -20,6 +20,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -65,6 +66,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	private String chosenDayOfMonth;
 	private String chosenDayOfWeek;
 	private String chosenDay;
+	private Date   chosenDate2 = new Date();
 	private String chosenHour = "20:00";
 
 	
@@ -78,6 +80,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	// error messages	
 	private String error;
 
+	boolean updateCase;
 	private String radio1;
 	
 	
@@ -100,9 +103,23 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	@PostConstruct
 	public void init() {
 		
-		// init job object for a new job that might be created
+		// init job object for a new job that might be created or updated
 		job = new SchedulingBean();
 
+		
+		// try to fetch jobId from request parameters in case this is an update request
+		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
+		String jobId = request.getParameter("jid");
+		
+		System.out.println("Job-ID: " + jobId);
+		if (jobId != null) {
+			updateCase = initJob(jobId);
+		}
+		
+		
+
+		
+		
 		// create a list of services
 		// TODO should be retrieved from the DB
 //		services.put("Harvester", 1);
@@ -147,7 +164,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		
 		if (JobType.OneTime.toString().equals(jobType) && !startRightNow) {
 			try {
-				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate) + " " + chosenHour);
+				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate) + " " + chosenTime);
 				job.setNonperiodicTimestamp(date);
 
 				System.out.println(System.currentTimeMillis());
@@ -169,6 +186,29 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 			}
 		}
 		
+		if (JobType.Repeatedly.toString().equals(jobType)) {
+			try {
+				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate2) + " " + chosenHour);
+				job.setNonperiodicTimestamp(date);
+
+				System.out.println(System.currentTimeMillis());
+				System.out.println(new Date());
+				System.out.println(date.getTime());
+				System.out.println(date);
+				if (System.currentTimeMillis() > date.getTime()) {
+//					((UIInput) toValidate).setValid(false);
+
+					FacesMessage message = new FacesMessage("Das gewählte Datum muss in der Zukunft liegen.");
+					context.addMessage("1", message);
+					valid = false;
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+				FacesMessage message = new FacesMessage("Bitte überprüfen sie das gewählte Datum! (Format: TT.MM.JJJJ)");
+				context.addMessage("1", message);
+				valid = false;
+			}
+		}
 		
 		return valid;
 	}
@@ -211,9 +251,11 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		
 		
 		if (JobType.Repeatedly.toString().equals(jobType)) {
+			
+			job.setPeriodic(true);
 			try {
 				System.out.println("break1");
-				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate) + " " + chosenHour);
+				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate2) + " " + chosenHour);
 				job.setNonperiodicTimestamp(date);
 				System.out.println("break2");
 			} catch (ParseException e) {
@@ -275,10 +317,18 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		}
 		System.out.println("date: " + job.getNonperiodicTimestamp());
 
-		boolean stored = schedulerControl.storeJob(job);
-
+		boolean stored; 
+		FacesMessage msg;
+		
+		if (updateCase) {
+			stored = schedulerControl.updateJob(job);
+			msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Die Dienstplanung wurde erfolgreich aktualisiert!", null);
+		} else {
+			stored = schedulerControl.createJob(job);
+			msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Der Dienst wurde erfolgreich in die Planung aufgenommen!", null);
+		}
 		if (stored) {
-			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Der Dienst wurde erfolgreich in die Planung aufgenommen!", null));
+			ctx.addMessage(null, msg);
 			return "success";
 		}
 		
@@ -349,19 +399,23 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 	}
 	
-	private void initJobs() {
-		if (jobList == null || jobList.isEmpty()) {
-			return;
+	private boolean initJob(String jobId) {
+
+		try {
+			Integer.parseInt(jobId);
+		}catch (NumberFormatException e) {
+			logger.warn("Invalid job-ID '" + jobId + "'. Job-ID is required to be a numeric value!");
+			return false;
 		}
 
-		String result = restConnector.prepareRestTransmission("ServiceJob/").GetData();
+		String result = restConnector.prepareRestTransmission("ServiceJob/" + jobId).GetData();
 		jobList = new ArrayList<SchedulingBean>();
 		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
 
 		if (rms == null || rms.getListEntrySets().isEmpty()) {
 
 			logger.error("received no scheduling job details at all from the server");
-			return;
+			return false;
 		}
 
 		for (RestEntrySet res : rms.getListEntrySets()) {
@@ -393,7 +447,19 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 					job.setPeriodic(Boolean.parseBoolean(res.getValue(key)));
 
 				} else if (key.equalsIgnoreCase("nonperiodic_date")) {
-					job.setNonperiodicTimestamp(new Date((res.getValue(key))));
+					System.out.println(res.getValue(key));
+					String npd = res.getValue(key);
+					
+					Date date = null;
+					if (npd != null) {
+						
+						try {
+							date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(npd);
+						} catch (ParseException e) {
+							logger.warn("Could not parse date received from server. " + npd, e);
+						}
+					}
+					job.setNonperiodicTimestamp(date);
 
 				} else if (key.equalsIgnoreCase("periodic_interval_type")) {
 					job.setPeriodicInterval(res.getValue(key) != null ? SchedulingIntervalType.valueOf(res.getValue(key)) : null);
@@ -406,10 +472,36 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 					continue;
 			}
 
-			jobList.add(job);
-
+//			if (job != null) {
+//				
+//				// 
+//				
+//				this.job = job;
+//				
+//				private String chosenService;
+//				
+//				// repeatedly or once only
+//				private String jobType;
+//				
+//				// case repeatedly
+//				private String intervalType = SchedulingIntervalType.Day.toString();
+//				private String chosenDayOfMonth;
+//				private String chosenDayOfWeek;
+//				private String chosenDay;
+//				private String chosenHour = "20:00";
+//
+//				
+//				// case once only
+//				private List<Repository> repoList;
+//				private String chosenRepository;
+//				private Date   chosenDate = new Date();
+//				private String chosenTime = "20:00";
+//				private boolean startRightNow;
+//				
+//				return true;
+//			}
 		}
-		System.out.println("Job List: " + jobList.size());
+		return false;
 	}
 	
 	
@@ -580,6 +672,18 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		System.out.println("setter now : " + startRightNow);
     	this.startRightNow = startRightNow;
     }
+	
+	
+
+	public Date getChosenDate2() {
+		return chosenDate2;
+	}
+
+
+	public void setChosenDate2(Date chosenDate2) {
+		this.chosenDate2 = chosenDate2;
+	}
+
 
 	public void setRestConnector(RestConnector restConnector) {
 		this.restConnector = restConnector;
@@ -596,5 +700,10 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	public void setError(String error) {
 		this.error = error;
 	}
+
+	public boolean isUpdateCase() {
+		return updateCase;
+	}
+	
 	
 }

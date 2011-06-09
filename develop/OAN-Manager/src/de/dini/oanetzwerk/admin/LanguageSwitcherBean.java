@@ -1,3 +1,4 @@
+package de.dini.oanetzwerk.admin;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Locale;

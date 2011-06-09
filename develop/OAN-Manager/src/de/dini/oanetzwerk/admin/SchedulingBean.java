@@ -105,24 +105,31 @@ public class SchedulingBean {
 
 	public String getInterval() {
 
-		String interval = periodic ? "regelmäßig\n" : "einmalig\n";
+		StringBuffer interval = new StringBuffer(periodic ? "regelmäßig\n" : "einmalig\n");
+		
+
 		
 		if (periodic) {
+			String date = new SimpleDateFormat("HH:mm").format(nonperiodicTimestamp);
+			
 			if (SchedulingIntervalType.Monthly.equals(periodicInterval)) {
-				interval = interval + "jeden " + periodicDays + ". des Monats um" + nonperiodicTimestamp.getHours() + ":" + nonperiodicTimestamp.getMinutes() + "Uhr";;
+				interval.append("jeden " + periodicDays + ". des Monats um" + date + "Uhr");
 			} else if (SchedulingIntervalType.Weekly.equals(periodicInterval)) {
-				interval = interval + "jeden " + periodicDays + " um " + nonperiodicTimestamp.getHours() + ":" + nonperiodicTimestamp.getMinutes() + "Uhr";;
+				interval.append("jeden " + periodicDays + " um " + date + "Uhr");
 			} else if (SchedulingIntervalType.Day.equals(periodicInterval)) {
 				if (periodicDays == 1) {
-					interval = interval + "täglich um " + nonperiodicTimestamp.getHours() + ":" + nonperiodicTimestamp.getMinutes() + "Uhr";
+					interval.append("täglich um ");
 				}
-				interval = interval + "alle " + periodicDays + " Tage";
+				else {
+					interval.append("alle " + periodicDays + " Tage um ");
+				}
+				interval.append(date + "Uhr");
 			}
 		} else {
 			
-			interval = interval + new SimpleDateFormat("dd.MM.yy HH:mm").format(nonperiodicTimestamp);
+			interval.append(new SimpleDateFormat("dd.MM.yy HH:mm").format(nonperiodicTimestamp));
 		}
-		return interval;
+		return interval.toString();
     }
 
 	public boolean isNonperiodicNow() {

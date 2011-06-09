@@ -51,40 +51,57 @@
 		</t:div>
         
         <t:div rendered="#{not jobList.jobListEmpty}">
+
         <table id="jobs" >
           <tr>
         	<td>
             <t:dataTable value="#{jobList.jobList}" var="row"
             headerClass="pane-header" rowClasses="odd, even"
-            style="border-collapse: collapse; border: 1px #bbb solid; width : 700px;">
+            style="border-collapse: collapse; border: 1px #bbb solid; width : 800px;">
             
-              <t:column style="width: 22%;text-align:center;vertical-align:middle;height: 50px;">
+              <t:column style="width: 15%;text-align:center;vertical-align:middle;height: 50px;">
                 <f:facet name="header">
                   <h:outputText value="Dienst" />
                 </f:facet>
                   <h:outputText value="#{row.serviceId == 1 ? 'Harvester' : row.serviceId == 2 ? 'Aggregator' : row.serviceId == 3 ? 'Marker' : Unknown}" />
               </t:column>
                       
-              <t:column style="width: 30%; vertical-align: middle; text-align: center; height: 50px;">
+              <t:column style="width: 25%; vertical-align: middle; text-align: center; height: 50px;">
                 <f:facet name="header">
                   <h:outputText value="Zeitpunkt/Intervall" />
                 </f:facet>
                   <h:outputText value="#{row.interval}" />
               </t:column>
                       
-              <t:column style="width: 30%; vertical-align: middle; text-align: center; height: 50px;">
+              <t:column style="width: 25%; vertical-align: middle; text-align: center; height: 50px;">
                 <f:facet name="header">
                   <h:outputText value="Zusatzinformationen" />
                 </f:facet>
                   <h:outputText value="#{row.info}" />
               </t:column>
             
-              <t:column style="width: 30%; vertical-align: middle; text-align: center; height: 50px;">
+              <t:column style="width: 20%; vertical-align: middle; text-align: center; height: 50px;">
                 <f:facet name="header">
                   <h:outputText value="Status" />
                 </f:facet>
                   <h:outputText value="#{row.status}" />
               </t:column>
+              
+<!--				<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">-->
+<!--					<f:facet name="header">-->
+<!--						<h:outputText value="Ändern/" />-->
+<!--					</f:facet>-->
+<!--					<a href="services_schedule_add.xhtml?jid=#{row.jobId}"><img-->
+<!--						src="../images/16x16/document_edit.gif" /></a>-->
+<!--				</t:column>-->
+				<t:column style="width: 15%; vertical-align: middle; text-align: center; height: 70px;">
+					<f:facet name="header">
+						<h:outputText value="Löschen" />
+					</f:facet>
+					
+					<a href="services_schedule.xhtml?jid=#{row.jobId}" onclick="if (!confirm('Sind sie sicher das sie diesen Job entfernen wollen?')) return false"><img
+						src="../images/16x16/edit-delete.gif" /></a>
+				</t:column>              
             </t:dataTable>            
 			</td>
 		  </tr>

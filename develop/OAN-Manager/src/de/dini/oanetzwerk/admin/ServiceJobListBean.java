@@ -1,3 +1,4 @@
+package de.dini.oanetzwerk.admin;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -8,16 +9,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.admin.RestConnector;
-import de.dini.oanetzwerk.admin.SchedulingBean;
 import de.dini.oanetzwerk.admin.SchedulingBean.SchedulingIntervalType;
 import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
@@ -36,6 +37,9 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 	FacesContext ctx = FacesContext.getCurrentInstance();
 	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(false);
 	
+	@ManagedProperty(value = "#{schedulerControl}")
+	private SchedulerControl schedulerControl;
+	
 	@ManagedProperty(value = "#{restConnector}")
 	private RestConnector restConnector;
 	
@@ -52,6 +56,34 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 		
 		// retrieve the jobs to be displayed
 		initJobs();
+		
+
+		// try to fetch jobId from request parameters in case this is an update request
+		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
+		String jobId = request.getParameter("jid");
+		
+		boolean deleted = false;
+		
+		int jobIndex = -1;
+		System.out.println("Job-ID: " + jobId);
+		if (jobId != null) {
+			for (SchedulingBean job : jobList) {
+				if (job.getJobId() != null && jobId.equals(job.getJobId().toString())) {
+					jobIndex = jobList.indexOf(job);
+					deleted = schedulerControl.deleteJob(jobId, job.getName());
+				}
+			}
+			
+			FacesMessage message;
+			if (deleted) {
+				jobList.remove(jobIndex);
+				message = new FacesMessage("Der Job wurde erfolgreich gelöscht.");
+			} else {
+				message = new FacesMessage("Der Job konnte nicht entfernt werden. Bitte prüfen sie die Logs.");
+			}
+			ctx.addMessage("1", message);
+		}
+		
 	}
 	
 	
@@ -144,5 +176,10 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 	public void setRestConnector(RestConnector restConnector) {
 		this.restConnector = restConnector;
 	}
-	
+
+
+	public void setSchedulerControl(SchedulerControl schedulerControl) {
+		this.schedulerControl = schedulerControl;
+	}
+		
 }
