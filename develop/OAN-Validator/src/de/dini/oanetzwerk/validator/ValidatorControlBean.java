@@ -39,6 +39,8 @@ public class ValidatorControlBean implements JobListener {
 	private String user = "sdavid";
 
 	public ValidatorControlBean() {
+		
+
 	}
 
 	public String validate() {
@@ -83,42 +85,13 @@ public class ValidatorControlBean implements JobListener {
 		return "validator_status";
 	}
 
-//	public void connectToMySQL() {
-//
-//		Connection conn;
-//		try {
-//			Class.forName("com.mysql.jdbc.Driver");
-//			String url = "jdbc:mysql:///localhost:3306/oan_validator";
-//
-//			Properties props = new Properties();
-//			props.put("user", "oan_user");
-//			props.put("password", "oan123");
-//			props.put("charSet", "UTF-8");
-//			conn = DriverManager.getConnection(url, props);
-//
-//			MultipleStatementConnection stmtconn = new MultipleStatementConnection(conn);
-//
-//			// System.out.println("Leere Tabelle "+methodName+" vor dem neu befüllen");
-//			String sql = "SELECT * FROM jobs";
-//			PreparedStatement statement = conn.prepareStatement(sql);
-//			stmtconn.loadStatement(statement);
-//			QueryResult qs = stmtconn.execute();
-//			
-//			stmtconn.commit();
-//
-//			System.out.println("Result: " + qs.getResultSet().next());
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			System.exit(-1);
-//		}
-//	}
+
 	
-	public List<Entry> getJobSummary() {
+	public List<Entry> getJobSummary(String jobId) {
 
 		try {
 			Validator val = APIStandalone.getValidator();
-			List<Entry> entries = val.getJobSummary("387");
+			List<Entry> entries = val.getJobSummary(jobId);
 			
 			if (entries == null)
 			{
@@ -196,6 +169,37 @@ public class ValidatorControlBean implements JobListener {
 		System.out.println("failed");
 
 	}
+	
+//	public void connectToMySQL() {
+	//
+//			Connection conn;
+//			try {
+//				Class.forName("com.mysql.jdbc.Driver");
+//				String url = "jdbc:mysql:///localhost:3306/oan_validator";
+	//
+//				Properties props = new Properties();
+//				props.put("user", "oan_user");
+//				props.put("password", "oan123");
+//				props.put("charSet", "UTF-8");
+//				conn = DriverManager.getConnection(url, props);
+	//
+//				MultipleStatementConnection stmtconn = new MultipleStatementConnection(conn);
+	//
+//				// System.out.println("Leere Tabelle "+methodName+" vor dem neu befüllen");
+//				String sql = "SELECT * FROM jobs";
+//				PreparedStatement statement = conn.prepareStatement(sql);
+//				stmtconn.loadStatement(statement);
+//				QueryResult qs = stmtconn.execute();
+//				
+//				stmtconn.commit();
+	//
+//				System.out.println("Result: " + qs.getResultSet().next());
+	//
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				System.exit(-1);
+//			}
+//		}
 
 	/*********************** Getter & Setter *********************/
 

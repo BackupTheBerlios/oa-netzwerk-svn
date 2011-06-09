@@ -136,7 +136,7 @@ public class HelperMethods {
 	}
 	
 	public static Properties loadPropertiesFromFileWithinWebcontainerWebapps(String file) throws InvalidPropertiesFormatException, FileNotFoundException, IOException {
-		final String webappsPath = System.getProperty("catalina.home") + "/wtpwebapps"; 
+		final String webappsPath = System.getProperty("catalina.home") + "/webapps"; 
 		Properties props = new Properties ( );
 		
 		if (logger.isDebugEnabled ( ))

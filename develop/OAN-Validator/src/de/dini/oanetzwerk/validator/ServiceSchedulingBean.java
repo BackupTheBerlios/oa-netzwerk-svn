@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import javax.faces.bean.ManagedBean;
 
+import de.dini.oanetzwerk.validator.utils.AbstractBean;
+
 @ManagedBean(name = "sersche")
 public class ServiceSchedulingBean extends AbstractBean implements Serializable{
 	
@@ -25,7 +27,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable{
 	private boolean stored;
 	
 	
-	ServiceSchedulingBean(){
+	public ServiceSchedulingBean(){
 		
 	}
 	
@@ -37,29 +39,29 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable{
 		
 	}
 	
-	public HashMap<String, String> getDetails() {
-		
-	}
-	
-	
+//	public HashMap<String, String> getDetails() {
+//		
+//	}
+//	
+//	
 	/*
 	 * Nachfolgend store, delete und deactivate für einen Eintrag
 	 */
 	
-	
-	public String store(){
-		
-	}
-	
-	public String delete(){
-		
-	}
-	
-	public String deactivate(){
-		
-	}
-	
-	
+//	
+//	public String store(){
+//		
+//	}
+//	
+//	public String delete(){
+//		
+//	}
+//	
+//	public String deactivate(){
+//		
+//	}
+//	
+//	
 	
 	
 	/*
