@@ -8,15 +8,14 @@
 <head></head>
 
 <body>
-
 <ui:debug hotkey="m" rendered="true" />
 
 <ui:composition template="templates/template.xhtml">
 
 
-  <ui:param name="pageTitle" value="Validation - Übersicht" />
+  <ui:param name="pageTitle" value="Validation - Ergebnisse" />
 
-  <ui:define name="navigation">
+ <ui:define name="navigation">
     <a href="/oanadmin/">OA-Netzwerk</a>
   </ui:define>
 
@@ -39,76 +38,65 @@
       href="livelog.faces">Live Log</a></div>
     </div>
   </ui:define>
-
+  
   <ui:define name="content">
   
-   <div style="padding: 20px; background-color: #f5f9f4;">
+  <div style="padding: 20px; background-color: #f5f9f4;">
       <div style="background-color: #f5f9f4;">
    
    <h2>
-   Validation - Übersicht
+   Details
    </h2>
-   Auf dieser Seite können Informationen über laufende Validations eingesehen werden.
+   Der erste Link liefert Informationen zur Einhaltung des OAI-Protokolls. Content führt zu einer detaillierteren Ansicht des gewählten Validation-Jobs.
     <br />
     <br />
-
-    <table id="executors" >
+    
+      <table id="executors" >
 
 						<tr>
 							<td><h:form>
-							<table width="100%">
 								<h:dataTable value="#{valiList.validations}" var="row"
 									headerClass="pane-header" rowClasses="odd, even"
-									style="border-collapse: collapse; border: 1px #bbb solid; width : 638px;">
+									style="border-collapse: collapse; border: 1px #bbb solid; width : 614px;">
 									
-									<h:column style="width: 30%; vertical-align: ; height: 70px;">
+									<h:column style="width: 22%; vertical-align: middle; height: 70px;">
 										<f:facet name="header">
-											<h:outputText value="OAI-URL" />
+											<h:outputText value="Repository" />
 										</f:facet>
-										<div align="center">
-										<h:outputText value="#{row.oaiUrl}"/>
+										<div align="middle">
+										<h:outputText value="#{row.oaiUrl}" />
 										</div>
 									</h:column>
 									
-									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+									<h:column style="width: 22%; vertical-align: middle; padding-left: 15px; height: 70px;">
 										<f:facet name="header">
-											<h:outputText value="Datum" />
+											<h:outputText value="OAI-PMH" />
 										</f:facet>
-										<div align="center">
-										<h:outputText value="#{row.date}" />
+										<div align="middle">
+										<a href="validation_results_oaipmh.xhtml">Folge Link</a>
 										</div>
-									</h:column>
+									</h:column >
 									
-									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+									<h:column style="width: 5%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
-											<h:outputText value="Dauer" />
+											<h:outputText value="Content" />
 										</f:facet>
-										<div align="center">
-										<h:outputText onclick="" value="#{row.duration}" />
-										</div>
-									</h:column>
-									
-									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
-										<f:facet name="header">
-											<h:outputText value="Status" />
-										</f:facet>
-										<div align="center">
-										<a href="validation_results.xhtml?vid=#{row.id}"><h:outputText value="#{row.state}" /></a>
+										<div align="middle">
+										<a href="validation_results_content.xhtml">Folge Link</a>
 										</div>
 									</h:column>
 									
 								</h:dataTable>
-								</table>
 							</h:form></td>
 						</tr>
 					</table>
-					
-	</div>
-	</div>
+      
+      </div>
+      </div>	
 
 </ui:define>
-</ui:composition>
 
+</ui:composition>
 </body>
 
 </html>

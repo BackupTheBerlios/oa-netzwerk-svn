@@ -40,6 +40,9 @@
   </ui:define>
   
   <ui:define name="content">
+  
+  <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
    
    <h2>
    Details
@@ -48,19 +51,48 @@
     <br />
     <br />
     
-    <table width="100%" style="width: 50%; border-collapse: collapse; border: 1px #bbb solid;">
+      <table id="executors" >
 
-         <tr>
-            <th class="pane-header">OAI-PMH</th>
-            <th class="pane-header">Content</th>
-           
-         </tr>
-
-         <tr class="odd">
-            <td style="vertical-align: middle; text-align: center;"><a href="validation_results_oaipmh.xhtml">Folge Link</a></td>
-            <td style="vertical-align: middle; text-align: center;"><a href="validation_results_content.xhtml">Folge Link</a></td>
-         </tr>
-      </table>	
+						<tr>
+							<td><h:form>
+								<h:dataTable value="#{results.jobs}" var="row"
+									headerClass="pane-header" rowClasses="odd, even"
+									style="border-collapse: collapse; border: 1px #bbb solid; width : 614px;">
+									
+									<h:column style="width: 22%; vertical-align: middle; height: 70px;">
+										<f:facet name="header">
+											<h:outputText value="Repository" />
+										</f:facet>
+										<div align="middle">
+										<h:outputText value="#{row.repo}" />
+										</div>
+									</h:column>
+									
+									<h:column style="width: 22%; vertical-align: middle; padding-left: 15px; height: 70px;">
+										<f:facet name="header">
+											<h:outputText value="OAI-PMH" />
+										</f:facet>
+										<div align="middle">
+										<a href="validation_results_oaipmh.xhtml?vid=#{row.id}">Folge Link</a>
+										</div>
+									</h:column >
+									
+									<h:column style="width: 5%; vertical-align: middle; text-align: center; height: 70px;">
+										<f:facet name="header">
+											<h:outputText value="Content" />
+										</f:facet>
+										<div align="middle">
+										<a href="validation_results_content.xhtml?vid=#{row.id}">Folge Link</a>
+										</div>
+									</h:column>
+									
+								</h:dataTable>
+							</h:form></td>
+						</tr>
+					</table>
+      
+      </div>
+      </div>	
 
 </ui:define>
 

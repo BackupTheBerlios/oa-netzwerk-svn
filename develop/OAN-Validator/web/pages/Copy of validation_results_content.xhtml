@@ -8,15 +8,14 @@
 <head></head>
 
 <body>
-
 <ui:debug hotkey="m" rendered="true" />
 
 <ui:composition template="templates/template.xhtml">
 
 
-  <ui:param name="pageTitle" value="Validation - Übersicht" />
+  <ui:param name="pageTitle" value="Validation - Ergebnisse/Content" />
 
-  <ui:define name="navigation">
+ <ui:define name="navigation">
     <a href="/oanadmin/">OA-Netzwerk</a>
   </ui:define>
 
@@ -39,19 +38,18 @@
       href="livelog.faces">Live Log</a></div>
     </div>
   </ui:define>
-
+  
   <ui:define name="content">
   
-   <div style="padding: 20px; background-color: #f5f9f4;">
+  <div style="padding: 20px; background-color: #f5f9f4;">
       <div style="background-color: #f5f9f4;">
-   
-   <h2>
-   Validation - Übersicht
+  
+  	<h2>
+   Content
    </h2>
-   Auf dieser Seite können Informationen über laufende Validations eingesehen werden.
+   Auf dieser Seite können Informationen über Regel, Status und Details eingesehen werden.
     <br />
     <br />
-
     <table id="executors" >
 
 						<tr>
@@ -59,56 +57,27 @@
 							<table width="100%">
 								<h:dataTable value="#{valiList.validations}" var="row"
 									headerClass="pane-header" rowClasses="odd, even"
-									style="border-collapse: collapse; border: 1px #bbb solid; width : 638px;">
+									style="border-collapse: collapse; border: 1px #bbb solid; width : 589px;">
 									
-									<h:column style="width: 30%; vertical-align: ; height: 70px;">
-										<f:facet name="header">
-											<h:outputText value="OAI-URL" />
-										</f:facet>
-										<div align="center">
-										<h:outputText value="#{row.oaiUrl}"/>
-										</div>
-									</h:column>
+									<tr>
+                 				 		<td>Name des Repositories&nbsp;
+                  							(<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)
+                  						</td>
+               						</tr>
+           
 									
-									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
-										<f:facet name="header">
-											<h:outputText value="Datum" />
-										</f:facet>
-										<div align="center">
-										<h:outputText value="#{row.date}" />
-										</div>
-									</h:column>
-									
-									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
-										<f:facet name="header">
-											<h:outputText value="Dauer" />
-										</f:facet>
-										<div align="center">
-										<h:outputText onclick="" value="#{row.duration}" />
-										</div>
-									</h:column>
-									
-									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
-										<f:facet name="header">
-											<h:outputText value="Status" />
-										</f:facet>
-										<div align="center">
-										<a href="validation_results.xhtml?vid=#{row.id}"><h:outputText value="#{row.state}" /></a>
-										</div>
-									</h:column>
 									
 								</h:dataTable>
 								</table>
 							</h:form></td>
 						</tr>
 					</table>
-					
-	</div>
-	</div>
-
+			
+			</div>
+			</div>
 </ui:define>
-</ui:composition>
 
+</ui:composition>
 </body>
 
 </html>
