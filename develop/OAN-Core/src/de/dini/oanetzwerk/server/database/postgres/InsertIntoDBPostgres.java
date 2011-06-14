@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -594,9 +595,10 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 					"VALUES (" + object_id + ", " + ddcValue + ")");
 		}
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO \"DDC_Classification\" (object_id, \"DDC_Categorie\") VALUES (?, ?)");
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO \"DDC_Classification\" (object_id, \"DDC_Categorie\", generated) VALUES (?, ?, ?)");
 		preparedstmt.setBigDecimal (1, object_id);
 		preparedstmt.setString (2, ddcValue);
+		preparedstmt.setBoolean(3, false);
 		
 		return preparedstmt;
 	}
@@ -620,9 +622,29 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO \"DNB_Classification\" (object_id, \"DNB_Categorie\") VALUES (?, ?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setString(2, category);
+		preparedstmt.setBoolean(3, false);
 		
 		return preparedstmt;
 	}
+	
+	@Override
+    public PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, List<String> categories, boolean generated) throws SQLException {
+		if (logger.isDebugEnabled()) {
+
+			logger.debug("Insert DDC: INSERT INTO  \"DDC_Classification\" (object_id, \"DDC_Categorie\", generated ) VALUES " + "(" + object_id + ", " + "DDC" + ", " + generated);
+		}
+
+		PreparedStatement preparedstmt = connection.prepareStatement("INSERT INTO  \"DDC_Classification\" (object_id, \"DDC_Categorie\", generated ) VALUES (?, ?, ?)");
+		
+		for (String category : categories) {
+			preparedstmt.setBigDecimal(1, object_id);
+			preparedstmt.setString(2, category);
+			preparedstmt.setBoolean(3, generated);
+			preparedstmt.addBatch();
+		}
+
+		return preparedstmt;
+    }
 
 	/**
 	 * @param object_id

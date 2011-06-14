@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 public interface InsertIntoDB {
 
@@ -81,4 +82,5 @@ public interface InsertIntoDB {
 	public abstract PreparedStatement Object(Connection connection, BigDecimal repository_id, Date harvested, Date repository_datestamp, String repository_identifier, boolean testdata, int failureCounter)
 			throws SQLException;
 
+    public abstract PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, List<String> categories, boolean generated) throws SQLException;
 }
