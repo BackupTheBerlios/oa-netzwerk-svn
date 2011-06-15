@@ -40,6 +40,21 @@
   </ui:define>
   
   <ui:define name="content">
+  
+  <script type="text/javascript">
+	function fold() {
+		if (document.getElementById)
+			document.getElementById("fehlerliste").style.display = "inline";
+	}
+
+	function unfold() {
+		if (document.getElementById)
+			document.getElementById("fehlerliste").style.display = "none";
+	}
+
+  </script>
+
+  
 
   <div style="padding: 20px; background-color: #f5f9f4;">
       <div style="background-color: #f5f9f4;">
@@ -94,13 +109,16 @@
 														headerClass="pane-header" rowClasses="odd, even"
 														style="border-collapse: collapse; border: 1px #bbb solid; width : 589px;">
 												
-												<div id="fehlerliste" >
+												<div id="fehlerliste" style="visibility: none">
 												<h:column
 													style="width: 30%; vertical-align: middle; height: 70px;">
 													<div align="center">			
 														<h:outputLink value="#{valiList.oaiUrl}?verb&#61;GetRecord&amp;metadataPrefix&#61;oai_dc&amp;identifier=#{error}" >#{error}</h:outputLink>
 													</div>
 												</h:column>
+												</div>
+												<div align="left">
+												<button onclick="fold();">Ansehen.</button>
 												</div>
 												
 											</h:dataTable>
@@ -114,6 +132,10 @@
 										</table>
 										
 									</h:column>
+									
+									
+									
+									
 <!--									<h:column style="width: 30%; vertical-align: middle; height: 70px;">-->
 <!--										<f:facet name="header">-->
 <!--											<h:outputText value="Regel" />-->
