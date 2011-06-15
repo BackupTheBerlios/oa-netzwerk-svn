@@ -13,7 +13,7 @@
   <ui:param name="pageTitle" value="Dienste - OA-Netzwerk Manager" />
 
   <ui:define name="navigation">
-    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml">Dienste</a>
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml"><h:outputLabel value="#{msg.serv_main1}" /></a>
   </ui:define>
 
   <ui:param name="menu_services" value="#{true}" /> 
@@ -21,14 +21,10 @@
   <ui:define name="content">
 
   <f:view>
-      Über dieses Portal ist die gesamte
-      Dienstekette des OA-Netzwerks steuerbar und ermöglicht den Ablauf der Dienste zu überwachen oder mögliche
-      Fehlersituationen schnell zu überblicken! Darüber hinaus lassen sich die OAN zugrundeliegenden Repositorien (Data
-      Provider) verwalten. Zusätzliche Funktionen wie der Live-Service-Log oder aufbereitete Reports erleichtern den
-      Einblick und geben einen Status über die Arbeit der OAN-Dienste.<br />
+      <h:outputLabel value="#{msg.serv_main_description}" /><br />
     <br />
 
-      Status: <h:outputLabel for="harvesterStatus" value="#{services.harvesterStatus}">
+      <h:outputLabel value="#{msg.serv_main_state}" /> <h:outputLabel for="harvesterStatus" value="#{services.harvesterStatus}">
 
     </h:outputLabel>
 
@@ -39,12 +35,12 @@
     <table width="80%" style="width: 80%; border-collapse: collapse; border: 1px #bbb solid;">
 
       <tr>
-        <th class="pane-header">Status</th>
-        <th class="pane-header">Dienst</th>
-        <th class="pane-header">Letzter Durchlauf</th>
-        <th class="pane-header">Dauer des letzten Durchlaufs</th>
-        <th class="pane-header">Intervall</th>
-        <th class="pane-header">Aktion</th>
+        <th class="pane-header"><h:outputLabel value="#{msg.serv_main2}" /></th>
+        <th class="pane-header"><h:outputLabel value="#{msg.serv_main3}" /></th>
+        <th class="pane-header"><h:outputLabel value="#{msg.serv_main4}" /></th>
+        <th class="pane-header"><h:outputLabel value="#{msg.serv_main5}" /></th>
+        <th class="pane-header"><h:outputLabel value="#{msg.serv_main6}" /></th>
+        <th class="pane-header"><h:outputLabel value="#{msg.serv_main7}" /></th>
       </tr>
 
       <tr class="odd">
@@ -60,19 +56,19 @@
             </t:div>            
         </td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">Harvester</td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">vor 7 Tagen</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main8}" /></td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">2h 15min</td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">wöchentlich</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main9}" /></td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">
         
         <t:div rendered="#{not services.harvesterStarted and not services.harvesterBusy}">
-        	<h:commandLink action="#{services.startHarvesterService}" title="Starten" >Starten</h:commandLink>
+        	<h:commandLink action="#{services.startHarvesterService}" title="Starten" ><h:outputLabel value="#{msg.serv_main10}" /></h:commandLink>
         </t:div> 
         
         <br />
         
         <t:div rendered="#{services.harvesterStarted or services.harvesterBusy}">
-        	<h:commandLink action="#{services.stopHarvesterService}" title="Stoppen" >Stoppen</h:commandLink> 
+        	<h:commandLink action="#{services.stopHarvesterService}" title="Stoppen" ><h:outputLabel value="#{msg.serv_main11}" /></h:commandLink> 
         </t:div> 
         
         </td>
@@ -90,19 +86,19 @@
             </t:div>            
         </td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">Aggregator</td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">vor 6 Tagen</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main12}" /></td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">7min</td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">wöchentlich</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main13}" /></td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">
         
         <t:div rendered="#{not services.aggregatorStarted and not services.aggregatorBusy}">
-        	<h:commandLink action="#{services.startAggregatorService}" title="Starten" >Starten</h:commandLink>
+        	<h:commandLink action="#{services.startAggregatorService}" title="Starten" ><h:outputLabel value="#{msg.serv_main14}" /></h:commandLink>
         </t:div> 
         
         <br />
         
         <t:div rendered="#{services.aggregatorStarted or services.aggregatorBusy}">
-        	<h:commandLink action="#{services.stopAggregatorService}" title="Stoppen" >Stoppen</h:commandLink> 
+        	<h:commandLink action="#{services.stopAggregatorService}" title="Stoppen" ><h:outputLabel value="#{msg.serv_main15}" /></h:commandLink> 
         </t:div> 
         
         </td>
@@ -120,19 +116,19 @@
             </t:div>            
         </td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">Marker</td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">vor 6 Tagen</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main16}" /></td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">7min</td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">wöchentlich</td>
+        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main17}" /></td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">
         
         <t:div rendered="#{not services.markerStarted and not services.markerBusy}">
-        	<h:commandLink action="#{services.startMarkerService}" title="Starten" >Starten</h:commandLink>
+        	<h:commandLink action="#{services.startMarkerService}" title="Starten" ><h:outputLabel value="#{msg.serv_main18}" /></h:commandLink>
         </t:div> 
         
         <br />
         
         <t:div rendered="#{services.markerStarted or services.markerBusy}">
-        	<h:commandLink action="#{services.stopMarkerService}" title="Stoppen" >Stoppen</h:commandLink> 
+        	<h:commandLink action="#{services.stopMarkerService}" title="Stoppen" ><h:outputLabel value="#{msg.serv_main19}" /></h:commandLink> 
         </t:div> 
         
         </td>

@@ -13,7 +13,7 @@
   <ui:param name="pageTitle" value="Neues Repository hinzufügen - OA-Netzwerk Manager" />
 
   <ui:define name="navigation">
-    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="repositories_main.xhtml">Repositorien</a> » <a href="repositories_add.xhtml">Hinzufügen</a>
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="repositories_main.xhtml"><h:outputLabel value="#{msg.repositories_add1}" /></a> » <a href="repositories_add.xhtml"><h:outputLabel value="#{msg.repositories_add2}" /></a>
   </ui:define>
 
   <ui:param name="menu_repository_add" value="#{true}" />
@@ -45,7 +45,7 @@
 
     <div style="padding: 20px; background-color: #f5f9f4;">
     <div style="background-color: #f5f9f4;">
-    <h2>Neues Repository hinzufügen</h2>
+    <h2><h:outputLabel value="#{msg.repositories_add_title}" /></h2>
 
     <table width="100%">
 
@@ -58,14 +58,14 @@
 
 
           <tr>
-            <td>Name des Repositories*&nbsp; (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)</td>
+            <td><h:outputLabel value="#{msg.repositories_add_name}*" />&nbsp; (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)</td>
           </tr>
           <tr>
 
             <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.repository.name}" required="true" requiredMessage="Bitte geben sie einen Namen für das Repository ein!" >
             <f:validateBean />   
             </t:inputText>
-            <div class="help_box" id="help_name">Geben Sie hier den Namen des neuen Repositoriums ein.</div>
+            <div class="help_box" id="help_name"><h:outputLabel value="#{msg.repositories_add_name_help}" /></div>
             </td>
 
           </tr>
@@ -75,17 +75,16 @@
           </tr>
           <tr>
             <td class="form"><t:inputText id="url" size="80" value="#{repo.repository.url}" />
-            <div class="help_box" id="help_url">Geben Sie die Internetseite des neuen Repositories an auf der allgemeine Informationen
-            zum Repository zu finden sind. (http://...)</div>
+            <div class="help_box" id="help_url"><h:outputLabel value="#{msg.repositories_add_url_help}" /></div>
             </td>
           </tr>
 
           <tr>
-            <td>Verantwortlicher&nbsp; (<a href="#" onclick="javascript:toggle_help('help_owner'); return false;">Help</a>)</td>
+            <td><h:outputLabel value="#{msg.repositories_add_resp}" />&nbsp; (<a href="#" onclick="javascript:toggle_help('help_owner'); return false;">Help</a>)</td>
           </tr>
           <tr>
             <td class="form"><t:inputText id="repo_owner" size="80" value="#{repo.repository.owner}" />
-            <div class="help_box" id="help_owner">Geben Sie hier den Namen des Verantwortlichen für das Repository ein.</div>
+            <div class="help_box" id="help_owner"><h:outputLabel value="#{msg.repositories_add_resp_help}" /></div>
             </td>
 
           </tr>
@@ -95,17 +94,17 @@
           </tr>
           <tr>
             <td class="form"><t:inputText id="repo_ownerEmail" size="80" value="#{repo.repository.ownerEmail}" />
-            <div class="help_box" id="help_ownerEmail">Geben Sie hier die E-Mail-Adresse des Verantwortlichen für das Repository ein.</div>
+            <div class="help_box" id="help_ownerEmail"><h:outputLabel value="#{msg.repositories_add_mail_help}" /></div>
             </td>
 
           </tr>
 
           <tr>
-            <td>OAI-PMH Schnittstelle* (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)</td>
+            <td><h:outputLabel value="#{msg.repositories_add_oai}*" /> (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)</td>
           </tr>
           <tr>
             <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.repository.oaiUrl}" required="true" requiredMessage="Bitte geben sie die URL der OAI/PMH-Schnittstelle ein!"/>
-            <div class="help_box" id="help_oaipmh">Geben Sie die URL der OAI-PMH Schnittstelle des neuen Repositories an. (http://...)</div>
+            <div class="help_box" id="help_oaipmh"><h:outputLabel value="#{msg.repositories_add_oai_help}" /></div>
             </td>
           </tr>
           <tr>
@@ -113,8 +112,7 @@
           </tr>
           <tr>
             <td class="form"><t:inputText id="harvest_batch" size="20" value="#{repo.repository.harvestAmount}" />
-            <div class="help_box" id="help_size">Geben Sie hier die Anzahl der Records an, die bei einem einzelnen Harvesting-Request
-            vom Repository zur Bearbeitung geladen werden soll.</div>
+            <div class="help_box" id="help_size"><h:outputLabel value="#{msg.repositories_add_harvbs_help}" /></div>
             </td>
           </tr>
           <tr>
@@ -122,8 +120,7 @@
           </tr>
           <tr>
             <td class="form"><t:inputText id="harvest_pause" size="20" value="#{repo.repository.harvestPause}" />
-            <div class="help_box" id="help_pause">Geben Sie die Zeit der Pause zwischen den Harvesting-Requests während eines
-            Harvestings in Millisekunden an. (1000ms = 1s)</div>
+            <div class="help_box" id="help_pause"><h:outputLabel value="#{msg.repositories_add_harvp_help}" /></div>
             </td>
           </tr>
           <tr>
@@ -131,16 +128,15 @@
           </tr>
           <tr>
             <td class="form"><t:inputText id="listrecords" size="20" value="#{repo.repository.listRecords}" />
-            <div class="help_box" id="help_listrec">Soll das Harvesting bevorzugt den ListRecords-Modus verwenden.</div>
+            <div class="help_box" id="help_listrec"><h:outputLabel value="#{msg.repositories_add_harvlr_help}" /></div>
             </td>
           </tr>
           <tr>
-            <td>aktiv (<a href="#" onclick="javascript:toggle_help('help_active'); return false;">Help</a>)</td>
+            <td><h:outputLabel value="#{msg.repositories_add_active}" /> (<a href="#" onclick="javascript:toggle_help('help_active'); return false;">Help</a>)</td>
           </tr>
           <tr>
             <td class="form"><t:selectBooleanCheckbox id="active" value="#{repo.repository.active}" />
-            <div class="help_box" id="help_active">Legt fest ob das neue Repository nach dem Hinzufügen vom Diensteprozess
-            berücksichtigt werden soll. (kann auch später aktiviert werden)</div>
+            <div class="help_box" id="help_active"><h:outputLabel value="#{msg.repositories_add_active_help}" /></div>
             </td>
           </tr>
 

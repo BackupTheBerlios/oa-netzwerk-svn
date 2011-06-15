@@ -10,7 +10,7 @@
 <ui:composition>
    <table width="100%">
       <tr>
-         <td id="footer"><span style="padding-right: 2em; color: gray"> Erzeugung dieser Seite: #{u:now()}</span>OAN-Manager ver. #{initParam['oanmanager.MANAGER_VERSION']}</td>
+         <td id="footer"><span style="padding-right: 2em; color: gray"> <h:outputLabel value="#{msg.footer}" /> #{u:now()}</span>OAN-Manager ver. #{initParam['oanmanager.MANAGER_VERSION']}</td>
       </tr>
    </table>
 </ui:composition>

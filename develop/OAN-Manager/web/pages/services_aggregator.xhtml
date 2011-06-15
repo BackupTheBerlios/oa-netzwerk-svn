@@ -13,15 +13,14 @@
    <ui:param name="pageTitle" value="Aggregator -Dienste - OA-Netzwerk Manager" />
    
    <ui:define name="navigation">
-      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml">Dienste</a> » <a href="services_aggregator.xhtml">Aggregator</a>
+      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml"><h:outputLabel value="#{msg.serv_agg1}" /></a> » <a href="services_aggregator.xhtml">Aggregator</a>
    </ui:define>
 
    <ui:param name="menu_services_aggregator" value="#{true}" /> 
 
    <ui:define name="content">
       
-      Über dieses Portal ist die gesamte Dienstekette des OA-Netzwerks steuerbar und ermöglicht den Ablauf der Dienste zu überwachen oder mögliche Fehlersituationen schnell zu überblicken! Darüber hinaus lassen sich die OAN zugrundeliegenden Repositorien (Data Provider) verwalten.
-      Zusätzliche Funktionen wie der Live-Service-Log oder aufbereitete Reports erleichtern den Einblick und geben einen Status über die Arbeit der OAN-Dienste.<br />
+      <h:outputLabel value="#{msg.serv_agg_description}" /><br />
       <br />
 
       <p />

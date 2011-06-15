@@ -13,9 +13,8 @@
 	<ui:param name="pageTitle" value="Reports - OA-Netzwerk Manager" />
 
 	<ui:define name="navigation">
-		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="reports.xhtml">Reports</a>
+		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="reports.xhtml"><h:outputLabel value="#{msg.reports1}" /></a>
 	</ui:define>
-
 
 
 	<ui:define name="content">
@@ -30,8 +29,7 @@
 		<h2>Reports</h2>
 		<p />
 		<br />
-		Nachfolgend sind diverse Reports zu den verschieden Diensten gelistet. Diese enthalten Details zu eventuellen Problemen und liefern einen Status über die
-		absolvierten Aufgaben der einzelnen Dienste.
+		<h:outputLabel value="#{msg.reports_description}" />
 		<p />
 
 		<table width="100%" >
@@ -42,18 +40,18 @@
 						<td width="300">
 						<h4>Validation-Reports</h4>
 						</td>
-						<td charoff="10"><h4>Typ</h4></td>
-						<td charoff="10"><h4>erstellt am</h4></td>
+						<td charoff="10"><h4><h:outputLabel value="#{msg.reports3}" /></h4></td>
+						<td charoff="10"><h4><h:outputLabel value="#{msg.reports2}" /></h4></td>
 						
 					</tr>
 					<tr>
 						<td width="140"><a href="#">Validation Report - EDOC HU-Berlin</a></td>
-						<td charoff="10">manuell</td>
+						<td charoff="10"><h:outputLabel value="#{msg.reports4}" /></td>
 						<td charoff="10">14.01.2011</td>
 					</tr>
 					<tr>
 						<td width="140"><a href="#">Validation Report - SSOAR</a></td>
-						<td charoff="10">automatisch</td>
+						<td charoff="10"><h:outputLabel value="#{msg.reports5}" /></td>
 						<td charoff="10">12.01.2011</td>
 					</tr>
 				</h:form>
@@ -67,18 +65,18 @@
 						<td width="300">
 						<h4>Harvesting-Reports</h4>
 						</td>
-						<td charoff="10"><h4>Typ</h4></td>
-						<td charoff="10"><h4>erstellt am</h4></td>
+						<td charoff="10"><h4><h:outputLabel value="#{msg.reports3}" /></h4></td>
+						<td charoff="10"><h4><h:outputLabel value="#{msg.reports2}" /></h4></td>
 						
 					</tr>
 					<tr>
 						<td width="140"><a href="#">EDOC HU-Berlin</a></td>
-						<td charoff="10">automatisch</td>
+						<td charoff="10"><h:outputLabel value="#{msg.reports5}" /></td>
 						<td charoff="10">10.01.2011</td>
 					</tr>
 					<tr>
 						<td width="140"><a href="#">Fraunhofer</a></td>
-						<td charoff="10">automatisch</td>
+						<td charoff="10"><h:outputLabel value="#{msg.reports5}" /></td>
 						<td charoff="10">10.01.2011</td>
 					</tr>
 				</h:form>

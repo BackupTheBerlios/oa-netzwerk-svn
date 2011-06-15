@@ -17,8 +17,8 @@
 		value="Neues Repository hinzufügen - OA-Netzwerk Manager" />
 
 	<ui:define name="navigation">
-		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="users_main.xhtml">Benutzer</a> » <a
-			href="users_add.xhtml">Hinzufügen</a>
+		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="users_main.xhtml"><h:outputLabel value="#{msg.users_add1}" /></a> » <a
+			href="users_add.xhtml"><h:outputLabel value="#{msg.users_add2}" /></a>
 	</ui:define>
 
   	<ui:param name="menu_users_add" value="#{true}" /> 
@@ -28,7 +28,7 @@
 
 		<div style="padding: 20px; background-color: #f5f9f4;">
 		<div style="background-color: #f5f9f4;">
-		<h2>Neuen Benutzer hinzufügen</h2>
+		<h2><h:outputLabel value="#{msg.users_add3}" /></h2>
 
 		<table width="100%">
 
@@ -37,43 +37,39 @@
 				<h:form id="bla" action="#{user.registerUser}">
 
 					<tr>
-						<td>Benutzername&nbsp; (<a href="#"
+						<td><h:outputLabel value="#{msg.users_add4}" />&nbsp; (<a href="#"
 							onclick="javascript:toggle_help('help_name'); return false;">Help</a>)
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><t:inputText id="username" size="80"
 							value="#{user.username}" />
-						<div class="help_box" id="help_name">Geben Sie hier den
-						Namen des neuen Repositoriums ein.</div>
+						<div class="help_box" id="help_name">
+						<h:outputLabel value="#{msg.users_add_enter_name}" /></div>
 						</td>
 
 					</tr>
 
 					<tr>
-						<td>Vorname (<a href="#"
+						<td><h:outputLabel value="#{msg.users_add5}" /> (<a href="#"
 							onclick="javascript:toggle_help('help_url'); return false;">Help</a>)
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><t:inputText id="firstname" size="80"
 							value="#{user.firstName}" />
-						<div class="help_box" id="help_url">Geben Sie die
-						Internetseite des neuen Repositories an auf der allgemeine
-						Informationen zum Repository zu finden sind. (http://...)</div>
+						<div class="help_box" id="help_url"><h:outputLabel value="#{msg.users_add_name_repo}" /></div>
 						</td>
 					</tr>
 					<tr>
-						<td>Nachname (<a href="#"
+						<td><h:outputLabel value="#{msg.users_add6}" /> (<a href="#"
 							onclick="javascript:toggle_help('help_url'); return false;">Help</a>)
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><t:inputText id="lastname" size="80"
 							value="#{user.lastName}" />
-						<div class="help_box" id="help_url">Geben Sie die
-						Internetseite des neuen Repositories an auf der allgemeine
-						Informationen zum Repository zu finden sind. (http://...)</div>
+						<div class="help_box" id="help_url"><h:outputLabel value="#{msg.users_add_name_repo}" /></div>
 						</td>
 					</tr>
 					<tr>
@@ -84,44 +80,39 @@
 					<tr>
 						<td class="form"><t:inputSecret id="email" size="80"
 							value="#{user.email}" />
-						<div class="help_box" id="help_oaipmh">Geben Sie die URL der
-						OAI-PMH Schnittstelle des neuen Repositories an. (http://...)</div>
+						<div class="help_box" id="help_oaipmh"><h:outputLabel value="#{msg.users_add_oai}" /></div>
 						</td>
 					</tr>
 					<tr>
-						<td>Passwort (<a href="#"
+						<td><h:outputLabel value="#{msg.users_add9}" /> (<a href="#"
 							onclick="javascript:toggle_help('help_size'); return false;">Help</a>)
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><t:inputSecret type="password" id="password"
 							size="40" value="#{user.password}" />
-						<div class="help_box" id="help_size">Geben Sie hier die
-						Anzahl der Records an, die bei einem einzelnen Harvesting-Request
-						vom Repository zur Bearbeitung geladen werden soll.</div>
+						<div class="help_box" id="help_size"><h:outputLabel value="#{msg.users_add_harvbs}" /></div>
 						</td>
 					</tr>
 					<tr>
-						<td>Passwortwiederholung (<a href="#"
+						<td><h:outputLabel value="#{msg.users_add8}" /> (<a href="#"
 							onclick="javascript:toggle_help('help_pause'); return false;">Help</a>)
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><t:inputText id="password2" size="40"
 							value="#{user.password2}" />
-						<div class="help_box" id="help_pause">Geben Sie die Zeit der
-						Pause zwischen den Harvesting-Requests während eines Harvestings
-						in Millisekunden an. (1000ms = 1s)</div>
+						<div class="help_box" id="help_pause"><h:outputLabel value="#{msg.users_add_harvp}" /></div>
 						</td>
 					</tr>
 					<tr>
-						<td>Berechtigungen (<a href="#"
+						<td><h:outputLabel value="#{msg.users_add7}" /> (<a href="#"
 							onclick="javascript:toggle_help('help_listrec'); return false;">Help</a>)
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><br />
-						Repositoryverwaltung <t:selectManyCheckbox
+						<h:outputLabel value="#{msg.users_add_admin_repo}" /><t:selectManyCheckbox
 							id="repositoryManagement" label="Repositoryverwaltung"
 							layoutWidth="4" disabled="false"
 							title="Wählen sie hier die Rechte für den neuen Benutzer aus."
@@ -132,7 +123,7 @@
 							<f:selectItem id="rm4" itemLabel="Löschen" itemValue="14" />
 						</t:selectManyCheckbox><br />
 						<br />
-						Diensteverwaltung <t:selectManyCheckbox id="serviceManagement"
+						<h:outputLabel value="#{msg.users_add_admin_service}" /><t:selectManyCheckbox id="serviceManagement"
 							label="Diensteverwaltung" layoutWidth="4" disabled="false"
 							title="Wählen sie hier die Rechte für den neuen Benutzer aus."
 							layout="pageDirection">
@@ -140,7 +131,7 @@
 							<f:selectItem id="sm2" itemLabel="Steuern" itemValue="12" />
 						</t:selectManyCheckbox><br />
 						<br />
-						Benutzerverwaltung<t:selectManyCheckbox id="userManagement"
+						<h:outputLabel value="#{msg.users_add_admin_user}" /><t:selectManyCheckbox id="userManagement"
 							label="Benutzerverwaltung" layoutWidth="4" disabled="false"
 							title="Wählen sie hier die Rechte für den neuen Benutzer aus."
 							layout="pageDirection">
@@ -150,7 +141,7 @@
 							<f:selectItem id="um4" itemLabel="Löschen" itemValue="14" />
 						</t:selectManyCheckbox><br />
 						<br />
-						Reportverwaltung<t:selectManyCheckbox id="reportManagement"
+						<h:outputLabel value="#{msg.users_add_admin_report}" /><t:selectManyCheckbox id="reportManagement"
 							label="Reportverwaltung" layoutWidth="4" disabled="false"
 							title="Wählen sie hier die Rechte für den neuen Benutzer aus."
 							layout="pageDirection">

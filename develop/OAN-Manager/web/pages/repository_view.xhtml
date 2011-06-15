@@ -10,7 +10,7 @@
 
 <ui:composition template="templates/template.xhtml">
    <ui:define name="title">
-      <title>Repository bearbeiten - OA-Netzwerk Manager</title>
+      <title><h:outputLabel value="#{msg.repo_view_title}" /></title>
       <script language="JavaScript" type="text/JavaScript" src="../js/form_help_box.js" />
    </ui:define>
 
@@ -21,7 +21,7 @@
 
       <div style="padding: 20px; background-color: #f5f9f4;">
       <div style="background-color: #f5f9f4;">
-      <h2>Repository bearbeiten</h2>
+      <h2><h:outputLabel value="#{msg.repo_view1}" /></h2>
 
 
 
@@ -34,13 +34,13 @@
             <h:form>
 
                <tr>
-                  <td>Name des Repositories*&nbsp;
+                  <td><h:outputLabel value="#{msg.repo_view_name}*" />&nbsp;
                   (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)
                   </td>
                </tr>
                <tr>
                   <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.repository.name}" required="true" requiredMessage="Bitte geben sie einen Namen für das Repository ein!" />
-                     <div class="help_box" id="help_name">Geben Sie hier den Namen des Repositoriums ein.</div>
+                     <div class="help_box" id="help_name"><h:outputLabel value="#{msg.repo_view_nameh}" /></div>
                   </td>
                   
                </tr>
@@ -52,17 +52,18 @@
                </tr>
                <tr>
                   <td class="form"><t:inputText id="url" size="80" value="#{repo.repository.url}" />
-                     <div class="help_box" id="help_url">Geben Sie die Internetseite des neuen Repositories an auf der allgemeine Informationen zum Repository zu finden sind. (http://...)</div>
+                     <div class="help_box" id="help_url"><h:outputLabel value="#{msg.repo_view_urlh}" /></div>
                   </td>
                </tr>
                <tr>
-                  <td>OAI-PMH Schnittstelle*
+                  <td><h:outputLabel value="#{msg.repo_view_oai}*" />
+
                      (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)
                   </td>
                </tr>
                <tr>
                   <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.repository.oaiUrl}" required="true" requiredMessage="Bitte geben sie die URL der OAI/PMH-Schnittstelle ein!" />
-                     <div class="help_box" id="help_oaipmh">Geben Sie die URL der OAI-PMH Schnittstelle des neuen Repositories an. (http://...)</div>
+                     <div class="help_box" id="help_oaipmh"><h:outputLabel value="#{msg.repo_view_oaih}" /></div>
                   </td>
                </tr>
                <tr>
@@ -72,7 +73,7 @@
                </tr>
                <tr>
                   <td class="form"><t:inputText id="harvest_batch" value="10" size="20" />
-                     <div class="help_box" id="help_size">Geben Sie hier die Anzahl der Records an, die bei einem einzelnen Harvesting-Request vom Repository zur Bearbeitung geladen werden soll.</div>
+                     <div class="help_box" id="help_size"><h:outputLabel value="#{msg.repo_view_harvbsh}" /></div>
                   </td>
                </tr>
                <tr>
@@ -82,27 +83,27 @@
                </tr>
                <tr>
                   <td class="form"><t:inputText id="harvest_pause" value="5000" size="20" />
-                     <div class="help_box" id="help_pause">Geben Sie die Zeit der Pause zwischen den Harvesting-Requests während eines Harvestings in Millisekunden an. (1000ms = 1s)</div>
+                     <div class="help_box" id="help_pause"><h:outputLabel value="#{msg.repo_view_pauseh}" /></div>
                   </td>
                </tr>
                <tr>
-                  <td>listrecords-Modus
+                  <td><h:outputLabel value="#{msg.repo_view_lr}" />
                      (<a href="#" onclick="javascript:toggle_help('help_listrec'); return false;">Help</a>)
                   </td>
                </tr>
                <tr>
                   <td class="form"><t:inputText id="listrecords" value="false" size="20" />
-                     <div class="help_box" id="help_listrec">Soll das Harvesting bevorzugt den ListRecords-Modus verwenden.</div>
+                     <div class="help_box" id="help_listrec"><h:outputLabel value="#{msg.repo_view_lrh}" /></div>
                   </td>
                </tr>
                <tr>
-                  <td>aktiv
+                  <td><h:outputLabel value="#{msg.repo_view_active}" />
                      (<a href="#" onclick="javascript:toggle_help('help_active'); return false;">Help</a>)
                   </td>
                </tr>
                <tr>
                   <td class="form"><t:selectBooleanCheckbox id="active" value="false" />
-                     <div class="help_box" id="help_active">Legt fest ob das neue Repository nach dem Hinzufügen vom Diensteprozess berücksichtigt werden soll. (kann auch später aktiviert werden)</div>
+                     <div class="help_box" id="help_active"><h:outputLabel value="#{msg.repo_view_activeh}" /></div>
                   </td>
                </tr>               
                <tr>

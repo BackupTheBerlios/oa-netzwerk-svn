@@ -33,9 +33,9 @@
 
       <ui:define name="content">
    
-            Willkommen im OA-Netzwerk Administrationsportal!<br />
+            <h:outputLabel value="#{msg.login_title}" /><br />
          <br />
-         Sie sind derzeit nicht eingeloggt!
+         <h:outputLabel value="#{msg.login_info}" />
          <p />
          <br />
          <br />
@@ -44,11 +44,11 @@
          <table width="40%">
             <tr>
 
-               <td>Benutzername</td>
+               <td><h:outputLabel value="#{msg.login1}" /></td>
                <td><input type="text" name="j_username" /></td>
             </tr>
             <tr>
-               <td>Passwort</td>
+               <td><h:outputLabel value="#{msg.login2}" /></td>
                <td><input type="password" name="j_password" /></td>
             </tr>
             <tr>

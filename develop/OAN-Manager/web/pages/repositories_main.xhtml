@@ -21,7 +21,7 @@
 
 		<ui:define name="navigation">
 			<a href="/oanadmin/">OA-Netzwerk</a> » <a
-				href="repositories_main.xhtml">Repositorien</a>
+				href="repositories_main.xhtml"><h:outputLabel value="#{msg.repositories_main1}" /></a>
 		</ui:define>
 
   		<ui:param name="menu_repository" value="#{true}" /> 
@@ -79,10 +79,11 @@
 
 						<tr>
 							<td><h:form>
-								<t:dataTable value="#{repoList.repositories}" var="row"
+								<h:dataTable value="#{repoList.repositories}" var="row"
 									headerClass="pane-header" rowClasses="odd, even"
 									style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
-									<t:column style="width: 22%; vertical-align: middle; height: 70px;">
+									
+									<h:column style="width: 22%; vertical-align: middle; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Name" />
 										</f:facet>
@@ -92,47 +93,53 @@
 <!--										<input type="hidden" name="identifier" value="#{row.id}" />-->
 <!--										<h:commandButton action="repository_view.xhtml?rid=#{row.id}" value="#{row.name}" />-->
 <!--										                           </h:form>-->
-									</t:column>
-									<t:column style="width: 22%; vertical-align: middle; padding-left: 15px; height: 70px;">
+									</h:column>
+									
+									<h:column style="width: 22%; vertical-align: middle; padding-left: 15px; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="URL" />
 										</f:facet>
 										<h:outputText value="#{row.url}" />
-									</t:column >
-									<t:column style="width: 5%; vertical-align: middle; text-align: center; height: 70px;">
+									</h:column >
+									
+									<h:column style="width: 5%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="ID" />
 										</f:facet>
 										<h:outputText value="#{row.id}" />
-									</t:column>
+									</h:column>
 
-									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+									<h:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Aktiv" />
 										</f:facet>
 										<h:outputText value="ja" />
-									</t:column>
-									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+									</h:column>
+									
+									<h:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Datum" />
 										</f:facet>
 										<h:outputText value="" />
-									</t:column>
-									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+									</h:column>
+									
+									<h:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Ändern" />
 										</f:facet>
 										<a href="repository_view.xhtml?rid=#{row.id}"><img
 											src="../images/16x16/document_edit.gif" /></a>
-									</t:column>
-									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+									</h:column>
+									
+									<h:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Löschen" />
 										</f:facet>
 										<a href="repositories_remove.xhtml?rid=#{row.id}"><img
 											src="../images/16x16/edit-delete.gif" /></a>
-									</t:column>
-								</t:dataTable>
+									</h:column>
+									
+								</h:dataTable>
 							</h:form></td>
 						</tr>
 					</table>
