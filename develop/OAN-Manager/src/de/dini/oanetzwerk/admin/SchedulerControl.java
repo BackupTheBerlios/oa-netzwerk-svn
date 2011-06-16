@@ -17,9 +17,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -115,7 +117,7 @@ public class SchedulerControl implements Serializable {
 				JobDetail jobDetail = null;
 				if (job instanceof HarvesterJob) {
 
-					jobDetail = newJob(HarvesterJob.class).withIdentity(job.getName()).build();
+					jobDetail = newJob(HarvesterJob.class).withIdentity(job.getName()).usingJobData("repository_id", job.getData().get("repository_id")).build();
 				} else if (job instanceof AggregatorJob) {
 					jobDetail = newJob(AggregatorJob.class).withIdentity(job.getName()).build();
 				} else {
@@ -233,6 +235,10 @@ public class SchedulerControl implements Serializable {
 			if (new BigDecimal(1).equals(bean.getServiceId())) {
 				System.out.println("Creating HarvesterJob");
 				job = new HarvesterJob();
+				
+				Map<String, String> data = new HashMap<String, String>();
+				data.put("repository_id", bean.getInfo());
+				job.setData(data);
 			} else if (new BigDecimal(2).equals(bean.getServiceId())) {
 				job = new AggregatorJob();
 			} else {
@@ -378,7 +384,7 @@ public class SchedulerControl implements Serializable {
 			AbstractServiceJob asj = getJobforSchedulingBean(job);
 			if (job != null) {
 				JobDetail jobDetail = newJob(asj.getClass()).withIdentity(job.getName())
-						.usingJobData("someProp", "someValue").build();
+						.usingJobData("repository_id", job.getInfo()).build();
 				try {
 					System.out.println("trigger name: " + asj.getTrigger().getKey());
 					scheduler.scheduleJob(jobDetail, asj.getTrigger());
@@ -399,7 +405,7 @@ public class SchedulerControl implements Serializable {
 					System.out.println("removed old job: " + deleted  +"  old trigger: " + unscheduled);
 					AbstractServiceJob asj = getJobforSchedulingBean(job);
 					JobDetail jobDetail = newJob(asj.getClass()).withIdentity(job.getName(), job.getServiceId().toString())
-							.usingJobData("someProp", "someValue").build();
+							.usingJobData("repository_id", job.getInfo()).build();
 					
 					scheduler.scheduleJob(jobDetail, asj.getTrigger());
 					System.out.println("rescheduled successfully");

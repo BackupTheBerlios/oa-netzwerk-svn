@@ -312,7 +312,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 			if (chosenRepository.equals(0)) {
 				job.setInfo("All");
 			} else {
-				job.setInfo("Repository mit ID " + chosenRepository);
+				job.setInfo(chosenRepository);
 			}
 		}
 		System.out.println("date: " + job.getNonperiodicTimestamp());
