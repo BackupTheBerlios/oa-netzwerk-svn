@@ -191,4 +191,21 @@ public class UpdateInDBPostgres implements UpdateFromDB {
 
 		return preparedstmt;
 	}
+	
+	
+	@Override
+	public PreparedStatement ServicesScheduling(Connection connection, String name, String status) throws SQLException {
+
+		if (logger.isDebugEnabled()) {
+
+			logger.debug("UPDATE \"ServicesScheduling\" SET status = " + status + " WHERE name = " + name);
+		}
+
+		PreparedStatement preparedstmt = connection.prepareStatement("UPDATE \"ServicesScheduling\" SET status = ? WHERE name = ?");
+		preparedstmt.setString(1, status);
+		preparedstmt.setString(2, name);
+
+
+		return preparedstmt;
+	}
 }

@@ -3,12 +3,11 @@ package de.dini.oanetzwerk.server.handler;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -19,7 +18,6 @@ import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
-import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
 import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
@@ -92,7 +90,7 @@ public class DDCEntry  extends AbstractKeyWordHandler implements KeyWord2Databas
 			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
 
 			Iterator<RestEntrySet> itSets = requestEntrySets.iterator();
-			List<String> categories = new ArrayList<String>();
+			Set<String> categories = new HashSet<String>();
 			
 			while (itSets.hasNext()) {
 				res = itSets.next();

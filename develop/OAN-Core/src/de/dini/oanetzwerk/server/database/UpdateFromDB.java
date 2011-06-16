@@ -10,6 +10,8 @@ public interface UpdateFromDB {
 
 	public abstract PreparedStatement ServicesScheduling(Connection connection, String name, BigDecimal service_id, String status, String info, boolean periodic, Date nonperiodicDate,
 			String periodicInterval, int periodicDays, int jobId) throws SQLException;
+	
+	public abstract PreparedStatement ServicesScheduling(Connection connection, String jobName, String status) throws SQLException;
 
 	public abstract PreparedStatement Repository(final Connection connection, final Long repository_id, final boolean active) throws SQLException;
 

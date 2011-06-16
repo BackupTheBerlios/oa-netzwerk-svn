@@ -174,4 +174,10 @@ public class UpdateInDBSybase implements UpdateFromDB {
 
 		return preparedstmt;
 	}
+
+	@Override
+    public PreparedStatement ServicesScheduling(Connection connection, String jobName, String status) throws SQLException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
 }

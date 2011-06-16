@@ -6,7 +6,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -628,7 +628,7 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 	}
 	
 	@Override
-    public PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, List<String> categories, boolean generated) throws SQLException {
+    public PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, Set<String> categories, boolean generated) throws SQLException {
 		if (logger.isDebugEnabled()) {
 
 			logger.debug("Insert DDC: INSERT INTO  \"DDC_Classification\" (object_id, \"DDC_Categorie\", generated ) VALUES " + "(" + object_id + ", " + "DDC" + ", " + generated);

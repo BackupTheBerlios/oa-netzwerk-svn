@@ -363,6 +363,88 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			return RestXmlCodec.encodeRestMessage(this.rms);
 		}
+		
+		// case of status update
+		if (path.length > 1) {
+			
+			String status = path[1];
+			if (status != null) {
+				String updatedStatus = null;
+				if (status.toLowerCase().equals("finished")) {
+					updatedStatus = "Finished";
+				}
+				else if (status.toLowerCase().equals("working")) {
+					updatedStatus = "Working";
+				}
+				if (updatedStatus != null) {
+					DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
+					MultipleStatementConnection stmtconn = null;
+					
+					this.rms = new RestMessage(RestKeyword.ServiceJob);
+					RestEntrySet res = new RestEntrySet();
+
+					try {
+						
+						stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
+
+						stmtconn.loadStatement(DBAccessNG.updateInDB().ServicesScheduling(stmtconn.connection, Integer.toString(jobId), status));
+						this.result = stmtconn.execute();
+
+						System.out.println("Update Count: " + this.result.getUpdateCount());
+						if (this.result.getUpdateCount() < 1) {
+
+							this.rms.setStatus(RestStatusEnum.NO_OBJECT_FOUND_ERROR);
+							this.rms.setStatusDescription("No matching Service job found for id " + jobId);
+						}
+
+						stmtconn.commit();
+
+						if (this.result.getWarning() != null)
+							for (Throwable warning : result.getWarning())
+								logger.warn(warning.getLocalizedMessage(), warning);
+
+						this.rms.setStatus(RestStatusEnum.OK);
+
+					} catch (SQLException ex) {
+
+						logger.error(ex.getLocalizedMessage(), ex);
+						this.rms.setStatus(RestStatusEnum.SQL_ERROR);
+						this.rms.setStatusDescription(ex.getLocalizedMessage());
+
+					} catch (WrongStatementException ex) {
+
+						logger.error(ex.getLocalizedMessage(), ex);
+						this.rms.setStatus(RestStatusEnum.WRONG_STATEMENT);
+						this.rms.setStatusDescription(ex.getLocalizedMessage());
+
+					} finally {
+
+						if (stmtconn != null) {
+
+							try {
+
+								stmtconn.close();
+								stmtconn = null;
+
+							} catch (SQLException ex) {
+
+								logger.error(ex.getLocalizedMessage(), ex);
+							}
+						}
+
+						this.rms.addEntrySet(res);
+						res = null;
+						this.result = null;
+						dbng = null;
+					}
+
+					return RestXmlCodec.encodeRestMessage(this.rms);
+				}
+				
+			}			
+		}
+		
+		// case update job as a whole
 
 		String name = null;
 		BigDecimal serviceId = null;
