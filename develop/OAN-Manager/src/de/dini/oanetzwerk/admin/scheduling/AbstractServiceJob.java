@@ -26,11 +26,6 @@ public abstract class AbstractServiceJob implements Job {
 	private Trigger trigger;
 	private String name;
 	
-	private String serviceName;
-	private ProcessingType processingType;
-	private int repositoryId;
-	private int interval;
-	private String additionalInfo;
 
 	public AbstractServiceJob() {
 		super();
@@ -106,45 +101,6 @@ public abstract class AbstractServiceJob implements Job {
 
 	/*********************** Getter & Setter ***********************/
 
-	public String getServiceName() {
-		return serviceName;
-	}
-
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
-
-	public ProcessingType getProcessingType() {
-		return processingType;
-	}
-
-	public void setProcessingType(ProcessingType processingType) {
-		this.processingType = processingType;
-	}
-
-	public int getRepositoryId() {
-		return repositoryId;
-	}
-
-	public void setRepositoryId(int repositoryId) {
-		this.repositoryId = repositoryId;
-	}
-
-	public int getInterval() {
-		return interval;
-	}
-
-	public void setInterval(int interval) {
-		this.interval = interval;
-	}
-
-	public String getAdditionalInfo() {
-		return additionalInfo;
-	}
-
-	public void setAdditionalInfo(String additionalInfo) {
-		this.additionalInfo = additionalInfo;
-	}
 
 	public void setConnector(RestConnector connector) {
 		this.connector = connector;

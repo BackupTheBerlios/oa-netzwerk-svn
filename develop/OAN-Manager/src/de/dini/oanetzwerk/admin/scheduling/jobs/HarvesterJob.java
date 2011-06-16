@@ -53,13 +53,14 @@ public class HarvesterJob extends AbstractServiceJob {
 				logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to start RMI-Harvester!");
 				return;
 			}
-			logger.info("Inititating Harvester job with name '" + jobName + "'...");
+			logger.info("Inititating Harvester job with name '" + getName() + "'...");
 
 			IService service = (IService) registry.lookup(name);
 
 			// create harvesting settings
 			Map<String, String> data = new HashMap<String, String>();
-//
+
+			data.put("repository_id", repoId);
 //			data.put("harvestType", "full");
 //			data.put("date", null);
 //			data.put("url", null);
