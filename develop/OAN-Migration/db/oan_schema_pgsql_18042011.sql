@@ -284,6 +284,7 @@ DROP TABLE IF EXISTS "public"."DDC_Classification";
 CREATE TABLE "public"."DDC_Classification" (
 "object_id" bigserial CONSTRAINT ddcbh_oid REFERENCES "Object"(object_id),
 "DDC_Categorie" varchar(10) NOT NULL CONSTRAINT ddcbh_ddc REFERENCES "DDC_Categories"("DDC_Categorie"),
+"generated" bool DEFAULT 'f',
 CONSTRAINT pk_ddcclass PRIMARY KEY(object_id, "DDC_Categorie")
 )
 WITH (OIDS=FALSE);
