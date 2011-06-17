@@ -264,11 +264,11 @@ public class SchedulerControl implements Serializable {
 					if (SchedulingIntervalType.Monthly.equals(bean.getPeriodicInterval())) {
 						logger.info("periodic job scheduled. (every " + bean.getPeriodicDays() + " day of a month)");
 						if (bean.getPeriodicDays() > 28) {
-							trigger = newTrigger().withIdentity(bean.getName()).withSchedule(cronSchedule("0 0 2 L * ?")).forJob("job")
+							trigger = newTrigger().withIdentity(bean.getName()).withSchedule(cronSchedule("0 0 2 L * ?"))
 									.build();
 						} else if (bean.getPeriodicDays() <= 28) {
 							trigger = newTrigger().withIdentity(bean.getName())
-									.withSchedule(cronSchedule("0 0 2 " + bean.getPeriodicDays() + " * ?")).forJob("job").build();
+									.withSchedule(cronSchedule("0 0 2 " + bean.getPeriodicDays() + " * ?")).build();
 
 						}
 					} else if (SchedulingIntervalType.Weekly.equals(bean.getPeriodicInterval())) {
@@ -277,7 +277,7 @@ public class SchedulerControl implements Serializable {
 								.withIdentity(bean.getName())
 								.withSchedule(
 										weeklyOnDayAndHourAndMinute(getDayOfWeek(bean.getPeriodicDays()), bean.getNonperiodicTimestamp()
-												.getHours(), bean.getNonperiodicTimestamp().getMinutes())).forJob("job").build();
+												.getHours(), bean.getNonperiodicTimestamp().getMinutes())).build();
 
 					} else if (SchedulingIntervalType.Day.equals(bean.getPeriodicInterval())) {
 

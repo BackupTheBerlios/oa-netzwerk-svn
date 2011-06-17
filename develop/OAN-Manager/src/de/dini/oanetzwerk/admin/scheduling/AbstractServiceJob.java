@@ -3,6 +3,7 @@ package de.dini.oanetzwerk.admin.scheduling;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.bean.ManagedProperty;
 
@@ -26,7 +27,8 @@ public abstract class AbstractServiceJob implements Job {
 	private Trigger trigger;
 	private String name;
 	
-
+	private Map<String, String> data;
+	
 	public AbstractServiceJob() {
 		super();
 	}
@@ -121,6 +123,14 @@ public abstract class AbstractServiceJob implements Job {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public Map<String, String> getData() {
+    	return data;
+    }
+
+	public void setData(Map<String, String> data) {
+    	this.data = data;
+    }
 	
 	
 

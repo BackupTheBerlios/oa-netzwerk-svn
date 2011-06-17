@@ -113,9 +113,9 @@ public class SchedulingBean {
 			String date = new SimpleDateFormat("HH:mm").format(nonperiodicTimestamp);
 			
 			if (SchedulingIntervalType.Monthly.equals(periodicInterval)) {
-				interval.append("jeden " + periodicDays + ". des Monats um" + date + "Uhr");
+				interval.append("jeden " + periodicDays + ". des Monats um" + date + " Uhr");
 			} else if (SchedulingIntervalType.Weekly.equals(periodicInterval)) {
-				interval.append("jeden " + periodicDays + " um " + date + "Uhr");
+				interval.append("jeden " + periodicDays + " um " + date + " Uhr");
 			} else if (SchedulingIntervalType.Day.equals(periodicInterval)) {
 				if (periodicDays == 1) {
 					interval.append("täglich um ");
@@ -123,7 +123,7 @@ public class SchedulingBean {
 				else {
 					interval.append("alle " + periodicDays + " Tage um ");
 				}
-				interval.append(date + "Uhr");
+				interval.append(date + " Uhr");
 			}
 		} else {
 			
@@ -139,6 +139,7 @@ public class SchedulingBean {
 	public void setNonperiodicNow(boolean nonperiodicNow) {
     	this.nonperiodicNow = nonperiodicNow;
     }
+	
 	
 	
 }
