@@ -388,8 +388,8 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 		PreparedStatement preparedstmt = connection
 				.prepareStatement(
 					"DELETE FROM \"WorkflowDB\" AS w " +
-					"JOIN \"ServicesOrder\" AS s ON w.service_id = s.predecessor_id " +
-					"WHERE w.object_id = ? and w.time <=? and s.service_id=?");
+					"USING \"ServicesOrder\" AS s WHERE w.service_id = s.predecessor_id " +
+					"AND w.object_id = ? AND w.time <=? AND s.service_id=?");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setDate(2, time);
 		preparedstmt.setBigDecimal(3, service_id);

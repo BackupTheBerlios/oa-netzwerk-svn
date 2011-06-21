@@ -347,11 +347,11 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 		if (logger.isDebugEnabled())
 			logger.debug("doing POST ServiceJob");
 
-		int jobId;
+		long jobName;
 
 		try {
 
-			jobId = Integer.parseInt(path[0]);
+			jobName = Long.parseLong(path[0]);
 
 		} catch (NumberFormatException ex) {
 
@@ -387,14 +387,14 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 						
 						stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
 
-						stmtconn.loadStatement(DBAccessNG.updateInDB().ServicesScheduling(stmtconn.connection, Integer.toString(jobId), status));
+						stmtconn.loadStatement(DBAccessNG.updateInDB().ServicesScheduling(stmtconn.connection, Long.toString(jobName), status));
 						this.result = stmtconn.execute();
 
 						System.out.println("Update Count: " + this.result.getUpdateCount());
 						if (this.result.getUpdateCount() < 1) {
 
 							this.rms.setStatus(RestStatusEnum.NO_OBJECT_FOUND_ERROR);
-							this.rms.setStatusDescription("No matching Service job found for id " + jobId);
+							this.rms.setStatusDescription("No matching Service job found for id " + jobName);
 						}
 
 						stmtconn.commit();
@@ -446,6 +446,23 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 		
 		// case update job as a whole
 
+		int jobId;
+
+		try {
+
+			jobId = Integer.parseInt(path[0]);
+
+		} catch (NumberFormatException ex) {
+
+			logger.error(path[0] + " is NOT a number!");
+
+			this.rms = new RestMessage(RestKeyword.ServiceJob);
+			this.rms.setStatus(RestStatusEnum.WRONG_PARAMETER);
+			this.rms.setStatusDescription(path[0] + " is NOT a number!");
+
+			return RestXmlCodec.encodeRestMessage(this.rms);
+		}
+		
 		String name = null;
 		BigDecimal serviceId = null;
 		String status = null;

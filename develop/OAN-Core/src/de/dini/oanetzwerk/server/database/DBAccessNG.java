@@ -85,6 +85,7 @@ public class DBAccessNG {
 
 		try {
 			System.out.println("DBAccessNG - new instance2");
+			System.out.println("DataSource: " + dataSource);
 			this.datasource = (DataSource) ((Context) new InitialContext().lookup("java:comp/env")).lookup(dataSource);
 
 			initDriverClass();
@@ -200,7 +201,7 @@ public class DBAccessNG {
 	 * @throws WrongStatementException
 	 * @throws SQLException
 	 */
-	public StatementConnection getSingleStatementConnection() throws WrongStatementException, SQLException {
+	public synchronized StatementConnection getSingleStatementConnection() throws WrongStatementException, SQLException {
 
 		Connection connection = getConnection();
 		
@@ -208,7 +209,19 @@ public class DBAccessNG {
 			logger.debug("Creating new SingleStatementConnection...");
 
 		if (connection == null || connection.isClosed()) {
-			throw new SQLException("Connection based on the given data source not available!");
+			
+			for (int i = 0; i < defaultPoolSize; i++) {
+				System.out.println("Connection " + i + " is null: " + connection == null + (connection == null ? "" : " closed: " + connection.isClosed()));
+				if (pool.get(i) == null || pool.get(i).isClosed()) {
+					connection = getConnection();
+				}
+			}
+			
+			if (connection == null || connection.isClosed()) {
+				
+				throw new SQLException("Connection based on the given data source not available!");
+			}
+			
 		} 
 
 		return new SingleStatementConnection(connection);
@@ -219,7 +232,7 @@ public class DBAccessNG {
 	 * @throws WrongStatementException
 	 * @throws SQLException
 	 */
-	public StatementConnection getMultipleStatementConnection() throws WrongStatementException, SQLException {
+	public synchronized StatementConnection getMultipleStatementConnection() throws WrongStatementException, SQLException {
 
 		Connection connection = getConnection();
 		

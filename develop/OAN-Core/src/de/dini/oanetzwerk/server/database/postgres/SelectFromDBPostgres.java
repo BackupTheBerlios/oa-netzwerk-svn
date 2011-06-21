@@ -498,9 +498,9 @@ public class SelectFromDBPostgres implements SelectFromDB {
 
 		// TODO: geändert von Sammy, zu testen ob der die gleichen Ergebnisse bringt wie der Sybase Query
 		PreparedStatement preparedstmt = connection.prepareStatement(
-			"SELECT \"WorkflowDB\".workflow_id\", \"WorkflowDB\".time" +
+			"SELECT \"WorkflowDB\".workflow_id " +
 			"FROM \"WorkflowDB\" " +
-			"WHERE \"WorkflowDB\".object_id = ? AND \"WorkflowDB\".service_id = ?" +
+			"WHERE \"WorkflowDB\".object_id = ? AND \"WorkflowDB\".service_id = ? " +
 			"ORDER BY time");
 
 		preparedstmt.setBigDecimal(1, object_id);

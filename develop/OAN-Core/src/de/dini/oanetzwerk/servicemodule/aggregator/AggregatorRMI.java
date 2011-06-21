@@ -13,13 +13,17 @@ import java.util.Random;
 
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
 
 import de.dini.oanetzwerk.servicemodule.IAggregatorMonitor;
 import de.dini.oanetzwerk.servicemodule.IHarvesterMonitor;
 import de.dini.oanetzwerk.servicemodule.IService;
+import de.dini.oanetzwerk.servicemodule.RMIService;
 import de.dini.oanetzwerk.servicemodule.harvester.Harvester;
+import de.dini.oanetzwerk.servicemodule.harvester.HarvesterRMI;
 
-public class AggregatorRMI implements IService {
+public class AggregatorRMI extends RMIService {
 
 	private static final Logger logger = Logger.getLogger(AggregatorRMI.class);
 
@@ -30,12 +34,16 @@ public class AggregatorRMI implements IService {
 
 	private int updateInterval = 10000;
 	private StringBuffer messages = new StringBuffer();
-
+	private boolean working = false;
+	
 	public AggregatorRMI() {
 		super();
 	}
 
 	public static void main(String[] args) {
+		
+		DOMConfigurator.configureAndWatch("log4j.xml" , 60*1000 );
+		
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
@@ -45,19 +53,15 @@ public class AggregatorRMI implements IService {
 
 	private void startService() {
 
+		logger.info("Aggregator starting due to rmi call.");
+		
 		try {
-			// FileWriter writer = new FileWriter(new
-			// File("/home/davidsam/Desktop/1234567.txt"));
-			// writer.write("blabla");
-			// writer.flush();
-			// writer.close();
-
-			AggregatorRMI server = new AggregatorRMI();
+			IService server = this;
 			IService stub = (IService) UnicastRemoteObject.exportObject(server, 0);
 			registry = getRegistry();
 
 			if (registry == null) {
-				logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to start RMI-Harvester!");
+				logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to start RMI-Aggregator!");
 				return;
 			}
 
@@ -68,81 +72,60 @@ public class AggregatorRMI implements IService {
 			e.printStackTrace();
 		}
 
-		//
-		publishUpdates();
+//		publishUpdates();
 	}
 
-	private void publishUpdates() {
+//	private void publishUpdates() {
+//
+//		String name = "HarvesterMonitorService";
+//
+//		try {
+//
+//			IAggregatorMonitor service = null;
+//			Map<String, String> data = new HashMap<String, String>();
+//			
+//			
+//			synchronized (this) {
+//
+//				while (true) {
+//
+//					if (registry == null)
+//						registry = getRegistry();
+//					
+//					if (registry == null) {
+//						logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to publish RMI-Updates!");
+//						this.wait(updateInterval);
+//						continue;
+//					}
+//
+//					if (service == null) {
+//						service = (IAggregatorMonitor) registry.lookup(name);
+//						logger.info("IAggregatorMonitor found!");
+//					}
+//						
+//					if (service != null) {
+//						logger.info("Publishing Updates to Aggreagator monitor.");
+//						// create aggregator settings
+//						data.put("progress", String.valueOf(this.getCurrentStatus()));
+//						data.put("messages", messages.toString());
+//						service.publishServiceUpdates(data);
+//					}
+//					this.wait(updateInterval);
+//				}
+//			}
+//
+//		} catch (RemoteException e) {
+//			System.err.println("RemoteException: ");
+//			e.printStackTrace();
+//		} catch (NotBoundException e) {
+//			System.err.println("NotBoundException: ");
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			System.err.println("InterruptedException: ");
+//			e.printStackTrace();
+//		}
+//	}
 
-		String name = "HarvesterMonitorService";
-
-		try {
-
-			IAggregatorMonitor service = null;
-			Map<String, String> data = new HashMap<String, String>();
-			
-			
-			synchronized (this) {
-
-				while (true) {
-
-					if (registry == null)
-						registry = getRegistry();
-					
-					if (registry == null) {
-						logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to publish RMI-Updates!");
-						this.wait(updateInterval);
-						continue;
-					}
-
-					if (service == null) {
-						service = (IAggregatorMonitor) registry.lookup(name);
-					}
-										
-					// create harvesting settings
-					data.put("progress", String.valueOf(this.getCurrentStatus()));
-					data.put("messages", messages.toString());
-					service.publishServiceUpdates(data);
-
-					this.wait(updateInterval);
-				}
-			}
-
-		} catch (RemoteException e) {
-			System.err.println("RemoteException: ");
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			System.err.println("NotBoundException: ");
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			System.err.println("InterruptedException: ");
-			e.printStackTrace();
-		}
-	}
-
-	private static Registry getRegistry() {
-
-		try {
-
-			// try to obtain an already started registry
-			return LocateRegistry.getRegistry();
-
-		} catch (RemoteException e) {
-
-			logger.warn("Could not retrieve RMI-Registry! Starting a registry ...");
-
-			// create registry if we failed to obtain an existing one
-			try {
-
-				return LocateRegistry.createRegistry(1099);
-
-			} catch (RemoteException e2) {
-				logger.error("Failed to create own RMI-Registry!");
-				e2.printStackTrace();
-			}
-		}
-		return null;
-	}
 
 	/********************** Contract Implementation **********************/
 
@@ -225,6 +208,7 @@ public class AggregatorRMI implements IService {
 
 		this.aggregator.setStopped(true);
 		this.aggregator = null;
+		working = false;
 		return true;
 	}
 
@@ -243,11 +227,19 @@ public class AggregatorRMI implements IService {
 		logger.info("Unbinding " + SERVICE_NAME + " !");
 		
 		try {
+			if (registry == null) {
+				registry = getRegistry();
+			}
 			registry.unbind(SERVICE_NAME);
 		} catch (NotBoundException e) {
 			logger.info(SERVICE_NAME + " already unbound.");
 		}
 		return true;
 	}
+
+	@Override
+    protected String getPropertyFile() {
+		return "aggregatorprop.xml";
+    }
 
 }

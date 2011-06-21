@@ -1,12 +1,9 @@
 package de.dini.oanetzwerk.servicemodule.harvester;
 
-import java.io.UnsupportedEncodingException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,27 +14,26 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
-import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
-import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.servicemodule.IHarvesterMonitor;
 import de.dini.oanetzwerk.servicemodule.IService;
+import de.dini.oanetzwerk.servicemodule.RMIService;
 import de.dini.oanetzwerk.servicemodule.Repository;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
-public class HarvesterRMI implements IService {
+public class HarvesterRMI extends RMIService {
 
-	static {
-
-		PropertyConfigurator.configureAndWatch("log4j.properties", 60 * 1000);
-
-	}
-
-	private static final Logger logger = Logger.getLogger(HarvesterRMI.class);
+//	static {
+//		PropertyConfigurator.configureAndWatch("log4j.properties", 60 * 1000);
+//	}
+//	
+	
+	private final Logger logger = Logger.getLogger(HarvesterRMI.class);
 
 	private static final String SERVICE_NAME = "HarvesterService";
 
@@ -49,31 +45,28 @@ public class HarvesterRMI implements IService {
 	private boolean working = false;
 
 	public HarvesterRMI() {
-		super();
+		super();	
 	}
 
 	public static void main(String[] args) {
 
-		PropertyConfigurator.configureAndWatch("log4j.properties", 60 * 1000);
+//		PropertyConfigurator.configureAndWatch("log4j.properties", 60 * 1000);
+		DOMConfigurator.configureAndWatch("log4j.xml" , 60*1000 );
 
+		
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
 
 		new HarvesterRMI().startService();
+		
 	}
 
 	private void startService() {
 
 		logger.info("Harvester starting due to rmi call.");
 		try {
-			// FileWriter writer = new FileWriter(new
-			// File("/home/davidsam/Desktop/1234567.txt"));
-			// writer.write("blabla");
-			// writer.flush();
-			// writer.close();
-
-			IService server = new HarvesterRMI();
+			IService server = this;
 			IService stub = (IService) UnicastRemoteObject.exportObject(server, 0);
 			registry = getRegistry();
 
@@ -88,84 +81,61 @@ public class HarvesterRMI implements IService {
 			System.err.println(SERVICE_NAME + " could not be bound: ");
 			e.printStackTrace();
 		}
+		
 
-		//
-		publishUpdates();
+//		publishUpdates();
 	}
 
-	private void publishUpdates() {
+//	private void publishUpdates() {
+//
+//		String name = "HarvesterMonitorService";
+//
+//		try {
+//
+//			IHarvesterMonitor service = null;
+//			Map<String, String> data = new HashMap<String, String>();
+//
+//			synchronized (this) {
+//
+//				while (working) {
+//
+//					if (registry == null)
+//						registry = getRegistry();
+//
+//					if (registry == null) {
+//						logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to publish RMI-Updates!");
+//						this.wait(updateInterval);
+//						continue;
+//					}
+//
+//					if (service == null) {
+//						service = (IHarvesterMonitor) registry.lookup(name);
+//						logger.info("IHarvesterMonitor found!");
+//					}
+//
+//					if (service != null) {
+//						logger.info("Publishing Updates to Harvester monitor.");
+//						// create harvesting settings
+//						data.put("progress", String.valueOf(this.getCurrentStatus()));
+//						data.put("messages", messages.toString());
+//						service.publishServiceUpdates(data);
+//					}
+//					this.wait(updateInterval);
+//				}
+//			}
+//
+//		} catch (RemoteException e) {
+//			System.err.println("RemoteException: ");
+//			e.printStackTrace();
+//		} catch (NotBoundException e) {
+//			System.err.println("NotBoundException: ");
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			System.err.println("InterruptedException: ");
+//			e.printStackTrace();
+//		}
+//	}
 
-		String name = "HarvesterMonitorService";
-
-		try {
-
-			IHarvesterMonitor service = null;
-			Map<String, String> data = new HashMap<String, String>();
-
-			synchronized (this) {
-
-				while (working) {
-
-					if (registry == null)
-						registry = getRegistry();
-
-					if (registry == null) {
-						logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to publish RMI-Updates!");
-						this.wait(updateInterval);
-						continue;
-					}
-
-					if (service == null) {
-						service = (IHarvesterMonitor) registry.lookup(name);
-						logger.info("IHarvesterMonitor found!");
-					}
-
-					if (service != null) {
-						logger.info("Publishing Updates to Harvester monitor.");
-						// create harvesting settings
-						data.put("progress", String.valueOf(this.getCurrentStatus()));
-						data.put("messages", messages.toString());
-						service.publishServiceUpdates(data);
-					}
-					this.wait(updateInterval);
-				}
-			}
-
-		} catch (RemoteException e) {
-			System.err.println("RemoteException: ");
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			System.err.println("NotBoundException: ");
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			System.err.println("InterruptedException: ");
-			e.printStackTrace();
-		}
-	}
-
-	private static Registry getRegistry() {
-
-		try {
-
-			// try to obtain an already started registry
-			return LocateRegistry.getRegistry();
-
-		} catch (RemoteException e) {
-
-			logger.warn("Could not retrieve RMI-Registry! Starting a registry ...");
-
-			// create registry if we failed to obtain an existing one
-			try {
-
-				return LocateRegistry.createRegistry(1099);
-
-			} catch (RemoteException e2) {
-				logger.error("Failed to create own RMI-Registry!");
-				e2.printStackTrace();
-			}
-		}
-		return null;
-	}
 
 	/********************** Contract Implementation **********************/
 
@@ -184,11 +154,18 @@ public class HarvesterRMI implements IService {
 		// TODO calculate progress
 		return new Random().nextInt();
 	}
+	
+	public String getUpdates() throws RemoteException {
+		// TODO read log file and send back last 100 lines of log
+		return "";
+	}
+	
 
 	@Override
 	@SuppressWarnings("static-access")
 	public boolean start(Map<String, String> data) throws RemoteException {
 
+		System.out.println("Harvester started!");
 		// initialize harvesting settings
 
 		if (data == null) {
@@ -209,11 +186,10 @@ public class HarvesterRMI implements IService {
 			                + "' was invalid!  Skipping...");
 		}
 
-		// fetch repository information
-
-		updateJobStatus(data.get("job_name"), "Working");
 		
-		//harvest all active repositories
+		
+		// fetch repository information
+		// harvest all active repositories
 		if (harvestAllRepositories) {
 
 			List<Repository> repositories = getRepositories();
@@ -221,11 +197,20 @@ public class HarvesterRMI implements IService {
 			for (Repository repository : repositories) {
 	            
 				data.put("repository_id", repository.getId().toString());
+
+				// set to working
+				updateJobStatus(data.get("job_name"), "Working");
+				working = true;
+
 				startHarvester(data);
             }
 			
 		} else { // harvest a single repository
-
+			
+			// set to working
+			updateJobStatus(data.get("job_name"), "Working");
+			working = true;
+			
 			startHarvester(data);
 		}
 
@@ -277,10 +262,13 @@ public class HarvesterRMI implements IService {
 
 	private void startHarvester(Map<String, String> data) {
 
+		System.out.println("start harvester method called");
 		// create a new instance of the harvester and set
-		harvester = new Harvester();
-		harvester.prepareHarvester(Integer.parseInt(data.get("repositoryId")));
+		harvester = Harvester.getHarvester(getApplicationPath());
+		System.out.println("XX");
+		harvester.prepareHarvester(Integer.parseInt(data.get("repository_id")));
 
+		System.out.println("bla"); 
 		String baseUrl = "";
 
 		// sets the type (full | update)
@@ -302,20 +290,21 @@ public class HarvesterRMI implements IService {
 		if (logger.isDebugEnabled()) {
 
 			logger.debug("Data after processing the CommandLine:");
+			logger.debug("full harvest: " + harvester.isFullharvest());
 			logger.debug("oai_url: " + harvester.getRepositoryURL());
 			logger.debug("test_data: " + harvester.isTestData());
 			logger.debug("harvest_amount: " + harvester.getAmount());
 			logger.debug("harvest_pause: " + harvester.getInterval());
 		}
 		
+		System.out.println("Starting to process repository..."); 
+		
 		// start the harvester
 		harvester.processRepository();
 
-		// set to working
-		working = true;
 
-		// start sending updates to RMI-listener (HarvesterMonitorService)
-		publishUpdates();
+//		// start sending updates to RMI-listener (HarvesterMonitorService)
+//		publishUpdates();
 
 	}
 
@@ -384,47 +373,10 @@ public class HarvesterRMI implements IService {
 		return repoList;
 	}
 
-	
-	// TODO Pull UP
-	private void updateJobStatus(String jobName, String status) {
-		
-		Properties props = null;
-		try {
-			props = HelperMethods.loadPropertiesFromFile(harvester.getPropertyfile());
-
-		} catch (Exception e) {
-			logger.warn("Could not load property file '" + harvester.getPropertyfile() + "'! Skipping harvesting ...");
-		}
-
-		RestClient client = RestClient.createRestClient(props.getProperty("host"), "Repository/", props.getProperty("username"),
-		                props.getProperty("password"));
-
-		RestMessage rms;
-		RestEntrySet res;
-		RestMessage result = null;
-
-		rms = new RestMessage();
-		rms.setKeyword(RestKeyword.ServiceJob);
-		rms.addEntrySet(new RestEntrySet());
-
-		try {
-
-			result = RestClient.createRestClient(props.getProperty("host"), "ServiceJob/" + jobName + "/" + status, props.getProperty("username"),
-			                props.getProperty("password")).sendPostRestMessage(rms);
-
-			if (result.getStatus() != RestStatusEnum.OK) {
-
-				logger.error("/ServiceJob response failed: " + rms.getStatus() + "(" + rms.getStatusDescription() + ")");
-				return;
-			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		logger.info("POST sent to /ServiceJob");
+	protected String getPropertyFile() {
+		if (harvester != null) {
+			return harvester.getPropertyfile();
+		} else return "harvesterprop.xml";
 	}
-	
-
 
 }

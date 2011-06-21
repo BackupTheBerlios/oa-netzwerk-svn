@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.servicemodule.harvester;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -143,6 +144,8 @@ public class Harvester {
 	
 	private String propertyfile = "harvesterprop.xml";
 	
+	
+	private String propertyFilePath = "";
 	/**
 	 * 
 	 */
@@ -175,7 +178,11 @@ public class Harvester {
 	 * @see #prepareHarvester(int)
 	 */
 	
-	public Harvester ( ) { }
+	public Harvester (String propertyFilePath) {
+		
+		System.out.println("created");
+		this.propertyFilePath = propertyFilePath;
+	}
 	
 	/**
 	 * This method configures the harvester. It sets the repository ID and gets
@@ -193,8 +200,11 @@ public class Harvester {
 		
 		try {
 			
-			this.props = HelperMethods.loadPropertiesFromFile (this.getPropertyfile ( ));
+			System.out.println("Z1");
+			this.props = HelperMethods.loadPropertiesFromFile (propertyFilePath + this.getPropertyfile ( ));
+			System.out.println("Z2");
 			this.getRepositoryDetails (id);
+			System.out.println("Z3");
 			
 		} catch (InvalidPropertiesFormatException ex) {
 			
@@ -306,10 +316,10 @@ public class Harvester {
 	 * @return the Harvester
 	 */
 	
-	public static final Harvester getHarvester ( ) {
+	public static final Harvester getHarvester(String propertyFileDir) {
 
 		if (harvester == null)
-			harvester = new Harvester ( );
+			harvester = new Harvester(propertyFileDir);
 		
 		return harvester;
 	}
@@ -1932,7 +1942,7 @@ public class Harvester {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("prepareRestTransmission");
 		
-		return RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		return RestClient.createRestClient (new File(propertyFilePath + "restclientprop.xml"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
 	}
 	
 	/**
