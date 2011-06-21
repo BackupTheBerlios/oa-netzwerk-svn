@@ -33,9 +33,7 @@ public class AggregatorJob extends AbstractServiceJob {
 	}
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		if (true)
-			return;
-		
+
 		System.out.println("Aggregator job called");
 
 		// initiate harvesting via RMI
@@ -54,8 +52,8 @@ public class AggregatorJob extends AbstractServiceJob {
 			// create harvesting settings
 			Map<String, String> data = new HashMap<String, String>();
 
-			data.put("repositoryID", "1");
-			data.put("listRecords", "true");
+			data.put("complete", "true");
+
 			// data.put(key, )
 
 			boolean started = service.start(data);

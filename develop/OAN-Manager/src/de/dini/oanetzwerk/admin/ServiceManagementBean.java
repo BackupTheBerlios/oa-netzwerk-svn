@@ -362,6 +362,7 @@ public class ServiceManagementBean {
 				System.out.println("Running command: java -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 								+ servicePath);
+				// TODO: change directory to service directory first
 				Runtime.getRuntime().exec(
 						"java -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "

@@ -9,6 +9,7 @@ import javax.faces.bean.ManagedProperty;
 
 import org.apache.log4j.Logger;
 import org.quartz.Job;
+import org.quartz.JobDataMap;
 import org.quartz.Trigger;
 
 import de.dini.oanetzwerk.admin.Repository;
@@ -25,9 +26,8 @@ public abstract class AbstractServiceJob implements Job {
 	private RestConnector connector;
 
 	private Trigger trigger;
-	private String name;
 	
-	private Map<String, String> data;
+	private JobDataMap data;
 	
 	public AbstractServiceJob() {
 		super();
@@ -116,22 +116,12 @@ public abstract class AbstractServiceJob implements Job {
 		this.trigger = trigger;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Map<String, String> getData() {
+	public JobDataMap getData() {
     	return data;
     }
 
-	public void setData(Map<String, String> data) {
+	public void setData(JobDataMap data) {
     	this.data = data;
     }
-	
-	
 
 }
