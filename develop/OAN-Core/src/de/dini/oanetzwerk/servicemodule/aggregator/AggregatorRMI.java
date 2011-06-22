@@ -194,7 +194,7 @@ public class AggregatorRMI extends RMIService {
 			aggregator.startAutoMode(complete);
 		}
 
-		logger.info("Aggregator started...");
+		logger.info("Aggregator Finished!");
 		return true;
 	}
 	

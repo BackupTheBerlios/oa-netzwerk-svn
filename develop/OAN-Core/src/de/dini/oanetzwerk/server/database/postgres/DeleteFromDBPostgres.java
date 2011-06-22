@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
 
@@ -377,13 +378,13 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 	 * @throws SQLException
 	 */
 
-	public PreparedStatement WorkflowDB(Connection connection, BigDecimal object_id, Date time, BigDecimal service_id)
+	public PreparedStatement WorkflowDB(Connection connection, BigDecimal object_id, Timestamp time, BigDecimal service_id)
 			throws SQLException {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("DELETE FROM \"WorkflowDB\" FROM dbo.WorkflowDB  AS w JOIN dbo.ServicesOrder s ON w.service_id = s.predecessor_id WHERE w.object_id = "
+//		if (logger.isDebugEnabled()) {
+			logger.info("DELETE FROM \"WorkflowDB\" FROM dbo.WorkflowDB  AS w JOIN dbo.ServicesOrder s ON w.service_id = s.predecessor_id WHERE w.object_id = "
 					+ object_id + " and w.time <= " + time + " and s.service_id= " + service_id);
-		}
+//		}
 		// TODO: hier nachhaken!!
 		PreparedStatement preparedstmt = connection
 				.prepareStatement(
@@ -391,10 +392,10 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 					"USING \"ServicesOrder\" AS s WHERE w.service_id = s.predecessor_id " +
 					"AND w.object_id = ? AND w.time <=? AND s.service_id=?");
 		preparedstmt.setBigDecimal(1, object_id);
-		preparedstmt.setDate(2, time);
+		preparedstmt.setTimestamp(2, time);
 		preparedstmt.setBigDecimal(3, service_id);
 
-		logger.debug("DELTE-Statement: " + preparedstmt.toString());
+		logger.debug("DELETE-Statement: " + preparedstmt.toString());
 
 		return preparedstmt;
 	}

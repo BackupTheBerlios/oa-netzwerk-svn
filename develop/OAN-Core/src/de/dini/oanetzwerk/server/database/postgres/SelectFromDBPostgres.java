@@ -1017,10 +1017,25 @@ public class SelectFromDBPostgres implements SelectFromDB {
 	 */
 	public PreparedStatement LatestKeyword(Connection connection, String keyword, String language) throws SQLException {
 		// TODO: Sinnfrage?
+		
+		if (language == null) {
+			System.out.println("language is null");
+		}
+		
+		if (language != null && language.toLowerCase().equals("null")) {
+			System.out.println("language is small letter null: " + language);
+		}
+		
+		System.out.println("keywordx: " + keyword + "  langx: " + language);
+		String sql = "SELECT MAX(keyword_id) FROM \"Keywords\" WHERE (keyword = ? AND lang" + (language == null ? " IS NULL)" : " = ?)");
+		System.out.println("SQL: " + sql);
+		
 		PreparedStatement preparedstmt = connection
-				.prepareStatement("SELECT MAX(keyword_id) FROM \"Keywords\" WHERE (keyword = ? AND lang = ?)");
+				.prepareStatement(sql);
 		preparedstmt.setString(1, keyword);
-		preparedstmt.setString(2, language);
+		if (language != null) {			
+			preparedstmt.setString(2, language);
+		}
 
 		return preparedstmt;
 	}

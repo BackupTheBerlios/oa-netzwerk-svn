@@ -774,10 +774,8 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						logger.debug("Keyword-Informationen hinzufügen" + keyword.toString());
 					}
 					BigDecimal keyword_id = null;
-					
 					stmtconn.loadStatement (DBAccessNG.insertIntoDB().Keyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 					this.result = stmtconn.execute ( );
-					
 					if (this.result.getWarning ( ) != null) 
 						for (Throwable warning : result.getWarning ( ))
 							logger.warn (warning.getLocalizedMessage ( ));
@@ -786,7 +784,6 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						logger.error("Fehler bei OID:" + object_id + " INSERT Keyword:'" + keyword.getKeyword() + "'");
 						//warn, error, rollback, nothing????
 					} 
-					
 					stmtconn.loadStatement (DBAccessNG.selectFromDB().LatestKeyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 					this.result = stmtconn.execute ( );
 					
@@ -794,10 +791,10 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						for (Throwable warning : result.getWarning ( ))
 							logger.warn (warning.getLocalizedMessage ( ));
 					
+					
 					while (this.result.getResultSet ( ).next ( )) {
 						keyword_id = this.result.getResultSet ( ).getBigDecimal(1);
 					}
-					
 					if(keyword_id != null) {
 					
 						stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Keyword (stmtconn.connection, object_id, keyword_id));
@@ -806,12 +803,11 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						if (this.result.getWarning ( ) != null) 
 							for (Throwable warning : result.getWarning ( ))
 								logger.warn (warning.getLocalizedMessage ( ));
-
+						
 						if (this.result.getUpdateCount ( ) < 1) {
 							logger.error("Fehler bei OID:" + object_id + " INSERT Object2Keyword:'" + keyword_id + "'");
 						}
-					}
-										
+					}										
 				}
 			}
 			

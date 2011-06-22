@@ -5,11 +5,11 @@
 package de.dini.oanetzwerk.server.database.sybase;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
 
@@ -406,7 +406,7 @@ public class DeleteFromDBSybase implements DeleteFromDB {
 	 */
 
 	@Override
-	public PreparedStatement WorkflowDB(Connection connection, BigDecimal object_id, Date time, BigDecimal service_id)
+	public PreparedStatement WorkflowDB(Connection connection, BigDecimal object_id, Timestamp time, BigDecimal service_id)
 			throws SQLException {
 
 		if (logger.isDebugEnabled()) {
@@ -417,7 +417,7 @@ public class DeleteFromDBSybase implements DeleteFromDB {
 		PreparedStatement preparedstmt = connection
 				.prepareStatement("DELETE FROM dbo.WorkflowDB FROM dbo.WorkflowDB w JOIN dbo.ServicesOrder s ON w.service_id = s.predecessor_id WHERE w.object_id = ? and w.time <=? and s.service_id=?");
 		preparedstmt.setBigDecimal(1, object_id);
-		preparedstmt.setDate(2, time);
+		preparedstmt.setTimestamp(2, time);
 		preparedstmt.setBigDecimal(3, service_id);
 
 		logger.debug("DELTE-Statement: " + preparedstmt.toString());

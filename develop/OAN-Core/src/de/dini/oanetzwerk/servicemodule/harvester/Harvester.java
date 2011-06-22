@@ -1355,9 +1355,9 @@ public class Harvester {
 			
 			if ((this.getRecordCounter++ % this.getAmount ( )) == 0) {
 				
-				logger.debug ("Going to sleep for " + this.getInterval ( ) + " milliseconds, letting the repository recover a bit");
+				logger.info ("Going to sleep for " + this.getInterval ( ) + " milliseconds, letting the repository recover a bit");
 				Thread.sleep (this.getInterval ( ));
-				logger.debug ("Continuing to ask the repository for some records");
+				logger.info ("Continuing to ask the repository for some records");
 				
 				this.getRecordCounter = 1;
 			}

@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public interface DeleteFromDB {
 
@@ -30,7 +31,7 @@ public interface DeleteFromDB {
 
 	public abstract PreparedStatement RawData(Connection connection, BigDecimal object_id) throws SQLException;
 
-	public abstract PreparedStatement WorkflowDB(Connection connection, BigDecimal object_id, Date time, BigDecimal service_id) throws SQLException;
+	public abstract PreparedStatement WorkflowDB(Connection connection, BigDecimal object_id, Timestamp time, BigDecimal service_id) throws SQLException;
 
 	public abstract PreparedStatement WorkflowDB(Connection connection, BigDecimal object_id) throws SQLException;
 
