@@ -622,7 +622,7 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO \"DNB_Classification\" (object_id, \"DNB_Categorie\") VALUES (?, ?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setString(2, category);
-		preparedstmt.setBoolean(3, false);
+//		preparedstmt.setBoolean(3, false);
 		
 		return preparedstmt;
 	}
