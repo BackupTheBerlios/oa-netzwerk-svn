@@ -20,21 +20,14 @@ public class HarvesterJob extends AbstractServiceJob {
 
 	private static Logger logger = Logger.getLogger(HarvesterJob.class);
 
-//	private String harvestType = "update";
-//	private List<Repository> repositories;
+
 
 	public HarvesterJob() {
 
 	}
 
-//	public HarvesterJob(String harvestType, List<Repository> repositories) {
-//		this.harvestType = harvestType;
-//		this.repositories = repositories;
-//	}
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-//		if (true)
-//			return;
 		
 		System.out.println("Harvester job called");
 

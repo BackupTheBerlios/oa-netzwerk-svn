@@ -31,6 +31,7 @@ import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.servicemodule.RestClient;
 
 @ManagedBean(name = "scheduling")
 @RequestScoped
@@ -83,17 +84,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	boolean updateCase;
 	private String radio1;
 	
-	
-	
-	public String getRadio1() {
-		return radio1;
-	}
-
-
-	public void setRadio1(String radio1) {
-		this.radio1 = radio1;
-	}
-
 
 	public ServiceSchedulingBean() {
 
@@ -116,21 +106,8 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 			updateCase = initJob(jobId);
 		}
 		
-		
-
-		
-		
-		// create a list of services
-		// TODO should be retrieved from the DB
-//		services.put("Harvester", 1);
-//		services.put("Aggregator", 2);
-//		services.put("Marker", 3);
-
 		// retrieve list of repositories
 		initRepositories();
-
-//		// retrieve the jobs to be displayed
-//		initJobs();
 		
 		schedulerControl.listJobs();
 	}
@@ -528,11 +505,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		return days;
 	}
 
-//	public Map<String, Integer> getServices() {
-//
-//		return services;
-//	}
-
 	public List<String> getHours() {
 
 		List<String> hours = new ArrayList<String>();
@@ -558,7 +530,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	public JobType[] getJobTypes() {
 		return JobType.values();
 	}
-
+	
 
 	/*********************** Getter & Setter ***********************/
 	
@@ -647,8 +619,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	}
 	
 	public boolean isJobListEmpty() {
-//		System.out.println(jobList == null );
-//		System.out.println("la: " +jobList == null || jobList.isEmpty());
 		return jobList == null || jobList.isEmpty();
 	}
 
@@ -672,18 +642,14 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		System.out.println("setter now : " + startRightNow);
     	this.startRightNow = startRightNow;
     }
-	
-	
 
 	public Date getChosenDate2() {
 		return chosenDate2;
 	}
 
-
 	public void setChosenDate2(Date chosenDate2) {
 		this.chosenDate2 = chosenDate2;
 	}
-
 
 	public void setRestConnector(RestConnector restConnector) {
 		this.restConnector = restConnector;
@@ -705,5 +671,11 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		return updateCase;
 	}
 	
-	
+	public String getRadio1() {
+		return radio1;
+	}
+
+	public void setRadio1(String radio1) {
+		this.radio1 = radio1;
+	}
 }

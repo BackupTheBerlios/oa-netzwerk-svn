@@ -73,8 +73,25 @@
 		document.getElementById(form + ":" + date).value = "";
 	}
 	
+	function showRepositoryChoice(index)
+	{
+
+		if (document.getElementById("form:jobtype").selectedIndex != 2) {
+			return;
+		}
+		
+		if (index==2) {
+			document.getElementById("repositoryChoice").style.visibility = "hidden";
+		} else {
+			document.getElementById("repositoryChoice").style.visibility = "visible";
+		} 
+	}
+	
 	function showForm(index)
 	{
+
+		document.getElementById("repositoryChoice").style.visibility = "hidden";
+		
 		if (index==0) {
 	   		document.getElementById("repeatedly").style.visibility = "hidden";
 	   		document.getElementById("onetime").style.visibility = "hidden";
@@ -84,6 +101,12 @@
 		} else if (index==2) {
 	   		document.getElementById("repeatedly").style.visibility = "hidden";
 	   		document.getElementById("onetime").style.visibility = "visible";
+	   		
+	   		if (document.getElementById("form:service").selectedIndex == 2) {
+	   			document.getElementById("repositoryChoice").style.visibility = "hidden";
+			} else {
+				document.getElementById("repositoryChoice").style.visibility = "visible";
+			} 
 		}
 	}
 </script>
@@ -137,7 +160,7 @@
                       <table>
                         <tr>
                           <td width="150px"></td>
-                          <td><h:selectOneMenu id="service" value="#{scheduling.chosenService}">
+                          <td><h:selectOneMenu id="service" value="#{scheduling.chosenService}" onchange="showRepositoryChoice(this.selectedIndex);" >
                             <f:selectItem itemLabel="Bitte wählen" itemValue="null" />
                             <f:selectItem itemLabel="Harvester" itemValue="1" />
                             <f:selectItem itemLabel="Aggregator" itemValue="2" />
@@ -241,7 +264,8 @@
 						</div>
                         <div id="onetime" style="visibility:hidden;">
                         	
-                        <br />
+                        	<div id="repositoryChoice">
+                        	<br />
 		                    Bitte wählen sie ein zu bearbeitendes Repository. Alternativ können auch alle Repositorien gewählt werden.
 		                    
 		                    <h:panelGroup>
@@ -263,6 +287,7 @@
 								</h:panelGrid>
 							</h:panelGroup>
 							<br />
+							</div>							
 		                    Bitte wählen sie wann der Dienst ausgeführt werden soll. 
 		                    <br />  
 							<table>
