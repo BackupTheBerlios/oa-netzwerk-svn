@@ -42,19 +42,40 @@
   <ui:define name="content">
   
   <script type="text/javascript">
-	function fold() {
-		if (document.getElementById)
-			document.getElementById("fehlerliste").style.display = "inline";
+  function fold() {
+		if (document.getElementById){
+			document.getElementById("fehlerliste").style.display = "none";
+			document.getElementById("ua").style.display = "inline";
+			document.getElementById("ia").style.display = "none";
+		}
 	}
 
 	function unfold() {
-		if (document.getElementById)
-			document.getElementById("fehlerliste").style.display = "none";
+		if (document.getElementById){
+			document.getElementById("fehlerliste").style.display = "inline";
+			document.getElementById("ua").style.display = "none";
+			document.getElementById("ia").style.display = "inline";
+		}
 	}
 
-  </script>
 
-  
+	function red() {
+		if (document.getElementById)
+			document.getElementById("ctab1").style.backgroundColor = "#ff4500";
+	}
+
+	function red2(check){
+		
+		if(check == "100.0")
+			document.getElementById("ctab1").style.backgroundColor = "#ff4500";
+		
+	}
+
+	function test() {
+		return "#ddd000";
+	}
+	
+  </script>
 
   <div style="padding: 20px; background-color: #f5f9f4;">
       <div style="background-color: #f5f9f4;">
@@ -70,66 +91,71 @@
 						<tr>
 							<td><h:form>
 							<table width="100%">
+							<!--div id="ctab" onload="red2(#{row.successPercentage})" style="background-color: #ddd000;"-->
 								<h:dataTable value="#{valiList.validationResults}" var="row"
 									headerClass="pane-header" rowClasses="odd, even"
 									style="border-collapse: collapse; border: 1px #bbb solid; width : 589px;">
-									
 									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
 <!--										<f:facet name="header">-->
 <!--											<h:outputText value="Regel-ID" />-->
 <!--										</f:facet>-->
-										
-
-	
-										
+						
 										<table>
 										<tr>
 											<td><b><h:outputText value="Regel" /></b></td>
-											<td><h:outputText value="#{row.name}" /></td>
+											<td><h:outputText value="#{row.entry.name}" /></td>
+											<div align="right">
+											<td><div align="right" style="background-color: #{row.color}">_______</div></td>
+											</div>
 										</tr>
+
 										<tr>
 											<td><b><h:outputText value="Beschreibung" /></b></td>
-											<td><h:outputText value="#{row.description}" /></td>
+											<td><h:outputText value="#{row.entry.description}" /></td>
 										</tr>
+										<t:div rendered="#{row.successPercentage eq 100}">
 										<tr>
 											<td><b><h:outputText value="Regel-Status" /></b></td>
-											<td><h:outputText value="#{row.successes}" /></td>
+											<td>completely</td>	
 										</tr>
+										
+										
+										</t:div>
+										<t:div rendered="#{row.successPercentage lt 100}">
 										<tr>
-											<td></td>
-											<td></td>
+											<td><b><h:outputText value="Regel-Status" /></b></td>
+											<td><h:outputText value="#{row.entry.successes}" /></td>	
 										</tr>
+										<tr style="align:center">
+											<td>	
+											<img id="ua" height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/next.gif" onclick="unfold();"/>			
+											<img id="ia" height="24" style="margin: 2px; display: none" alt="" width="24" src="../images/24x24/up.gif" onclick="fold();" />								
+											</td>
+										</tr>
+										</t:div>
 										
 										<tr>
 											<td colspan="2">
-											
-<!--											<t:div rendered="#{row.successes }">-->
-										
-											<h:dataTable value="#{row.errors}" var="error"
+										<t:div rendered="#{row.successPercentage lt 100}"> 
+										<div id="fehlerliste" style="display: none">
+											<h:dataTable value="#{row.entry.errors}" var="error"
 														headerClass="pane-header" rowClasses="odd, even"
 														style="border-collapse: collapse; border: 1px #bbb solid; width : 589px;">
-												
-												<div id="fehlerliste" style="visibility: none">
 												<h:column
 													style="width: 30%; vertical-align: middle; height: 70px;">
 													<div align="center">			
 														<h:outputLink value="#{valiList.oaiUrl}?verb&#61;GetRecord&amp;metadataPrefix&#61;oai_dc&amp;identifier=#{error}" >#{error}</h:outputLink>
+					
 													</div>
 												</h:column>
-												</div>
-												<div align="left">
-												<button onclick="fold();">Ansehen.</button>
-												</div>
-												
 											</h:dataTable>
+										</div>
+										</t:div>
 										
-									
-											
 											</td>
 										</tr>
-										
-										
 										</table>
+
 										
 									</h:column>
 									
@@ -176,13 +202,14 @@
 <!--									</h:column>-->
 									
 								</h:dataTable>
+								<!--/div-->
 								</table>
 							</h:form></td>
 						</tr>
 					</table>
 					
-<!--											</t:div>-->
-									
+<!--</t:div>-->
+
 			
 			</div>
 			</div>
