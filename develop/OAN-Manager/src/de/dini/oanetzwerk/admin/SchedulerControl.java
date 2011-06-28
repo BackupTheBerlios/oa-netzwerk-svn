@@ -92,6 +92,10 @@ public class SchedulerControl implements Serializable {
 			scheduler = factory.getScheduler();
 			scheduler.start();
 
+			if (scheduler == null) {
+				System.out.println("scheduler is null after creation");
+			}
+			
 			// load jobs from database
 			List<AbstractServiceJob> jobsToSchedule = loadJobsFromDB();
 			
@@ -466,6 +470,12 @@ public class SchedulerControl implements Serializable {
 
 		// enumerate each job group
 		try {
+
+			if (scheduler == null || scheduler.getJobGroupNames() == null || scheduler.getJobGroupNames().isEmpty()) {
+				logger.warn("Could not list service jobs as scheduler has not been initialized correctly. Please review earlier log messages!");
+				return;
+			}
+		
 			for (String group : scheduler.getJobGroupNames()) {
 				System.out.println("Group: " + group);
 				// enumerate each job in group

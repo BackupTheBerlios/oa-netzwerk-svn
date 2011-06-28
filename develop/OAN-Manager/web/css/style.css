@@ -31,8 +31,12 @@ div.infomessage_box
 	padding: 15px 20px 15px 20px;
 }
 
+a:visited {
+	text-decoration:none;
+}
  
  /** custom end  **/
+ 
 body {
   margin: 0;
   padding: 0;

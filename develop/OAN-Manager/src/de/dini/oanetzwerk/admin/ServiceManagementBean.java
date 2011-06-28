@@ -53,6 +53,7 @@ public class ServiceManagementBean {
 	private String localPathToHarvester = null;
 	private String localPathToAggregator = null;
 	private String localPathToMarker = null;
+	private String javaPath = null;
 
 	@ManagedProperty(value="#{restConnector}")
 	private RestConnector connector;	
@@ -68,7 +69,8 @@ public class ServiceManagementBean {
 
 	@PostConstruct
 	private void init() {
-
+		
+		// retrieve file paths to services (harvester, aggregator and marker)
 		localPathToHarvester = propertyManager.getServiceProperties().getProperty("location.harvester");
 
 		if (localPathToHarvester != null && new File(localPathToHarvester).exists()) {
@@ -80,8 +82,11 @@ public class ServiceManagementBean {
 		aggregatorStatus = checkServiceStatus("AggregatorService");
 		markerStatus = checkServiceStatus("MarkerService");
 		
-//		storeJob();
-//		updateJob(3);
+		// try to fetch path to a specified java binary file
+		javaPath = propertyManager.getServiceProperties().getProperty("java.path");
+		if (javaPath == null || javaPath.trim().length() == 0) {
+			javaPath = null;
+		}
 	}
 
 	
@@ -352,6 +357,19 @@ public class ServiceManagementBean {
 				// /home/sam/Dev/TestDirectory/services/harvester/Harvester.jar
 				System.out.println(servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))));
 				
+				String javaBinaryPath = null;
+				
+				if (javaPath != null) {
+					if (javaPath.endsWith(System.getProperty("file.separator") + "java")) {
+						javaBinaryPath = javaPath;
+					} else if (javaPath.endsWith(System.getProperty("file.separator"))) {
+						javaBinaryPath = javaPath + "java";
+					} else if (!javaPath.endsWith(System.getProperty("file.separator")) && !javaPath.endsWith("java")) {
+						javaBinaryPath = javaPath + System.getProperty("file.separator") + "java";
+					}
+				} else {
+					javaBinaryPath = "java";
+				}
 				
 				
 				if (!checkIfLocalPathToServiceIsValid(servicePath)) {
@@ -359,12 +377,12 @@ public class ServiceManagementBean {
 				}
 				
 				
-				System.out.println("Running command: java -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
+				System.out.println("Running command: " + javaBinaryPath + " -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 								+ servicePath);
 				// TODO: change directory to service directory first
 				Runtime.getRuntime().exec(
-						"java -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
+								javaBinaryPath + " -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 								+ servicePath);
 

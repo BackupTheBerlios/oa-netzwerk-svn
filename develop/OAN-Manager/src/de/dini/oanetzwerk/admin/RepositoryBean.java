@@ -6,11 +6,6 @@ package de.dini.oanetzwerk.admin;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -23,19 +18,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.admin.ServiceSchedulingBean.JobType;
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
-import de.dini.oanetzwerk.server.database.DBAccessNG;
-import de.dini.oanetzwerk.server.database.DeleteFromDB;
-import de.dini.oanetzwerk.server.database.SingleStatementConnection;
-import de.dini.oanetzwerk.server.database.UpdateInDB;
-import de.dini.oanetzwerk.utils.DBHelper;
-import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
  * @author Michael K&uuml;hn
