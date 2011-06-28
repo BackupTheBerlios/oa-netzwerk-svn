@@ -138,7 +138,7 @@ public class ValidationListBean extends AbstractBean implements Serializable{
 	}
 	
 
-	public List<Entry> getValidationResults(){
+	public List<ValidatorJob> getValidationResults(){
 		
 //		List<ValidationBean> valiList = new ArrayList<ValidationBean>(); //Liste von Validations wird generiert
 //		
@@ -176,7 +176,14 @@ public class ValidationListBean extends AbstractBean implements Serializable{
 //	
 //		System.out.println(valiList.size()); //Größe des Repositorys wird ermittelt
 
-		return this.getJobSummary(validationId);
+		List<Entry> list = this.getJobSummary(validationId);
+		System.out.println("job-id: " + validationId);
+		List<ValidatorJob> jobs = new ArrayList<ValidatorJob>();
+		for (Entry entry : list) {
+			jobs.add(new ValidatorJob(entry));
+		}
+		
+		return jobs;
 	}
 	
 	
