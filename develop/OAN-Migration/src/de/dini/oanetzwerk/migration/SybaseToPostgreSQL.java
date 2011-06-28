@@ -19,6 +19,9 @@ import de.dini.oanetzwerk.server.database.StatementConnection;
 public class SybaseToPostgreSQL {
 
 	public String[] tables = {
+					"Repositories"
+					};
+	public String[] tables1 = {
 			"DDC_Categories",
 			"DINI_Set_Categories",
 			"DNB_Categories",
@@ -80,8 +83,8 @@ public class SybaseToPostgreSQL {
 			String url = "jdbc:postgresql://localhost:5432/oanetdb";
 			
 			Properties props = new Properties();
-			props.put("user", "postgres");
-			props.put("password", "12345");
+			props.put("user", "oan_user");
+			props.put("password", "oan123");
 			props.put("charSet", "UTF-8");
 			conn = DriverManager.getConnection(url, props);
 			

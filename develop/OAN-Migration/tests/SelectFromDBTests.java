@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
+import junit.framework.Assert;
+
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,13 +18,15 @@ import org.junit.Test;
 import de.dini.oanetzwerk.migration.SelectFromDBPostgres;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.SelectFromDB;
-import junit.framework.Assert;
+import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 
 public class SelectFromDBTests {
 	Connection sybase;
 	Connection postgres;
 	MultipleStatementConnection msSybase;
 	MultipleStatementConnection msPostgres;
+	
+	private SelectFromDBSybase selectSybase = new SelectFromDBSybase();
 	
 	@Before public void setup() {
 		try {
@@ -56,7 +60,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase InternalID(String repository_identifier)");
 			String repository_identifier = "";
 			
-			PreparedStatement sybaseQuery = SelectFromDB.InternalID(sybase, repository_identifier);
+			PreparedStatement sybaseQuery = selectSybase.InternalID(sybase, repository_identifier);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.InternalIDPostgres(postgres, repository_identifier);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -87,7 +91,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase ObjectEntry(BigDecimal object_id)");
 			BigDecimal object_id = new BigDecimal(98123);
 			
-			PreparedStatement sybaseQuery = SelectFromDB.ObjectEntry(sybase, object_id);
+			PreparedStatement sybaseQuery = selectSybase.ObjectEntry(sybase, object_id);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ObjectEntryPostgres(postgres, object_id);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -118,7 +122,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase ObjectEntry(String repository_identifier)");
 			String repository_identifier = "oai:bth.rwth-aachen.de-opus:2655";
 			
-			PreparedStatement sybaseQuery = SelectFromDB.ObjectEntry(sybase, repository_identifier);
+			PreparedStatement sybaseQuery = selectSybase.ObjectEntry(sybase, repository_identifier);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ObjectEntryPostgres(postgres, repository_identifier);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -150,7 +154,7 @@ public class SelectFromDBTests {
 			BigDecimal repositoryID = new BigDecimal(1);
 			String externalOID = "";
 			
-			PreparedStatement sybaseQuery = SelectFromDB.ObjectEntryID(sybase, repositoryID, externalOID);
+			PreparedStatement sybaseQuery = selectSybase.ObjectEntryID(sybase, repositoryID, externalOID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ObjectEntryIDPostgres(postgres, repositoryID, externalOID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -181,7 +185,7 @@ public class SelectFromDBTests {
 			BigDecimal repositoryID = new BigDecimal(1);
 			BigDecimal oid_offset = new BigDecimal(1);
 			
-			PreparedStatement sybaseQuery = SelectFromDB.ObjectEntry(sybase, repositoryID, oid_offset);
+			PreparedStatement sybaseQuery = selectSybase.ObjectEntry(sybase, repositoryID, oid_offset);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ObjectEntryPostgres(postgres, repositoryID, oid_offset);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -212,7 +216,7 @@ public class SelectFromDBTests {
 			Date repository_date_stamp = Date.valueOf("2010-07-01");
 			String repository_identifier = "oai:HUBerlin.de:35790";
 			
-			PreparedStatement sybaseQuery = SelectFromDB.ObjectEntry(sybase, repositoryID, repository_date_stamp, repository_identifier);
+			PreparedStatement sybaseQuery = selectSybase.ObjectEntry(sybase, repositoryID, repository_date_stamp, repository_identifier);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ObjectEntryPostgres(postgres, repositoryID, repository_date_stamp, repository_identifier);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -240,7 +244,7 @@ public class SelectFromDBTests {
 	@Test public void AllOIDsTest() {
 		try{
 			System.out.println("Testcase AllOIDs()");
-			PreparedStatement sybaseQuery = SelectFromDB.AllOIDs(sybase);
+			PreparedStatement sybaseQuery = selectSybase.AllOIDs(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllOIDsPostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -268,7 +272,7 @@ public class SelectFromDBTests {
 	@Test public void AllOIDsMarkAsTestTest() {
 		try {
 			System.out.println("Testcase AllOIDsMarkAsTest");
-			PreparedStatement sybaseQuery = SelectFromDB.AllOIDsMarkAsTest(sybase);
+			PreparedStatement sybaseQuery = selectSybase.AllOIDsMarkAsTest(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllOIDsMarkAsTestPostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -296,7 +300,7 @@ public class SelectFromDBTests {
 	@Test public void AllOIDsMarkAsNotTestTest() {
 		try{ 
 			System.out.println("Testcase AllOIDsMarkAsNotTest");
-			PreparedStatement sybaseQuery = SelectFromDB.AllOIDsMarkAsNotTest(sybase);
+			PreparedStatement sybaseQuery = selectSybase.AllOIDsMarkAsNotTest(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllOIDsMarkAsNotTestPostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -324,7 +328,7 @@ public class SelectFromDBTests {
 	@Test public void AllOIDsMarkAsHasFulltextlinkTest() {
 		try {
 			System.out.println("Testcase AllOIDsMarkAsHasFulltextlink()");
-			PreparedStatement sybaseQuery = SelectFromDB.AllOIDsMarkAsHasFulltextlink(sybase);
+			PreparedStatement sybaseQuery = selectSybase.AllOIDsMarkAsHasFulltextlink(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllOIDsMarkAsHasFulltextlinkPostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -354,7 +358,7 @@ public class SelectFromDBTests {
 			BigDecimal repID = new BigDecimal(25);
 			
 			System.out.println("Testcase AllOIDsFromRepositoryID(BigDecimal repID)");
-			PreparedStatement sybaseQuery = SelectFromDB.AllOIDsFromRepositoryID(sybase, repID);
+			PreparedStatement sybaseQuery = selectSybase.AllOIDsFromRepositoryID(sybase, repID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllOIDsFromRepositoryIDPostgres(postgres, repID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -384,7 +388,7 @@ public class SelectFromDBTests {
 			BigDecimal repID = new BigDecimal(4);
 			
 			System.out.println("Testcase AllOIDsFromRepositoryIDMarkAsTest(BigDecimal repID)");
-			PreparedStatement sybaseQuery = SelectFromDB.AllOIDsFromRepositoryIDMarkAsTest(sybase, repID);
+			PreparedStatement sybaseQuery = selectSybase.AllOIDsFromRepositoryIDMarkAsTest(sybase, repID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllOIDsFromRepositoryIDMarkAsTestPostgres(postgres, repID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -411,7 +415,7 @@ public class SelectFromDBTests {
 	@Test public void RepositoryTest() {
 		try {
 			System.out.println("Testcase Repository()");
-			PreparedStatement sybaseQuery = SelectFromDB.Repository(sybase);
+			PreparedStatement sybaseQuery = selectSybase.Repository(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.RepositoryPostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -441,7 +445,7 @@ public class SelectFromDBTests {
 			
 			BigDecimal repository_id = new BigDecimal(33);
 			
-			PreparedStatement sybaseQuery = SelectFromDB.Repository(sybase, repository_id);
+			PreparedStatement sybaseQuery = selectSybase.Repository(sybase, repository_id);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.RepositoryPostgres(postgres, repository_id);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -470,7 +474,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase RawRecordDataHistory(BigDecimal internalOID)");
 			BigDecimal internalOID = new BigDecimal(88888);
-			PreparedStatement sybaseQuery = SelectFromDB.RawRecordDataHistory(sybase, internalOID);
+			PreparedStatement sybaseQuery = selectSybase.RawRecordDataHistory(sybase, internalOID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.RawRecordDataHistoryPostgres(postgres, internalOID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -500,7 +504,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase RawRecordData(BigDecimal internalOID, Date repository_timestamp)");
 			BigDecimal internalOID = new BigDecimal(101231);
 			Date repository_timestamp = Date.valueOf("2009-09-08");
-			PreparedStatement sybaseQuery = SelectFromDB.RawRecordData(sybase, internalOID, repository_timestamp);
+			PreparedStatement sybaseQuery = selectSybase.RawRecordData(sybase, internalOID, repository_timestamp);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.RawRecordDataPostgres(postgres, internalOID, repository_timestamp);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -529,7 +533,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase RawRecordData(BigDecimal internalOID)");
 			BigDecimal internalOID = new BigDecimal(88888);
-			PreparedStatement sybaseQuery = SelectFromDB.RawRecordData(sybase, internalOID);
+			PreparedStatement sybaseQuery = selectSybase.RawRecordData(sybase, internalOID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.RawRecordDataPostgres(postgres, internalOID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -558,7 +562,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase Services(String name)");
 			String name = "Aggregator";
-			PreparedStatement sybaseQuery = SelectFromDB.Services(sybase, name);
+			PreparedStatement sybaseQuery = selectSybase.Services(sybase, name);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ServicesPostgres(postgres, name);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -587,7 +591,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase Services(BigDecimal serviceID)");
 			BigDecimal serviceID = new BigDecimal(5);
-			PreparedStatement sybaseQuery = SelectFromDB.Services(sybase, serviceID);
+			PreparedStatement sybaseQuery = selectSybase.Services(sybase, serviceID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ServicesPostgres(postgres, serviceID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -616,7 +620,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase ServicesOrder(BigDecimal serviceID)");
 			BigDecimal serviceID = new BigDecimal(4);
-			PreparedStatement sybaseQuery = SelectFromDB.ServicesOrder(sybase, serviceID);
+			PreparedStatement sybaseQuery = selectSybase.ServicesOrder(sybase, serviceID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ServicesOrderPostgres(postgres, serviceID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -645,7 +649,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase WorkflowDB(BigDecimal serviceID)");
 			BigDecimal serviceID = new BigDecimal(2);
-			PreparedStatement sybaseQuery = SelectFromDB.WorkflowDB(sybase, serviceID);
+			PreparedStatement sybaseQuery = selectSybase.WorkflowDB(sybase, serviceID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.WorkflowDBPostgres(postgres, serviceID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -674,7 +678,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase WorkflowDBComplete(BigDecimal serviceID)");
 			BigDecimal serviceID = new BigDecimal(2);
-			PreparedStatement sybaseQuery = SelectFromDB.WorkflowDBComplete(sybase, serviceID);
+			PreparedStatement sybaseQuery = selectSybase.WorkflowDBComplete(sybase, serviceID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.WorkflowDBCompletePostgres(postgres, serviceID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -704,7 +708,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase WorkflowDBComplete(BigDecimal serviceID, BigDecimal repositoryID)");
 			BigDecimal serviceID = new BigDecimal(2);
 			BigDecimal repositoryID = new BigDecimal(2);
-			PreparedStatement sybaseQuery = SelectFromDB.WorkflowDB(sybase, serviceID, repositoryID);
+			PreparedStatement sybaseQuery = selectSybase.WorkflowDB(sybase, serviceID, repositoryID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.WorkflowDBPostgres(postgres, serviceID, repositoryID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -734,7 +738,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase WorkflowDBInserted(BigDecimal objectID, BigDecimal serviceID)");
 			BigDecimal serviceID = new BigDecimal(1);
 			BigDecimal objectID = new BigDecimal(52003);
-			PreparedStatement sybaseQuery = SelectFromDB.WorkflowDB(sybase, objectID, serviceID);
+			PreparedStatement sybaseQuery = selectSybase.WorkflowDB(sybase, objectID, serviceID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.WorkflowDBPostgres(postgres, objectID, serviceID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -766,7 +770,7 @@ public class SelectFromDBTests {
 			BigDecimal objectID = new BigDecimal(2);
 			Timestamp time = Timestamp.valueOf("2010-07-21 11:21:57");
 			Date sybaseTime = Date.valueOf("2010-07-21 11:21:57");
-			PreparedStatement sybaseQuery = SelectFromDB.WorkflowDB(sybase, objectID, sybaseTime, serviceID);
+			PreparedStatement sybaseQuery = selectSybase.WorkflowDB(sybase, objectID, sybaseTime, serviceID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.WorkflowDBPostgres(postgres, objectID, time, serviceID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -796,7 +800,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Title(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(98765);
 
-			PreparedStatement sybaseQuery = SelectFromDB.Title(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.Title(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.TitlePostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -826,7 +830,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Authors(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.Authors(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.Authors(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AuthorsPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -856,7 +860,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Editors(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(102345);
 
-			PreparedStatement sybaseQuery = SelectFromDB.Editors(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.Editors(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.EditorsPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -886,7 +890,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Contributors(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(1045);
 
-			PreparedStatement sybaseQuery = SelectFromDB.Contributors(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.Contributors(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ContributorsPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -916,7 +920,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Format(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.Format(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.Format(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.FormatPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -946,7 +950,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Identifier(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.Identifier(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.Identifier(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.IdentifierPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -975,7 +979,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Description(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.Description(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.Description(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.DescriptionPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1004,7 +1008,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase DateValues(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.DateValues(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.DateValues(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.DateValuesPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1033,7 +1037,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase TypeValues(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.TypeValues(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.TypeValues(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.TypeValuesPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1062,7 +1066,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Publisher(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.Publisher(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.Publisher(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.PublisherPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1092,7 +1096,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase DDCClassification(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(102345);
 
-			PreparedStatement sybaseQuery = SelectFromDB.DDCClassification(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.DDCClassification(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.DDCClassificationPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1121,7 +1125,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase DNBClassification(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.DNBClassification(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.DNBClassification(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.DNBClassificationPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1151,7 +1155,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase DINISetClassification(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.DINISetClassification(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.DINISetClassification(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.DINISetClassificationPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1181,7 +1185,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase OtherClassification(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.OtherClassification(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.OtherClassification(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.OtherClassificationPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1211,7 +1215,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase AllClassifications(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.AllClassifications(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.AllClassifications(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllClassificationsPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1244,7 +1248,7 @@ public class SelectFromDBTests {
 			ids.add(new BigDecimal(102345));
 			ids.add(new BigDecimal(102748));
 
-			PreparedStatement sybaseQuery = SelectFromDB.AllClassifications(sybase, ids);
+			PreparedStatement sybaseQuery = selectSybase.AllClassifications(sybase, ids);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllClassificationsPostgres(postgres, ids);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1274,7 +1278,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Keywords(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.Keywords(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.Keywords(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.KeywordsPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1304,7 +1308,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Languages(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.Languages(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.Languages(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.LanguagesPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1334,7 +1338,7 @@ public class SelectFromDBTests {
 			String firstname = "Fiorella";
 			String lastname = "Monti";
 
-			PreparedStatement sybaseQuery = SelectFromDB.LatestPerson(sybase, firstname, lastname);
+			PreparedStatement sybaseQuery = selectSybase.LatestPerson(sybase, firstname, lastname);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.LatestPersonPostgres(postgres, firstname, lastname);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1365,7 +1369,7 @@ public class SelectFromDBTests {
 			String keyword = "Philosophie";
 			
 
-			PreparedStatement sybaseQuery = SelectFromDB.LatestKeyword(sybase, keyword, null);
+			PreparedStatement sybaseQuery = selectSybase.LatestKeyword(sybase, keyword, null);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.LatestPersonPostgres(postgres, keyword, null);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1395,7 +1399,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase LanguageByName(String language)");
 			String language = "fre";
 
-			PreparedStatement sybaseQuery = SelectFromDB.LanguageByName(sybase, language);
+			PreparedStatement sybaseQuery = selectSybase.LanguageByName(sybase, language);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.LanguageByNamePostgres(postgres, language);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1425,7 +1429,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase Iso639LanguageByName(String iso639language)");
 			String iso639language = "deu";
 
-			PreparedStatement sybaseQuery = SelectFromDB.Iso639LanguageByName(sybase, iso639language);
+			PreparedStatement sybaseQuery = selectSybase.Iso639LanguageByName(sybase, iso639language);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.Iso639LanguageByNamePostgres(postgres, iso639language);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1455,7 +1459,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase DDCCategoriesByCategorie(String category)");
 			String category = "004";
 
-			PreparedStatement sybaseQuery = SelectFromDB.DDCCategoriesByCategorie(sybase, category);
+			PreparedStatement sybaseQuery = selectSybase.DDCCategoriesByCategorie(sybase, category);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.DDCCategoriesByCategoriePostgres(postgres, category);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1485,7 +1489,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase DNBCategoriesByCategorie(String category)");
 			String category = "27";
 
-			PreparedStatement sybaseQuery = SelectFromDB.DNBCategoriesByCategorie(sybase, category);
+			PreparedStatement sybaseQuery = selectSybase.DNBCategoriesByCategorie(sybase, category);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.DNBCategoriesByCategoriePostgres(postgres, category);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1515,7 +1519,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase DINISetCategoriesByName(String name)");
 			String name = "pub-type:dissertation";
 
-			PreparedStatement sybaseQuery = SelectFromDB.DINISetCategoriesByName(sybase, name);
+			PreparedStatement sybaseQuery = selectSybase.DINISetCategoriesByName(sybase, name);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.DINISetCategoriesByNamePostgres(postgres, name);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1545,7 +1549,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase LatestOtherCategories(String category)");
 			String category = "EP:Buch, Monographie";
 
-			PreparedStatement sybaseQuery = SelectFromDB.LatestOtherCategories(sybase, category);
+			PreparedStatement sybaseQuery = selectSybase.LatestOtherCategories(sybase, category);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.LatestOtherCategoriesPostgres(postgres, category);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1575,7 +1579,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase FullTextLinks(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(45623);
 
-			PreparedStatement sybaseQuery = SelectFromDB.FullTextLinks(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.FullTextLinks(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.FullTextLinksPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1604,7 +1608,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase ObjectServiceStatusAll()");
 
-			PreparedStatement sybaseQuery = SelectFromDB.ObjectServiceStatusAll(sybase);
+			PreparedStatement sybaseQuery = selectSybase.ObjectServiceStatusAll(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ObjectServiceStatusAllPostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1634,7 +1638,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase ObjectServiceStatusID(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.ObjectServiceStatusID(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.ObjectServiceStatusID(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ObjectServiceStatusIDPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1663,7 +1667,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase ServiceNotify(BigDecimal serviceID)");
 			BigDecimal serviceID = new BigDecimal(4);
 
-			PreparedStatement sybaseQuery = SelectFromDB.ServiceNotify(sybase, serviceID);
+			PreparedStatement sybaseQuery = selectSybase.ServiceNotify(sybase, serviceID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.ServiceNotifyPostgres(postgres, serviceID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1692,7 +1696,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase LoginData(String name)");
 			String name = "malitzro";
 
-			PreparedStatement sybaseQuery = SelectFromDB.LoginData(sybase, name);
+			PreparedStatement sybaseQuery = selectSybase.LoginData(sybase, name);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.LoginDataPostgres(postgres, name);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1721,7 +1725,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase LoginDataLowerCase(String name)");
 			String name = "malitzro";
 
-			PreparedStatement sybaseQuery = SelectFromDB.LoginDataLowerCase(sybase, name);
+			PreparedStatement sybaseQuery = selectSybase.LoginDataLowerCase(sybase, name);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.LoginDataLowerCasePostgres(postgres, name);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1750,7 +1754,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase AllDDCCategories()");
 			
 
-			PreparedStatement sybaseQuery = SelectFromDB.AllDDCCategories(sybase);
+			PreparedStatement sybaseQuery = selectSybase.AllDDCCategories(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllDDCCategoriesPostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1779,7 +1783,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase DDCCategoryWildcard(String wildcardCategory)");
 			String wildcardCategory = "%5";
 
-			PreparedStatement sybaseQuery = SelectFromDB.DDCCategoryWildcard(sybase, wildcardCategory);
+			PreparedStatement sybaseQuery = selectSybase.DDCCategoryWildcard(sybase, wildcardCategory);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.LoginDataPostgres(postgres,wildcardCategory);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1809,7 +1813,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase DuplicateProbabilities(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(4966);
 
-			PreparedStatement sybaseQuery = SelectFromDB.DuplicateProbabilities(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.DuplicateProbabilities(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.DuplicateProbabilitiesPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1838,7 +1842,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase OAIListSets()");
 
-			PreparedStatement sybaseQuery = SelectFromDB.OAIListSets(sybase);
+			PreparedStatement sybaseQuery = selectSybase.OAIListSets(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.OAIListSetsPostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1867,7 +1871,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase OAIGetOldestDate()");
 
-			PreparedStatement sybaseQuery = SelectFromDB.OAIGetOldestDate(sybase);
+			PreparedStatement sybaseQuery = selectSybase.OAIGetOldestDate(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.OAIGetOldestDatePostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1905,7 +1909,7 @@ public class SelectFromDBTests {
 			
 			
 			
-			PreparedStatement sybaseQuery = SelectFromDB.OAIListSetsbyID(sybase, set, from, until, ids);
+			PreparedStatement sybaseQuery = selectSybase.OAIListSetsbyID(sybase, set, from, until, ids);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.OAIListSetsbyIDPostgres(postgres, set, from, until, ids);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1942,7 +1946,7 @@ public class SelectFromDBTests {
 			
 			
 			
-			PreparedStatement sybaseQuery = SelectFromDB.OAIListAll(sybase, set, from, until, ids);
+			PreparedStatement sybaseQuery = selectSybase.OAIListAll(sybase, set, from, until, ids);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.OAIListAllPostgres(postgres, set, from, until, ids);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -1971,7 +1975,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase RepositoryData(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.RepositoryData(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.RepositoryData(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.RepositoryDataPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -2001,7 +2005,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase InterpolatedDDCClassification_withCategorie(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.InterpolatedDDCClassification_withCategorie(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.InterpolatedDDCClassification_withCategorie(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.InterpolatedDDCClassification_withCategoriePostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -2030,7 +2034,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase InterpolatedDDCClassification(BigDecimal objectID)");
 			BigDecimal objectID = new BigDecimal(88888);
 
-			PreparedStatement sybaseQuery = SelectFromDB.InterpolatedDDCClassification(sybase, objectID);
+			PreparedStatement sybaseQuery = selectSybase.InterpolatedDDCClassification(sybase, objectID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.InterpolatedDDCClassificationPostgres(postgres, objectID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -2060,7 +2064,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase UsageData_Metrics(String metrics_name)");
 			String metrics_name = "Counter";
 
-			PreparedStatement sybaseQuery = SelectFromDB.UsageData_Metrics(sybase, metrics_name);
+			PreparedStatement sybaseQuery = selectSybase.UsageData_Metrics(sybase, metrics_name);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.UsageData_MetricsPostgres(postgres, metrics_name);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -2088,7 +2092,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase UsageData_Metrics_AllNames(String metrics_name)");
 
-			PreparedStatement sybaseQuery = SelectFromDB.UsageData_Metrics_AllNames(sybase);
+			PreparedStatement sybaseQuery = selectSybase.UsageData_Metrics_AllNames(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.UsageData_Metrics_AllNamesPostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -2118,7 +2122,7 @@ public class SelectFromDBTests {
 			String metrics_name = "Counter";
 			BigDecimal objectID = new BigDecimal(47141);
 
-			PreparedStatement sybaseQuery = SelectFromDB.UsageData_Months_ListForMetricsName(sybase, objectID, metrics_name);
+			PreparedStatement sybaseQuery = selectSybase.UsageData_Months_ListForMetricsName(sybase, objectID, metrics_name);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.UsageData_Months_ListForMetricsNamePostgres(postgres, objectID, metrics_name);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -2148,7 +2152,7 @@ public class SelectFromDBTests {
 			String metrics_name = "Counter";
 			BigDecimal objectID = new BigDecimal(1);
 			
-			PreparedStatement sybaseQuery = SelectFromDB.UsageData_Overall_ForMetricsName(sybase, objectID, metrics_name);
+			PreparedStatement sybaseQuery = selectSybase.UsageData_Overall_ForMetricsName(sybase, objectID, metrics_name);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.UsageData_Overall_ForMetricsNamePostgres(postgres, objectID, metrics_name);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -2176,7 +2180,7 @@ public class SelectFromDBTests {
 		try {
 			System.out.println("Testcase UsageDataOIDs()");
 
-			PreparedStatement sybaseQuery = SelectFromDB.UsageDataOIDs(sybase);
+			PreparedStatement sybaseQuery = selectSybase.UsageDataOIDs(sybase);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.UsageDataOIDsPostgres(postgres);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -2205,7 +2209,7 @@ public class SelectFromDBTests {
 			System.out.println("Testcase UsageDataOIDsForRepository(BigDecimal repositoryID)");
 			int repositoryID = 1;	
 			
-			PreparedStatement sybaseQuery = SelectFromDB.UsageDataOIDsForRepository(sybase, repositoryID);
+			PreparedStatement sybaseQuery = selectSybase.UsageDataOIDsForRepository(sybase, repositoryID);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.UsageDataOIDsForRepositoryPostgres(postgres, repositoryID);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -2240,7 +2244,7 @@ public class SelectFromDBTests {
 			int resultCount = 100;
 			Boolean rowCountOnly = false;
 			
-			PreparedStatement sybaseQuery = SelectFromDB.AllOIDsByDate(sybase, from, until, set, idOffset, resultCount, rowCountOnly);
+			PreparedStatement sybaseQuery = selectSybase.AllOIDsByDate(sybase, from, until, set, idOffset, resultCount, rowCountOnly);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllOIDsByDatePostgres(sybase, from, until, set, idOffset, resultCount, rowCountOnly);
 			
 			msSybase.loadStatement(sybaseQuery);
@@ -2274,7 +2278,7 @@ public class SelectFromDBTests {
 			int resultCount = 100;
 			Boolean rowCountOnly = true;
 			
-			PreparedStatement sybaseQuery = SelectFromDB.AllOIDsByDate(sybase, from, until, set, idOffset, resultCount, rowCountOnly);
+			PreparedStatement sybaseQuery = selectSybase.AllOIDsByDate(sybase, from, until, set, idOffset, resultCount, rowCountOnly);
 			PreparedStatement postgresQuery = SelectFromDBPostgres.AllOIDsByDatePostgres(sybase, from, until, set, idOffset, resultCount, rowCountOnly);
 			
 			msSybase.loadStatement(sybaseQuery);
