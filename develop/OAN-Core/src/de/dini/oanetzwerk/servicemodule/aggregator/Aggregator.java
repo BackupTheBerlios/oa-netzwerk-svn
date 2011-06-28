@@ -526,11 +526,7 @@ public class Aggregator {
 			
 			if (logger.isDebugEnabled ( ))
 				logger.debug ("workflow_id is: " + workflowid);
-			
-		
-			
-			
-			
+
 		}
 	}
 

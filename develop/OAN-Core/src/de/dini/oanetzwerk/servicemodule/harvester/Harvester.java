@@ -200,11 +200,8 @@ public class Harvester {
 		
 		try {
 			
-			System.out.println("Z1");
 			this.props = HelperMethods.loadPropertiesFromFile (propertyFilePath + this.getPropertyfile ( ));
-			System.out.println("Z2");
 			this.getRepositoryDetails (id);
-			System.out.println("Z3");
 			
 		} catch (InvalidPropertiesFormatException ex) {
 			
