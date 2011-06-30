@@ -3,24 +3,25 @@
  */
 package de.dini.oanetzwerk.admin;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 
-/**
- * @author Michael K&uuml;hn
- * 
- */
 
 @ManagedBean(name = "user")
+@SessionScoped
 public class UserBean extends AbstractBean implements Serializable {
 
 	
@@ -32,8 +33,6 @@ public class UserBean extends AbstractBean implements Serializable {
 	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(
 			false);
 
-	private boolean deactivated = false;
-	private boolean deleted = false;
 
 	private Long id = null;
 	private String username;
@@ -53,6 +52,47 @@ public class UserBean extends AbstractBean implements Serializable {
 		// initUserBean();
 	}
 
+	
+//	@PostConstruct
+//	public void init() {
+//		
+//		// do nothing
+//	
+//		if (ctx.getExternalContext().getRemoteUser() != null) {
+//			System.out.println("remote user: " + FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
+//		}
+//			
+//		if (ctx.getExternalContext().getUserPrincipal() != null) {
+//			System.out.println(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName()); 
+//		}
+//		
+//	}
+	
+	
+	public String logout() {
+		System.out.println("logging out...");
+		if (FacesContext.getCurrentInstance().getExternalContext().getRemoteUser() != null) {
+			System.out.println("remote user: " + FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
+		}
+			
+		if (FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null) {
+			System.out.println(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName()); 
+		}
+		
+		((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
+		
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().redirect("overview.xhtml");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "logged_out";
+	}
+	
+	public String getUser() {
+		return FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -176,174 +216,5 @@ public class UserBean extends AbstractBean implements Serializable {
 	// return ctx.getMessages("repositories");
 	// }
 
-	// private void initUserBean() {
-	//
-	// HttpServletRequest request = (HttpServletRequest)
-	// ctx.getExternalContext().getRequest();
-	// String repoId = request.getParameter("rid");
-	//
-	// if (repoId == null) {
-	// return;
-	// }
-	//
-	// try {
-	// this.id = Long.parseLong(repoId);
-	//
-	// } catch (NumberFormatException e) {
-	// e.printStackTrace();
-	// // redirect to repo_main page
-	// try {
-	// ctx.getExternalContext().redirect("/repositories_main.xhtml");
-	// } catch (IOException ex) {
-	// ex.printStackTrace();
-	// }
-	// }
-	//
-	// // get repo from db, initialize
-	// HashMap<String, String> details = getDetails();
-	//
-	// for (String key : details.keySet()) {
-	//
-	// System.out.println("key: " + key);
-	// if (key == null) {
-	// continue;
-	// } else if (key.equals("name")) {
-	// this.name = details.get(key);
-	// } else if (key.equals("url")) {
-	// this.url = details.get(key);
-	// } else if (key.equals("oai_url")) {
-	// this.oaiUrl = details.get(key);
-	// } else if (key.equals("harvest_amount")) {
-	// this.harvestAmount = details.get(key);
-	// } else if (key.equals("last_full_harvest_begin")) {
-	// this.lastFullHarvestBegin = details.get(key);
-	// } else if (key.equals("testdata")) {
-	// this.testData = details.get(key);
-	// } else if (key.equals("active")) {
-	// this.active = Boolean.parseBoolean(details.get(key));
-	// }
-	// }
-	// }
-	//
-	//
-	// public HashMap<String, String> getDetails() {
-	//
-	// String result = this.prepareRestTransmission("Repository/" +
-	// Long.toString(id)).GetData();
-	//
-	// HashMap<String, String> details = new HashMap<String, String>();
-	// RestMessage rms = RestXmlCodec.decodeRestMessage(result);
-	//
-	// if (rms == null || rms.getListEntrySets().isEmpty()) {
-	//
-	// logger.error("received no Repository Details at all from the server");
-	// return null;
-	// }
-	//
-	// RestEntrySet res = rms.getListEntrySets().get(0);
-	// Iterator<String> it = res.getKeyIterator();
-	// String key = "";
-	//
-	// while (it.hasNext()) {
-	//
-	// key = it.next();
-	// details.put(key, res.getValue(key));
-	// }
-	//
-	// return details;
-	// }
-	//
-	//
-	// public String storeRepository() {
-	//
-	// System.out.println("Name: " + name);
-	// System.out.println("Url: " + url);
-	// System.out.println("" + harvestAmount);
-	// logger.warn("jsdfbkj");
-	// try {
-	//
-	// SingleStatementConnection stmtconn = (SingleStatementConnection) new
-	// DBAccessNG().getSingleStatementConnection();
-	// PreparedStatement statement =
-	// InsertIntoDB.Repository(stmtconn.connection, name, url, oaiUrl,
-	// Integer.parseInt(harvestAmount),
-	// Integer.parseInt(harvestPause), listRecords,
-	// Boolean.parseBoolean(testData), active);
-	//
-	// new DBHelper().save(stmtconn, statement);
-	//
-	// ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-	// "info.success_stored", null));
-	//
-	// } catch (WrongStatementException ex) {
-	// logger.error(ex.getLocalizedMessage(), ex);
-	// } catch (SQLException ex) {
-	// logger.error(ex.getLocalizedMessage(), ex);
-	// }
-	//
-	// return "success";
-	// }
-	//
-	// public String delete() {
-	//
-	// System.out.println("delete!");
-	//
-	// System.out.println("Name: " + name);
-	// System.out.println("Url: " + url);
-	// System.out.println("" + harvestAmount);
-	// logger.warn("jsdfbkj");
-	// try {
-	//
-	// SingleStatementConnection stmtconn = (SingleStatementConnection) new
-	// DBAccessNG().getSingleStatementConnection();
-	// PreparedStatement statement =
-	// DeleteFromDB.Repositories(stmtconn.connection, id);
-	//
-	// new DBHelper().save(stmtconn, statement);
-	//
-	// ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-	// "info.success_deleted", null));
-	//
-	// } catch (WrongStatementException ex) {
-	// logger.error(ex.getLocalizedMessage(), ex);
-	// } catch (SQLException ex) {
-	// logger.error(ex.getLocalizedMessage(), ex);
-	// }
-	//
-	//
-	// return "";
-	// }
-	//
-	// public String deactivate() {
-	//
-	// System.out.println("deactivate!");
-	//
-	// System.out.println("Name: " + name);
-	// System.out.println("Url: " + url);
-	// System.out.println("" + harvestAmount);
-	// try {
-	//
-	// SingleStatementConnection stmtconn = (SingleStatementConnection) new
-	// DBAccessNG().getSingleStatementConnection();
-	// PreparedStatement statement = UpdateInDB.Repository(stmtconn.connection,
-	// id, false);
-	//
-	// new DBHelper().save(stmtconn, statement);
-	//
-	// ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-	// "info.success_deactivated", null));
-	//
-	// } catch (WrongStatementException ex) {
-	// logger.error(ex.getLocalizedMessage(), ex);
-	// ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-	// "Error", null));
-	// } catch (SQLException ex) {
-	// logger.error(ex.getLocalizedMessage(), ex);
-	// ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-	// "Error", null));
-	// }
-	//
-	// return "";
-	// }
 
 }

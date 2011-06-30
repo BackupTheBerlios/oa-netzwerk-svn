@@ -42,6 +42,13 @@
 				<to-view-id>/pages/services_schedule.xhtml</to-view-id>
 			</navigation-case>
 		</navigation-rule>
+		<navigation-rule>
+			<navigation-case>
+				<from-outcome>logged_out</from-outcome>
+				<to-view-id>/pages/overview.xhtml</to-view-id>
+				
+			</navigation-case>
+		</navigation-rule>
 
 		<!--managed-bean>
 		<managed-bean-name>validator</managed-bean-name>

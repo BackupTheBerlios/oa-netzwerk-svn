@@ -25,41 +25,6 @@
 		</ui:define>
 
   		<ui:param name="menu_repository" value="#{true}" /> 
-  		
-<!--		<ui:define name="menu">-->
-<!--			<div id="tasks">-->
-<!---->
-<!--			<div class="task"><img height="24" style="margin: 2px;" alt=""-->
-<!--				width="24" src="../images/24x24/new-package.gif" /><a-->
-<!--				href="repositories_main.xhtml"><b>Repositorien verwalten</b></a>-->
-<!---->
-<!--			<div class="subtasks">-->
-<!--			<div class="task"><img height="24" style="margin: 2px;" alt=""-->
-<!--				width="24" src="../images/24x24/setting.gif" /> <a-->
-<!--				href="repositories_add.xhtml">Repository hinzufügen</a></div>-->
-<!---->
-<!--			</div>-->
-<!--			</div>-->
-<!---->
-<!--			<div class="task"><img height="24" style="margin: 2px;" alt=""-->
-<!--				width="24" src="../images/24x24/setting.gif" /><a-->
-<!--				href="services_main.faces">Dienste verwalten</a></div>-->
-<!---->
-<!--			<div class="task"><img height="24" style="margin: 2px;" alt=""-->
-<!--				width="24" src="../images/24x24/setting.gif" /><a-->
-<!--				href="users_main.faces">Benutzer verwalten</a></div>-->
-<!---->
-<!--			<div class="task"><img height="24" style="margin: 2px;" alt=""-->
-<!--				width="24" src="../images/24x24/notepad.gif" /><a-->
-<!--				href="reports.faces">Reports</a></div>-->
-<!---->
-<!--			<div class="task"><img height="24" style="margin: 2px;" alt=""-->
-<!--				width="24" src="../images/24x24/notepad.gif" /><a-->
-<!--				href="livelog.faces">Live Log</a></div>-->
-<!--			</div>-->
-<!---->
-<!---->
-<!--		</ui:define>-->
 
 		<ui:define name="content">
 			<!--      <form action="createItem" method="post">-->
@@ -79,11 +44,11 @@
 
 						<tr>
 							<td><h:form>
-								<h:dataTable value="#{repoList.repositories}" var="row"
+								<t:dataTable value="#{repoList.repositories}" var="row"
 									headerClass="pane-header" rowClasses="odd, even"
 									style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
 									
-									<h:column style="width: 22%; vertical-align: middle; height: 70px;">
+									<t:column style="padding-left:10px; width: 25%; vertical-align: middle; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Name" />
 										</f:facet>
@@ -93,53 +58,53 @@
 <!--										<input type="hidden" name="identifier" value="#{row.id}" />-->
 <!--										<h:commandButton action="repository_view.xhtml?rid=#{row.id}" value="#{row.name}" />-->
 <!--										                           </h:form>-->
-									</h:column>
+									</t:column>
 									
-									<h:column style="width: 22%; vertical-align: middle; padding-left: 15px; height: 70px;">
+									<t:column style="width: 25%; vertical-align: middle; padding-left: 15px; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="URL" />
 										</f:facet>
 										<h:outputText value="#{row.url}" />
-									</h:column >
+									</t:column >
 									
-									<h:column style="width: 5%; vertical-align: middle; text-align: center; height: 70px;">
+									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="ID" />
 										</f:facet>
 										<h:outputText value="#{row.id}" />
-									</h:column>
+									</t:column>
 
-									<h:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Aktiv" />
 										</f:facet>
 										<h:outputText value="ja" />
-									</h:column>
+									</t:column>
 									
-									<h:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Datum" />
 										</f:facet>
 										<h:outputText value="" />
-									</h:column>
+									</t:column>
 									
-									<h:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Ändern" />
 										</f:facet>
 										<a href="repository_view.xhtml?rid=#{row.id}"><img
 											src="../images/16x16/document_edit.gif" /></a>
-									</h:column>
+									</t:column>
 									
-									<h:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Löschen" />
 										</f:facet>
 										<a href="repositories_remove.xhtml?rid=#{row.id}"><img
 											src="../images/16x16/edit-delete.gif" /></a>
-									</h:column>
+									</t:column>
 									
-								</h:dataTable>
+								</t:dataTable>
 							</h:form></td>
 						</tr>
 					</table>

@@ -17,11 +17,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -49,6 +47,7 @@ import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
 import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.AggregatorJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.HarvesterJob;
+import de.dini.oanetzwerk.admin.scheduling.jobs.MarkerJob;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -118,21 +117,37 @@ public class SchedulerControl implements Serializable {
 	
 	private boolean scheduleJob(AbstractServiceJob job) {
 
-		JobDetail jobDetail = null;
-		if (job instanceof HarvesterJob) {
-
-			jobDetail = newJob(HarvesterJob.class).withIdentity(job.getData().getString("job_name"))
-			                .usingJobData(job.getData()).build();
-		} else if (job instanceof AggregatorJob) {
-			jobDetail = newJob(AggregatorJob.class).withIdentity(job.getData().getString("job_name")).build();
-		} else {
-			System.out.println("else");
-			// jobDetail = newJob(Marker.class).withIdentity("job1",
-			// "group1").build();
+		logger.info("Scheduling quartz-job of type " + job.getClass() + " with name " + job.getData().getString("job_name"));
+	
+		System.out.println("goo");
+		System.out.println(job.getClass());
+		JobDetail jobDetail = newJob(job.getClass()).withIdentity(job.getData().getString("job_name"))
+			.usingJobData(job.getData()).build();
+		
+//		JobDetail jobDetail = null;
+//		
+//		if (job instanceof HarvesterJob) {
+//			jobDetail = newJob(HarvesterJob.class).withIdentity(job.getData().getString("job_name"))
+//			                .usingJobData(job.getData()).build();
+//		} else if (job instanceof AggregatorJob) {
+//			jobDetail = newJob(AggregatorJob.class).withIdentity(job.getData().getString("job_name")).usingJobData(job.getData()).build();
+//		} else if (job instanceof MarkerJob){
+//			 jobDetail = newJob(MarkerJob.class).withIdentity(job.getData().getString("job_name")).usingJobData(job.getData()).build();
+//		} else {
+//			logger.warn("Unknown job type! " + job.getClass().getName());
+//		}
+		
+		if (jobDetail == null) {
+			System.out.println("jobdetail iis null");
 		}
-
-		logger.info("Scheduling job of type " + job.getClass() + " with name " + job.getData().getString("job_name"));
-
+		
+		if (job == null) {
+			System.out.println("job iis null");
+		}
+		
+		if (job.getTrigger() == null) {
+			System.out.println("jobtrigger iis null");
+		}
 		try {
 			scheduler.scheduleJob(jobDetail, job.getTrigger());
 
@@ -151,27 +166,20 @@ public class SchedulerControl implements Serializable {
 
 			AbstractServiceJob job = null;
 			if (new BigDecimal(1).equals(bean.getServiceId())) {
-				System.out.println("Creating HarvesterJob");
 				job = new HarvesterJob();
-				
-				JobDataMap data = new JobDataMap();
-				data.put("repository_id", bean.getInfo());
-				data.put("job_name", bean.getName());
-				job.setData(data);
 			} else if (new BigDecimal(2).equals(bean.getServiceId())) {
 				job = new AggregatorJob();
 			} else {
-				// job = new MarkerJob();
-				System.out.println("Unknown Job " + bean.getServiceId());
+				job = new MarkerJob();				
 			}
+			JobDataMap data = new JobDataMap();
+			data.put("repository_id", bean.getInfo());
+			data.put("job_name", bean.getName());
+			job.setData(data);
 
 			Trigger trigger = null;
 
-			System.out.println("out: " + bean.getNonperiodicTimestamp());
-
 			try {
-
-				System.out.println("interval " + bean.getInterval());
 				if (bean.isPeriodic()) {
 
 					if (bean.getNonperiodicTimestamp() == null) {
@@ -213,8 +221,6 @@ public class SchedulerControl implements Serializable {
 					logger.info("Non-periodic job scheduled.");
 					System.out.println("startAt: " + bean.getNonperiodicTimestamp());
 					trigger = (SimpleTrigger) newTrigger().withIdentity(bean.getName()).startAt(bean.getNonperiodicTimestamp()).build();
-					// job.setTrigger(trigger);
-					System.out.println("test");
 				}
 
 				job.setTrigger(trigger);
@@ -237,7 +243,7 @@ public class SchedulerControl implements Serializable {
 	 * @return
 	 */
 	private List<AbstractServiceJob> loadJobsFromDB() {
-		System.out.println("Retrieving jobs from database ...");
+		logger.info("Retrieving jobs from database ...");
 
 		List<AbstractServiceJob> persistedJobs = new ArrayList<AbstractServiceJob>();
 
@@ -311,8 +317,6 @@ public class SchedulerControl implements Serializable {
 			}
 		}
 
-		System.out.println("persisted jobs = null: " + persistedJobs == null);
-		System.out.println("persisted jobs size " + persistedJobs.size());
 		return persistedJobs;
 	}
 	
@@ -444,6 +448,8 @@ public class SchedulerControl implements Serializable {
 
 	private int getDayOfWeek(int day) {
 
+		System.out.println("getdayofweek: mon " + DateBuilder.MONDAY);
+		System.out.println("getdayofweek: sun " + DateBuilder.SUNDAY);
 		switch (day) {
 		case 1:
 			return DateBuilder.MONDAY;
@@ -506,11 +512,6 @@ public class SchedulerControl implements Serializable {
 	
 	
 	private void outputFireTimeList(OperableTrigger trigger1, Date fromDate, Date toDate) {
-
-		// Trigger trigger = newTrigger()
-		// .withIdentity("blabla")
-		// .withSchedule(
-		// weeklyOnDayAndHourAndMinute(getDayOfWeek(5), 18, 30)).build();
 
 		Trigger trigger = null;
 		try {

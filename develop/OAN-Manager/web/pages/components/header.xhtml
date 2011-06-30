@@ -10,35 +10,27 @@
       <table id="header" cellpadding="0" cellspacing="0" width="100%" border="0">
          <tr>
             <td id="top-panel" colspan="2">
+            <h:form id="language">
             <table cellpadding="0" cellspacing="0" width="100%" border="0">
                <tr>
                   <td style="font-weight: bold; font-size: 2em;"><a href="/oanadmin/"><img alt=""
                      src="../images/logo_oan_small3.png" /></a></td>
                   <td style="vertical-align: middle; text-align: right; padding-right: 1em;">
-<!--                  <form style="position: relative;" name="search" action="/search/" class="no-json"-->
-<!--                     method="get">-->
-<!--                  <div id="search-box-minWidth"></div>-->
-<!--                  <div id="search-box-sizer"></div>-->
-<!--                  <div id="searchform"><input name="q" value="Suche" id="search-box"-->
-<!--                     class="has-default-text defaulted" /> <a-->
-<!--                     href="Search+Box"><img alt="help for search"-->
-<!--                     src="../images/16x16/help.png" /></a>-->
-<!--                  <div id="search-box-completion"></div>-->
-<!--                  <script>-->
-<!--	createSearchBox("/search/");-->
-<!--</script></div>-->
-<!--                  </form>-->
                   
-                  <h:form id="language">
                     <h:selectOneMenu value="#{language.localeCode}" onchange="submit()"
                       valueChangeListener="#{language.countryLocaleCodeChanged}">
                         <f:selectItems value="#{language.countriesInMap}" /> 
                     </h:selectOneMenu>
-                  </h:form>
                   </td>
+                  <t:div rendered="#{not empty user.user}">
+                  <td width="5%" style="vertical-align: middle; text-align: right; padding-right: 1em;">
+                      <h:commandLink id="logout" value="Ausloggen" action="#{user.logout}" />
+                  </td>
+                  </t:div>  
                   <td id="login-field"><span></span></td>
                </tr>
-            </table>
+            </table>            
+            </h:form>
             </td>
          </tr>
          <tr id="top-nav">

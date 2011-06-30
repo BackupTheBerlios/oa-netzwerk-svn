@@ -35,7 +35,7 @@ public class StartupListener implements ServletContextListener, IHarvesterMonito
 			System.setSecurityManager(new SecurityManager());
 		}
 
-		startMonitorService();
+//		startMonitorService();
     }
 	
 
@@ -95,7 +95,7 @@ public class StartupListener implements ServletContextListener, IHarvesterMonito
     public void contextDestroyed(ServletContextEvent arg0) {
 	    
 		logger.info("Stopping rmi-monitoring service ...");
-	    stopMonitorService();
+//	    stopMonitorService();
     }
 	
 	public boolean stopMonitorService() {
