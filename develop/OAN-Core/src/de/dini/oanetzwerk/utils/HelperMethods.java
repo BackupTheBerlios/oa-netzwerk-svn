@@ -274,6 +274,12 @@ public class HelperMethods {
 
 		return result;
 	}
+	
+	public static Integer getIntegerFromCmdLine(String optionValue) throws NumberFormatException {
+
+		Integer result = Integer.parseInt(optionValue);
+		return result;
+	}
 
 	/**
 	 * This method decodes a RestMessage and extracts the value for a given key.
@@ -422,6 +428,15 @@ public class HelperMethods {
 		                properties.getProperty("password"));
 	}
 
+	public static RestClient prepareRestTransmission(File restProperties, String resource, Properties properties) {
+
+		if (logger.isDebugEnabled())
+			logger.debug("prepareRestTransmission");
+
+		return RestClient.createRestClient(restProperties, resource, properties.getProperty("username"),
+		                properties.getProperty("password"));
+	}
+	
 	public static String getRestFailureMessage(final RestKeyword keyword, final RestStatusEnum status, final String description) {
 
 		logger.error(description);

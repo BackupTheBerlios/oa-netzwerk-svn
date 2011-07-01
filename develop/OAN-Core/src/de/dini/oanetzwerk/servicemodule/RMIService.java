@@ -102,9 +102,7 @@ public abstract class RMIService implements IService {
 
 			
 			System.out.println("username: " + serviceProps.getProperty("username"));
-			
-			System.out.println("bla");
-			
+						
 			
 //			RestClient client = RestClient.createRestClient(props.getProperty("host"), "ServiceJob/" + jobName + "/" + status, props.getProperty("username"),
 //			                props.getProperty("password"));

@@ -64,11 +64,11 @@ public class RunMarkerAndEraser {
 					
 				} else if (cmd.hasOption ('m')) {
 					
-					new MarkerAndEraser (HelperMethods.getBigDecimalFromCmdLine (cmd.getOptionValue ('i'))).markAndErase ( );
+					new MarkerAndEraser (HelperMethods.getIntegerFromCmdLine (cmd.getOptionValue ('i'))).markAndErase ( );
 					
 				} else if (cmd.hasOption ('t')) {
 					
-					new MarkerAndEraser (HelperMethods.getBigDecimalFromCmdLine (cmd.getOptionValue ('i'))).eraseTestOnlyData ( );
+					new MarkerAndEraser (HelperMethods.getIntegerFromCmdLine (cmd.getOptionValue ('i'))).eraseTestOnlyData ( );
 				}
 				
 			} catch (ParseException parex) {

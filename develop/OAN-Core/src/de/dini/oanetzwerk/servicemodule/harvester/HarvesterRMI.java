@@ -264,7 +264,7 @@ public class HarvesterRMI extends RMIService {
 
 		System.out.println("start harvester method called");
 		// create a new instance of the harvester and set
-		harvester = Harvester.getHarvester(getApplicationPath());
+		harvester = new Harvester(getApplicationPath());
 		System.out.println("XX");
 		harvester.prepareHarvester(Integer.parseInt(data.get("repository_id")));
 

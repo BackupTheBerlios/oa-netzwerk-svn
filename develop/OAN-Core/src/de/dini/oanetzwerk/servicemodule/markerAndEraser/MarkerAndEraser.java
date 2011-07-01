@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.servicemodule.markerAndEraser;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -35,54 +36,57 @@ import de.dini.oanetzwerk.utils.exceptions.ValueFromKeyException;
 
 public class MarkerAndEraser {
 
-	private static final int LIMIT_PECULIAR = 3;
-
-	private static final int LIMIT_OUTDATED = 6;
-
-	/**
-	 * general log4j-Logger
-	 */
-
 	private static Logger logger = Logger.getLogger(MarkerAndEraser.class);
-
-	/**
-	 * log4j-Logger for marknerase processing status 
-	 */
-
+	
+	
 	private static Logger marknEraseStateLog = Logger
-			.getLogger("MarknEraseState");
+	.getLogger("MarknEraseState");
 
 	
-	private final BigDecimal repositoryID;
+	private static final int LIMIT_PECULIAR = 3;
+	private static final int LIMIT_OUTDATED = 6;
 	
+	private Integer repositoryID = null;
 
 	private Date lastRepositoryHarvestDate;
-	
-	
 	private Date lastRepositoryMarkAndEraseDate;
 
 
 	private Properties props = new Properties();
-
-
+	private String propertyFilePath = "";
 	private String propertyfile = "markereraserprop.xml";
-
+	
+	private boolean stopped = false;
+	
 	/**
 	 * @param repositoryID
 	 */
 
-	public MarkerAndEraser(BigDecimal repositoryID) {
+	public MarkerAndEraser(Integer repositoryID) {
+		this("", repositoryID);
 
+	}
+	
+	public MarkerAndEraser(String propertyFilePath, Integer repositoryID) {
+
+		this.propertyFilePath = propertyFilePath;
+		prepareMarker(repositoryID);
+	}
+	
+	
+	public boolean prepareMarker(Integer id) {
+		
 		// setup log4j config-file
 		DOMConfigurator.configure("log4j.xml");
 		
-		this.repositoryID = repositoryID;
+		this.repositoryID = id;
 
 		try {
 
-			this.props = HelperMethods.loadPropertiesFromFile(this
+			this.props = HelperMethods.loadPropertiesFromFile(propertyFilePath + this
 					.getPropertyfile());
 
+			return true;
 		} catch (InvalidPropertiesFormatException ex) {
 
 			logger.error(ex.getLocalizedMessage(), ex);
@@ -101,6 +105,7 @@ public class MarkerAndEraser {
 			ex.printStackTrace();
 			System.exit(1);
 		}
+		return false;
 	}
 
 	/**
@@ -114,6 +119,11 @@ public class MarkerAndEraser {
 		
 		// check for data that has not been collected during the last full harvest
 		checkForPeculiarObjects();
+		
+		if(isStopped()) {
+			logger.info("Marker has been manually stopped! Processing has been stopped!");
+			return;
+		}
 		
 		// update workflowDB entries
 		processWorkflowData();
@@ -152,8 +162,7 @@ public class MarkerAndEraser {
 
 		ressource = "WorkflowDB/" + serviceId + "/forRepository/" + this.repositoryID;
 
-		RestMessage rms = HelperMethods.prepareRestTransmission(ressource,
-				this.getProps()).sendGetRestMessage();
+		RestMessage rms = this.prepareRestTransmission(ressource).sendGetRestMessage();
 
 		if (rms.getStatus() != RestStatusEnum.OK) {
 
@@ -258,8 +267,7 @@ public class MarkerAndEraser {
 
 			long start = System.currentTimeMillis();
 
-			result = HelperMethods.prepareRestTransmission("WorkflowDB/",
-					this.getProps()).sendPutRestMessage(rms);
+			result = this.prepareRestTransmission("WorkflowDB/").sendPutRestMessage(rms);
 			
 			logger.info("PUT sent to /WorkflowDB for object " + oid + " in " + Long.toString(System.currentTimeMillis() - start));
 
@@ -318,8 +326,7 @@ public class MarkerAndEraser {
 		
 		String resource = "Repository/" + this.repositoryID.toString();
 		
-		RestMessage rms = HelperMethods.prepareRestTransmission(resource,
-				this.getProps()).sendGetRestMessage();
+		RestMessage rms = this.prepareRestTransmission(resource).sendGetRestMessage();
 		
 		if (rms == null || rms.getStatus() != RestStatusEnum.OK) {
 			
@@ -393,8 +400,7 @@ public class MarkerAndEraser {
 		
 			String resource = "ObjectEntry/fromRepositoryID/" + repositoryID + "/oidOffset/" + oidOffset;
 			
-			RestMessage rms = HelperMethods.prepareRestTransmission(resource,
-					this.getProps()).sendGetRestMessage();
+			RestMessage rms = this.prepareRestTransmission(resource).sendGetRestMessage();
 	
 			if (rms.getStatus() != RestStatusEnum.OK) {
 				logger.error("ObjectEntry/ response failed: " + rms.getStatus() + "("
@@ -413,6 +419,10 @@ public class MarkerAndEraser {
 			
 			while (it.hasNext()) { // next
 
+				if(isStopped()) {
+					return;
+				}
+				
 				res = it.next();
 				Date harvestedTimestamp = null;
 				
@@ -445,7 +455,7 @@ public class MarkerAndEraser {
 						objectId = new BigDecimal(res.getValue("object_id"));
 						String updateResource = "ObjectEntry/" + objectId;
 						
-						RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), updateResource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+						RestClient restclient = this.prepareRestTransmission(updateResource);
 						RestMessage updateRequest = new RestMessage(RestKeyword.ObjectEntry);
 						updateRequest.addEntrySet (res);
 						updateResponse = restclient.sendPostRestMessage(updateRequest);
@@ -535,9 +545,8 @@ public class MarkerAndEraser {
 
 	protected void getTestData() {
 
-		String result = HelperMethods.prepareRestTransmission(
-				"AllOIDs/fromRepositoryID/" + this.repositoryID.toPlainString()
-						+ "/markedAs/test", this.getProps()).GetData();
+		String result = this.prepareRestTransmission("AllOIDs/fromRepositoryID/" + this.repositoryID 
+						+ "/markedAs/test").GetData();
 
 		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
 
@@ -598,10 +607,8 @@ public class MarkerAndEraser {
 	private Date getHarvestedDatestamp(BigDecimal oid)
 			throws ValueFromKeyException, ParseException {
 
-		RestMessage objectEntryResponse = HelperMethods
-				.prepareRestTransmission(
-						"ObjectEntry/" + oid.toPlainString() + "/",
-						this.getProps()).sendGetRestMessage();
+		RestMessage objectEntryResponse = this.prepareRestTransmission("ObjectEntry/" 
+			+ oid.toPlainString() + "/").sendGetRestMessage();
 
 		String objectEntryDatestamp;
 		Date objectEntryDate = null;
@@ -638,8 +645,7 @@ public class MarkerAndEraser {
 				+ " marked as test data");
 
 		@SuppressWarnings("unused")
-		String result = HelperMethods.prepareRestTransmission(
-				"ObjectEntry/" + oid.toPlainString(), this.getProps())
+		String result = this.prepareRestTransmission("ObjectEntry/" + oid.toPlainString())
 				.DeleteData();
 	}
 
@@ -648,8 +654,7 @@ public class MarkerAndEraser {
 		
 		String resource = "Repository/" + this.repositoryID + "/markedtoday/";
 		
-		String postRepositories = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"))
-				.PostData("");
+		String postRepositories = this.prepareRestTransmission(resource).PostData("");
 		
 		RestMessage postRepositoriesmsg = RestXmlCodec.decodeRestMessage (postRepositories);
 		
@@ -684,6 +689,18 @@ public class MarkerAndEraser {
 	
 	
 	/**
+	 * @param string
+	 * @return
+	 */
+	private RestClient prepareRestTransmission (String resource) {
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("prepareRestTransmission");
+		
+		return HelperMethods.prepareRestTransmission(new File(propertyFilePath + "restclientprop.xml"), resource, props);
+	}
+	
+	/**
 	 * @return
 	 */
 
@@ -709,5 +726,16 @@ public class MarkerAndEraser {
 
 		this.propertyfile = propertyfile;
 	}
+
+	protected boolean isStopped() {
+    	return stopped;
+    }
+
+	protected void setStopped(boolean stopped) {
+    	this.stopped = stopped;
+    }
+	
+	
+	
 }
 

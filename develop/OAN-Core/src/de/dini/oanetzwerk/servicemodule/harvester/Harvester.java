@@ -177,12 +177,18 @@ public class Harvester {
 	 * 
 	 * @see #prepareHarvester(int)
 	 */
+	public Harvester() {
+		
+		this.propertyFilePath = "";
+	}
+	
 	
 	public Harvester (String propertyFilePath) {
 		
-		System.out.println("created");
 		this.propertyFilePath = propertyFilePath;
 	}
+
+	
 	
 	/**
 	 * This method configures the harvester. It sets the repository ID and gets
@@ -312,15 +318,15 @@ public class Harvester {
 	 * 
 	 * @return the Harvester
 	 */
-	
-	public static final Harvester getHarvester(String propertyFileDir) {
-
-		if (harvester == null)
-			harvester = new Harvester(propertyFileDir);
-		
-		return harvester;
-	}
-	
+//	
+//	public static final Harvester getHarvester(String propertyFileDir) {
+//
+//		if (harvester == null)
+//			harvester = new Harvester(propertyFileDir);
+//		
+//		return harvester;
+//	}
+//	
 	
 	/**
 	 * Getter method for the propertyfile
@@ -1337,8 +1343,9 @@ public class Harvester {
 	@SuppressWarnings("unchecked")
 	private Element retrieveRecord (String headerIdentifier) throws ParserConfigurationException, SAXException {
 		
-		if (logger.isDebugEnabled ( ))
-			logger.debug ("retrieveRecord");
+		
+//		if (logger.isDebugEnabled ( ))
+			logger.info("retrieveRecord");
 		
 		// TODO: allgemeine Methode einbauen (getRepositoryAnswer)
 		HttpClient client = new HttpClient ( );
@@ -1657,7 +1664,7 @@ public class Harvester {
 		try {
 			
 //			postObjectEntryResponse = prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/")
-			postObjectEntryResponse = HelperMethods.prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/", this.getProps ( ))
+			postObjectEntryResponse = this.prepareRestTransmission ("ObjectEntry/" + this.ids.get (index).getInternalOID ( ) + "/")
 				.sendPostRestMessage (this.createObjectEntryRestMessage (this.ids.get (index), this.ids.get (index).getFailureCounter ( )));
 			
 		} catch (UnsupportedEncodingException ex) {
@@ -1918,7 +1925,7 @@ public class Harvester {
 		currentObject.setFailureCounter (currentObject.getFailureCounter ( ) + 1);
 		
 		try {
-			HelperMethods.prepareRestTransmission ("ObjectEntry/" + currentObject.getInternalOID ( ) + "/", this.getProps ( ))
+			prepareRestTransmission ("ObjectEntry/" + currentObject.getInternalOID ( ) + "/")
 				.sendPostRestMessage (this.createObjectEntryRestMessage (currentObject, currentObject.getFailureCounter ( )));
 //			prepareRestTransmission ()
 //					.sendPostRestMessage (this.createObjectEntryRestMessage (currentObject, currentObject.getFailureCounter ( )));
@@ -1933,13 +1940,12 @@ public class Harvester {
 	 * @param string
 	 * @return
 	 */
-	@Deprecated
 	private RestClient prepareRestTransmission (String resource) {
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("prepareRestTransmission");
 		
-		return RestClient.createRestClient (new File(propertyFilePath + "restclientprop.xml"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		return HelperMethods.prepareRestTransmission(new File(propertyFilePath + "restclientprop.xml"), resource, props);
 	}
 	
 	/**

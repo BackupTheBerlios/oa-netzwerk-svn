@@ -95,28 +95,16 @@ public class MarkerRMI extends RMIService {
 		// create a new instance of the aggregator
 		
 		int id = 0;
-		String time = null;
-		boolean complete = false;
 
-		// Bestimmen, ob nur eine einzelne ID übergeben wurde oder
-		// der Auto-Modus genutzt werden soll
-		if (data.containsKey("itemId")) {
-			id = new Integer((data.get("itemId")));
+		if (data.containsKey("repository_id")) {
+			id = new Integer((data.get("repository_id")));
 		}
 
-		time = data.get("timestamp");
 
-		// TODO: wenn time null ist, geht PUT WORKFLOWDB nicht
-		if(time == null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
-			time = sdf.format(new Date(System.currentTimeMillis()));
-		}
 		
-		BigDecimal repoId = null;
+		marker = new MarkerAndEraser(getApplicationPath(), id);
 		
-		marker = new MarkerAndEraser(repoId);
-		
-		// im Testfall wird ein anderer Constructor aufgerufen
+		// im Testfall wird eine andere Startmethode aufgerufen
 		if (data.containsKey("testing") && Boolean.TRUE.equals(Boolean.parseBoolean(data.get("testing")))) {
 			marker.eraseTestOnlyData();
 		} else {
@@ -131,7 +119,7 @@ public class MarkerRMI extends RMIService {
 
 	@Override
 	public boolean stop() throws RemoteException {
-
+ 
 		if (this.marker == null) {
 			return true;
 		}

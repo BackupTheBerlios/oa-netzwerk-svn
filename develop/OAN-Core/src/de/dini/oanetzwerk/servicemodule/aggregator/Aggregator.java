@@ -4,6 +4,7 @@
 
 package de.dini.oanetzwerk.servicemodule.aggregator;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
@@ -76,6 +77,8 @@ public class Aggregator {
 		
 	private boolean stopped = false;
 	
+	private String propertyFilePath = "";
+	
 	private final Properties getProps ( ) {
 		
 		return this.props;
@@ -94,7 +97,7 @@ public class Aggregator {
 		try {
 
 			this.props = HelperMethods
-					.loadPropertiesFromFile("aggregatorprop.xml");
+					.loadPropertiesFromFile(propertyFilePath + "aggregatorprop.xml");
 
 		} catch (InvalidPropertiesFormatException ex) {
 
@@ -122,6 +125,13 @@ public class Aggregator {
 	 * properties.
 	 */
 	public Aggregator() {
+		this.init();
+
+	}
+	
+	public Aggregator(String propFilePath) {
+		
+		this.propertyFilePath = propFilePath;
 		this.init();
 
 	}
@@ -172,10 +182,7 @@ public class Aggregator {
 			if (complete == true) {
 				ressource = ressource + "/completeRebuild";
 			}
-			RestClient restclient = RestClient.createRestClient(this.props
-					.getProperty("host"), ressource, this.props
-					.getProperty("username"), this.props
-					.getProperty("password"));
+			RestClient restclient = prepareRestTransmission(ressource);
 
 			// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus
 			// dem
@@ -250,10 +257,7 @@ public class Aggregator {
 	public void deleteUnneededData() {
 				
 		// neue Anfrage auf Delete zum Bereinigen der Datenbank
-		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), 
-				                                             "UnneededData",
-				                                             this.props.getProperty ("username"),
-				                                             this.props.getProperty ("password"));
+		RestClient restclient = prepareRestTransmission("UnneededData");
 		
 		RestMessage msgDeleteResponse = restclient.sendDeleteRestMessage();
 		
@@ -396,7 +400,7 @@ public class Aggregator {
 		
 		// Retrieving ServiceID
 		
-		result = (RestClient.createRestClient (this.getProps ( ).getProperty ("host"), "Services/byName/"+name+"/", this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"))).GetData ( );
+		result = prepareRestTransmission("Services/byName/"+name+"/").GetData();
 		
 		//restclient = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
 		//result = restclient.GetData ( );
@@ -449,10 +453,12 @@ public class Aggregator {
 	 * @param string
 	 * @return
 	 */
-	//TODO: 
 	private RestClient prepareRestTransmission (String resource) {
 		
-		return RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"));
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("prepareRestTransmission");
+		
+		return HelperMethods.prepareRestTransmission(new File(propertyFilePath + "restclientprop.xml"), resource, props);
 	}
 
 	
@@ -563,8 +569,8 @@ public class Aggregator {
 			
 		// Rest-Client auf InternalMetadataEntry mit aktueller OID initialisieren
 		String resource = "InternalMetadataEntry/" + this.currentRecordId;
-		RestClient restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
-
+		RestClient restclient = prepareRestTransmission(resource);
+		
 		RestMessage msgGetResponse = null;
 
 		// -------------------------------------------		
@@ -584,7 +590,7 @@ public class Aggregator {
 			logger.debug("# DELETE necessary:" + msgGetResponse);
 			
 			// neue Anfrage auf Delete zum löschen des bereits existierenden Datensatzes
-			restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+			restclient = prepareRestTransmission(resource);
 			
 			if (logger.isDebugEnabled()) logger.debug("BEFORE DELETE InternalMetadataEntry/"+this.currentRecordId);
 			RestMessage msgDeleteResponse = restclient.sendDeleteRestMessage();
@@ -622,7 +628,7 @@ public class Aggregator {
 			msgPutRequest.addEntrySet (res);
 
 			// abschicken der Daten	
-			restclient = RestClient.createRestClient (this.props.getProperty ("host"), resource, this.props.getProperty ("username"), this.props.getProperty ("password"));
+			restclient = prepareRestTransmission(resource);
 			
 			RestMessage msgPutResponse = null;
 			try {
@@ -801,9 +807,7 @@ public class Aggregator {
 			logger.debug("loadRawData started");
 
 		String ressource = "RawRecordData/" + id;
-		RestClient restclient = RestClient.createRestClient(this.props
-				.getProperty("host"), ressource, this.props
-				.getProperty("username"), this.props.getProperty("password"));
+		RestClient restclient = prepareRestTransmission(ressource);
 
 		//String result = restclient.GetData();
 		// Resultat ist ein XML-Fragment, hier muss das Resultat noch aus dem
