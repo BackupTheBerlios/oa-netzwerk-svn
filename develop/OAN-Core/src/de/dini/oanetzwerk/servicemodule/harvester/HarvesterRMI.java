@@ -51,7 +51,7 @@ public class HarvesterRMI extends RMIService {
 	public static void main(String[] args) {
 
 //		PropertyConfigurator.configureAndWatch("log4j.properties", 60 * 1000);
-		DOMConfigurator.configureAndWatch("log4j.xml" , 60*1000 );
+//		DOMConfigurator.configureAndWatch("log4j.xml" , 60*1000 );
 
 		
 		if (System.getSecurityManager() == null) {
@@ -265,10 +265,8 @@ public class HarvesterRMI extends RMIService {
 		System.out.println("start harvester method called");
 		// create a new instance of the harvester and set
 		harvester = new Harvester(getApplicationPath());
-		System.out.println("XX");
 		harvester.prepareHarvester(Integer.parseInt(data.get("repository_id")));
 
-		System.out.println("bla"); 
 		String baseUrl = "";
 
 		// sets the type (full | update)

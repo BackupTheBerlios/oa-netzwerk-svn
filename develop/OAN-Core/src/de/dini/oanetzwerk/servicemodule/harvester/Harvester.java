@@ -179,13 +179,14 @@ public class Harvester {
 	 */
 	public Harvester() {
 		
-		this.propertyFilePath = "";
+		this("");		
 	}
 	
 	
 	public Harvester (String propertyFilePath) {
 		
 		this.propertyFilePath = propertyFilePath;
+		Harvester.harvester = this;
 	}
 
 	

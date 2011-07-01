@@ -96,6 +96,7 @@ public class Aggregator {
 
 		try {
 
+			System.out.println("path: " + propertyFilePath);
 			this.props = HelperMethods
 					.loadPropertiesFromFile(propertyFilePath + "aggregatorprop.xml");
 

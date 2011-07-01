@@ -8,6 +8,7 @@ import java.rmi.registry.Registry;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -59,6 +60,8 @@ public abstract class RMIService implements IService {
         } catch (Exception e) {
 			logger.warn("Could not load property file '" + getPropertyFile() + "' or 'restclientprop.xml' from path " + applicationPath + "! Skipping harvesting ...");
         }
+        
+		DOMConfigurator.configureAndWatch((applicationPath == null ? "" : applicationPath) + "log4j.xml" , 60*1000 );
 	}
 
 	protected static Registry getRegistry() {

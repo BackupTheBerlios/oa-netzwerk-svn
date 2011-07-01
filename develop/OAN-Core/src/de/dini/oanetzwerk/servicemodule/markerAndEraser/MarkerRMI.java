@@ -36,7 +36,7 @@ public class MarkerRMI extends RMIService {
 
 	public static void main(String[] args) {
 		
-		DOMConfigurator.configureAndWatch("log4j.xml" , 60*1000 );
+//		DOMConfigurator.configureAndWatch("log4j.xml" , 60*1000 );
 		
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
@@ -104,6 +104,9 @@ public class MarkerRMI extends RMIService {
 		
 		marker = new MarkerAndEraser(getApplicationPath(), id);
 		
+		// updating job status
+		updateJobStatus(data.get("job_name"), "Working");
+		
 		// im Testfall wird eine andere Startmethode aufgerufen
 		if (data.containsKey("testing") && Boolean.TRUE.equals(Boolean.parseBoolean(data.get("testing")))) {
 			marker.eraseTestOnlyData();
@@ -112,6 +115,8 @@ public class MarkerRMI extends RMIService {
 			marker.markAndErase();
 		}
 		
+		// updating job status
+		updateJobStatus(data.get("job_name"), "Finished");
 		logger.info("Marker Finished!");
 		return true;
 	}

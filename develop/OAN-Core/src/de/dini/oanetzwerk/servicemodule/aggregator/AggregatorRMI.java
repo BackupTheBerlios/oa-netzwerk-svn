@@ -41,9 +41,7 @@ public class AggregatorRMI extends RMIService {
 	}
 
 	public static void main(String[] args) {
-		
-		DOMConfigurator.configureAndWatch("log4j.xml" , 60*1000 );
-		
+				
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
@@ -177,14 +175,17 @@ public class AggregatorRMI extends RMIService {
 			aggregator = new Aggregator(true); }
 		else {
 			// Standardfall ohne Testing
-			aggregator = new Aggregator();
+			aggregator = new Aggregator(getApplicationPath());
 		}
 		
 		
 		if (data.containsKey("complete")) {
 			complete = true;
 		}
-
+		
+		// updating job status
+		updateJobStatus(data.get("job_name"), "Working");
+		
 		// hier wird entweder die spezifische Objekt-ID übergeben
 		// oder ein Auto-Durchlauf gestartet
 		if (id > 0) {
@@ -194,6 +195,8 @@ public class AggregatorRMI extends RMIService {
 			aggregator.startAutoMode(complete);
 		}
 
+		// updating job status
+		updateJobStatus(data.get("job_name"), "Finished");
 		logger.info("Aggregator Finished!");
 		return true;
 	}
