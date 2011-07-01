@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project name="OAN-Manager" basedir=".">
+
+	<!-- ==================================================================== -->
+	<!-- Property Definitions                                                 -->
+	<!-- ==================================================================== -->
+
+	<property environment="env" />
+
+	<import file="build.xml" />
+
+	<property name="build" value="build/classes" />
+	<property name="dist" value="dist" />
+	<property name="lib" value="lib" />
+	<property name="run" value="run" />
+	<property name="src" value="src" />
+	<property name="web" value="web" />
+	<property name="war" value="war" />
+
+	<property name="web.lib" value="${web}/WEB-INF/lib" />
+	<property name="war.lib" value="${war}/WEB-INF/lib" />
+
+
+
+	<path id="compile.classpath">
+		<fileset dir="${basedir}">
+			<include name="${web.lib}/*.jar" />
+			<include name="${lib}/*.jar" />
+		</fileset>
+	</path>
+
+
+
+	<target name="compile">
+		<javac destdir="${build}" debug="true" debuglevel="lines,vars,source" srcdir="${src}:../OAN-Core/src/" source="1.5" target="1.5">
+			<classpath refid="compile.classpath" />
+			<include name="de/dini/oanetzwerk/admin/**/*.java" />
+			<include name="de/dini/oanetzwerk/servicemodule/*.java" />
+			<include name="de/dini/oanetzwerk/utils/**/*.java" />
+			<include name="de/dini/oanetzwerk/codec/**/*.java" />
+			<exclude name="de/dini/oanetzwerk/admin/tests/**/*.java" />
+			<exclude name="de/dini/oanetzwerk/admin/utils/**/*.java" />
+			<exclude name="de/dini/oanetzwerk/utils/TestEncoding.java" />
+			<exclude name="de/dini/oanetzwerk/utils/SQL2DB.java" />
+		</javac>
+		<copy todir="${build}">
+			<fileset dir="${src}">
+				<include name="**/*.properties" />
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+
+
+
+	<target name="war" depends="compile">
+		<mkdir dir="${dist}" />
+
+		<war destfile="${dist}/OAN-Manager.war" webxml="web/WEB-INF/web.xml">
+
+			<!--metainf dir="myfaces-root/admin-gui/META-INF/">
+			</metainf-->
+			<webinf dir="web/WEB-INF/">
+				<include name="faces-config.xml" />
+				<include name="admingui.xml" />
+				<include name="utils-taglib.xml" />
+				<include name="web.xml" />
+			</webinf>
+
+			<webinf dir="conf/production">
+				<include name="services.properties" />
+				<include name="restclientprop.xml" />
+			</webinf>
+
+			<classes dir="${build}" />
+
+			<lib dir="${web.lib}/" />
+
+			<zipfileset dir="web/">
+				<include name="*.html" />
+			</zipfileset>
+			<zipfileset dir="web/js/" prefix="js/" />
+			<zipfileset dir="web/css/" prefix="css/" />
+			<zipfileset dir="web/images/" prefix="images/" />
+			<zipfileset dir="web/pages/" prefix="pages/" />
+		</war>
+	</target>
+
+</project>
