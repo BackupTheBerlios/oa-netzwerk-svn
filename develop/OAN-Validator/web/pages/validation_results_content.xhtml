@@ -50,9 +50,9 @@
 		}
 	}
 
-	function unfold() {
+	function unfold(count) {
 		if (document.getElementById){
-			document.getElementById("fehlerliste").style.display = "inline";
+			document.getElementById("fehlerliste" + count).style.display = "inline";
 			document.getElementById("ua").style.display = "none";
 			document.getElementById("ia").style.display = "inline";
 		}
@@ -92,10 +92,10 @@
 							<td><h:form>
 							<table width="100%">
 							<!--div id="ctab" onload="red2(#{row.successPercentage})" style="background-color: #ddd000;"-->
-								<h:dataTable value="#{valiList.validationResults}" var="row"
+								<t:dataTable value="#{valiList.validationResults}" var="row" rowIndexVar="count"
 									headerClass="pane-header" rowClasses="odd, even"
 									style="border-collapse: collapse; border: 1px #bbb solid; width : 589px;">
-									<h:column style="width: 30%; vertical-align: middle; height: 70px;">
+									<t:column style="width: 30%; vertical-align: middle; height: 70px;">
 <!--										<f:facet name="header">-->
 <!--											<h:outputText value="Regel-ID" />-->
 <!--										</f:facet>-->
@@ -128,8 +128,8 @@
 										</tr>
 										<tr style="align:center">
 											<td>	
-											<img id="ua" height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/next.gif" onclick="unfold();"/>			
-											<img id="ia" height="24" style="margin: 2px; display: none" alt="" width="24" src="../images/24x24/up.gif" onclick="fold();" />								
+											<img id="ua" height="12" style="margin: 2px;" alt="" width="12" src="../images/24x24/unfold_arrow.gif" onclick="unfold(#{count});"/>			
+											<img id="ia" height="24" width="24" style="margin: 2px;" display="none" alt=""  src="../images/24x24/next.gif" onclick="fold();" />								
 											</td>
 										</tr>
 										</t:div>
@@ -137,7 +137,7 @@
 										<tr>
 											<td colspan="2">
 										<t:div rendered="#{row.successPercentage lt 100}"> 
-										<div id="fehlerliste" style="display: none">
+										<div id="fehlerliste#{count}" style="display: none">
 											<h:dataTable value="#{row.entry.errors}" var="error"
 														headerClass="pane-header" rowClasses="odd, even"
 														style="border-collapse: collapse; border: 1px #bbb solid; width : 589px;">
@@ -157,7 +157,7 @@
 										</table>
 
 										
-									</h:column>
+									</t:column>
 									
 									
 									
@@ -201,7 +201,7 @@
 <!--										</div>-->
 <!--									</h:column>-->
 									
-								</h:dataTable>
+								</t:dataTable>
 								<!--/div-->
 								</table>
 							</h:form></td>
