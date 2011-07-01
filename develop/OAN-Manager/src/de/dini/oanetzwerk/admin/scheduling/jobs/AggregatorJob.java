@@ -57,13 +57,13 @@ public class AggregatorJob extends AbstractServiceJob {
 			// data.put(key, )
 
 			boolean started = service.start(data);
-			System.out.println("Client: " + started);
+//			System.out.println("Client: " + started);
 
-			for (int i = 0; i < 5; i++) {
-				this.wait(3000);
-				System.out.println(service.getCurrentStatus());
-			}
-			System.out.println("Harvester initiated.");
+//			for (int i = 0; i < 5; i++) {
+//				this.wait(3000);
+//				System.out.println(service.getCurrentStatus());
+//			}
+			System.out.println("Aggregator finished.");
 
 		} catch (RemoteException e) {
 			System.err.println("RemoteException: ");
@@ -71,10 +71,7 @@ public class AggregatorJob extends AbstractServiceJob {
 		} catch (NotBoundException e) {
 			System.err.println("NotBoundException: ");
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			System.err.println("InterruptedException: ");
-			e.printStackTrace();
-		}
+		} 
 
 	}
 
