@@ -1,11 +1,11 @@
 package de.dini.oanetzwerk.servicemodule.harvester;
 
+import java.io.File;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +13,10 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.xml.DOMConfigurator;
 
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
-import de.dini.oanetzwerk.servicemodule.IHarvesterMonitor;
 import de.dini.oanetzwerk.servicemodule.IService;
 import de.dini.oanetzwerk.servicemodule.RMIService;
 import de.dini.oanetzwerk.servicemodule.Repository;
@@ -187,6 +184,7 @@ public class HarvesterRMI extends RMIService {
 		}
 
 		
+		harvester = new Harvester(getApplicationPath());
 		
 		// fetch repository information
 		// harvest all active repositories
@@ -264,7 +262,7 @@ public class HarvesterRMI extends RMIService {
 
 		System.out.println("start harvester method called");
 		// create a new instance of the harvester and set
-		harvester = new Harvester(getApplicationPath());
+
 		harvester.prepareHarvester(Integer.parseInt(data.get("repository_id")));
 
 		String baseUrl = "";
@@ -312,14 +310,13 @@ public class HarvesterRMI extends RMIService {
 
 		Properties props = null;
 		try {
-			props = HelperMethods.loadPropertiesFromFile(harvester.getPropertyfile());
+			props = HelperMethods.loadPropertiesFromFile(getApplicationPath() + harvester.getPropertyfile());
 
 		} catch (Exception e) {
-			logger.warn("Could not load property file '" + harvester.getPropertyfile() + "'! Skipping harvesting ...");
+			logger.warn("Could not load property file '" + getApplicationPath() + harvester.getPropertyfile() + "'! Skipping harvesting ...");
 		}
 
-		RestClient client = RestClient.createRestClient(props.getProperty("host"), "Repository/", props.getProperty("username"),
-		                props.getProperty("password"));
+		RestClient client = HelperMethods.prepareRestTransmission(new File(getApplicationPath() + "restclientprop.xml"), "Repository/", props);
 		String result = client.GetData();
 
 		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
