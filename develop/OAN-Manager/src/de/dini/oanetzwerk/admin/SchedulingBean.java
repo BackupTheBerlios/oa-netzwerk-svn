@@ -1,10 +1,10 @@
 package de.dini.oanetzwerk.admin;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class SchedulingBean {
+public class SchedulingBean implements Comparable<SchedulingBean> {
 
 	private Integer jobId = null;
 	private String name = "";
@@ -139,7 +139,29 @@ public class SchedulingBean {
 	public void setNonperiodicNow(boolean nonperiodicNow) {
     	this.nonperiodicNow = nonperiodicNow;
     }
-	
-	
-	
+
+	@Override
+    public int compareTo(SchedulingBean o) {
+	    
+		if (o == null || o.getName() == null) {
+			return 1;
+		}
+		
+		if (this == null || this.getName() == null) {
+			return -1;
+		}
+		
+		long otherName = Long.parseLong(o.getName()); 
+		long thisName = Long.parseLong(this.getName());
+		
+		if (thisName > otherName) {
+			return 1;
+		} else if (otherName == thisName) {
+			return 0;
+		} else {
+			return -1;
+		}
+		
+    }
+		
 }

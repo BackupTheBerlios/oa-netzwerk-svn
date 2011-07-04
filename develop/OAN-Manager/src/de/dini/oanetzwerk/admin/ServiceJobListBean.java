@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -58,7 +59,7 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 		initJobs();
 		
 
-		// try to fetch jobId from request parameters in case this is an update request
+		// try to fetch jobId from request parameters in case this is an update/delete request
 		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
 		String jobId = request.getParameter("jid");
 		
@@ -163,9 +164,12 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 	}
 	
 	
+	
+	
 	/********************* Getter & Setter **********************/
 	
 	public List<SchedulingBean> getJobList() {
+		Collections.sort(jobList);
 		return jobList;
 	}
 	
