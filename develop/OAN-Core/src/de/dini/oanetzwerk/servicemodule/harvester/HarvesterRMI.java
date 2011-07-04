@@ -193,7 +193,16 @@ public class HarvesterRMI extends RMIService {
 			List<Repository> repositories = getRepositories();
 			
 			for (Repository repository : repositories) {
-	            
+	        
+				try {
+					synchronized (this) {
+						logger.info("Startiung harvesting-process of repository with ID " + repository.getId());
+							this.wait(10000);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				data.put("repository_id", repository.getId().toString());
 
 				// set to working
@@ -263,6 +272,7 @@ public class HarvesterRMI extends RMIService {
 		System.out.println("start harvester method called");
 		// create a new instance of the harvester and set
 
+		harvester = new Harvester(getApplicationPath());
 		harvester.prepareHarvester(Integer.parseInt(data.get("repository_id")));
 
 		String baseUrl = "";

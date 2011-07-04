@@ -34,6 +34,8 @@ public class DBAccessNG {
 
 	private static int defaultPoolSize = 5;
 
+	private static int validityCheckTimeout = 3000;
+	
 	private DataSource datasource;
 
 	private List<Connection> pool = new ArrayList<Connection>();
@@ -162,7 +164,7 @@ public class DBAccessNG {
 	 * @return Connection
 	 * @throws SQLException
 	 */
-	public synchronized Connection getConnection() throws SQLException {
+	private synchronized Connection getConnection() throws SQLException {
 
 		Connection connection;
 
@@ -208,7 +210,7 @@ public class DBAccessNG {
 		if (logger.isDebugEnabled())
 			logger.debug("Creating new SingleStatementConnection...");
 
-		if (connection == null || connection.isClosed()) {
+		if (connection == null || connection.isClosed() || !connection.isValid(validityCheckTimeout)) {
 			
 			for (int i = 0; i < defaultPoolSize; i++) {
 				System.out.println("Connection " + i + " is null: " + connection == null + (connection == null ? "" : " closed: " + connection.isClosed()));
@@ -217,9 +219,9 @@ public class DBAccessNG {
 				}
 			}
 			
-			if (connection == null || connection.isClosed()) {
+			if (connection == null || connection.isClosed() || !connection.isValid(validityCheckTimeout)) {
 				
-				throw new SQLException("Connection based on the given data source not available!");
+				throw new SQLException("Cannot retrieve a fresh database connection!");
 			}
 			
 		} 
