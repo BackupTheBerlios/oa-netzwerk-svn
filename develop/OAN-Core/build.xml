@@ -61,7 +61,7 @@
 		<pathelement location="${lib}/commons-codec-1.3.jar" />
 		<pathelement location="${lib}/jdom.jar" />
 		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
-		<pathelement location="${lib}/tomcat-dbcp.jar" />
+		<pathelement location="${lib}/commons-dbcp-1.4.jar" />
 		<pathelement location="${lib}/servlet-api.jar" />
 		<pathelement location="${lib}/commons-lang-2.3.jar" />
 		<pathelement location="${lib}/commons-cli-1.1.jar" />
@@ -72,7 +72,8 @@
 		<pathelement location="${lib}/jconn3.jar" />
 		<pathelement location="${lib}/commons-codec-1.3.jar" />
 		<pathelement location="${lib}/jdom.jar" />
-		<pathelement location="${lib}/commons-dbcp-1.2.2.jar" />
+		<!--pathelement location="${lib}/commons-dbcp-1.2.2.jar" /-->
+		<pathelement location="${lib}/commons-dbcp-1.4.jar" />
 		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
 		<pathelement location="${lib}/servlet-api.jar" />
 		<pathelement location="${lib}/commons-lang-2.3.jar" />
@@ -167,7 +168,8 @@
 		<pathelement location="${lib}/bcel-5.1.jar" />
 		<pathelement location="${lib}/jconn3.jar" />
 		<pathelement location="${lib}/jdom.jar" />
-		<pathelement location="${lib}/tomcat-dbcp.jar" />
+		<!--pathelement location="${lib}/tomcat-dbcp.jar" /-->
+		<pathelement location="${lib}/commons-dbcp-1.4.jar" />
 		<pathelement location="${lib}/servlet-api.jar" />
 		<pathelement location="${lib}/commons-cli-1.1.jar" />
 	</path>
@@ -339,9 +341,10 @@
 	</target>
 
 	<target name="compileHarvester" depends="init">
-		<javac destdir="${build.harvester}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+		<javac destdir="${build.harvester}" debug="true" debuglevel="lines,vars,source" srcdir="${src}" source="1.5" target="1.5">
 			<classpath refid="classpath.harvester" />
 			<include name="**/harvester/*.java" />
+			<include name="**/servicemodule/*.java" />
 			<include name="**/codec/*.java" />
 			<include name="**/RestClient.java" />
 			<include name="**/exceptions/*.java" />
@@ -460,9 +463,10 @@
 	</target>
 
 	<target name="compileAggregator" depends="init">
-		<javac destdir="${build.aggregator}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
+		<javac destdir="${build.aggregator}" debug="true" debuglevel="lines,vars,source" srcdir="${src}" source="1.5" target="1.5">
 			<classpath refid="classpath.aggregator" />
 			<include name="**/aggregator/*.java" />
+			<include name="**/servicemodule/*.java" />
 			<include name="**/codec/*.java" />
 			<include name="**/RestClient.java" />
 			<include name="**/exceptions/*.java" />
@@ -480,7 +484,7 @@
 		<jar jarfile="${build}/Aggregator.jar">
 			<fileset dir="${build.aggregator}" />
 			<manifest>
-				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.aggregator.RunAggregator" />
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.aggregator.AggregatorRMI" />
 				<attribute name="Class-Path" value="${cp}" />
 			</manifest>
 		</jar>
@@ -525,7 +529,7 @@
 		<jar  jarfile="${build}/MarkerAndEraser.jar">
 			<fileset dir="${build.markereraser}" />
 			<manifest>
-				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.markerAndEraser.RunMarkerAndEraser" />
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.markerAndEraser.MarkerRMI" />
 				<attribute name="Class-Path" value="${cp}" />
 			</manifest>
 		</jar>
@@ -561,11 +565,12 @@
 				<include name="jdom.jar" />
 				<include name="commons-codec-1.3.jar" />
 				<include name="commons-lang-2.3.jar" />
+				<include name="postgresql-8.4-702.jdbc4.jar" />
 			</lib>
 			<webinf dir="conf">
 				<include name="serverprop.xml" />
 			</webinf>
-			<metainf dir="conf">
+			<metainf dir="conf/postgres">
 				<include name="context.xml" />
 			</metainf>
 			<classes dir="${build.server}">
@@ -588,7 +593,7 @@
 			<webinf dir="conf">
 				<include name="serverprop.xml" />
 			</webinf>
-			<metainf dir="conf/dev">
+			<metainf dir="conf/dev/postgresql">
 				<include name="context.xml" />
 			</metainf>
 			<classes dir="${build.server}">

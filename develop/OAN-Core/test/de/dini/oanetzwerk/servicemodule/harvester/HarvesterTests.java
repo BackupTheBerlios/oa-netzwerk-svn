@@ -28,14 +28,14 @@ public class HarvesterTests {
 	
 	@Before public void setUp ( ) {
 		
-		harvester = new Harvester ( );
-		harvester.setPropertyfile ("/home/mkuehn/workspace/oa-netzwerk-develop/harvesterprop.xml");
+		harvester = new Harvester("/home/mkuehn/workspace/oa-netzwerk-develop/");
+		harvester.setPropertyfile ("harvesterprop.xml");
 	}
 	
 	@org.junit.Test
 	public void testprepareHarvester ( ) {
 		
-		harvester = Harvester.getHarvester ( );
+		harvester = new Harvester();
 		assertNotNull (harvester);
 		assertTrue (harvester.prepareHarvester (1));
 		assertFalse (harvester.getProps ( ).isEmpty ( ));

@@ -23,7 +23,7 @@ public class TestHarvester {
 	@Before
 	public void setUp ( ) throws Exception {
 		
-		harvester = Harvester.getHarvester ( );
+		harvester = new Harvester();
 		harvester.setPropertyfile ("harvesterprop.xml");
 		harvester.prepareHarvester (1);
 		harvester.setRepositoryURL ("http://edoc.hu-berlin.de/OAI-2.0");
