@@ -378,14 +378,14 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 				}
 				if (updatedStatus != null) {
 					DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
-					MultipleStatementConnection stmtconn = null;
+					SingleStatementConnection stmtconn = null;
 					
 					this.rms = new RestMessage(RestKeyword.ServiceJob);
 					RestEntrySet res = new RestEntrySet();
 
 					try {
 						
-						stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
+						stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection();
 
 						stmtconn.loadStatement(DBAccessNG.updateInDB().ServicesScheduling(stmtconn.connection, Long.toString(jobName), status));
 						this.result = stmtconn.execute();
@@ -396,8 +396,6 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 							this.rms.setStatus(RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 							this.rms.setStatusDescription("No matching Service job found for id " + jobName);
 						}
-
-						stmtconn.commit();
 
 						if (this.result.getWarning() != null)
 							for (Throwable warning : result.getWarning())

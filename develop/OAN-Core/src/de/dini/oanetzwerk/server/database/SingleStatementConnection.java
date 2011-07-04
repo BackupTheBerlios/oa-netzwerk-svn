@@ -39,6 +39,7 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	public SingleStatementConnection (Connection dataSourceConnection) throws SQLException {
 		
+		logger.info("Creating new singlestatement connection!");
 //		if (logger.isDebugEnabled ( ))
 //			logger.debug ("SingleStatementConnection Instance will be prepared");
 		
@@ -60,6 +61,8 @@ public class SingleStatementConnection implements StatementConnection {
 	 */
 	
 	public boolean loadStatement (PreparedStatement pstmt) {
+		
+		logger.info("loading statement...");
 		
 		if (this.singleStatement == null) {
 			
@@ -84,6 +87,8 @@ public class SingleStatementConnection implements StatementConnection {
 	 */
 	
 	public QueryResult execute ( ) throws SQLException {
+		
+		logger.info("executing statement...");
 		
 		QueryResult result = new QueryResult ( );
 		
@@ -114,11 +119,13 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	public void close ( ) throws SQLException {
 		
+		logger.info("clsoing connection...");
 //		if (logger.isDebugEnabled ( ))
 //			logger.debug ("closing Statement and Connection");
 		
 		if (!this.connection.isClosed ( )) {
 	
+
 			this.connection.setAutoCommit (true);
 			
 			if (this.singleStatement != null) {
@@ -128,6 +135,8 @@ public class SingleStatementConnection implements StatementConnection {
 			}
 			
 			this.connection.close ( );
+		} else {
+			logger.info("connection was closed already!");
 		}
 	}
 	

@@ -1496,8 +1496,7 @@ public class Harvester {
 //		String postRepositories = prepareRestTransmission ("Repository/" + this.getRepositoryID ( ) + "/harvestedtoday/").PostData ("");
 		String resource = "Repository/" + this.repositoryID + "/harvestedtoday/";
 		
-		String postRepositories = RestClient.createRestClient (this.getProps ( ).getProperty ("host"), resource, this.getProps ( ).getProperty ("username"), this.getProps ( ).getProperty ("password"))
-		.PostData("");
+		String postRepositories = this.prepareRestTransmission(resource).PostData("");
 		
 		RestMessage postRepositoriesmsg = RestXmlCodec.decodeRestMessage (postRepositories);
 		

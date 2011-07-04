@@ -10,8 +10,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 
 import de.dini.oanetzwerk.server.database.postgres.DeleteFromDBPostgres;
 import de.dini.oanetzwerk.server.database.postgres.InsertIntoDBPostgres;
@@ -61,6 +61,7 @@ public class DBAccessNG {
 	 */
 	private DBAccessNG() {
 
+		
 		if (logger.isDebugEnabled())
 			logger.debug("DBAccessNG Instance will be prepared!");
 
@@ -99,6 +100,9 @@ public class DBAccessNG {
 	}
 
 	public static synchronized DBAccessNG getInstance() {
+		
+		logger.info("retrieving DBAccessNG instance...");
+		
 		if (instance == null) {
 			instance = new DBAccessNG();
 		}
@@ -106,6 +110,9 @@ public class DBAccessNG {
 	}
 	
 	public static synchronized DBAccessNG getInstance(String dataSource) {
+		
+		logger.info("retrieving DBAccessNG instance2...");
+		
 		if (instance == null) {
 			instance = new DBAccessNG(dataSource);
 		}
@@ -166,36 +173,38 @@ public class DBAccessNG {
 	 */
 	private synchronized Connection getConnection() throws SQLException {
 
-		Connection connection;
+		logger.info("getConnection()");
+		
+//		Connection connection;
+//
+//		if (pool.size() < defaultPoolSize) {
+//			logger.info("Connection pool not yet filled up, creating new connection!");
+//			connection = createConnection();
+//			pool.add(connection);
+//			return connection;
+//		}
+//
+//		connection = pool.get(currentPoolCursor);
+//
+//		if (connection == null || connection.isClosed()) {
+//
+//			connection = createConnection();
+//			pool.remove(currentPoolCursor);
+//			pool.add(currentPoolCursor, connection);
+//		} else {
+//			logger.info("Existing connection retrieved from pool!");
+//		}
+//
+//		currentPoolCursor++;
+//		if (currentPoolCursor >= defaultPoolSize) {
+//			currentPoolCursor = 0;
+//		}
+//
+//		if (connection == null) {
+//			throw new SQLException("Connection based on the given data source not available!");
+//		} 
 
-		if (pool.size() < defaultPoolSize) {
-			logger.info("Connection pool not yet filled up, creating new connection!");
-			connection = createConnection();
-			pool.add(connection);
-			return connection;
-		}
-
-		connection = pool.get(currentPoolCursor);
-
-		if (connection == null || connection.isClosed()) {
-
-			connection = createConnection();
-			pool.remove(currentPoolCursor);
-			pool.add(currentPoolCursor, connection);
-		} else {
-			logger.info("Existing connection retrieved from pool!");
-		}
-
-		currentPoolCursor++;
-		if (currentPoolCursor >= defaultPoolSize) {
-			currentPoolCursor = 0;
-		}
-
-		if (connection == null) {
-			throw new SQLException("Connection based on the given data source not available!");
-		} 
-
-		return connection;
+		return createConnection();
 	}
 
 	/**
@@ -205,21 +214,27 @@ public class DBAccessNG {
 	 */
 	public synchronized StatementConnection getSingleStatementConnection() throws WrongStatementException, SQLException {
 
+		logger.info("getSingleStatementConnection()");
+		
 		Connection connection = getConnection();
 		
 		if (logger.isDebugEnabled())
 			logger.debug("Creating new SingleStatementConnection...");
 
-		if (connection == null || connection.isClosed() || !connection.isValid(validityCheckTimeout)) {
+		if (connection == null || connection.isClosed()) {
 			
-			for (int i = 0; i < defaultPoolSize; i++) {
-				System.out.println("Connection " + i + " is null: " + connection == null + (connection == null ? "" : " closed: " + connection.isClosed()));
-				if (pool.get(i) == null || pool.get(i).isClosed()) {
-					connection = getConnection();
-				}
-			}
+			System.out.println("fallback connection");
+			connection = getConnection();
 			
-			if (connection == null || connection.isClosed() || !connection.isValid(validityCheckTimeout)) {
+			
+//			for (int i = 0; i < defaultPoolSize; i++) {
+//				System.out.println("Connection " + i + " is null: " + connection == null + (connection == null ? "" : " closed: " + connection.isClosed()));
+//				if (pool.get(i) == null || pool.get(i).isClosed()) {
+//					connection = getConnection();
+//				}
+//			}
+			
+			if (connection == null || connection.isClosed()) {
 				
 				throw new SQLException("Cannot retrieve a fresh database connection!");
 			}
@@ -236,10 +251,12 @@ public class DBAccessNG {
 	 */
 	public synchronized StatementConnection getMultipleStatementConnection() throws WrongStatementException, SQLException {
 
+		logger.info("getMultiStatementConnection()");
+		
 		Connection connection = getConnection();
 		
 		if (logger.isDebugEnabled())
-			logger.debug("Creating new SingleStatementConnection...");
+			logger.debug("Creating new MultiStatementConnection...");
 
 		if (connection == null) {
 			throw new SQLException("Connection based on the given data source not available!");
@@ -283,6 +300,9 @@ public class DBAccessNG {
 	 * @throws SQLException
 	 */
 	public QueryResult executeStatement(StatementConnection statement) throws SQLException {
+
+		logger.info("executeStatement()");
+		
 		QueryResult result;
 
 		try {
