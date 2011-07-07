@@ -32,8 +32,6 @@ public class HarvesterJob extends AbstractServiceJob {
 		System.out.println("Harvester job called");
 
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
-		String repoId = jobData.getString("repository_id");
-
 		
 		
 		// initiate harvesting via RMI

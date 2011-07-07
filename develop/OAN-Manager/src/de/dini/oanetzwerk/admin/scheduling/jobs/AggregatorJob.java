@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -20,22 +21,17 @@ public class AggregatorJob extends AbstractServiceJob {
 
 	private static Logger logger = Logger.getLogger(HarvesterJob.class);
 
-	private String harvestType = "update";
-	private List<Repository> repositories;
 
 	public AggregatorJob() {
 
-	}
-
-	public AggregatorJob(String harvestType, List<Repository> repositories) {
-		this.harvestType = harvestType;
-		this.repositories = repositories;
 	}
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 
 		System.out.println("Aggregator job called");
 
+		JobDataMap jobData = context.getJobDetail().getJobDataMap();
+		
 		// initiate harvesting via RMI
 		try {
 
@@ -47,11 +43,14 @@ public class AggregatorJob extends AbstractServiceJob {
 				return;
 			}
 
+			logger.info("Inititating Harvester job with name '" + jobData.getString("job_name") + "'...");
+
+
 			IService service = (IService) registry.lookup(name);
 
 			// create harvesting settings
 			Map<String, String> data = new HashMap<String, String>();
-
+			data.put("job_name", jobData.getString("job_name"));
 			data.put("complete", "true");
 
 			// data.put(key, )

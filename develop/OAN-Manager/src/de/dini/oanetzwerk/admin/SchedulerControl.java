@@ -119,6 +119,7 @@ public class SchedulerControl implements Serializable {
 
 		logger.info("Scheduling quartz-job of type " + job.getClass() + " with name " + job.getData().getString("job_name"));
 	
+		System.out.println("jobname: " + job.getData().getString("job_name"));
 		System.out.println("goo");
 		System.out.println(job.getClass());
 		JobDetail jobDetail = newJob(job.getClass()).withIdentity(job.getData().getString("job_name"))
