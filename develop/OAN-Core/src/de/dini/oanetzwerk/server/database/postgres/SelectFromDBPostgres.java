@@ -998,12 +998,23 @@ public class SelectFromDBPostgres implements SelectFromDB {
 	 * @throws SQLException
 	 */
 	public PreparedStatement LatestPerson(Connection connection, String firstname, String lastname) throws SQLException {
-		// TODO: Sinnfrage dieses Queries??
-		PreparedStatement preparedstmt = connection
-				.prepareStatement("SELECT person_id FROM \"Person\" WHERE (firstname = ? AND lastname = ?) ORDER BY person_id DESC LIMIT 1");
-		preparedstmt.setString(1, firstname);
-		preparedstmt.setString(2, lastname);
 
+		boolean firstnameIsNull = (firstname == null);
+		
+		PreparedStatement preparedstmt;
+		if (firstnameIsNull) {
+			preparedstmt = connection
+				.prepareStatement("SELECT person_id FROM \"Person\" WHERE (firstname IS NULL AND lastname = ?) ORDER BY person_id DESC LIMIT 1");
+		} else {
+			preparedstmt = connection
+			.prepareStatement("SELECT person_id FROM \"Person\" WHERE (firstname = ? AND lastname = ?) ORDER BY person_id DESC LIMIT 1");
+		}
+		if (firstnameIsNull) {
+			preparedstmt.setString(1, lastname);
+		} else {
+			preparedstmt.setString(1, firstname);
+			preparedstmt.setString(2, lastname);
+		}
 		return preparedstmt;
 	}
 
@@ -1803,7 +1814,7 @@ public class SelectFromDBPostgres implements SelectFromDB {
 	@Override
 	public PreparedStatement UsageData_Ranking(Connection connection) throws SQLException {
 		// TODO Anpassen der Datumsanfrage wenn die Statistik DB es erlaubt.
-		PreparedStatement preparedstmt = connection.prepareStatement("Select distinct top 10 object_id, counter, counted_for_date FROM \"UsageData_Months\" where counted_for_date in (SELECT max(counted_for_date) from \"UsageData_Months\" where counted_for_date <(SELECT max(counted_for_date) from \"UsageData_Months\")) Order by counter desc");
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT DISTINCT object_id, counter, counted_for_date FROM \"UsageData_Months\" WHERE counted_for_date IN (SELECT max(counted_for_date) FROM \"UsageData_Months\" WHERE counted_for_date <(SELECT max(counted_for_date) FROM \"UsageData_Months\")) ORDER BY  counter DESC LIMIT 10");
 		return preparedstmt;
 	}
 	

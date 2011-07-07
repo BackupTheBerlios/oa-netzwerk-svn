@@ -30,7 +30,7 @@ public class DDCEntry  extends AbstractKeyWordHandler implements KeyWord2Databas
 	private static final String OIDS_PARAM = "OIDS";
 
 	public DDCEntry() {
-		super(DDCEntry.class.getName(), RestKeyword.UsageData);
+		super(DDCEntry.class.getName(), RestKeyword.DDCEntry);
 	}
 
 	@Override

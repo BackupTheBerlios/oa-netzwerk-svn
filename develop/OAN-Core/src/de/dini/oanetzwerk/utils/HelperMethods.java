@@ -437,6 +437,15 @@ public class HelperMethods {
 		                properties.getProperty("password"));
 	}
 	
+	public static RestClient prepareRestTransmission(Properties restProperties, String resource, Properties properties) {
+
+		if (logger.isDebugEnabled())
+			logger.debug("prepareRestTransmission");
+
+		return RestClient.createRestClient(restProperties, resource, properties.getProperty("username"),
+		                properties.getProperty("password"));
+	}
+	
 	public static String getRestFailureMessage(final RestKeyword keyword, final RestStatusEnum status, final String description) {
 
 		logger.error(description);

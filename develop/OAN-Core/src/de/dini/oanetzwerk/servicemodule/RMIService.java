@@ -60,7 +60,7 @@ public abstract class RMIService implements IService {
         } catch (Exception e) {
 			logger.warn("Could not load property file '" + getPropertyFile() + "' or 'restclientprop.xml' from path " + applicationPath + "! Skipping harvesting ...");
         }
-        
+        System.out.println("Reading " + applicationPath + "log4j.xml!");
 		DOMConfigurator.configureAndWatch((applicationPath == null ? "" : applicationPath) + "log4j.xml" , 60*1000 );
 	}
 

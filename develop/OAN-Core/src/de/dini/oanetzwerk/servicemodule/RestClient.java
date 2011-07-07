@@ -247,6 +247,43 @@ public class RestClient {
 		}
 	}
 	
+	
+	private RestClient (Properties restclientProps, String restQueryPath, String user, String pwd) {
+		
+		this.queryPath = filterpath (restQueryPath);
+		this.username = user;
+		this.password = pwd;
+		
+		this.props = restclientProps;
+
+		if (this.props == null) {
+			
+			this.port = 443;
+			this.qualifiedServerName = "oanet.cms.hu-berlin.de";
+			this.servletPath = "restserver/server";
+			logger.warn ("No Property File found, trying default settings!");
+			
+		} else {
+			
+			this.nossl = setSSL (qualifiedServerName);
+		}
+		
+		if (!this.nossl && this.props != null) {
+			
+			this.qualifiedServerName = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
+			this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+			this.port = new Integer (this.props.getProperty ("SSLPort", "443"));
+			System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
+			System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
+			
+		} else if (this.props != null) {
+			
+			this.qualifiedServerName = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
+			this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+			this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
+		}
+	}
+	
 	/**
 	 * @param path
 	 * @return the filtered path
@@ -327,6 +364,8 @@ public class RestClient {
 		return restclient;
 	}
 	
+	
+	
 	/**
 	 * Creates a {@link RestClient} and calls the {@link RestClient} Constructor. 
 	 * @see RestClient#RestClient(String url, String path, String user, String pwd)
@@ -361,6 +400,17 @@ public class RestClient {
 	public static RestClient createRestClient (File restclientPropFile, String restQueryPath, String userName, String passWord) {
 		
 		RestClient restclient = new RestClient (restclientPropFile, restQueryPath, userName, passWord);
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("new restclient created");
+		
+		return restclient;
+	}
+	
+	
+	public static RestClient createRestClient (Properties restclientProps, String restQueryPath, String userName, String passWord) {
+		
+		RestClient restclient = new RestClient (restclientProps, restQueryPath, userName, passWord);
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("new restclient created");

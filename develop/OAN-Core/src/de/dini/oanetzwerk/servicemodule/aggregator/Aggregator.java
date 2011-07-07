@@ -70,6 +70,8 @@ public class Aggregator {
 
 	private Properties props; // special aggregator settings like connecting
 								// server
+	
+	private Properties restclientProps;
 
 	private boolean testing = false; // if set to true, aggregator stores data, but no update to workflow is saved
 
@@ -79,10 +81,6 @@ public class Aggregator {
 	
 	private String propertyFilePath = "";
 	
-	private final Properties getProps ( ) {
-		
-		return this.props;
-	}
 	
 	
 	/**
@@ -92,13 +90,15 @@ public class Aggregator {
 	 * bindet Properties korrekt ein und liest SERVICE-ID aus
 	 */
 	private  void init() {
-		DOMConfigurator.configure("log4j.xml");
 
 		try {
 
 			System.out.println("path: " + propertyFilePath);
 			this.props = HelperMethods
 					.loadPropertiesFromFile(propertyFilePath + "aggregatorprop.xml");
+			
+			this.restclientProps = HelperMethods
+			.loadPropertiesFromFile(propertyFilePath + "restclientprop.xml");
 
 		} catch (InvalidPropertiesFormatException ex) {
 
@@ -459,7 +459,7 @@ public class Aggregator {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("prepareRestTransmission");
 		
-		return HelperMethods.prepareRestTransmission(new File(propertyFilePath + "restclientprop.xml"), resource, props);
+		return HelperMethods.prepareRestTransmission(restclientProps, resource, props);
 	}
 
 	
@@ -906,5 +906,11 @@ public class Aggregator {
 	public void setStopped(boolean stopped) {
     	this.stopped = stopped;
     }
+	
+	private final Properties getProps ( ) {
+		
+		return this.props;
+	}
+	
 	
 }
