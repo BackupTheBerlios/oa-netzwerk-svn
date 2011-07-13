@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><validationResults>
+<validationResult>
+<timestamp>2011-12-11 14:12:38</timestamp>
+<server>http://oanet.cms.hu-berlin.de/restserver/server/</server>
+<alias>HU Berlin Restschnittstelle</alias>
+<username>Harvester</username>
+<password>retsevrah</password>
+<resultSet>
+<result>
+<parameter>CompleteMetadataEntry/16</parameter>
+<returnValue>passed</returnValue>
+</result>
+<result>
+<parameter>CompleteMetadataEntry/17</parameter>
+<returnValue>passed</returnValue>
+</result>
+</resultSet>
+</validationResult>
+<validationResult>
+<timestamp>2011-13-11 14:13:21</timestamp>
+<server>http://oanet.cms.hu-berlin.de/restserver/server/</server>
+<alias>HU Berlin Restschnittstelle</alias>
+<username>Harvester</username>
+<password>retsevrah</password>
+<resultSet>
+<result>
+<parameter>Repository/16</parameter>
+<returnValue>passed</returnValue>
+</result>
+</resultSet>
+</validationResult>
+<validationResult>
+<timestamp>2011-13-11 14:13:48</timestamp>
+<server>http://oanet.cms.hu-berlin.de/restserver/server/</server>
+<alias>HU Berlin Restschnittstelle</alias>
+<username>Harvester</username>
+<password>retsevrah</password>
+<resultSet>
+<result>
+<parameter>Repository/45</parameter>
+<returnValue>return SAXException: cvc-complex-type.2.4.b: The content of element 'oanrest' is not complete. One of '{entryset}' is expected.</returnValue>
+</result>
+</resultSet>
+</validationResult>
+
+
+</validationResults>

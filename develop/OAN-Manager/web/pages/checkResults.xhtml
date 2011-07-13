@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Check the results of your plagiarism search</title>
+</head>
+<body>
+<f:view>
+	<f:loadBundle basename="messages.repositories" var="msg" />
+
+
+	<ui:composition template="templates/template.xhtml">
+
+		<ui:param name="pageTitle" value="OAPS Result Check" />
+		<ui:define name="navigation">
+			<a href="/oanadmin/">OA-Netzwerk</a> » <a href="repository_validator.xhtml">Repository Validator</a>
+		</ui:define>
+
+		<ui:param name="menu_repository" value="#{true}" /> 
+
+	
+		<ui:define name="content">
+			<div style="padding: 20px; background-color: #f5f9f4;">
+				<h2>check your OAPS Report</h2>
+				<f:if #{OAPSConnector.maillink} != null>
+					<h:outputLink value="./receiveReport.xhtml">
+						<h:outputText value="Click here to receive the report via Email" />
+						<f:param name="action" value="receiveReport" />
+						<f:param name="code" value="#{OAPSConnector.jobMailHash}" />
+					</h:outputLink>
+				</f:if>
+				<f:else>
+					Your file has not yet been fully processed. Please try again in a while.
+				</f:else>
+			</div>
+		</ui:define>
+
+	</ui:composition>
+	
+
+</f:view>
+</body>
+</html>

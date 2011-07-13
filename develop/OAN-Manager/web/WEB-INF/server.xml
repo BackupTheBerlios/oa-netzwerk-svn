@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serverList>
+<server>
+<url>http://oanet.cms.hu-berlin.de/restserver/server/</url>
+<alias>HU Berlin Restschnittstelle</alias>
+<username>Harvester</username>
+<password>retsevrah</password>
+<parameters>
+<parameter>CompleteMetadataEntry/16</parameter>
+<parameter>CompleteMetadataEntry/17</parameter>
+</parameters>
+</server>
+</serverList>
