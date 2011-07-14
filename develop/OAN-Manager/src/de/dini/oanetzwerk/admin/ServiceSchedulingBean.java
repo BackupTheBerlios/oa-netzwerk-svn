@@ -2,24 +2,22 @@ package de.dini.oanetzwerk.admin;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -31,7 +29,6 @@ import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
-import de.dini.oanetzwerk.servicemodule.RestClient;
 
 @ManagedBean(name = "scheduling")
 @RequestScoped
@@ -125,15 +122,14 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		System.out.println("jobtype: " + jobType);
 		System.out.println("date: " + chosenDate);
 
-		// TODO: externalize strings , --> message codes
 		
 		if ("null".equals(chosenService)) {
-			context.addMessage("1", new FacesMessage("Bitte wählen sie einen Dienst aus."));
+			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_chooseservice", null));
 			valid = false;
 		}
 		
 		if ("null".equals(jobType)) {
-			context.addMessage("1", new FacesMessage("Bitte geben sie an, ob der Dienst wiederholt oder einmalig ausgeführt werden soll."));
+			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_chooseinterval", null));
 			valid = false;
 			return valid;
 		}		
@@ -151,13 +147,13 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 				if (System.currentTimeMillis() > date.getTime()) {
 //					((UIInput) toValidate).setValid(false);
 
-					FacesMessage message = new FacesMessage("Das gewählte Datum muss in der Zukunft liegen.");
+					FacesMessage message = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_datenotinfuture", null);
 					context.addMessage("1", message);
 					valid = false;
 				}
 			} catch (ParseException e) {
 				e.printStackTrace();
-				FacesMessage message = new FacesMessage("Bitte überprüfen sie das gewählte Datum! (Format: TT.MM.JJJJ)");
+				FacesMessage message = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_checkdateformat", null);
 				context.addMessage("1", message);
 				valid = false;
 			}
@@ -175,13 +171,13 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 				if (System.currentTimeMillis() > date.getTime()) {
 //					((UIInput) toValidate).setValid(false);
 
-					FacesMessage message = new FacesMessage("Das gewählte Datum muss in der Zukunft liegen.");
+					FacesMessage message = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_datenotinfuture", null);
 					context.addMessage("1", message);
 					valid = false;
 				}
 			} catch (ParseException e) {
 				e.printStackTrace();
-				FacesMessage message = new FacesMessage("Bitte überprüfen sie das gewählte Datum! (Format: TT.MM.JJJJ)");
+				FacesMessage message = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_checkdateformat", null);
 				context.addMessage("1", message);
 				valid = false;
 			}
@@ -190,24 +186,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		return valid;
 	}
 	
-//	public void validateDate(FacesContext context, UIComponent toValidate, Object value) {
-//		System.out.println("VALIDATING");
-//
-//		// TODO
-////		if (true)
-////			return;
-//
-//		Date chosenDate = (Date) value;
-//		System.out.println("date: " + chosenDate);
-//		Date date = null;
-//		if (date == null) {
-//
-//			FacesMessage message = new FacesMessage("Bitte geben sie das Datum in einem gültigen Format an. (tt.mm.jjjj)");
-//			context.addMessage(toValidate.getClientId(context), message);
-//			return;
-//		}
-//
-//	}
 
 	public String storeJob() {
 
@@ -299,17 +277,18 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		
 		if (updateCase) {
 			stored = schedulerControl.updateJob(job);
-			msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Die Dienstplanung wurde erfolgreich aktualisiert!", null);
+			msg = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_update_success", null);
 		} else {
 			stored = schedulerControl.createJob(job);
-			msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Der Dienst wurde erfolgreich in die Planung aufgenommen!", null);
+			msg = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_new_success", null);
 		}
 		if (stored) {
 			ctx.addMessage(null, msg);
 			return "success";
 		}
 		
-		ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Dienst konnte nicht gespeichert werden. Bitte schauen sie in die Logs für Details.", null));
+		ctx.addMessage(null, LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_ERROR, "scheduling_servicejob_new_success", null));
+		
 		return "failed";
 	}
 	
@@ -338,7 +317,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 		// prepare 'all' entry
 		Repository repoAll = new Repository();
-		repoAll.setName("Alle");
+		repoAll.setName(LanguageSwitcherBean.getMessage(ctx, "general_all"));
 		repoAll.setId(new Long(0));
 		repoList.add(repoAll);
 
@@ -678,4 +657,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	public void setRadio1(String radio1) {
 		this.radio1 = radio1;
 	}
+	
+
 }

@@ -48,6 +48,7 @@ import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.AggregatorJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.HarvesterJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.MarkerJob;
+import de.dini.oanetzwerk.admin.scheduling.jobs.UpdateDDCCountJob;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -95,6 +96,9 @@ public class SchedulerControl implements Serializable {
 				System.out.println("scheduler is null after creation");
 			}
 			
+			// schedule ddc-count update job
+			scheduleDDCCounterJob();
+			
 			// load jobs from database
 			List<AbstractServiceJob> jobsToSchedule = loadJobsFromDB();
 			
@@ -114,6 +118,24 @@ public class SchedulerControl implements Serializable {
 		}
 	}
 
+	private boolean scheduleDDCCounterJob() {
+		logger.info("Scheduling Update-Job for ddc counts.");
+		
+		JobDetail jobDetail = newJob(UpdateDDCCountJob.class).withIdentity("DDC-Counter")
+			.build();
+		
+		Trigger trigger = newTrigger().withIdentity("DDC-Counter")
+				.startAt(tomorrowAt(2, 0, 0))
+				.withSchedule(calendarIntervalSchedule().withIntervalInDays(1)).build();
+		try {
+	        scheduler.scheduleJob(jobDetail, trigger);
+	        logger.info("Successfully scheduled DDC-Counter");
+        } catch (SchedulerException e) {
+	        logger.warn("Could not schedule DDC-Counter", e);
+	        return false;
+        }
+        return true;
+	}
 	
 	private boolean scheduleJob(AbstractServiceJob job) {
 
