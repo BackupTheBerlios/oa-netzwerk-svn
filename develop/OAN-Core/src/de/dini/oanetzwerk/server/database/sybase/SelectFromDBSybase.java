@@ -1949,4 +1949,18 @@ public class SelectFromDBSybase implements SelectFromDB {
 		preparedstmt.setInt(1, jobId);
 		return preparedstmt;
 	}
+
+
+	@Override
+    public PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, String category) throws SQLException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
+
+
+	@Override
+    public PreparedStatement DDCClassification2(Connection connection, BigDecimal object_id) throws SQLException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
 }

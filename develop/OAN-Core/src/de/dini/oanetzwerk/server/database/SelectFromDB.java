@@ -169,4 +169,7 @@ public interface SelectFromDB {
 
 	public abstract PreparedStatement InternalID(Connection connection, String repository_identifier) throws SQLException;
 
+	public abstract PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, String category) throws SQLException;
+	
+	public abstract PreparedStatement DDCClassification2(Connection connection, BigDecimal object_id) throws SQLException;
 }

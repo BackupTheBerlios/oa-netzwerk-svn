@@ -51,7 +51,7 @@ public interface DeleteFromDB {
 
 	public abstract PreparedStatement DNB_Classification(Connection connection, BigDecimal object_id) throws SQLException;
 
-	public abstract PreparedStatement DDC_Classification(Connection connection, BigDecimal object_id) throws SQLException;
+	public abstract PreparedStatement DDC_Classification(Connection connection, BigDecimal object_id, boolean deleteGeneratedOnly) throws SQLException;
 
 	public abstract PreparedStatement Other_Classification(Connection connection, BigDecimal object_id) throws SQLException;
 
@@ -82,5 +82,7 @@ public interface DeleteFromDB {
 	public abstract PreparedStatement Description(Connection connection, BigDecimal object_id) throws SQLException;
 	
 	public abstract PreparedStatement ServicesScheduling(Connection connection, BigDecimal jobId) throws SQLException;
+	
+	public abstract PreparedStatement DDC_Classification(Connection connection, BigDecimal object_id, String category, boolean deleteGeneratedOnly) throws SQLException;
 
 }

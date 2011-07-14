@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 public abstract class Classification implements ClassificationInterface {
 	
 	String value;
+	Boolean generated;
 	
 	public static boolean isDDC(String testvalue) {
 		if (testvalue.toLowerCase().startsWith("ddc:")) return true;
@@ -77,6 +78,16 @@ public abstract class Classification implements ClassificationInterface {
 		this.value = value;
 	}
 	
+	public Boolean isGenerated() {
+    	return generated;
+    }
+
+	public void setGenerated(Boolean generated) {
+    	this.generated = generated;
+    }
+
+
+
 	static class Adapter extends XmlAdapter<Classification,ClassificationInterface> {
 		public ClassificationInterface unmarshal(Classification v) {
 			System.out.println("unmarshal(" + v +")");

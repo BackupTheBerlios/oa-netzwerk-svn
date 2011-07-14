@@ -230,11 +230,26 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 	 * @return
 	 * @throws SQLException
 	 */
+	
+	public PreparedStatement DDC_Classification(Connection connection, BigDecimal object_id, boolean deleteGeneratedOnly) throws SQLException {
 
-	public PreparedStatement DDC_Classification(Connection connection, BigDecimal object_id) throws SQLException {
-
-		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"DDC_Classification\" WHERE object_id=?");
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"DDC_Classification\" WHERE object_id=?" + (deleteGeneratedOnly ? " AND generated = ?" : ""));
 		preparedstmt.setBigDecimal(1, object_id);
+		if (deleteGeneratedOnly) {
+			preparedstmt.setBoolean(2, deleteGeneratedOnly);
+		}
+		
+		return preparedstmt;
+	}
+	
+	public PreparedStatement DDC_Classification(Connection connection, BigDecimal object_id, String category, boolean deleteGeneratedOnly) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"DDC_Classification\" WHERE object_id=? AND \"DDC_Categorie\" = ?" + (deleteGeneratedOnly ? " AND generated = ?" : ""));
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setString(2, category);
+		if (deleteGeneratedOnly) {
+			preparedstmt.setBoolean(3, deleteGeneratedOnly);
+		}
 
 		return preparedstmt;
 	}

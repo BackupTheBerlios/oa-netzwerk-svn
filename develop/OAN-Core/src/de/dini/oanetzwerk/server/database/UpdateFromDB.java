@@ -26,4 +26,7 @@ public interface UpdateFromDB {
 	public abstract PreparedStatement Object(Connection connection, BigDecimal object_id, BigDecimal repository_id, Date harvested, Date repository_datestamp, String repository_identifier, boolean testdata, int failureCounter,
 			boolean peculiar, boolean outdated, int peculiarCounter) throws SQLException;
 
+	public abstract PreparedStatement DDCBrowsingHelpCount(Connection connection) throws SQLException;
+	
+	public abstract PreparedStatement DDCBrowsingHelpSubCount(Connection connection) throws SQLException;
 }

@@ -14,9 +14,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp.DelegatingResultSet;
 import org.apache.log4j.Logger;
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
-import org.apache.tomcat.dbcp.dbcp.DelegatingResultSet;
 
 import de.dini.oanetzwerk.oaipmh.Record;
 import de.dini.oanetzwerk.server.database.QueryResult;
@@ -29,11 +29,11 @@ public class Statistics {
 
 	public static void main(String[] args) {
 
-		new Statistics().bla();
+		new Statistics().generate();
 
 	}
 
-	public void bla() {
+	public void generate() {
 		LinkedList<Record> recordList = new LinkedList<Record>();
 
 		SingleStatementConnection stmtconn = null;

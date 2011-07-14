@@ -215,7 +215,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DDC_Classification (stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DDC_Classification (stmtconn.connection, object_id, false));
 			this.result = stmtconn.execute ( );
 			
 			if (this.result.getWarning ( ) != null) 

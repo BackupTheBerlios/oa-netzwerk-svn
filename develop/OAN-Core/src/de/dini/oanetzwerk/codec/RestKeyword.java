@@ -23,5 +23,6 @@ public enum RestKeyword {
 	InterpolatedDDC,
 	UsageData,
 	UsageStatistics,
-	DDCEntry
+	DDCEntry,
+	DDCStatistics
 }

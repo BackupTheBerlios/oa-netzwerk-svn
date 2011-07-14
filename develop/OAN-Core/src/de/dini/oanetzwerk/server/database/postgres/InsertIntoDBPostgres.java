@@ -645,6 +645,22 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 
 		return preparedstmt;
     }
+	
+	@Override
+    public PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, String category, boolean generated) throws SQLException {
+		if (logger.isDebugEnabled()) {
+
+			logger.debug("Insert DDC: INSERT INTO  \"DDC_Classification\" (object_id, \"DDC_Categorie\", generated ) VALUES " + "(" + object_id + ", " + category + ", " + generated);
+		}
+
+		PreparedStatement preparedstmt = connection.prepareStatement("INSERT INTO  \"DDC_Classification\" (object_id, \"DDC_Categorie\", generated ) VALUES (?, ?, ?)");
+		
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setString(2, category);
+		preparedstmt.setBoolean(3, generated);
+
+		return preparedstmt;
+    }
 
 	/**
 	 * @param object_id
@@ -942,4 +958,22 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 
 		return preparedstmt;
 	}
+	
+	public PreparedStatement DDCCategory (Connection connection, String category, String name, String enName) throws SQLException {
+				
+			if (logger.isDebugEnabled ( )) {			
+				logger.debug ("Insert DDCCategory: INSERT INTO \"DDC_Categories\" (\"DDC_Categorie\", name, name_en) "
+						                   + "VALUES (" + category + ", " + name + ", " + enName + ")");
+			}
+			
+			PreparedStatement preparedstmt = 
+				connection.prepareStatement( "INSERT INTO \"DDC_Categories\" (\"DDC_Categorie\", name, name_en) "
+						                   + "VALUES (?, ?, ?)");
+			
+			preparedstmt.setString (1, category);
+			preparedstmt.setString (2, name);
+			preparedstmt.setString (3, enName);
+
+			return preparedstmt;
+		}
 }

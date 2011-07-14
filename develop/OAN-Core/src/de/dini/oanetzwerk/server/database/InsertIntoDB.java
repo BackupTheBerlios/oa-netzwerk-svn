@@ -83,4 +83,8 @@ public interface InsertIntoDB {
 			throws SQLException;
 
     public abstract PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, Set<String> categories, boolean generated) throws SQLException;
+    
+    public abstract PreparedStatement DDCCategory (Connection connection, String category, String name, String enName) throws SQLException ;
+ 
+    public abstract PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, String category, boolean generated) throws SQLException;
 }

@@ -982,4 +982,17 @@ public class InsertIntoDBSybase implements InsertIntoDB {
 
 		return preparedstmt;
 	}
+
+	@Override
+    public PreparedStatement DDCCategory(Connection connection, String category, String name, String enName) throws SQLException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
+
+	@Override
+    public PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, String category, boolean generated)
+                    throws SQLException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
 }

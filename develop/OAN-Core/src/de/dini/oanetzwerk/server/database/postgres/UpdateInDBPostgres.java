@@ -208,4 +208,28 @@ public class UpdateInDBPostgres implements UpdateFromDB {
 
 		return preparedstmt;
 	}
+	
+	@Override
+	public PreparedStatement DDCBrowsingHelpCount(Connection connection) throws SQLException {
+
+		if (logger.isDebugEnabled()) {
+
+			logger.debug("UPDATE \"DDC_Browsing_Help\" SET direct_count = \"fnDDCDirectCount\"(\"DDC_Categorie\")");
+		}
+
+		PreparedStatement preparedstmt = connection.prepareStatement("UPDATE \"DDC_Browsing_Help\" SET direct_count = \"fnDDCDirectCount\"(\"DDC_Categorie\")");
+		return preparedstmt;
+	}
+	
+	@Override
+	public PreparedStatement DDCBrowsingHelpSubCount(Connection connection) throws SQLException {
+
+		if (logger.isDebugEnabled()) {
+
+			logger.debug("UPDATE \"DDC_Browsing_Help\" SET sub_count = \"fnDDCCount\"(\"DDC_Categorie\")");
+		}
+
+		PreparedStatement preparedstmt = connection.prepareStatement("UPDATE \"DDC_Browsing_Help\" SET sub_count = \"fnDDCCount\"(\"DDC_Categorie\")");
+		return preparedstmt;
+	}
 }

@@ -180,4 +180,17 @@ public class UpdateInDBSybase implements UpdateFromDB {
 	    // TODO Auto-generated method stub
 	    return null;
     }
+
+	@Override
+    public PreparedStatement DDCBrowsingHelpCount(Connection connection) throws SQLException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
+
+	@Override
+    public PreparedStatement DDCBrowsingHelpSubCount(Connection connection) throws SQLException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
+	
 }

@@ -749,12 +749,35 @@ public class SelectFromDBPostgres implements SelectFromDB {
 	public PreparedStatement DDCClassification(Connection connection, BigDecimal object_id) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement(
-			"SELECT \"C\".name, \"D\".\"DDC_Categorie\" " +
+			"SELECT \"C\".name, \"D\".\"DDC_Categorie\", \"D\".generated " +
 			"FROM \"DDC_Classification\" AS \"D\" " +
 			"JOIN \"DDC_Categories\" AS \"C\" " +
 			"	ON \"D\".\"DDC_Categorie\" = \"C\".\"DDC_Categorie\" WHERE \"D\".object_id = ?");
 		preparedstmt.setBigDecimal(1, object_id);
 
+		return preparedstmt;
+	}
+	
+	public PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, String category) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement(
+			"SELECT \"D\".\"DDC_Categorie\" " +
+			"FROM \"DDC_Classification\" AS \"D\" " +
+			"WHERE \"D\".object_id = ? AND \"D\".\"DDC_Categorie\" = ?");
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setString(2, category);
+		
+		return preparedstmt;
+	}
+	
+	public PreparedStatement DDCClassification2(Connection connection, BigDecimal object_id) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement(
+			"SELECT \"D\".\"DDC_Categorie\", \"D\".generated " +
+			"FROM \"DDC_Classification\" AS \"D\" " +
+			"WHERE \"D\".object_id = ?");
+		preparedstmt.setBigDecimal(1, object_id);
+		
 		return preparedstmt;
 	}
 

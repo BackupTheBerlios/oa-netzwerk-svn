@@ -256,8 +256,8 @@ public class DeleteFromDBSybase implements DeleteFromDB {
 	 */
 
 	@Override
-	public PreparedStatement DDC_Classification(Connection connection, BigDecimal object_id) throws SQLException {
-
+	public PreparedStatement DDC_Classification(Connection connection, BigDecimal object_id, boolean deleteGeneratedOnly) throws SQLException {
+		// TODO: use deleteGeneratedOnly field
 		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM dbo.DDC_Classification WHERE object_id=?");
 		preparedstmt.setBigDecimal(1, object_id);
 
@@ -577,4 +577,11 @@ public class DeleteFromDBSybase implements DeleteFromDB {
 
 		return preparedstmt;
 	}
+
+	@Override
+    public PreparedStatement DDC_Classification(Connection connection, BigDecimal object_id, String category, boolean deleteGeneratedOnly)
+                    throws SQLException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
 }

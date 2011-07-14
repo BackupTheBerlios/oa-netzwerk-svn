@@ -8,4 +8,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public interface ClassificationInterface {
 	public String getValue();
 	public void setValue(String value);
+	public Boolean isGenerated();
+	public void setGenerated(Boolean generated);
 }
