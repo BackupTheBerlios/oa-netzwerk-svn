@@ -1,6 +1,8 @@
 package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
@@ -15,6 +17,7 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
+import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.server.database.sybase.DeleteFromDBSybase;
 import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
 import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
@@ -774,26 +777,40 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						logger.debug("Keyword-Informationen hinzufügen" + keyword.toString());
 					}
 					BigDecimal keyword_id = null;
-					stmtconn.loadStatement (DBAccessNG.insertIntoDB().Keyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
-					this.result = stmtconn.execute ( );
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
-
-					if (this.result.getUpdateCount ( ) < 1) {
-						logger.error("Fehler bei OID:" + object_id + " INSERT Keyword:'" + keyword.getKeyword() + "'");
-						//warn, error, rollback, nothing????
-					} 
-					stmtconn.loadStatement (DBAccessNG.selectFromDB().LatestKeyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
-					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					// test if the keyword is already present in the database
+					PreparedStatement checkForExistingKeyword = stmtconn.connection.prepareStatement("SELECT keyword_id, keyword FROM \"Keywords\" WHERE keyword = '"+keyword.getKeyword()+"'");
+					stmtconn.loadStatement(checkForExistingKeyword);
+					QueryResult qrs = stmtconn.execute();
+					ResultSet rs = qrs.getResultSet();
 					
-					
-					while (this.result.getResultSet ( ).next ( )) {
-						keyword_id = this.result.getResultSet ( ).getBigDecimal(1);
+					// keyword not found --> insert new keyword
+					if (!rs.next()) {
+						stmtconn.loadStatement (DBAccessNG.insertIntoDB().Keyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
+						this.result = stmtconn.execute ( );
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
+	
+						if (this.result.getUpdateCount ( ) < 1) {
+							logger.error("Fehler bei OID:" + object_id + " INSERT Keyword:'" + keyword.getKeyword() + "'");
+							//warn, error, rollback, nothing????
+						} 
+						stmtconn.loadStatement (DBAccessNG.selectFromDB().LatestKeyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
+						this.result = stmtconn.execute ( );
+						
+						if (this.result.getWarning ( ) != null) 
+							for (Throwable warning : result.getWarning ( ))
+								logger.warn (warning.getLocalizedMessage ( ));
+						
+						
+						while (this.result.getResultSet ( ).next ( )) {
+							keyword_id = this.result.getResultSet ( ).getBigDecimal(1);
+						}
+					}
+					// keyword found --> get ID to insert
+					else {
+						keyword_id = rs.getBigDecimal(1);
 					}
 					if(keyword_id != null) {
 					
