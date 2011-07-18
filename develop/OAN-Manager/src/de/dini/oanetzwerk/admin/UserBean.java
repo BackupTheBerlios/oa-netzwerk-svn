@@ -7,15 +7,19 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.myfaces.config.impl.digester.elements.Attribute;
+import org.apache.tomcat.util.modeler.Registry;
 
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 
@@ -53,21 +57,68 @@ public class UserBean extends AbstractBean implements Serializable {
 	}
 
 	
-//	@PostConstruct
-//	public void init() {
-//		
-//		// do nothing
-//	
-//		if (ctx.getExternalContext().getRemoteUser() != null) {
-//			System.out.println("remote user: " + FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
-//		}
-//			
-//		if (ctx.getExternalContext().getUserPrincipal() != null) {
-//			System.out.println(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName()); 
-//		}
-//		
-//	}
+	@PostConstruct
+	public void init() {
+		
+		// do nothing
 	
+		System.out.println("bla");
+		
+		if (FacesContext.getCurrentInstance().getExternalContext().getRemoteUser() != null) {
+			System.out.println("remote user: " + FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
+		}
+			
+		if (FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null) {
+			System.out.println(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName()); 
+		}
+		
+		if (FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null) {
+			System.out.println(FacesContext.getCurrentInstance().getExternalContext().isUserInRole("oadmin")); 
+		}
+		
+        MBeanServer mbs = Registry.getRegistry(null, null).getMBeanServer();
+        
+        try {
+            ObjectName oname = new ObjectName(
+                    "Users:type=UserDatabase,database=UserDatabase");
+                        
+            Attribute a = new Attribute();
+            String[] roles = (String[]) mbs.getAttribute(oname, "roles");
+            for (String r : roles) {
+				
+            	System.out.println("roles: " + r);
+			}
+            
+            String[] users = (String[]) mbs.getAttribute(oname, "users");
+            for (String u : users) {
+				
+            	System.out.println("users: " + u);
+			}
+            System.out.println("finish");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
+	
+	public String getUsers() {
+		System.out.println("bla");
+		
+		if (FacesContext.getCurrentInstance().getExternalContext().getRemoteUser() != null) {
+			System.out.println("remote user: " + FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
+		}
+			
+		if (FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null) {
+			System.out.println(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName()); 
+		}
+		
+		if (FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null) {
+			System.out.println(FacesContext.getCurrentInstance().getExternalContext().isUserInRole("oadmin")); 
+		}
+		
+		createUser();
+		
+		return "test";
+	}
 	
 	public String logout() {
 		System.out.println("logging out...");
@@ -216,5 +267,37 @@ public class UserBean extends AbstractBean implements Serializable {
 	// return ctx.getMessages("repositories");
 	// }
 
+	public void createUser() {
+        MBeanServer mbs = Registry.getRegistry(null, null).getMBeanServer();
+        
+        try {
+            ObjectName oname = new ObjectName(
+                    "Users:type=UserDatabase,database=UserDatabase");
+            
+            mbs.invoke(oname, "createUser", new Object[] { "sdavid", "12345",
+                    "Sammy David" }, new String[] { "java.lang.String",
+                    "java.lang.String", "java.lang.String" });
+ 
+            mbs.invoke(oname, "save", new Object[0], new String[0]);
+ 
+            
+            Attribute a = new Attribute();
+            String[] roles = (String[]) mbs.getAttribute(oname, "roles");
+            for (String r : roles) {
+				
+            	System.out.println("roles: " + r);
+			}
+            
+            String[] users = (String[]) mbs.getAttribute(oname, "users");
+            for (String u : users) {
+				
+            	System.out.println("users: " + u);
+			}
+            System.out.println("finish");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+	}
 
 }
