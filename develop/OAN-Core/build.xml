@@ -181,6 +181,7 @@
 		<pathelement location="${lib}/log4j-1.2.15.jar" />
 		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
 		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-dbcp-1.4.jar" />
 		<pathelement location="${lib}/commons-lang-2.3.jar" />
 		<pathelement location="${lib}/rome-1.0RC1.jar" />
 		<pathelement location="${lib}/jdom.jar" />
@@ -193,6 +194,7 @@
 		<pathelement location="${lib}/log4j-1.2.15.jar" />
 		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
 		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-dbcp-1.4.jar" />
 		<pathelement location="${lib}/commons-lang-2.3.jar" />
 		<pathelement location="${lib}/javabib-bin.jar" />
 		<pathelement location="${lib}/jdom.jar" />
@@ -205,8 +207,10 @@
 		<pathelement location="${lib}/log4j-1.2.15.jar" />
 		<pathelement location="${lib}/commons-httpclient-3.1.jar" />
 		<pathelement location="${lib}/commons-codec-1.3.jar" />
+		<pathelement location="${lib}/commons-dbcp-1.4.jar" />
 		<pathelement location="${lib}/commons-lang-2.3.jar" />
 		<pathelement location="${lib}/jdom.jar" />
+		
 	</path>
 
 	<path id="classpath.oadminrealm">
@@ -578,6 +582,7 @@
 			</classes>
 		</war>
 	</target>
+	
 
 	<target name="warLocalServer" depends="compileServer">
 		<war destfile="${dist}/restserver.war" webxml="conf/web.xml">
@@ -841,8 +846,8 @@
 	</target>
 
 	<target name="warOAIPMH" depends="jibxBindOAIPMH">
-		<war destfile="${dist}/oaipmh.war" webxml="conf_oaipmh/web.xml">
-			<fileset file="conf_oaipmh/oaipmh.properties" />
+		<war destfile="${dist}/oaipmh.war" webxml="conf/oaipmh/web.xml">
+			<fileset file="conf/oaipmh/oaipmh.properties" />
 			<lib dir="${lib}">
 				<include name="log4j-1.2.15.jar" />
 				<include name="jibx-run-1.2.2.jar" />
@@ -872,18 +877,18 @@
 	</target>
 
 	<target name="warRSSFeed" depends="compileRSSFeed">
-		<war destfile="${dist}/rssfeed.war" webxml="conf_rssfeed/web.xml">
+		<war destfile="${dist}/rssfeed.war" webxml="conf/rssfeed/web.xml">
 			<lib dir="${lib}">
 				<include name="log4j-1.2.15.jar" />
 				<include name="rome-1.0RC1.jar" />
 				<include name="commons-lang-2.3.jar" />
 				<include name="jdom.jar" />
 			</lib>
-			<metainf dir="conf_rssfeed">
+			<metainf dir="conf/rssfeed">
 				<include name="context.xml" />
 			</metainf>
 			<classes dir="${build.rssfeed}" />
-			<webinf dir="conf_rssfeed/">
+			<webinf dir="conf/rssfeed/">
 				<include name="searchclientprop.xml" />
 			</webinf>
 		</war>
@@ -905,12 +910,12 @@
 	</target>
 
 	<target name="warIndexerAccess" depends="compileIndexerAccess">
-		<war destfile="${dist}/indexeraccess.war" webxml="conf_indexeraccess/web.xml">
+		<war destfile="${dist}/indexeraccess.war" webxml="conf/indexeraccess/web.xml">
 			<lib dir="${lib}">
 				<include name="log4j-1.2.15.jar" />
 				<include name="commons-lang-2.3.jar" />
 			</lib>
-			<metainf dir="conf_indexeraccess">
+			<metainf dir="conf/indexeraccess">
 				<include name="context.xml" />
 			</metainf>
 			<classes dir="${build.indexeraccess}" />
@@ -933,14 +938,14 @@
 	</target>
 
 	<target name="warBibExport" depends="compileBibExport">
-		<war destfile="${dist}/bibexport.war" webxml="conf_bibexport/web.xml">
+		<war destfile="${dist}/bibexport.war" webxml="conf/bibexport/web.xml">
 			<lib dir="${lib}">
 				<include name="log4j-1.2.15.jar" />
 				<include name="javabib-bin.jar" />
 				<include name="commons-lang-2.3.jar" />
 				<include name="jdom.jar" />
 			</lib>
-			<metainf dir="conf_bibexport">
+			<metainf dir="conf/bibexport">
 				<include name="context.xml" />
 			</metainf>
 			<classes dir="${build.bibexport}" />
