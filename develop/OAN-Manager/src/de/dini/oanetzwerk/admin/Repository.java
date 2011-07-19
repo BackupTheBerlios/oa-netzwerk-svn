@@ -1,5 +1,10 @@
 package de.dini.oanetzwerk.admin;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 public class Repository {
 
 	

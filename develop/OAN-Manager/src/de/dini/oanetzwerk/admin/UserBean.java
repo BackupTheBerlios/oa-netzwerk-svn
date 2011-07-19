@@ -3,40 +3,32 @@
  */
 package de.dini.oanetzwerk.admin;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
-import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.myfaces.config.impl.digester.elements.Attribute;
-import org.apache.tomcat.util.modeler.Registry;
 
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 
-
-@ManagedBean(name = "user")
-@SessionScoped
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 public class UserBean extends AbstractBean implements Serializable {
 
-	
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(UserBean.class);
 	private static final SimpleDateFormat DATE_GER = new SimpleDateFormat("dd.MM.yyyy");
-	
-	FacesContext ctx = FacesContext.getCurrentInstance();
-	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(
-			false);
 
+	FacesContext ctx = FacesContext.getCurrentInstance();
+	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(false);
 
 	private Long id = null;
 	private String username;
@@ -44,106 +36,23 @@ public class UserBean extends AbstractBean implements Serializable {
 	private String password2;
 	private String firstName;
 	private String lastName;
-	private String email;
+	private String fullName;
 	private boolean rightRepositoryManagement;
 	private boolean rightServiceManagement;
 	private boolean rightUserManagement;
+	private boolean rightValidator;
 	private boolean rightReportManagement;
 	private Date lastLogin;
 
 	public UserBean() {
 		super();
-		// initUserBean();
 	}
 
-	
-	@PostConstruct
-	public void init() {
-		
-		// do nothing
-	
-		System.out.println("bla");
-		
-		if (FacesContext.getCurrentInstance().getExternalContext().getRemoteUser() != null) {
-			System.out.println("remote user: " + FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
-		}
-			
-		if (FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null) {
-			System.out.println(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName()); 
-		}
-		
-		if (FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null) {
-			System.out.println(FacesContext.getCurrentInstance().getExternalContext().isUserInRole("oadmin")); 
-		}
-		
-        MBeanServer mbs = Registry.getRegistry(null, null).getMBeanServer();
-        
-        try {
-            ObjectName oname = new ObjectName(
-                    "Users:type=UserDatabase,database=UserDatabase");
-                        
-            Attribute a = new Attribute();
-            String[] roles = (String[]) mbs.getAttribute(oname, "roles");
-            for (String r : roles) {
-				
-            	System.out.println("roles: " + r);
-			}
-            
-            String[] users = (String[]) mbs.getAttribute(oname, "users");
-            for (String u : users) {
-				
-            	System.out.println("users: " + u);
-			}
-            System.out.println("finish");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-	}
-	
-	public String getUsers() {
-		System.out.println("bla");
-		
-		if (FacesContext.getCurrentInstance().getExternalContext().getRemoteUser() != null) {
-			System.out.println("remote user: " + FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
-		}
-			
-		if (FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null) {
-			System.out.println(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName()); 
-		}
-		
-		if (FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null) {
-			System.out.println(FacesContext.getCurrentInstance().getExternalContext().isUserInRole("oadmin")); 
-		}
-		
-		createUser();
-		
-		return "test";
-	}
-	
-	public String logout() {
-		System.out.println("logging out...");
-		if (FacesContext.getCurrentInstance().getExternalContext().getRemoteUser() != null) {
-			System.out.println("remote user: " + FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
-		}
-			
-		if (FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal() != null) {
-			System.out.println(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName()); 
-		}
-		
-		((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-		
-		try {
-			FacesContext.getCurrentInstance().getExternalContext().redirect("overview.xhtml");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return "logged_out";
-	}
-	
-	public String getUser() {
-		return FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-	}
-	
+
+//	public String getUser() {
+//		return FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+//	}
+
 	public Long getId() {
 		return id;
 	}
@@ -192,19 +101,21 @@ public class UserBean extends AbstractBean implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public String getEmail() {
-		return email;
-	}
+	public String getFullName() {
+    	return fullName;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+	public void setFullName(String fullName) {
+    	this.fullName = fullName;
+    }
 
 	public boolean isRightRepositoryManagement() {
+		System.out.println("checking2" + rightRepositoryManagement);
 		return rightRepositoryManagement;
 	}
 
 	public void setRightRepositoryManagement(boolean rightRepositoryManagement) {
+		System.out.println("checking" + rightRepositoryManagement);
 		this.rightRepositoryManagement = rightRepositoryManagement;
 	}
 
@@ -224,6 +135,14 @@ public class UserBean extends AbstractBean implements Serializable {
 		this.rightUserManagement = rightUserManagement;
 	}
 
+	public boolean isRightValidator() {
+		return rightValidator;
+	}
+
+	public void setRightValidator(boolean rightValidator) {
+		this.rightValidator = rightValidator;
+	}
+
 	public boolean isRightReportManagement() {
 		return rightReportManagement;
 	}
@@ -240,64 +159,71 @@ public class UserBean extends AbstractBean implements Serializable {
 		this.lastLogin = lastLogin;
 	}
 
-	public String getName() {
-		return firstName + " " + lastName;
-	}
-	
-	
+
 	public String getRights() {
-		
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(rightRepositoryManagement ? "Repositoryverwaltung, " : "");
-		buffer.append(rightServiceManagement? "Diensteverwaltung, " : "");
+		buffer.append(rightServiceManagement ? "Diensteverwaltung, " : "");
+		buffer.append(rightValidator? "Validatorzugriff, " : "");
 		buffer.append(rightUserManagement ? "Benutzerverwaltung, " : "");
 		buffer.append(rightReportManagement ? "Reportzugriff, " : "");
 		String rights = buffer.toString();
+
+		return rights.endsWith(", ") ? rights.substring(0, rights.length() - 2) : rights;
+	}
+
+	public boolean validate() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		boolean valid = true;
+
+		if (username == null || username.length() == 0) {
+			context.addMessage("1",
+			                LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "users_add_error_missingusername", null));
+			valid = false;
+		} else if (username.length() < 3) {
+			context.addMessage("1",
+			                LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "users_add_error_usernametooshort", null));
+			valid = false;
+		}
+
+		if (firstName == null || firstName.length() == 0) {
+			context.addMessage("1",
+			                LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "users_add_error_missingfirstname", null));
+			valid = false;
+		}
+
+		if (lastName == null || lastName.length() == 0) {
+			context.addMessage("1",
+			                LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "users_add_error_missinglastname", null));
+			valid = false;
+		}
 		
-		return rights.endsWith(", ") ? rights.substring(0, rights.length()-2) : rights;
-	}
-	
-	
-	public boolean registerUser()
-	{
-		return true;
-	}
-	
-	// public String message() {
-	// return ctx.getMessages("repositories");
-	// }
+		setFullName(firstName + " " + lastName);
 
-	public void createUser() {
-        MBeanServer mbs = Registry.getRegistry(null, null).getMBeanServer();
-        
-        try {
-            ObjectName oname = new ObjectName(
-                    "Users:type=UserDatabase,database=UserDatabase");
-            
-            mbs.invoke(oname, "createUser", new Object[] { "sdavid", "12345",
-                    "Sammy David" }, new String[] { "java.lang.String",
-                    "java.lang.String", "java.lang.String" });
- 
-            mbs.invoke(oname, "save", new Object[0], new String[0]);
- 
-            
-            Attribute a = new Attribute();
-            String[] roles = (String[]) mbs.getAttribute(oname, "roles");
-            for (String r : roles) {
-				
-            	System.out.println("roles: " + r);
-			}
-            
-            String[] users = (String[]) mbs.getAttribute(oname, "users");
-            for (String u : users) {
-				
-            	System.out.println("users: " + u);
-			}
-            System.out.println("finish");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		if (password == null || password.length() == 0) {
+			context.addMessage("1",
+			                LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "users_add_error_missingpassword", null));
+			valid = false;
+		} else if (password.length() < 6) {
+			context.addMessage("1",
+			                LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "users_add_error_passwordtooshort", null));
+			valid = false;
+		}
 
+		if (password2 == null || password2.length() == 0) {
+			context.addMessage("1",
+			                LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "users_add_error_missingpassword2", null));
+			valid = false;
+		}
+
+		if (password != null && password2 != null && !password.equals(password2)) {
+			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO,
+			                "users_add_error_passwordsnotequal", null));
+			valid = false;
+		}
+
+		return valid;
 	}
 
 }

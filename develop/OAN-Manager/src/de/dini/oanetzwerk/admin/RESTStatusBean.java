@@ -26,6 +26,11 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.utils.PropertyManager;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 @ManagedBean(name="rest")
 @RequestScoped
 public class RESTStatusBean {

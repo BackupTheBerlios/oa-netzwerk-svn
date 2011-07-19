@@ -17,7 +17,11 @@ import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
 import de.dini.oanetzwerk.admin.utils.RMIRegistryHelper;
 import de.dini.oanetzwerk.servicemodule.IService;
 
-
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 public class MarkerJob  extends AbstractServiceJob {
 
 		private static Logger logger = Logger.getLogger(MarkerJob.class);

@@ -17,7 +17,10 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 
-
+/**
+ * @author Johannes Haubold
+ * 
+ */
 @ManagedBean(name="repoValidator")
 @RequestScoped 
 public class RepositoryValidatorBean extends AbstractBean implements Serializable {

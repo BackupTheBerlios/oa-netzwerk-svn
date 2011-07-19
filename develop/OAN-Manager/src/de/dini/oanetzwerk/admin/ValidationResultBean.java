@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 
+
 public class ValidationResultBean extends AbstractBean implements Serializable {
 
 	private String timestamp;

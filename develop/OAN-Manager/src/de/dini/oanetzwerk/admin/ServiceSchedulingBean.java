@@ -30,6 +30,11 @@ import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 @ManagedBean(name = "scheduling")
 @RequestScoped
 public class ServiceSchedulingBean extends AbstractBean implements Serializable {

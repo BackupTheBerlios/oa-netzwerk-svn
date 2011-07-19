@@ -13,6 +13,11 @@ import de.dini.oanetzwerk.admin.RestConnector;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 public class UpdateDDCCountJob implements Job {
 
 	private static Logger logger = Logger.getLogger(UpdateDDCCountJob.class);

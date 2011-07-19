@@ -29,7 +29,8 @@
       <div style="background-color: #f5f9f4;">
       <h2><h:outputLabel value="#{msg.repo_rem2}" /></h2>
 
-
+      <h:messages style="color:#33B300" /><br />
+            
       <table width="100%">
 
          <f:view>
@@ -90,7 +91,7 @@
                   <p />
                   <t:inputHidden value="#{repo.repository.id}" /> <t:commandButton type="submit" action="#{repo.deactivate}"
                      value="Deaktivieren" width="200"></t:commandButton> <t:commandButton type="submit"
-                     action="#{repo.delete}" value="Endgültig Löschen" size="200"></t:commandButton></td>
+                     action="#{repo.delete}" value="Endgültig löschen!" size="200" disabled="true" ></t:commandButton></td>
                </tr>
             </h:form>
          </f:view>

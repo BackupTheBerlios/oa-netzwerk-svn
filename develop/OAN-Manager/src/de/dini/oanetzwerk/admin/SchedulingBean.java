@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 public class SchedulingBean implements Comparable<SchedulingBean> {
 
 	private Integer jobId = null;

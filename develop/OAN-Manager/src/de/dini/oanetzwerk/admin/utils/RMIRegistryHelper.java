@@ -6,6 +6,11 @@ import java.rmi.registry.Registry;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 public class RMIRegistryHelper {
 
 	private static final Logger logger = Logger.getLogger(RMIRegistryHelper.class);

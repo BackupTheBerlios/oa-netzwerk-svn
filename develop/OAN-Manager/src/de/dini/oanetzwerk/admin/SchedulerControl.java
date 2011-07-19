@@ -57,6 +57,11 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.Utils;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 @ManagedBean(name = "schedulerControl")
 @ApplicationScoped
 public class SchedulerControl implements Serializable {
@@ -73,6 +78,8 @@ public class SchedulerControl implements Serializable {
 
 	public SchedulerControl() {
 		super();
+		System.out.println("SchedulerControl constructor");
+		initAndStartScheduler();
 	}
 
 

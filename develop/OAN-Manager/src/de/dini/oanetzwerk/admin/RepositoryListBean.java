@@ -22,6 +22,11 @@ import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 @ManagedBean(name = "repoList")
 @SessionScoped
 public class RepositoryListBean extends AbstractBean implements Serializable {
@@ -35,7 +40,6 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 	@ManagedProperty(value = "#{restConnector}")
 	private RestConnector restConnector;
 
-//	private RepositoryBean repo;
 	private List<Repository> repoList;
 
 	public RepositoryListBean() {
@@ -72,10 +76,6 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 
 				key = it.next();
 
-				// if (logger.isDebugEnabled ( ))
-				// logger.debug ("key: " + key + " value: " + res.getValue
-				// (key));
-
 				if (key.equalsIgnoreCase("name")) {
 
 					repo.setName(res.getValue(key));
@@ -88,6 +88,14 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 
 					repo.setId(new Long(res.getValue(key)));
 
+				} else if (key.equalsIgnoreCase("active")) {
+
+					repo.setActive(Boolean.parseBoolean(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("last_full_harvest_begin")) {
+
+					repo.setLastFullHarvestBegin(res.getValue(key));
+
 				} else
 					// System.out.println("Key: " + key);
 					continue;
@@ -96,28 +104,6 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 			repoList.add(repo);
 
 		}
-		System.out.println(repoList.size());
-
-		// if (logger.isDebugEnabled())
-		// logger.debug("DBAccessNG Instance will be prepared!");
-		//
-		// try {
-		//
-		// DataSource datasource = (DataSource) ((Context) new
-		// InitialContext().lookup("java:comp/env")).lookup("jdbc/oanetztest");
-		// Connection connection = datasource.getConnection();
-		// Connection conn2 = connection;
-		// System.out.println(conn2);
-		//
-		// } catch (NamingException ex) {
-		//
-		// // this.datasource = new BasicDataSource();
-		// // this.datasource.
-		// logger.error(ex.getLocalizedMessage(), ex);
-		// } catch (SQLException ex) {
-		//
-		// }
-
 	}
 
 	public List<Repository> getRepositories() {

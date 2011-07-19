@@ -27,7 +27,11 @@ import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 
-
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 @ManagedBean(name="jobList")
 @RequestScoped
 public class ServiceJobListBean extends AbstractBean implements Serializable {

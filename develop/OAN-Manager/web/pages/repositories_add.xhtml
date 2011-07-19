@@ -18,28 +18,6 @@
 
   <ui:param name="menu_repository_add" value="#{true}" />
 	
-<!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a-->
-<!--      href="repositories_main.faces">Repositorien verwalten</a></div>-->
-<!---->
-<!--    <div class="subtasks">-->
-<!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a-->
-<!--      href="repositories_add.faces"><b>Repository hinzufügen</b></a></div>-->
-<!--    </div>-->
-<!---->
-<!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a-->
-<!--      href="services_main.faces">Dienste verwalten</a></div>-->
-<!---->
-<!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a-->
-<!--      href="users_main.faces">Benutzer verwalten</a></div>-->
-<!---->
-<!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a-->
-<!--      href="reports.faces">Reports</a></div>-->
-<!---->
-<!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a-->
-<!--      href="livelog.faces">Live Log</a></div>-->
-
-
-
   <ui:define name="content">
 
 
@@ -135,7 +113,7 @@
             <td><h:outputLabel value="#{msg.repositories_add_active}" /> (<a href="#" onclick="javascript:toggle_help('help_active'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:selectBooleanCheckbox id="active" value="#{repo.repository.active}" />
+            <td class="form"><t:selectBooleanCheckbox id="active" value="#{true}" />
             <div class="help_box" id="help_active"><h:outputLabel value="#{msg.repositories_add_active_help}" /></div>
             </td>
           </tr>

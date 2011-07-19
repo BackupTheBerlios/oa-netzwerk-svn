@@ -44,6 +44,10 @@ import org.xml.sax.SAXException;
 
 import de.dini.oanetzwerk.utils.PropertyManager;
 
+/**
+ * @author Johannes Haubold
+ * 
+ */
 @ManagedBean
 @RequestScoped
 public class RepositoryValidator {

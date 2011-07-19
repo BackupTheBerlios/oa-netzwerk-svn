@@ -22,6 +22,10 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
+/**
+ * @author Johannes Haubold
+ * 
+ */
 
 public class OAPSBackend {
 	

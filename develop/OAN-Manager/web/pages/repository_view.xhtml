@@ -23,10 +23,8 @@
       <div style="background-color: #f5f9f4;">
       <h2><h:outputLabel value="#{msg.repo_view1}" /></h2>
 
-
-
-
-      <form action="createItem" method="post">
+      <h:messages style="color:#33B300" /><br />
+    
       <table width="100%">
 
 
@@ -36,6 +34,10 @@
                <tr>
                   <td><h:outputLabel value="#{msg.repo_view_name}*" />&nbsp;
                   (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)
+                  </td>
+               </tr>
+               <tr>
+                  <td class="form"><t:inputHidden id="repo_id" size="80" value="#{repo.repository.id}" />
                   </td>
                </tr>
                <tr>
@@ -72,7 +74,7 @@
                   </td>
                </tr>
                <tr>
-                  <td class="form"><t:inputText id="harvest_batch" value="10" size="20" />
+                  <td class="form"><t:inputText id="harvest_batch" value="#{repo.repository.harvestAmount}" size="20" />
                      <div class="help_box" id="help_size"><h:outputLabel value="#{msg.repo_view_harvbsh}" /></div>
                   </td>
                </tr>
@@ -82,7 +84,7 @@
                   </td>
                </tr>
                <tr>
-                  <td class="form"><t:inputText id="harvest_pause" value="5000" size="20" />
+                  <td class="form"><t:inputText id="harvest_pause" value="#{repo.repository.harvestPause}" size="20" />
                      <div class="help_box" id="help_pause"><h:outputLabel value="#{msg.repo_view_pauseh}" /></div>
                   </td>
                </tr>
@@ -92,7 +94,7 @@
                   </td>
                </tr>
                <tr>
-                  <td class="form"><t:inputText id="listrecords" value="false" size="20" />
+                  <td class="form"><t:inputText id="listrecords" value="#{repo.repository.listRecords}" size="20" />
                      <div class="help_box" id="help_listrec"><h:outputLabel value="#{msg.repo_view_lrh}" /></div>
                   </td>
                </tr>
@@ -102,19 +104,18 @@
                   </td>
                </tr>
                <tr>
-                  <td class="form"><t:selectBooleanCheckbox id="active" value="false" />
+                  <td class="form"><t:selectBooleanCheckbox id="active" value="#{repo.repository.active}" />
                      <div class="help_box" id="help_active"><h:outputLabel value="#{msg.repo_view_activeh}" /></div>
                   </td>
                </tr>               
                <tr>
                   <td align="center"><t:commandButton type="reset" value="Zurücksetzen"></t:commandButton> <t:commandButton
-                     type="submit" value="Speichern"></t:commandButton></td>
+                     type="submit" action="#{repo.updateRepository}" value="Speichern"></t:commandButton></td>
                </tr>
             </h:form>
          </f:view>
 
       </table>
-      </form>
       * Pflichtfelder
       </div>
       </div>

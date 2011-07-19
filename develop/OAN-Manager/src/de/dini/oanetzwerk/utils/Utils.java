@@ -1,5 +1,10 @@
 package de.dini.oanetzwerk.utils;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 public class Utils {
 
 	private final static String WEBAPP_DIR 			= "/webapps";

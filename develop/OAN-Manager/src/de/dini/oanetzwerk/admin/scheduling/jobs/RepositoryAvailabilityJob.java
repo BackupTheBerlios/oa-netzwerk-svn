@@ -9,6 +9,11 @@ import org.quartz.JobExecutionException;
 
 import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 public class RepositoryAvailabilityJob extends AbstractServiceJob {
 
 	private static Logger logger = Logger.getLogger(RepositoryAvailabilityJob.class);

@@ -8,6 +8,11 @@ import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 @ManagedBean(name="scheduler")
 public class SchedulerControllerBean {
 

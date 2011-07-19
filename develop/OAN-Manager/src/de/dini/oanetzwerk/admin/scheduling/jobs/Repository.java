@@ -1,6 +1,10 @@
 package de.dini.oanetzwerk.admin.scheduling.jobs;
 
-
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 class Repository {
 
 	

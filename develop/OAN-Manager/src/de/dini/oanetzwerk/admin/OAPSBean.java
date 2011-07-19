@@ -43,6 +43,10 @@ import OapsAPI_pkg.ReportResult;
 
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 
+/**
+ * @author Johannes Haubold
+ * 
+ */
 
 @ManagedBean(name="OAPSConnector")
 @RequestScoped 

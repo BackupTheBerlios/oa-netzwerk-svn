@@ -14,7 +14,7 @@
 <ui:composition template="templates/template.xhtml">
 
 	<ui:param name="pageTitle"
-		value="Neues Repository hinzufügen - OA-Netzwerk Manager" />
+		value="Neuen Benutzer hinzufügen - OA-Netzwerk Manager" />
 
 	<ui:define name="navigation">
 		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="users_main.xhtml"><h:outputLabel value="#{msg.users_add1}" /></a> » <a
@@ -28,132 +28,85 @@
 
 		<div style="padding: 20px; background-color: #f5f9f4;">
 		<div style="background-color: #f5f9f4;">
+    
 		<h2><h:outputLabel value="#{msg.users_add3}" /></h2>
 
 		<table width="100%">
 
 
 			<f:view>
-				<h:form id="bla" action="#{user.registerUser}">
-
+				<h:form id="addUser">
+                    <tr>
+                      <td colspan="2">
+                        <h:messages style="color:red" />
+                      </td>
+                    </tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.users_add4}" />&nbsp; (<a href="#"
-							onclick="javascript:toggle_help('help_name'); return false;">Help</a>)
+						<td>
+                            <h:outputLabel value="#{msg.users_add4}" />
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><t:inputText id="username" size="80"
-							value="#{user.username}" />
-						<div class="help_box" id="help_name">
-						<h:outputLabel value="#{msg.users_add_enter_name}" /></div>
+							value="#{userList.newUser.username}" />
 						</td>
-
 					</tr>
-
 					<tr>
-						<td><h:outputLabel value="#{msg.users_add5}" /> (<a href="#"
-							onclick="javascript:toggle_help('help_url'); return false;">Help</a>)
+						<td><h:outputLabel value="#{msg.users_add5}" />
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><t:inputText id="firstname" size="80"
-							value="#{user.firstName}" />
-						<div class="help_box" id="help_url"><h:outputLabel value="#{msg.users_add_name_repo}" /></div>
+							value="#{userList.newUser.firstName}" />
 						</td>
 					</tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.users_add6}" /> (<a href="#"
-							onclick="javascript:toggle_help('help_url'); return false;">Help</a>)
+						<td><h:outputLabel value="#{msg.users_add6}" />
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><t:inputText id="lastname" size="80"
-							value="#{user.lastName}" />
-						<div class="help_box" id="help_url"><h:outputLabel value="#{msg.users_add_name_repo}" /></div>
+							value="#{userList.newUser.lastName}" />
 						</td>
 					</tr>
 					<tr>
-						<td>E-Mail (<a href="#"
-							onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)
-						</td>
-					</tr>
-					<tr>
-						<td class="form"><t:inputSecret id="email" size="80"
-							value="#{user.email}" />
-						<div class="help_box" id="help_oaipmh"><h:outputLabel value="#{msg.users_add_oai}" /></div>
-						</td>
-					</tr>
-					<tr>
-						<td><h:outputLabel value="#{msg.users_add9}" /> (<a href="#"
-							onclick="javascript:toggle_help('help_size'); return false;">Help</a>)
+						<td><h:outputLabel value="#{msg.users_add9}" />
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><t:inputSecret type="password" id="password"
-							size="40" value="#{user.password}" />
-						<div class="help_box" id="help_size"><h:outputLabel value="#{msg.users_add_harvbs}" /></div>
+							size="40" value="#{userList.newUser.password}" />
 						</td>
 					</tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.users_add8}" /> (<a href="#"
-							onclick="javascript:toggle_help('help_pause'); return false;">Help</a>)
+						<td><h:outputLabel value="#{msg.users_add8}" />
 						</td>
 					</tr>
 					<tr>
-						<td class="form"><t:inputText id="password2" size="40"
-							value="#{user.password2}" />
-						<div class="help_box" id="help_pause"><h:outputLabel value="#{msg.users_add_harvp}" /></div>
+						<td class="form"><t:inputSecret type="password" id="password2" size="40"
+							value="#{userList.newUser.password2}" />
 						</td>
 					</tr>
 					<tr>
 						<td><h:outputLabel value="#{msg.users_add7}" /> (<a href="#"
-							onclick="javascript:toggle_help('help_listrec'); return false;">Help</a>)
+							onclick="javascript:toggle_help('help_userrights'); return false;">Help</a>)
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><br />
-						<h:outputLabel value="#{msg.users_add_admin_repo}" /><t:selectManyCheckbox
-							id="repositoryManagement" label="Repositoryverwaltung"
-							layoutWidth="4" disabled="false"
-							title="Wählen sie hier die Rechte für den neuen Benutzer aus."
-							layout="pageDirection">
-							<f:selectItem id="rm1" itemLabel="Lesen" itemValue="11" />
-							<f:selectItem id="rm2" itemLabel="Ändern" itemValue="12" />
-							<f:selectItem id="rm3" itemLabel="Hinzufügen" itemValue="13" />
-							<f:selectItem id="rm4" itemLabel="Löschen" itemValue="14" />
-						</t:selectManyCheckbox><br />
-						<br />
-						<h:outputLabel value="#{msg.users_add_admin_service}" /><t:selectManyCheckbox id="serviceManagement"
-							label="Diensteverwaltung" layoutWidth="4" disabled="false"
-							title="Wählen sie hier die Rechte für den neuen Benutzer aus."
-							layout="pageDirection">
-							<f:selectItem id="sm1" itemLabel="Lesen" itemValue="11" />
-							<f:selectItem id="sm2" itemLabel="Steuern" itemValue="12" />
-						</t:selectManyCheckbox><br />
-						<br />
-						<h:outputLabel value="#{msg.users_add_admin_user}" /><t:selectManyCheckbox id="userManagement"
-							label="Benutzerverwaltung" layoutWidth="4" disabled="false"
-							title="Wählen sie hier die Rechte für den neuen Benutzer aus."
-							layout="pageDirection">
-							<f:selectItem id="um1" itemLabel="Lesen" itemValue="11" />
-							<f:selectItem id="um2" itemLabel="Ändern" itemValue="12" />
-							<f:selectItem id="um3" itemLabel="Hinzufügen" itemValue="13" />
-							<f:selectItem id="um4" itemLabel="Löschen" itemValue="14" />
-						</t:selectManyCheckbox><br />
-						<br />
-						<h:outputLabel value="#{msg.users_add_admin_report}" /><t:selectManyCheckbox id="reportManagement"
-							label="Reportverwaltung" layoutWidth="4" disabled="false"
-							title="Wählen sie hier die Rechte für den neuen Benutzer aus."
-							layout="pageDirection">
-							<f:selectItem id="rem1" itemLabel="Lesen" itemValue="11" />
-							<f:selectItem id="rem2" itemLabel="Löschen" itemValue="14" />
-						</t:selectManyCheckbox><br />
+
+						    <t:selectBooleanCheckbox id="rm1" value="#{userList.newUser.rightRepositoryManagement}" /> <h:outputLabel value="#{msg.users_add_admin_repo}" /><br />   
+							<t:selectBooleanCheckbox id="rm2" value="#{userList.newUser.rightServiceManagement}" /> <h:outputLabel value="#{msg.users_add_admin_service}" /><br />   
+							<t:selectBooleanCheckbox id="rm3" value="#{userList.newUser.rightUserManagement}" /> <h:outputLabel value="#{msg.users_add_admin_user}" /><br />   
+							<t:selectBooleanCheckbox id="rm4" value="#{userList.newUser.rightValidator}" /> <h:outputLabel value="#{msg.users_add_admin_validator}" /><br />   
+                            <t:selectBooleanCheckbox id="rm5" value="#{userList.newUser.rightReportManagement}" /> <h:outputLabel value="#{msg.users_add_admin_report}" /><br />   
+						<br />    
 						</td>
 					</tr>
 					<tr>
 						<td align="center"><t:commandButton type="reset"
 							value="Zurücksetzen"></t:commandButton> <h:commandButton
-							type="submit" action="#{repo.storeRepository}" value="Hinzufügen"></h:commandButton></td>
+							type="submit" action="#{userList.addUser}" value="Hinzufügen"></h:commandButton></td>
 					</tr>
 				</h:form>
 			</f:view>

@@ -17,7 +17,8 @@ import de.dini.oanetzwerk.admin.utils.RMIRegistryHelper;
 import de.dini.oanetzwerk.servicemodule.IHarvesterMonitor;
 
 /**
- * @author Michael K&uuml;hn
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
  * 
  */
 

@@ -32,6 +32,11 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.servicemodule.IService;
 import de.dini.oanetzwerk.utils.PropertyManager;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 @ManagedBean(name = "services")
 @RequestScoped
 public class ServiceManagementBean {

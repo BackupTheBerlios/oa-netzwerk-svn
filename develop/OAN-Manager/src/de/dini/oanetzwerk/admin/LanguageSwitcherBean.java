@@ -15,6 +15,12 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
+
 @ManagedBean(name = "language")
 @SessionScoped
 public class LanguageSwitcherBean implements Serializable {

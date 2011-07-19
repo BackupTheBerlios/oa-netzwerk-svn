@@ -18,6 +18,11 @@ import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 public abstract class AbstractServiceJob implements Job {
 
 	private static final Logger LOG = Logger.getLogger(AbstractServiceJob.class);
@@ -33,19 +38,6 @@ public abstract class AbstractServiceJob implements Job {
 		super();
 	}
 
-	// @Override
-	// public void execute(JobExecutionContext arg0) throws
-	// JobExecutionException {
-	// // to be overridden by subclasses
-	//
-	// }
-
-	public enum ProcessingType {
-
-		SINGLE, // Only a single repository should be processed by this job
-				// (repositoryId)
-		MULTI; // all repositories should be processed by this job
-	}
 
 	public List<Repository> getRepositories() {
 

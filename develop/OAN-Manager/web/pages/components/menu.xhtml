@@ -127,24 +127,46 @@
     	<div class="subtasks">
 		<t:div rendered="#{menu_user_add}">	    
 		    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-      			href="user_add.xhtml"><b><h:outputLabel value="#{msg.menu13}" /></b></a></div>
+      			href="users_add.xhtml"><b><h:outputLabel value="#{msg.menu13}" /></b></a></div>
 		</t:div>
 		
 		<t:div rendered="#{not menu_user_add}">	 
 			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-      			href="user_add.xhtml"><h:outputLabel value="#{msg.menu14}" /></a></div>
+      			href="users_add.xhtml"><h:outputLabel value="#{msg.menu14}" /></a></div>
 		</t:div>
 		</div>
 	</t:div>
-	<t:div>
-		<div class="task">
-			<img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/settigs.gif" />
-			<a href="OAPS.xhtml"><h:outputLabel value="OAPS-Anbindung" /></a>
-		</div>
-	</t:div>		
-	
-	
 
+	
+    <!-- ********************* Validator ******************** -->
+
+    <t:div rendered="#{menu_validator}">
+      <div class="task">
+        <img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" />
+        <a href="validation_overview.xhtml"><b><h:outputLabel value="Validator" /></b></a>
+      </div>
+    </t:div>        
+    <t:div rendered="#{not menu_validator}">
+        <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+            href="validation_overview.xhtml"><h:outputLabel value="Validator" /></a></div>
+    </t:div>  
+  
+  <!-- ********************* OAPS ******************** -->
+
+<!--    <t:div rendered="#{menu_oaps}">-->
+<!--      <div class="task">-->
+<!--        <img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" />-->
+<!--        <a href="OAPS.xhtml"><b><h:outputLabel value="OAPS-Anbindung" /></b></a>-->
+<!--      </div>-->
+<!--    </t:div>      	-->
+<!--    <t:div rendered="#{not menu_oaps}">-->
+<!--        <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a-->
+<!--            href="OAPS.xhtml"><h:outputLabel value="OAPS-Anbindung" /></a></div>-->
+<!--    </t:div>  -->
+
+
+  <!-- ********************* Others ******************** -->
+  
 <!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a-->
 <!--      href="reports.xhtml">Reports</a></div>-->
 <!---->

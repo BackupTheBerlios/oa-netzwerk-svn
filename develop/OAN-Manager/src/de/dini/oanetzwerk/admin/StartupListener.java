@@ -15,6 +15,11 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.servicemodule.IHarvesterMonitor;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 public class StartupListener implements ServletContextListener, IHarvesterMonitor {
 
 	private static final Logger logger = Logger.getLogger(StartupListener.class);

@@ -26,7 +26,8 @@ import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 
 /**
- * @author Michael K&uuml;hn
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
  * 
  */
 
@@ -43,18 +44,12 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(
 			false);
 	
-//	@ManagedProperty(value="#{restConnector}")
-//	private RestConnector restConnector;	
-	
 	private Repository repository;
 	private String repoId;
 
 	public RepositoryBean() {
 		super();
-//		if (restConnector != null) 
-//		{
-//			connector = restConnector;
-//		}
+
 		System.out.println("RepositoryBean constructor");
 		init();
 		
@@ -68,13 +63,9 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 		HttpServletRequest request = (HttpServletRequest) ctx
 				.getExternalContext().getRequest();
 		
-
 		String repoId = request.getParameter("rid");
-//		String repoId = FacesContext.getCurrentInstance().
-//		getExternalContext().getRequestParameterMap().get("identifier");
 
-		System.out.println("ID1: " + repoId);
-		System.out.println("ID2: " + this.repoId);
+
 		if (repoId == null) {
 			return null;
 		}
@@ -97,7 +88,6 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 
 		for (String key : details.keySet()) {
 
-			System.out.println("key: " + key);
 			if (key == null) {
 				continue;
 			} else if (key.equals("name")) {
@@ -180,9 +170,7 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 	
 	public String storeRepository() {
 
-		System.out.println("Name: " + repository.getName());
-		System.out.println("Url: " + repository.getUrl());
-		System.out.println("" + repository.getHarvestAmount());
+		logger.info("Creating repository with name " + repository.getName());
 
 		// REST call
 		RestMessage rms;
@@ -228,10 +216,8 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 		
 		logger.info("PUT sent to /Repository");
 
-		
-
-		ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-				"info.success_stored", null));
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ctx.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "repo_add_success", null));
 
 		return "success";
 	}
@@ -266,38 +252,113 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 //		return "";
 //	}
 
-//	public String deactivate() {
-//
-//		System.out.println("deactivate!");
-//
-//		System.out.println("Name: " + repository.getName());
-//		System.out.println("Url: " + repository.getUrl());
-//		System.out.println("" + repository.getHarvestAmount());
-//		try {
-//
-//			SingleStatementConnection stmtconn = (SingleStatementConnection) new DBAccessNG()
-//					.getSingleStatementConnection();
-//			PreparedStatement statement = UpdateInDB.Repository(
-//					stmtconn.connection, repository.getId(), false);
-//
-//			new DBHelper().save(stmtconn, statement);
-//
-//			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-//					"info.success_deactivated", null));
-//
-//		} catch (WrongStatementException ex) {
-//			logger.error(ex.getLocalizedMessage(), ex);
-//			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//					"Error", null));
-//		} catch (SQLException ex) {
-//			logger.error(ex.getLocalizedMessage(), ex);
-//			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//					"Error", null));
-//		}
-//
-//		return "";
-//	}
+	public String deactivate() {
 
+
+		if (repository.getId() == null) {
+			logger.warn("Received request trying to update a repository without specifying a valid repository id! Skipping...");
+			return "repositories_main";
+		}
+		
+		logger.info("Updating repository with id " + repository.getId() + " and name " + repository.getName());
+
+		// REST call
+		RestMessage rms;
+		RestEntrySet res;
+		RestMessage result = null;
+
+		rms = new RestMessage();
+		rms.setKeyword(RestKeyword.Repository);
+		rms.setStatus(RestStatusEnum.OK);
+		res = new RestEntrySet();
+		res.addEntry("active", Boolean.toString(repository.isActive()));
+		rms.addEntrySet(res);
+		
+
+		try {
+			result = connector.prepareRestTransmission("Repository/" + repository.getId() + "/deactivate").sendPostRestMessage(rms);
+			
+			if (rms.getStatus() != RestStatusEnum.OK) {
+
+				logger.error("/Repository response failed: " + rms.getStatus() + "("
+						+ rms.getStatusDescription() + ")");
+				return "failed";
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return "failed";
+		}
+		
+
+		logger.info("POST sent to /Repository/" + repository.getId() + "/deactivate");
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ctx.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "repo_update_success", null));
+		
+
+		return "success";
+	}
+	
+	
+	public String updateRepository() {
+
+		if (repository.getId() == null) {
+			logger.warn("Received request trying to update a repository without specifying a valid repository id! Skipping...");
+			return "repositories_main";
+		}
+		
+		logger.info("Updating repository with id " + repository.getId() + " and name " + repository.getName());
+
+
+		// REST call
+		RestMessage rms;
+		RestEntrySet res;
+		RestMessage result = null;
+
+		rms = new RestMessage();
+
+		rms.setKeyword(RestKeyword.Repository);
+		rms.setStatus(RestStatusEnum.OK);
+
+		res = new RestEntrySet();
+
+		res.addEntry("name", repository.getName());
+		res.addEntry("url", repository.getUrl());
+		res.addEntry("owner", repository.getOwner());
+		res.addEntry("ownerEmail", repository.getOwnerEmail());
+		res.addEntry("oaiUrl", repository.getOaiUrl());
+		res.addEntry("harvestAmount", repository.getHarvestAmount());
+		res.addEntry("lastFullHarvestBegin", repository.getLastFullHarvestBegin());
+		res.addEntry("harvestPause", repository.getHarvestPause());
+		res.addEntry("testData", repository.getTestData());
+		res.addEntry("active", Boolean.toString(repository.isActive()));
+		res.addEntry("listRecords", Boolean.toString(repository.isListRecords()));
+			
+		
+		rms.addEntrySet(res);
+		
+		
+		try {
+			result = connector.prepareRestTransmission("Repository/" + repository.getId()).sendPostRestMessage(rms);
+			
+			if (rms.getStatus() != RestStatusEnum.OK) {
+
+				logger.error("/Repository response failed: " + rms.getStatus() + "("
+						+ rms.getStatusDescription() + ")");
+				return "failed";
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return "failed";
+		}
+		
+
+		logger.info("POST sent to /Repository/" + repository.getId());
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ctx.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "repo_update_success", null));
+		
+
+		return "success";
+	}
 	
 	public Repository getRepository() {
 		return repository;

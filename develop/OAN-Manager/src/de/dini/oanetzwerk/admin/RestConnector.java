@@ -13,6 +13,11 @@ import org.apache.log4j.Logger;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.PropertyManager;
 
+/**
+ * @author Sammy David
+ * sammy.david@cms.hu-berlin.de
+ * 
+ */
 @ManagedBean(name="restConnector")
 @ApplicationScoped
 public class RestConnector implements Serializable {
