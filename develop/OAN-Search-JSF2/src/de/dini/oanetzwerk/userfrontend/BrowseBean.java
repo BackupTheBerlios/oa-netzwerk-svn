@@ -42,7 +42,7 @@ public class BrowseBean {
 	private String selectedDDCCatValue = null;
 	private String selectedDDCCatName = "Alles";
 	
-	private Boolean showDDCNums;
+	private Boolean showDDCNums = true;
     
 
 

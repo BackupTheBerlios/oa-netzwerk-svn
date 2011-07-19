@@ -28,11 +28,11 @@
 						<!-- Trennspalte -->
 					</td>
 					<td class="colStyle750">
-						<t:div rendered="#{searchBean.hitlist.sizeListClipboardOID > 0}">
 							<div class="closelink">
 								<h:commandLink value="#{msg.linkname_close_clipboard}" action="close_clipboard"/>
 							</div>			
-			        <ui:include src="components/clipboard.xhtml" />
+						<t:div rendered="#{searchBean.hitlist.sizeListClipboardOID > 0}">
+			        		<ui:include src="components/clipboard.xhtml" />
 						</t:div>
 						<t:div rendered="#{!(searchBean.hitlist.sizeListClipboardOID > 0)}">
 							<br />

@@ -24,12 +24,12 @@
 				<h:inputText maxlength="2048" size="70" title="#{msg.title_browse_ddc}" value="#{searchBean.strOneSlot}" /><br />
 				<table>
 				<tr>
+				<td width="175px"></td>
 				<td><h:commandButton value="#{msg.start_search}" action="#{searchBean.actionSearchWithDDCButton}" /></td>
 				<td><h:commandButton value="#{msg.start_metasearch}" action="#{searchBean.actionMetaSearchWithDDCButton}" /></td>
-				<td><h:commandButton styleclass="rankingbutton" value="#{msg.list_ranking}" action="#{searchBean.actionGetRanking}" /></td>
 				</tr>
-				</table>			
-				<span class="span_selected_ddc"><h:outputText value="#{msg.category}"/>: <t:outputText value="#{searchBean.browse.selectedDDCCatName}"/></span>
+				</table><br/>			
+				<span class="span_selected_ddc"><h:outputText value="#{msg.category}"/>:&nbsp;<t:outputText value=" #{searchBean.browse.selectedDDCCatName}"/></span>
 			</h:form>
 		</div>
 	</t:panelGroup>

@@ -78,6 +78,11 @@
 			<to-view-id>/search.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>details_clicked</from-outcome>
+			<to-view-id>/metadata.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>	
 	</navigation-rule>
 	
 <!--    	 NAVIGATION RULE /hitdetails -->

@@ -13,7 +13,7 @@
 
 <t:div rendered="#{searchBean.hitlist.booleanListHitOIDNotEmpty}" >
 <div id="div_hitlist_scroller">
-		<h3><h:outputText value="#{msg.hitlist_scroller_title}"/>: <h:outputText value="#{searchBean.hitlist.sizeListHitOID}"/></h3>
+		<h3><h:outputText value="#{msg.hitlist_scroller_title}"/>:&nbsp;<h:outputText value=" #{searchBean.hitlist.sizeListHitOID}"/></h3>
 		<t:dataScroller id="scroller_hitlist"
 	          for="thehitlist"
 	          fastStep="10"

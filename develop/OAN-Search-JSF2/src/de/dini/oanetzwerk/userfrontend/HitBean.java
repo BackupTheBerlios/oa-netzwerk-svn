@@ -432,8 +432,11 @@ public class HitBean implements Serializable {
 	/////////////////////// action method //////////////////////////////
 
 	public String actionDetailsLink() {
+		System.out.println("blabla");
 		this.parentHitlistBean.setSelectedDetailsOID(this.getCompleteMetadata().getOid());
+		System.out.println("blabla2");
 		for(DuplicateProbability dupPro : this.getCompleteMetadata().getDuplicateProbabilityList()) {
+			System.out.println("blabla3");
 			this.parentHitlistBean.addHitbeanToMap(dupPro.getReferToOID());			
 		}
 		return "details_clicked";

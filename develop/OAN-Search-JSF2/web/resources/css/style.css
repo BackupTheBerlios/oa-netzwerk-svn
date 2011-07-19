@@ -284,8 +284,8 @@ dt {
   border:1px solid black;
   padding: 10px;
   background-color: #f0f0ff;
-  margin-top: 30px;
-  margin-left: 10px;
+  margin-top: -15px;
+  margin-left: 20px;
 }
 #div_clipboard_overview {
   border-top:1px solid grey;
@@ -450,11 +450,8 @@ dt {
 	margin-top: 15px;
 }
 .span_ddc_num {
-  font-size: 12px;
-  color: black;
-  background-color:#AFAFAF;
-  padding:1px 10px;
-
+  font-size: 10px;
+  color: #ADADAD; 
 }
 
 .span_ddc_name {

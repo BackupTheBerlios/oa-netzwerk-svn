@@ -13,7 +13,7 @@
 			        
 	<div id="div_clipboard_overview">
 		<t:dataList id="clipboard_overview" value="#{searchBean.hitlist.listClipboardOID}" var="clipboardOID" layout="unorderedList" first="0" dir="LTR">
-			<span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[hitOID].actionDetailsLink}" title="#{msg.show_meta_data_of_object}"><h:graphicImage library="img" name="16x16_lupe.png"/></h:commandLink></span>
+			<span class="command_link_lupe"><h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionDetailsLink}" title="#{msg.show_meta_data_of_object}"><h:graphicImage library="img" name="16x16_lupe.png"/></h:commandLink></span>
 			<span class="command_link_minus">
 				<h:commandLink action="#{searchBean.hitlist.mapHitBean[clipboardOID].actionVerwerfenLink}" title="#{msg.delete_from_clipboard}"><h:graphicImage library="img" name="16x16_minus.png"/></h:commandLink>
 			</span>		
