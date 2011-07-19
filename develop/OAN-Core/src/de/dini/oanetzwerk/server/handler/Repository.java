@@ -28,7 +28,7 @@ import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
  * @author Michael K&uuml;hn
- * 
+ * @author Sammy David
  */
 
 public class Repository extends AbstractKeyWordHandler implements KeyWord2DatabaseInterface {
@@ -134,12 +134,12 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 					res.addEntry("test_data", new Boolean(this.result.getResultSet().getBoolean("test_data")).toString());
 					res.addEntry("harvest_amount", Integer.toString(this.result.getResultSet().getInt("harvest_amount")));
 					res.addEntry("harvest_pause", Integer.toString(this.result.getResultSet().getInt("harvest_pause")));
+					res.addEntry("active", new Boolean(this.result.getResultSet().getBoolean("active")).toString());
 
 					Date lastFullHarvestBegin = this.result.getResultSet().getDate("last_full_harvest_begin");
 					res.addEntry("last_full_harvest_begin", lastFullHarvestBegin == null ? null : lastFullHarvestBegin.toString());
 					Date lastMarkerEraserBegin = this.result.getResultSet().getDate("last_markereraser_begin");
 					res.addEntry("last_markereraser_begin", lastMarkerEraserBegin == null ? null : lastMarkerEraserBegin.toString());
-
 					this.rms.setStatus(RestStatusEnum.OK);
 					this.rms.addEntrySet(res);
 
@@ -176,7 +176,12 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 					res.addEntry("test_data", new Boolean(this.result.getResultSet().getBoolean("test_data")).toString());
 					res.addEntry("harvest_amount", Integer.toString(this.result.getResultSet().getInt("harvest_amount")));
 					res.addEntry("harvest_pause", Integer.toString(this.result.getResultSet().getInt("harvest_pause")));
-
+					res.addEntry("active", new Boolean(this.result.getResultSet().getBoolean("active")).toString());
+					Date lastFullHarvestBegin = this.result.getResultSet().getDate("last_full_harvest_begin");
+					res.addEntry("last_full_harvest_begin", lastFullHarvestBegin == null ? null : lastFullHarvestBegin.toString());
+					Date lastMarkerEraserBegin = this.result.getResultSet().getDate("last_markereraser_begin");
+					res.addEntry("last_markereraser_begin", lastMarkerEraserBegin == null ? null : lastMarkerEraserBegin.toString());
+					
 					this.rms.addEntrySet(res);
 				}
 
@@ -231,7 +236,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 	protected String postKeyWord(String[] path, String data) throws NotEnoughParametersException {
 
 		if (path.length < 1)
-			throw new NotEnoughParametersException("This method needs at least 2 parameters: the keyword and the internal object ID");
+			throw new NotEnoughParametersException("This method needs at least 2 parameters: the keyword and the repository id!");
 
 		BigDecimal repositoryID;
 
@@ -249,16 +254,178 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			return RestXmlCodec.encodeRestMessage(this.rms);
 		}
+		
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
+		SingleStatementConnection stmtconn = null;
 
-		// check for /harvestedtoday/ and /markedtoday/ request
+		
+		
+		// case: update repository info
+		if (path.length == 1) {
+	
+			RestMessage msg = RestXmlCodec.decodeRestMessage(data);
+	
+			String name 		= null;
+			String owner 		= "";
+			String ownerEmail  	= "";
+			String url 			= null;
+			String oaiUrl 		= null;
+			String harvestAmount = "10";
+			String harvestPause = "5000";
+			boolean testData 	= true;
+			boolean listRecords = true;
+			boolean active 		= false;
+	
+			List<RestEntrySet> entries = msg.getListEntrySets();
+			Iterator<RestEntrySet> iterator = entries.iterator();
+			RestEntrySet res;
+	
+			String key;
+			while (iterator.hasNext()) {
+				res = iterator.next();
+	
+				Iterator<String> it = res.getKeyIterator();
+				while (it.hasNext()) {
+					key = it.next();
+	
+					if (key.equalsIgnoreCase("name")) {
+						name = res.getValue(key);
+					} else if (key.equalsIgnoreCase("repoId")) {
+						url = res.getValue(key);
+					} else if (key.equalsIgnoreCase("url")) {
+						url = res.getValue(key);
+					} else if (key.equalsIgnoreCase("oaiUrl")) {
+						oaiUrl = res.getValue(key);
+					} else if (key.equalsIgnoreCase("owner")) {
+						owner = res.getValue(key);
+					} else if (key.equalsIgnoreCase("ownerEmail")) {
+						ownerEmail = res.getValue(key);
+					} else if (key.equalsIgnoreCase("harvestAmount")) {
+						harvestAmount = res.getValue(key);
+					} else if (key.equalsIgnoreCase("harvestPause")) {
+						harvestPause = res.getValue(key);
+					} else if (key.equalsIgnoreCase("testData")) {
+						testData = Boolean.parseBoolean(res.getValue(key));
+					} else if (key.equalsIgnoreCase("active")) {
+						active = Boolean.parseBoolean(res.getValue(key));
+					} else if (key.equalsIgnoreCase("listRecords")) {
+						listRecords = Boolean.parseBoolean(res.getValue(key));
+					}
+	
+				}
+			}
+	
+			try {
+				if (name == null || name.length() == 0 || url == null || url.length() == 0 || oaiUrl == null || oaiUrl.length() == 0) {
+					logger.error("An error occured while processing Put Repository: Name, Url and OAI-Url must be provided!");
+					this.rms.setStatus(RestStatusEnum.WRONG_PARAMETER);
+					this.rms.setStatusDescription("Name, Url and OAI-Url must be provided!");
+					return RestXmlCodec.encodeRestMessage(this.rms);
+				}
+	
+				stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection();
+				stmtconn.loadStatement(DBAccessNG.updateInDB().Repository(stmtconn.connection, repositoryID, name, url, oaiUrl, owner, ownerEmail,
+				                Integer.parseInt(harvestAmount), Integer.parseInt(harvestPause), listRecords, testData, active));
+	
+				this.result = stmtconn.execute();
+	
+				if (this.result.getWarning() != null)
+					for (Throwable warning : result.getWarning())
+						logger.warn(warning.getLocalizedMessage(), warning);
+	
+			} catch (SQLException ex) {
+	
+				logger.error("An error occured while processing Post Repository: " + ex.getLocalizedMessage(), ex);
+				this.rms.setStatus(RestStatusEnum.SQL_ERROR);
+				this.rms.setStatusDescription(ex.getLocalizedMessage());
+	
+			} catch (WrongStatementException ex) {
+	
+				logger.error("An error occured while processing Post Repository: " + ex.getLocalizedMessage(), ex);
+				this.rms.setStatus(RestStatusEnum.WRONG_STATEMENT);
+				this.rms.setStatusDescription(ex.getLocalizedMessage());
+	
+			} finally {
+	
+				if (stmtconn != null) {
+	
+					try {
+	
+						stmtconn.close();
+						stmtconn = null;
+	
+					} catch (SQLException ex) {
+	
+						logger.error(ex.getLocalizedMessage(), ex);
+					}
+				}
+	
+				this.result = null;
+				dbng = null;
+			}
+	
+			return RestXmlCodec.encodeRestMessage(this.rms);
+		}
+	
+		// case: setting active property of reposiotry
+		if (path.length == 2 && "deactivate".equals(path[1])) {
+			
+			RestMessage msg = RestXmlCodec.decodeRestMessage(data);
+			boolean active 		= false;
+		
+			try {
+	
+				stmtconn = (SingleStatementConnection) dbng.getSingleStatementConnection();
+				stmtconn.loadStatement(DBAccessNG.updateInDB().Repository(stmtconn.connection, repositoryID, false));
+	
+				this.result = stmtconn.execute();
+	
+				if (this.result.getWarning() != null)
+					for (Throwable warning : result.getWarning())
+						logger.warn(warning.getLocalizedMessage(), warning);
+	
+			} catch (SQLException ex) {
+	
+				logger.error("An error occured while processing Post Repository: " + ex.getLocalizedMessage(), ex);
+				this.rms.setStatus(RestStatusEnum.SQL_ERROR);
+				this.rms.setStatusDescription(ex.getLocalizedMessage());
+	
+			} catch (WrongStatementException ex) {
+	
+				logger.error("An error occured while processing Post Repository: " + ex.getLocalizedMessage(), ex);
+				this.rms.setStatus(RestStatusEnum.WRONG_STATEMENT);
+				this.rms.setStatusDescription(ex.getLocalizedMessage());
+	
+			} finally {
+	
+				if (stmtconn != null) {
+	
+					try {
+	
+						stmtconn.close();
+						stmtconn = null;
+	
+					} catch (SQLException ex) {
+	
+						logger.error(ex.getLocalizedMessage(), ex);
+					}
+				}
+	
+				this.result = null;
+				dbng = null;
+			}
+	
+			return RestXmlCodec.encodeRestMessage(this.rms);
+		}
+		
+		
+		
+		// case: check for /harvestedtoday/ and /markedtoday/ request
 		if (path.length == 2 && (path[1].equals(PATH_HARVESTEDTODAY) || path[1].equals(PATH_MARKEDTODAY))) {
 			if (data != null) {
 				logger.info("POST-Request to Repository/" + path[0]
 				                + "/harvestedtoday/ or /markedtoday/ should not contain any data in body! Ignoring data: \n" + data);
 			}
-
-			DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
-			SingleStatementConnection stmtconn = null;
 
 			try {
 

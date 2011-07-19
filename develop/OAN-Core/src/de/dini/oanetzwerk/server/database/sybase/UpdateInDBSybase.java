@@ -136,7 +136,7 @@ public class UpdateInDBSybase implements UpdateFromDB {
 	
 	@Override
 	public PreparedStatement Repository (final Connection connection,
-			final Long repository_id, final boolean active) throws SQLException {
+			final BigDecimal repository_id, final boolean active) throws SQLException {
 		
 		if (logger.isDebugEnabled ( )) {
 			
@@ -146,7 +146,7 @@ public class UpdateInDBSybase implements UpdateFromDB {
 
 		PreparedStatement preparedstmt = connection.prepareStatement ("UPDATE dbo.Repositories SET active = ? WHERE repository_id = ?");
 		preparedstmt.setBoolean(1, active);
-		preparedstmt.setLong(2, repository_id);
+		preparedstmt.setBigDecimal(2, repository_id);
 		
 		return preparedstmt;
 	}
@@ -189,6 +189,14 @@ public class UpdateInDBSybase implements UpdateFromDB {
 
 	@Override
     public PreparedStatement DDCBrowsingHelpSubCount(Connection connection) throws SQLException {
+	    // TODO Auto-generated method stub
+	    return null;
+    }
+
+	@Override
+    public PreparedStatement Repository(Connection connection, BigDecimal repository_id, String name, String url, String oaiUrl,
+                    String owner, String ownerEmail, Integer harvestAmount, Integer harvestPause, boolean listRecords, boolean testData,
+                    boolean active) throws SQLException {
 	    // TODO Auto-generated method stub
 	    return null;
     }

@@ -251,7 +251,10 @@ public class SelectFromDBPostgres implements SelectFromDB {
 				"	\"Repositories\".oai_url, " +
 				"	\"Repositories\".test_data, " +
 				"	\"Repositories\".harvest_amount, " +
-				"	\"Repositories\".harvest_pause " +
+				"	\"Repositories\".harvest_pause, " +
+				"	\"Repositories\".last_full_harvest_begin, " +
+				"	\"Repositories\".last_markereraser_begin, " +
+				"   \"Repositories\".active " +
 				"FROM \"Repositories\"");
 
 		return preparedstmt;
@@ -278,7 +281,8 @@ public class SelectFromDBPostgres implements SelectFromDB {
 					"	\"Repositories\".harvest_amount, " +
 					"	\"Repositories\".harvest_pause, " +
 					"	\"Repositories\".last_full_harvest_begin, " +
-					"	\"Repositories\".last_markereraser_begin " +
+					"	\"Repositories\".last_markereraser_begin, " +
+					"   \"Repositories\".active " +
 					"FROM \"Repositories\" WHERE \"Repositories\".repository_id = ?");
 		preparedstmt.setBigDecimal(1, repositoryID);
 

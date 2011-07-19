@@ -13,10 +13,15 @@ public interface UpdateFromDB {
 	
 	public abstract PreparedStatement ServicesScheduling(Connection connection, String jobName, String status) throws SQLException;
 
-	public abstract PreparedStatement Repository(final Connection connection, final Long repository_id, final boolean active) throws SQLException;
+	public abstract PreparedStatement Repository(final Connection connection, final BigDecimal repository_id, final boolean active) throws SQLException;
 
 	public abstract PreparedStatement Repository(final Connection connection, final BigDecimal repository_id, final Date dateToSet, final String dateField) throws SQLException;
 
+	public PreparedStatement Repository (final Connection connection, BigDecimal repository_id,
+					String name, String url, String oaiUrl, String owner,
+	                String ownerEmail, Integer harvestAmount, Integer harvestPause, 
+	                boolean listRecords, boolean testData, boolean active) throws SQLException;
+	                
 	public abstract PreparedStatement LoginData(Connection connection, String name, String password, String email) throws SQLException;
 
 	public abstract PreparedStatement PrecleanedData(Connection connection, BigDecimal object_id, Date repositoryDateStamp, String metaDataFormat, String data) throws SQLException;

@@ -151,7 +151,7 @@ public class UpdateInDBPostgres implements UpdateFromDB {
 	}
 	
 	public PreparedStatement Repository (final Connection connection,
-			final Long repository_id, final boolean active) throws SQLException {
+			final BigDecimal repository_id, final boolean active) throws SQLException {
 		
 		if (logger.isDebugEnabled ( )) {
 			
@@ -163,8 +163,37 @@ public class UpdateInDBPostgres implements UpdateFromDB {
 			"UPDATE \"Repositories\" " +
 			"SET active = ? WHERE repository_id = ?");
 		preparedstmt.setBoolean(1, active);
-		preparedstmt.setLong(2, repository_id);
+		preparedstmt.setBigDecimal(2, repository_id);
 		
+		return preparedstmt;
+	}
+	
+	public PreparedStatement Repository (final Connection connection, BigDecimal repository_id,
+					String name, String url, String oaiUrl, String owner,
+	                String ownerEmail, Integer harvestAmount, Integer harvestPause, 
+	                boolean listRecords, boolean testData, boolean active) throws SQLException {
+				
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Updating Repository: UPDATE \"Repositories\" " +
+			"SET name = " + name + ", url = " + url + ", oai_url = " + oaiUrl + ", test_data = " + testData + ", harvest_amount = " + harvestAmount + ", harvest_pause = " + harvestPause + ", listrecords = " + listRecords + ", active = " + active + ", owner_technical = " + owner + ", email_technical = " + ownerEmail + " WHERE repository_id = " + repository_id);
+		}
+
+		PreparedStatement preparedstmt = connection.prepareStatement (
+			"UPDATE \"Repositories\" " +
+			"SET name = ?, url = ?, oai_url = ?, test_data = ?, harvest_amount = ?, harvest_pause = ?, listrecords = ?, active = ?, owner_technical = ?, email_technical = ? WHERE repository_id = ?");
+		
+		preparedstmt.setString(1, name);
+		preparedstmt.setString(2, url);
+		preparedstmt.setString(3, oaiUrl);
+		preparedstmt.setBoolean(4, testData);
+		preparedstmt.setInt(5, harvestAmount);
+		preparedstmt.setInt(6, harvestPause);
+		preparedstmt.setBoolean(7, listRecords);
+		preparedstmt.setBoolean(8, active);
+		preparedstmt.setString(9, owner);
+		preparedstmt.setString(10, ownerEmail);
+		preparedstmt.setBigDecimal(11, repository_id);
 		return preparedstmt;
 	}
 	
