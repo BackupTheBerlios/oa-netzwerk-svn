@@ -60,7 +60,6 @@ public class LanguageSwitcherBean implements Serializable {
 	
 	public static FacesMessage getFacesMessage(FacesContext ctx, FacesMessage.Severity severity, String msgKey, Object... args) {
 		Locale loc = ctx.getViewRoot().getLocale();
-		System.out.println("localex: " + loc);
 		ResourceBundle bundle = ResourceBundle.getBundle(messageBundle, loc);
 		String msg = bundle.getString(msgKey);
 		if (args != null) {

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk">
 
 <head></head>
 
@@ -12,21 +15,45 @@
 
 <ui:composition template="templates/template.xhtml">
 
-   
-   <ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
-   
-   <ui:define name="navigation">
-      <a href="/oanadmin/">OA-Netzwerk</a>
-   </ui:define>
-   
 
-   <ui:define name="content">
-   	  
-      <h:outputLabel value="#{msg.overview_description}" />
-  
-      <br /><br />
+	<ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
 
-   </ui:define>
+	<ui:define name="navigation">
+		<a href="/oanadmin/">OA-Netzwerk</a>
+	</ui:define>
+
+
+	<ui:define name="content">
+
+		<h:outputText value="#{msg.overview_description}" />
+
+		<ul>
+			<li>
+				<b><h:outputText value="#{msg.overview_description_repositories_title}" /></b>
+				<h:outputText value="#{msg.overview_description_repositories_text}" />
+			</li><br />
+			<li>
+				<b><h:outputText value="#{msg.overview_description_services_title}" /></b>
+				<h:outputText value="#{msg.overview_description_services_text}" />
+			</li><br />
+			<li>
+				<b><h:outputText value="#{msg.overview_description_validator_title}" /></b>
+				<h:outputText value="#{msg.overview_description_validator_text}" />
+			</li><br />
+			<li>
+				<b><h:outputText value="#{msg.overview_description_rest_title}" /></b>
+				<h:outputText value="#{msg.overview_description_rest_text}" />
+			</li><br />
+			<li>
+				<b><h:outputText value="#{msg.overview_description_users_title}" /></b>
+				<h:outputText value="#{msg.overview_description_users_text}" />
+			</li>
+		</ul>
+
+		<br />
+		<br />
+
+	</ui:define>
 </ui:composition>
 
 </body>

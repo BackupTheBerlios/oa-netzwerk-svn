@@ -2,17 +2,10 @@ package de.dini.oanetzwerk.admin;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -24,12 +17,8 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.admin.utils.RMIRegistryHelper;
-import de.dini.oanetzwerk.codec.RestEntrySet;
-import de.dini.oanetzwerk.codec.RestKeyword;
-import de.dini.oanetzwerk.codec.RestMessage;
-import de.dini.oanetzwerk.codec.RestStatusEnum;
-import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.servicemodule.IService;
+import de.dini.oanetzwerk.servicemodule.ServiceStatus;
 import de.dini.oanetzwerk.utils.PropertyManager;
 
 /**
@@ -62,6 +51,8 @@ public class ServiceManagementBean {
 	private String rmiHostForHarvester = null;
 	private String rmiHostForAggregator = null;
 	private String rmiHostForMarker = null;
+	
+	private boolean rmiRegistryNotStarted = false;
 	
 	private String javaPath = null;
 
@@ -106,9 +97,15 @@ public class ServiceManagementBean {
 			localMarker = true;
 		}
 
+		
 		harvesterStatus = checkServiceStatus("HarvesterService", rmiHostForHarvester);
-		aggregatorStatus = checkServiceStatus("AggregatorService", rmiHostForAggregator);
-		markerStatus = checkServiceStatus("MarkerService", rmiHostForMarker);
+
+		if (!rmiRegistryNotStarted) {
+			aggregatorStatus = checkServiceStatus("AggregatorService", rmiHostForAggregator);
+		}
+		if (!rmiRegistryNotStarted) {
+			markerStatus = checkServiceStatus("MarkerService", rmiHostForMarker);
+		}
 		
 		// try to fetch path to a specified java binary file
 		javaPath = propertyManager.getServiceProperties().getProperty("java.path");
@@ -289,7 +286,7 @@ public class ServiceManagementBean {
 //	
 	
 	private ServiceStatus checkServiceStatus(String serviceName, String serviceHost) {
-
+		FacesContext context = FacesContext.getCurrentInstance();
 		Registry registry = RMIRegistryHelper.getRegistry(serviceHost);
 
 		try {
@@ -297,11 +294,16 @@ public class ServiceManagementBean {
 
 			if (service != null) {
 				System.out.println(serviceName + " running.");
-				return ServiceStatus.Started;
+				try {
+					return service.getCurrentStatus();
+				} catch (ConnectException e) {
+					return ServiceStatus.Stopped;
+				}
 			}
 		} catch (ConnectException e) {
 			logger.warn("Could not connect to RMI registry, please make sure the registry is running");
-			e.printStackTrace();
+			rmiRegistryNotStarted = true;
+			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "services_failure_rmiregistrynotfound", null));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (NotBoundException e) {
@@ -310,7 +312,7 @@ public class ServiceManagementBean {
 		return ServiceStatus.Stopped;
 	}
 
-	public boolean startHarvesterService() {
+	public String startHarvesterService() {
 		
 		boolean started = startService(SERVICE_NAME_HARVESTER, localPathToHarvester, getHarvesterStatus());
 		
@@ -318,20 +320,20 @@ public class ServiceManagementBean {
 			harvesterStatus = checkServiceStatus(SERVICE_NAME_HARVESTER, rmiHostForHarvester);
 		}
 		logger.info(SERVICE_NAME_HARVESTER + " " + harvesterStatus);
-		return started;
+		return "services_main";
 	}
 	
-	public boolean stopHarvesterService() {
+	public String stopHarvesterService() {
 		boolean stopped = stopService(SERVICE_NAME_HARVESTER, getHarvesterStatus(), rmiHostForHarvester);
 		
 		if (stopped) {
 			harvesterStatus = ServiceStatus.Stopped;
 		}
 		logger.info(SERVICE_NAME_HARVESTER + " " + harvesterStatus);
-		return stopped;
+		return "services_main";
 	}
 	
-	public boolean startAggregatorService() {
+	public String startAggregatorService() {
 		
 		boolean started = startService(SERVICE_NAME_AGGREGATOR, localPathToAggregator, getAggregatorStatus());
 		
@@ -339,20 +341,20 @@ public class ServiceManagementBean {
 			aggregatorStatus = checkServiceStatus(SERVICE_NAME_AGGREGATOR, rmiHostForAggregator);
 		}
 		logger.info(SERVICE_NAME_AGGREGATOR + " " + aggregatorStatus);
-		return started;
+		return "services_main";
 	}
 	
-	public boolean stopAggregatorService() {
+	public String stopAggregatorService() {
 		boolean stopped = stopService(SERVICE_NAME_AGGREGATOR, getAggregatorStatus(), rmiHostForAggregator);
 		
 		if (stopped) {
 			aggregatorStatus = ServiceStatus.Stopped;
 		}
 		logger.info(SERVICE_NAME_AGGREGATOR + " " + aggregatorStatus);
-		return stopped;
+		return "services_main";
 	}
 	
-	public boolean startMarkerService() {
+	public String startMarkerService() {
 		
 		boolean started = startService(SERVICE_NAME_MARKER, localPathToMarker, getMarkerStatus());
 		
@@ -360,17 +362,17 @@ public class ServiceManagementBean {
 			markerStatus = checkServiceStatus(SERVICE_NAME_MARKER, rmiHostForMarker);
 		}
 		logger.info(SERVICE_NAME_MARKER + " " + markerStatus);
-		return started;
+		return "services_main";
 	}
 	
-	public boolean stopMarkerService() {
+	public String stopMarkerService() {
 		boolean stopped = stopService(SERVICE_NAME_MARKER, getMarkerStatus(), rmiHostForMarker);
 		
 		if (stopped) {
 			markerStatus = ServiceStatus.Stopped;
 		}
 		logger.info(SERVICE_NAME_MARKER + " " + markerStatus);
-		return stopped;
+		return "services_main";
 	}
 	
 	
@@ -451,6 +453,14 @@ public class ServiceManagementBean {
 				
 			} catch (ConnectException e) {
 				logger.warn("Could not connect to RMI registry, please make sure the registry is running");
+				
+				if (serviceName.equals(SERVICE_NAME_HARVESTER)) {
+					harvesterStatus = ServiceStatus.Stopped;
+				} else if (serviceName.equals(SERVICE_NAME_AGGREGATOR)) {
+					aggregatorStatus = ServiceStatus.Stopped;
+				} else if (serviceName.equals(SERVICE_NAME_MARKER)) {
+					markerStatus = ServiceStatus.Stopped;
+				}
 				e.printStackTrace();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -467,11 +477,6 @@ public class ServiceManagementBean {
 	private boolean checkIfLocalPathToServiceIsValid(String path) {
 	
 		return new File(path).exists();
-	}
-	
-	public enum ServiceStatus {
-
-		Started, Busy, Stopped
 	}
 
 	/********************* Getter & Setter ***********************/

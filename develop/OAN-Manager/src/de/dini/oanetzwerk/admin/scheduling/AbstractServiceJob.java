@@ -3,8 +3,8 @@ package de.dini.oanetzwerk.admin.scheduling;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 
 import org.apache.log4j.Logger;
@@ -17,19 +17,16 @@ import de.dini.oanetzwerk.admin.RestConnector;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
-import de.dini.oanetzwerk.utils.PropertyManager;
 
 /**
  * @author Sammy David
  * sammy.david@cms.hu-berlin.de
  * 
  */
+
 public abstract class AbstractServiceJob implements Job {
 
 	private static final Logger LOG = Logger.getLogger(AbstractServiceJob.class);
-
-	@ManagedProperty(value = "#{propertyManager}")
-	protected PropertyManager propertyManager;
 	
 	@ManagedProperty(value = "#{restconnector}")
 	private RestConnector connector;
@@ -101,12 +98,13 @@ public abstract class AbstractServiceJob implements Job {
 
 	
 	public void setConnector(RestConnector connector) {
+		System.out.println("conn setter");
 		this.connector = connector;
 	}
 
-	public void setPropertyManager(PropertyManager propertyManager) {
-    	this.propertyManager = propertyManager;
-    }
+	public RestConnector getConnector() {
+		return connector;
+	}
 
 	public Trigger getTrigger() {
 		return trigger;

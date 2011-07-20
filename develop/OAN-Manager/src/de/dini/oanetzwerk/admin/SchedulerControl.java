@@ -7,6 +7,7 @@ import static org.quartz.DateBuilder.tomorrowAt;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 import static org.quartz.impl.matchers.GroupMatcher.groupEquals;
+import static org.quartz.JobKey.jobKey;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -84,7 +85,7 @@ public class SchedulerControl implements Serializable {
 	@PostConstruct
 	public void initAndStartScheduler() {
 
-		System.out.println("SchedulerControl initiated!");
+		logger.info("SchedulerControl initiated!");
 
 		try {
 
@@ -98,7 +99,7 @@ public class SchedulerControl implements Serializable {
 			scheduler.start();
 
 			if (scheduler == null) {
-				System.out.println("scheduler is null after creation");
+				logger.warn("scheduler is null after creation");
 			}
 			
 			// schedule ddc-count update job
@@ -146,9 +147,6 @@ public class SchedulerControl implements Serializable {
 
 		logger.info("Scheduling quartz-job of type " + job.getClass() + " with name " + job.getData().getString("job_name"));
 	
-		System.out.println("jobname: " + job.getData().getString("job_name"));
-		System.out.println("goo");
-		System.out.println(job.getClass());
 		JobDetail jobDetail = newJob(job.getClass()).withIdentity(job.getData().getString("job_name"))
 			.usingJobData(job.getData()).build();
 		
@@ -166,15 +164,15 @@ public class SchedulerControl implements Serializable {
 //		}
 		
 		if (jobDetail == null) {
-			System.out.println("jobdetail iis null");
+			logger.warn("Failure creating job detail for job !");
 		}
 		
 		if (job == null) {
-			System.out.println("job iis null");
+			logger.warn("Failure creating job !");
 		}
 		
 		if (job.getTrigger() == null) {
-			System.out.println("jobtrigger iis null");
+			logger.warn("Failure creating job trigger for job !");
 		}
 		try {
 			scheduler.scheduleJob(jobDetail, job.getTrigger());
@@ -246,8 +244,7 @@ public class SchedulerControl implements Serializable {
 
 				} else {
 
-					logger.info("Non-periodic job scheduled.");
-					System.out.println("startAt: " + bean.getNonperiodicTimestamp());
+					logger.info("Non-periodic job scheduled. (starting at "+ bean.getNonperiodicTimestamp() +")" );
 					trigger = (SimpleTrigger) newTrigger().withIdentity(bean.getName()).startAt(bean.getNonperiodicTimestamp()).build();
 				}
 
@@ -300,7 +297,7 @@ public class SchedulerControl implements Serializable {
 				// (key));
 
 				if (key.equalsIgnoreCase("name")) {
-					System.out.println("jobName: " + res.getValue(key));
+					logger.info("Retrieved job from DB with job-name: " + res.getValue(key));
 					bean.setName(res.getValue(key));
 
 				} else if (key.equalsIgnoreCase("service_id")) {
@@ -317,9 +314,7 @@ public class SchedulerControl implements Serializable {
 
 				} else if (key.equalsIgnoreCase("nonperiodic_date")) {
 					try {
-						System.out.println("out-1: " + res.getValue(key));
 						bean.setNonperiodicTimestamp(new Date(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(res.getValue(key)).getTime()));
-						System.out.println("out0: " + bean.getNonperiodicTimestamp());
 					} catch (ParseException ex) {
 
 						logger.error(ex.getLocalizedMessage());
@@ -361,12 +356,16 @@ public class SchedulerControl implements Serializable {
 
 		logger.info("Storing job....");
 
-		System.out.println("isnewjob: " + isNewJob);
 		if (isNewJob) {
 			long now = new Date().getTime();
 			job.setName(Long.toString(now));
 		}
-		System.out.println("job name: " + job.getName());
+		
+		if (isNewJob) {
+			logger.info("Creating new job with name " + job.getName() + "!");
+		} else {
+			logger.info("Updating job!");
+		}
 
 		// save to db, REST call
 		RestMessage rms = new RestMessage();;
@@ -391,8 +390,8 @@ public class SchedulerControl implements Serializable {
 		res.addEntry("periodic_interval", job.getPeriodicInterval() != null ? job.getPeriodicInterval().toString() : null);
 		res.addEntry("periodic_days", Integer.toString(job.getPeriodicDays()));
 
-		System.out.println("interval: " + job.getPeriodicInterval());
-		System.out.println("days: " + job.getPeriodicDays());
+//		System.out.println("interval: " + job.getPeriodicInterval());
+//		System.out.println("days: " + job.getPeriodicDays());
 		rms.addEntrySet(res);
 
 		try {
@@ -421,7 +420,7 @@ public class SchedulerControl implements Serializable {
 			try {
 				boolean deleted = scheduler.deleteJob(new JobKey("DEFAULT." + job.getName()));
 				boolean unscheduled = scheduler.unscheduleJob(new TriggerKey("DEFAULT." + job.getName()));
-				System.out.println("removed old job: " + deleted  +"  old trigger: " + unscheduled);
+				logger.info("removed old job: " + deleted  +"  old trigger: " + unscheduled);
 			} catch (SchedulerException e) {
 				e.printStackTrace();
 			}
@@ -447,13 +446,12 @@ public class SchedulerControl implements Serializable {
 		boolean deleted = false;
 		
 		// unschedule job
-		JobKey key = new JobKey(jobName);
 		try {
-			if (scheduler.checkExists(key)) {
+			if (scheduler.checkExists(jobKey(jobName))) {
 
-				deleted = scheduler.deleteJob(key);
+				deleted = scheduler.deleteJob(jobKey(jobName));
 				if (deleted) {
-					logger.info("Job with key '" + key + "' has been removed!" + deleted);
+					logger.info("Job with key '" + jobName + "' has been removed!" + deleted);
 				}				
 			}
 		} catch (SchedulerException e) {
@@ -468,8 +466,9 @@ public class SchedulerControl implements Serializable {
 		if (rms.getStatus() != RestStatusEnum.OK) {
 			deleted = false;
 			logger.error("/ServiceJob/" + jobId + " response failed: " + rms.getStatus() + "(" + rms.getStatusDescription() + ")");
+		} else {
+			deleted = true;
 		}
-		
 		return deleted;
 	}
 	
@@ -511,23 +510,23 @@ public class SchedulerControl implements Serializable {
 			}
 		
 			for (String group : scheduler.getJobGroupNames()) {
-				System.out.println("Group: " + group);
+//				System.out.println("Group: " + group);
 				// enumerate each job in group
 
 				for (JobKey jobKey : scheduler.getJobKeys(groupEquals(group))) {
 					System.out.println("Found job identified by: " + jobKey);
 					
-					List<? extends Trigger> list = scheduler.getTriggersOfJob(jobKey);
-
-					try {
-						Date date = new SimpleDateFormat("yyyy-MM-dd").parse("2012-05-05");
-						for (Trigger trigger : list) {
-							System.out.println("trigger found");
-							outputFireTimeList((OperableTrigger) trigger, new Date(), date);
-						}
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
+//					List<? extends Trigger> list = scheduler.getTriggersOfJob(jobKey);
+//
+//					try {
+//						Date date = new SimpleDateFormat("yyyy-MM-dd").parse("2012-05-05");
+//						for (Trigger trigger : list) {
+//							System.out.println("trigger found");
+//							outputFireTimeList((OperableTrigger) trigger, new Date(), date);
+//						}
+//					} catch (ParseException e) {
+//						e.printStackTrace();
+//					}
 				}
 			}
 		} catch (SchedulerException e) {
@@ -539,28 +538,28 @@ public class SchedulerControl implements Serializable {
 	/*************************** Utils ***************************/ 
 	
 	
-	private void outputFireTimeList(OperableTrigger trigger1, Date fromDate, Date toDate) {
-
-		Trigger trigger = null;
-		try {
-			Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2011-07-05 18:30");
-			trigger = newTrigger().withIdentity("blabla1").startAt(tomorrowAt(15, 0, 0)) // 15:00:00
-																							// tomorrow
-					.withSchedule(calendarIntervalSchedule().withIntervalInDays(3)).build();
-			System.out.println(trigger.getStartTime());
-			// trigger.
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		System.out.println("computing...");
-		List fireTimeList = TriggerUtils.computeFireTimesBetween((OperableTrigger) trigger, null, fromDate, toDate);
-		System.out.println("finished computing");
-		for (int i = 0; i < fireTimeList.size(); i++) {
-			System.out.println(fireTimeList.get(i));
-		}
-	}
+//	private void outputFireTimeList(OperableTrigger trigger1, Date fromDate, Date toDate) {
+//
+//		Trigger trigger = null;
+//		try {
+//			Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2011-07-05 18:30");
+//			trigger = newTrigger().withIdentity("blabla1").startAt(tomorrowAt(15, 0, 0)) // 15:00:00
+//																							// tomorrow
+//					.withSchedule(calendarIntervalSchedule().withIntervalInDays(3)).build();
+//			System.out.println(trigger.getStartTime());
+//			// trigger.
+//
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
+//
+//		System.out.println("computing...");
+//		List fireTimeList = TriggerUtils.computeFireTimesBetween((OperableTrigger) trigger, null, fromDate, toDate);
+//		System.out.println("finished computing");
+//		for (int i = 0; i < fireTimeList.size(); i++) {
+//			System.out.println(fireTimeList.get(i));
+//		}
+//	}
 	
 	
 	/************************** Getter and Setter *******************************/

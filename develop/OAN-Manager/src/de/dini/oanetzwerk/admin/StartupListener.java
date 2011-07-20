@@ -127,7 +127,7 @@ public class StartupListener implements ServletContextListener, IHarvesterMonito
 
 	@Override
     public void publishServiceUpdates(Map<String, String> updates) {
-	    System.out.println("Update received, progress: " + updates.get("progress"));
+//	    System.out.println("Update received, progress: " + updates.get("progress"));
 	    
     }
 

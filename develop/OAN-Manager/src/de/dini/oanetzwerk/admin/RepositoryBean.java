@@ -49,10 +49,7 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 
 	public RepositoryBean() {
 		super();
-
-		System.out.println("RepositoryBean constructor");
 		init();
-		
 	}
 
 
@@ -111,10 +108,6 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 
 	public HashMap<String, String> getDetails() {
 
-		if (connector == null) 
-		{
-			System.out.println("yes is null");
-		}
 		String result = connector.prepareRestTransmission(
 				"Repository/" + Long.toString(repository.getId())).GetData();
 
@@ -378,6 +371,5 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 
 	public static void setRestConnector(RestConnector restConnector) {
 		connector = restConnector;
-		System.out.println("RepositoryBean restConnector setter");
 	}
 }

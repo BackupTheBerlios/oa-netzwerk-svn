@@ -18,7 +18,7 @@
 
 	<ui:define name="navigation">
 		<a href="/oanadmin/">OA-Netzwerk</a> » <a
-			href="repositories_main.xhtml"><h:outputLabel value="#{msg.r_info1}" /></a>
+			href="repositories_main.xhtml"><h:outputText value="#{msg.r_info1}" /></a>
 	</ui:define>
 
 	<ui:param name="menu_repository" value="#{true}" />
@@ -28,7 +28,7 @@
 
 		<div style="padding: 20px; background-color: #f5f9f4;">
 		<div style="background-color: #f5f9f4;">
-		<h2><h:outputLabel value="#{msg.r_info_remove}" /></h2>
+		<h2><h:outputText value="#{msg.r_info_remove}" /></h2>
 
 
 
@@ -44,7 +44,7 @@
 						<td colspan="2">
 						<p />
 						<br />
-						<b><h:outputLabel value="#{msg.r_info_rremove}" /></b>
+						<b><h:outputText value="#{msg.r_info_rremove}" /></b>
 						<p />
 
 						</td>
@@ -54,7 +54,7 @@
 						<td charoff="10">#{repo.id}</td>
 					</tr>
 					<tr>
-						<td width="140"><h:outputLabel value="#{msg.r_info2}" /></td>
+						<td width="140"><h:outputText value="#{msg.r_info2}" /></td>
 						<td charoff="10">#{repo.name}</td>
 					</tr>
 					<tr>
@@ -62,7 +62,7 @@
 						<td>#{repo.url}</td>
 					</tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.r_info_oaipmh}" /></td>
+						<td><h:outputText value="#{msg.r_info_oaipmh}" /></td>
 						<td>#{repo.oaiUrl}</td>
 					</tr>
 					<tr>
@@ -74,11 +74,11 @@
 						<td>#{repo.harvestPause}</td>
 					</tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.r_info_lr}" /></td>
+						<td><h:outputText value="#{msg.r_info_lr}" /></td>
 						<td>#{repo.listRecords}</td>
 					</tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.r_info_active}" /></td>
+						<td><h:outputText value="#{msg.r_info_active}" /></td>
 						<td>#{repo.active}</td>
 					</tr>
 
@@ -86,7 +86,7 @@
 						<td colspan="2">
 						<p />
 						<br />
-						<h:outputLabel value="#{msg.r_info_info}" />
+						<h:outputText value="#{msg.r_info_info}" />
 						<p />
 						</td>
 					</tr>

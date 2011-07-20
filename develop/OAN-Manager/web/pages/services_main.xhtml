@@ -13,7 +13,7 @@
   <ui:param name="pageTitle" value="Dienste - OA-Netzwerk Manager" />
 
   <ui:define name="navigation">
-    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml"><h:outputLabel value="#{msg.serv_main1}" /></a>
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml"><h:outputText value="#{msg.serv_main1}" /></a>
   </ui:define>
 
   <ui:param name="menu_services" value="#{true}" /> 
@@ -21,26 +21,32 @@
   <ui:define name="content">
 
   <f:view>
-      <h:outputLabel value="#{msg.serv_main_description}" /><br />
-    <br />
 
-      <h:outputLabel value="#{msg.serv_main_state}" /> <h:outputLabel for="harvesterStatus" value="#{services.harvesterStatus}">
-
-    </h:outputLabel>
 
     <div style="padding: 20px; background-color: #f5f9f4;">
     <div style="background-color: #f5f9f4;">
 
+	<div id="main" style="width:900px;" > <!-- style="display: none" -->
+
+	<h2>Dienststeuerung</h2>
+
+	<br />
+	<h:messages style="color:red" />
+    <br />
+
+
+
+
     <h:form>
-    <table width="50%" style="width: 50%; border-collapse: collapse; border: 1px #bbb solid;">
+    <table width="80%" style="width: 80%; border-collapse: collapse; border: 1px #bbb solid;">
 
       <tr>
-        <th class="pane-header"><h:outputLabel value="#{msg.serv_main2}" /></th>
-        <th class="pane-header"><h:outputLabel value="#{msg.serv_main3}" /></th>
-<!--        <th class="pane-header"><h:outputLabel value="#{msg.serv_main4}" /></th>-->
-<!--        <th class="pane-header"><h:outputLabel value="#{msg.serv_main5}" /></th>-->
-<!--        <th class="pane-header"><h:outputLabel value="#{msg.serv_main6}" /></th>-->
-        <th class="pane-header"><h:outputLabel value="#{msg.serv_main7}" /></th>
+        <th class="pane-header"><h:outputText value="#{msg.serv_main2}" /></th>
+        <th class="pane-header"><h:outputText value="#{msg.serv_main3}" /></th>
+<!--        <th class="pane-header"><h:outputText value="#{msg.serv_main4}" /></th>-->
+<!--        <th class="pane-header"><h:outputText value="#{msg.serv_main5}" /></th>-->
+<!--        <th class="pane-header"><h:outputText value="#{msg.serv_main6}" /></th>-->
+        <th class="pane-header"><h:outputText value="#{msg.serv_main7}" /></th>
       </tr>
 
       <tr class="odd">
@@ -49,26 +55,26 @@
 				<img src="../images/24x24/status_green.png" width="18" height="18" title="Harvester ist bereit" />
             </t:div>
             <t:div rendered="#{services.harvesterBusy}">
-				<img src="../images/24x24/status_yellow.png" width="18" height="18" title="Harvester arbeitet gerade" />
+				<img src="../images/24x24/status_yellow.png" width="20" height="20" title="Harvester arbeitet gerade" />
             </t:div>
        		<t:div rendered="#{not services.harvesterStarted and not services.harvesterBusy}">
 				<img src="../images/24x24/status_red.png" width="18" height="18" title="Harvester-Dienst ist nicht gestartet" />
             </t:div>            
         </td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">Harvester</td>
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main8}" /></td>-->
+<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main8}" /></td>-->
 <!--        <td style="vertical-align: middle; text-align: center; height: 70px;">2h 15min</td>-->
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main9}" /></td>-->
+<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main9}" /></td>-->
         <td style="vertical-align: middle; text-align: center; height: 70px;">
         
         <t:div rendered="#{not services.harvesterStarted and not services.harvesterBusy}">
-        	<h:commandLink action="#{services.startHarvesterService}" title="Starten" ><h:outputLabel value="#{msg.serv_main10}" /></h:commandLink>
+        	<h:commandLink action="#{services.startHarvesterService}" title="Starten" ><h:outputText value="#{msg.serv_main10}" /></h:commandLink>
         </t:div> 
         
         <br />
         
         <t:div rendered="#{services.harvesterStarted or services.harvesterBusy}">
-        	<h:commandLink action="#{services.stopHarvesterService}" title="Stoppen" ><h:outputLabel value="#{msg.serv_main11}" /></h:commandLink> 
+        	<h:commandLink action="#{services.stopHarvesterService}" title="Stoppen" ><h:outputText value="#{msg.serv_main11}" /></h:commandLink> 
         </t:div> 
         
         </td>
@@ -79,26 +85,26 @@
 				<img src="../images/24x24/status_green.png" width="18" height="18" title="Aggregator ist bereit" />
             </t:div>
             <t:div rendered="#{services.aggregatorBusy}">
-				<img src="../images/24x24/status_yellow.png" width="18" height="18" title="Aggregator arbeitet gerade" />
+				<img src="../images/24x24/status_yellow.png" width="20" height="20" title="Aggregator arbeitet gerade" />
             </t:div>
        		<t:div rendered="#{not services.aggregatorStarted and not services.aggregatorBusy}">
 				<img src="../images/24x24/status_red.png" width="18" height="18" title="Aggregator-Dienst ist nicht gestartet" />
             </t:div>            
         </td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">Aggregator</td>
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main12}" /></td>-->
+<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main12}" /></td>-->
 <!--        <td style="vertical-align: middle; text-align: center; height: 70px;">7min</td>-->
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main13}" /></td>-->
+<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main13}" /></td>-->
         <td style="vertical-align: middle; text-align: center; height: 70px;">
         
         <t:div rendered="#{not services.aggregatorStarted and not services.aggregatorBusy}">
-        	<h:commandLink action="#{services.startAggregatorService}" title="Starten" ><h:outputLabel value="#{msg.serv_main14}" /></h:commandLink>
+        	<h:commandLink action="#{services.startAggregatorService}" title="Starten" ><h:outputText value="#{msg.serv_main14}" /></h:commandLink>
         </t:div> 
         
         <br />
         
         <t:div rendered="#{services.aggregatorStarted or services.aggregatorBusy}">
-        	<h:commandLink action="#{services.stopAggregatorService}" title="Stoppen" ><h:outputLabel value="#{msg.serv_main15}" /></h:commandLink> 
+        	<h:commandLink action="#{services.stopAggregatorService}" title="Stoppen" ><h:outputText value="#{msg.serv_main15}" /></h:commandLink> 
         </t:div> 
         
         </td>
@@ -109,26 +115,26 @@
 				<img src="../images/24x24/status_green.png" width="18" height="18" title="Marker ist bereit"/>
             </t:div>
             <t:div rendered="#{services.markerBusy}">
-				<img src="../images/24x24/status_yellow.png" width="18" height="18" title="Marker arbeitet gerade" />
+				<img src="../images/24x24/status_yellow.png" width="20" height="20" title="Marker arbeitet gerade" />
             </t:div>
        		<t:div rendered="#{not services.markerStarted and not services.markerBusy}">
 				<img src="../images/24x24/status_red.png" width="18" height="18" title="Marker-Dienst ist nicht gestartet" />
             </t:div>            
         </td>
         <td style="vertical-align: middle; text-align: center; height: 70px;">Marker</td>
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main16}" /></td>-->
+<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main16}" /></td>-->
 <!--        <td style="vertical-align: middle; text-align: center; height: 70px;">7min</td>-->
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputLabel value="#{msg.serv_main17}" /></td>-->
+<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main17}" /></td>-->
         <td style="vertical-align: middle; text-align: center; height: 70px;">
         
         <t:div rendered="#{not services.markerStarted and not services.markerBusy}">
-        	<h:commandLink action="#{services.startMarkerService}" title="Starten" ><h:outputLabel value="#{msg.serv_main18}" /></h:commandLink>
+        	<h:commandLink action="#{services.startMarkerService}" title="Starten" ><h:outputText value="#{msg.serv_main18}" /></h:commandLink>
         </t:div> 
         
         <br />
         
         <t:div rendered="#{services.markerStarted or services.markerBusy}">
-        	<h:commandLink action="#{services.stopMarkerService}" title="Stoppen" ><h:outputLabel value="#{msg.serv_main19}" /></h:commandLink> 
+        	<h:commandLink action="#{services.stopMarkerService}" title="Stoppen" ><h:outputText value="#{msg.serv_main19}" /></h:commandLink> 
         </t:div> 
         
         </td>
@@ -137,7 +143,7 @@
     </table>
     </h:form>
 
-
+	</div>
     </div>
     </div>
 

@@ -26,15 +26,15 @@
       <h:form id="serverValidation" method="POST" action="#{repoValidator.validateFromForm}">
         <table width="100%" style="border: 1px solid black; margin-bottom: 3em; padding: 1em 0px;">
           <tr>
-            <th width="50%"><h:outputLabel value="#{msg.rest_vali1}" /></th>
-            <th width="50%"><h:outputLabel value="#{msg.rest_vali2}" /></th>
+            <th width="50%"><h:outputText value="#{msg.rest_vali1}" /></th>
+            <th width="50%"><h:outputText value="#{msg.rest_vali2}" /></th>
           </tr>
           <tr>
             <td style="vertical-align: middle; padding-left: 10em;"><t:selectOneListbox value="#{repoValidator.serverName}">
               <t:selectItems value="#{repoValidator.servers}" />
             </t:selectOneListbox> <br />
             <br />
-            <h:outputLabel value="#{msg.rest_vali3}" /> <br />
+            <h:outputText value="#{msg.rest_vali3}" /> <br />
             <t:inputText id="input_parameter" value="#{repoValidator.parameter}" label="Parameter" /></td>
             <td style="padding-left: 10em;">
             <table>

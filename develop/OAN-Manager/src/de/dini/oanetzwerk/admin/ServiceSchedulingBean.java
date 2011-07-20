@@ -90,7 +90,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	public ServiceSchedulingBean() {
 
 	}
- 
+	
 	
 	@PostConstruct
 	public void init() {
@@ -103,8 +103,8 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
 		String jobId = request.getParameter("jid");
 		
-		System.out.println("Job-ID: " + jobId);
 		if (jobId != null) {
+			logger.info("Job-ID detected: " + jobId);
 			updateCase = initJob(jobId);
 		}
 		
@@ -122,11 +122,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		FacesContext context = FacesContext.getCurrentInstance();
 		boolean valid = true;
 
-		System.out.println("Validating");
-		System.out.println("service: " + chosenService);
-		System.out.println("jobtype: " + jobType);
-		System.out.println("date: " + chosenDate);
-
+		logger.info("Validating job with service= " + chosenService + " , job-type= " + jobType + " ,date= " + chosenDate);
 		
 		if ("null".equals(chosenService)) {
 			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_chooseservice", null));
@@ -145,10 +141,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate) + " " + chosenTime);
 				job.setNonperiodicTimestamp(date);
 
-				System.out.println(System.currentTimeMillis());
-				System.out.println(new Date());
-				System.out.println(date.getTime());
-				System.out.println(date);
 				if (System.currentTimeMillis() > date.getTime()) {
 //					((UIInput) toValidate).setValid(false);
 
@@ -169,10 +161,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate2) + " " + chosenHour);
 				job.setNonperiodicTimestamp(date);
 
-				System.out.println(System.currentTimeMillis());
-				System.out.println(new Date());
-				System.out.println(date.getTime());
-				System.out.println(date);
 				if (System.currentTimeMillis() > date.getTime()) {
 //					((UIInput) toValidate).setValid(false);
 
@@ -196,14 +184,12 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 		
 //		System.out.println("radio1: " + radio1);
-		System.out.println("date: " + chosenDate);
-		System.out.println("time: " + chosenTime);
-		System.out.println("jobType: " + jobType);
-		System.out.println("intervalType: " + intervalType);
+		logger.info("Validating job with service= " + chosenService + " , job-type= " + jobType + " ,date= " + chosenDate + 
+				" ,time= " + chosenTime + " ,interval-type= " + intervalType );
 
 		boolean valid = validate();
 		
-		System.out.println("form valid: " + valid);
+		System.out.println("Job valid: " + valid);
 		
 		if (!valid) {
 			return "failed";
@@ -214,10 +200,8 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 			
 			job.setPeriodic(true);
 			try {
-				System.out.println("break1");
 				Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(new SimpleDateFormat("dd-MM-yyyy").format(chosenDate2) + " " + chosenHour);
 				job.setNonperiodicTimestamp(date);
-				System.out.println("break2");
 			} catch (ParseException e) {
 				// this should never happen
 				e.printStackTrace();
@@ -282,17 +266,17 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		
 		if (updateCase) {
 			stored = schedulerControl.updateJob(job);
-			msg = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_update_success", null);
+			msg = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_success_update", null);
 		} else {
 			stored = schedulerControl.createJob(job);
-			msg = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_new_success", null);
+			msg = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_success_new", null);
 		}
 		if (stored) {
 			ctx.addMessage(null, msg);
 			return "success";
 		}
 		
-		ctx.addMessage(null, LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_ERROR, "scheduling_servicejob_new_success", null));
+		ctx.addMessage(null, LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_ERROR, "scheduling_servicejob_error_storage", null));
 		
 		return "failed";
 	}
@@ -356,7 +340,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 			repoList.add(repo);
 
 		}
-		System.out.println(repoList.size());
+		logger.info("Repositories received: " + repoList.size());
 
 	}
 	
@@ -623,7 +607,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
     }
 
 	public void setStartRightNow(boolean startRightNow) {
-		System.out.println("setter now : " + startRightNow);
     	this.startRightNow = startRightNow;
     }
 

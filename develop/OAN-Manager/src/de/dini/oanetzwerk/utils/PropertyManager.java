@@ -33,18 +33,23 @@ public class PropertyManager implements Serializable {
 	private static String contextPath 				= "/oanadmin";
 	private static String contextPathFallback		= "/OAN-Manager";
 	
-	private Properties serviceProperties = null;
-	private Properties adminProperties = null;
-	private Properties restProperties = null;
+	private static Properties serviceProperties = null;
+	private static Properties adminProperties = null;
+	private static Properties restProperties = null;
 	
 	public PropertyManager() {
 		super();
-		System.out.println("PropertyManager constructor");
 	}
 
+	@SuppressWarnings("unused")
 	@PostConstruct
 	private void init() {
 
+		PropertyManager.readPropertyFiles();
+	}	
+	
+	
+	public static void readPropertyFiles() {
 		String context = faces.getExternalContext().getRequestContextPath();
 		
 		if (context != null && context.length() > 0) {		
@@ -61,12 +66,12 @@ public class PropertyManager implements Serializable {
 		if (!isLoaded)
 			isLoaded = loadServiceProperties(webappDirFallback, contextPathFallback);		
 		
-		loadAdminProperties(webappDir, contextPath);
-		loadRestClientProperties(webappDir, contextPath);
-	}	
+		PropertyManager.loadAdminProperties(webappDir, contextPath);
+		PropertyManager.loadRestClientProperties(webappDir, contextPath);
+	}
 	
 	
-	private boolean loadServiceProperties(final String webappDir, final String contextPath) {
+	private static boolean loadServiceProperties(final String webappDir, final String contextPath) {
 		
 		try {
 			serviceProperties 	= HelperMethods.loadPropertiesFromPropFile (CATALINA_BASE + webappDir + contextPath + "/WEB-INF/services.properties");
@@ -82,7 +87,7 @@ public class PropertyManager implements Serializable {
 		return false;
 	}
 	
-	private boolean loadAdminProperties(final String webappDir, final String contextPath) {
+	private static boolean loadAdminProperties(final String webappDir, final String contextPath) {
 		
 		try {
 			adminProperties 	= HelperMethods.loadPropertiesFromFile (CATALINA_BASE + webappDir + contextPath + "/WEB-INF/admingui.xml");
@@ -98,7 +103,7 @@ public class PropertyManager implements Serializable {
 		return false;
 	}
 	
-	private boolean loadRestClientProperties(final String webappDir, final String contextPath) {
+	private static boolean loadRestClientProperties(final String webappDir, final String contextPath) {
 		
 		try {
 			restProperties 	= HelperMethods.loadPropertiesFromFile (CATALINA_BASE + webappDir + contextPath + "/WEB-INF/restclientprop.xml");
@@ -115,29 +120,29 @@ public class PropertyManager implements Serializable {
 	}
 	
 
-	public Properties getServiceProperties() {
+	public static Properties getServiceProperties() {
 		if (serviceProperties == null) {
-			init();
+			readPropertyFiles();
 		}
 		return serviceProperties;
 	}
 
-	public void setServiceProperties(Properties serviceProperties) {
-		this.serviceProperties = serviceProperties;
-	}
+//	public void setServiceProperties(Properties serviceProperties) {
+//		this.serviceProperties = serviceProperties;
+//	}
 
-	public Properties getAdminProperties() {
+	public static Properties getAdminProperties() {
 		
 		if (adminProperties == null) {
-			init();
+			readPropertyFiles();
 		}
     	return adminProperties;
     }
 	
-	public Properties getRestProperties() {
+	public static Properties getRestProperties() {
 		
 		if (restProperties == null) {
-			init();
+			readPropertyFiles();
 		}
     	return restProperties;
     }

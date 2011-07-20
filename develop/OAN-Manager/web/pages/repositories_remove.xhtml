@@ -13,7 +13,7 @@
    <ui:param name="pageTitle" value="Repository aus OA-Netzwerk entfernen - OA-Netzwerk Manager" />
 
    <ui:define name="navigation">
-      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="repositories_main.xhtml"><h:outputLabel value="#{msg.repo_rem1}" /></a>
+      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="repositories_main.xhtml"><h:outputText value="#{msg.repo_rem1}" /></a>
    </ui:define>
 
    <ui:param name="menu_pository" value="#{true}" /> 
@@ -27,7 +27,7 @@
 
       <div style="padding: 20px; background-color: #f5f9f4;">
       <div style="background-color: #f5f9f4;">
-      <h2><h:outputLabel value="#{msg.repo_rem2}" /></h2>
+      <h2><h:outputText value="#{msg.repo_rem2}" /></h2>
 
       <h:messages style="color:#33B300" /><br />
             
@@ -40,7 +40,7 @@
                   <td colspan="2">
                   <p />
                   <br />
-                  <b><h:outputLabel value="#{msg.repo_rem3}" /></b>
+                  <b><h:outputText value="#{msg.repo_rem3}" /></b>
                   <p />
 
                   </td>
@@ -58,7 +58,7 @@
                   <td>#{repo.repository.url}</td>
                </tr>
                <tr>
-                  <td><h:outputLabel value="#{msg.repo_rem4}" /></td>
+                  <td><h:outputText value="#{msg.repo_rem4}" /></td>
                   <td>#{repo.repository.oaiUrl}</td>
                </tr>
                <tr>
@@ -70,11 +70,11 @@
                   <td>#{repo.repository.harvestPause}</td>
                </tr>
                <tr>
-                  <td><h:outputLabel value="#{msg.repo_rem5}" /></td>
+                  <td><h:outputText value="#{msg.repo_rem5}" /></td>
                   <td>#{repo.repository.listRecords}</td>
                </tr>
                <tr>
-                  <td><h:outputLabel value="#{msg.repo_rem6}" /></td>
+                  <td><h:outputText value="#{msg.repo_rem6}" /></td>
                   <td>#{repo.repository.active}</td>
                </tr>
 
@@ -82,7 +82,7 @@
                   <td colspan="2">
                   <p />
                   <br />
-                  <h:outputLabel value="#{msg.repo_rem_info}" />
+                  <h:outputText value="#{msg.repo_rem_info}" />
                   <p />
                   </td>
                </tr>

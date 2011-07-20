@@ -48,11 +48,6 @@ public class UserBean extends AbstractBean implements Serializable {
 		super();
 	}
 
-
-//	public String getUser() {
-//		return FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
-//	}
-
 	public Long getId() {
 		return id;
 	}

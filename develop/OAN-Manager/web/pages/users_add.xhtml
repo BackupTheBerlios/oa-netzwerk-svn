@@ -17,8 +17,8 @@
 		value="Neuen Benutzer hinzufügen - OA-Netzwerk Manager" />
 
 	<ui:define name="navigation">
-		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="users_main.xhtml"><h:outputLabel value="#{msg.users_add1}" /></a> » <a
-			href="users_add.xhtml"><h:outputLabel value="#{msg.users_add2}" /></a>
+		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="users_main.xhtml"><h:outputText value="#{msg.users_add1}" /></a> » <a
+			href="users_add.xhtml"><h:outputText value="#{msg.users_add2}" /></a>
 	</ui:define>
 
   	<ui:param name="menu_users_add" value="#{true}" /> 
@@ -29,7 +29,7 @@
 		<div style="padding: 20px; background-color: #f5f9f4;">
 		<div style="background-color: #f5f9f4;">
     
-		<h2><h:outputLabel value="#{msg.users_add3}" /></h2>
+		<h2><h:outputText value="#{msg.users_add3}" /></h2>
 
 		<table width="100%">
 
@@ -43,7 +43,7 @@
                     </tr>
 					<tr>
 						<td>
-                            <h:outputLabel value="#{msg.users_add4}" />
+                            <h:outputText value="#{msg.users_add4}" />
 						</td>
 					</tr>
 					<tr>
@@ -52,7 +52,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.users_add5}" />
+						<td><h:outputText value="#{msg.users_add5}" />
 						</td>
 					</tr>
 					<tr>
@@ -61,7 +61,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.users_add6}" />
+						<td><h:outputText value="#{msg.users_add6}" />
 						</td>
 					</tr>
 					<tr>
@@ -70,7 +70,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.users_add9}" />
+						<td><h:outputText value="#{msg.users_add9}" />
 						</td>
 					</tr>
 					<tr>
@@ -79,7 +79,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.users_add8}" />
+						<td><h:outputText value="#{msg.users_add8}" />
 						</td>
 					</tr>
 					<tr>
@@ -88,18 +88,18 @@
 						</td>
 					</tr>
 					<tr>
-						<td><h:outputLabel value="#{msg.users_add7}" /> (<a href="#"
+						<td><h:outputText value="#{msg.users_add7}" /> (<a href="#"
 							onclick="javascript:toggle_help('help_userrights'); return false;">Help</a>)
 						</td>
 					</tr>
 					<tr>
 						<td class="form"><br />
 
-						    <t:selectBooleanCheckbox id="rm1" value="#{userList.newUser.rightRepositoryManagement}" /> <h:outputLabel value="#{msg.users_add_admin_repo}" /><br />   
-							<t:selectBooleanCheckbox id="rm2" value="#{userList.newUser.rightServiceManagement}" /> <h:outputLabel value="#{msg.users_add_admin_service}" /><br />   
-							<t:selectBooleanCheckbox id="rm3" value="#{userList.newUser.rightUserManagement}" /> <h:outputLabel value="#{msg.users_add_admin_user}" /><br />   
-							<t:selectBooleanCheckbox id="rm4" value="#{userList.newUser.rightValidator}" /> <h:outputLabel value="#{msg.users_add_admin_validator}" /><br />   
-                            <t:selectBooleanCheckbox id="rm5" value="#{userList.newUser.rightReportManagement}" /> <h:outputLabel value="#{msg.users_add_admin_report}" /><br />   
+						    <t:selectBooleanCheckbox id="rm1" value="#{userList.newUser.rightRepositoryManagement}" /> <h:outputText value="#{msg.users_add_admin_repo}" /><br />   
+							<t:selectBooleanCheckbox id="rm2" value="#{userList.newUser.rightServiceManagement}" /> <h:outputText value="#{msg.users_add_admin_service}" /><br />   
+							<t:selectBooleanCheckbox id="rm3" value="#{userList.newUser.rightUserManagement}" /> <h:outputText value="#{msg.users_add_admin_user}" /><br />   
+							<t:selectBooleanCheckbox id="rm4" value="#{userList.newUser.rightValidator}" /> <h:outputText value="#{msg.users_add_admin_validator}" /><br />   
+                            <t:selectBooleanCheckbox id="rm5" value="#{userList.newUser.rightReportManagement}" /> <h:outputText value="#{msg.users_add_admin_report}" /><br />   
 						<br />    
 						</td>
 					</tr>

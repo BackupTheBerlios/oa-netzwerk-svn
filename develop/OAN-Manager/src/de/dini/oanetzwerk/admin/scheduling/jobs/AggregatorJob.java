@@ -4,7 +4,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -16,6 +15,7 @@ import org.quartz.JobExecutionException;
 import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
 import de.dini.oanetzwerk.admin.utils.RMIRegistryHelper;
 import de.dini.oanetzwerk.servicemodule.IService;
+import de.dini.oanetzwerk.utils.PropertyManager;
 
 /**
  * @author Sammy David
@@ -41,7 +41,7 @@ public class AggregatorJob extends AbstractServiceJob {
 		try {
 
 			String name = "AggregatorService";
-			String host = propertyManager.getServiceProperties().getProperty("java.rmiregistry.host.aggregator");
+			String host = PropertyManager.getServiceProperties().getProperty("java.rmiregistry.host.aggregator");
 			
 			Registry registry = RMIRegistryHelper.getRegistry(host);
 

@@ -10,7 +10,7 @@
 
 <ui:composition template="templates/template.xhtml">
    <ui:define name="title">
-      <title><h:outputLabel value="#{msg.repo_view_title}" /></title>
+      <title><h:outputText value="#{msg.repo_view_title}" /></title>
       <script language="JavaScript" type="text/JavaScript" src="../js/form_help_box.js" />
    </ui:define>
 
@@ -21,7 +21,7 @@
 
       <div style="padding: 20px; background-color: #f5f9f4;">
       <div style="background-color: #f5f9f4;">
-      <h2><h:outputLabel value="#{msg.repo_view1}" /></h2>
+      <h2><h:outputText value="#{msg.repo_view1}" /></h2>
 
       <h:messages style="color:#33B300" /><br />
     
@@ -32,7 +32,7 @@
             <h:form>
 
                <tr>
-                  <td><h:outputLabel value="#{msg.repo_view_name}*" />&nbsp;
+                  <td><h:outputText value="#{msg.repo_view_name}*" />&nbsp;
                   (<a href="#" onclick="javascript:toggle_help('help_name'); return false;">Help</a>)
                   </td>
                </tr>
@@ -42,7 +42,7 @@
                </tr>
                <tr>
                   <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.repository.name}" required="true" requiredMessage="Bitte geben sie einen Namen für das Repository ein!" />
-                     <div class="help_box" id="help_name"><h:outputLabel value="#{msg.repo_view_nameh}" /></div>
+                     <div class="help_box" id="help_name"><h:outputText value="#{msg.repo_view_nameh}" /></div>
                   </td>
                   
                </tr>
@@ -54,18 +54,18 @@
                </tr>
                <tr>
                   <td class="form"><t:inputText id="url" size="80" value="#{repo.repository.url}" />
-                     <div class="help_box" id="help_url"><h:outputLabel value="#{msg.repo_view_urlh}" /></div>
+                     <div class="help_box" id="help_url"><h:outputText value="#{msg.repo_view_urlh}" /></div>
                   </td>
                </tr>
                <tr>
-                  <td><h:outputLabel value="#{msg.repo_view_oai}*" />
+                  <td><h:outputText value="#{msg.repo_view_oai}*" />
 
                      (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)
                   </td>
                </tr>
                <tr>
                   <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.repository.oaiUrl}" required="true" requiredMessage="Bitte geben sie die URL der OAI/PMH-Schnittstelle ein!" />
-                     <div class="help_box" id="help_oaipmh"><h:outputLabel value="#{msg.repo_view_oaih}" /></div>
+                     <div class="help_box" id="help_oaipmh"><h:outputText value="#{msg.repo_view_oaih}" /></div>
                   </td>
                </tr>
                <tr>
@@ -75,7 +75,7 @@
                </tr>
                <tr>
                   <td class="form"><t:inputText id="harvest_batch" value="#{repo.repository.harvestAmount}" size="20" />
-                     <div class="help_box" id="help_size"><h:outputLabel value="#{msg.repo_view_harvbsh}" /></div>
+                     <div class="help_box" id="help_size"><h:outputText value="#{msg.repo_view_harvbsh}" /></div>
                   </td>
                </tr>
                <tr>
@@ -85,27 +85,27 @@
                </tr>
                <tr>
                   <td class="form"><t:inputText id="harvest_pause" value="#{repo.repository.harvestPause}" size="20" />
-                     <div class="help_box" id="help_pause"><h:outputLabel value="#{msg.repo_view_pauseh}" /></div>
+                     <div class="help_box" id="help_pause"><h:outputText value="#{msg.repo_view_pauseh}" /></div>
                   </td>
                </tr>
                <tr>
-                  <td><h:outputLabel value="#{msg.repo_view_lr}" />
+                  <td><h:outputText value="#{msg.repo_view_lr}" />
                      (<a href="#" onclick="javascript:toggle_help('help_listrec'); return false;">Help</a>)
                   </td>
                </tr>
                <tr>
                   <td class="form"><t:inputText id="listrecords" value="#{repo.repository.listRecords}" size="20" />
-                     <div class="help_box" id="help_listrec"><h:outputLabel value="#{msg.repo_view_lrh}" /></div>
+                     <div class="help_box" id="help_listrec"><h:outputText value="#{msg.repo_view_lrh}" /></div>
                   </td>
                </tr>
                <tr>
-                  <td><h:outputLabel value="#{msg.repo_view_active}" />
+                  <td><h:outputText value="#{msg.repo_view_active}" />
                      (<a href="#" onclick="javascript:toggle_help('help_active'); return false;">Help</a>)
                   </td>
                </tr>
                <tr>
                   <td class="form"><t:selectBooleanCheckbox id="active" value="#{repo.repository.active}" />
-                     <div class="help_box" id="help_active"><h:outputLabel value="#{msg.repo_view_activeh}" /></div>
+                     <div class="help_box" id="help_active"><h:outputText value="#{msg.repo_view_activeh}" /></div>
                   </td>
                </tr>               
                <tr>

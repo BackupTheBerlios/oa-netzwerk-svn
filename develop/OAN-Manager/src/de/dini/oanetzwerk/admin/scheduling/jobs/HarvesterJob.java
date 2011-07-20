@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+
 import org.apache.log4j.Logger;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -15,17 +18,18 @@ import org.quartz.JobExecutionException;
 import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
 import de.dini.oanetzwerk.admin.utils.RMIRegistryHelper;
 import de.dini.oanetzwerk.servicemodule.IService;
+import de.dini.oanetzwerk.utils.PropertyManager;
 
 /**
  * @author Sammy David
  * sammy.david@cms.hu-berlin.de
  * 
  */
+
 public class HarvesterJob extends AbstractServiceJob {
 
 	private static Logger logger = Logger.getLogger(HarvesterJob.class);
-
-
+	
 
 	public HarvesterJob() {
 
@@ -43,7 +47,8 @@ public class HarvesterJob extends AbstractServiceJob {
 		try {
 
 			String name = "HarvesterService";
-			String host = propertyManager.getServiceProperties().getProperty("java.rmiregistry.host.harvester");
+
+			String host = PropertyManager.getServiceProperties().getProperty("java.rmiregistry.host.harvester");
 			
 			Registry registry = RMIRegistryHelper.getRegistry(host);
 
@@ -101,6 +106,8 @@ public class HarvesterJob extends AbstractServiceJob {
 	public static int progress() {
 		return new Random().nextInt(100);
 	}
+	
+
 
 //	public void getRepositories() {
 //

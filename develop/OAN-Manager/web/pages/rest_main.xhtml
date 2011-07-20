@@ -13,7 +13,7 @@
   <ui:param name="pageTitle" value="Dienste - OA-Netzwerk Manager" />
 
   <ui:define name="navigation">
-    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml"><h:outputLabel value="#{msg.rest_main1}" /></a>
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services_main.xhtml"><h:outputText value="#{msg.rest_main1}" /></a>
   </ui:define>
 
   <ui:param name="menu_rest" value="#{true}" /> 
@@ -28,10 +28,10 @@
         <table width="80%" style="width: 80%; border-collapse: collapse; border: 1px #bbb solid;">
 
           <tr>
-            <th class="pane-header"><h:outputLabel value="#{msg.rest_main2}" /></th>
-            <th class="pane-header"><h:outputLabel value="#{msg.rest_main3}" /></th>
+            <th class="pane-header"><h:outputText value="#{msg.rest_main2}" /></th>
+            <th class="pane-header"><h:outputText value="#{msg.rest_main3}" /></th>
             <th class="pane-header">URL</th>
-            <th class="pane-header"><h:outputLabel value="#{msg.rest_main4}" /></th>
+            <th class="pane-header"><h:outputText value="#{msg.rest_main4}" /></th>
           </tr>
 
           <tr class="odd">
@@ -43,7 +43,7 @@
             <td style="vertical-align: middle; text-align: center; height: 70px;">REST-Server</td>
             <td style="vertical-align: middle; text-align: center; height: 70px;">#{rest.url}</td>
             <td style="vertical-align: middle; text-align: center; height: 70px;">
-              <h:commandLink action="#{rest.checkStatus}" title="Starten"><h:outputLabel value="#{msg.rest_main5}" /></h:commandLink>
+              <h:commandLink action="#{rest.checkStatus}" title="Starten"><h:outputText value="#{msg.rest_main5}" /></h:commandLink>
             </td>
           </tr>
 

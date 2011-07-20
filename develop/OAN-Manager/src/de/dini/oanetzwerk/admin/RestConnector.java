@@ -31,7 +31,6 @@ public class RestConnector implements Serializable {
 	
 	public RestConnector() {
 	    super();
-	    System.out.println("RestConnector constructor");
     }
 	
 
@@ -54,6 +53,10 @@ public class RestConnector implements Serializable {
 
 	public void setPropertyManager(PropertyManager propertyManager) {
     	this.propertyManager = propertyManager;
-    	System.out.println("RestConnector propertyManager setter");
-    }	
+    }
+
+	public PropertyManager getPropertyManager() {
+		return propertyManager;
+	}	
+	
 }
