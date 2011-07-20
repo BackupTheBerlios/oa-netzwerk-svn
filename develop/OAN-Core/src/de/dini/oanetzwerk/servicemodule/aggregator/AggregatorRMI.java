@@ -20,6 +20,7 @@ import de.dini.oanetzwerk.servicemodule.IAggregatorMonitor;
 import de.dini.oanetzwerk.servicemodule.IHarvesterMonitor;
 import de.dini.oanetzwerk.servicemodule.IService;
 import de.dini.oanetzwerk.servicemodule.RMIService;
+import de.dini.oanetzwerk.servicemodule.ServiceStatus;
 import de.dini.oanetzwerk.servicemodule.harvester.Harvester;
 import de.dini.oanetzwerk.servicemodule.harvester.HarvesterRMI;
 
@@ -138,9 +139,12 @@ public class AggregatorRMI extends RMIService {
 	}
 
 	@Override
-	public int getCurrentStatus() throws RemoteException {
-		// TODO calculate progress
-		return new Random().nextInt();
+	public ServiceStatus getCurrentStatus() throws RemoteException {
+		if (working) {
+			return ServiceStatus.Busy;
+		} else {
+			return ServiceStatus.Started;
+		}
 	}
 
 	@Override
@@ -188,6 +192,8 @@ public class AggregatorRMI extends RMIService {
 		
 		// hier wird entweder die spezifische Objekt-ID übergeben
 		// oder ein Auto-Durchlauf gestartet
+		
+		working = true;
 		if (id > 0) {
 			aggregator.startSingleRecord(id, time);
 		} else {
@@ -198,6 +204,7 @@ public class AggregatorRMI extends RMIService {
 		// updating job status
 		updateJobStatus(data.get("job_name"), "Finished");
 		logger.info("Aggregator Finished!");
+		working = false;
 		return true;
 	}
 	

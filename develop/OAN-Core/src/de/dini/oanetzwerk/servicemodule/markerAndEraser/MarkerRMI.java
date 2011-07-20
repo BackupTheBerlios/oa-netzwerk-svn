@@ -15,6 +15,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 import de.dini.oanetzwerk.servicemodule.IService;
 import de.dini.oanetzwerk.servicemodule.RMIService;
+import de.dini.oanetzwerk.servicemodule.ServiceStatus;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class MarkerRMI extends RMIService {
@@ -81,9 +82,12 @@ public class MarkerRMI extends RMIService {
 	}
 
 	@Override
-	public int getCurrentStatus() throws RemoteException {
-		// TODO calculate progress
-		return new Random().nextInt();
+	public ServiceStatus getCurrentStatus() throws RemoteException {
+		if (working) {
+			return ServiceStatus.Busy;
+		} else {
+			return ServiceStatus.Started;
+		}
 	}
 
 	@Override
@@ -106,6 +110,7 @@ public class MarkerRMI extends RMIService {
 		
 		// updating job status
 		updateJobStatus(data.get("job_name"), "Working");
+		working = true;
 		
 		// im Testfall wird eine andere Startmethode aufgerufen
 		if (data.containsKey("testing") && Boolean.TRUE.equals(Boolean.parseBoolean(data.get("testing")))) {
@@ -118,6 +123,7 @@ public class MarkerRMI extends RMIService {
 		// updating job status
 		updateJobStatus(data.get("job_name"), "Finished");
 		logger.info("Marker Finished!");
+		working = false;
 		return true;
 	}
 	
@@ -162,7 +168,7 @@ public class MarkerRMI extends RMIService {
 
 	@Override
     protected String getPropertyFile() {
-		return "aggregatorprop.xml";
+		return "markerprop.xml";
     }
 
 }

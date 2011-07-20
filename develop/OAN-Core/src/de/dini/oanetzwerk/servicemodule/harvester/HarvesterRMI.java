@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -21,6 +20,7 @@ import de.dini.oanetzwerk.servicemodule.IService;
 import de.dini.oanetzwerk.servicemodule.RMIService;
 import de.dini.oanetzwerk.servicemodule.Repository;
 import de.dini.oanetzwerk.servicemodule.RestClient;
+import de.dini.oanetzwerk.servicemodule.ServiceStatus;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class HarvesterRMI extends RMIService {
@@ -147,9 +147,12 @@ public class HarvesterRMI extends RMIService {
 	}
 
 	@Override
-	public int getCurrentStatus() throws RemoteException {
-		// TODO calculate progress
-		return new Random().nextInt();
+	public ServiceStatus getCurrentStatus() throws RemoteException {
+		if (working) {
+			return ServiceStatus.Busy;
+		} else {
+			return ServiceStatus.Started;
+		}
 	}
 	
 	public String getUpdates() throws RemoteException {
@@ -224,6 +227,7 @@ public class HarvesterRMI extends RMIService {
 
 		updateJobStatus(data.get("job_name"), "Finished");
 		logger.info("Harvesting job finished!");
+		working = false;
 		return true;
 	}
 

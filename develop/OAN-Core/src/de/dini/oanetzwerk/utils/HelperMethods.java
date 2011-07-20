@@ -106,11 +106,9 @@ public class HelperMethods {
 
 		Properties props = new Properties();
 
-		// if (logger.isDebugEnabled ( ))
-		logger.info(new File(file).getAbsoluteFile());
-		System.out.println("out");
-		System.out.println(new File(file).getAbsoluteFile());
-		System.out.println(file);
+		if (logger.isDebugEnabled ( ))
+			logger.debug(new File(file).getAbsoluteFile());
+
 		props.loadFromXML(new FileInputStream(file));
 
 		return props;
@@ -118,7 +116,6 @@ public class HelperMethods {
 
 	public static Properties loadPropertiesFromPropFile(String file) throws InvalidPropertiesFormatException, FileNotFoundException,
 	                IOException {
-		System.out.println(file);
 		Properties props = new Properties();
 
 		if (logger.isDebugEnabled())

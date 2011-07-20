@@ -390,7 +390,6 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 						stmtconn.loadStatement(DBAccessNG.updateInDB().ServicesScheduling(stmtconn.connection, Long.toString(jobName), status));
 						this.result = stmtconn.execute();
 
-						System.out.println("Update Count: " + this.result.getUpdateCount());
 						if (this.result.getUpdateCount() < 1) {
 
 							this.rms.setStatus(RestStatusEnum.NO_OBJECT_FOUND_ERROR);
@@ -560,7 +559,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 					nonperiodicTimestamp, periodicInterval, periodicDays, jobId));
 			this.result = stmtconn.execute();
 
-			System.out.println("Update Count: " + this.result.getUpdateCount());
+			logger.info("Update Count: " + this.result.getUpdateCount());
 			if (this.result.getUpdateCount() < 1) {
 
 				this.rms.setStatus(RestStatusEnum.NO_OBJECT_FOUND_ERROR);
@@ -719,7 +718,6 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 			} else if (key.equalsIgnoreCase("nonperiodic_date")) {
 
 				try {
-					System.out.println("date:: "+ res.getValue(key));
 					nonperiodicTimestamp = new Timestamp(new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(res.getValue(key)).getTime());
 
 				} catch (ParseException ex) {
@@ -767,12 +765,12 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 			stmtconn.loadStatement(DBAccessNG.insertIntoDB().ServicesScheduling(stmtconn.connection, name, serviceId, status, info, periodic,
 					nonperiodicTimestamp, periodicInterval, periodicDays));
 			
-			System.out.println(name + "   " + serviceId + "   " + status + "   " + info + "   " + periodic
+			logger.info("DB-Insert: " + name + "   " + serviceId + "   " + status + "   " + info + "   " + periodic
 					 + "   " + nonperiodicTimestamp  + "   " + periodicInterval  + "   " +  periodicDays);
 			
 			this.result = stmtconn.execute();
 
-			System.out.println("Update Count: " + this.result.getUpdateCount());
+			logger.info("Update Count: " + this.result.getUpdateCount());
 			if (this.result.getUpdateCount() < 1) {
 
 				this.rms.setStatus(RestStatusEnum.NO_OBJECT_FOUND_ERROR);

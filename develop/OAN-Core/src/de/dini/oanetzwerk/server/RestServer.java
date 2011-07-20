@@ -156,17 +156,17 @@ public class RestServer extends HttpServlet implements Serializable {
 		String classname;
 		String dataSource;
 		
-		if (this.getServerproperties ( ) != null) {
-			
-			classname = this.getServerproperties ( ).getProperty ("handlerpath") + path [1];
-			dataSource = this.getServerproperties ( ).getProperty ("datasource");
-			
-		} else {
+//		if (this.getServerproperties ( ) != null) {
+//			
+//			classname = this.getServerproperties ( ).getProperty ("handlerpath") + path [1];
+//			dataSource = this.getServerproperties ( ).getProperty ("datasource");
+//			
+//		} else {
 			
 			classname = "de.dini.oanetzwerk.server.handler." + path [1];
 			dataSource = "jdbc/oanetztest";
 			
-		}
+//		}
 		
 		if (logger.isDebugEnabled ( )) {
 			logger.debug ("Class to be loaded: " + classname);
@@ -351,44 +351,44 @@ public class RestServer extends HttpServlet implements Serializable {
 	 * @return the serverproperties
 	 */
 	
-	protected final Properties getServerproperties ( ) {
-		
-		if (this.serverproperties == null) {
-			
-			this.serverproperties = new Properties ( );
-			
-			File serverpropFile = new File (System.getProperty ("catalina.base"), "webapps/restserver/WEB-INF/serverprop.xml");
-			
-			try {
-				
-				this.serverproperties.loadFromXML (new FileInputStream (serverpropFile));
-				
-			} catch (InvalidPropertiesFormatException ex) {
-				
-				logger.error (serverpropFile.getAbsoluteFile ( ) + " is not a valid java.util.Properties file!");
-				logger.error (ex.getLocalizedMessage ( ), ex);
-				
-				this.serverproperties = null;
-				return null;
-				
-			} catch (FileNotFoundException ex) {
-				
-				logger.error (serverpropFile.getAbsoluteFile ( ) + " not found! Does it really exist?");
-				//logger.error (ex.getLocalizedMessage ( ), ex);
-				
-				this.serverproperties = null;
-				return null;
-				
-			} catch (IOException ex) {
-				
-				logger.error ("While opening " + serverpropFile.getAbsoluteFile ( ) + " an I/O-Error occured. Please fix this!");
-				logger.error (ex.getLocalizedMessage ( ), ex);
-				
-				this.serverproperties = null;
-				return null;
-			}
-		}
-		
-		return this.serverproperties;
-	}
+//	protected final Properties getServerproperties ( ) {
+//		
+//		if (this.serverproperties == null) {
+//			
+//			this.serverproperties = new Properties ( );
+//			
+//			File serverpropFile = new File (System.getProperty ("catalina.base"), "webapps/restserver/WEB-INF/serverprop.xml");
+//			
+//			try {
+//				
+//				this.serverproperties.loadFromXML (new FileInputStream (serverpropFile));
+//				
+//			} catch (InvalidPropertiesFormatException ex) {
+//				
+//				logger.error (serverpropFile.getAbsoluteFile ( ) + " is not a valid java.util.Properties file!");
+//				logger.error (ex.getLocalizedMessage ( ), ex);
+//				
+//				this.serverproperties = null;
+//				return null;
+//				
+//			} catch (FileNotFoundException ex) {
+//				
+//				logger.error (serverpropFile.getAbsoluteFile ( ) + " not found! Does it really exist?");
+//				//logger.error (ex.getLocalizedMessage ( ), ex);
+//				
+//				this.serverproperties = null;
+//				return null;
+//				
+//			} catch (IOException ex) {
+//				
+//				logger.error ("While opening " + serverpropFile.getAbsoluteFile ( ) + " an I/O-Error occured. Please fix this!");
+//				logger.error (ex.getLocalizedMessage ( ), ex);
+//				
+//				this.serverproperties = null;
+//				return null;
+//			}
+//		}
+//		
+//		return this.serverproperties;
+//	}
 }

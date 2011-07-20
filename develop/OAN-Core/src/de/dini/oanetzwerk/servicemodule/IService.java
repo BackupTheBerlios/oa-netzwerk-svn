@@ -14,7 +14,7 @@ public interface IService extends Remote {
 	
 	int getCurrentRepository() throws RemoteException;
 	
-	int getCurrentStatus() throws RemoteException;
+	ServiceStatus getCurrentStatus() throws RemoteException;
 	
 	int getUpdateInterval() throws RemoteException;
 	

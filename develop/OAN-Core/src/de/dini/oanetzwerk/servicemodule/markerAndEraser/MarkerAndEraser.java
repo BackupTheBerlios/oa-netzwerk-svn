@@ -51,10 +51,10 @@ public class MarkerAndEraser {
 	private Date lastRepositoryHarvestDate;
 	private Date lastRepositoryMarkAndEraseDate;
 
-
+	private Properties restclientProps;
 	private Properties props = new Properties();
 	private String propertyFilePath = "";
-	private String propertyfile = "markereraserprop.xml";
+	private String propertyfile = "markerprop.xml";
 	
 	private boolean stopped = false;
 	
@@ -76,9 +76,6 @@ public class MarkerAndEraser {
 	
 	public boolean prepareMarker(Integer id) {
 		
-		// setup log4j config-file
-		DOMConfigurator.configure("log4j.xml");
-		
 		this.repositoryID = id;
 
 		try {
@@ -86,6 +83,9 @@ public class MarkerAndEraser {
 			this.props = HelperMethods.loadPropertiesFromFile(propertyFilePath + this
 					.getPropertyfile());
 
+			this.restclientProps = HelperMethods
+			.loadPropertiesFromFile(propertyFilePath + "restclientprop.xml");
+			
 			return true;
 		} catch (InvalidPropertiesFormatException ex) {
 
@@ -697,7 +697,7 @@ public class MarkerAndEraser {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("prepareRestTransmission");
 		
-		return HelperMethods.prepareRestTransmission(new File(propertyFilePath + "restclientprop.xml"), resource, props);
+		return HelperMethods.prepareRestTransmission(restclientProps, resource, props);
 	}
 	
 	/**

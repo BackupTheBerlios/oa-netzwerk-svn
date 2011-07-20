@@ -440,7 +440,6 @@ public class DDCEntry  extends AbstractKeyWordHandler implements KeyWord2Databas
 				
 				result.getResultSet().next();
 				int row = result.getResultSet().getRow();
-				System.out.println("rows: " + row);
 
 				if (row == 0) {
 
@@ -462,7 +461,6 @@ public class DDCEntry  extends AbstractKeyWordHandler implements KeyWord2Databas
 				
 				result.getResultSet().next();
 				row = result.getResultSet().getRow();
-				System.out.println("rows2: " + row);
 
 				// if relation doesn't exist, create it
 				if (row == 0) {

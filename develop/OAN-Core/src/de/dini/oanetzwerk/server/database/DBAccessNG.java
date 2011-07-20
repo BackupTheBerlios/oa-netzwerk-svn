@@ -52,9 +52,6 @@ public class DBAccessNG {
 	private static UpdateFromDB update;
 	private static DeleteFromDB delete;
 	
-	// private Connection dataSourceConnection;
-	// private StatementConnection statementConnection;
-	// private boolean isSingeleStatementConnection;
 
 	/**
 	 * 
@@ -66,14 +63,11 @@ public class DBAccessNG {
 			logger.debug("DBAccessNG Instance will be prepared!");
 
 		try {
-			System.out.println("DBAccessNG - new instance1");
 			this.datasource = (DataSource) ((Context) new InitialContext().lookup("java:comp/env")).lookup("jdbc/oanetztest");
 
 			initDriverClass();
 		} catch (NamingException ex) {
 
-//			this.datasource = new BasicDataSource();
-//			this.datasource.
 			logger.error(ex.getLocalizedMessage(), ex);
 		}
 	}
@@ -87,8 +81,6 @@ public class DBAccessNG {
 			logger.debug("DBAccessNG Instance will be prepared!");
 
 		try {
-			System.out.println("DBAccessNG - new instance2");
-			System.out.println("DataSource: " + dataSource);
 			this.datasource = (DataSource) ((Context) new InitialContext().lookup("java:comp/env")).lookup(dataSource);
 
 			initDriverClass();
