@@ -43,7 +43,9 @@ public class HarvesterJob extends AbstractServiceJob {
 		try {
 
 			String name = "HarvesterService";
-			Registry registry = RMIRegistryHelper.getRegistry();
+			String host = propertyManager.getServiceProperties().getProperty("java.rmiregistry.host.harvester");
+			
+			Registry registry = RMIRegistryHelper.getRegistry(host);
 
 			if (registry == null) {
 				logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to start RMI-Harvester!");

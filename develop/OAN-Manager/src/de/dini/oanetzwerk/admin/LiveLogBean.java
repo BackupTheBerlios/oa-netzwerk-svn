@@ -43,29 +43,29 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	public LiveLogBean() {
 		super();
 		
-		String name = "HarvesterMonitorService";
-
-		
-		try {
-//			FileWriter writer = new FileWriter(new File("/home/davidsam/Desktop/1234567.txt"));
-//			writer.write("blabla");
-//			writer.flush();
-//			writer.close();
-			
-			IHarvesterMonitor stub = (IHarvesterMonitor) UnicastRemoteObject.exportObject(this, 0);
-			Registry registry = RMIRegistryHelper.getRegistry();
-			
-			if (registry == null) {
-				logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to bind to obtain Harvester-Monitoring!");
-				return;
-			}
-			
-			registry.rebind(name, stub);
-			System.out.println(name + " bound");
-		} catch (Exception e) {
-			System.err.println(name + " could not be bound: ");
-			e.printStackTrace();
-		}
+//		String name = "HarvesterMonitorService";
+//
+//		
+//		try {
+////			FileWriter writer = new FileWriter(new File("/home/davidsam/Desktop/1234567.txt"));
+////			writer.write("blabla");
+////			writer.flush();
+////			writer.close();
+//			
+//			IHarvesterMonitor stub = (IHarvesterMonitor) UnicastRemoteObject.exportObject(this, 0);
+//			Registry registry = RMIRegistryHelper.getRegistry();
+//			
+//			if (registry == null) {
+//				logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to bind to obtain Harvester-Monitoring!");
+//				return;
+//			}
+//			
+//			registry.rebind(name, stub);
+//			System.out.println(name + " bound");
+//		} catch (Exception e) {
+//			System.err.println(name + " could not be bound: ");
+//			e.printStackTrace();
+//		}
 	}
 	
 	

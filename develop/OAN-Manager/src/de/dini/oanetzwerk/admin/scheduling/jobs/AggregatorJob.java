@@ -41,7 +41,9 @@ public class AggregatorJob extends AbstractServiceJob {
 		try {
 
 			String name = "AggregatorService";
-			Registry registry = RMIRegistryHelper.getRegistry();
+			String host = propertyManager.getServiceProperties().getProperty("java.rmiregistry.host.aggregator");
+			
+			Registry registry = RMIRegistryHelper.getRegistry(host);
 
 			if (registry == null) {
 				logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to start RMI-Harvester!");

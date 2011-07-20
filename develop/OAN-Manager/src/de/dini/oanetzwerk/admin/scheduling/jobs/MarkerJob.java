@@ -44,7 +44,9 @@ public class MarkerJob  extends AbstractServiceJob {
 			try {
 
 				String name = "MarkerService";
-				Registry registry = RMIRegistryHelper.getRegistry();
+				String host = propertyManager.getServiceProperties().getProperty("java.rmiregistry.host.marker");
+				
+				Registry registry = RMIRegistryHelper.getRegistry(host);
 
 				if (registry == null) {
 					logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to start RMI-Marker!");

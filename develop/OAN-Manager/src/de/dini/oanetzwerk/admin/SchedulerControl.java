@@ -78,8 +78,6 @@ public class SchedulerControl implements Serializable {
 
 	public SchedulerControl() {
 		super();
-		System.out.println("SchedulerControl constructor");
-		initAndStartScheduler();
 	}
 
 
