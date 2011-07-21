@@ -561,7 +561,7 @@
 	</target>
 
 	<target name="warServer" depends="compileServer">
-		<war destfile="${dist}/restserver.war" webxml="conf/web.xml">
+		<war destfile="${dist}/rest.war" webxml="conf/web.xml">
 			<!--war destfile="${build}/restserver.war"-->
 			<lib dir="${lib}">
 				<include name="commons-cli-1.1.jar" />
@@ -585,7 +585,7 @@
 	
 
 	<target name="warLocalServer" depends="compileServer">
-		<war destfile="${dist}/restserver.war" webxml="conf/web.xml">
+		<war destfile="${dist}/rest.war" webxml="conf/web.xml">
 			<!--war destfile="${build}/restserver.war"-->
 			<lib dir="${lib}">
 				<include name="commons-cli-1.1.jar" />
@@ -881,6 +881,7 @@
 			<lib dir="${lib}">
 				<include name="log4j-1.2.15.jar" />
 				<include name="rome-1.0RC1.jar" />
+				<include name="commons-httpclient-3.1.jar" />
 				<include name="commons-lang-2.3.jar" />
 				<include name="jdom.jar" />
 			</lib>

@@ -213,15 +213,15 @@
 	</target>
 
 	<target name="local-deploy-server" depends="warLocalServer" description="Simply deploys the server web archive">
-		<delete file="${env.CATALINA_HOME}/webapps/restserver.war" />
-		<delete dir="${env.CATALINA_HOME}/webapps/restserver" />
-		<copy file="${dist}\restserver.war" todir="${env.CATALINA_HOME}/webapps" />
+		<delete file="${env.CATALINA_HOME}/webapps/rest.war" />
+		<delete dir="${env.CATALINA_HOME}/webapps/rest" />
+		<copy file="${dist}\rest.war" todir="${env.CATALINA_HOME}/webapps" />
 	</target>
 	
 	<target name="local-deploy-liveserver" depends="warServer" description="Simply deploys the server web archive">
-		<delete file="${env.CATALINA_HOME}/webapps/restserver.war" />
-		<delete dir="${env.CATALINA_HOME}/webapps/restserver" />
-		<copy file="${dist}\restserver.war" todir="${env.CATALINA_HOME}/webapps" />
+		<delete file="${env.CATALINA_HOME}/webapps/rest.war" />
+		<delete dir="${env.CATALINA_HOME}/webapps/rest" />
+		<copy file="${dist}\rest.war" todir="${env.CATALINA_HOME}/webapps" />
 	</target>
 
 	<target name="local-deploy-oaipmh" depends="warOAIPMH" description="Simply deploys the oaipmh web archive">
