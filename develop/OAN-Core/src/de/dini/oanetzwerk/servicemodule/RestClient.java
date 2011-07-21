@@ -37,11 +37,15 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class RestClient {
 	
+	private static final String DEFAULT_HOST = "oanet.cms.hu-berlin.de";
+
+	private static final String DEFAULT_REST_SERVLET_PATH = "rest/server";
+
 	/**
 	 * The path to the servlet within the servlet container. (Specified in the web.xml)
 	 */
 	
-	private String servletPath = "restserver/server";
+	private String servletPath = DEFAULT_REST_SERVLET_PATH;
 	
 	/**
 	 * The servlet container's port.
@@ -166,7 +170,7 @@ public class RestClient {
 				
 			} else {
 				
-				this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+				this.servletPath = new String (this.props.getProperty ("servletPath", DEFAULT_REST_SERVLET_PATH));
 				this.port = new Integer (this.props.getProperty ("SSLPort", "443"));
 				System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
 				System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
@@ -180,7 +184,7 @@ public class RestClient {
 				
 			} else {
 				
-				this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+				this.servletPath = new String (this.props.getProperty ("servletPath", DEFAULT_REST_SERVLET_PATH));
 				this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
 			}
 		}
@@ -222,7 +226,7 @@ public class RestClient {
 		if (this.props == null) {
 			
 			this.port = 443;
-			this.qualifiedServerName = "oanet.cms.hu-berlin.de";
+			this.qualifiedServerName = DEFAULT_HOST;
 			this.servletPath = "restserver/server";
 			logger.warn ("No Property File found, trying default settings!");
 			
@@ -233,16 +237,16 @@ public class RestClient {
 		
 		if (!this.nossl && this.props != null) {
 			
-			this.qualifiedServerName = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
-			this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+			this.qualifiedServerName = new String (this.props.getProperty ("url", DEFAULT_HOST));
+			this.servletPath = new String (this.props.getProperty ("servletPath", DEFAULT_REST_SERVLET_PATH));
 			this.port = new Integer (this.props.getProperty ("SSLPort", "443"));
 			System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
 			System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
 			
 		} else if (this.props != null) {
 			
-			this.qualifiedServerName = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
-			this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+			this.qualifiedServerName = new String (this.props.getProperty ("url", DEFAULT_HOST));
+			this.servletPath = new String (this.props.getProperty ("servletPath", DEFAULT_REST_SERVLET_PATH));
 			this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
 		}
 	}
@@ -259,8 +263,8 @@ public class RestClient {
 		if (this.props == null) {
 			
 			this.port = 443;
-			this.qualifiedServerName = "oanet.cms.hu-berlin.de";
-			this.servletPath = "restserver/server";
+			this.qualifiedServerName = DEFAULT_HOST;
+			this.servletPath = DEFAULT_REST_SERVLET_PATH;
 			logger.warn ("No Property File found, trying default settings!");
 			
 		} else {
@@ -270,16 +274,16 @@ public class RestClient {
 		
 		if (!this.nossl && this.props != null) {
 			
-			this.qualifiedServerName = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
-			this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+			this.qualifiedServerName = new String (this.props.getProperty ("url", DEFAULT_HOST));
+			this.servletPath = new String (this.props.getProperty ("servletPath", DEFAULT_REST_SERVLET_PATH));
 			this.port = new Integer (this.props.getProperty ("SSLPort", "443"));
 			System.setProperty ("javax.net.ssl.trustStore", this.props.getProperty ("trustStore"));
 			System.setProperty ("javax.net.ssl.keyStorePassword", this.props.getProperty ("keystorepassword"));
 			
 		} else if (this.props != null) {
 			
-			this.qualifiedServerName = new String (this.props.getProperty ("url", "oanet.cms.hu-berlin.de"));
-			this.servletPath = new String (this.props.getProperty ("servletPath", "restserver/server"));
+			this.qualifiedServerName = new String (this.props.getProperty ("url", DEFAULT_HOST));
+			this.servletPath = new String (this.props.getProperty ("servletPath", DEFAULT_REST_SERVLET_PATH));
 			this.port = new Integer (this.props.getProperty ("NonSSLPort", "80"));
 		}
 	}

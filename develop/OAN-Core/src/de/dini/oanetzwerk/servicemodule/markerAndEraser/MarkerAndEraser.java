@@ -46,7 +46,7 @@ public class MarkerAndEraser {
 	private static final int LIMIT_PECULIAR = 3;
 	private static final int LIMIT_OUTDATED = 6;
 	
-	private Integer repositoryID = null;
+	private Long repositoryID = null;
 
 	private Date lastRepositoryHarvestDate;
 	private Date lastRepositoryMarkAndEraseDate;
@@ -62,19 +62,19 @@ public class MarkerAndEraser {
 	 * @param repositoryID
 	 */
 
-	public MarkerAndEraser(Integer repositoryID) {
+	public MarkerAndEraser(Long repositoryID) {
 		this("", repositoryID);
 
 	}
 	
-	public MarkerAndEraser(String propertyFilePath, Integer repositoryID) {
+	public MarkerAndEraser(String propertyFilePath, Long repositoryID) {
 
 		this.propertyFilePath = propertyFilePath;
 		prepareMarker(repositoryID);
 	}
 	
 	
-	public boolean prepareMarker(Integer id) {
+	public boolean prepareMarker(Long id) {
 		
 		this.repositoryID = id;
 
@@ -150,7 +150,7 @@ public class MarkerAndEraser {
 
 		try {
 
-			serviceId = HelperMethods.getServiceId("MarkAndErase", props);
+			serviceId = getServiceId("MarkAndErase");
 
 			logger.debug("ServiceID: " + serviceId);
 
@@ -687,6 +687,68 @@ public class MarkerAndEraser {
 		}
 	}
 	
+
+	public BigDecimal getServiceId(String service) throws ServiceIDException {
+
+		RestMessage getServicesResponse = prepareRestTransmission("Services/byName/" + service + "/")
+		                .sendGetRestMessage();
+
+		if (getServicesResponse == null || getServicesResponse.getListEntrySets().isEmpty()
+		                || getServicesResponse.getStatus() != RestStatusEnum.OK) {
+
+			String description = RestStatusEnum.UNKNOWN_ERROR.toString();
+
+			if (getServicesResponse != null)
+				description = getServicesResponse.getStatusDescription();
+
+			if (getServicesResponse == null || getServicesResponse.getStatus() != RestStatusEnum.SQL_WARNING) {
+
+				logger.error("Could NOT get " + service + "-Service-ID from database! " + description);
+				throw new ServiceIDException("Could NOT get " + service + "-Service-ID from database! Cause: " + description);
+
+			} else {
+
+				logger.warn("SQL_WARNING: " + description);
+				throw new ServiceIDException("SQL_WARNING: " + description);
+			}
+		}
+
+		RestEntrySet res = getServicesResponse.getListEntrySets().get(0);
+
+		Iterator<String> it = res.getKeyIterator();
+		String key = "";
+
+		BigDecimal thisServiceID = new BigDecimal(0);
+
+		while (it.hasNext()) {
+
+			key = it.next();
+
+			if (logger.isDebugEnabled())
+				logger.debug("key: " + key + " value: " + res.getValue(key));
+
+			if (key.equalsIgnoreCase("service_id")) {
+
+				thisServiceID = new BigDecimal(res.getValue(key));
+				continue;
+
+			} else if (key.equalsIgnoreCase("name")) {
+
+				if (!res.getValue(key).equalsIgnoreCase("Harvester"))
+					logger.warn("Should read Harvester and read " + res.getValue(key) + " instead!");
+
+				continue;
+
+			} else {
+
+				logger.warn("Unknown RestMessage key received: " + res.getValue(key));
+
+				continue;
+			}
+		}
+
+		return thisServiceID;
+	}
 	
 	/**
 	 * @param string

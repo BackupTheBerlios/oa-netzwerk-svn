@@ -193,7 +193,7 @@ public class HarvesterRMI extends RMIService {
 		// harvest all active repositories
 		if (harvestAllRepositories) {
 
-			List<Repository> repositories = getRepositories();
+			List<Repository> repositories = getRepositories(harvester.getPropertyfile());
 			
 			for (Repository repository : repositories) {
 	        
@@ -318,69 +318,6 @@ public class HarvesterRMI extends RMIService {
 
 	}
 
-	public List<Repository> getRepositories() {
-
-		List<Repository> repoList = new ArrayList<Repository>();
-
-		Properties props = null;
-		try {
-			props = HelperMethods.loadPropertiesFromFile(getApplicationPath() + harvester.getPropertyfile());
-
-		} catch (Exception e) {
-			logger.warn("Could not load property file '" + getApplicationPath() + harvester.getPropertyfile() + "'! Skipping harvesting ...");
-		}
-
-		RestClient client = HelperMethods.prepareRestTransmission(new File(getApplicationPath() + "restclientprop.xml"), "Repository/", props);
-		String result = client.GetData();
-
-		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
-
-		if (rms == null || rms.getListEntrySets().isEmpty()) {
-
-			logger.error("received no Repository Details at all from the server");
-			return null;
-		}
-
-		for (RestEntrySet res : rms.getListEntrySets()) {
-
-			Iterator<String> it = res.getKeyIterator();
-			String key = "";
-			Repository repo = new Repository();
-
-			while (it.hasNext()) {
-
-				key = it.next();
-
-				// if (logger.isDebugEnabled ( ))
-				// logger.debug ("key: " + key + " value: " + res.getValue
-				// (key));
-
-				if (key.equalsIgnoreCase("name")) {
-
-					repo.setName(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("active")) {
-
-					repo.setActive(Boolean.parseBoolean(res.getValue(key)));
-
-				} else if (key.equalsIgnoreCase("repository_id")) {
-
-					repo.setId(new Long(res.getValue(key)));
-
-				} else
-					// System.out.println("Key: " + key);
-					continue;
-			}
-
-			if (repo.isActive()) {
-				repoList.add(repo);
-			}
-
-		}
-		System.out.println(repoList.size());
-
-		return repoList;
-	}
 
 	protected String getPropertyFile() {
 		if (harvester != null) {

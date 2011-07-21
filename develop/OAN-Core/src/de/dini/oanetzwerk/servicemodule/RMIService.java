@@ -5,6 +5,9 @@ import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -14,6 +17,7 @@ import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.HelperMethods;
 
 public abstract class RMIService implements IService {
@@ -64,6 +68,70 @@ public abstract class RMIService implements IService {
 		DOMConfigurator.configureAndWatch((applicationPath == null ? "" : applicationPath) + "log4j.xml" , 60*1000 );
 	}
 
+	protected List<Repository> getRepositories(String servicePropFile) {
+
+		List<Repository> repoList = new ArrayList<Repository>();
+
+		Properties props = null;
+		try {
+			props = HelperMethods.loadPropertiesFromFile(getApplicationPath() + servicePropFile);
+
+		} catch (Exception e) {
+			logger.warn("Could not load property file '" + getApplicationPath() + servicePropFile + "'! Skipping harvesting ...");
+		}
+
+		RestClient client = HelperMethods.prepareRestTransmission(new File(getApplicationPath() + "restclientprop.xml"), "Repository/", props);
+		String result = client.GetData();
+
+		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+
+		if (rms == null || rms.getListEntrySets().isEmpty()) {
+
+			logger.error("received no Repository Details at all from the server");
+			return null;
+		}
+
+		for (RestEntrySet res : rms.getListEntrySets()) {
+
+			Iterator<String> it = res.getKeyIterator();
+			String key = "";
+			Repository repo = new Repository();
+
+			while (it.hasNext()) {
+
+				key = it.next();
+
+				// if (logger.isDebugEnabled ( ))
+				// logger.debug ("key: " + key + " value: " + res.getValue
+				// (key));
+
+				if (key.equalsIgnoreCase("name")) {
+
+					repo.setName(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("active")) {
+
+					repo.setActive(Boolean.parseBoolean(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("repository_id")) {
+
+					repo.setId(new Long(res.getValue(key)));
+
+				} else
+					// System.out.println("Key: " + key);
+					continue;
+			}
+
+			if (repo.isActive()) {
+				repoList.add(repo);
+			}
+
+		}
+		System.out.println(repoList.size());
+
+		return repoList;
+	}
+	
 	protected static Registry getRegistry() {
 
 		try {

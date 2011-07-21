@@ -7,16 +7,24 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.servicemodule.IService;
 import de.dini.oanetzwerk.servicemodule.RMIService;
+import de.dini.oanetzwerk.servicemodule.Repository;
 import de.dini.oanetzwerk.servicemodule.ServiceStatus;
 import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.utils.exceptions.ServiceIDException;
 
 public class MarkerRMI extends RMIService {
 
@@ -93,32 +101,80 @@ public class MarkerRMI extends RMIService {
 	@Override
 	@SuppressWarnings("static-access")
 	public boolean start(Map<String, String> data) throws RemoteException {
-
-		// execute Server
-
-		// create a new instance of the aggregator
 		
-		int id = 0;
-
-		if (data.containsKey("repository_id")) {
-			id = new Integer((data.get("repository_id")));
+		System.out.println("Marker started!");
+		
+		// execute Server
+		
+		if (data == null || !data.containsKey("repositoryId")) {
+			logger.warn("Could not retrieve repository information, cannot start Marker job! Skipping...");
 		}
 
-
+		int repo;
 		
-		marker = new MarkerAndEraser(getApplicationPath(), id);
+		String repoId = data.get("repositoryId");
+		boolean processAllRepositories = false;
+		try {
+
+			repo = Integer.parseInt(repoId);
+			if (repo == 0) {
+				processAllRepositories = true;
+			}
+		} catch (NumberFormatException e) {
+
+			logger.warn("Could not retrieve repository information, cannot start marker job as the repository id '" + repoId
+			                + "' was invalid!  Skipping...");
+			return false;
+		}
 		
 		// updating job status
 		updateJobStatus(data.get("job_name"), "Working");
 		working = true;
 		
-		// im Testfall wird eine andere Startmethode aufgerufen
-		if (data.containsKey("testing") && Boolean.TRUE.equals(Boolean.parseBoolean(data.get("testing")))) {
-			marker.eraseTestOnlyData();
-		} else {
-			// Standardfall ohne Testing
-			marker.markAndErase();
+		
+		// fetch repository information
+		// process all active repositories
+		if (processAllRepositories) {
+
+			List<Repository> repositories = getRepositories(getPropertyFile());
+			
+			for (Repository repository : repositories) {
+	        
+				try {
+					synchronized (this) {
+						logger.info("Running marker&eraser on repository with ID " + repository.getId());
+							this.wait(10000);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				marker = new MarkerAndEraser(getApplicationPath(), repository.getId());
+				
+				// im Testfall wird eine andere Startmethode aufgerufen
+				if (data.containsKey("testing") && Boolean.TRUE.equals(Boolean.parseBoolean(data.get("testing")))) {
+					marker.eraseTestOnlyData();
+				} else {
+					// Standardfall ohne Testing
+					marker.markAndErase();
+				}
+            }
+			
+		} else { // harvest a single repository
+			
+			marker = new MarkerAndEraser(getApplicationPath(), (long) repo);
+			
+			// im Testfall wird eine andere Startmethode aufgerufen
+			if (data.containsKey("testing") && Boolean.TRUE.equals(Boolean.parseBoolean(data.get("testing")))) {
+				marker.eraseTestOnlyData();
+			} else {
+				// Standardfall ohne Testing
+				marker.markAndErase();
+			}
 		}
+		
+		
 		
 		// updating job status
 		updateJobStatus(data.get("job_name"), "Finished");
@@ -166,6 +222,7 @@ public class MarkerRMI extends RMIService {
 		return true;
 	}
 
+	
 	@Override
     protected String getPropertyFile() {
 		return "markerprop.xml";
