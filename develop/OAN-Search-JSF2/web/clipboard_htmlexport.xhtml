@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+			xmlns:f="http://java.sun.com/jsf/core" 
+			xmlns:h="http://java.sun.com/jsf/html"
+   		xmlns:ui="http://java.sun.com/jsf/facelets" 
+   		xmlns:t="http://myfaces.apache.org/tomahawk">
+<head></head>
+
+<body>
+<ui:composition>	
+			        
+    <h3>Merkzettel, aus Open-Access-Netzwerk exportiert</h3>
+
+	<h:form>
+        <t:dataList id="clipboard_exported_html" value="#{searchBean.hitlist.listClipboardOID}" var="clipboardOID" layout="unorderedList" first="0" dir="LTR">
+	   		<h:outputLink value="#{searchBean.hitlist.mapHitBean[clipboardOID].bestLink}" target="_blank" title="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedTitle}">
+            <t:outputText value="#{searchBean.hitlist.mapHitBean[clipboardOID].trimmedTitle}"/>
+            </h:outputLink>
+		</t:dataList>
+	</h:form>
+
+</ui:composition>
+</body>
+</html>	

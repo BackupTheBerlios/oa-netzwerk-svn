@@ -29,8 +29,8 @@ public class WebUtils {
 	private static String webappDir 				= "/webapps";
 	private static String webappDirFallback			= "/wtpwebapps";
 	private static String contextPath 				= "/oansearch";
-	private static String contextPathFallback		= "/OAN-Search-JSF2";
-	
+	private static String contextPathFallback		= "/OAN-Search";
+	private static String contextPathFallback2		= "/OAN-Search-JSF2";
 	
 	static {
 		
@@ -49,6 +49,8 @@ public class WebUtils {
 			isLoaded = loadBasicProperties(webappDir, contextPathFallback);
 		if (!isLoaded)
 			isLoaded = loadBasicProperties(webappDirFallback, contextPathFallback);		
+		if (!isLoaded)
+			isLoaded = loadBasicProperties(webappDirFallback, contextPathFallback2);		
 		
 		
 		loadRestClientProperties();

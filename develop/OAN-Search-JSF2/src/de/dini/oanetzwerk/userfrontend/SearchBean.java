@@ -225,8 +225,8 @@ public class SearchBean implements Serializable {
 			String strQuery = new String(this.strOneSlot);
 			strQuery = strQuery.toUpperCase();
 			strQuery = strQuery.trim();
-			if(metasearch) searchFor(strQuery, strDDC);
-			else searchFor2(strQuery, strDDC);
+			if(metasearch) searchFor2(strQuery, strDDC);
+			else searchFor(strQuery, strDDC);
 		} else if (strDDC != null) {
 			searchFor(null, strDDC);
 		}

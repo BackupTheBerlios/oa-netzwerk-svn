@@ -83,8 +83,13 @@
 			<to-view-id>/metadata.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>	
+		<navigation-case>
+			<from-outcome>clipboard_exporthtml</from-outcome>
+			<to-view-id>/clipboard_exporthtml</to-view-id>
+			<redirect />
+		</navigation-case>		
 	</navigation-rule>
-	
+		
 <!--    	 NAVIGATION RULE /hitdetails -->
 <!--    		-->
 <!--	<navigation-rule>-->
