@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,19 +38,35 @@ public class Identify extends AbstractOAIPMHVerb {
 			return errorMsg;
 		}
 		
-		List<String> adminEmails = new ArrayList<String>();
-		adminEmails.add("oanet@oanet.cms.hu-berlin.de");
 
 		IdentifyType identify = new IdentifyType();
-		identify.setBaseURL("http://oanet.cms.hu-berlin.de/oaipmh/oaipmh");
+		identify.setBaseURL(getOaipmhProperties().getProperty("baseUrl"));
 		
 		DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection();
 		identify.setEarliestDatestamp(dataConnection.getEarliestDataStamp());
 		identify.setGranularity(GranularityType.YYYYMMDD);
 		identify.setProtocolVersion(ProtocolVersionType._20);
-		identify.setRepositoryName("OA Netzwerk OAI-PMH Export Interface");
-		identify.setAdminEmails(adminEmails);
-		identify.setDeletedRecord(DeletedRecordType.TRANSIENT);
+		identify.setRepositoryName(getOaipmhProperties().getProperty("name"));
+		
+		// set admin emails
+		String adminEmails = getOaipmhProperties().getProperty("adminEmails");
+		List<String> emails = new ArrayList<String>();
+		
+		if (adminEmails != null && adminEmails.length() > 0) {
+			if (adminEmails.contains(";")) {
+				String[] temp = adminEmails.split(";");
+				emails = Arrays.asList(temp);
+			}
+			else {
+				emails.add(adminEmails);
+			}
+		}
+		
+		identify.setAdminEmails(emails);
+		
+		// set deleted record type
+		String deletedRecords = getOaipmhProperties().getProperty("deletedRecords");
+		identify.setDeletedRecord(DeletedRecordType.convert(deletedRecords));
 
 //		OaiIdentifierType oaiIdent = new OaiIdentifierType();
 //		oaiIdent.setDelimiter(":");

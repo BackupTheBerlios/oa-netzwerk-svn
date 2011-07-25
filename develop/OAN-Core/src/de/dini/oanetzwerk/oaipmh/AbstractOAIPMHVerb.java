@@ -33,6 +33,7 @@ public abstract class AbstractOAIPMHVerb implements OAIPMHVerbs {
 	private static final int DEFAULT_MAX_RESULTS = 100;
 	private static final String OAIPMH_CONFIG_PATH = 
 		System.getProperty("catalina.home") + System.getProperty("file.separator") + "webapps/oaipmh/oaipmh.properties";
+	private static Properties oaipmhProperties = new Properties();
 	
 	protected ConnectionToolkit dataConnectionToolkit;
 	private DataConnectionType connectionType = DataConnectionType.DB;
@@ -64,12 +65,11 @@ public abstract class AbstractOAIPMHVerb implements OAIPMHVerbs {
 		
 		// read oaipmh properties
 		
-		Properties properties = new Properties();
 		try {
-			properties.load(new FileInputStream(OAIPMH_CONFIG_PATH));
+			oaipmhProperties.load(new FileInputStream(OAIPMH_CONFIG_PATH));
 
-			String results = properties.getProperty("maximum_results");
-			String connType = properties.getProperty("connection_type");
+			String results = oaipmhProperties.getProperty("maximum_results");
+			String connType = oaipmhProperties.getProperty("connection_type");
 
 			if (StringUtils.isNotEmpty(results)) {
 				maxResults = Integer.parseInt(results);
@@ -130,6 +130,11 @@ public abstract class AbstractOAIPMHVerb implements OAIPMHVerbs {
 
 	public int getMaxResults() {
 		return maxResults;
+	}
+
+
+	public static Properties getOaipmhProperties() {
+		return oaipmhProperties;
 	}
 	
 }
