@@ -228,7 +228,6 @@
 		<delete file="${env.CATALINA_HOME}/webapps/oaipmh.war" />
 		<delete dir="${env.CATALINA_HOME}/webapps/oaipmh" />
 		<copy file="${dist}\oaipmh.war" todir="${env.CATALINA_HOME}/webapps" />
-		<antcall target="tomcat-start" />
 	</target>
 	
 	<target name="local-deploy-oai" depends="warOAI" description="Simply deploys the oaipmh web archive">

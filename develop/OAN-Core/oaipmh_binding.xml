@@ -329,7 +329,7 @@
 		</collection>
 	</mapping>
 	
-	<mapping name="dc " class="de.dini.oanetzwerk.oaipmh.oaidc.OAIDCDescriptionType" extends="de.dini.oanetzwerk.oaipmh.AbstractMetadataType">
+	<!--mapping name="dc " class="de.dini.oanetzwerk.oaipmh.oaidc.OAIDCDescriptionType" extends="de.dini.oanetzwerk.oaipmh.AbstractMetadataType">
 		<namespace uri="http://www.openarchives.org/OAI/2.0/oai_dc/" default="elements" prefix="oai_dc" />
 		<namespace uri="http://purl.org/dc/elements/1.1/" default="attributes" prefix="dc" />
 		<namespace uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi" />
@@ -346,7 +346,7 @@
 			<value name="description" type="java.lang.String" />
 		</collection>
 
-	</mapping>
+	</mapping-->
 
 
 </binding>
