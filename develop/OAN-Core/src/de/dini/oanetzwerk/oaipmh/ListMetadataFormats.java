@@ -37,10 +37,10 @@ public class ListMetadataFormats extends AbstractOAIPMHVerb  {
 			if (parameter.size() == 2 && parameter.containsKey("identifier")) {
 
 				String identifier = parameter.get("identifier")[0];
-
+				System.out.println("IDENT: " + identifier);
 				DataConnection dataConnection = this.dataConnectionToolkit.createDataConnection();
 
-				if (dataConnection.existsIdentifier(identifier))
+				if (dataConnection.existsRepositoryIdentifier(identifier))
 					reqType.setIdentifier(identifier);
 
 				else {

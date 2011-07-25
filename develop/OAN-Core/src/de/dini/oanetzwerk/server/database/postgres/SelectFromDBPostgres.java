@@ -1760,6 +1760,8 @@ public class SelectFromDBPostgres implements SelectFromDB {
 		StringBuffer sql = new StringBuffer("SELECT ");
 		if (rowCountOnly) {
 			sql.append("COUNT(o.object_id) AS size ");
+		} else {
+			sql.append(" * ");
 		}
 		sql.append("from \"Object\" AS o ");
 
