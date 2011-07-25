@@ -1766,7 +1766,7 @@ public class SelectFromDBPostgres implements SelectFromDB {
 		HashMap<Integer, Object> params = new HashMap<Integer, Object>();
 		int paramCount = 1;
 
-		if (set != null) {
+		if (set != null && set.length() > 0) {
 			if (set.startsWith("ddc:")) {
 				sql.append("LEFT OUTER JOIN \"DDC_Classification\" AS ddc ON o.object_id = ddc.object_id ");
 			} else if (set.startsWith("dnb:")) {
@@ -1799,7 +1799,7 @@ public class SelectFromDBPostgres implements SelectFromDB {
 			params.put(paramCount++, until);
 		}
 
-		if (set != null) {
+		if (set != null && set.length() > 0) {
 			if (set.startsWith("ddc:")) {
 				sql.append("AND ddc.\"DDC_Categorie\" = ?");
 			} else if (set.startsWith("dnb:")) {
@@ -1817,18 +1817,21 @@ public class SelectFromDBPostgres implements SelectFromDB {
 		}
 
 		logger.info("sql: " + sql.toString() + "   using offset value " + idOffset);
-
+		logger.warn("blabla");
 		preparedstmt = connection.prepareStatement(sql.toString());
 
 		Object param;
 		for (int i = 1; i <= params.size(); i++) {
+			System.out.println("param:" + params.get(i));
+			logger.warn("param:" + params.get(i));
 			param = params.get(i);
-			if (param instanceof Date)
+			if (param instanceof Date) {
 				preparedstmt.setDate(i, (Date) param);
-			else if (param instanceof String)
+			} else if (param instanceof String) {
 				preparedstmt.setString(i, set.startsWith("pub-type:") ? set : set.endsWith("_OAN") ? set : set.split(":")[1]);
-			else
+			} else {
 				preparedstmt.setInt(i, ((BigInteger) param).intValue());
+			}
 		}
 		if (!rowCountOnly) {
 			sql.append(" LIMIT " + resultCount);
