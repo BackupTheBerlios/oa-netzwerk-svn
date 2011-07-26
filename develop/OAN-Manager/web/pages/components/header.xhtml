@@ -22,9 +22,9 @@
                         <f:selectItems value="#{language.countriesInMap}" /> 
                     </h:selectOneMenu>
                   </td>
-                  <t:div rendered="#{not empty user.user}">
+                  <t:div rendered="#{not empty userList.user}">
                   <td width="5%" style="vertical-align: middle; text-align: right; padding-right: 1em;">
-                      <h:commandLink id="logout" value="Ausloggen" action="#{user.logout}" />
+                      <h:commandLink id="logout" value="Ausloggen" action="#{userList.logout}" />
                   </td>
                   </t:div>  
                   <td id="login-field"><span></span></td>

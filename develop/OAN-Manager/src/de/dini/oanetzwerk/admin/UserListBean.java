@@ -257,6 +257,10 @@ public class UserListBean extends AbstractBean implements Serializable {
 	}
 
 	
+	public String getUser() {
+		return FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();
+	}
+	
 	public List<UserBean> getUsers() {
 		return userList;
 	}
