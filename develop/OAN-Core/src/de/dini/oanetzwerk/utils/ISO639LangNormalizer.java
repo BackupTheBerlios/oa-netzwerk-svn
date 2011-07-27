@@ -11,7 +11,8 @@ import java.util.Locale;
  */
 public class ISO639LangNormalizer {
 
-	private static HashMap<String,Locale> mapISO639_3 = new HashMap<String, Locale>();	
+	private static HashMap<String,Locale> mapISO639_3_ToLocale = new HashMap<String, Locale>();	
+	private static HashMap<String,String> mapISO639_3 = new HashMap<String, String>();	
 	private static HashMap<String,String> mapISO639_3to2 = new HashMap<String,String>();
 	
 	static {
@@ -200,7 +201,198 @@ public class ISO639LangNormalizer {
 		mapISO639_3to2.put("zha","za");
 		mapISO639_3to2.put("zho","zh");
 		mapISO639_3to2.put("zul","zu");
+		
+		
+		
+		mapISO639_3.put("ab", "abk");
+		mapISO639_3.put("aa", "aar");
+		mapISO639_3.put("af", "afr");
+		mapISO639_3.put("ak", "aka");
+		mapISO639_3.put("sq", "sqi");
+		mapISO639_3.put("am", "amh");
+		mapISO639_3.put("ar", "ara");
+		mapISO639_3.put("an", "arg");
+		mapISO639_3.put("hy", "hye");
+		mapISO639_3.put("as", "asm");
+		mapISO639_3.put("av", "ava");
+		mapISO639_3.put("ae", "ave");
+		mapISO639_3.put("ay", "aym");
+		mapISO639_3.put("az", "aze");
+		mapISO639_3.put("bm", "bam");
+		mapISO639_3.put("ba", "bak");
+		mapISO639_3.put("eu", "eus");
+		mapISO639_3.put("be", "bel");
+		mapISO639_3.put("bn", "ben");
+		mapISO639_3.put("bi", "bis");
+		mapISO639_3.put("bs", "bos");
+		mapISO639_3.put("br", "bre");
+		mapISO639_3.put("bg", "bul");
+		mapISO639_3.put("my", "mya");
+		mapISO639_3.put("ca", "cat");
+		mapISO639_3.put("ch", "cha");
+		mapISO639_3.put("ce", "che");
+		mapISO639_3.put("ny", "nya");
+		mapISO639_3.put("zh", "zho");
+		mapISO639_3.put("cv", "chv");
+		mapISO639_3.put("kw", "cor");
+		mapISO639_3.put("co", "cos");
+		mapISO639_3.put("cr", "cre");
+		mapISO639_3.put("hr", "hrv");
+		mapISO639_3.put("cs", "ces");
+		mapISO639_3.put("da", "dan");
+		mapISO639_3.put("dv", "div");
+		mapISO639_3.put("nl", "nld");
+		mapISO639_3.put("dz", "dzo");
+		mapISO639_3.put("en", "eng");
+		mapISO639_3.put("eo", "epo");
+		mapISO639_3.put("et", "est");
+		mapISO639_3.put("ee", "ewe");
+		mapISO639_3.put("fo", "fao");
+		mapISO639_3.put("fj", "fij");
+		mapISO639_3.put("fi", "fin");
+		mapISO639_3.put("fr", "fra");
+		mapISO639_3.put("ff", "ful");
+		mapISO639_3.put("gl", "glg");
+		mapISO639_3.put("ka", "kat");
+		mapISO639_3.put("de", "deu");
+		mapISO639_3.put("el", "ell");
+		mapISO639_3.put("gn", "grn");
+		mapISO639_3.put("gu", "guj");
+		mapISO639_3.put("ht", "hat");
+		mapISO639_3.put("ha", "hau");
+		mapISO639_3.put("he", "heb");
+		mapISO639_3.put("hz", "her");
+		mapISO639_3.put("hi", "hin");
+		mapISO639_3.put("ho", "hmo");
+		mapISO639_3.put("hu", "hun");
+		mapISO639_3.put("ia", "ina");
+		mapISO639_3.put("id", "ind");
+		mapISO639_3.put("ie", "ile");
+		mapISO639_3.put("ga", "gle");
+		mapISO639_3.put("ig", "ibo");
+		mapISO639_3.put("ik", "ipk");
+		mapISO639_3.put("io", "ido");
+		mapISO639_3.put("is", "isl");
+		mapISO639_3.put("it", "ita");
+		mapISO639_3.put("iu", "iku");
+		mapISO639_3.put("ja", "jpn");
+		mapISO639_3.put("jv", "jav");
+		mapISO639_3.put("kl", "kal");
+		mapISO639_3.put("kn", "kan");
+		mapISO639_3.put("kr", "kau");
+		mapISO639_3.put("ks", "kas");
+		mapISO639_3.put("kk", "kaz");
+		mapISO639_3.put("km", "khm");
+		mapISO639_3.put("ki", "kik");
+		mapISO639_3.put("rw", "kin");
+		mapISO639_3.put("ky", "kir");
+		mapISO639_3.put("kv", "kom");
+		mapISO639_3.put("kg", "kon");
+		mapISO639_3.put("ko", "kor");
+		mapISO639_3.put("ku", "kur");
+		mapISO639_3.put("kj", "kua");
+		mapISO639_3.put("la", "lat");
+		mapISO639_3.put("lb", "ltz");
+		mapISO639_3.put("lg", "lug");
+		mapISO639_3.put("li", "lim");
+		mapISO639_3.put("ln", "lin");
+		mapISO639_3.put("lo", "lao");
+		mapISO639_3.put("lt", "lit");
+		mapISO639_3.put("lu", "lub");
+		mapISO639_3.put("lv", "lav");
+		mapISO639_3.put("gv", "glv");
+		mapISO639_3.put("mk", "mkd");
+		mapISO639_3.put("mg", "mlg");
+		mapISO639_3.put("ms", "msa");
+		mapISO639_3.put("ml", "mal");
+		mapISO639_3.put("mt", "mlt");
+		mapISO639_3.put("mi", "mri");
+		mapISO639_3.put("mr", "mar");
+		mapISO639_3.put("mh", "mah");
+		mapISO639_3.put("mn", "mon");
+		mapISO639_3.put("na", "nau");
+		mapISO639_3.put("nv", "nav");
+		mapISO639_3.put("nb", "nob");
+		mapISO639_3.put("nd", "nde");
+		mapISO639_3.put("ne", "nep");
+		mapISO639_3.put("ng", "ndo");
+		mapISO639_3.put("nn", "nno");
+		mapISO639_3.put("no", "nor");
+		mapISO639_3.put("ii", "iii");
+		mapISO639_3.put("nr", "nbl");
+		mapISO639_3.put("oc", "oci");
+		mapISO639_3.put("oj", "oji");
+		mapISO639_3.put("cu", "chu");
+		mapISO639_3.put("om", "orm");
+		mapISO639_3.put("or", "ori");
+		mapISO639_3.put("os", "oss");
+		mapISO639_3.put("pa", "pan");
+		mapISO639_3.put("pi", "pli");
+		mapISO639_3.put("fa", "fas");
+		mapISO639_3.put("pl", "pol");
+		mapISO639_3.put("ps", "pus");
+		mapISO639_3.put("pt", "por");
+		mapISO639_3.put("qu", "que");
+		mapISO639_3.put("rm", "roh");
+		mapISO639_3.put("rn", "run");
+		mapISO639_3.put("ro", "ron");
+		mapISO639_3.put("ru", "rus");
+		mapISO639_3.put("sa", "san");
+		mapISO639_3.put("sc", "srd");
+		mapISO639_3.put("sd", "snd");
+		mapISO639_3.put("se", "sme");
+		mapISO639_3.put("sm", "smo");
+		mapISO639_3.put("sg", "sag");
+		mapISO639_3.put("sr", "srp");
+		mapISO639_3.put("gd", "gla");
+		mapISO639_3.put("sn", "sna");
+		mapISO639_3.put("si", "sin");
+		mapISO639_3.put("sk", "slk");
+		mapISO639_3.put("sl", "slv");
+		mapISO639_3.put("so", "som");
+		mapISO639_3.put("st", "sot");
+		mapISO639_3.put("es", "spa");
+		mapISO639_3.put("su", "sun");
+		mapISO639_3.put("sw", "swa");
+		mapISO639_3.put("ss", "ssw");
+		mapISO639_3.put("sv", "swe");
+		mapISO639_3.put("ta", "tam");
+		mapISO639_3.put("te", "tel");
+		mapISO639_3.put("tg", "tgk");
+		mapISO639_3.put("th", "tha");
+		mapISO639_3.put("ti", "tir");
+		mapISO639_3.put("bo", "bod");
+		mapISO639_3.put("tk", "tuk");
+		mapISO639_3.put("tl", "tgl");
+		mapISO639_3.put("tn", "tsn");
+		mapISO639_3.put("to", "ton");
+		mapISO639_3.put("tr", "tur");
+		mapISO639_3.put("ts", "tso");
+		mapISO639_3.put("tt", "tat");
+		mapISO639_3.put("tw", "twi");
+		mapISO639_3.put("ty", "tah");
+		mapISO639_3.put("ug", "uig");
+		mapISO639_3.put("uk", "ukr");
+		mapISO639_3.put("ur", "urd");
+		mapISO639_3.put("uz", "uzb");
+		mapISO639_3.put("ve", "ven");
+		mapISO639_3.put("vi", "vie");
+		mapISO639_3.put("vo", "vol");
+		mapISO639_3.put("wa", "wln");
+		mapISO639_3.put("cy", "cym");
+		mapISO639_3.put("wo", "wol");
+		mapISO639_3.put("fy", "fry");
+		mapISO639_3.put("xh", "xho");
+		mapISO639_3.put("yi", "yid");
+		mapISO639_3.put("yo", "yor");
+		mapISO639_3.put("za", "zha");
+		mapISO639_3.put("zu", "zul");
+
 	}
+	
+
+
+
 	
 	public static String getISO639_2fromISO639_3(String iso3) {
 		return mapISO639_3to2.get(iso3);
@@ -226,13 +418,20 @@ public class ISO639LangNormalizer {
 	}
 		
 	public static Locale get_ISO639_3(String input) {
-		if(mapISO639_3.containsKey(input)) {
-			return mapISO639_3.get(input);
+		if(mapISO639_3_ToLocale.containsKey(input)) {
+			return mapISO639_3_ToLocale.get(input);
 		} else {
 			Locale result = get_ISO639_3_unbuffered(input);
-			mapISO639_3.put(input, result);
+			mapISO639_3_ToLocale.put(input, result);
 			return result;
 		}	    
+	}
+	
+	public static String getISO639_3(String input) {
+		if(mapISO639_3.containsKey(input)) {
+			return mapISO639_3.get(input);
+		}
+		 return null;
 	}
 	
 	public static Locale get_ISO639_3_unbuffered(String input) {

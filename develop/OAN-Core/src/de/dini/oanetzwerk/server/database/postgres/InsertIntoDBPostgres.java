@@ -563,7 +563,7 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 	 */
 	
 	public PreparedStatement Object2Iso639Language (Connection connection, BigDecimal object_id,
-			BigDecimal language_id, int number) throws SQLException {
+			BigDecimal language_id, int number, boolean generated) throws SQLException {
 		
 		if (logger.isDebugEnabled ( )) {
 			
@@ -571,10 +571,11 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 					"VALUES (" + object_id + ", " + language_id + ", " + number + ")");
 		}
 		
-		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO \"Object2Iso639Language\" (object_id, language_id, number) VALUES (?,?,?)");
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO \"Object2Iso639Language\" (object_id, language_id, number, generated) VALUES (?,?,?,?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setBigDecimal(2, language_id);
 		preparedstmt.setInt(3, number);
+		preparedstmt.setBoolean(4, generated);
 		
 		return preparedstmt;
 	}

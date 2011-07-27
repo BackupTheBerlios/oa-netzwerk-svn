@@ -43,7 +43,7 @@ public interface InsertIntoDB {
 
 	public abstract PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, String ddcValue) throws SQLException;
 
-	public abstract PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, BigDecimal language_id, int number) throws SQLException;
+	public abstract PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, BigDecimal language_id, int number, boolean generated) throws SQLException;
 
 	public abstract PreparedStatement Object2Language(Connection connection, BigDecimal object_id, BigDecimal language_id, int number) throws SQLException;
 

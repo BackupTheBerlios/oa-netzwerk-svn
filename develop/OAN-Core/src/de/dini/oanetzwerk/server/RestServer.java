@@ -274,7 +274,12 @@ public class RestServer extends HttpServlet implements Serializable {
 		
 		// setting the http response status to 400, maybe another status could fit better 
 		
-		this.response.setStatus (HttpServletResponse.SC_BAD_REQUEST);
+		try {
+			this.response.reset();
+			this.response.setStatus (HttpServletResponse.SC_BAD_REQUEST);
+		} catch (Exception e) {
+			logger.warn("Error while writing error response! ", e);
+		}
 		
 		return RestXmlCodec.encodeRestMessage (rms);
 	}

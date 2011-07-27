@@ -999,17 +999,39 @@ public class SelectFromDBPostgres implements SelectFromDB {
 	public PreparedStatement Languages(Connection connection, BigDecimal object_id) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement(
-			"SELECT L.language AS language, I.iso639language AS iso639language, O2L.number AS number "+
-			"FROM \"Object2Language\" AS O2L " + 
-			"LEFT JOIN \"Language\" AS L " +
-			"	ON L.language_id = O2L.language_id "+
-			"LEFT JOIN \"Object2Iso639Language\" AS I2L " +
-			"	ON O2L.object_id = I2L.object_id "+
-			"LEFT JOIN \"Iso639Language\" AS I " +
-			"	ON I.language_id = I2L.language_id " + 
-			"WHERE O2L.object_id = ?");
+			"SELECT l.language AS language, i.iso639language AS iso639language, o2l.number AS number "+
+			"FROM \"Object2Language\" AS o2l " + 
+			"LEFT JOIN \"Language\" AS l " +
+			"	ON l.language_id = o2l.language_id "+
+			"LEFT JOIN \"Object2Iso639Language\" AS i2l " +
+			"	ON o2l.object_id = i2l.object_id "+
+			"LEFT JOIN \"Iso639Language\" AS i " +
+			"	ON i.language_id = i2l.language_id " + 
+			"WHERE o2l.object_id = ?");
 
 		preparedstmt.setBigDecimal(1, object_id);
+
+		return preparedstmt;
+	}
+	
+	/*
+	 	SELECT l.language AS language FROM "Object2Language" AS o2l  
+		LEFT JOIN "Language" AS l ON l.language_id = o2l.language_id 
+ 		WHERE o2l.object_id = 133 AND l.language = 'de'
+	 
+	 */
+	
+	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, String language) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement(
+						"SELECT i.language_id,  AS language_id "+
+						"FROM \"Object2Iso639Language\" AS i2l " +
+						"LEFT JOIN \"Iso639Language\" AS i " +
+						" ON i.language_id = i2l.language_id " + 
+						"WHERE i2l.object_id = ? AND i.iso639language = ?");
+
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setString(2, language);
 
 		return preparedstmt;
 	}

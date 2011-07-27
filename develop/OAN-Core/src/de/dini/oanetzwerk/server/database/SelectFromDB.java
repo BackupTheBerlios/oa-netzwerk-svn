@@ -172,4 +172,6 @@ public interface SelectFromDB {
 	public abstract PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, String category) throws SQLException;
 	
 	public abstract PreparedStatement DDCClassification2(Connection connection, BigDecimal object_id) throws SQLException;
+	
+	public abstract PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, String language) throws SQLException;
 }

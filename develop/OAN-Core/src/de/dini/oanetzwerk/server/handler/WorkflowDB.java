@@ -262,8 +262,11 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 						time = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.S").parse (new String (res.getValue (key)));
 						
 					} catch (ParseException ex) {
-						
-						logger.error (ex.getLocalizedMessage ( ), ex);
+						try {
+							time = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss").parse (new String (res.getValue (key)));
+						} catch (ParseException e) {
+							logger.error (ex.getLocalizedMessage ( ), e);
+						}
 					}
 				}
 //					time = new String (res.getValue (key));
@@ -287,8 +290,13 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 		if ((object_id == null) | (service_id == null) | ((newObject == false && time == null))) {
 			// Fehlermeldung generieren und abbrechen
 			this.rms = new RestMessage (RestKeyword.WorkflowDB);
-			this.rms.setStatus (RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
-			this.rms.setStatusDescription ("PUT /WorkflowDB/ needs 3 entries in body: object_id, service_id and time");
+			if (time == null) {
+				this.rms.setStatus (RestStatusEnum.WRONG_PARAMETER);
+				this.rms.setStatusDescription ("Incorrect timestamp format, expected format is YYYY-MM-DD HH:MM:SS");
+			} else {
+				this.rms.setStatus (RestStatusEnum.INCOMPLETE_ENTRYSET_ERROR);
+				this.rms.setStatusDescription ("PUT /WorkflowDB/ needs 3 entries in body: object_id, service_id and time");
+			}
 			return RestXmlCodec.encodeRestMessage (this.rms);
 		}
 		

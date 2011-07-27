@@ -921,7 +921,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 
 						}
 						
-						stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Iso639Language(stmtconn.connection, object_id, iso639language_id, language.getNumber()));
+						stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Iso639Language(stmtconn.connection, object_id, iso639language_id, language.getNumber(), false));
 						this.result = stmtconn.execute ( );
 
 						if (this.result.getWarning ( ) != null) 
