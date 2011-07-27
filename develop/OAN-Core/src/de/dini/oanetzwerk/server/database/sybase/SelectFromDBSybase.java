@@ -1963,4 +1963,11 @@ public class SelectFromDBSybase implements SelectFromDB {
 	    // TODO Auto-generated method stub
 	    return null;
     }
+
+
+	@Override
+	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, String language) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

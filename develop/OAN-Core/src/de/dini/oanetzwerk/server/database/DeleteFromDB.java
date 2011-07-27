@@ -60,8 +60,10 @@ public interface DeleteFromDB {
 
 	public abstract PreparedStatement Object2Keywords(Connection connection, BigDecimal object_id) throws SQLException;
 
-	public abstract PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id) throws SQLException;
+	public abstract PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, boolean deleteGeneratedOnly) throws SQLException;
 
+	public abstract PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, BigDecimal languageId, boolean deleteGeneratedOnly) throws SQLException;
+	
 	public abstract PreparedStatement Object2Language(Connection connection, BigDecimal object_id) throws SQLException;
 
 	public abstract PreparedStatement Object2Contributor(Connection connection, BigDecimal object_id) throws SQLException;

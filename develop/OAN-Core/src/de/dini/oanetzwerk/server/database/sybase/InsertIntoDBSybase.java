@@ -590,7 +590,7 @@ public class InsertIntoDBSybase implements InsertIntoDB {
 	 */
 
 	@Override
-	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, BigDecimal language_id, int number)
+	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, BigDecimal language_id, int number, boolean generated)
 	                throws SQLException {
 
 		if (logger.isDebugEnabled()) {

@@ -195,7 +195,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 				for (Throwable warning : result.getWarning ( ))
 					logger.warn (warning.getLocalizedMessage ( ));
 
-			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Iso639Language(stmtconn.connection, object_id));
+			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Iso639Language(stmtconn.connection, object_id, false));
 			logger.debug("BEFORE DeleteFromDB.Object2Iso639Language");
 			this.result = stmtconn.execute ( );
 			logger.debug("AFTER DeleteFromDB.Object2Iso639Language");

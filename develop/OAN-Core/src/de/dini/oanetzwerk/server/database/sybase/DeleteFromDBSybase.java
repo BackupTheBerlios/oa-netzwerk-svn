@@ -200,21 +200,6 @@ public class DeleteFromDBSybase implements DeleteFromDB {
 		return preparedstmt;
 	}
 
-	/**
-	 * @param connection
-	 * @param object_id
-	 * @return
-	 * @throws SQLException
-	 */
-
-	@Override
-	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id) throws SQLException {
-
-		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM  dbo.Object2Iso639Language WHERE object_id=?");
-		preparedstmt.setBigDecimal(1, object_id);
-
-		return preparedstmt;
-	}
 
 	/**
 	 * @param connection
@@ -617,6 +602,21 @@ public class DeleteFromDBSybase implements DeleteFromDB {
 			String table, String field, String joinTable,
 			String joinTableField, String joinTableFilterField,
 			BigDecimal joinTableParam) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, BigDecimal languageId,
+			boolean deleteGeneratedOnly) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, boolean deleteGeneratedOnly)
+			throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}

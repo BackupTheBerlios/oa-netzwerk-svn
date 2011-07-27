@@ -229,13 +229,26 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 	 * @throws SQLException
 	 */
 
-	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id) throws SQLException {
+	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, boolean deleteGeneratedOnly) throws SQLException {
 
-		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"Object2Iso639Language\" WHERE object_id=?");
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"Object2Iso639Language\" WHERE object_id=? AND generated=?");
 		preparedstmt.setBigDecimal(1, object_id);
-
+		preparedstmt.setBoolean(2, deleteGeneratedOnly);
+		
 		return preparedstmt;
 	}
+	
+	
+	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, BigDecimal languageId, boolean deleteGeneratedOnly) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"Object2Iso639Language\" WHERE object_id=? AND language_id=? AND generated=?");
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setBigDecimal(2, languageId);
+		preparedstmt.setBoolean(3, deleteGeneratedOnly);
+		
+		return preparedstmt;
+	}
+	
 
 	/**
 	 * @param connection

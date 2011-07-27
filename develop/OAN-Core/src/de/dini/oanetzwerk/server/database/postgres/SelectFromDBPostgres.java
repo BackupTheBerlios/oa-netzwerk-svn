@@ -1021,18 +1021,23 @@ public class SelectFromDBPostgres implements SelectFromDB {
 	 
 	 */
 	
+	
+	
 	public PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, String language) throws SQLException {
 
+		boolean languageSpecified = language != null && language.length() > 0;
+		
 		PreparedStatement preparedstmt = connection.prepareStatement(
-						"SELECT i.language_id,  AS language_id "+
+						"SELECT i.language_id, i.iso639language AS language, i2l.generated AS generated "+
 						"FROM \"Object2Iso639Language\" AS i2l " +
 						"LEFT JOIN \"Iso639Language\" AS i " +
 						" ON i.language_id = i2l.language_id " + 
-						"WHERE i2l.object_id = ? AND i.iso639language = ?");
+						"WHERE i2l.object_id = ?" + (languageSpecified ? " AND i.iso639language = ?" : ""));
 
 		preparedstmt.setBigDecimal(1, object_id);
-		preparedstmt.setString(2, language);
-
+		if (languageSpecified) {
+			preparedstmt.setString(2, language);
+		}
 		return preparedstmt;
 	}
 
