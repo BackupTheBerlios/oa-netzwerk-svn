@@ -562,10 +562,10 @@ public class DeleteFromDBSybase implements DeleteFromDB {
 	}
 
 	@Override
-	public PreparedStatement Repositories(Connection connection, Long repository_id) throws SQLException {
+	public PreparedStatement Repositories(Connection connection, BigDecimal repository_id) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM dbo.Repositories WHERE repository_id = ?");
-		preparedstmt.setLong(1, repository_id);
+		preparedstmt.setBigDecimal(1, repository_id);
 
 		return preparedstmt;
 	}
@@ -584,4 +584,40 @@ public class DeleteFromDBSybase implements DeleteFromDB {
 	    // TODO Auto-generated method stub
 	    return null;
     }
+
+	@Override
+	public PreparedStatement Repository_Sets(Connection connection, BigDecimal repository_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PreparedStatement AggregatorMetadata(Connection connection,
+			BigDecimal object_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PreparedStatement OAIExportCache(Connection connection,
+			BigDecimal object_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PreparedStatement Worklist(Connection connection,
+			BigDecimal object_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PreparedStatement DeleteFromTableByField(Connection connection,
+			String table, String field, String joinTable,
+			String joinTableField, String joinTableFilterField,
+			BigDecimal joinTableParam) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

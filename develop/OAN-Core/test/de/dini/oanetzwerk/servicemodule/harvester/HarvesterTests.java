@@ -35,7 +35,7 @@ public class HarvesterTests {
 	@org.junit.Test
 	public void testprepareHarvester ( ) {
 		
-		harvester = new Harvester();
+		harvester = new Harvester ( );
 		assertNotNull (harvester);
 		assertTrue (harvester.prepareHarvester (1));
 		assertFalse (harvester.getProps ( ).isEmpty ( ));

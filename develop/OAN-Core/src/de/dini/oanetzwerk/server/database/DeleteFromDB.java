@@ -9,7 +9,10 @@ import java.sql.Timestamp;
 
 public interface DeleteFromDB {
 
-	public abstract PreparedStatement Repositories(Connection connection, Long repository_id) throws SQLException;
+	public abstract PreparedStatement AggregatorMetadata(Connection connection, BigDecimal object_id) throws SQLException;
+	public abstract PreparedStatement OAIExportCache(Connection connection, BigDecimal object_id) throws SQLException;
+	public abstract PreparedStatement Worklist(Connection connection, BigDecimal object_id) throws SQLException;
+	public abstract PreparedStatement Repositories(Connection connection, BigDecimal repository_id) throws SQLException;
 
 	public abstract PreparedStatement UsageData_ALL_Overall(Connection connection, BigDecimal object_id) throws SQLException;
 
@@ -85,4 +88,6 @@ public interface DeleteFromDB {
 	
 	public abstract PreparedStatement DDC_Classification(Connection connection, BigDecimal object_id, String category, boolean deleteGeneratedOnly) throws SQLException;
 
+	public abstract PreparedStatement Repository_Sets(Connection connection, BigDecimal repository_id) throws SQLException;
+	public abstract PreparedStatement DeleteFromTableByField(Connection connection, String table, String field, String joinTable, String joinTableField, String joinTableFilterField, BigDecimal joinTableParam) throws SQLException;
 }

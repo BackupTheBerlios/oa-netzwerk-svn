@@ -14,6 +14,49 @@ import de.dini.oanetzwerk.server.database.DeleteFromDB;
 public class DeleteFromDBPostgres implements DeleteFromDB {
 	private static Logger logger = Logger.getLogger(DeleteFromDBPostgres.class);
 
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException
+	 */
+	public PreparedStatement AggregatorMetadata(Connection connection, BigDecimal object_id) throws SQLException {
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"AggregatorMetadata\" WHERE object_id = ?");
+		preparedstmt.setBigDecimal(1, object_id);
+		return preparedstmt;
+	}
+	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException
+	 */
+	public PreparedStatement OAIExportCache(Connection connection, BigDecimal object_id) throws SQLException {
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"OAIExportCache\" WHERE object_id = ?");
+		preparedstmt.setBigDecimal(1, object_id);
+		return preparedstmt;
+	}
+	
+	/**
+	 * @param connection
+	 * @param object_id
+	 * @return
+	 * @throws SQLException
+	 */
+	public PreparedStatement Worklist(Connection connection, BigDecimal object_id) throws SQLException {
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"Worklist\" WHERE object_id = ?");
+		preparedstmt.setBigDecimal(1, object_id);
+		return preparedstmt;
+	}
+	
 	/**
 	 * @param connection
 	 * @param object_id
@@ -363,7 +406,7 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 
 	public PreparedStatement DuplicatePossibilities(Connection connection, BigDecimal object_id) throws SQLException {
 
-		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"DuplicatePossibilities\" WHERE object_id = ?");
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"DuplicatePossibilities\" WHERE ? in (object_id, duplicate_id) ");
 		preparedstmt.setBigDecimal(1, object_id);
 
 		return preparedstmt;
@@ -541,11 +584,22 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 		return preparedstmt;
 	}
 
-	public PreparedStatement Repositories(Connection connection, Long repository_id) throws SQLException {
+	public PreparedStatement Repositories(Connection connection, BigDecimal repository_id) throws SQLException {
 
 		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"Repositories\" WHERE repository_id = ?");
-		preparedstmt.setLong(1, repository_id);
+		preparedstmt.setBigDecimal(1, repository_id);
 
+		return preparedstmt;
+	}
+	/**
+	 * @param connection
+	 * @param repository_id
+	 * @return
+	 * @throws SQLException
+	 */
+	public PreparedStatement Repository_Sets(Connection connection, BigDecimal repository_id) throws SQLException {
+		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"Repository_Sets\" WHERE repository_id = ?");
+		preparedstmt.setBigDecimal(1, repository_id);
 		return preparedstmt;
 	}
 	
@@ -554,6 +608,45 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 		PreparedStatement preparedstmt = connection.prepareStatement("DELETE FROM \"ServicesScheduling\" WHERE job_id = ?");
 		preparedstmt.setBigDecimal(1, jobId);
 
+		return preparedstmt;
+	}
+
+	/**
+	 * Creates a delete Statement using a join to another table.<br />
+	 * Example: <br />
+	 * DELETE FROM "RawData"
+		WHERE object_id IN (
+    		SELECT object_id FROM "Object"
+    		WHERE repository_id = 15
+		);
+		
+		@param connection
+		@param table Table to delete from (here: "RawData"
+		@param field field to use as row finder (here: object_id)
+		@param joinTable table to get the rowfinder data from (here: "Object")
+		@param joinTableField filtering field for the jointable (here: repository_id)
+		@param joinTableParam parameter to filter for in the jointable (here: 15)
+	 */
+	public PreparedStatement DeleteFromTableByField(
+			Connection connection,
+			String table, 
+			String field, 
+			String joinTable,
+			String joinTableField,
+			String joinTableFilterField, 
+			BigDecimal joinTableParam) throws SQLException
+	{
+		String queryString = 
+			"DELETE FROM "+table+" "+
+			"WHERE "+field+" IN ("+
+			"	SELECT "+joinTableField+" FROM "+joinTable+" "+
+			"	WHERE "+joinTableFilterField+" = ?"+
+			")";
+		PreparedStatement preparedstmt = connection.prepareStatement(queryString);
+		
+		preparedstmt.setBigDecimal(1, joinTableParam);
+		
+		
 		return preparedstmt;
 	}
 }
