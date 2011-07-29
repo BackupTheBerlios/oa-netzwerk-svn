@@ -175,6 +175,8 @@ CREATE TABLE "public"."Repositories" (
 "name" varchar(256) NOT NULL,
 "url" varchar(256) NOT NULL,
 "oai_url" varchar(256) NOT NULL,
+"owner_technical" varchar(256),
+"email_technical" varchar(256),
 "test_data" boolean NOT NULL DEFAULT true,
 "harvest_amount" int NOT NULL DEFAULT 10,
 "harvest_pause" int NOT NULL DEFAULT 5000,
@@ -439,6 +441,7 @@ CREATE TABLE "public"."Object2Iso639Language" (
 "object_id" bigserial CONSTRAINT fk_oid REFERENCES "Object"(object_id),
 "language_id" bigserial CONSTRAINT fk_languageid REFERENCES "Iso639Language"(language_id),
 "number" int NOT NULL,
+"generated" bool DEFAULT 'f',
 CONSTRAINT pk_obj2iso PRIMARY KEY(object_id, language_id)
 )
 WITH (OIDS=FALSE);
