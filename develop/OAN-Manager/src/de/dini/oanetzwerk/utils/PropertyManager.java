@@ -36,6 +36,7 @@ public class PropertyManager implements Serializable {
 	private static Properties serviceProperties = null;
 	private static Properties adminProperties = null;
 	private static Properties restProperties = null;
+	private static Properties oapsProperties = null;
 	
 	public PropertyManager() {
 		super();
@@ -66,9 +67,12 @@ public class PropertyManager implements Serializable {
 		if (!isLoaded)
 			isLoaded = loadServiceProperties(webappDirFallback, contextPathFallback);		
 		
-		PropertyManager.loadAdminProperties(webappDir, contextPath);
-		PropertyManager.loadRestClientProperties(webappDir, contextPath);
-	}
+
+		loadAdminProperties(webappDir, contextPath);
+		loadRestClientProperties(webappDir, contextPath);
+		loadOAPSClientProperties(webappDir, contextPath);
+	}	
+
 	
 	
 	private static boolean loadServiceProperties(final String webappDir, final String contextPath) {
@@ -119,12 +123,31 @@ public class PropertyManager implements Serializable {
 		return false;
 	}
 	
+	private static boolean loadOAPSClientProperties(final String webappDir, final String contextPath) {
+		try {
+			oapsProperties = HelperMethods.loadPropertiesFromFile(CATALINA_BASE + webappDir + contextPath +"/WEB-INF/oapsprop.xml");
+			PropertyManager.webappDir = webappDir;
+			PropertyManager.contextPath = contextPath;
+			logger.info("Found oapsprop.xml in '" + CATALINA_BASE + webappDir + contextPath + "/WEB-INF/oapsprop.xml'");
+			return true;
+		} catch (Exception e) {
+			logger.warn("Could not find oapsprop.xml in '" + CATALINA_BASE + webappDir + contextPath + "/WEB-INF/oapsprop.xml'");
+		}
+		return false;
+	}
+	
 
 	public static Properties getServiceProperties() {
 		if (serviceProperties == null) {
 			readPropertyFiles();
 		}
 		return serviceProperties;
+	}
+	public Properties getOAPSProperties() {
+		if (oapsProperties == null) {
+			init();
+		}
+		return oapsProperties;
 	}
 
 //	public void setServiceProperties(Properties serviceProperties) {

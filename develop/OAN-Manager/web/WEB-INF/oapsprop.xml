@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
+<properties> 
+<comment>Die Absender Properties beziehen sich auf die Mailadresse die zu OAPS kommuniziert. Die Userkontakt Properties beziehen sich auf die Mails die mit dem Benutzer unserer Webseite kommunizieren.</comment>
+<entry key="absender_email">sammy.david@cms.hu-berlin.de</entry>
+<entry key="absender_email_password">g7w5a%a5</entry>
+<entry key="absender_mailserver">mailhost.cms.hu-berlin.de</entry>
+<entry key="absender_mailserver_port">25</entry>
+
+<entry key="userkontakt_email">sammy.david@cms.hu-berlin.de</entry>
+<entry key="userkontakt_email_password">g7w5a%a5</entry>
+<entry key="userkontakt_mailserver">mailhost.cms.hu-berlin.de</entry>
+<entry key="userkontakt_mailserver_port">25</entry>
+</properties>

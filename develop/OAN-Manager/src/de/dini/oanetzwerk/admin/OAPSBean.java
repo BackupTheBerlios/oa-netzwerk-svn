@@ -17,6 +17,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -42,6 +43,7 @@ import OapsAPI_pkg.ReportResult;
 
 
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
+import de.dini.oanetzwerk.utils.PropertyManager;
 
 /**
  * @author Johannes Haubold
@@ -59,8 +61,7 @@ public class OAPSBean extends AbstractBean implements Serializable {
 	private int rating = 0;
 	private String language = null;
 	private String errorMessage = null;
-	private String pass = OAPSBackend.getPassword();
-	private String mail = OAPSBackend.getAbsender_email();
+	private Properties oapsProp = null;
 	private String jobMailHash = null;
 	private String action = null;
 	
@@ -85,6 +86,10 @@ public class OAPSBean extends AbstractBean implements Serializable {
 				receiveReport();
 			}
 		}
+		
+		PropertyManager pm = new PropertyManager();
+		oapsProp = pm.getOAPSProperties();
+		
 	}
 	
 	public void receiveReport() {
@@ -104,7 +109,12 @@ public class OAPSBean extends AbstractBean implements Serializable {
 			mb = new OapsAPIBindingStub(url.openConnection().getURL(), srv);
 			
 			
-			ReportResult rr = mb.getReport(new Login(this.mail, OAPSBackend.hash(this.pass)), Integer.toString(this.jobID));
+			ReportResult rr = mb.getReport(
+				new Login(
+					oapsProp.getProperty("absender_email"), 
+					OAPSBackend.hash(oapsProp.getProperty("absender_email_password"))
+				), 
+				Integer.toString(this.jobID));
 			this.status = rr.getStatus();
 			
 			if (this.status.equals("OK")) {
@@ -131,7 +141,13 @@ public class OAPSBean extends AbstractBean implements Serializable {
 				// if mail successfully sent, delete job from OAPS (cleanup)
 				if (sendSuccess) {
 					System.out.println("Report erfolgreich gesendet");
-					boolean deleteSuccess = mb.deleteJob(new Login(this.mail, OAPSBackend.hash(this.pass)), String.valueOf(this.jobID));
+					boolean deleteSuccess = mb.deleteJob(
+						new Login(
+							oapsProp.getProperty("absender_email"),
+							OAPSBackend.hash(oapsProp.getProperty("absender_email_password"))
+						), 
+						String.valueOf(this.jobID)
+					);
 					if (deleteSuccess) { 
 						System.out.println("Job erfolgreich gelöscht");
 						this.status = "deleted";
@@ -180,7 +196,7 @@ public class OAPSBean extends AbstractBean implements Serializable {
 			
 	        String hash = null; 
 	        
-	        hash = OAPSBackend.hash(pass);
+	        hash = OAPSBackend.hash(oapsProp.getProperty("absender_email_password"));
 	        
 	        InputStream fileStream = file.getInputStream();
 	        long size = file.getSize();
@@ -190,7 +206,7 @@ public class OAPSBean extends AbstractBean implements Serializable {
 //	        System.err.println("output: ");
 //	        System.out.println(new String(OAPSBackend.getBase64(fileBuffer)));
 	        
-	        String jobId = mb.startJob(new Login(mail, hash),/*OAPSBackend.getBase64(fileBuffer)*/ fileBuffer, this.language);
+	        String jobId = mb.startJob(new Login(oapsProp.getProperty("absender_email"), hash),/*OAPSBackend.getBase64(fileBuffer)*/ fileBuffer, this.language);
 	        
 	        OAPSBackend backend = new OAPSBackend();
 	        String jobMailHash = Base64.encodeBase64URLSafeString((jobId+","+userEmail).getBytes());
@@ -241,7 +257,7 @@ public class OAPSBean extends AbstractBean implements Serializable {
 			mb = new OapsAPIBindingStub(url.openConnection().getURL(), srv);
 			
 			
-			ReportResult rr = mb.getReport(new Login(this.mail, OAPSBackend.hash(this.pass)), Integer.toString(this.jobID));
+			ReportResult rr = mb.getReport(new Login(oapsProp.getProperty("absender_email"), OAPSBackend.hash(oapsProp.getProperty("absender_email_password"))), Integer.toString(this.jobID));
 			this.status = rr.getStatus();
 			System.out.println("aktueller Status: "+this.status);
 //			if (this.status.equals("OK")) {

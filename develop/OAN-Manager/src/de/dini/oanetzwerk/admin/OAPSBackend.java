@@ -22,6 +22,8 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
+import de.dini.oanetzwerk.utils.PropertyManager;
+
 /**
  * @author Johannes Haubold
  * 
@@ -29,16 +31,15 @@ import org.apache.myfaces.custom.fileupload.UploadedFile;
 
 public class OAPSBackend {
 	
-	private static String absender_email = "sammy.david@cms.hu-berlin.de";
-	private static String password = "g7w5a%a5";
-	
 	
 	public boolean sendMail(String receiver, String subject, String content, File attachment) {
+		PropertyManager pm = new PropertyManager();
+		Properties oapsProperties = pm.getOAPSProperties();
 		// Mailserver Einstellungen
-		String absender_email = this.absender_email;
-		String mailhost = "mailhost.cms.hu-berlin.de";
-		int port = 25;
-		String password = this.password;
+		String absender_email = oapsProperties.getProperty("userkontakt_email");
+		String mailhost = oapsProperties.getProperty("userkontakt_mailserver");
+		int port = Integer.parseInt(oapsProperties.getProperty("userkontakt_mailserver_port"));
+		String password = oapsProperties.getProperty("userkontakt_email_password");
 		
 		Properties props = new Properties();
 		props.put("mail.smtp.user", absender_email);
@@ -172,15 +173,6 @@ public class OAPSBackend {
 		
 	}
 	
-	public static String getAbsender_email() {
-		return absender_email;
-	}
-
-	
-	public static String getPassword() {
-		return password;
-	}
-
 	private class SMTPAuthenticator extends javax.mail.Authenticator {
 		String mail;
 		String pass;
