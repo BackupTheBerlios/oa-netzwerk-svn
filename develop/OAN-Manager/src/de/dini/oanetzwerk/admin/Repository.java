@@ -29,6 +29,10 @@ public class Repository {
 	private boolean listRecords;
 	private boolean active = true;
 	
+//  Status (online/offline)
+	private String status = null;
+	private String lastStatusCheck = null;
+	
 	
 //	public boolean success() {
 //		return deactivated || deleted || stored;
@@ -131,5 +135,21 @@ public class Repository {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getLastStatusCheck() {
+		return lastStatusCheck;
+	}
+
+	public void setLastStatusCheck(String lastStatusCheck) {
+		this.lastStatusCheck = lastStatusCheck;
 	}
 }
