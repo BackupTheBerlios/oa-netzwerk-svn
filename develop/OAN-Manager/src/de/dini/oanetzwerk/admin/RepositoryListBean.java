@@ -92,7 +92,6 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 				} else if (key.equalsIgnoreCase("url")) {
 
 					repo.setUrl(res.getValue(key));
-					repoURL = res.getValue(key);
 
 				} else if (key.equalsIgnoreCase("repository_id")) {
 
@@ -106,7 +105,10 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 
 					repo.setLastFullHarvestBegin(res.getValue(key));
 
-				} else
+				} else if (key.equalsIgnoreCase("oai_url")) {
+					repoURL = res.getValue(key);
+				}
+				else
 					// System.out.println("Key: " + key);
 					continue;
 			}
@@ -136,13 +138,15 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 				else {
 					repo.setStatus("offline");
 				}
-				DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd. MM. yyyy");
-				String timestamp = dateFormat.format(new Date().getTime());
-				repo.setLastStatusCheck(timestamp);
+				
 	        }
 	        catch (Exception e) {
 	        	e.printStackTrace();
+	        	repo.setStatus("offline");
 	        }
+	        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd. MM. yyyy");
+			String timestamp = dateFormat.format(new Date().getTime());
+			repo.setLastStatusCheck(timestamp);
 			
 			repoList.add(repo);
 		}
