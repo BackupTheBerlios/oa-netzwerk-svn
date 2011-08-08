@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
@@ -70,34 +71,34 @@ public class ValidatorTest implements JobListener {
 
 	}
 
-	public static void main(String[] args) {
-		StringBuffer sb = new StringBuffer();
+//	public static void main(String[] args) {
+//		StringBuffer sb = new StringBuffer();
+//
+//		FileInputStream fstream;
+//		try {
+//			fstream = new FileInputStream("test.txt");
+//			// Get the object of DataInputStream
+//			DataInputStream in = new DataInputStream(fstream);
+//			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+//			String strLine;
+//			// Read File Line By Line
+//			while ((strLine = br.readLine()) != null) {
+//				// Print the content on the console
+//				System.out.print(strLine + ", ");
+//
+//			}
+//
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//	}
 
-		FileInputStream fstream;
-		try {
-			fstream = new FileInputStream("test.txt");
-			// Get the object of DataInputStream
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			String strLine;
-			// Read File Line By Line
-			while ((strLine = br.readLine()) != null) {
-				// Print the content on the console
-				System.out.print(strLine + ", ");
-
-			}
-
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	// @Test
+//	@Test
 	public void testCreateDINI2010Rules() {
 
 		String iso639_3 = "aar, abk, afr, aka, amh, ara, arg, asm, ava, ave, aym, aze, bak, bam, bel, ben, "
@@ -112,8 +113,13 @@ public class ValidatorTest implements JobListener {
 				+ "tgk, tgl, tha, tir, ton, tsn, tso, tuk, tur, twi, uig, ukr, urd, uzb, ven, vie, vol, wln, "
 				+ "wol, xho, yid, yor, zha, zho, zul";
 
+		iso639_3 = iso639_3.replace(", ", "\n");
+		
 		StringBuffer sb = new StringBuffer();
 		String mimeTypes = "";
+		String docTypes = "";
+		String statusTypes = "";
+		String downloadableMimeTypes = "";
 		FileInputStream fstream;
 		
 		try {
@@ -123,10 +129,44 @@ public class ValidatorTest implements JobListener {
 			String strLine;
 
 			while ((strLine = br.readLine()) != null) {
-				sb.append(strLine).append(", ");
+				sb.append(strLine).append("\n");
 			}
+			mimeTypes = sb.toString(); //.substring(0, sb.toString().length() - 2);
+			
+			// read doc-types
+			sb = new StringBuffer();
+			fstream = new FileInputStream("docTypes.txt");
+			in = new DataInputStream(fstream);
+			br = new BufferedReader(new InputStreamReader(in));
 
-			mimeTypes = sb.toString().substring(0, sb.toString().length() - 2);
+			while ((strLine = br.readLine()) != null) {
+				sb.append(strLine).append("\n");
+			}
+			docTypes = sb.toString(); //.substring(0, sb.toString().length() - 2);
+			
+			
+			// read status-types
+			sb = new StringBuffer();
+			fstream = new FileInputStream("statusTypes.txt");
+			in = new DataInputStream(fstream);
+			br = new BufferedReader(new InputStreamReader(in));
+
+			while ((strLine = br.readLine()) != null) {
+				sb.append(strLine).append("\n");
+			}
+			statusTypes = sb.toString(); //.substring(0, sb.toString().length() - 2);
+			
+			
+			// read downloadable mimetypes
+			sb = new StringBuffer();
+			fstream = new FileInputStream("downloadableMimeTypes.txt");
+			in = new DataInputStream(fstream);
+			br = new BufferedReader(new InputStreamReader(in));
+
+			while ((strLine = br.readLine()) != null) {
+				sb.append(strLine).append("\n");
+			}
+			downloadableMimeTypes = sb.toString(); //.substring(0, sb.toString().length() - 2);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -152,6 +192,8 @@ public class ValidatorTest implements JobListener {
 			params.addParam(FieldNames.RULE_REGULAREXPRESSION_REGEXPR,
 					"^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");
 
+
+
 			
 			// mandatory repository name
 
@@ -164,6 +206,7 @@ public class ValidatorTest implements JobListener {
 			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=Identify, field=repositoryName");
 			params2.addParam(FieldNames.RULE_NAME, "mandatory field repositoryName");
 			params2.addParam(FieldNames.RULE_DESCRIPTION, "Das Repository muss einen Namen haben.");
+			
 
 			
 			// mandatory protocolVersion 2.0
@@ -171,283 +214,396 @@ public class ValidatorTest implements JobListener {
 			SgParameters params3 = new SgParameters();
 			params3.addParam(FieldNames.RULE_TYPE, "Vocabulary");
 			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, ">0");
-			params2.addParam(FieldNames.RULE_WEIGHT, "1");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=Identify, field=protocolVersion");
-			params2.addParam(FieldNames.RULE_NAME, "oaipmh version 2.0");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Der OAI-PMH Standard in Version 2.0 sollte unterstützt werden.");
-			params2.addParam(FieldNames.RULE_VOCABULARY_WORDS, "2.0");
+			params3.addParam(FieldNames.RULE_MANDATORY, "true");
+			params3.addParam(FieldNames.RULE_SUCCESS, ">0");
+			params3.addParam(FieldNames.RULE_WEIGHT, "1");
+			params3.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=Identify, field=protocolVersion");
+			params3.addParam(FieldNames.RULE_NAME, "oaipmh version 2.0");
+			params3.addParam(FieldNames.RULE_DESCRIPTION, "Der OAI-PMH Standard in Version 2.0 sollte unterstützt werden.");
+			params3.addParam(FieldNames.RULE_VOCABULARY_WORDS, "2.0");
 
+			
 			
 			// datestamp format
 
-			SgParameters params33 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Vocabulary");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "1");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=Identify, field=granularity");
-			params2.addParam(FieldNames.RULE_NAME, "datestamp format should be YYYY-MM-DD");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Das empfohlene Zeitstempelformat ist JJJJ-MM-TT.");
-			params2.addParam(FieldNames.RULE_VOCABULARY_WORDS, "YYYY-MM-DD");
+			SgParameters params15 = new SgParameters();
+			params15.addParam(FieldNames.RULE_TYPE, "Vocabulary");
+			params15.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params15.addParam(FieldNames.RULE_MANDATORY, "true");
+			params15.addParam(FieldNames.RULE_SUCCESS, "a");
+			params15.addParam(FieldNames.RULE_WEIGHT, "1");
+			params15.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=Identify, field=granularity");
+			params15.addParam(FieldNames.RULE_NAME, "datestamp format should be YYYY-MM-DD");
+			params15.addParam(FieldNames.RULE_DESCRIPTION, "Das empfohlene Zeitstempelformat ist JJJJ-MM-TT.");
+			params15.addParam(FieldNames.RULE_VOCABULARY_WORDS, "YYYY-MM-DD");
 
+			// datestamp granularities must match
+
+			SgParameters params18 = new SgParameters();
+			params18.addParam(FieldNames.RULE_TYPE, "Date Granularity");
+			params18.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params18.addParam(FieldNames.RULE_MANDATORY, "true");
+			params18.addParam(FieldNames.RULE_SUCCESS, "a");
+			params18.addParam(FieldNames.RULE_WEIGHT, "1");
+			params18.addParam(FieldNames.RULE_NAME, "datestamp granularities must match");
+			params18.addParam(FieldNames.RULE_DESCRIPTION,
+					"Verwenden sie das Zeitstempelformat das unter dem Identify-Verb ausgewiesen ist.");
+
+			
 			
 			// valid base url
 
 			SgParameters params4 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Valid Url");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, ">0");
-			params2.addParam(FieldNames.RULE_WEIGHT, "1");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=Identify, field=baseUrl");
-			params2.addParam(FieldNames.RULE_NAME, "valid base url");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Die Basis-URL muss eine gültige Internet-Adresse sein.");
+			params4.addParam(FieldNames.RULE_TYPE, "Valid Url");
+			params4.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params4.addParam(FieldNames.RULE_MANDATORY, "true");
+			params4.addParam(FieldNames.RULE_SUCCESS, "a");
+			params4.addParam(FieldNames.RULE_WEIGHT, "1");
+			params4.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=Identify, field=baseURL");
+			params4.addParam(FieldNames.RULE_NAME, "valid base url");
+			params4.addParam(FieldNames.RULE_DESCRIPTION, "Die Basis-URL muss eine gültige Internet-Adresse sein.");
 
 			
 			// deletion strategy
 
 			SgParameters params5 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Vocabulary");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "1");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=Identify, field=deletedRecord");
-			params2.addParam(FieldNames.RULE_NAME, "valid deletion strategy");
-			params2.addParam(FieldNames.RULE_DESCRIPTION,
+			params5.addParam(FieldNames.RULE_TYPE, "Vocabulary");
+			params5.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params5.addParam(FieldNames.RULE_MANDATORY, "true");
+			params5.addParam(FieldNames.RULE_SUCCESS, "a");
+			params5.addParam(FieldNames.RULE_WEIGHT, "1");
+			params5.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=Identify, field=deletedRecord");
+			params5.addParam(FieldNames.RULE_NAME, "valid deletion strategy");
+			params5.addParam(FieldNames.RULE_DESCRIPTION,
 					"Die Deletion-Strategie sollte den Status gelöschter Objekte mindestens einen Monat lang vorhalten. (transient oder persistent)");
-			params5.addParam(FieldNames.RULE_VOCABULARY_WORDS, "transient, persistent");
+			params5.addParam(FieldNames.RULE_VOCABULARY_WORDS, "transient\npersistent");
 
 			
 			// resumption token lief span 24h
 
 			SgParameters params6 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Resumption Token Duration Check");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "1");
-			params2.addParam(FieldNames.RULE_NAME, "resumption token life span is 24h");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Die Gültigkeit von Resumption-Tokens sollte 24 Stunden betragen.");
+			params6.addParam(FieldNames.RULE_TYPE, "Resumption Token Duration Check");
+			params6.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params6.addParam(FieldNames.RULE_MANDATORY, "true");
+			params6.addParam(FieldNames.RULE_SUCCESS, "a");
+			params6.addParam(FieldNames.RULE_WEIGHT, "1");
+			params6.addParam(FieldNames.RULE_NAME, "resumption token life span is 24h");
+			params6.addParam(FieldNames.RULE_DESCRIPTION, "Die Gültigkeit von Resumption-Tokens sollte 24 Stunden betragen.");
 
 			
 			// batch size 100-500
 
 			SgParameters params7 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Cardinality");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "1");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=ListRecords&metadataPrefix=oai_dc, field=record");
-			params2.addParam(FieldNames.RULE_NAME, "batch size between 100-500");
-			params2.addParam(FieldNames.RULE_DESCRIPTION,
+			params7.addParam(FieldNames.RULE_TYPE, "Cardinality");
+			params7.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params7.addParam(FieldNames.RULE_MANDATORY, "true");
+			params7.addParam(FieldNames.RULE_SUCCESS, "a");
+			params7.addParam(FieldNames.RULE_WEIGHT, "1");
+			params7.addParam(FieldNames.RULE_CARDINALITY_GREATERTHAN, "99");
+			params7.addParam(FieldNames.RULE_CARDINALITY_LESSTHAN, "501");
+			params7.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=ListRecords&metadataPrefix=oai_dc, field=record");
+			params7.addParam(FieldNames.RULE_NAME, "batch size between 100-500");
+			params7.addParam(FieldNames.RULE_DESCRIPTION,
 					"Die Batch-Size (maximale Anzahl der Antwort-Records per Request) sollte zwischen 100 und 500 liegen.");
 
 			
 			// use of provenance element
 
 			SgParameters params8 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Schema Validity Check");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "1");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=ListRecords&metadataPrefix=oai_dc");
-			params2.addParam(FieldNames.RULE_NAME, "use of provenance element in records' metadata");
-			params2.addParam(FieldNames.RULE_DESCRIPTION,
+			params8.addParam(FieldNames.RULE_TYPE, "Schema Validity Check");
+			params8.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params8.addParam(FieldNames.RULE_MANDATORY, "true");
+			params8.addParam(FieldNames.RULE_SUCCESS, "a");
+			params8.addParam(FieldNames.RULE_WEIGHT, "1");
+			params8.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=ListRecords&metadataPrefix=oai_dc");
+			params8.addParam(FieldNames.RULE_NAME, "use of provenance element in records' metadata");
+			params8.addParam(FieldNames.RULE_DESCRIPTION,
 					"Das provenance-Element sollte verwendet werden, um die Herkunft eines Dokuments anzuzeigen.");
 
+			
+			
+			// support of oai_dc metadata type
+			SgParameters params24 = new SgParameters();
+			params24.addParam(FieldNames.RULE_TYPE, "Vocabulary");
+			params24.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params24.addParam(FieldNames.RULE_SUCCESS, ">0");
+			params24.addParam(FieldNames.RULE_WEIGHT, "1");
+			params24.addParam(FieldNames.RULE_PROVIDER_INFORMATION, " verb=ListMetadataFormats, field=metadataPrefix");
+			params24.addParam(FieldNames.RULE_NAME, "supports oai_dc metadata format");
+			params24.addParam(FieldNames.RULE_DESCRIPTION, "Das Metadatenformat oai_dc sollte unterstützt werden.");
+			params24.addParam(FieldNames.RULE_VOCABULARY_WORDS, "oai_dc");
+
+			
+			// ddc set exists
+			
+			SgParameters params23 = new SgParameters();
+			params23.addParam(FieldNames.RULE_TYPE, "Regular Expression");
+			params23.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params23.addParam(FieldNames.RULE_MANDATORY, "true");
+			params23.addParam(FieldNames.RULE_SUCCESS, ">0");
+			params23.addParam(FieldNames.RULE_WEIGHT, "1");
+			params23.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=ListSets, field=setSpec");
+			params23.addParam(FieldNames.RULE_NAME, "at least one ddc category");
+			params23.addParam(FieldNames.RULE_DESCRIPTION,
+					"Es sollte eine Set-Struktur existieren, in die alle Meta­datensätze gemäß der fachlichen Zuordnung (DDC) der " +
+					"dazugehörigen Dokumente eingeordnet sind. (Beispielformat 'ddc:004')");
+			params23.addParam(FieldNames.RULE_REGULAREXPRESSION_REGEXPR, "ddc:[0-9]{3}.[0-9]{1}||ddc:[0-9]{3}");
+			
+			
+			// at least one doc-type
+			
+			SgParameters params20 = new SgParameters();
+			params20.addParam(FieldNames.RULE_TYPE, "Vocabulary");
+			params20.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params20.addParam(FieldNames.RULE_MANDATORY, "true");
+			params20.addParam(FieldNames.RULE_SUCCESS, ">0");
+			params20.addParam(FieldNames.RULE_WEIGHT, "1");
+			params20.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=ListSets, field=setSpec");
+			params20.addParam(FieldNames.RULE_NAME, "at least one document type");
+			params20.addParam(FieldNames.RULE_DESCRIPTION,
+					"Es sollte wenigstens ein setSpec-Feld Auskunft darüber geben um was für einen Dokumenttyp es sich handelt. (Beispielformat 'doc-type:masterThesis')");
+			params20.addParam(FieldNames.RULE_VOCABULARY_WORDS, docTypes);
+			
+			
+			// at least one status-type
+			
+			SgParameters params21 = new SgParameters();
+			params21.addParam(FieldNames.RULE_TYPE, "Vocabulary");
+			params21.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params21.addParam(FieldNames.RULE_MANDATORY, "true");
+			params21.addParam(FieldNames.RULE_SUCCESS, ">0");
+			params21.addParam(FieldNames.RULE_WEIGHT, "1");
+			params21.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=ListSets, field=setSpec");
+			params21.addParam(FieldNames.RULE_NAME, "at least one status type");
+			params21.addParam(FieldNames.RULE_DESCRIPTION,
+					"Es sollte wenigstens ein setSpec-Feld Auskunft darüber geben um welche Dokumentversion es sich handelt. (Beispielformat 'status-type:publishedVersion')");
+			params21.addParam(FieldNames.RULE_VOCABULARY_WORDS, statusTypes);
+			
+			
+			// open_access set
+			
+			SgParameters params22 = new SgParameters();
+			params22.addParam(FieldNames.RULE_TYPE, "Vocabulary");
+			params22.addParam(FieldNames.RULE_JOBTYPE, "OAI Usage Validation");
+			params22.addParam(FieldNames.RULE_MANDATORY, "true");
+			params22.addParam(FieldNames.RULE_SUCCESS, ">0");
+			params22.addParam(FieldNames.RULE_WEIGHT, "1");
+			params22.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=ListSets, field=setSpec");
+			params22.addParam(FieldNames.RULE_NAME, "open_access set");
+			params22.addParam(FieldNames.RULE_DESCRIPTION,
+					"Es sollte ein 'open_access'-Set geben, dem alle Open-Access Publikationen zugeordnet sind.");
+			params22.addParam(FieldNames.RULE_VOCABULARY_WORDS, "open_access");
+			
+			
+			///
+			/// Content Validation Rules
+			///
+			
 			
 			// mandatory fields oai_dc
 
 			SgParameters params9 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Field Exists");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "3");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:identifier");
-			params2.addParam(FieldNames.RULE_NAME, "mandatory dc:identifier");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:identifier ist erforderlich.");
+			params9.addParam(FieldNames.RULE_TYPE, "Field Exists");
+			params9.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
+			params9.addParam(FieldNames.RULE_MANDATORY, "true");
+			params9.addParam(FieldNames.RULE_SUCCESS, "a");
+			params9.addParam(FieldNames.RULE_WEIGHT, "3");
+			params9.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:identifier");
+			params9.addParam(FieldNames.RULE_NAME, "mandatory dc:identifier");
+			params9.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:identifier ist erforderlich.");
 
 			SgParameters params10 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Field Exists");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "4");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:title");
-			params2.addParam(FieldNames.RULE_NAME, "mandatory dc:title");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:title ist erforderlich.");
+			params10.addParam(FieldNames.RULE_TYPE, "Field Exists");
+			params10.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
+			params10.addParam(FieldNames.RULE_MANDATORY, "true");
+			params10.addParam(FieldNames.RULE_SUCCESS, "a");
+			params10.addParam(FieldNames.RULE_WEIGHT, "4");
+			params10.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:title");
+			params10.addParam(FieldNames.RULE_NAME, "mandatory dc:title");
+			params10.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:title ist erforderlich.");
 
 			SgParameters params11 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Field Exists");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "3");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:date");
-			params2.addParam(FieldNames.RULE_NAME, "mandatory dc:date");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:date ist erforderlich.");
+			params11.addParam(FieldNames.RULE_TYPE, "Field Exists");
+			params11.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
+			params11.addParam(FieldNames.RULE_MANDATORY, "true");
+			params11.addParam(FieldNames.RULE_SUCCESS, "a");
+			params11.addParam(FieldNames.RULE_WEIGHT, "3");
+			params11.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:date");
+			params11.addParam(FieldNames.RULE_NAME, "mandatory dc:date");
+			params11.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:date ist erforderlich.");
 
 			SgParameters params12 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Field Exists");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "3");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:creator");
-			params2.addParam(FieldNames.RULE_NAME, "mandatory dc:creator");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:creator ist erforderlich.");
+			params12.addParam(FieldNames.RULE_TYPE, "Field Exists");
+			params12.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
+			params12.addParam(FieldNames.RULE_MANDATORY, "true");
+			params12.addParam(FieldNames.RULE_SUCCESS, "a");
+			params12.addParam(FieldNames.RULE_WEIGHT, "3");
+			params12.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:creator");
+			params12.addParam(FieldNames.RULE_NAME, "mandatory dc:creator");
+			params12.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:creator ist erforderlich.");
 
 			SgParameters params13 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Field Exists");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "3");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:type");
-			params2.addParam(FieldNames.RULE_NAME, "mandatory dc:type");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:type ist erforderlich.");
+			params13.addParam(FieldNames.RULE_TYPE, "Field Exists");
+			params13.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
+			params13.addParam(FieldNames.RULE_MANDATORY, "true");
+			params13.addParam(FieldNames.RULE_SUCCESS, "a");
+			params13.addParam(FieldNames.RULE_WEIGHT, "3");
+			params13.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:type");
+			params13.addParam(FieldNames.RULE_NAME, "mandatory dc:type");
+			params13.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:type ist erforderlich.");
 
 			// dc:language should be ISO639-3
 
 			SgParameters params14 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Vocabulary");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "3");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:language");
-			params2.addParam(FieldNames.RULE_NAME, "dc:language should be ISO 639-3");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:language sollte nur Sprachcodes im ISO 639-3 Format enthalten.");
-			params5.addParam(FieldNames.RULE_VOCABULARY_WORDS, iso639_3);
+			params14.addParam(FieldNames.RULE_TYPE, "Vocabulary");
+			params14.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
+			params14.addParam(FieldNames.RULE_MANDATORY, "true");
+			params14.addParam(FieldNames.RULE_SUCCESS, "a");
+			params14.addParam(FieldNames.RULE_WEIGHT, "3");
+			params14.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:language");
+			params14.addParam(FieldNames.RULE_NAME, "dc:language should be ISO 639-3");
+			params14.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:language sollte nur Sprachcodes im ISO 639-3 Format enthalten.");
+			params14.addParam(FieldNames.RULE_VOCABULARY_WORDS, iso639_3);
 
 			
 			// dc:identifier muss downloadbare Ressource enthalten
 
-			SgParameters params16 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Retrievable Resource");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, ">0");
-			params2.addParam(FieldNames.RULE_WEIGHT, "1");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:identifier");
-			params2.addParam(FieldNames.RULE_NAME, "one dc:identifier should contain downloadable resource");
-			params2.addParam(FieldNames.RULE_DESCRIPTION,
-					"Mindestens ein dc:identifier Feld muss eine URL zu einer herunterladbaren Ressource führen.");
+//			SgParameters params16 = new SgParameters();
+//			params16.addParam(FieldNames.RULE_TYPE, "Retrievable Resource");
+//			params16.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
+//			params16.addParam(FieldNames.RULE_MANDATORY, "true");
+//			params16.addParam(FieldNames.RULE_SUCCESS, ">0");
+//			params16.addParam(FieldNames.RULE_WEIGHT, "1");
+//			params16.addParam(FieldNames.RULE_RETRIEVERESOURCE_MAXDEPTH, "1");
+//			params16.addParam(FieldNames.RULE_RETRIEVERESOURCE_MIMETYPES, downloadableMimeTypes);			
+//			params16.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:identifier");
+//			params16.addParam(FieldNames.RULE_NAME, "one dc:identifier should contain downloadable resource");
+//			params16.addParam(FieldNames.RULE_DESCRIPTION,
+//					"Mindestens ein dc:identifier Feld muss eine URL zu einer herunterladbaren Ressource führen.");
 
 			
 			// dc:format should contain standard mime types
 
 			SgParameters params17 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Vocabulary");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "3");
-			params2.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:format");
-			params2.addParam(FieldNames.RULE_NAME, "dc:format should contain standard mime types");
-			params2.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:format sollte Standard MIME-Typen enthalten.");
-			params5.addParam(FieldNames.RULE_VOCABULARY_WORDS, mimeTypes);
-
-			
-			// datestamp granularities must match
-
-			SgParameters params18 = new SgParameters();
-			params3.addParam(FieldNames.RULE_TYPE, "Date Granularity");
-			params3.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
-			params2.addParam(FieldNames.RULE_MANDATORY, "true");
-			params2.addParam(FieldNames.RULE_SUCCESS, "a");
-			params2.addParam(FieldNames.RULE_WEIGHT, "1");
-			params2.addParam(FieldNames.RULE_NAME, "datestamp granularities must match");
-			params2.addParam(FieldNames.RULE_DESCRIPTION,
-					"Verwenden sie das Zeitstempelformat das unter dem Identify-Verb ausgewiesen ist.");
+			params17.addParam(FieldNames.RULE_TYPE, "Vocabulary");
+			params17.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
+			params17.addParam(FieldNames.RULE_MANDATORY, "true");
+			params17.addParam(FieldNames.RULE_SUCCESS, "a");
+			params17.addParam(FieldNames.RULE_WEIGHT, "3");
+			params17.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "dc:format");
+			params17.addParam(FieldNames.RULE_NAME, "dc:format should contain standard mime types");
+			params17.addParam(FieldNames.RULE_DESCRIPTION, "Das Feld dc:format sollte Standard MIME-Typen enthalten.");
+			params17.addParam(FieldNames.RULE_VOCABULARY_WORDS, mimeTypes);
 
 			
 			
 			// at least one ddc-category
 			
-			
-			
-			// at least one pub-type
-			
-			validator.addNewRule(params);
+			SgParameters params19 = new SgParameters();
+			params19.addParam(FieldNames.RULE_TYPE, "Regular Expression");
+			params19.addParam(FieldNames.RULE_JOBTYPE, "OAI Content Validation");
+			params19.addParam(FieldNames.RULE_MANDATORY, "true");
+			params19.addParam(FieldNames.RULE_SUCCESS, ">0");
+			params19.addParam(FieldNames.RULE_WEIGHT, "1");
+			params19.addParam(FieldNames.RULE_PROVIDER_INFORMATION, "verb=ListRecords&metadataPrefix=oai_dc, field=setSpec");
+			params19.addParam(FieldNames.RULE_NAME, "at least one ddc category");
+			params19.addParam(FieldNames.RULE_DESCRIPTION,
+					"Es sollte ein setSpec-Feld geben das Auskunft über die DDC-Kategorie gibt derer das Dokument zugehörig ist. (Beispielformat 'ddc:004')");
+			params19.addParam(FieldNames.RULE_REGULAREXPRESSION_REGEXPR, "ddc:[0-9]{3}.[0-9]{1}||ddc:[0-9]{3}");
 
+
+
+			
+			
+			// add new rules to DB
+			validator.addNewRule(params);
+			validator.addNewRule(params2);
+			validator.addNewRule(params3);
+			validator.addNewRule(params4);
+			validator.addNewRule(params5);
+			validator.addNewRule(params6);
+			validator.addNewRule(params7);
+			validator.addNewRule(params8);
+			validator.addNewRule(params24);
+			validator.addNewRule(params15);
+			validator.addNewRule(params18);			
+			validator.addNewRule(params20);
+			validator.addNewRule(params21);
+			validator.addNewRule(params22);
+			validator.addNewRule(params23);
+			
+			
+			validator.addNewRule(params9);
+			validator.addNewRule(params10);
+			validator.addNewRule(params11);
+			validator.addNewRule(params12);
+			validator.addNewRule(params13);
+			validator.addNewRule(params14);
+//			validator.addNewRule(params16);
+			validator.addNewRule(params17);
+			validator.addNewRule(params19);
+
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	// @Test
+	@Test
 	public void testNewJob() {
 
-		// SgParameters params = new SgParameters();
-		// params.addParam(FieldNames.JOB_GENERAL_USER, "user");
-		// params.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Usage Validation");
-		// params.addParam(FieldNames.JOB_OAIUSAGE_BASEURL,
-		// "http://ubm.opus.hbz-nrw.de/phpoai/oai2.php");
-		//
-		// List<Integer> ruleIds = new ArrayList<Integer>();
-		// ruleIds.add(1);
-		//
 		boolean done = false;
-		// try {
-		//
-		// Validator val = APIStandalone.getValidator();
-		//
-		// IJob job = val.addNewJob(params, ruleIds);
-		// job.addListener(this);
-		// val.startJob(job);
-		// done = true;
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		//
-		// DocumentBuilderFactory factory =
-		// DocumentBuilderFactory.newInstance();
-
+		String baseUrl = "http://edoc.hu-berlin.de/OAI-2.0";
+		
 		SgParameters params = new SgParameters();
-
-		// params.addParam(FieldNames.JOB_GENERAL_USER, "sdavid");
-		// params.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Usage Validation");
-		// params.addParam(FieldNames.JOB_OAIUSAGE_BASEURL, baseUrl);
-
-		// general job definition
-		params.addParam(FieldNames.JOB_GENERAL_USER, "testuser");
-		params.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Content Validation");
-		params.addParam(FieldNames.JOB_OAICONTENT_BASEURL, "http://ubm.opus.hbz-nrw.de/phpoai/oai2.php");
-		params.addParam(FieldNames.JOB_OAICONTENT_RANDOM, "false");
-		params.addParam(FieldNames.JOB_OAICONTENT_RECORDS, "30");
-		params.addParam(FieldNames.JOB_OAICONTENT_SET, "driver");
-
+		
+		params.addParam(FieldNames.JOB_GENERAL_USER, "sdavid");
+		params.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Usage Validation");
+		params.addParam(FieldNames.JOB_OAIUSAGE_BASEURL, baseUrl);
+		
 		// rule definition
 		List<Integer> ruleIds = new ArrayList<Integer>();
-		// for (int i = 1; i < 24; i++) {
+		for (int i = 170; i < 183; i++) {
+			ruleIds.add(i);
+		}
+		
+		
+		///
+		///
+		///
+		
+		
+		SgParameters params2 = new SgParameters();
+		
+		// general job definition
+		params2.addParam(FieldNames.JOB_GENERAL_USER, "sdavid");
+		params2.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Content Validation");
+		params2.addParam(FieldNames.JOB_OAICONTENT_BASEURL, baseUrl);
+		params2.addParam(FieldNames.JOB_OAICONTENT_RANDOM, "false");
+		params2.addParam(FieldNames.JOB_OAICONTENT_RECORDS, "30");
 
-		// if (i == 24 || i == 27 || i == 30) {
-		// continue;
-		// }
-		// ruleIds.add(i);
-		// }
-
-		// ruleIds.add(1);
-		ruleIds.add(24);
-		// ruleIds.add(3);
+		// rule definition
+		List<Integer> ruleIds2 = new ArrayList<Integer>();
+		for (int i = 183; i < 192; i++) {
+			ruleIds2.add(i);
+		}
 
 		try {
 
 			Validator val = APIStandalone.getValidator();
 
-			IJob job = val.addNewJob(params, ruleIds);
-			job.addListener(this);
-			val.startJob(job);
+//			IJob job = val.addNewJob(params, ruleIds);
+//			job.addListener(this);
+//			val.startJob(job);
+			
+			IJob job2 = val.addNewJob(params2, ruleIds2);
+			job2.addListener(this);
+			val.startJob(job2);
+			
 			done = true;
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
