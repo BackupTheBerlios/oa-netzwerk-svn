@@ -1,0 +1,13 @@
+application/msword
+application/octet-stream
+application/pdf
+application/postscript
+application/rtf
+application/xml
+application/zip
+text/html
+text/plain
+text/richtext
+text/rtf
+text/xml
+

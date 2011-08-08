@@ -1,0 +1,5 @@
+status-type:draft
+status-type:submittedVersion
+status-type:acceptedVersion
+status-type:publishedVersion
+status-type:updatedVersion
