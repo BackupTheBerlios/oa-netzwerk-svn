@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<display-name>OAN-Manager</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+
+	<!-- Faces Config -->
+	<context-param>
+		<param-name>javax.faces.PROJECT_STAGE</param-name>
+		<param-value>Development</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+		<param-value>resources.application</param-value>
+	</context-param>
+	<context-param>
+		<description>State saving method: 'client' or 'server' (=default). See JSF Specification 2.5.2</description>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>client</param-value>
+	</context-param>
+	<context-param>
+		<description>
+	This parameter tells MyFaces if javascript code should be allowed in
+	the rendered HTML output.
+	If javascript is allowed, command_link anchors will have javascript code
+	that submits the corresponding form.
+	If javascript is not allowed, the state saving info and nested parameters
+	will be added as url parameters.
+	Default is 'true'</description>
+		<param-name>org.apache.myfaces.ALLOW_JAVASCRIPT</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<description>
+	If true, rendered HTML code will be formatted, so that it is 'human-readable'
+	i.e. additional line separators and whitespace will be written, that do not
+	influence the HTML code.
+	Default is 'true'</description>
+		<param-name>org.apache.myfaces.PRETTY_HTML</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.apache.myfaces.DETECT_JAVASCRIPT</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<description>
+	If true, a javascript function will be rendered that is able to restore the
+	former vertical scroll on every request. Convenient feature if you have pages
+	with long lists and you do not want the browser page to always jump to the top
+	if you trigger a link or button action that stays on the same page.
+	Default is 'false'
+		</description>
+		<param-name>org.apache.myfaces.AUTO_SCROLL</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>facelets.LIBRARIES</param-name>
+		<param-value>/WEB-INF/utils-taglib.xml</param-value>
+	</context-param>
+
+	<!-- Quartz Config -->
+	<context-param>
+		<param-name>config-file</param-name>
+		<param-value>quartz.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>shutdown-on-unload</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>start-scheduler-on-load</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+
+	<!-- General Application Parameters -->
+	<context-param>
+		<param-name>oanmanager.DEBUG_MODE</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>oanmanager.MANAGER_VERSION</param-name>
+		<param-value>0.3</param-value>
+	</context-param>
+
+
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.jsf</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.faces</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.xhtml</url-pattern>
+	</servlet-mapping>
+
+	<filter>
+		<filter-name>MyFacesExtensionsFilter</filter-name>
+		<filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
+		<init-param>
+			<param-name>uploadMaxFileSize</param-name>
+			<param-value>20m</param-value>
+		</init-param>
+	</filter>
+
+	<!-- extension mapping for adding <script/>, <link/>, and other resource tags to JSF-pages -->
+	<filter-mapping>
+		<filter-name>MyFacesExtensionsFilter</filter-name>
+		<!-- servlet-name must match the name of your javax.faces.webapp.FacesServlet entry -->
+		<servlet-name>Faces Servlet</servlet-name>
+	</filter-mapping>
+
+	<!-- extension mapping for serving page-independent resources (javascript, stylesheets, images, etc.) -->
+	<filter-mapping>
+		<filter-name>MyFacesExtensionsFilter</filter-name>
+		<url-pattern>/faces/myFacesExtensionResource/*</url-pattern>
+	</filter-mapping>
+
+	<!-- MyFaces Listener -->
+	<listener>
+		<listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
+	</listener>
+
+	<!-- Quartz Listener -->
+	<listener>
+		<listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
+	</listener>
+
+
+
+	<!-- REALM Start -->
+	
+	<security-constraint>
+		<display-name>Security Constraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>OAdmiN</web-resource-name>
+			<url-pattern>/pages/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>oanadmin</role-name>
+			<role-name>repositoryManager</role-name>
+			<role-name>serviceManager</role-name>
+			<role-name>validatorManager</role-name>
+			<role-name>userManager</role-name>
+			<role-name>reportManager</role-name>
+<!-- 			<role-name>oasysop</role-name> -->
+		</auth-constraint>
+		
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>OAdmiN</realm-name>
+		<form-login-config>
+			<form-login-page>/pages/login.xhtml</form-login-page>
+			<form-error-page>/pages/login.xhtml</form-error-page>
+		</form-login-config>
+	</login-config>
+	<security-role>
+		<description>OANetzwerk-Admin</description>
+		<role-name>oanadmin</role-name>
+	</security-role>
+	<!-- 
+	<security-role>
+		<description>OANetzwerk-SysOP</description>
+		<role-name>oasysop</role-name>
+	</security-role>
+	-->
+	
+	<!--  Userzugriff auf einzelne Seiten -->
+	<security-constraint>
+  		<web-resource-collection>
+    		<web-resource-name>repositoryManager</web-resource-name>
+   		 	<url-pattern>/pages/repositories_main.xhtml</url-pattern>
+   		 	<url-pattern>/pages/repositories_add.xhtml</url-pattern>
+  		</web-resource-collection>
+  		<auth-constraint>
+    		<role-name>repositoryManager</role-name>
+    		<role-name>oanadmin</role-name>
+  		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+  		<web-resource-collection>
+    		<web-resource-name>serviceManager</web-resource-name>
+   		 	<url-pattern>/pages/services_main.xhtml</url-pattern>
+   		 	<url-pattern>/pages/services_schedule.xhtml</url-pattern>
+   		 	<url-pattern>/pages/services_schedule_add.xhtml</url-pattern>
+  		</web-resource-collection>
+  		<auth-constraint>
+    		<role-name>serviceManager</role-name>
+    		<role-name>oanadmin</role-name> 
+  		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+  		<web-resource-collection>
+    		<web-resource-name>validatorManager</web-resource-name>
+   		 	<url-pattern>/pages/validation_overview.xhtml</url-pattern>
+   		 	<url-pattern>/pages/validation_overview.xhtml</url-pattern>
+  		</web-resource-collection>
+  		<auth-constraint>
+    		<role-name>validatorManager</role-name>
+    		<role-name>oanadmin</role-name>
+  		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+  		<web-resource-collection>
+    		<web-resource-name>userManager</web-resource-name>
+   		 	<url-pattern>/pages/users_main.xhtml</url-pattern>
+   		 	<url-pattern>/pages/users_add.xhtml</url-pattern>
+  		</web-resource-collection>
+  		<auth-constraint>
+    		<role-name>userManager</role-name>
+    		<role-name>oanadmin</role-name>
+  		</auth-constraint>
+	</security-constraint>
+</web-app>
