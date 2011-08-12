@@ -17,12 +17,15 @@
 	<!-- ********************* Repositories ******************** -->
 
 
-	<t:div rendered="#{not menu_repository}">
+	<t:div rendered="#{userList.repositoryManager and not menu_repository}">
 	   	<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
       		href="repositories_main.xhtml"><h:outputText value="#{msg.menu1}" /></a></div>
 	</t:div>		
-		
-	<t:div rendered="#{menu_repository or menu_repository_add}">
+	<!-- 
+		repoManager: #{userList.repositoryManager}	
+		userManager: #{userList.userManager}
+	 -->	
+	<t:div rendered="#{userList.repositoryManager and menu_repository or userList.repositoryManager and menu_repository_add}">
 		
 		<t:div rendered="#{menu_repository}">
 	    	<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
@@ -47,14 +50,14 @@
 
 	<t:div rendered="#{not menu_rest}">
 	      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         	src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml">REST-Server</a></div>
+         	src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml"><h:outputText value="#{msg.menu5}" /></a></div>
 	</t:div>		
 		
 	<t:div rendered="#{menu_rest or menu_rest_validation}">
 		
 		<t:div rendered="#{menu_rest}">
 	      	<div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         		src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml"><b>REST-Server</b></a></div>
+         		src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml"><b><h:outputText value="#{msg.menu5}" /></b></a></div>
       	</t:div>
 		
     	<div class="subtasks">
@@ -73,12 +76,12 @@
 	<!-- ********************* Services ******************** -->
 		
 		
-	<t:div rendered="#{not menu_services}">
+	<t:div rendered="#{userList.serviceManager and not menu_services}">
 	    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
 	      href="services_main.xhtml"><h:outputText value="#{msg.menu7}" /></a></div>
 	</t:div>
 	
-	<t:div rendered="#{menu_services or menu_services_schedule or menu_services_schedule_add}">
+	<t:div rendered="#{userList.serviceManager and menu_services or userList.serviceManager and menu_services_schedule or userList.serviceManager and menu_services_schedule_add}">
 		<t:div rendered="#{menu_services}">	
 			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
 	      		href="services_main.xhtml"><b><h:outputText value="#{msg.menu8}" /></b></a></div>
@@ -90,21 +93,21 @@
       			href="services_schedule.xhtml"><b><h:outputText value="#{msg.menu9}" /></b></a></div>
             
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-                href="services_schedule_add.xhtml">Neuer Job</a></div>            
+                href="services_schedule_add.xhtml"><h:outputText value="#{msg.menu16}" /></a></div>            
 		</t:div>
 		
 		<t:div rendered="#{menu_services_schedule_add}">	 
 			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
       			href="services_schedule.xhtml"><h:outputText value="#{msg.menu10}" /></a></div>
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-                href="services_schedule_add.xhtml"><b>Neuer Job</b></a></div>              
+                href="services_schedule_add.xhtml"><b><h:outputText value="#{msg.menu16}" /></b></a></div>              
 		</t:div>
     
         <t:div rendered="#{not menu_services_schedule and not menu_services_schedule_add}">   
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-                href="services_schedule.xhtml">Ablaufplan</a></div>
+                href="services_schedule.xhtml"><h:outputText value="#{msg.menu10}" /></a></div>
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-                href="services_schedule_add.xhtml">Neuer Job</a></div>              
+                href="services_schedule_add.xhtml"><h:outputText value="#{msg.menu16}" /></a></div>              
         </t:div>    
 		</div>
 	</t:div>
@@ -113,12 +116,12 @@
 	<!-- ********************* Users ******************** -->
 		
 		
-	<t:div rendered="#{not menu_users}">
+	<t:div rendered="#{userList.userManager and not menu_users}">
     		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
       			href="users_main.xhtml"><h:outputText value="#{msg.menu11}" /></a></div>
 	</t:div>
 	
-	<t:div rendered="#{menu_users or menu_users_add}">
+	<t:div rendered="#{userList.userManager and menu_users or userList.userManager and menu_users_add}">
 		<t:div rendered="#{menu_users}">	
     		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
       			href="users_main.xhtml"><b><h:outputText value="#{msg.menu12}" /></b></a></div>
@@ -140,13 +143,13 @@
 	
     <!-- ********************* Validator ******************** -->
 
-    <t:div rendered="#{menu_validator}">
+    <t:div rendered="#{userList.validatorManager and menu_validator}">
       <div class="task">
         <img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" />
         <a href="validation_overview.xhtml"><b><h:outputText value="Validator" /></b></a>
       </div>
     </t:div>        
-    <t:div rendered="#{not menu_validator}">
+    <t:div rendered="#{userList.validatorManager and not menu_validator}">
         <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
             href="validation_overview.xhtml"><h:outputText value="Validator" /></a></div>
     </t:div>  
@@ -156,12 +159,12 @@
     <t:div rendered="#{menu_oaps}">
       <div class="task">
         <img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" />
-        <a href="OAPS.xhtml"><b><h:outputText value="OAPS-Anbindung" /></b></a>
+        <a href="OAPS.xhtml"><b><h:outputText value="OAPS" /></b></a>
       </div>
     </t:div>      	
     <t:div rendered="#{not menu_oaps}">
         <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-            href="OAPS.xhtml"><h:outputText value="OAPS-Anbindung" /></a></div>
+            href="OAPS.xhtml"><h:outputText value="OAPS" /></a></div>
     </t:div>  
 
 

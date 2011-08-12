@@ -158,11 +158,11 @@ public class UserBean extends AbstractBean implements Serializable {
 	public String getRights() {
 
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(rightRepositoryManagement ? "Repositoryverwaltung, " : "");
-		buffer.append(rightServiceManagement ? "Diensteverwaltung, " : "");
-		buffer.append(rightValidator? "Validatorzugriff, " : "");
-		buffer.append(rightUserManagement ? "Benutzerverwaltung, " : "");
-		buffer.append(rightReportManagement ? "Reportzugriff, " : "");
+		buffer.append(rightRepositoryManagement ? LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "menu1", null).getDetail() + ", " : "");
+		buffer.append(rightServiceManagement ? LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "menu7", null).getDetail() + ", " : "");
+		buffer.append(rightValidator? LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "menu5", null).getDetail() + ", " : "");
+		buffer.append(rightUserManagement ? LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "menu11", null).getDetail()+", " : "");
+		buffer.append(rightReportManagement ? LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "menu15", null).getDetail()+", " : "");
 		String rights = buffer.toString();
 
 		return rights.endsWith(", ") ? rights.substring(0, rights.length() - 2) : rights;

@@ -119,7 +119,7 @@
 
 		<div style="margin-left:40px;" id="aenderungsmenu" > <!-- style="display: none" -->
 
-		Mit dem folgenden Formular können sie einen Dienst planen. Dabei können sie selbst festlegen ob der Dienst regelmäßig oder einmalig arbeiten soll sowie weitere Einstellungen vornehmen. 		
+		<h:outputText value="#{msg.services_schedule_add_description}" /> 		
 		<br />
 		<br />
 
@@ -150,7 +150,7 @@
                 </tr>
 				<tr>            
           		
-                     <td colspan="2" ><br />Bitte wählen sie den auszuführenden Dienst aus.
+                     <td colspan="2" ><br /><h:outputText value="#{msg.services_schedule_add_select_service}" />
                      
 					<br />
 					</td>
@@ -161,7 +161,7 @@
                         <tr>
                           <td width="150px"></td>
                           <td><h:selectOneMenu id="service" value="#{scheduling.chosenService}" onchange="showRepositoryChoice(this.selectedIndex);" >
-                            <f:selectItem itemLabel="Bitte wählen" itemValue="null" />
+                            <f:selectItem itemLabel="Bitte wählen / Choose..." itemValue="null" />
                             <f:selectItem itemLabel="Harvester" itemValue="1" />
                             <f:selectItem itemLabel="Aggregator" itemValue="2" />
                             <f:selectItem itemLabel="Marker" itemValue="3" />
@@ -170,7 +170,7 @@
                           </td>
                         </tr>
                         <tr>
-                  			<td colspan="2">Bitte wählen sie ob der Dienst regelmäßig oder einmalig ausgeführt werden soll.</td>
+                  			<td colspan="2"><h:outputText value="#{msg.services_schedule_add_periodic_or_once}" /></td>
                 		</tr>
 	                    <tr>
                           <td width="150px"></td>
@@ -190,7 +190,7 @@
                         	<div id="repeatedly" style="visibility:hidden;height:0px" >
                         	
                         	  <br />
-                    			Bitte legen sie das Interval für die Dienstausführung fest.<br />
+                    			<h:outputText value="#{services_schedule_add_select_interval}" /><br />
                         	<h:panelGroup>
 								<h:panelGrid columns="3">
 									<h:panelGrid columns="1" style="width:160px;">
@@ -265,7 +265,7 @@
                         	
                         	<div id="repositoryChoice">
                         	<br />
-		                    Bitte wählen sie ein zu bearbeitendes Repository. Alternativ können auch alle Repositorien gewählt werden.
+		                    <h:outputText value="#{msg.services.schedule_add_select_repository}" />
 		                    
 		                    <h:panelGroup>
 								<h:panelGrid columns="2">
@@ -284,7 +284,7 @@
 							</h:panelGroup>
 							<br />
 							</div>							
-		                    Bitte wählen sie wann der Dienst ausgeführt werden soll. 
+		                    <h:outputText value="#{msg.services_schedule_add_execution_date}" />
 		                    <br />  
 							<table>
 		                        <tr>

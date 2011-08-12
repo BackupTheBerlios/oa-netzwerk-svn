@@ -95,7 +95,7 @@ public class OAPSBean extends AbstractBean implements Serializable {
 	public void receiveReport() {
 		System.out.println("receiveReport()");
 		if (this.jobID == 0 || this.userEmail.equals(null)) {
-			this.errorMessage = "Dieser Link ist nicht gültig.";
+			this.errorMessage = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "oaps_invalid_link", null).getDetail();
 			
 		}
 		
@@ -218,7 +218,7 @@ public class OAPSBean extends AbstractBean implements Serializable {
 	       
 	       if (mailSuccess) {
 	    	   System.out.println("Mail erfolgreich versendet");
-	    	   ctx.addMessage("1", new FacesMessage("Ihr Dokument wurde an OAPS übermittelt. Sie erhalten eine Email mit einem Link, unter dem Sie den aktuellen Bearbeitungsstand Ihres Dokuments einsehen können."));
+	    	   ctx.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "oaps_submit_success", null));
 	       }
 	       else {
 	    	   System.out.println("Mail konnte nicht verschickt werden");
@@ -246,7 +246,7 @@ public class OAPSBean extends AbstractBean implements Serializable {
 	
 	public void checkResults() {
 		if (this.jobID == 0 || this.userEmail.equals(null)) {
-			this.errorMessage = "Dieser Link ist nicht gültig.";
+			this.errorMessage = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "oaps_invalid_link", null).getDetail();
 			
 		}
 		OapsAPI srv = new OapsAPILocator();

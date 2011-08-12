@@ -6,6 +6,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -37,7 +38,7 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	
 	private Long id = null;
 	private String update = "";
-	private String updateMessage = "Currently no service in progress...";
+	private String updateMessage = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "users_add_success", null).getDetail();
 
 	
 	public LiveLogBean() {

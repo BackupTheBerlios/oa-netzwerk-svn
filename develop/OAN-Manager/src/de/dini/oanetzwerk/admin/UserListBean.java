@@ -42,7 +42,7 @@ public class UserListBean extends AbstractBean implements Serializable {
 	private static final String ROLE_SERVICE_MANAGER = "serviceManager";
 	private static final String ROLE_USER_MANAGER = "userManager";
 	private static final String ROLE_VALIDATOR_MANAGER = "validatorManager";
-	private static final String ROLE_OANADMIN = "oadmin";
+	private static final String ROLE_OANADMIN = "oanadmin";
 
 	FacesContext ctx = FacesContext.getCurrentInstance();
 	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(false);
@@ -232,8 +232,12 @@ public class UserListBean extends AbstractBean implements Serializable {
 	}
 
 	public String removeUser(String username) {
-
 		FacesContext context = FacesContext.getCurrentInstance();
+		if (username.equals("oanadmin")) {
+			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "users_remove_oanadmin", null));
+			return "users_main";
+		}
+		
 
 		MBeanServer mbs = Registry.getRegistry(null, null).getMBeanServer();
 
@@ -256,6 +260,30 @@ public class UserListBean extends AbstractBean implements Serializable {
 		return "users_main";
 	}
 
+	public boolean isUserManager() {
+		
+		return  isOanAdmin() || FacesContext.getCurrentInstance().getExternalContext().isUserInRole(ROLE_USER_MANAGER);
+	}
+	public boolean isRepositoryManager() {
+		
+		return isOanAdmin() || FacesContext.getCurrentInstance().getExternalContext().isUserInRole(ROLE_REPOSITORY_MANAGER);
+	}
+	public boolean isReportManager() {
+		
+		return isOanAdmin() || FacesContext.getCurrentInstance().getExternalContext().isUserInRole(ROLE_REPORT_MANAGER);
+	}
+	public boolean isValidatorManager() {
+		
+		return isOanAdmin() || FacesContext.getCurrentInstance().getExternalContext().isUserInRole(ROLE_VALIDATOR_MANAGER);
+	}
+	public boolean isServiceManager() {
+		
+		return isOanAdmin() || FacesContext.getCurrentInstance().getExternalContext().isUserInRole(ROLE_SERVICE_MANAGER);
+	}
+	public boolean isOanAdmin() {
+		
+		return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(ROLE_OANADMIN);
+	}
 	
 	public String getUser() {
 		return FacesContext.getCurrentInstance().getExternalContext().getRemoteUser();

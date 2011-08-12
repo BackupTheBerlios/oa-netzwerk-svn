@@ -82,9 +82,9 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 			FacesMessage message;
 			if (deleted) {
 				jobList.remove(jobIndex);
-				message = new FacesMessage("Der Job wurde erfolgreich gelöscht.");
+				message = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "serviceJobList_delete_success", null);
 			} else {
-				message = new FacesMessage("Der Job konnte nicht entfernt werden. Bitte prüfen sie die Logs.");
+				message = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "serviceJobList_delete_fail", null);
 			}
 			ctx.addMessage("1", message);
 		}

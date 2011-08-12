@@ -41,7 +41,7 @@
                   </td>
                </tr>
                <tr>
-                  <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.repository.name}" required="true" requiredMessage="Bitte geben sie einen Namen für das Repository ein!" />
+                  <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.repository.name}" required="true" requiredMessage="#{msg.repo_view_name_required}" />
                      <div class="help_box" id="help_name"><h:outputText value="#{msg.repo_view_nameh}" /></div>
                   </td>
                   
@@ -64,7 +64,7 @@
                   </td>
                </tr>
                <tr>
-                  <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.repository.oaiUrl}" required="true" requiredMessage="Bitte geben sie die URL der OAI/PMH-Schnittstelle ein!" />
+                  <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.repository.oaiUrl}" required="true" requiredMessage="#{msg.repo_view_oaipmh_url_required}" />
                      <div class="help_box" id="help_oaipmh"><h:outputText value="#{msg.repo_view_oaih}" /></div>
                   </td>
                </tr>
