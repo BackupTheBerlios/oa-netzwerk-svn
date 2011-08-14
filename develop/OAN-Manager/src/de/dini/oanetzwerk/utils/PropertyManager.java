@@ -25,7 +25,7 @@ public class PropertyManager implements Serializable {
 	
 	private final static String CATALINA_BASE		= System.getProperty("catalina.base");
 	
-	private static FacesContext faces 				= FacesContext.getCurrentInstance();
+//	private static FacesContext faces 				= FacesContext.getCurrentInstance();
 	
 	
 	private static String webappDir 				= "/webapps";
@@ -51,7 +51,7 @@ public class PropertyManager implements Serializable {
 	
 	
 	public static void readPropertyFiles() {
-		String context = faces.getExternalContext().getRequestContextPath();
+		String context = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
 		
 		if (context != null && context.length() > 0) {		
 			contextPath = context;

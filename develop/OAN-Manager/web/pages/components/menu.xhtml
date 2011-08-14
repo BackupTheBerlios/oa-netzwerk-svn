@@ -19,7 +19,7 @@
 
 	<t:div rendered="#{userList.repositoryManager and not menu_repository}">
 	   	<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
-      		href="repositories_main.xhtml"><h:outputText value="#{msg.menu1}" /></a></div>
+      		href="repositories_main.xhtml"><h:outputText value="#{msg.menu_repo_mgmt}" /></a></div>
 	</t:div>		
 	<!-- 
 		repoManager: #{userList.repositoryManager}	
@@ -29,17 +29,17 @@
 		
 		<t:div rendered="#{menu_repository}">
 	    	<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
-	      		href="repositories_main.xhtml"><b><h:outputText value="#{msg.menu2}" /></b></a></div>
+	      		href="repositories_main.xhtml"><b><h:outputText value="#{msg.menu_repo_mgmt}" /></b></a></div>
       	</t:div>
 		
     	<div class="subtasks">
 		<t:div rendered="#{menu_repository_add}">
    		 		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-      				href="repositories_add.xhtml"><b><h:outputText value="#{msg.menu3}" /></b></a></div>
+      				href="repositories_add.xhtml"><b><h:outputText value="#{msg.menu_repo_add}" /></b></a></div>
     	</t:div>
 		<t:div rendered="#{not menu_repository_add}">
    		 		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-      				href="repositories_add.xhtml"><h:outputText value="#{msg.menu4}" /></a></div>
+      				href="repositories_add.xhtml"><h:outputText value="#{msg.menu_repo_add}" /></a></div>
     	</t:div>    	
    		</div>
 	</t:div>
@@ -50,24 +50,24 @@
 
 	<t:div rendered="#{not menu_rest}">
 	      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         	src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml"><h:outputText value="#{msg.menu5}" /></a></div>
+         	src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml"><h:outputText value="#{msg.menu_rest}" /></a></div>
 	</t:div>		
 		
 	<t:div rendered="#{menu_rest or menu_rest_validation}">
 		
 		<t:div rendered="#{menu_rest}">
 	      	<div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
-         		src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml"><b><h:outputText value="#{msg.menu5}" /></b></a></div>
+         		src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml"><b><h:outputText value="#{msg.menu_rest}" /></b></a></div>
       	</t:div>
 		
     	<div class="subtasks">
 		<t:div rendered="#{menu_rest_validation}">
       		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
-       			 href="rest_validator.xhtml"><b><h:outputText value="#{msg.menu5}" /></b></a></div>
+       			 href="rest_validator.xhtml"><b><h:outputText value="#{msg.menu_rest_validate}" /></b></a></div>
     	</t:div>
 		<t:div rendered="#{not menu_rest_validation}">
       		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
-       			 href="rest_validator.xhtml"><h:outputText value="#{msg.menu6}" /></a></div>
+       			 href="rest_validator.xhtml"><h:outputText value="#{msg.menu_rest_validate}" /></a></div>
     	</t:div>    	
    		</div>
 	</t:div>
@@ -78,36 +78,36 @@
 		
 	<t:div rendered="#{userList.serviceManager and not menu_services}">
 	    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-	      href="services_main.xhtml"><h:outputText value="#{msg.menu7}" /></a></div>
+	      href="services_main.xhtml"><h:outputText value="#{msg.menu_services_mgmt}" /></a></div>
 	</t:div>
 	
 	<t:div rendered="#{userList.serviceManager and menu_services or userList.serviceManager and menu_services_schedule or userList.serviceManager and menu_services_schedule_add}">
 		<t:div rendered="#{menu_services}">	
 			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-	      		href="services_main.xhtml"><b><h:outputText value="#{msg.menu8}" /></b></a></div>
+	      		href="services_main.xhtml"><b><h:outputText value="#{msg.menu_services_mgmt}" /></b></a></div>
 	    </t:div>  
 	    
     	<div class="subtasks">
 		<t:div rendered="#{menu_services_schedule}">	    
 		    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-      			href="services_schedule.xhtml"><b><h:outputText value="#{msg.menu9}" /></b></a></div>
+      			href="services_schedule.xhtml"><b><h:outputText value="#{msg.menu_services_activityplan}" /></b></a></div>
             
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-                href="services_schedule_add.xhtml"><h:outputText value="#{msg.menu16}" /></a></div>            
+                href="services_schedule_add.xhtml"><h:outputText value="#{msg.menu_services_newjob}" /></a></div>            
 		</t:div>
 		
 		<t:div rendered="#{menu_services_schedule_add}">	 
 			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-      			href="services_schedule.xhtml"><h:outputText value="#{msg.menu10}" /></a></div>
+      			href="services_schedule.xhtml"><h:outputText value="#{msg.menu_services_activityplan}" /></a></div>
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-                href="services_schedule_add.xhtml"><b><h:outputText value="#{msg.menu16}" /></b></a></div>              
+                href="services_schedule_add.xhtml"><b><h:outputText value="#{msg.menu_services_newjob}" /></b></a></div>              
 		</t:div>
     
         <t:div rendered="#{not menu_services_schedule and not menu_services_schedule_add}">   
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-                href="services_schedule.xhtml"><h:outputText value="#{msg.menu10}" /></a></div>
+                href="services_schedule.xhtml"><h:outputText value="#{msg.menu_services_activityplan}" /></a></div>
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-                href="services_schedule_add.xhtml"><h:outputText value="#{msg.menu16}" /></a></div>              
+                href="services_schedule_add.xhtml"><h:outputText value="#{msg.menu_services_newjob}" /></a></div>              
         </t:div>    
 		</div>
 	</t:div>
@@ -118,24 +118,24 @@
 		
 	<t:div rendered="#{userList.userManager and not menu_users}">
     		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-      			href="users_main.xhtml"><h:outputText value="#{msg.menu11}" /></a></div>
+      			href="users_main.xhtml"><h:outputText value="#{msg.menu_user_mgmt}" /></a></div>
 	</t:div>
 	
 	<t:div rendered="#{userList.userManager and menu_users or userList.userManager and menu_users_add}">
 		<t:div rendered="#{menu_users}">	
     		<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-      			href="users_main.xhtml"><b><h:outputText value="#{msg.menu12}" /></b></a></div>
+      			href="users_main.xhtml"><b><h:outputText value="#{msg.menu_user_mgmt}" /></b></a></div>
 	    </t:div>  
 	    
     	<div class="subtasks">
 		<t:div rendered="#{menu_user_add}">	    
 		    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-      			href="users_add.xhtml"><b><h:outputText value="#{msg.menu13}" /></b></a></div>
+      			href="users_add.xhtml"><b><h:outputText value="#{msg.menu_user_add}" /></b></a></div>
 		</t:div>
 		
 		<t:div rendered="#{not menu_user_add}">	 
 			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-      			href="users_add.xhtml"><h:outputText value="#{msg.menu14}" /></a></div>
+      			href="users_add.xhtml"><h:outputText value="#{msg.menu_user_add}" /></a></div>
 		</t:div>
 		</div>
 	</t:div>
@@ -143,15 +143,28 @@
 	
     <!-- ********************* Validator ******************** -->
 
-    <t:div rendered="#{userList.validatorManager and menu_validator}">
+    <t:div rendered="#{userList.validatorManager and (menu_validation_dini or menu_validation_add or menu_validation_results)}">
       <div class="task">
         <img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" />
-        <a href="validation_overview.xhtml"><b><h:outputText value="Validator" /></b></a>
+        <a href="validation_dini_overview.xhtml"><b><h:outputText value="Validator" /></b></a>
       </div>
-    </t:div>        
-    <t:div rendered="#{userList.validatorManager and not menu_validator}">
+    	
+    	<div class="subtasks">
+		<t:div rendered="#{menu_validation_add}">	    
+		    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      			href="validation_dini.xhtml"><b><h:outputText value="DINI-Check" /></b></a></div>
+		</t:div>
+		
+		<t:div rendered="#{not menu_validation_add}">	 
+			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      			href="validation_dini.xhtml"><h:outputText value="DINI-Check" /></a></div>
+		</t:div>
+		</div>  	
+    </t:div>   
+         
+    <t:div rendered="#{userList.validatorManager and not menu_validation_dini}">
         <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-            href="validation_overview.xhtml"><h:outputText value="Validator" /></a></div>
+            href="validation_dini_overview.xhtml"><h:outputText value="Validator" /></a></div>          
     </t:div>  
   
   <!-- ********************* OAPS ******************** -->

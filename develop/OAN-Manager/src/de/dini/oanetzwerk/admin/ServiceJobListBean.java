@@ -60,7 +60,7 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 	public void init() {
 		
 		// retrieve the jobs to be displayed
-		initJobs();
+		jobList = restConnector.fetchServiceJobs();
 		
 
 		// try to fetch jobId from request parameters in case this is an update/delete request
@@ -90,84 +90,6 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 		}
 		
 	}
-	
-	
-	private void initJobs() {
-//		if (jobList != null && !jobList.isEmpty()) {
-//			return;
-//		}
-
-		String result = restConnector.prepareRestTransmission("ServiceJob/").GetData();
-		jobList = new ArrayList<SchedulingBean>();
-		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
-
-		if (rms == null || rms.getListEntrySets().isEmpty()) {
-
-			logger.error("received no scheduling job details at all from the server");
-			return;
-		}
-
-		for (RestEntrySet res : rms.getListEntrySets()) {
-
-			Iterator<String> it = res.getKeyIterator();
-			String key = "";
-			SchedulingBean job = new SchedulingBean();
-
-			while (it.hasNext()) {
-
-				key = it.next();
-
-				if (key.equalsIgnoreCase("name")) {
-					job.setName(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("status")) {
-					job.setStatus(ServiceStatus.valueOf(res.getValue(key)));
-
-				} else if (key.equalsIgnoreCase("service_id")) {
-					job.setServiceId(new BigDecimal((new Long(res.getValue(key)))));
-
-				} else if (key.equalsIgnoreCase("job_id")) {
-					job.setJobId(Integer.parseInt(res.getValue(key)));
-
-				} else if (key.equalsIgnoreCase("info")) {
-					job.setInfo(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("periodic")) {
-					job.setPeriodic(Boolean.parseBoolean(res.getValue(key)));
-
-				} else if (key.equalsIgnoreCase("nonperiodic_date")) {
-					System.out.println(res.getValue(key));
-					String npd = res.getValue(key);
-					
-					Date date = null;
-					if (npd != null) {
-						
-						try {
-							date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(npd);
-						} catch (ParseException e) {
-							logger.warn("Could not parse date received from server. " + npd, e);
-						}
-					}
-					job.setNonperiodicTimestamp(date);
-
-				} else if (key.equalsIgnoreCase("periodic_interval_type")) {
-					job.setPeriodicInterval(res.getValue(key) != null ? SchedulingIntervalType.valueOf(res.getValue(key)) : null);
-
-				} else if (key.equalsIgnoreCase("periodic_interval_days")) {
-					job.setPeriodicDays(Integer.parseInt(res.getValue(key)));
-				} else
-
-					// System.out.println("Key: " + key);
-					continue;
-			}
-
-			jobList.add(job);
-
-		}
-		System.out.println("Job List: " + jobList.size());
-	}
-	
-	
 	
 	
 	/********************* Getter & Setter **********************/

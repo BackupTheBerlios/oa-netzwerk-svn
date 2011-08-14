@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+<f:view>
+
+<ui:composition template="templates/template.xhtml">
+
+  <ui:param name="pageTitle" value="DINI Check - OA-Netzwerk Manager" />
+
+  <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="validation_dini_overview.xhtml"><h:outputText value="Validator" /></a> » <a href="validation_dini.xhtml"><h:outputText value="DINI Check" /></a>
+  </ui:define>
+
+  <ui:param name="menu_validation_add" value="#{true}" />
+	
+  <ui:define name="content">
+
+    <div style="padding: 20px; background-color: #f5f9f4;">
+    <div style="background-color: #f5f9f4;">
+    <h2><h:outputText value="DINI Check" /></h2>
+
+    <h:form id="diniValidationForm">
+    <table width="90%">
+          <tr>
+            <td colspan="2">Mit dem DINI-Validator können sie die OAI-PMH Schnittstelle von Repositorien auf ihre Konformität zum 
+            DINI-Zertifikat prüfen. Diese Analyse ist ein nützliches Hilfsinstrument, mit dem sich anhand der Ergebnisse 
+            leicht erkennen lässt inwieweit das Repositorium den Regeln folgt und wo gegebenenfalls gezielt optimiert werden kann. <p />
+            Nachfolgend können sie das zu prüfende Repository angeben und festlegen welche Regeln des Zertifikats geprüft werden sollen.            
+            <p />
+            </td>
+          </tr>
+          <tr>
+          	<td colspan="2"><h:messages style="color:red;"/></td>
+          </tr>
+          <tr>
+			<td width="30%"><i>Wählen sie zunächst den DINI Regelsatz</i><p /><br /></td>
+			<td><h:selectOneMenu id="ruleset" value="#{validation.selectedDiniRuleset}" style="width : 200px;">
+					<f:selectItems value="#{validation.ruleSets}" var="ruleset"
+							itemLabel="#{ruleset.name}" itemValue="#{ruleset.name}" />
+				</h:selectOneMenu>
+			</td>
+          </tr>
+
+          <tr>
+            <td><i>Geben sie ein Repository an (<a href="#" onclick="javascript:toggle_help('help_repository'); return false;">Help</a>)</i></td>
+			<td>
+
+				<h:selectOneMenu id="repositories" value="#{validation.baseUrl}" style=" width : 200px;" 
+							onchange="document.getElementById('diniValidationForm:url').value=this.value;">
+					<f:selectItems value="#{validation.repositories}" var="repo" itemLabel="#{repo.name}" itemValue="#{repo.oaiUrl}" />
+				</h:selectOneMenu>
+			</td>		
+		  </tr>
+          <tr>
+          	<td></td>
+            <td class="form"><t:inputText id="url" size="70" value="#{validation.baseUrl}" />
+            <div class="help_box" id="help_repository">
+            	<h:outputText value="Bitte wählen sie ein Repository aus der Dropdown-Liste oder geben sie im " /><br />
+            	<h:outputText value="Eingabefeld darunter eine gültige Basis-URL an!" />
+            </div>
+            </td>
+          </tr>
+          
+          <tr>
+          	<td><i>Wieviele Records sollen maximal überprüft werden. (<a href="#" onclick="javascript:toggle_help('help_records'); return false;">Help</a>)</i></td>
+            <td class="form">
+            	<t:inputText id="numRecords" size="10" maxlength="9" value="#{validation.selectedNumOfRecords}" />
+            	<t:selectBooleanCheckbox id="random" value="#{validation.randomRecords}" /><h:outputText value="zufällige Records prüfen" />
+	            <div class="help_box" id="help_records">
+	            	<h:outputText value="Die Angabe -1 bedeutet alle Records werden geprüft!" /><br />
+	            </div>
+            </td>
+          </tr>
+
+		  <tr>
+		  	<td colspan="2">
+		  	
+		  		<t:dataTable value="#{validation.diniRules}" var="row"
+					headerClass="pane-header" rowClasses="odd, even"
+					style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
+					
+					<t:column style="width: 5%; vertical-align: middle; text-align: center; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="" />
+						</f:facet>
+						<t:selectBooleanCheckbox value="#{row.parameters['check']}" />
+					</t:column>							
+					
+					<t:column style="padding-left:10px; width: 35%; vertical-align: middle; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="Regel" />
+						</f:facet>
+						<h:outputText value="#{row.parameters['name']}" />
+					</t:column>
+					
+					<t:column style="width: 60%; vertical-align: middle; padding-left: 15px; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="Beschreibung" />
+						</f:facet>
+						<h:outputText value="#{row.parameters['description']}" />
+					</t:column >			
+				</t:dataTable>
+		  	</td>
+		  </tr>
+
+          <tr>
+            <td colspan="2" align="right"><p /><h:commandButton type="submit" style="width: 250px;height: 40px;" 
+            	action="#{validation.submitValidation}" value="DINI-Konformität jetzt prüfen!"></h:commandButton>
+            </td>
+          </tr>
+    	</table>
+	</h:form>
+    </div>
+    </div>
+
+  </ui:define>
+</ui:composition>
+
+</f:view>
+</body>
+
+</html>

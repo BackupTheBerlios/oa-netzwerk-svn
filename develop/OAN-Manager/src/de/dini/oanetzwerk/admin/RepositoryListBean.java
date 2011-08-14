@@ -61,58 +61,12 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 		
 		RepositoryBean.setRestConnector(restConnector);
 		
-		if (repoList != null && !repoList.isEmpty()) {
-			return;
-		}
+		repoList = restConnector.fetchRepositories();
 		
-		String result = restConnector.prepareRestTransmission("Repository/").GetData();
-		repoList = new ArrayList<Repository>();
-		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
-
-		if (rms == null || rms.getListEntrySets().isEmpty()) {
-
-			logger.error("received no Repository Details at all from the server");
-			return;
-		}
-
-		for (RestEntrySet res : rms.getListEntrySets()) {
-
-			Iterator<String> it = res.getKeyIterator();
-			String key = "";
-			Repository repo = new Repository();
+		for (Repository repo : repoList) {
+			
 			String repoURL = null;
-			while (it.hasNext()) {
-
-				key = it.next();
-
-				if (key.equalsIgnoreCase("name")) {
-
-					repo.setName(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("url")) {
-
-					repo.setUrl(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("repository_id")) {
-
-					repo.setId(new Long(res.getValue(key)));
-
-				} else if (key.equalsIgnoreCase("active")) {
-
-					repo.setActive(Boolean.parseBoolean(res.getValue(key)));
-
-				} else if (key.equalsIgnoreCase("last_full_harvest_begin")) {
-
-					repo.setLastFullHarvestBegin(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("oai_url")) {
-					repoURL = res.getValue(key);
-				}
-				else
-					// System.out.println("Key: " + key);
-					continue;
-			}
-
+			
 			// check the online status of the repository
 			HttpClient htc = new HttpClient();
 			htc.getHttpConnectionManager().getParams().setConnectionTimeout(5000);
@@ -122,10 +76,10 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 			if (!parameter.isEmpty()) {
 				// testen ob die Url auch mit einem / endet.
 				// damit wird abgefangen wenn User die Schnittstellenadresse ohne / eingeben
-				if (!repoURL.endsWith("/")) {
-					repoURL = repoURL.concat("/");
+				if (!repo.getOaiUrl().endsWith("/")) {
+					repoURL = repo.getOaiUrl().concat("/");
 				}
-				repoURL = repoURL.concat(parameter);
+				repoURL = repo.getOaiUrl().concat(parameter);
 			}
 			HttpMethod method = new GetMethod(repoURL);
 	        method.setFollowRedirects(true);
@@ -148,7 +102,6 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 			String timestamp = dateFormat.format(new Date().getTime());
 			repo.setLastStatusCheck(timestamp);
 			
-			repoList.add(repo);
 		}
 
 	}

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+<f:view>
+
+<ui:composition template="templates/template.xhtml">
+
+
+  <ui:param name="pageTitle" value="Validation - Ergebnisse/Content" />
+
+ <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="validation_dini_overview.xhtml"><h:outputText value="Validator" /></a>
+  </ui:define>
+  
+  <ui:param name="menu_validation_results" value="#{true}" />
+    
+  <ui:define name="content">
+  
+  <script type="text/javascript">
+  function fold(count) {
+		if (document.getElementById){
+			document.getElementById("fehlerliste" + count).style.display = "none";
+			document.getElementById("ua" + count).style.display = "inline";
+			document.getElementById("ia" + count).style.display = "none";
+		}
+	}
+
+	function unfold(count) {
+		if (document.getElementById){
+			document.getElementById("fehlerliste" + count).style.display = "inline";
+			document.getElementById("ua" + count).style.display = "none";
+			document.getElementById("ia" + count).style.display = "inline";
+		}
+	}
+
+
+	function red() {
+		if (document.getElementById)
+			document.getElementById("ctab1").style.backgroundColor = "#ff4500";
+	}
+
+	function red2(check){
+		
+		if(check == "100.0")
+			document.getElementById("ctab1").style.backgroundColor = "#ff4500";
+		
+	}
+
+	function test() {
+		return "#ddd000";
+	}
+	
+  </script>
+
+  <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
+  
+  	<h2>
+   Ergebnisse 
+   </h2>
+   	<t:div rendered="#{empty validation.validationResults}">
+   		Es konnten keine Ergebnisse gefunden werden.
+   	</t:div>
+   
+    <t:div rendered="#{not empty validation.validationResults}">
+	    Nachfolgend erhalten sie eine Liste der geprüften Regeln und den jeweiligen Status darüber inwieweit diese Regel vom Repository umgesetzt wurde. <p />
+	    <b>Geprüftes Repository</b>: #{validation.baseUrl}<p />
+	    <br />
+	    <br />
+    <div style="padding-left:40px;">
+		<h:form>
+			<t:dataTable value="#{validation.validationResults}" var="row" rowIndexVar="count"
+				headerClass="pane-header" rowClasses="odd, even"
+				style="border-collapse: collapse; border: 1px #bbb solid; width : 650px;">
+				<t:column style="width: 100%;">
+	
+					<table width="90%">
+					<tr>
+						<td style="width: 20%; padding-top: 15px; padding-left:15px"><b><h:outputText value="Regel" /></b></td>
+						<td style="width: 80%; padding-top: 15px;"><h:outputText value="#{row.entry.name}" /></td>
+					</tr>
+
+					<tr>
+						<td style="width: 20%; padding-left:15px"><b><h:outputText value="Beschreibung" /></b></td>
+						<td style="width: 80%;"><h:outputText value="#{row.entry.description}" /><br />   </td>
+					</tr>
+					<t:div rendered="#{row.successPercentage eq 100}">
+					<tr>
+						<td style="width: 20%; padding-left:15px"><b><h:outputText value="Regel-Status" /></b></td>
+						<td><img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" /><h:outputText value="&#160; Erfüllt (#{row.successPercentage}%)" />
+						</td>	
+					</tr>
+					
+					
+					</t:div>
+					<t:div rendered="#{row.successPercentage lt 100}">
+					<tr>
+						<td style="width: 20%; padding-left:15px"><b><h:outputText value="Regel-Status" /></b></td>
+						<td><img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" />
+						<h:outputText rendered="#{row.showDetails}" value="&#160; #{row.successPercentage}%  (#{row.entry.successes})" /></td>	
+					</tr>
+					<t:div rendered="#{row.successPercentage lt 100 and row.showDetails}"> 
+					<tr style="align:center">
+						<td style="width: 20%; padding-left:15px"></td>
+						<td>	
+						<div id="ua#{count}"><h:outputText value="Details" onclick="unfold(#{count});" /></div>			
+						<div id="ia#{count}" style="display: none;"><h:outputText value="Details ausblenden" onclick="fold(#{count});" /></div>							
+						</td>
+						<td></td>
+					</tr>
+					</t:div>
+					
+					<tr>
+						<td colspan="2" style="width: 20%; padding-left:15px">
+					<div id="fehlerliste#{count}" style="display: none">
+						<h:dataTable value="#{row.entry.errors}" var="error"
+									headerClass="pane-header" rowClasses="odd, even"
+									style="border-collapse: collapse; border: 1px #bbb solid; width : 589px;">
+							<h:column
+								style="width: 30%; vertical-align: middle; height: 70px;">
+								<div align="center">			
+									<h:outputLink value="#{validation.baseUrl}?verb&#61;GetRecord&amp;metadataPrefix&#61;oai_dc&amp;identifier=#{error}" >#{error}</h:outputLink>
+
+								</div>
+							</h:column>
+						</h:dataTable>
+					</div>							
+						</td>
+					</tr>
+					</t:div>
+					</table>
+
+				</t:column>
+			</t:dataTable>
+		</h:form>
+	</div>
+	</t:div>
+	</div>
+	</div>
+</ui:define>
+
+</ui:composition>
+
+</f:view>
+</body>
+
+</html>

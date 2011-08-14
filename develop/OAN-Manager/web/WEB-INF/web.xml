@@ -58,6 +58,11 @@
 		<param-value>true</param-value>
 	</context-param>
 	<context-param>
+		<param-name>org.apache.myfaces.CHECK_EXTENSIONS_FILTER</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
 		<param-name>facelets.LIBRARIES</param-name>
 		<param-value>/WEB-INF/utils-taglib.xml</param-value>
 	</context-param>
@@ -130,16 +135,18 @@
 	</filter-mapping>
 
 	<!-- MyFaces Listener -->
-	<listener>
-		<listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
-	</listener>
+<!--	<listener>-->
+<!--		<listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>-->
+<!--	</listener>-->
 
 	<!-- Quartz Listener -->
 	<listener>
 		<listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
 	</listener>
 
-
+<!--	<listener>-->
+<!--		<listener-class>de.dini.oanetzwerk.admin.SchedulerControl</listener-class>-->
+<!--	</listener>-->
 
 	<!-- REALM Start -->
 	
@@ -174,9 +181,29 @@
 		</form-login-config>
 	</login-config>
 	<security-role>
-		<description>OANetzwerk-Admin</description>
+		<description>OA-Netzwerk-Administrator</description>
 		<role-name>oanadmin</role-name>
 	</security-role>
+	<security-role>
+		<description>OAN - User Management</description>
+		<role-name>userManager</role-name>
+	</security-role>
+	<security-role>
+		<description>OAN - Repository Management</description>
+		<role-name>repositoryManager</role-name>
+	</security-role>
+	<security-role>
+		<description>OAN - Service Management</description>
+		<role-name>serviceManager</role-name>
+	</security-role>
+	<security-role>
+		<description>OAN - Validator Management</description>
+		<role-name>validatorManager</role-name>
+	</security-role>
+	<security-role>
+		<description>OAN - Report Management</description>
+		<role-name>reportManager</role-name>
+	</security-role>				
 	<!-- 
 	<security-role>
 		<description>OANetzwerk-SysOP</description>

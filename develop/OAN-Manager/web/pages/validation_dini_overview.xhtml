@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+<f:view>
+
+<ui:composition template="templates/template.xhtml">
+
+  <ui:param name="pageTitle" value="Validation - Übersicht" />
+
+  <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="validation_dini_overview.xhtml"><h:outputText value="Validator" /></a>
+  </ui:define>
+
+  <ui:param name="menu_validation_dini" value="#{true}" />
+
+  <ui:define name="content">
+  
+   <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
+   
+   <h2>
+   Validation - Übersicht
+   </h2>
+   Nachfolgend die Liste der ausgeführten bzw. in Bearbeitung befindlichen DINI-Checks.
+    <br />
+    <br />
+
+    <table width="800px">
+
+		<tr>
+			<td class="setting-leftspace"></td>
+			<td>
+			<table width="100%">
+				<tr>
+				 	<td>
+				<h:form><t:dataTable value="#{validation.validations}" var="row"
+					headerClass="pane-header" rowClasses="odd, even"
+					style="border-collapse: collapse; border: 1px #bbb solid; width : 700px;">
+					
+					<t:column style="width: 45%; vertical-align: middle; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="OAI-URL" />
+						</f:facet>
+						<div align="center">
+						<h:outputText value="#{row.oaiUrl}"/>
+						</div>
+					</t:column>
+					
+					<t:column style="width: 15%; vertical-align: middle; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="Datum" />
+						</f:facet>
+						<div align="center">
+						<h:outputText value="#{row.date}" />
+						</div>
+					</t:column>
+					
+					<t:column style="width: 20%; vertical-align: middle; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="Dauer" />
+						</f:facet>
+						<div align="center">
+						<h:outputText onclick="" value="#{row.duration}" />
+						</div>
+					</t:column>
+					
+					<t:column style="width: 20%; vertical-align: middle; height: 70px;">
+						<f:facet name="header">
+							<h:outputText value="Status" />
+						</f:facet>
+						<div align="center">
+						<t:div rendered="#{row.state eq msg.validation_status_pending}"><h:outputText value="#{row.state}" /></t:div>
+						<t:div rendered="#{row.state eq msg.validation_status_finished}"><a href="validation_dini_results.xhtml?vid=#{row.id}"><h:outputText value="#{row.state}" /></a></t:div>
+						</div>
+					</t:column>
+					
+				</t:dataTable></h:form>
+				</td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+					
+	</div>
+	</div>
+
+</ui:define>
+</ui:composition>
+
+</f:view>
+
+</body>
+
+</html>

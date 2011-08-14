@@ -2,14 +2,30 @@ package de.dini.oanetzwerk.admin;
 
 import java.io.File;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import de.dini.oanetzwerk.admin.SchedulingBean.SchedulingIntervalType;
+import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
+import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
+import de.dini.oanetzwerk.admin.utils.AbstractBean;
+import de.dini.oanetzwerk.codec.RestEntrySet;
+import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.servicemodule.RestClient;
 import de.dini.oanetzwerk.utils.PropertyManager;
 
@@ -34,6 +50,133 @@ public class RestConnector implements Serializable {
     }
 	
 
+	
+	public List<Repository> fetchRepositories() {
+		
+		logger.info("Retrieving repositories from server ...");
+
+		String result = prepareRestTransmission("Repository/").GetData();
+		List<Repository> repoList = new ArrayList<Repository>();
+		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+
+		if (rms == null || rms.getListEntrySets().isEmpty()) {
+
+			logger.error("received no Repository Details at all from the server");
+			return repoList;
+		}
+
+		for (RestEntrySet res : rms.getListEntrySets()) {
+
+			Iterator<String> it = res.getKeyIterator();
+			String key = "";
+			Repository repo = new Repository();
+
+			while (it.hasNext()) {
+
+				key = it.next();
+
+				if (key.equalsIgnoreCase("name")) {
+
+					repo.setName(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("url")) {
+
+					repo.setUrl(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("repository_id")) {
+
+					repo.setId(new Long(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("active")) {
+
+					repo.setActive(Boolean.parseBoolean(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("last_full_harvest_begin")) {
+
+					repo.setLastFullHarvestBegin(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("oai_url")) {
+					
+					repo.setOaiUrl(res.getValue(key));
+					
+				} else
+					continue;
+			}
+
+			repoList.add(repo);
+		}
+		
+		logger.info(repoList.size() + " repositories received from server!");
+		
+		return repoList;
+	}
+	
+	
+	public List<SchedulingBean> fetchServiceJobs() {
+		
+		logger.info("Retrieving service jobs from server ...");
+
+		List<SchedulingBean> jobList = new ArrayList<SchedulingBean>();
+		String result = prepareRestTransmission("ServiceJob/").GetData();
+		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+
+		if (rms == null || rms.getListEntrySets().isEmpty()) {
+
+			logger.error("received no service jobs at all from the server");
+			return jobList;
+		}
+
+		for (RestEntrySet res : rms.getListEntrySets()) {
+
+			SchedulingBean bean = new SchedulingBean();
+			Iterator<String> it = res.getKeyIterator();
+			String key = "";
+
+			while (it.hasNext()) {
+
+				key = it.next();
+
+				if (key.equalsIgnoreCase("name")) {
+					logger.info("Retrieved job from DB with job-name: " + res.getValue(key));
+					bean.setName(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("service_id")) {
+					bean.setServiceId(new BigDecimal(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("job_id")) {
+					bean.setJobId(new Integer(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("status")) {
+					bean.setStatus(ServiceStatus.valueOf(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("info")) {
+					bean.setInfo(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("nonperiodic_date")) {
+					try {
+						bean.setNonperiodicTimestamp(new Date(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(res.getValue(key)).getTime()));
+					} catch (ParseException ex) {
+
+						logger.warn("Could not parse date received from server. " + res.getValue(key), ex);
+					}
+
+				} else if (key.equalsIgnoreCase("periodic")) {
+					bean.setPeriodic(new Boolean(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("periodic_interval_days")) {
+					bean.setPeriodicDays(new Integer(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("periodic_interval_type")) {
+					bean.setPeriodicInterval(res.getValue(key) == null ? null : SchedulingIntervalType.valueOf(res.getValue(key)));
+
+				} else
+					continue;
+			}
+		}
+		logger.info(jobList.size() + " service jobs received from the server.");
+		
+		return jobList;
+	}
 	
 	public RestClient prepareRestTransmission(String resource) {
 

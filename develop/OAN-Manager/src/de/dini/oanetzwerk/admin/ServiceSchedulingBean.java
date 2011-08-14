@@ -99,15 +99,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		job = new SchedulingBean();
 
 		
-		// try to fetch jobId from request parameters in case this is an update request
-		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
-		String jobId = request.getParameter("jid");
-		
-		if (jobId != null) {
-			logger.info("Job-ID detected: " + jobId);
-			updateCase = initJob(jobId);
-		}
-		
 		// retrieve list of repositories
 		initRepositories();
 		
@@ -289,166 +280,15 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 		RepositoryBean.setRestConnector(restConnector);
 
-		if (repoList != null && !repoList.isEmpty()) {
-			return;
-		}
-
+		repoList = restConnector.fetchRepositories();
 		
-		String result = restConnector.prepareRestTransmission("Repository/").GetData();
-		repoList = new ArrayList<Repository>();
-		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
-
-		if (rms == null || rms.getListEntrySets().isEmpty()) {
-
-			logger.error("received no Repository Details at all from the server");
-			return;
-		}
-
 		// prepare 'all' entry
 		Repository repoAll = new Repository();
 		repoAll.setName(LanguageSwitcherBean.getMessage(ctx, "general_all"));
 		repoAll.setId(new Long(0));
-		repoList.add(repoAll);
-
-		for (RestEntrySet res : rms.getListEntrySets()) {
-
-			Iterator<String> it = res.getKeyIterator();
-			String key = "";
-			Repository repo = new Repository();
-
-			while (it.hasNext()) {
-
-				key = it.next();
-
-				if (key.equalsIgnoreCase("name")) {
-
-					repo.setName(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("url")) {
-
-					repo.setUrl(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("repository_id")) {
-
-					repo.setId(new Long(res.getValue(key)));
-
-				} else
-					// System.out.println("Key: " + key);
-					continue;
-			}
-
-			repoList.add(repo);
-
-		}
-		logger.info("Repositories received: " + repoList.size());
+		repoList.add(0, repoAll);
 
 	}
-	
-	private boolean initJob(String jobId) {
-
-		try {
-			Integer.parseInt(jobId);
-		}catch (NumberFormatException e) {
-			logger.warn("Invalid job-ID '" + jobId + "'. Job-ID is required to be a numeric value!");
-			return false;
-		}
-
-		String result = restConnector.prepareRestTransmission("ServiceJob/" + jobId).GetData();
-		jobList = new ArrayList<SchedulingBean>();
-		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
-
-		if (rms == null || rms.getListEntrySets().isEmpty()) {
-
-			logger.error("received no scheduling job details at all from the server");
-			return false;
-		}
-
-		for (RestEntrySet res : rms.getListEntrySets()) {
-
-			Iterator<String> it = res.getKeyIterator();
-			String key = "";
-			SchedulingBean job = new SchedulingBean();
-
-			while (it.hasNext()) {
-
-				key = it.next();
-
-				if (key.equalsIgnoreCase("name")) {
-					job.setName(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("status")) {
-					job.setStatus(ServiceStatus.valueOf(res.getValue(key)));
-
-				} else if (key.equalsIgnoreCase("service_id")) {
-					job.setServiceId(new BigDecimal((new Long(res.getValue(key)))));
-
-				} else if (key.equalsIgnoreCase("job_id")) {
-					job.setJobId(Integer.parseInt(res.getValue(key)));
-
-				} else if (key.equalsIgnoreCase("info")) {
-					job.setInfo(res.getValue(key));
-
-				} else if (key.equalsIgnoreCase("periodic")) {
-					job.setPeriodic(Boolean.parseBoolean(res.getValue(key)));
-
-				} else if (key.equalsIgnoreCase("nonperiodic_date")) {
-					System.out.println(res.getValue(key));
-					String npd = res.getValue(key);
-					
-					Date date = null;
-					if (npd != null) {
-						
-						try {
-							date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(npd);
-						} catch (ParseException e) {
-							logger.warn("Could not parse date received from server. " + npd, e);
-						}
-					}
-					job.setNonperiodicTimestamp(date);
-
-				} else if (key.equalsIgnoreCase("periodic_interval_type")) {
-					job.setPeriodicInterval(res.getValue(key) != null ? SchedulingIntervalType.valueOf(res.getValue(key)) : null);
-
-				} else if (key.equalsIgnoreCase("periodic_interval_days")) {
-					job.setPeriodicDays(Integer.parseInt(res.getValue(key)));
-				} else
-
-					// System.out.println("Key: " + key);
-					continue;
-			}
-
-//			if (job != null) {
-//				
-//				// 
-//				
-//				this.job = job;
-//				
-//				private String chosenService;
-//				
-//				// repeatedly or once only
-//				private String jobType;
-//				
-//				// case repeatedly
-//				private String intervalType = SchedulingIntervalType.Day.toString();
-//				private String chosenDayOfMonth;
-//				private String chosenDayOfWeek;
-//				private String chosenDay;
-//				private String chosenHour = "20:00";
-//
-//				
-//				// case once only
-//				private List<Repository> repoList;
-//				private String chosenRepository;
-//				private Date   chosenDate = new Date();
-//				private String chosenTime = "20:00";
-//				private boolean startRightNow;
-//				
-//				return true;
-//			}
-		}
-		return false;
-	}
-	
 	
 	/******************************* Form Preparations *******************************/
 	
