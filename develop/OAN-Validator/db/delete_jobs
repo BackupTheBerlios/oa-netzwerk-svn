@@ -1,0 +1,7 @@
+# delete jobs
+
+delete from rulesinjob;
+delete from oai_usage_job;
+delete from oai_content_job;
+delete from tasks;
+delete from jobs;

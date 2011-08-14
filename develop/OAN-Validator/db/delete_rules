@@ -1,0 +1,12 @@
+
+# delete rules
+
+delete from tasks;
+delete from notconfusedfields_rule;
+delete from cardinality_rule where Rules_id > 0;
+delete from retrievableresource_rule where Rules_id > 0;
+delete from regularexpression_rule where Rules_id > 0;
+delete from vocabulary_rule where Rules_id > 0;
+delete from rules where id > 0;
+delete from rule_sets where id > 4;
+ALTER TABLE rules AUTO_INCREMENT = 1;
