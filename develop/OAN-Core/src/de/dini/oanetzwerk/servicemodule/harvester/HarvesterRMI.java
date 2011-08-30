@@ -194,22 +194,30 @@ public class HarvesterRMI extends RMIService {
 		if (harvestAllRepositories) {
 
 			List<Repository> repositories = getRepositories(harvester.getPropertyfile());
-			
+			logger.info("br1");
 			for (Repository repository : repositories) {
-	        
+				logger.info("br2");
 				try {
+					logger.info("br3");
 					synchronized (this) {
+						logger.info("br4");
 						logger.info("Startiung harvesting-process of repository with ID " + repository.getId());
-							this.wait(10000);
+						logger.info("br5");
+						this.wait(10000);
+						logger.info("br6");
 					}
 				} catch (InterruptedException e) {
+					logger.info("br7");
+					logger.info(e.getMessage());
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				logger.info("br9");
 				data.put("repository_id", repository.getId().toString());
-
+				logger.info("br10");
 				// set to working
 				updateJobStatus(data.get("job_name"), "Working");
+				logger.info("br11");
 				working = true;
 
 				startHarvester(data);

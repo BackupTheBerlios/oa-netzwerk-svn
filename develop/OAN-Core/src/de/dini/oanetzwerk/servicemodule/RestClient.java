@@ -19,6 +19,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.httpclient.params.HttpConnectionParams;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -538,7 +539,13 @@ public class RestClient {
 			buffer.append (this.qualifiedServerName).append (":").append (this.port) .append ("/").append (servletPath) .append ("/") .append (queryPath);
 		}
 
-		newclient.getParams ( ).setParameter ("http.protocol.content-charset", "UTF-8");
+		
+		
+		// set content charset		
+		newclient.getParams().setParameter("http.protocol.content-charset", "UTF-8");
+
+		// set connection timeout
+		newclient.setConnectionTimeout(900000); // set to 15 minutes
 		
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("URL to connect to: " + this.qualifiedServerName);

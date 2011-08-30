@@ -18,9 +18,6 @@ import de.dini.oanetzwerk.server.database.DBAccessNG;
 import de.dini.oanetzwerk.server.database.MetadataDBMapper;
 import de.dini.oanetzwerk.server.database.MultipleStatementConnection;
 import de.dini.oanetzwerk.server.database.QueryResult;
-import de.dini.oanetzwerk.server.database.sybase.DeleteFromDBSybase;
-import de.dini.oanetzwerk.server.database.sybase.InsertIntoDBSybase;
-import de.dini.oanetzwerk.server.database.sybase.SelectFromDBSybase;
 import de.dini.oanetzwerk.utils.HelperMethods;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
@@ -473,6 +470,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 		
 		String strXML = null;
 		strXML = res.getValue ("internalmetadata");
+		System.out.println("decoded internalmetadata: \n" + strXML);
 		
 		if (strXML == null) {
 			
@@ -771,6 +769,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			}
 
 			if (keywordList != null) {
+				PreparedStatement checkForExistingKeyword = null;
 				for (Keyword keyword : keywordList) {
 					
 					if (logger.isDebugEnabled()) {
@@ -779,7 +778,8 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					BigDecimal keyword_id = null;
 					
 					// test if the keyword is already present in the database
-					PreparedStatement checkForExistingKeyword = stmtconn.connection.prepareStatement("SELECT keyword_id, keyword FROM \"Keywords\" WHERE keyword = '"+keyword.getKeyword()+"'");
+					checkForExistingKeyword = stmtconn.connection.prepareStatement("SELECT keyword_id, keyword FROM \"Keywords\" WHERE keyword = ?");
+					checkForExistingKeyword.setString(1, keyword.getKeyword());
 					stmtconn.loadStatement(checkForExistingKeyword);
 					QueryResult qrs = stmtconn.execute();
 					ResultSet rs = qrs.getResultSet();
@@ -813,16 +813,19 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						keyword_id = rs.getBigDecimal(1);
 					}
 					if(keyword_id != null) {
-					
-						stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Keyword (stmtconn.connection, object_id, keyword_id));
-						this.result = stmtconn.execute ( );
-						
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
-						
-						if (this.result.getUpdateCount ( ) < 1) {
-							logger.error("Fehler bei OID:" + object_id + " INSERT Object2Keyword:'" + keyword_id + "'");
+						try {
+							stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Keyword (stmtconn.connection, object_id, keyword_id));
+							this.result = stmtconn.execute ( );
+							
+							if (this.result.getWarning ( ) != null) 
+								for (Throwable warning : result.getWarning ( ))
+									logger.warn (warning.getLocalizedMessage ( ));
+							
+							if (this.result.getUpdateCount ( ) < 1) {
+								logger.error("Fehler bei OID:" + object_id + " INSERT Object2Keyword:'" + keyword_id + "'");
+							}
+						} catch (SQLException e) {
+							logger.warn(e);
 						}
 					}										
 				}

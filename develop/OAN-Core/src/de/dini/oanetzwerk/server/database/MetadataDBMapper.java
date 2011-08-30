@@ -115,40 +115,40 @@ public class MetadataDBMapper {
 		}
 		hmf.setAuthorCounter(hmf.getAuthorList().size());
 		
-		// Auswertung der Editoren
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().Editors (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Editor temp = new Editor ( );
-			temp.setNumber(queryResult.getResultSet ( ).getInt("number"));
-			temp.setFirstname(queryResult.getResultSet ( ).getString("firstname"));
-			temp.setLastname(queryResult.getResultSet ( ).getString("lastname"));
-			temp.setInstitution(queryResult.getResultSet ( ).getString("institution"));
-			temp.setEmail(queryResult.getResultSet ( ).getString("email"));
-			temp.setTitle(queryResult.getResultSet ( ).getString("title"));
-			hmf.addEditor (temp);
-		}
-		hmf.setEditorCounter(hmf.getEditorList().size());
-		
-		// Auswertung der Bearbeiter
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().Contributors (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Contributor temp = new Contributor ( );
-			temp.setNumber(queryResult.getResultSet ( ).getInt("number"));
-			temp.setFirstname(queryResult.getResultSet ( ).getString("firstname"));
-			temp.setLastname(queryResult.getResultSet ( ).getString("lastname"));
-			temp.setInstitution(queryResult.getResultSet ( ).getString("institution"));
-			temp.setEmail(queryResult.getResultSet ( ).getString("email"));
-			temp.setTitle(queryResult.getResultSet ( ).getString("title"));
-			hmf.addContributor (temp);
-		}
-		hmf.setContributorCounter(hmf.getContributorList().size());
-	
+//		// Auswertung der Editoren
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().Editors (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Editor temp = new Editor ( );
+//			temp.setNumber(queryResult.getResultSet ( ).getInt("number"));
+//			temp.setFirstname(queryResult.getResultSet ( ).getString("firstname"));
+//			temp.setLastname(queryResult.getResultSet ( ).getString("lastname"));
+//			temp.setInstitution(queryResult.getResultSet ( ).getString("institution"));
+//			temp.setEmail(queryResult.getResultSet ( ).getString("email"));
+//			temp.setTitle(queryResult.getResultSet ( ).getString("title"));
+//			hmf.addEditor (temp);
+//		}
+//		hmf.setEditorCounter(hmf.getEditorList().size());
+//		
+//		// Auswertung der Bearbeiter
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().Contributors (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Contributor temp = new Contributor ( );
+//			temp.setNumber(queryResult.getResultSet ( ).getInt("number"));
+//			temp.setFirstname(queryResult.getResultSet ( ).getString("firstname"));
+//			temp.setLastname(queryResult.getResultSet ( ).getString("lastname"));
+//			temp.setInstitution(queryResult.getResultSet ( ).getString("institution"));
+//			temp.setEmail(queryResult.getResultSet ( ).getString("email"));
+//			temp.setTitle(queryResult.getResultSet ( ).getString("title"));
+//			hmf.addContributor (temp);
+//		}
+//		hmf.setContributorCounter(hmf.getContributorList().size());
+//	
 		// Auswertung des Formats
 		stmtconn.loadStatement (DBAccessNG.selectFromDB().Format (stmtconn.connection, hmf.getOid()));
 		queryResult = stmtconn.execute ( );
@@ -176,19 +176,19 @@ public class MetadataDBMapper {
 		}
 		hmf.setIdentifierCounter(hmf.getIdentifierList().size());
 
-		// Auswertung der Description
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().Description (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Description temp = new Description ( );
-			temp.setDescription(queryResult.getResultSet ( ).getString ("abstract"));
-			temp.setLanguage(queryResult.getResultSet ( ).getString ("lang"));
-			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addDescription (temp);
-		}
-		hmf.setDescriptionCounter(hmf.getDescriptionList().size());
+//		// Auswertung der Description
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().Description (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Description temp = new Description ( );
+//			temp.setDescription(queryResult.getResultSet ( ).getString ("abstract"));
+//			temp.setLanguage(queryResult.getResultSet ( ).getString ("lang"));
+//			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
+//			hmf.addDescription (temp);
+//		}
+//		hmf.setDescriptionCounter(hmf.getDescriptionList().size());
 
 		// Auswertung der DateValue-Werte
 		stmtconn.loadStatement (DBAccessNG.selectFromDB().DateValues (stmtconn.connection, hmf.getOid()));
@@ -207,115 +207,115 @@ public class MetadataDBMapper {
 		}
 		hmf.setDateValueCounter(hmf.getDateValueList().size());
 
-		// Auswertung der TypeValue-Werte
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().TypeValues (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			TypeValue temp = new TypeValue ( );
-			temp.setTypeValue(queryResult.getResultSet ( ).getString ("value"));
-//			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addTypeValue (temp);
-		}
-		hmf.setTypeValueCounter(hmf.getTypeValueList().size());
+//		// Auswertung der TypeValue-Werte
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().TypeValues (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			TypeValue temp = new TypeValue ( );
+//			temp.setTypeValue(queryResult.getResultSet ( ).getString ("value"));
+////			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
+//			hmf.addTypeValue (temp);
+//		}
+//		hmf.setTypeValueCounter(hmf.getTypeValueList().size());
 
-		// Auswertung der Publisher-Werte
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().Publisher (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Publisher temp = new Publisher ( );
-			temp.setName(queryResult.getResultSet ( ).getString ("name"));
-			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addPublisher (temp);
-		}
-		hmf.setPublisherCounter(hmf.getPublisherList().size());
-
-		// oben beschriebene Queries reichen aus um festzustellen ob ein Objekt existiert oder nicht
-		
-		//start
-		
-		// Auswertung der DDC-Classifications-Werte
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().DDCClassification (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Classification cl = new DDCClassification();
-			cl.setValue(queryResult.getResultSet ( ).getString("DDC_Categorie"));
-			cl.setGenerated(queryResult.getResultSet().getBoolean("generated"));
+//		// Auswertung der Publisher-Werte
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().Publisher (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Publisher temp = new Publisher ( );
+//			temp.setName(queryResult.getResultSet ( ).getString ("name"));
 //			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addClassfication(cl);
-		}
-		
-		// Auswertung der DNB-Classifications-Werte
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().DNBClassification (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Classification cl = new DNBClassification();
-			cl.setValue(queryResult.getResultSet ( ).getString("DNB_Categorie"));
+//			hmf.addPublisher (temp);
+//		}
+//		hmf.setPublisherCounter(hmf.getPublisherList().size());
+//
+//		// oben beschriebene Queries reichen aus um festzustellen ob ein Objekt existiert oder nicht
+//		
+//		//start
+//		
+//		// Auswertung der DDC-Classifications-Werte
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().DDCClassification (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Classification cl = new DDCClassification();
+//			cl.setValue(queryResult.getResultSet ( ).getString("DDC_Categorie"));
+//			cl.setGenerated(queryResult.getResultSet().getBoolean("generated"));
+////			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
+//			hmf.addClassfication(cl);
+//		}
+//		
+//		// Auswertung der DNB-Classifications-Werte
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().DNBClassification (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Classification cl = new DNBClassification();
+//			cl.setValue(queryResult.getResultSet ( ).getString("DNB_Categorie"));
+////			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
+//			hmf.addClassfication(cl);
+//		}
+//
+//		// Auswertung der DINI-Set-Classifications-Werte
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().DINISetClassification (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Classification cl = new DINISetClassification();
+//			cl.setValue(queryResult.getResultSet ( ).getString("name"));
+////			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
+//			hmf.addClassfication(cl);
+//		}
+//
+//		// Auswertung der Other-Classifications-Werte
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().OtherClassification (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Classification cl = new OtherClassification();
+//			cl.setValue(queryResult.getResultSet ( ).getString("name"));
+////			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
+//			hmf.addClassfication(cl);
+//		}
+//		hmf.setClassificationCounter(hmf.getClassificationList().size());
+//
+//		// Auswertung der Keywords-Werte
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().Keywords (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Keyword temp = new Keyword();
+//			temp.setKeyword(queryResult.getResultSet ( ).getString("keyword"));
+//			temp.setLanguage(queryResult.getResultSet ( ).getString("lang"));
+////			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
+//			hmf.addKeyword(temp);
+//		}
+//		hmf.setKeywordCounter(hmf.getKeywordList().size());
+//
+//		//END
+//		
+//		// Auswertung der Language-Werte
+//		stmtconn.loadStatement (DBAccessNG.selectFromDB().Languages (stmtconn.connection, hmf.getOid()));
+//		queryResult = stmtconn.execute ( );
+//		
+//		while (queryResult.getResultSet ( ).next ( )) {
+//			
+//			Language temp = new Language();
+//			temp.setLanguage(queryResult.getResultSet ( ).getString("language"));
+//			temp.setIso639language(queryResult.getResultSet ( ).getString("iso639language"));
 //			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addClassfication(cl);
-		}
-
-		// Auswertung der DINI-Set-Classifications-Werte
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().DINISetClassification (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Classification cl = new DINISetClassification();
-			cl.setValue(queryResult.getResultSet ( ).getString("name"));
-//			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addClassfication(cl);
-		}
-
-		// Auswertung der Other-Classifications-Werte
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().OtherClassification (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Classification cl = new OtherClassification();
-			cl.setValue(queryResult.getResultSet ( ).getString("name"));
-//			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addClassfication(cl);
-		}
-		hmf.setClassificationCounter(hmf.getClassificationList().size());
-
-		// Auswertung der Keywords-Werte
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().Keywords (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Keyword temp = new Keyword();
-			temp.setKeyword(queryResult.getResultSet ( ).getString("keyword"));
-			temp.setLanguage(queryResult.getResultSet ( ).getString("lang"));
-//			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addKeyword(temp);
-		}
-		hmf.setKeywordCounter(hmf.getKeywordList().size());
-
-		//END
-		
-		// Auswertung der Language-Werte
-		stmtconn.loadStatement (DBAccessNG.selectFromDB().Languages (stmtconn.connection, hmf.getOid()));
-		queryResult = stmtconn.execute ( );
-		
-		while (queryResult.getResultSet ( ).next ( )) {
-			
-			Language temp = new Language();
-			temp.setLanguage(queryResult.getResultSet ( ).getString("language"));
-			temp.setIso639language(queryResult.getResultSet ( ).getString("iso639language"));
-			temp.setNumber (queryResult.getResultSet ( ).getInt ("number"));
-			hmf.addLanguage(temp);
-		}
-		hmf.setLanguageCounter(hmf.getLanguageList().size());
+//			hmf.addLanguage(temp);
+//		}
+//		hmf.setLanguageCounter(hmf.getLanguageList().size());
 
 		
 	}

@@ -119,7 +119,7 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	public void close ( ) throws SQLException {
 		
-		logger.info("clsoing connection...");
+		logger.info("closing connection...");
 //		if (logger.isDebugEnabled ( ))
 //			logger.debug ("closing Statement and Connection");
 		
