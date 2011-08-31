@@ -11,6 +11,7 @@
 
 	<property name="build.dir" value="build" />
 	<property name="lib.dir" value="lib" />
+	<property name="dist" value="dist" />
 	<property name="run" value="run" />
 	<property name="src.dir" value="src" />
 	<property name="web.dir" value="web" />
@@ -240,16 +241,20 @@
 	<!-- Local setup of services -->
 
 	<target name="local-setup-harvester" depends="jarHarvester" description="Setup the Harvester on the dev machine.">
-		<copy file="${build}\Harvester.jar" todir="${run}" />
+		<copy file="${build}\Harvester.jar" todir="${dist}" />
 	</target>
 
 	<target name="local-setup-aggregator" depends="jarAggregator" description="Setup the Aggregator on the dev machine.">
-		<copy file="${build}\Aggregator.jar" todir="${run}" />
+		<copy file="${build}\Aggregator.jar" todir="${dist}" />
 	</target>
 
 	<target name="local-setup-markereraser" depends="jarMarkerAndEraser" description="Setup the MarkerAndEraser on the dev machine.">
 		<!-- untar src="${dist}/MarkerAndEraser.tar" dest="${run}" /-->
-		<copy file="${build}\MarkerAndEraser.jar" todir="${run}" />
+		<copy file="${build}\MarkerAndEraser.jar" todir="${dist}" />
+	</target>
+	
+	<target name="local-setup-servicewrapper" depends="jarServiceWrapper" description="Setup the Harvester on the dev machine.">
+		<copy file="${build}\Service.jar" todir="${dist}" />
 	</target>
 
 	<!-- ==================================================================== -->

@@ -284,7 +284,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 				res.addEntry("status", this.result.getResultSet().getString("status"));
 				res.addEntry("info", this.result.getResultSet().getString("info"));
 				res.addEntry("periodic", Boolean.toString(this.result.getResultSet().getBoolean("periodic")));
-				res.addEntry("nonperiodic_date", this.result.getResultSet().getDate("nonperiodic_date").toString());
+				res.addEntry("nonperiodic_date", this.result.getResultSet().getTimestamp("nonperiodic_date").toString());
 				res.addEntry("periodic_interval_type", this.result.getResultSet().getString("periodic_interval_type"));
 				res.addEntry("periodic_interval_days", Integer.toString(this.result.getResultSet().getInt("periodic_interval_days")));
 

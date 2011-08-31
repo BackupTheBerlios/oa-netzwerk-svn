@@ -230,6 +230,7 @@
 		<mkdir dir="${build}" />
 		<mkdir dir="${build.server}" />
 		<mkdir dir="${build.server_readonly}" />
+		<mkdir dir="${build.servicewrapper}" />
 		<mkdir dir="${build.harvester}" />
 		<mkdir dir="${build.oidgetter}" />
 		<mkdir dir="${build.openrestclient}" />
@@ -344,20 +345,6 @@
 		</javac>
 	</target>
 
-	<target name="compileHarvester" depends="init">
-		<javac destdir="${build.harvester}" debug="true" debuglevel="lines,vars,source" srcdir="${src}" source="1.5" target="1.5">
-			<classpath refid="classpath.harvester" />
-			<include name="**/harvester/*.java" />
-			<include name="**/servicemodule/*.java" />
-			<include name="**/codec/*.java" />
-			<include name="**/RestClient.java" />
-			<include name="**/exceptions/*.java" />
-			<include name="**/HelperMethods.java" />
-			<exclude name="**/server/" />
-			<exclude name="**/Test*" />
-		</javac>
-	</target>
-
 	<target name="compileOIDGetter" depends="init">
 		<javac destdir="${build.oidgetter}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
 			<classpath refid="classpath.oidgetter" />
@@ -428,6 +415,20 @@
 			<fileset dir="${dist.openrestclient}">
 			</fileset>
 		</zip>
+	</target>
+	
+	<target name="compileHarvester" depends="init">
+		<javac destdir="${build.harvester}" debug="true" debuglevel="lines,vars,source" srcdir="${src}" source="1.5" target="1.5">
+			<classpath refid="classpath.harvester" />
+			<include name="**/harvester/*.java" />
+			<include name="**/servicemodule/*.java" />
+			<include name="**/codec/*.java" />
+			<include name="**/RestClient.java" />
+			<include name="**/exceptions/*.java" />
+			<include name="**/HelperMethods.java" />
+			<exclude name="**/server/" />
+			<exclude name="**/Test*" />
+		</javac>
 	</target>
 
 	<target name="jarHarvester" depends="compileHarvester">
@@ -559,6 +560,28 @@
 			</tarfileset>
 		</tar>
 	</target>
+	
+	<target name="compileServiceWrapper" depends="init">
+		<javac destdir="${build.servicewrapper}" debug="true" debuglevel="lines,vars,source" srcdir="${src}" source="1.5" target="1.5">
+			<classpath refid="classpath.harvester" />
+			<include name="**/servicewrapper/*.java" />
+			<include name="**/servicemodule/*.java" />
+			<include name="**/HelperMethods.java" />
+		</javac>
+	</target>
+				
+	<target name="jarServiceWrapper" depends="compileServiceWrapper">
+		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
+		<jar jarfile="${build}/Service.jar">
+			<fileset dir="${build.servicewrapper}" />
+			<manifest>
+				<!--attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.RunHarvester" /-->
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.servicewrapper.ServiceWrapperRMI" />
+				<attribute name="Class-Path" value="${cp}" />
+			</manifest>
+		</jar>
+	</target>
+	
 
 	<target name="warServer" depends="compileServer">
 		<war destfile="${dist}/rest.war" webxml="conf/web.xml">
@@ -854,7 +877,7 @@
 				<include name="commons-lang-2.3.jar" />
 			</lib>
 	
-			<metainf dir="conf/dev">
+			<metainf dir="conf/postgres">
 				<include name="context.xml" />
 			</metainf>
 			<classes dir="${build.oaipmh}" />

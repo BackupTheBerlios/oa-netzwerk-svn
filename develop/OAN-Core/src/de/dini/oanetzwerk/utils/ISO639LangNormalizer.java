@@ -1,6 +1,9 @@
 package de.dini.oanetzwerk.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -203,7 +206,6 @@ public class ISO639LangNormalizer {
 		mapISO639_3to2.put("zul","zu");
 		
 		
-		
 		mapISO639_3.put("ab", "abk");
 		mapISO639_3.put("aa", "aar");
 		mapISO639_3.put("af", "afr");
@@ -389,9 +391,6 @@ public class ISO639LangNormalizer {
 		mapISO639_3.put("zu", "zul");
 
 	}
-	
-
-
 
 	
 	public static String getISO639_2fromISO639_3(String iso3) {
