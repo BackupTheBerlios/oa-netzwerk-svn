@@ -21,6 +21,23 @@
 	
   <ui:define name="content">
 
+  <script type="text/javascript">
+    function fold() {
+      
+        document.getElementById("rules").style.display = "none";
+        document.getElementById("unfold").style.display = "inline";
+        document.getElementById("fold").style.display = "none";
+    }
+
+	function unfold() {
+		document.getElementById("rules").style.display = "inline";
+		document.getElementById("unfold").style.display = "none";
+		document.getElementById("fold").style.display = "inline";
+
+	}
+
+  </script>
+  
     <div style="padding: 20px; background-color: #f5f9f4;">
     <div style="background-color: #f5f9f4;">
     <h2><h:outputText value="DINI Check" /></h2>
@@ -78,9 +95,22 @@
             </td>
           </tr>
 
+          <tr>
+            <td width="30%"><p /><i>E-Mail Benachrichtigung (optional)</i></td>
+            <td>
+               <t:inputText id="email" size="70" value="#{validation.email}" /><br />
+               <t:selectBooleanCheckbox value="#{validation.adminEmail}" > 
+                  <t:outputText value="E-Mail Adresse des Repository-Administrators verwenden (Identify-Verb)" />
+               </t:selectBooleanCheckbox>
+            <p />
+            </td>
+          </tr>
+          
 		  <tr>
 		  	<td colspan="2">
-		  	
+              <div id="fold" style="display: none;"><a href="#" onclick="fold(); return false;">Regeln ausblenden</a></div>			
+			  <div id="unfold"><a href="#" onclick="unfold(); return false;">Regeln einblenden</a></div>
+		  	  <div id="rules" style="display: none">
 		  		<t:dataTable value="#{validation.diniRules}" var="row"
 					headerClass="pane-header" rowClasses="odd, even"
 					style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
@@ -106,9 +136,10 @@
 						<h:outputText value="#{row.parameters['description']}" />
 					</t:column >			
 				</t:dataTable>
+              </div>
 		  	</td>
 		  </tr>
-
+  
           <tr>
             <td colspan="2" align="right"><p /><h:commandButton type="submit" style="width: 250px;height: 40px;" 
             	action="#{validation.submitValidation}" value="DINI-Konformität jetzt prüfen!"></h:commandButton>

@@ -64,13 +64,24 @@
   	<h2>
    Ergebnisse 
    </h2>
-   	<t:div rendered="#{empty validation.validationResults}">
+   
+   
+   	<t:div rendered="#{validation.validationResults == null}">
+   		<h:messages style="color:red;"/>
+        <h:outputText value="#{msg.validation_failure_readspecs}" /><a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">http://www.openarchives.org/OAI/openarchivesprotocol.html</a>)
+   	</t:div>
+    
+   	<t:div rendered="#{validation.validationResults == null and empty validation.validationResults}">
    		Es konnten keine Ergebnisse gefunden werden.
    	</t:div>
    
-    <t:div rendered="#{not empty validation.validationResults}">
+    <t:div rendered="#{validation.validationResults == null and not empty validation.validationResults}">
 	    Nachfolgend erhalten sie eine Liste der geprüften Regeln und den jeweiligen Status darüber inwieweit diese Regel vom Repository umgesetzt wurde. <p />
 	    <b>Geprüftes Repository</b>: #{validation.baseUrl}<p />
+        <b>Score</b>(<a href="#" onclick="javascript:toggle_help('help_score'); return false;">?</a>): <font size="5">#{validation.score}</font><p />
+            <div class="help_box" id="help_score">
+              <h:outputText value="Der Score gibt in einem Rahmen von 0-100 an, in welchem Umfang das geprüfte Repository die im DINI-Zertifikat enthaltenen Anforderungen erfüllt. Je höher der Wert desto besser entspricht das Repository den Anforderungen. Dieser Wert beruht auf einer eigens festgelegten, geeigneten Berechnungsgrundlage." /><br />
+            </div>
 	    <br />
 	    <br />
     <div style="padding-left:40px;">
@@ -109,8 +120,8 @@
 					<tr style="align:center">
 						<td style="width: 20%; padding-left:15px"></td>
 						<td>	
-						<div id="ua#{count}"><h:outputText value="Details" onclick="unfold(#{count});" /></div>			
-						<div id="ia#{count}" style="display: none;"><h:outputText value="Details ausblenden" onclick="fold(#{count});" /></div>							
+						<div id="ua#{count}"><a href="#" onclick="unfold(#{count}); return false;">Details</a></div>			
+						<div id="ia#{count}" style="display: none;"><a href="#" onclick="fold(#{count}); return false;">Details ausblenden</a></div>							
 						</td>
 						<td></td>
 					</tr>

@@ -115,179 +115,16 @@ public class ServiceManagementBean {
 	}
 
 	
-//	private String storeJob() {
-//		
-//		String name = "TestName";
-//		BigDecimal serviceId = new BigDecimal(1);
-//		String status = "Offen";
-//		String info = "25";
-//		boolean periodic = false;
-//		Date nonperiodicTimestamp = new Date(System.currentTimeMillis());
-//		String periodicInterval = null;
-//		int periodicDays = 0;
-//
-//		// REST call
-//		RestMessage rms;
-//		RestEntrySet res;
-//		RestMessage result = null;
-//
-//		rms = new RestMessage();
-//
-//		rms.setKeyword(RestKeyword.ServiceJob);
-//		rms.setStatus(RestStatusEnum.OK);
-//
-//		res = new RestEntrySet();
-//
-//		res.addEntry("name", name);
-//		res.addEntry("service_id", serviceId.toString());
-//		res.addEntry("status", status);
-//		res.addEntry("info", info);
-//		res.addEntry("periodic", Boolean.toString(periodic));
-//		res.addEntry("nonperiodic_date", new SimpleDateFormat("dd-MM-yyyy HH:mm").format(nonperiodicTimestamp));
-//		res.addEntry("periodic_interval", periodicInterval);
-//		res.addEntry("periodic_days", Integer.toString(periodicDays));
-//			
-//		rms.addEntrySet(res);
-//		
-//		
-//		try {
-//			result = connector.prepareRestTransmission("ServiceJob/").sendPutRestMessage(rms);
-//			
-//			if (rms.getStatus() != RestStatusEnum.OK) {
-//
-//				logger.error("/ServiceJob response failed: " + rms.getStatus() + "("
-//						+ rms.getStatusDescription() + ")");
-//				return "failed";
-//			}
-//		} catch (UnsupportedEncodingException e) {
-//			e.printStackTrace();
-//			return "failed";
-//		}
-//		
-//		logger.info("PUT sent to /ServiceJob");
-//
-//		
-//
-//		ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-//				"info.servicejob_stored_success", null));
-//
-//		return "success";
-//	}
-//	
-//	
-//	private String updateJob(Integer jobId) {
-//		
-//		String name = "TestName";
-//		BigDecimal serviceId = new BigDecimal(1);
-//		String status = "In Bearbeitung";
-//		String info = "25";
-//		boolean periodic = false;
-//		Date nonperiodicTimestamp = new Date(System.currentTimeMillis());
-//		String periodicInterval = null;
-//		int periodicDays = 0;
-//
-//		// REST call
-//		RestMessage rms;
-//		RestEntrySet res;
-//		RestMessage result = null;
-//
-//		rms = new RestMessage();
-//
-//		rms.setKeyword(RestKeyword.ServiceJob);
-//		rms.setStatus(RestStatusEnum.OK);
-//
-//		res = new RestEntrySet();
-//
-//		res.addEntry("name", name);
-//		res.addEntry("service_id", serviceId.toString());
-//		res.addEntry("status", status);
-//		res.addEntry("info", info);
-//		res.addEntry("periodic", Boolean.toString(periodic));
-//		res.addEntry("nonperiodic_date", new SimpleDateFormat("dd-MM-yyyy HH:mm").format(nonperiodicTimestamp));
-//		res.addEntry("periodic_interval", periodicInterval);
-//		res.addEntry("periodic_days", Integer.toString(periodicDays));
-//			
-//		rms.addEntrySet(res);
-//		
-//		
-//		try {
-//			result = connector.prepareRestTransmission("ServiceJob/" + Integer.toString(jobId)).sendPostRestMessage(rms);
-//			
-//			if (rms.getStatus() != RestStatusEnum.OK) {
-//
-//				logger.error("/ServiceJob response failed: " + rms.getStatus() + "("
-//						+ rms.getStatusDescription() + ")");
-//				return "failed";
-//			}
-//		} catch (UnsupportedEncodingException e) {
-//			e.printStackTrace();
-//			return "failed";
-//		}
-//		
-//		logger.info("PUT sent to /ServiceJob");
-//
-//		
-//
-//		ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-//				"info.servicejob_stored_success", null));
-//
-//		return "success";
-//	}
-//	
-//	private void getJobs(int jobId) {
-//		
-//		String result = connector.prepareRestTransmission("ServiceJob/" + (jobId > 0 ? Integer.toString(jobId) : "")).GetData();
-//		List jobList = new ArrayList<Repository>();
-//		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
-//
-//		if (rms == null || rms.getListEntrySets().isEmpty()) {
-//
-//			logger.error("received no Service job details at all from the server");
-//			return;
-//		}
-//
-//		for (RestEntrySet res : rms.getListEntrySets()) {
-//
-//			Iterator<String> it = res.getKeyIterator();
-//			String key = "";
-//			Repository repo = new Repository();
-//
-//			while (it.hasNext()) {
-//
-//				key = it.next();
-//
-//				// if (logger.isDebugEnabled ( ))
-//				// logger.debug ("key: " + key + " value: " + res.getValue
-//				// (key));
-//
-//				if (key.equalsIgnoreCase("name")) {
-//
-//					repo.setName(res.getValue(key));
-//
-//				} else if (key.equalsIgnoreCase("url")) {
-//
-//					repo.setUrl(res.getValue(key));
-//
-//				} else if (key.equalsIgnoreCase("repository_id")) {
-//
-//					repo.setId(new Long(res.getValue(key)));
-//
-//				} else
-//					// System.out.println("Key: " + key);
-//					continue;
-//			}
-//
-//			jobList.add(repo);
-//
-//		}
-////		System.out.println(repoList.size());
-//		
-//	}
-//	
 	
 	private ServiceStatus checkServiceStatus(String serviceName, String serviceHost) {
 		FacesContext context = FacesContext.getCurrentInstance();
-		Registry registry = RMIRegistryHelper.getRegistry(serviceHost);
+		
+		Registry registry;
+		if (serviceHost == null || "".equals(serviceHost)) {
+			registry = RMIRegistryHelper.getRegistry();
+		} else {
+			registry = RMIRegistryHelper.getRegistry(serviceHost);
+		}
 
 		try {
 			IService service = (IService) registry.lookup(serviceName);
@@ -407,12 +244,12 @@ public class ServiceManagementBean {
 				}
 				
 				
-				System.out.println("Running command: " + javaBinaryPath + " -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
+				System.out.println("Running command: " + javaBinaryPath + " -Dfile.encoding=UTF8 -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 								+ servicePath);
 				// TODO: change directory to service directory first
 				Runtime.getRuntime().exec(
-								javaBinaryPath + " -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
+								javaBinaryPath + " -Dfile.encoding=UTF8 -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 								+ servicePath);
 

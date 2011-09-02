@@ -172,6 +172,7 @@ public class RestConnector implements Serializable {
 				} else
 					continue;
 			}
+			jobList.add(bean);
 		}
 		logger.info(jobList.size() + " service jobs received from the server.");
 		

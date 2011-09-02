@@ -37,6 +37,7 @@ public class PropertyManager implements Serializable {
 	private static Properties adminProperties = null;
 	private static Properties restProperties = null;
 	private static Properties oapsProperties = null;
+	private static Properties mailProperties = null;
 	
 	public PropertyManager() {
 		super();
@@ -71,6 +72,7 @@ public class PropertyManager implements Serializable {
 		loadAdminProperties(webappDir, contextPath);
 		loadRestClientProperties(webappDir, contextPath);
 		loadOAPSClientProperties(webappDir, contextPath);
+		loadMailProperties(webappDir, contextPath);
 	}	
 
 	
@@ -136,6 +138,19 @@ public class PropertyManager implements Serializable {
 		return false;
 	}
 	
+	private static boolean loadMailProperties(final String webappDir, final String contextPath) {
+		try {
+			mailProperties = HelperMethods.loadPropertiesFromFile(CATALINA_BASE + webappDir + contextPath +"/WEB-INF/mailsettings.xml");
+			PropertyManager.webappDir = webappDir;
+			PropertyManager.contextPath = contextPath;
+			logger.info("Found oapsprop.xml in '" + CATALINA_BASE + webappDir + contextPath + "/WEB-INF/mailsettings.xml'");
+			return true;
+		} catch (Exception e) {
+			logger.warn("Could not find mailsettings.xml in '" + CATALINA_BASE + webappDir + contextPath + "/WEB-INF/mailsettings.xml'");
+		}
+		return false;
+	}
+	
 
 	public static Properties getServiceProperties() {
 		if (serviceProperties == null) {
@@ -148,6 +163,13 @@ public class PropertyManager implements Serializable {
 			init();
 		}
 		return oapsProperties;
+	}
+	
+	public Properties getMailProperties() {
+		if (mailProperties == null) {
+			init();
+		}
+		return mailProperties;
 	}
 
 //	public void setServiceProperties(Properties serviceProperties) {
