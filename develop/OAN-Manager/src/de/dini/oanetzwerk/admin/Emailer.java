@@ -1,5 +1,6 @@
 package de.dini.oanetzwerk.admin;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -8,13 +9,18 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.mail.Authenticator;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 
 import org.apache.log4j.Logger;
+
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
 
 import de.dini.oanetzwerk.utils.PropertyManager;
 
@@ -52,61 +58,79 @@ public class Emailer {
     }
 	
 	
-	public boolean sendValidatorInfoMail(String recipient, String subject, String message) {
+	public boolean sendValidatorInfoMail(List<String> recipients, String subject, String message) {
 		
-		return sendPlainTextEMail(validatorSender, recipient, user, password, subject, message, mailhost, port);
+		return sendPlainTextEMail(validatorSender, recipients, user, password, subject, message, mailhost, port);
 		
 	}
 	
 	
-	private boolean sendPlainTextEMail(String sender, String recipient, String user, String password, String subject, String message, String mailhost, String port) {
-		
-		Properties mailProperties = propertyManager.getOAPSProperties();
-		
+	private boolean sendPlainTextEMail(String sender, List<String> recipients, String user, String password, String subject, String message, String mailhost, String port) {
+				
 		// Mailserver Einstellungen
 		
 		Properties props = new Properties();
-		props.put("mail.smtp.user", user);
+//		props.put("mail.smtp.user", user);
 		props.put("mail.smtp.host", mailhost);
 		props.put("mail.smtp.port", port);
 		props.put("mail.smtp.auth", "true");
 		//props.put("mail.smtp.starttls.enable","true");
 		//props.put("mail.smtp.ssl.enable", "true");
-		//props.put("mail.smtp.debug", "true");
+		props.put("mail.smtp.debug", "true");
 		//props.put("mail.smtp.socketFactory.port", port);
 		//props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		//props.put("mail.smtp.socketFactory.fallback", "false");
 
+		
 
 		try
 		{
 			Authenticator auth = new SMTPAuthenticator(user, password);
 			Session session = Session.getInstance(props, auth);
-			//session.setDebug(true);
 	
 		    Message msg = new MimeMessage(session);
-
+		    
 		    // set sender and recipient address
 		    InternetAddress addressFrom = new InternetAddress(sender);
 		    msg.setFrom(addressFrom);
-
-		    InternetAddress[] addressTo = new InternetAddress[1]; 
-	        addressTo[0] = new InternetAddress(recipient);
+		    
+		    
+		    InternetAddress[] addressTo = new InternetAddress[recipients.size()]; 			
+		    for (int i = 0; i < recipients.size(); i++) {
+				addressTo[i] = new InternetAddress(recipients.get(i));
+			}
 		    msg.setRecipients(Message.RecipientType.TO, addressTo);
 		   
-		    // Setting the Subject and Content Type
+		    // Setting the Subject and Text
+		    System.out.println("Setting mail subject: " + subject);
 		    msg.setSubject(subject);
-		    msg.setContent(message, "text/plain");
+		    System.out.println("setting msg: "+ message);
+		    msg.setText(message);
+		    
 		    Transport.send(msg);
 		    
 		    return true;
 		}
 		catch (Exception e) {
-			logger.warn("Could not send email to " + recipient + "! ", e);
+			logger.warn("Could not send email to " + getCommaSeperatedList(recipients) + "! ", e);
 			e.printStackTrace();
 		}
 		
 		return false;
+	}
+	
+	public String getCommaSeperatedList(List<String> strings) {
+		
+		if (strings == null || strings.isEmpty()) {
+			return "";
+		}
+		StringBuffer buffer = new StringBuffer();
+		
+		for (String string : strings) {
+	        buffer.append(string).append(",");
+        }
+		
+		return buffer.toString().substring(0, buffer.toString().length() - 1);
 	}
 	
 	private class SMTPAuthenticator extends javax.mail.Authenticator {

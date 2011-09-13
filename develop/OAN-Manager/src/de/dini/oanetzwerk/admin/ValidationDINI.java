@@ -9,6 +9,7 @@ import gr.uoa.di.validator.api.standalone.APIStandalone;
 import gr.uoa.di.validator.constants.FieldNames;
 import gr.uoa.di.validator.jobs.JobListener;
 import gr.uoa.di.validatorweb.actions.browsejobs.Job;
+import gr.uoa.di.validatorweb.actions.rulesets.Rule;
 import gr.uoa.di.validatorweb.actions.rulesets.RuleSet;
 
 import java.io.InputStream;
@@ -16,8 +17,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -37,10 +36,10 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
-import org.apache.myfaces.custom.emailvalidator.EmailValidator;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import de.dini.oanetzwerk.utils.CommonValidationUtils;
 import de.dini.oanetzwerk.utils.PropertyManager;
 
 
@@ -51,8 +50,7 @@ public class ValidationDINI implements Serializable, JobListener {
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(ValidationDINI.class);
 	private static String defaultDiniRuleSetName = "DINI 2010";
-	private static final String regex = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-	private static final String emailRegex = "^[\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[a-zA-Z]{2,4}$"; 
+
 		
 	FacesContext ctx = FacesContext.getCurrentInstance();
 	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(false);
@@ -80,6 +78,8 @@ public class ValidationDINI implements Serializable, JobListener {
 	private List<Repository> repoList;
 	private List<ValidationBean> validationList;
 	private List<ValidatorTask> validationResults;
+	private List<ValidatorTask> mandatoryTasks 	= null;
+	private List<ValidatorTask> optionalTasks 	= null;
 	
 	@PostConstruct
 	private void initValidationBean(){
@@ -117,7 +117,7 @@ public class ValidationDINI implements Serializable, JobListener {
 			}
 		} else if ("validation_dini_results.xhtml".equals(path)) {
 			
-			validationResults = fetchValidationResults();
+			fetchValidationResults();
 		}
 				
 	}
@@ -173,11 +173,9 @@ public class ValidationDINI implements Serializable, JobListener {
 		boolean valid = true;
 
 		logger.info("Validating validation-job for OAI-Url= " + baseUrl + " , chosen DINI Certificate= " + selectedDiniRuleset );
-		
-		Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(baseUrl);
 
-		if (!matcher.matches() || baseUrl.length() < 10) {
+
+		if (!CommonValidationUtils.isValidUrl(baseUrl)) {
 			context.addMessage("1", new FacesMessage("Please specify a valid oai-pmh base url or select a repository from the dropdown list. "));
 			//context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_chooseservice", null));
 			valid = false;
@@ -219,7 +217,11 @@ public class ValidationDINI implements Serializable, JobListener {
 				System.out.println(nodes.getLength());
 				
 				for (int i = 0; i < nodes.getLength(); i++) {
-					email = nodes.item(i).getTextContent();
+					if (email == null || email.trim().length() == 0) {
+						email = nodes.item(i).getTextContent();
+					} else {
+						email = email + ";" + nodes.item(i).getTextContent();
+					}
 				}
 
 			} catch (Exception e) {
@@ -228,11 +230,8 @@ public class ValidationDINI implements Serializable, JobListener {
 		}
 		
 		if (email != null && email.length() > 0) {
-			
-			Pattern p = Pattern.compile(emailRegex);
-	        Matcher m = p.matcher(email);
 
-			if (!m.matches()) {
+			if (!CommonValidationUtils.isValidEmail(email)) {
 				context.addMessage("1", new FacesMessage("The given email-adress is invalid, please specify a valid email!"));
 				valid = false;
 			}
@@ -403,20 +402,34 @@ public class ValidationDINI implements Serializable, JobListener {
 	
 	// used by validation_dini_results.xhtml
 
-	public List<ValidatorTask> fetchValidationResults(){
+	public List<ValidatorTask> getMandatoryValidationResults() {
+		if (mandatoryTasks == null) {
+			fetchValidationResults();
+		}
+		return mandatoryTasks;		
+	}
+	
+	public List<ValidatorTask> getOptionalValidationResults() {
+		if (optionalTasks == null) {
+			fetchValidationResults();
+		}
+		return optionalTasks;		
+	}
+	
+	private void fetchValidationResults(){
 
 		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
 		validationId = request.getParameter("vid");
 
-		logger.info("Validation job-ID received: " + validationId);
+		logger.info("Fetching results... validation job-ID received: " + validationId);
 		int id;
 		if (validationId == null || validationId.length() == 0) {
 			ctx.addMessage("1", new FacesMessage("Could not find the requested validation results!"));
-			return new ArrayList<ValidatorTask>();
+			return; // new ArrayList<ValidatorTask>();
 		}
 		
 		Validator val = APIStandalone.getValidator();
-		
+		List<Rule> rules = null;
 		try {
 			Job job = val.getJob(validationId);
 			
@@ -424,25 +437,33 @@ public class ValidationDINI implements Serializable, JobListener {
 				baseUrl = job.getRepo();
 				score = job.getScore() != null && job.getScore().length() > 0 ? Integer.parseInt(job.getScore()) : 0;
 			} 
-                
+            
+
 		} catch (ValidatorException e) {
 			logger.warn("Could not find a job for id " + validationId, e);
 			ctx.addMessage("1", new FacesMessage("The job-id " + validationId + " is not valid!"));
-			return new ArrayList<ValidatorTask>();
+			return; // new ArrayList<ValidatorTask>();
 		}
 
 		
 		List<Entry> list = this.getJobSummary(validationId);
 
-		List<ValidatorTask> tasks = new ArrayList<ValidatorTask>();
+		mandatoryTasks 	= new ArrayList<ValidatorTask>();
+		optionalTasks 	= new ArrayList<ValidatorTask>();
 		
 		boolean generalFailure = list == null || list.isEmpty();
 		
 		if (!generalFailure) {
 			// entries from usage validation job
 			for (Entry entry : list) {
-	
-				tasks.add(new ValidatorTask(entry, false));
+				
+				if (entry.getWeight() < 2) {
+					
+					optionalTasks.add(new ValidatorTask(entry, false));
+				} else {
+					
+					mandatoryTasks.add(new ValidatorTask(entry, false));
+				}
 			}
 		}
 		
@@ -457,14 +478,21 @@ public class ValidationDINI implements Serializable, JobListener {
 			if (!generalFailure) {
 				// entries from content validation job
 				for (Entry entry : relatedJob) {
-					tasks.add(new ValidatorTask(entry, true));
+					
+					if (entry.getWeight() < 2) {
+						
+						optionalTasks.add(new ValidatorTask(entry, true));
+					} else {
+						
+						mandatoryTasks.add(new ValidatorTask(entry, true));
+					}
 				}
 			}
 			
 			// abort processing, general oaipmh failure occured 
 			if (generalFailure) {
 				ctx.addMessage("1", new FacesMessage(LanguageSwitcherBean.getMessage(ctx, "validation_failure_oaipmh")));
-				return null;
+				return; // null;
 			}
 			
 			Job job = val.getJob(Integer.toString(Integer.parseInt(validationId) + 1));
@@ -480,7 +508,7 @@ public class ValidationDINI implements Serializable, JobListener {
 			logger.warn("Could not fetch related job with generated id.  (" + validationId + " + 1)", e);
 		}
 		
-		return tasks;
+//		return mandatoryTasks;
 	}
 	
 	
@@ -522,7 +550,7 @@ public class ValidationDINI implements Serializable, JobListener {
 	
 	
 
-	public void sendInfoMail(int jobId, String recipient) {
+	public void sendInfoMail(int jobId, List<String> recipients) {
 	
 		// send email
 		String resultsUrl = "https://localhost:8443/oanadmin/pages/validation_dini_results.xhtml?vid=" + jobId;
@@ -531,11 +559,11 @@ public class ValidationDINI implements Serializable, JobListener {
 		String message = "Die Validierung des Repositories ist beendet. Die Ergebnisse können sie unter " +
 				resultsUrl + " einsehen.";
 		
-		boolean success = emailer.sendValidatorInfoMail(recipient, subject, message);
+		boolean success = emailer.sendValidatorInfoMail(recipients, subject, message);
 		if (success) {
-		logger.info("The validation results for job " + jobId + " have been successfully sent via email to " + recipient + " !");
+		logger.info("The validation results for job " + jobId + " have been successfully sent via email.");
 		} else {
-			logger.warn("The validation results for job " + jobId + " could not be sent via email to " + recipient); 
+			logger.warn("The validation results for job " + jobId + " could not be sent via email !"); 
 		}
 	}
 
@@ -644,10 +672,39 @@ public class ValidationDINI implements Serializable, JobListener {
 			} 
 			
 			recipient = job.getUser();
+		
+			String[] emails = null;
 			
-			System.out.println(job.getType());
-			// send info mail
-			sendInfoMail(arg0, recipient);
+			System.out.println(job.getUser()); 
+			if (recipient == null || recipient.trim().length() == 0) {
+				logger.info("Skipped email notification, no valid email adresses found for job with id " + arg0); 
+				return;
+			}
+			
+			if (recipient.contains(";")) {
+				emails = recipient.split(";");
+			} else {
+				emails = new String[] {recipient};
+			}
+			
+			List<String>  validEmails = new ArrayList<String>();
+			
+			for (String email : emails) {
+	            
+				if (CommonValidationUtils.isValidEmail(email)) {
+					validEmails.add(email);
+				}
+            }
+			// check if the user-field is a valid e-mail address
+			if (validEmails.size() > 0) {
+				System.out.println(job.getType());
+				// only send emails for content job results
+				if ("OAI Content Validation".equals(job.getType())) {
+				
+					// send info mail
+					sendInfoMail(arg0, validEmails);
+				}
+			}
 			
 		} catch (ValidatorException e) {
 			logger.warn("An error occured while retrieving list of validation jobs! ", e);
