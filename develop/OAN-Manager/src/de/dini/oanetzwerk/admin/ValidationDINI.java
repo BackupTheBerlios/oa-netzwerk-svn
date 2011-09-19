@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -63,6 +64,9 @@ public class ValidationDINI implements Serializable, JobListener {
 	
 	@ManagedProperty(value = "#{propertyManager}")
 	private PropertyManager propertyManager;
+	
+	@ManagedProperty(value = "#{fileStorage}")
+	private FileStorage fileStorage;
 	
 	private String validationId = null;
 	private String baseUrl = "http://";
@@ -714,8 +718,21 @@ public class ValidationDINI implements Serializable, JobListener {
 	}
 
 	@Override
-	public void failed(int arg0, Exception arg1) {
-		logger.warn("job failed! (" + arg0 + ")", arg1);
+	public void failed(int jobId, Exception ex) {
+		logger.warn("job failed! (" + jobId + ")", ex);
+		
+		Map<Integer, String> errors = fileStorage.getValidatorErrors();
+		
+		System.out.println("err1: " + ex.getMessage());
+		System.out.println("err2: " + ex.getLocalizedMessage());
+		
+		String errorMessage = ex.getMessage();
+		
+		if (errors != null) {
+			errors.put(jobId, errorMessage);
+		}
+		
+		fileStorage.storeValidatorInfo(errors);
 	}
 	
 }
