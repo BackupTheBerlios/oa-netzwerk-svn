@@ -80,6 +80,8 @@ public class UserListBean extends AbstractBean implements Serializable {
 	
 	public List<UserBean> fetchUsers() {
 
+		System.out.println("fetching users...");
+		System.out.println(FacesContext.getCurrentInstance().getExternalContext().getRemoteUser());
 		userList = new ArrayList<UserBean>();
 
 		MBeanServer mbs = Registry.getRegistry(null, null).getMBeanServer();
@@ -89,12 +91,18 @@ public class UserListBean extends AbstractBean implements Serializable {
 
 			String[] users = (String[]) mbs.getAttribute(oname, "users");
 
+			if (users != null) {
+				System.out.println(users.length);
+			} else {
+				System.out.println("users are null");
+			}
 			UserBean user = null;
 
 			boolean manageableUser = true;
 
 			for (String u : users) {
 
+				System.out.println(u);
 				// assume the user can be handled by us
 				manageableUser = true;
 
@@ -281,8 +289,8 @@ public class UserListBean extends AbstractBean implements Serializable {
 		return isOanAdmin() || FacesContext.getCurrentInstance().getExternalContext().isUserInRole(ROLE_SERVICE_MANAGER);
 	}
 	public boolean isOanAdmin() {
-		
-		return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(ROLE_OANADMIN);
+		return true;
+		//return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(ROLE_OANADMIN);
 	}
 	
 	public String getUser() {

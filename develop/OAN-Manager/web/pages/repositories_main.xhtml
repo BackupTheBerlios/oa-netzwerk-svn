@@ -80,16 +80,18 @@
 										<h:outputText value="#{row.active ? msg.general_yes : msg.general_no}" />
 									</t:column>
 									
-<!--									<t:column style="width: 20%; vertical-align: middle; text-align: center; height: 70px;">-->
-<!--										<f:facet name="header">-->
-<!--											<h:outputText value="Online-Status" />-->
-<!--											<br />-->
-<!--											<h:outputText value="(Last Status Check)" />-->
-<!--										</f:facet>-->
-<!--										<h:outputText value="#{row.status}" />-->
-<!--										<br />-->
-<!--										<h:outputText value="#{row.lastStatusCheck}" />-->
-<!--									</t:column>-->
+									<t:column style="width: 20%; vertical-align: middle; text-align: center; height: 70px;">
+										<f:facet name="header">
+											<h:outputText value="Online-Status" />
+											<br />
+											<h:outputText value="(Last Status Check)" />
+										</f:facet>
+										<h:outputText value="#{row.status}" />
+										<br />
+										<h:outputText value="#{row.lastStatusCheck}" />
+										<br />
+										<a href="repositories_onlinestatus.xhtml?id=#{row.id}">View History</a>
+									</t:column>
 
 									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">

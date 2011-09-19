@@ -14,6 +14,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -37,7 +38,7 @@ import de.dini.oanetzwerk.codec.RestXmlCodec;
  * 
  */
 @ManagedBean(name = "repoList")
-@SessionScoped
+@RequestScoped
 public class RepositoryListBean extends AbstractBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -48,6 +49,9 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 
 	@ManagedProperty(value = "#{restConnector}")
 	private RestConnector restConnector;
+	
+	@ManagedProperty(value = "#{repositoryOnlineStatus}")
+	private RepositoryOnlineStatusBean repositoryOnlineStatus;
 	
 	private List<Repository> repoList;
 
@@ -63,47 +67,45 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 		
 		repoList = restConnector.fetchRepositories();
 		
+		System.out.println("size: " + repoList.size());
+		String updateTimestamp = repositoryOnlineStatus.getLastUpdate();
+		logger.info(updateTimestamp);
+		
 		for (Repository repo : repoList) {
 			
-			String repoURL = null;
-			
-			// check the online status of the repository
-			HttpClient htc = new HttpClient();
-			htc.getHttpConnectionManager().getParams().setConnectionTimeout(5000);
-			
-			String parameter = "?verb=identify";
-			
-			if (!parameter.isEmpty()) {
-				// testen ob die Url auch mit einem / endet.
-				// damit wird abgefangen wenn User die Schnittstellenadresse ohne / eingeben
-				if (!repo.getOaiUrl().endsWith("/")) {
-					repoURL = repo.getOaiUrl().concat("/");
-				}
-				repoURL = repo.getOaiUrl().concat(parameter);
+			if (repo.getId() == null) {
+				System.out.println("Repo.getId = null");
 			}
-			HttpMethod method = new GetMethod(repoURL);
-	        method.setFollowRedirects(true);
-	        String response = null;
-	        try {
-				htc.executeMethod(method);
-				if (method.getStatusCode() == 200) {
-					repo.setStatus("online");
+			else {
+				System.out.println("Setting online Status of Repo No "+repo.getId());
+			}
+			if (!repositoryOnlineStatus.getOnlineStatus().containsKey(repo.getId())) {
+				repo.setStatus("unchecked");
+			}
+			repo.setLastStatusCheck(updateTimestamp);
+			if (repositoryOnlineStatus.getOnlineStatus().size() == 0) {
+				repo.setStatus("wird geprüft...");	
+			} else {
+				
+				if (repositoryOnlineStatus.getOnlineStatus().get(repo.getId()).containsKey(updateTimestamp)) {
+					repo.setStatus(
+						repositoryOnlineStatus.
+						getOnlineStatus().
+						get(
+							repo.
+							getId()
+						).
+						get(
+							updateTimestamp
+						) == true ? "online" : "offline"
+					);
 				}
 				else {
-					repo.setStatus("offline");
+					repo.setStatus("unknown");
 				}
-				
-	        }
-	        catch (Exception e) {
-	        	e.printStackTrace();
-	        	repo.setStatus("offline");
-	        }
-	        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss - dd. MM. yyyy");
-			String timestamp = dateFormat.format(new Date().getTime());
-			repo.setLastStatusCheck(timestamp);
-			
+			}
 		}
-
+		
 	}
 
 	public List<Repository> getRepositories() {
@@ -113,6 +115,10 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 
 	public void setRestConnector(RestConnector restConnector) {
 		this.restConnector = restConnector;
+	}
+	
+	public void setRepositoryOnlineStatus(RepositoryOnlineStatusBean repositoryOnlineStatus) {
+		this.repositoryOnlineStatus = repositoryOnlineStatus;
 	}
 
 }

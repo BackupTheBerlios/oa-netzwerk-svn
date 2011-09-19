@@ -5,9 +5,9 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.CronScheduleBuilder.weeklyOnDayAndHourAndMinute;
 import static org.quartz.DateBuilder.tomorrowAt;
 import static org.quartz.JobBuilder.newJob;
+import static org.quartz.JobKey.jobKey;
 import static org.quartz.TriggerBuilder.newTrigger;
 import static org.quartz.impl.matchers.GroupMatcher.groupEquals;
-import static org.quartz.JobKey.jobKey;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.InvalidPropertiesFormatException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -27,8 +26,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 import org.quartz.DateBuilder;
@@ -41,9 +38,7 @@ import org.quartz.SchedulerFactory;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
-import org.quartz.TriggerUtils;
 import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.spi.OperableTrigger;
 
 import de.dini.oanetzwerk.admin.SchedulingBean.SchedulingIntervalType;
 import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
@@ -51,6 +46,7 @@ import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.AggregatorJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.HarvesterJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.MarkerJob;
+import de.dini.oanetzwerk.admin.scheduling.jobs.RepositoryOnlineStatusUpdateJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.UpdateDDCCountJob;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -78,6 +74,9 @@ public class SchedulerControl implements Serializable { // ,
 
 	@ManagedProperty(value = "#{restConnector}")
 	private RestConnector restConnector;
+	
+	@ManagedProperty(value= "#{repositoryOnlineStatus}")
+	private RepositoryOnlineStatusBean repositoryOnlineStatus;
 
 	public SchedulerControl() {
 		super();
@@ -88,6 +87,7 @@ public class SchedulerControl implements Serializable { // ,
 
 		logger.info("SchedulerControl initiated!");
 
+		System.out.println("|||||||| Scheduler started |||||||||||||");
 		try {
 
 			this.restProperties = HelperMethods.loadPropertiesFromFileWithinWebcontainerWebapps(Utils.getDefaultContext()
@@ -105,7 +105,10 @@ public class SchedulerControl implements Serializable { // ,
 
 			// schedule ddc-count update job
 			scheduleDDCCounterJob();
-
+			
+			// schedule check for repository online status
+			scheduleRepositoryOnlineStatusUpdate();
+			
 			// load jobs from database
 			List<AbstractServiceJob> jobsToSchedule = loadJobsFromDB();
 
@@ -137,6 +140,37 @@ public class SchedulerControl implements Serializable { // ,
 			logger.info("Successfully scheduled DDC-Counter");
 		} catch (SchedulerException e) {
 			logger.warn("Could not schedule DDC-Counter", e);
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean scheduleRepositoryOnlineStatusUpdate() {
+		
+		JobDataMap data = new JobDataMap();
+		data.put("repositoryOnlineStatus", repositoryOnlineStatus);
+		
+		JobDetail jobdetail = newJob(RepositoryOnlineStatusUpdateJob.class).withIdentity("RepositoryOnlineStatusUpdate").usingJobData(data).build();
+		
+		
+		Trigger trigger = newTrigger().
+			withIdentity("RepositoryOnlineStatusUpdate").
+			startAt(
+				tomorrowAt(2,30,0)
+			).
+//			startNow().
+			withSchedule(
+				calendarIntervalSchedule().
+//				withIntervalInMinutes(2)
+				withIntervalInHours(4)
+			).
+			build();
+		
+		try {
+			scheduler.scheduleJob(jobdetail, trigger);
+			logger.info("Successfully scheduled RepositoryOnlineStatusUpdate");
+		} catch (SchedulerException e) {
+			logger.warn("Could not schedule RepositoryOnlineStatusUpdate", e);
 			return false;
 		}
 		return true;
@@ -491,6 +525,19 @@ public class SchedulerControl implements Serializable { // ,
 	public RestConnector getRestConnector() {
 		return restConnector;
 	}
+
+	public RepositoryOnlineStatusBean getRepositoryOnlineStatus() {
+		return repositoryOnlineStatus;
+	}
+
+	public void setRepositoryOnlineStatus(
+			RepositoryOnlineStatusBean repositoryOnlineStatus) {
+		this.repositoryOnlineStatus = repositoryOnlineStatus;
+	}
+
+
+	
+	
 
 	//
 	// @Override
