@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -76,6 +77,7 @@ public class ValidationDINI implements Serializable, JobListener {
 	private int score;
 	private boolean adminEmail = false;
 	private String email;
+	private String errorMessage;
 	
 	private List<RuleSet> ruleSets = new ArrayList<RuleSet>();
 	private List<SgParameters> diniRules;
@@ -506,6 +508,14 @@ public class ValidationDINI implements Serializable, JobListener {
 				score = Math.round( ((float)score / 3.0f)  + (score2 / 3.0f * 2.0f) );
 			} 
 			
+			// read and set error message if job failed
+			Map<Integer, String> errorMap = fileStorage.getValidatorErrors();
+			if (errorMap != null) {
+				errorMessage = errorMap.get(validationId);
+				errorMessage = errorMessage == null ? errorMap.get(validationId + 1) : errorMessage;
+			}
+//			FacesContext.getCurrentInstance().getExternalContext().get
+			
 		} catch (NumberFormatException e) {
 			logger.warn("Could not fetch related job with generated id.  (" + validationId + " + 1)", e);
 		} catch (ValidatorException e) {
@@ -569,6 +579,63 @@ public class ValidationDINI implements Serializable, JobListener {
 		} else {
 			logger.warn("The validation results for job " + jobId + " could not be sent via email !"); 
 		}
+	}
+	
+	
+	
+	public String getMainDescription(String description) {
+		long start = System.currentTimeMillis();
+//		System.out.println("XXX: " + getLocalizedDescriptions(description)[0]);
+		System.out.println("XXX duration: " + (System.currentTimeMillis() - start));
+		return getLocalizedDescriptions(description)[0];
+	}
+	
+	public String getAdditionalDescription(String description) {
+		String[] descriptions = getLocalizedDescriptions(description);
+		return (descriptions != null && descriptions.length == 2) ? descriptions[1] : descriptions[0]; 
+	}
+	
+	private String[] getLocalizedDescriptions(String description) {
+		// expected String format
+		// germanMainDescription &&& germanAdditionalInfo ||| englishMainDescription &&& englishAdditionalInfo
+		
+		System.out.println("XXX1: " + description);
+		String[] descriptionsForAllLanguages = null;
+		
+		if (description != null && description.contains("\\|\\|\\|")) {
+			descriptionsForAllLanguages = description.split("\\|\\|\\|");
+		} else {
+			descriptionsForAllLanguages = new String[] { description };
+		}
+		
+		System.out.println("XXX2: " + descriptionsForAllLanguages.length);
+		
+		String localizedDescription;
+		if (descriptionsForAllLanguages.length > 1) {
+			// use descriptions for current language only
+			if (Locale.GERMAN.equals(FacesContext.getCurrentInstance().getViewRoot().getLocale())) {
+				// german
+				localizedDescription = descriptionsForAllLanguages[0];
+				
+			} else {
+				// english
+				localizedDescription = descriptionsForAllLanguages[1];
+			}
+		} else {
+			localizedDescription = description;
+		}
+		System.out.println("XXX3: " + localizedDescription);
+		// use main description only
+		String[] descriptionsPerLanguage = null;
+		
+		if (localizedDescription != null && localizedDescription.contains("&&&")) {
+			descriptionsPerLanguage = localizedDescription.split("&&&");
+		} else {
+			return new String[] { localizedDescription };
+		}
+		
+		return descriptionsPerLanguage;
+		
 	}
 
 	public String getValidationId() {
@@ -646,6 +713,11 @@ public class ValidationDINI implements Serializable, JobListener {
 	public List<ValidatorTask> getValidationResults() {
 		return validationResults;
 	}
+	
+	
+	public void setFileStorage(FileStorage fileStorage) {
+    	this.fileStorage = fileStorage;
+    }
 
 	public void setRestConnector(RestConnector restConnector) {
 		this.restConnector = restConnector;

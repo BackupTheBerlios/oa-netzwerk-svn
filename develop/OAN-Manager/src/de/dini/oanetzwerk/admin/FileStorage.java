@@ -16,7 +16,7 @@ import javax.faces.bean.ManagedBean;
 @ApplicationScoped
 public class FileStorage {
 
-	private String storageDirectory = "";
+	private String storageDirectory = "/home/davidsam/Dev/TestDirectory/services/validator/";
 	
 	private String validatorErrorsFilename = "validator_errors.oan";
 	

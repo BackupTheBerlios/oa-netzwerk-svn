@@ -67,6 +67,13 @@
 		<param-value>/WEB-INF/utils-taglib.xml</param-value>
 	</context-param>
 
+	<!-- Enable Expression Language 2.2 -->
+	<context-param>
+		<param-name>org.apache.myfaces.EXPRESSION_FACTORY</param-name>
+		<param-value>com.sun.el.ExpressionFactoryImpl</param-value>
+	</context-param>
+
+
 	<!-- Quartz Config -->
 	<context-param>
 		<param-name>config-file</param-name>

@@ -82,9 +82,10 @@
 	    <br />
     <div style="padding-left:40px;">
 		<h:form id="form">
-   <t:panelTabbedPane id="tabbedPane" bgcolor="#FFCCCC" serverSideTabSwitch="false">
+   <t:panelTabbedPane id="tabbedPane" serverSideTabSwitch="false">
    
     <t:panelTab id="tab1" label="Anforderungen" rendered="#{true}">
+
 
     
 			<t:dataTable value="#{validation.mandatoryValidationResults}" var="row" rowIndexVar="count"
@@ -100,7 +101,8 @@
 
 					<tr>
 						<td style="width: 20%; padding-left:15px"><b><h:outputText value="Beschreibung" /></b></td>
-						<td style="width: 80%;"><h:outputText value="#{row.entry.description}" /><br />   </td>
+						<td style="width: 80%;"><h:outputText value="#{validation.getMainDescription(row.entry.description)}" /><br />  
+                    </td>
 					</tr>
 					<t:div rendered="#{row.successPercentage eq 100}">
 					<tr>

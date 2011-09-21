@@ -34,6 +34,47 @@ div.infomessage_box
 a:visited {
 	text-decoration:none;
 }
+
+
+
+
+.myFaces_panelTabbedPane_activeHeaderCell input {
+    background-color: #D4E6D1 !important;
+    cursor: pointer;
+}
+.myFaces_panelTabbedPane_inactiveHeaderCell input {
+    background-color: #F4F4F4 !important;
+    cursor: pointer;
+}
+
+.myFaces_panelTabbedPane_pane {
+    background-color: #E8F2FC;
+    border: 1px solid #EEEEEE;
+    border-style: none none none;
+    border-width: 2px;
+    padding: 10px;
+}
+
+td.myFaces_panelTabbedPane_activeHeaderCell {
+	border-style: solid;
+	text-align: center;
+}
+
+td.myFaces_panelTabbedPane_inactiveHeaderCell {
+	border-style: solid;
+	text-align: center;
+
+}
+
+td.myFaces_panelTabbedPane_disabledHeaderCell {
+	border-top: 1px outset silver;
+	border-right: 1px outset silver;
+	border-bottom: 0px none;
+	border-left: 1px outset silver;
+	text-align: center;
+	background-color: #B8DFFF;
+}
+
  
  /** custom end  **/
  
@@ -156,7 +197,7 @@ a:link {
 
 a:visited {
   text-decoration: underline;
-  color: #5c3566;
+  color: #204A87;
 }
 /**/
 /* tip - anchors of class info */
@@ -368,6 +409,8 @@ tr.even {
 	background-color:#f5f9f4;;
    
 }
+
+
 
 /*.bigtable tr {*/
 /*  border: 1px solid #bbb;*/
