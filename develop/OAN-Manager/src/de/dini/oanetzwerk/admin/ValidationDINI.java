@@ -9,9 +9,10 @@ import gr.uoa.di.validator.api.standalone.APIStandalone;
 import gr.uoa.di.validator.constants.FieldNames;
 import gr.uoa.di.validator.jobs.JobListener;
 import gr.uoa.di.validatorweb.actions.browsejobs.Job;
-import gr.uoa.di.validatorweb.actions.rulesets.Rule;
 import gr.uoa.di.validatorweb.actions.rulesets.RuleSet;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,6 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -40,6 +47,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import de.dini.oanetzwerk.utils.CommonValidationUtils;
 import de.dini.oanetzwerk.utils.PropertyManager;
@@ -435,7 +443,7 @@ public class ValidationDINI implements Serializable, JobListener {
 		}
 		
 		Validator val = APIStandalone.getValidator();
-		List<Rule> rules = null;
+
 		try {
 			Job job = val.getJob(validationId);
 			
@@ -461,14 +469,24 @@ public class ValidationDINI implements Serializable, JobListener {
 		
 		if (!generalFailure) {
 			// entries from usage validation job
+			SgParameters params = null;
 			for (Entry entry : list) {
+				
+				
+				//fetch rule, too
+				try {
+					params = val.getRule(Integer.toString(entry.getRuleId()));
+				} catch (ValidatorException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				if (entry.getWeight() < 2) {
 					
-					optionalTasks.add(new ValidatorTask(entry, false));
+					optionalTasks.add(new ValidatorTask(entry, params, false));
 				} else {
 					
-					mandatoryTasks.add(new ValidatorTask(entry, false));
+					mandatoryTasks.add(new ValidatorTask(entry, params, false));
 				}
 			}
 		}
@@ -483,14 +501,23 @@ public class ValidationDINI implements Serializable, JobListener {
 			
 			if (!generalFailure) {
 				// entries from content validation job
+				SgParameters params = null;
 				for (Entry entry : relatedJob) {
+					
+					// fetch rule, too
+					try {
+						params = val.getRule(Integer.toString(entry.getRuleId()));
+					} catch (ValidatorException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					if (entry.getWeight() < 2) {
 						
-						optionalTasks.add(new ValidatorTask(entry, true));
+						optionalTasks.add(new ValidatorTask(entry, params, true));
 					} else {
 						
-						mandatoryTasks.add(new ValidatorTask(entry, true));
+						mandatoryTasks.add(new ValidatorTask(entry, params, true));
 					}
 				}
 			}
@@ -637,6 +664,129 @@ public class ValidationDINI implements Serializable, JobListener {
 		return descriptionsPerLanguage;
 		
 	}
+	
+	public String getRuleUrl(String baseUrl, String providerInfo) {
+		
+		System.out.println("YYY: " + baseUrl);
+		System.out.println("YYY2: " + providerInfo);
+		if (providerInfo == null || providerInfo.length() == 0) {
+			return null;
+		}
+		
+		String url = null;
+		
+		try {
+			if (providerInfo.contains("verb=")) {
+				return baseUrl + "?" + providerInfo.substring(providerInfo.indexOf("verb="), providerInfo.indexOf(',', providerInfo.indexOf("verb=")));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getHighlightedResponse(String baseUrl, String providerInfo) {
+		
+		System.out.println("YYY: " + baseUrl);
+		System.out.println("YYY2: " + providerInfo);
+		if (providerInfo == null || providerInfo.length() == 0) {
+			return null;
+		}
+		
+		String url = null;
+		
+		try {
+			System.out.println("argh1");
+			if (providerInfo.contains("verb=")) {
+				System.out.println("argh2");
+				url = baseUrl + "?" + providerInfo.substring(providerInfo.indexOf("verb="), providerInfo.indexOf(',', providerInfo.indexOf("verb=")));
+				
+				// getXMLReponse();
+				String xml = getXMLResponse(url);
+				System.out.println("break1" + xml);
+				String tag = providerInfo.substring(providerInfo.indexOf("field=") + 6, providerInfo.length());
+				System.out.println("break2" + tag);
+				// String output = decorateXML(); 
+				return decorateXml(xml, tag);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String getXMLResponse(String url) {
+		System.out.println("break: " + url);
+		HttpClient htc = new HttpClient();
+		GetMethod method = new GetMethod(url);
+		method.setFollowRedirects(true);
+		InputStream response = null;
+		try {
+			htc.executeMethod(method);
+			
+//			response = method.getResponseBodyAsStream();
+//			System.out.println(method.getResponseHeader("content-type"));
+//			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+//			DocumentBuilder builder = domFactory.newDocumentBuilder();
+//			Document doc = builder.parse(response);
+			
+			// response seems to be valid xml
+			return method.getResponseBodyAsString();
+			
+//			XPath xpath = XPathFactory.newInstance().newXPath();
+//			XPathExpression expr = xpath.compile("//adminEmail");
+//			Object result = expr.evaluate(doc, XPathConstants.NODESET);
+//
+//			NodeList nodes = (NodeList) result;
+//			System.out.println(nodes.getLength());
+//			
+//			for (int i = 0; i < nodes.getLength(); i++) {
+//				if (email == null || email.trim().length() == 0) {
+//					email = nodes.item(i).getTextContent();
+//				} else {
+//					email = email + ";" + nodes.item(i).getTextContent();
+//				}
+//			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String decorateXml(String xml, String tagToHighlight) {
+
+		long start = System.currentTimeMillis();
+		xml = xml.replaceAll("<", "<b><");
+		xml = xml.replaceAll(">", "></b>");
+		xml = xml.replaceAll("<b></b>", "<b>");
+		xml = xml.replaceAll("<" + tagToHighlight + ">", "<" + tagToHighlight + "><font color=\"#660000\">");
+		xml = xml.replaceAll("</" + tagToHighlight + ">", "</font></" + tagToHighlight + ">");
+		xml = formatXml(xml);
+		xml.replaceAll("\n", "<br />");
+		System.out.println(System.currentTimeMillis()-start);	
+		return formatXml(xml);
+		
+	}
+	
+
+    public String formatXml(String xml){
+        try{
+            Transformer serializer= SAXTransformerFactory.newInstance().newTransformer();
+            serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+            //serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            //serializer.setOutputProperty("{http://xml.customer.org/xslt}indent-amount", "2");
+            Source xmlSource=new SAXSource(new InputSource(new ByteArrayInputStream(xml.getBytes())));
+            StreamResult res =  new StreamResult(new ByteArrayOutputStream());            
+            serializer.transform(xmlSource, res);
+            return new String(((ByteArrayOutputStream)res.getOutputStream()).toByteArray());
+        }catch(Exception e){
+            e.printStackTrace();
+            return xml;
+        }
+    }
+
 
 	public String getValidationId() {
 		return validationId;

@@ -108,6 +108,8 @@
 					<tr>
 						<td style="width: 20%; padding-left:15px"><b><h:outputText value="Regel-Status" /></b></td>
 						<td><img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" /><h:outputText value="&#160; Erfüllt (#{row.successPercentage}%)" />
+							#{validation.getRuleUrl(validation.baseUrl, row.rule.parameters['provider_information'])}
+							#{row.rule.parameters['provider_information']}
 						</td>	
 					</tr>
 					
@@ -116,8 +118,12 @@
 					<t:div rendered="#{row.successPercentage lt 100}">
 					<tr>
 						<td style="width: 20%; padding-left:15px"><b><h:outputText value="Regel-Status" /></b></td>
-						<td><img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" />
-						<h:outputText rendered="#{row.showDetails}" value="&#160; #{row.successPercentage}%  (#{row.entry.successes})" /></td>	
+						<td>
+							<img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" />
+							<h:outputText rendered="#{row.showDetails}" value="&#160; #{row.successPercentage}%  (#{row.entry.successes})" />
+							#{row.rule.parameters["provider_information"]}
+
+						</td>	
 					</tr>
 					<t:div rendered="#{row.successPercentage lt 100 and row.showDetails}"> 
 					<tr style="align:center">
@@ -179,7 +185,9 @@
                     <tr>
                       <td style="width: 20%; padding-left: 15px"><b><h:outputText value="Regel-Status" /></b></td>
                       <td><img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" /><h:outputText
-                        value="&#160; Erfüllt (#{row.successPercentage}%)" /></td>
+                        value="&#160; Erfüllt (#{row.successPercentage}%)" />
+                        #{validation.getRuleUrl(validation.baseUrl, row.rule.parameters['provider_information'])}                        
+                        </td>
                     </tr>
   
   
@@ -188,7 +196,27 @@
                     <tr>
                       <td style="width: 20%; padding-left: 15px"><b><h:outputText value="Regel-Status" /></b></td>
                       <td><img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" /> <h:outputText
-                        rendered="#{row.showDetails}" value="&#160; #{row.successPercentage}%  (#{row.entry.successes})" /></td>
+                        rendered="#{row.showDetails}" value="&#160; #{row.successPercentage}%  (#{row.entry.successes})" />
+                         
+                        
+                        <t:popup styleClass="popup"
+													closePopupOnExitingElement="false"
+													closePopupOnExitingPopup="true"
+													displayAtDistanceX="0" displayAtDistanceY="0">
+													
+													<h:outputText value="#{validation.getRuleUrl(validation.baseUrl, row.rule.parameters['provider_information'])}" />
+													
+													<f:facet name="popup">
+														<h:panelGroup>
+															<h:panelGrid columns="1">
+																<t:div style="background-color: #E4E4E4; -moz-border-radius: 10px; -webkit-border-radius: 10px;">
+																	<h:outputText escape="false" style="padding-top: 30px;padding-left: 30px;padding-right: 30px;padding-bottom: 30px;" value="#{validation.getHighlightedResponse(validation.baseUrl, row.rule.parameters['provider_information'])}" />
+																</t:div>
+															</h:panelGrid>
+														</h:panelGroup>
+													</f:facet>
+												</t:popup>
+                        </td>
                     </tr>
                     <t:div rendered="#{row.successPercentage lt 100 and row.showDetails}">
                       <tr style="align: center">
