@@ -39,7 +39,7 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	private Long id = null;
 	private String update = "";
 	private String updateMessage = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "users_add_success", null).getDetail();
-
+	private boolean renderPopups = false;
 	
 	public LiveLogBean() {
 		super();
@@ -79,6 +79,17 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	
 	
 	
+	public boolean isRenderPopups() {
+    	return renderPopups;
+    }
+
+
+	public void setRenderPopups(boolean renderPopups) {
+    	this.renderPopups = renderPopups;
+    	System.out.println("popups true");
+    }
+
+
 	@Override
     public void publishServiceUpdates(Map<String, String> updates) {
 	    

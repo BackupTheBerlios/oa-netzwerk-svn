@@ -33,10 +33,13 @@
 		<h:outputScript name="jsf.js" library="javax.faces" target="head" />
 		<h:form prependId="false">
 
-			<t:inputTextarea id="out" value="#{log.update}" cols="150" rows="70" wrap="physical" title="inputTextarea example" rendered="true" required="false" />
+			<t:inputTextarea rendered="#{log.renderPopups}" id="out" value="#{log.update}" cols="150" rows="70" wrap="physical" title="inputTextarea example" required="false" />
 			<br />
 
-			<h:commandButton id="updateButton" value="Update" type="button" onclick="jsf.ajax.request(this, event, {execute: '', render: 'out'}); return false;" />
+			<h:commandButton id="updateButton" value="Update" type="button" onclick="jsf.ajax.request(this, event, {execute: '', render: 'out'}); return false;" >
+              <f:ajax execute="@this" listener="#{log.setRenderPopups(true)}" />
+          
+          </h:commandButton>
 
 		</h:form>
 

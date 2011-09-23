@@ -208,12 +208,17 @@
 													
 													<f:facet name="popup">
 														<h:panelGroup>
-															<h:panelGrid columns="1">
-																<t:div style="background-color: #E4E4E4; -moz-border-radius: 10px; -webkit-border-radius: 10px;">
-																	<h:outputText escape="false" style="padding-top: 30px;padding-left: 30px;padding-right: 30px;padding-bottom: 30px;" value="#{validation.getHighlightedResponse(validation.baseUrl, row.rule.parameters['provider_information'])}" />
-																</t:div>
-															</h:panelGrid>
-														</h:panelGroup>
+                              <h:panelGrid columns="1">
+                                <t:div
+                                  style="border: 2px #000000 solid; background-color: rgba(244,244,244,0.85); -moz-border-radius: 10px; -webkit-border-radius: 10px;">
+                                  <t:div style="padding: 20px;">
+                                    <h:outputText escape="false"
+                                       value="#{validation.getHighlightedResponse(validation.baseUrl, row.rule.parameters['provider_information'])}" />
+
+                                  </t:div>
+                                </t:div>
+                              </h:panelGrid>
+                            </h:panelGroup>
 													</f:facet>
 												</t:popup>
                         </td>

@@ -44,6 +44,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -703,7 +704,7 @@ public class ValidationDINI implements Serializable, JobListener {
 				
 				// getXMLReponse();
 				String xml = getXMLResponse(url);
-				System.out.println("break1" + xml);
+//				System.out.println("break1" + xml);
 				String tag = providerInfo.substring(providerInfo.indexOf("field=") + 6, providerInfo.length());
 				System.out.println("break2" + tag);
 				// String output = decorateXML(); 
@@ -756,25 +757,29 @@ public class ValidationDINI implements Serializable, JobListener {
 	
 	private String decorateXml(String xml, String tagToHighlight) {
 
+		System.out.println(xml);
 		long start = System.currentTimeMillis();
-		xml = xml.replaceAll("<", "<b><");
-		xml = xml.replaceAll(">", "></b>");
-		xml = xml.replaceAll("<b></b>", "<b>");
-		xml = xml.replaceAll("<" + tagToHighlight + ">", "<" + tagToHighlight + "><font color=\"#660000\">");
-		xml = xml.replaceAll("</" + tagToHighlight + ">", "</font></" + tagToHighlight + ">");
 		xml = formatXml(xml);
-		xml.replaceAll("\n", "<br />");
-		System.out.println(System.currentTimeMillis()-start);	
-		return formatXml(xml);
+		System.out.println(xml);
+		xml = StringEscapeUtils.escapeHtml(xml);
+		xml = xml.replaceAll("&lt;", "<b>&lt;");
+		xml = xml.replaceAll("&gt;", "&gt;</b>");
+		xml = xml.replaceAll("<b></b>", "<b>");
+		xml = xml.replaceAll("&lt;" + tagToHighlight + "&gt;", "&lt;" + tagToHighlight + "&gt;<font color=\"#CC0000\">");
+		xml = xml.replaceAll("&lt;/" + tagToHighlight + "&gt;", "</font>&lt;/" + tagToHighlight + "&gt;");
+		System.out.println(System.currentTimeMillis()-start);
+		xml = xml.replaceAll("\n", "<br />");
+		xml = xml.replaceAll("   ", "&nbsp;&nbsp;&nbsp;");
+		System.out.println("yyyyy: " + xml);
+		return xml;
 		
 	}
 	
-
     public String formatXml(String xml){
         try{
             Transformer serializer= SAXTransformerFactory.newInstance().newTransformer();
             serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-            //serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             //serializer.setOutputProperty("{http://xml.customer.org/xslt}indent-amount", "2");
             Source xmlSource=new SAXSource(new InputSource(new ByteArrayInputStream(xml.getBytes())));
