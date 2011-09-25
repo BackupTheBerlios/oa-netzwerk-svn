@@ -31,14 +31,16 @@
 		<br />
 
 		<h:outputScript name="jsf.js" library="javax.faces" target="head" />
-		<h:form prependId="false">
+		<h:form id="form" prependId="false">
 
-			<t:inputTextarea rendered="#{log.renderPopups}" id="out" value="#{log.update}" cols="150" rows="70" wrap="physical" title="inputTextarea example" required="false" />
+			<t:div id="layer">
+				<t:inputTextarea rendered="#{log.renderPopups}" id="out" value="#{log.update}" cols="150" rows="70" wrap="physical" title="inputTextarea example" required="false" />
+			</t:div>
 			<br />
 
-			<h:commandButton id="updateButton" value="Update" type="button" onclick="jsf.ajax.request(this, event, {execute: '', render: 'out'}); return false;" >
-              <f:ajax execute="@this" listener="#{log.setRenderPopups(true)}" />
-          
+			<h:commandButton id="updateButton" value="Update" type="button" onclick="jsf.ajax.request(this, event, {execute: '', render: 'layer'}); return false;" >
+              <f:setPropertyActionListener target="#{log.renderPopups}" value="#{true}"/>
+       
           </h:commandButton>
 
 		</h:form>

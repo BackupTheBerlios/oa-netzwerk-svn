@@ -71,10 +71,7 @@ public class ValidationDINI implements Serializable, JobListener {
 	
 	@ManagedProperty(value = "#{emailer}")
 	private Emailer emailer;
-	
-	@ManagedProperty(value = "#{propertyManager}")
-	private PropertyManager propertyManager;
-	
+		
 	@ManagedProperty(value = "#{fileStorage}")
 	private FileStorage fileStorage;
 	
@@ -82,59 +79,47 @@ public class ValidationDINI implements Serializable, JobListener {
 	private String baseUrl = "http://";
 	private String selectedDiniRuleset;
 	private String selectedNumOfRecords = "100";
-	private boolean randomRecords;
-	private int score;
-	private boolean adminEmail = false;
 	private String email;
-	private String errorMessage;
+	private boolean adminEmail = false;
+	private boolean randomRecords;
 	
 	private List<RuleSet> ruleSets = new ArrayList<RuleSet>();
 	private List<SgParameters> diniRules;
 	private List<Repository> repoList;
-	private List<ValidationBean> validationList;
-	private List<ValidatorTask> validationResults;
-	private List<ValidatorTask> mandatoryTasks 	= null;
-	private List<ValidatorTask> optionalTasks 	= null;
+
 	
 	@PostConstruct
-	private void initValidationBean(){
-		
+	public void initValidationBean() {
+
 		String path = FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath();
-		
+
 		path = path.substring(path.lastIndexOf('/') + 1);
-		
-		if ("validation_dini.xhtml".equals(path)) {
-			
-			// fetch repositories
-			repoList = restConnector.fetchRepositories();		
-	
-			Repository dummy = new Repository();
-			dummy.setName(LanguageSwitcherBean.getMessage(ctx, "general_choose"));
-			dummy.setOaiUrl("http://");
-			repoList.add(0, dummy);
-			
-			
-			// fetch dini rule sets 
-			try {
-	
-				Validator validator = APIStandalone.getValidator();
-				List<RuleSet> rulesets = validator.getAllRuleSets();
-	
-				RuleSet diniRuleSet = null;
-				for (RuleSet ruleset : rulesets) {
-					if (ruleset.getName().startsWith("DINI ")) {
-						ruleSets.add(ruleset);
-					}
+
+		// fetch repositories
+		repoList = restConnector.fetchRepositories();
+
+		Repository dummy = new Repository();
+		dummy.setName(LanguageSwitcherBean.getMessage(ctx, "general_choose"));
+		dummy.setOaiUrl("http://");
+		repoList.add(0, dummy);
+
+		// fetch dini rule sets
+		try {
+
+			Validator validator = APIStandalone.getValidator();
+			List<RuleSet> rulesets = validator.getAllRuleSets();
+
+
+			for (RuleSet ruleset : rulesets) {
+				if (ruleset.getName().startsWith("DINI ")) {
+					ruleSets.add(ruleset);
 				}
-	
-			} catch (ValidatorException e) {
-				logger.warn("Could not fetch DINI rule sets. ", e);
 			}
-		} else if ("validation_dini_results.xhtml".equals(path)) {
-			
-			fetchValidationResults();
+
+		} catch (ValidatorException e) {
+			logger.warn("Could not fetch DINI rule sets. ", e);
 		}
-				
+
 	}
 	
 	// used by validation_dini.xhtml
@@ -322,278 +307,8 @@ public class ValidationDINI implements Serializable, JobListener {
 		return "validation_dini_overview";
 	}
 	
-	// used by validation_dini_overview.xhtml
-	
-	public List<ValidationBean> getValidations(){
-		
-		if (validationList != null && validationList.size() > 0) {
-			return validationList;
-		}
-		
-		
-		validationList = new ArrayList<ValidationBean>(); //Liste von Validations wird generiert
-
-		List<Job> jobs = this.getJobs();
-		
-//		System.out.println("vorher");
-//		for (Job job : jobs) {
-//	        
-//			System.out.println(job.getId());
-//			System.out.println(job.getRepo()); 
-//        }
-		
-		Collections.sort(jobs, new JobComparator());
-		
-//		System.out.println("nachher");
-//		for (Job job : jobs) {
-//	        
-//			System.out.println(job.getId());
-//			System.out.println(job.getRepo()); 
-//        }
-		
-		String date = "";
-		
-		int i = 0;
-
-		Job job, job2;
-		for (int j = 0; j < jobs.size()-1; j++) {
-			
-			job = jobs.get(j);
-			job2 = jobs.get(j+1);
-			
-			ValidationBean vali = new ValidationBean();
-			
-			// check if the jobs are related in terms of a full dini analysis (usage and content validation)
-			if (job.getRepo().equals(job2.getRepo()) && job.getRuleset() != null 
-					&& job2.getRuleset() != null && job.getRuleset().equals(job2.getRuleset())
-					&& job.getType().equals("OAI Usage Validation") && job2.getType().equals("OAI Content Validation")
-					&& (Integer.parseInt(job.getId()) + 1 == Integer.parseInt(job2.getId())) ) {
-				
-				// case: related jobs, combine 2 jobs to be shown as one
-		
-				System.out.println("started: " + job.getStarted());
-				System.out.println("started2: " + job2.getStarted());
-	
-				// Setzen der Dauer
-				vali.setDuration(job2.getDuration());
-				System.out.println("duration1: " + job.getDuration());
-				System.out.println("duration2: " + job2.getDuration());
-				
-				// Setzen des Status
-				vali.setState(job.getStatus().equals("finished") && job2.getStatus().equals("finished") 
-						? LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "validation_status_finished", null).getSummary() 
-						: LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "validation_status_pending", null).getSummary());
-	
-				j++;
-				
-			} else { // not related
-				vali.setDuration(job.getDuration());
-				vali.setState(job.getStatus());
-			}
-			
-			// set job-id 
-			String id = job.getId();
-			vali.setId(Integer.parseInt(job.getId()));
-			
-			List<Entry> e = this.getJobSummary(id);
-
-			// Setzen des Datums
-			date = job.getStarted().substring(0, 10);
-			vali.setDate(date);
-
-			// Setzen der OaiUrl
-			
-			vali.setOaiUrl(job.getRepo() != null ? job.getRepo().replace("\n", "") : "");
-			
-			// Aufnehmen in die Liste der Validations
-			validationList.add(vali);
-			
-		}
-
-		logger.debug("NUmber of validation-jobs to be shown: " + validationList.size()); 
-
-		return validationList;
-	}
-	
-	// used by validation_dini_results.xhtml
-
-	public List<ValidatorTask> getMandatoryValidationResults() {
-		if (mandatoryTasks == null) {
-			fetchValidationResults();
-		}
-		return mandatoryTasks;		
-	}
-	
-	public List<ValidatorTask> getOptionalValidationResults() {
-		if (optionalTasks == null) {
-			fetchValidationResults();
-		}
-		return optionalTasks;		
-	}
-	
-	private void fetchValidationResults(){
-
-		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
-		validationId = request.getParameter("vid");
-
-		logger.info("Fetching results... validation job-ID received: " + validationId);
-		int id;
-		if (validationId == null || validationId.length() == 0) {
-			ctx.addMessage("1", new FacesMessage("Could not find the requested validation results!"));
-			return; // new ArrayList<ValidatorTask>();
-		}
-		
-		Validator val = APIStandalone.getValidator();
-
-		try {
-			Job job = val.getJob(validationId);
-			
-			if (job != null) {
-				baseUrl = job.getRepo();
-				score = job.getScore() != null && job.getScore().length() > 0 ? Integer.parseInt(job.getScore()) : 0;
-			} 
-            
-
-		} catch (ValidatorException e) {
-			logger.warn("Could not find a job for id " + validationId, e);
-			ctx.addMessage("1", new FacesMessage("The job-id " + validationId + " is not valid!"));
-			return; // new ArrayList<ValidatorTask>();
-		}
-
-		
-		List<Entry> list = this.getJobSummary(validationId);
-
-		mandatoryTasks 	= new ArrayList<ValidatorTask>();
-		optionalTasks 	= new ArrayList<ValidatorTask>();
-		
-		boolean generalFailure = list == null || list.isEmpty();
-		
-		if (!generalFailure) {
-			// entries from usage validation job
-			SgParameters params = null;
-			for (Entry entry : list) {
-				
-				
-				//fetch rule, too
-				try {
-					params = val.getRule(Integer.toString(entry.getRuleId()));
-				} catch (ValidatorException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				if (entry.getWeight() < 2) {
-					
-					optionalTasks.add(new ValidatorTask(entry, params, false));
-				} else {
-					
-					mandatoryTasks.add(new ValidatorTask(entry, params, false));
-				}
-			}
-		}
-		
-		// fetch related job tasks from content validation
-		String relatedJobId = null;
-		try {
-			relatedJobId = Integer.toString((Integer.parseInt(validationId) + 1));
-			List<Entry> relatedJob = this.getJobSummary(relatedJobId);
-
-			generalFailure = relatedJob == null || relatedJob.isEmpty();
-			
-			if (!generalFailure) {
-				// entries from content validation job
-				SgParameters params = null;
-				for (Entry entry : relatedJob) {
-					
-					// fetch rule, too
-					try {
-						params = val.getRule(Integer.toString(entry.getRuleId()));
-					} catch (ValidatorException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					if (entry.getWeight() < 2) {
-						
-						optionalTasks.add(new ValidatorTask(entry, params, true));
-					} else {
-						
-						mandatoryTasks.add(new ValidatorTask(entry, params, true));
-					}
-				}
-			}
-			
-			// abort processing, general oaipmh failure occured 
-			if (generalFailure) {
-				ctx.addMessage("1", new FacesMessage(LanguageSwitcherBean.getMessage(ctx, "validation_failure_oaipmh")));
-				return; // null;
-			}
-			
-			Job job = val.getJob(Integer.toString(Integer.parseInt(validationId) + 1));
-			
-			if (job != null) {
-				float score2 = (float) (job.getScore() != null && job.getScore().length() > 0 ? Integer.parseInt(job.getScore()) : 0);
-				score = Math.round( ((float)score / 3.0f)  + (score2 / 3.0f * 2.0f) );
-			} 
-			
-			// read and set error message if job failed
-			Map<Integer, String> errorMap = fileStorage.getValidatorErrors();
-			if (errorMap != null) {
-				errorMessage = errorMap.get(validationId);
-				errorMessage = errorMessage == null ? errorMap.get(validationId + 1) : errorMessage;
-			}
-//			FacesContext.getCurrentInstance().getExternalContext().get
-			
-		} catch (NumberFormatException e) {
-			logger.warn("Could not fetch related job with generated id.  (" + validationId + " + 1)", e);
-		} catch (ValidatorException e) {
-			logger.warn("Could not fetch related job with generated id.  (" + validationId + " + 1)", e);
-		}
-		
-//		return mandatoryTasks;
-	}
-	
-	
-	//Liefert zum Entry mit der entsprechenden JobId Informationen
-	public List<Entry> getJobSummary(String jobId) {
-
-		try {
-			Validator val = APIStandalone.getValidator();
-			List<Entry> entries = val.getJobSummary(jobId);
-			
-			if (entries == null)
-			{
-				logger.info("No summary available for job-id " + jobId + "!" );
-			}
-
-			return entries;
-		} catch (ValidatorException e) {
-			logger.warn("An error occured while retrieving job summary for job with id " + jobId + "! ", e);
-		}
-		return null;
-	}
-	
-	//Liefert alle Jobs, die entsprechend angefordert wurden (SQL-Not.)
-	public List<Job> getJobs() {
-		try {
-			Validator val = APIStandalone.getValidator();
-			List<Job> jobs = val.getJobsOfUser("sdavid");
-			
-			if (jobs == null)
-			{
-				logger.warn("No validation jobs are available!");
-			} 
-			return jobs;
-		} catch (ValidatorException e) {
-			logger.warn("An error occured while retrieving list of validation jobs! ", e);
-		}
-		return null;
-	}
-	
-	
-
 	public void sendInfoMail(int jobId, List<String> recipients) {
-	
+		
 		// send email
 		String resultsUrl = "https://localhost:8443/oanadmin/pages/validation_dini_results.xhtml?vid=" + jobId;
 		System.out.println("url: " + resultsUrl);
@@ -610,282 +325,8 @@ public class ValidationDINI implements Serializable, JobListener {
 	}
 	
 	
+	/*********************** Interface Implementation ********************/
 	
-	public String getMainDescription(String description) {
-		long start = System.currentTimeMillis();
-//		System.out.println("XXX: " + getLocalizedDescriptions(description)[0]);
-		System.out.println("XXX duration: " + (System.currentTimeMillis() - start));
-		return getLocalizedDescriptions(description)[0];
-	}
-	
-	public String getAdditionalDescription(String description) {
-		String[] descriptions = getLocalizedDescriptions(description);
-		return (descriptions != null && descriptions.length == 2) ? descriptions[1] : descriptions[0]; 
-	}
-	
-	private String[] getLocalizedDescriptions(String description) {
-		// expected String format
-		// germanMainDescription &&& germanAdditionalInfo ||| englishMainDescription &&& englishAdditionalInfo
-		
-		System.out.println("XXX1: " + description);
-		String[] descriptionsForAllLanguages = null;
-		
-		if (description != null && description.contains("\\|\\|\\|")) {
-			descriptionsForAllLanguages = description.split("\\|\\|\\|");
-		} else {
-			descriptionsForAllLanguages = new String[] { description };
-		}
-		
-		System.out.println("XXX2: " + descriptionsForAllLanguages.length);
-		
-		String localizedDescription;
-		if (descriptionsForAllLanguages.length > 1) {
-			// use descriptions for current language only
-			if (Locale.GERMAN.equals(FacesContext.getCurrentInstance().getViewRoot().getLocale())) {
-				// german
-				localizedDescription = descriptionsForAllLanguages[0];
-				
-			} else {
-				// english
-				localizedDescription = descriptionsForAllLanguages[1];
-			}
-		} else {
-			localizedDescription = description;
-		}
-		System.out.println("XXX3: " + localizedDescription);
-		// use main description only
-		String[] descriptionsPerLanguage = null;
-		
-		if (localizedDescription != null && localizedDescription.contains("&&&")) {
-			descriptionsPerLanguage = localizedDescription.split("&&&");
-		} else {
-			return new String[] { localizedDescription };
-		}
-		
-		return descriptionsPerLanguage;
-		
-	}
-	
-	public String getRuleUrl(String baseUrl, String providerInfo) {
-		
-		System.out.println("YYY: " + baseUrl);
-		System.out.println("YYY2: " + providerInfo);
-		if (providerInfo == null || providerInfo.length() == 0) {
-			return null;
-		}
-		
-		String url = null;
-		
-		try {
-			if (providerInfo.contains("verb=")) {
-				return baseUrl + "?" + providerInfo.substring(providerInfo.indexOf("verb="), providerInfo.indexOf(',', providerInfo.indexOf("verb=")));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public String getHighlightedResponse(String baseUrl, String providerInfo) {
-		
-		System.out.println("YYY: " + baseUrl);
-		System.out.println("YYY2: " + providerInfo);
-		if (providerInfo == null || providerInfo.length() == 0) {
-			return null;
-		}
-		
-		String url = null;
-		
-		try {
-			System.out.println("argh1");
-			if (providerInfo.contains("verb=")) {
-				System.out.println("argh2");
-				url = baseUrl + "?" + providerInfo.substring(providerInfo.indexOf("verb="), providerInfo.indexOf(',', providerInfo.indexOf("verb=")));
-				
-				// getXMLReponse();
-				String xml = getXMLResponse(url);
-//				System.out.println("break1" + xml);
-				String tag = providerInfo.substring(providerInfo.indexOf("field=") + 6, providerInfo.length());
-				System.out.println("break2" + tag);
-				// String output = decorateXML(); 
-				return decorateXml(xml, tag);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	private String getXMLResponse(String url) {
-		System.out.println("break: " + url);
-		HttpClient htc = new HttpClient();
-		GetMethod method = new GetMethod(url);
-		method.setFollowRedirects(true);
-		InputStream response = null;
-		try {
-			htc.executeMethod(method);
-			
-//			response = method.getResponseBodyAsStream();
-//			System.out.println(method.getResponseHeader("content-type"));
-//			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-//			DocumentBuilder builder = domFactory.newDocumentBuilder();
-//			Document doc = builder.parse(response);
-			
-			// response seems to be valid xml
-			return method.getResponseBodyAsString();
-			
-//			XPath xpath = XPathFactory.newInstance().newXPath();
-//			XPathExpression expr = xpath.compile("//adminEmail");
-//			Object result = expr.evaluate(doc, XPathConstants.NODESET);
-//
-//			NodeList nodes = (NodeList) result;
-//			System.out.println(nodes.getLength());
-//			
-//			for (int i = 0; i < nodes.getLength(); i++) {
-//				if (email == null || email.trim().length() == 0) {
-//					email = nodes.item(i).getTextContent();
-//				} else {
-//					email = email + ";" + nodes.item(i).getTextContent();
-//				}
-//			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	private String decorateXml(String xml, String tagToHighlight) {
-
-		System.out.println(xml);
-		long start = System.currentTimeMillis();
-		xml = formatXml(xml);
-		System.out.println(xml);
-		xml = StringEscapeUtils.escapeHtml(xml);
-		xml = xml.replaceAll("&lt;", "<b>&lt;");
-		xml = xml.replaceAll("&gt;", "&gt;</b>");
-		xml = xml.replaceAll("<b></b>", "<b>");
-		xml = xml.replaceAll("&lt;" + tagToHighlight + "&gt;", "&lt;" + tagToHighlight + "&gt;<font color=\"#CC0000\">");
-		xml = xml.replaceAll("&lt;/" + tagToHighlight + "&gt;", "</font>&lt;/" + tagToHighlight + "&gt;");
-		System.out.println(System.currentTimeMillis()-start);
-		xml = xml.replaceAll("\n", "<br />");
-		xml = xml.replaceAll("   ", "&nbsp;&nbsp;&nbsp;");
-		System.out.println("yyyyy: " + xml);
-		return xml;
-		
-	}
-	
-    public String formatXml(String xml){
-        try{
-            Transformer serializer= SAXTransformerFactory.newInstance().newTransformer();
-            serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-            serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            //serializer.setOutputProperty("{http://xml.customer.org/xslt}indent-amount", "2");
-            Source xmlSource=new SAXSource(new InputSource(new ByteArrayInputStream(xml.getBytes())));
-            StreamResult res =  new StreamResult(new ByteArrayOutputStream());            
-            serializer.transform(xmlSource, res);
-            return new String(((ByteArrayOutputStream)res.getOutputStream()).toByteArray());
-        }catch(Exception e){
-            e.printStackTrace();
-            return xml;
-        }
-    }
-
-
-	public String getValidationId() {
-		return validationId;
-	}
-
-	public void setValidationId(String validationId) {
-		this.validationId = validationId;
-	}
-	
-	public String getBaseUrl() {
-		return baseUrl;
-	}
-
-	public void setBaseUrl(String baseUrl) {
-		this.baseUrl = baseUrl;
-	}	
-	
-	public List<RuleSet> getRuleSets() {
-		return ruleSets;
-	}
-
-	public String getSelectedDiniRuleset() {
-		return selectedDiniRuleset;
-	}
-
-	public void setSelectedDiniRuleset(String selectedDiniRuleset) {
-		this.selectedDiniRuleset = selectedDiniRuleset;
-	}
-	
-	public String getSelectedNumOfRecords() {
-		return selectedNumOfRecords;
-	}
-
-	public void setSelectedNumOfRecords(String selectedNumOfRecords) {
-		this.selectedNumOfRecords = selectedNumOfRecords;
-	}
-
-	public boolean isRandomRecords() {
-		return randomRecords;
-	}
-
-	public void setRandomRecords(boolean randomRecords) {
-		this.randomRecords = randomRecords;
-	}
-	
-	public boolean isAdminEmail() {
-    	return adminEmail;
-    }
-
-	public void setAdminEmail(boolean adminEmail) {
-    	this.adminEmail = adminEmail;
-    }
-
-	public String getEmail() {
-    	return email;
-    }
-
-	public void setEmail(String email) {
-    	this.email = email;
-    }
-
-	public void setDiniRules(List<SgParameters> diniRules) {
-		this.diniRules = diniRules;
-	}
-
-	public List<Repository> getRepositories() {
-		return repoList;
-	}
-	
-	public String getScore() {
-    	return Integer.toString(score);
-    }
-
-	public List<ValidatorTask> getValidationResults() {
-		return validationResults;
-	}
-	
-	
-	public void setFileStorage(FileStorage fileStorage) {
-    	this.fileStorage = fileStorage;
-    }
-
-	public void setRestConnector(RestConnector restConnector) {
-		this.restConnector = restConnector;
-	}
-
-	public void setEmailer(Emailer emailer) {
-    	this.emailer = emailer;
-    }
-
-	public void setPropertyManager(PropertyManager propertyManager) {
-    	this.propertyManager = propertyManager;
-    }
-
 	@Override
 	public void done(int arg0, double arg1) {
 		logger.info("job finished! (" + arg0 + ")");
@@ -961,5 +402,88 @@ public class ValidationDINI implements Serializable, JobListener {
 		
 		fileStorage.storeValidatorInfo(errors);
 	}
+
+	
+	/******************** Getter & Setter *************************/
+
+	public String getValidationId() {
+		return validationId;
+	}
+
+	public void setValidationId(String validationId) {
+		this.validationId = validationId;
+	}
+	
+	public String getBaseUrl() {
+		return baseUrl;
+	}
+
+	public void setBaseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
+	}	
+	
+	public List<RuleSet> getRuleSets() {
+		return ruleSets;
+	}
+
+	public String getSelectedDiniRuleset() {
+		return selectedDiniRuleset;
+	}
+
+	public void setSelectedDiniRuleset(String selectedDiniRuleset) {
+		this.selectedDiniRuleset = selectedDiniRuleset;
+	}
+	
+	public String getSelectedNumOfRecords() {
+		return selectedNumOfRecords;
+	}
+
+	public void setSelectedNumOfRecords(String selectedNumOfRecords) {
+		this.selectedNumOfRecords = selectedNumOfRecords;
+	}
+
+	public boolean isRandomRecords() {
+		return randomRecords;
+	}
+
+	public void setRandomRecords(boolean randomRecords) {
+		this.randomRecords = randomRecords;
+	}
+	
+	public boolean isAdminEmail() {
+    	return adminEmail;
+    }
+
+	public void setAdminEmail(boolean adminEmail) {
+    	this.adminEmail = adminEmail;
+    }
+
+	public String getEmail() {
+    	return email;
+    }
+
+	public void setEmail(String email) {
+    	this.email = email;
+    }
+
+	public void setDiniRules(List<SgParameters> diniRules) {
+		this.diniRules = diniRules;
+	}
+
+	public List<Repository> getRepositories() {
+		return repoList;
+	}
+	
+	public void setFileStorage(FileStorage fileStorage) {
+    	this.fileStorage = fileStorage;
+    }
+
+	public void setRestConnector(RestConnector restConnector) {
+		this.restConnector = restConnector;
+	}
+
+	public void setEmailer(Emailer emailer) {
+    	this.emailer = emailer;
+    }
 	
 }

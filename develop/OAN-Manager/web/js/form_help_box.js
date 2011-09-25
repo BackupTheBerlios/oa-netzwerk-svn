@@ -20,3 +20,9 @@ function toggle_help(id){
 if(document.getElementById && document.createElement) {
    document.write('<style type="text/css">*.help_box{display:none}</style>');
 }
+
+
+function hideElement(element) {
+	
+	document.getElementById(element).style.display = "none";
+}
