@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:cc="http://java.sun.com/jsf/composite" 
+        xmlns:t="http://myfaces.apache.org/tomahawk">
+<head>
+    <title>A collapsible panel composite component</title>
+</head>
+<body>
+<cc:interface>
+    <cc:attribute name="text" default="Loading..."/>
+    <cc:attribute name="style"/>
+    <cc:attribute name="styleClass" default="ajax-progress"/>
+</cc:interface>
+<cc:implementation>
+    <h:outputStylesheet library="oan" name="style.css"/>
+    <h:outputScript name="jsf.js" library="javax.faces" target="head"/>
+    <h:outputScript name="ajaxStatus.js" library="oan" target="head"/>
+    <script type="text/javascript">
+    registerAjaxStatus('#{cc.clientId}:msg');
+    </script>
+    <div id="#{cc.clientId}:msg" class="#{cc.attrs.styleClass}" style="#{cc.attrs.style}">
+      	
+      <t:div style="position:absolute; top: 0px; left: 0px; width: 100%; background-color: rgba(0,0,0,0.80);">
+      	<t:div style="margin: auto; padding-top: 150px; width: 800px; height: 1024px; text-align: center; border: 2px #000000 solid; background-color: rgba(244,244,244,0.75); -moz-border-radius: 10px; -webkit-border-radius: 10px;">
+        	<img src="../images/ajax-loader.gif"/>
+        </t:div>
+      </t:div>
+    </div>
+</cc:implementation>
+</body>
+</html>

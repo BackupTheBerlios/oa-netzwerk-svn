@@ -82,6 +82,7 @@ public class ValidationDINI implements Serializable, JobListener {
 	private String email;
 	private boolean adminEmail = false;
 	private boolean randomRecords;
+	private boolean allRecords = false;
 	
 	private List<RuleSet> ruleSets = new ArrayList<RuleSet>();
 	private List<SgParameters> diniRules;
@@ -186,7 +187,7 @@ public class ValidationDINI implements Serializable, JobListener {
 			int numberOfRecords = Integer.parseInt(selectedNumOfRecords);
 			
 			// if the value specified is too large or a negative value, just check all records by setting 0
-			if (numberOfRecords < 0 || numberOfRecords > Integer.MAX_VALUE) {
+			if (numberOfRecords < 0 || numberOfRecords > Integer.MAX_VALUE || allRecords) {
 				selectedNumOfRecords = "0";
 			}
 			
@@ -450,6 +451,14 @@ public class ValidationDINI implements Serializable, JobListener {
 		this.randomRecords = randomRecords;
 	}
 	
+	public boolean isAllRecords() {
+		return allRecords;
+	}
+
+	public void setAllRecords(boolean allRecords) {
+		this.allRecords = allRecords;
+	}
+
 	public boolean isAdminEmail() {
     	return adminEmail;
     }

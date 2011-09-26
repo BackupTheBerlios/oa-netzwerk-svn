@@ -5,6 +5,8 @@ import gr.uoa.di.validator.api.SgParameters;
 import gr.uoa.di.validator.api.Validator;
 import gr.uoa.di.validator.api.ValidatorException;
 import gr.uoa.di.validator.api.standalone.APIStandalone;
+import gr.uoa.di.validator.constants.FieldNames;
+import gr.uoa.di.validator.rules.Rule;
 import gr.uoa.di.validatorweb.actions.browsejobs.Job;
 
 import java.io.ByteArrayInputStream;
@@ -23,7 +25,6 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -44,7 +45,6 @@ public class ValidationDINIResults {
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(ValidationDINI.class);
 		
-	
 	@ManagedProperty(value = "#{fileStorage}")
 	private FileStorage fileStorage;
 	
@@ -52,6 +52,7 @@ public class ValidationDINIResults {
 	private String baseUrl = "http://";
 	private String errorMessage;
 	private int score;
+	private int bonus;
 
 	private List<ValidationBean> validationList;
 	private List<ValidatorTask> mandatoryTasks 	= null;
@@ -94,7 +95,7 @@ public class ValidationDINIResults {
 			
 			if (job != null) {
 				baseUrl = job.getRepo();
-				score = job.getScore() != null && job.getScore().length() > 0 ? Integer.parseInt(job.getScore()) : 0;
+//				score = job.getScore() != null && job.getScore().length() > 0 ? Integer.parseInt(job.getScore()) : 0;
 			} 
             
 
@@ -156,7 +157,7 @@ public class ValidationDINIResults {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+					System.out.println("getMandatory: " + params.getParamByName("mandatory"));
 					if (entry.getWeight() < 2) {
 						
 						optionalTasks.add(new ValidatorTask(entry, params, true));
@@ -173,12 +174,32 @@ public class ValidationDINIResults {
 				return; // null;
 			}
 			
-			Job job = val.getJob(Integer.toString(Integer.parseInt(validationId) + 1));
+//			Job job = val.getJob(Integer.toString(Integer.parseInt(validationId) + 1));
+//			
+//			if (job != null) {
+//				float score2 = (float) (job.getScore() != null && job.getScore().length() > 0 ? Integer.parseInt(job.getScore()) : 0);
+//				score = Math.round( ((float)score / 3.0f)  + (score2 / 3.0f * 2.0f) );
+//			} 
 			
-			if (job != null) {
-				float score2 = (float) (job.getScore() != null && job.getScore().length() > 0 ? Integer.parseInt(job.getScore()) : 0);
-				score = Math.round( ((float)score / 3.0f)  + (score2 / 3.0f * 2.0f) );
-			} 
+			float points = 0.0f;
+			for (ValidatorTask task : mandatoryTasks) {
+				// calculate points per rule and add it to the overall points
+				points += task.getSuccessPercentage() / 100.0f * ((float)task.getEntry().getWeight()); 
+				System.out.println("current points: " + points + "   perc: " + task.getSuccessPercentage());
+			}
+			
+			score = Math.round(100.0f/38.0f * points);
+			System.out.println("Score: " + score);
+			
+			float extraPoints = 0.0f;
+			for (ValidatorTask task : optionalTasks) {
+				// calculate points per rule and add it to the overall points
+				extraPoints += task.getSuccessPercentage() / 100.0f * ((float)task.getEntry().getWeight()) * 2 ; // * 2; each rule should make 2 bonus points 
+				System.out.println("current bonus: " + extraPoints + "   perc: " + task.getSuccessPercentage());
+			}
+			
+			bonus = Math.round(extraPoints);
+			System.out.println("Bonus: " + bonus);
 			
 			// read and set error message if job failed
 			Map<Integer, String> errorMap = fileStorage.getValidatorErrors();
@@ -190,9 +211,7 @@ public class ValidationDINIResults {
 			
 		} catch (NumberFormatException e) {
 			logger.warn("Could not fetch related job with generated id.  (" + validationId + " + 1)", e);
-		} catch (ValidatorException e) {
-			logger.warn("Could not fetch related job with generated id.  (" + validationId + " + 1)", e);
-		}
+		} 
 		
 //		return mandatoryTasks;
 	}
@@ -569,5 +588,9 @@ public class ValidationDINIResults {
 	public String getScore() {
     	return Integer.toString(score);
     }
+
+	public String getBonus() {
+		return Integer.toString(bonus);
+	}
 	
 }

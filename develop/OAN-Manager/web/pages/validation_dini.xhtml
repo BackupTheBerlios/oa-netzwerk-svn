@@ -35,6 +35,13 @@
 		document.getElementById("fold").style.display = "inline";
 
 	}
+	
+	function toggleRecordCount(comp1, comp2, form) {
+		
+		document.getElementById(form + ":" + comp1).disabled = !document.getElementById(form + ":" + comp1).disabled;
+		document.getElementById(form + ":" + comp2).disabled = !document.getElementById(form + ":" + comp2).disabled;
+
+	}
 
   </script>
   
@@ -43,7 +50,7 @@
     <h2><h:outputText value="DINI Check" /></h2>
 
     <h:form id="diniValidationForm">
-    <table width="90%">
+    <table width="80%">
           <tr>
             <td colspan="2">Mit dem DINI-Validator können sie die OAI-PMH Schnittstelle von Repositorien auf ihre Konformität zum 
             DINI-Zertifikat prüfen. Diese Analyse ist ein nützliches Hilfsinstrument, mit dem sich anhand der Ergebnisse 
@@ -85,13 +92,11 @@
           </tr>
           
           <tr>
-          	<td><i>Wieviele Records sollen maximal überprüft werden. (<a href="#" onclick="javascript:toggle_help('help_records'); return false;">Help</a>)</i></td>
+          	<td><i>Wieviele Records sollen maximal überprüft werden.</i></td>
             <td class="form">
             	<t:inputText id="numRecords" size="10" maxlength="9" value="#{validation.selectedNumOfRecords}" />
-            	<t:selectBooleanCheckbox id="random" value="#{validation.randomRecords}" /><h:outputText value="zufällige Records prüfen" />
-	            <div class="help_box" id="help_records">
-	            	<h:outputText value="Die Angabe -1 bedeutet alle Records werden geprüft!" /><br />
-	            </div>
+            	<t:selectBooleanCheckbox id="random" value="#{validation.randomRecords}" style="margin-left: 30px;" /><h:outputText value="zufällige Records prüfen" />
+            	<t:selectBooleanCheckbox id="all" value="#{validation.allRecords}" style="margin-left: 30px;" onclick="javascript:toggleRecordCount('numRecords', 'random', 'diniValidationForm');"/><h:outputText value="vollständige Analyse" />
             </td>
           </tr>
 
@@ -99,9 +104,8 @@
             <td width="30%"><p /><i>E-Mail Benachrichtigung (optional)</i></td>
             <td>
                <t:inputText id="email" size="70" value="#{validation.email}" /><br />
-               <t:selectBooleanCheckbox value="#{validation.adminEmail}" > 
-                  <t:outputText value="E-Mail Adresse des Repository-Administrators verwenden (Identify-Verb)" />
-               </t:selectBooleanCheckbox>
+               <t:selectBooleanCheckbox value="#{validation.adminEmail}" /> 
+               <t:outputText value="E-Mail Adresse des Repository-Administrators verwenden (Identify-Verb)" />   
             <p />
             </td>
           </tr>
