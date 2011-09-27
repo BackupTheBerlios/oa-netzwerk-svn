@@ -39,8 +39,13 @@
 			<table width="100%">
 				<tr>
 				 	<td>
-				<h:form><t:dataTable value="#{validationResults.validations}" var="row"
-					headerClass="pane-header" rowClasses="odd, even"
+				<h:form id="form">
+                <t:div rendered="#{validationResults.validations.size() == 0}">
+                  <b>Aktuell gibt es keine zu bearbeitenden oder abgeschlossenen Aufträge.</b>
+                </t:div>
+                <t:div rendered="#{validationResults.validations.size() > 0}">
+                <t:dataTable id="jobs" value="#{validationResults.validations}" var="row"
+					headerClass="pane-header" rowClasses="odd, even" rows="20"
 					style="border-collapse: collapse; border: 1px #bbb solid; width : 700px;">
 					
 					<t:column style="width: 45%; vertical-align: middle; height: 70px;">
@@ -80,7 +85,26 @@
 						</div>
 					</t:column>
 					
-				</t:dataTable></h:form>
+				</t:dataTable>
+                </t:div>
+                <t:div rendered="#{validationResults.validations.size() > 20}">
+                  <t:dataScroller id="dataScroller" for="jobs" fastStep="10" pageIndexVar="pageIndex" renderFacetsIfSinglePage="true"
+                    pageCountVar="pageCount" paginator="true" paginatorMaxPages="9" immediate="true">
+                    <f:facet name="first">
+                      <t:outputText value="First"></t:outputText>
+                    </f:facet>
+                    <f:facet name="last">
+                      <t:outputText value="Last"></t:outputText>
+                    </f:facet>
+                    <f:facet name="previous">
+                      <t:outputText value="Previous"></t:outputText>
+                    </f:facet>
+                    <f:facet name="next">
+                      <t:outputText value="Next"></t:outputText>
+                    </f:facet>
+                  </t:dataScroller>
+                </t:div>
+              </h:form>
 				</td>
 				</tr>
 				</table>

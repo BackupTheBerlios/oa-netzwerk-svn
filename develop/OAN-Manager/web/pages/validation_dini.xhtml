@@ -123,21 +123,24 @@
 						<f:facet name="header">
 							<h:outputText value="" />
 						</f:facet>
-						<t:selectBooleanCheckbox value="#{row.parameters['check']}" />
+						<t:selectBooleanCheckbox value="#{row.parameters['check']}" disabled="#{true}"/>
 					</t:column>							
+          
 					
 					<t:column style="padding-left:10px; width: 35%; vertical-align: middle; height: 70px;">
 						<f:facet name="header">
 							<h:outputText value="Regel" />
 						</f:facet>
-						<h:outputText value="#{row.parameters['name']}" />
+						<h:outputText value="#{validation.getLocalizedRuleName(row.parameters['name'])}" />
 					</t:column>
+          
 					
 					<t:column style="width: 60%; vertical-align: middle; padding-left: 15px; height: 70px;">
 						<f:facet name="header">
 							<h:outputText value="Beschreibung" />
 						</f:facet>
-						<h:outputText value="#{row.parameters['description']}" />
+						<h:outputText value="#{validation.getMainDescription(row.parameters['description'])}" />
+                        <h:outputText value="#{validation.getAdditionalDescription(row.parameters['description'])}" />            
 					</t:column >			
 				</t:dataTable>
               </div>

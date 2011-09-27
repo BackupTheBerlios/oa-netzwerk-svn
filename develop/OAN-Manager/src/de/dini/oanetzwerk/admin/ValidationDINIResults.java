@@ -73,7 +73,6 @@ public class ValidationDINIResults {
 	
 	// used by validation_dini_results.xhtml
 	private void fetchValidationResults(){
-
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
 		validationId = request.getParameter("vid");
@@ -226,6 +225,7 @@ public class ValidationDINIResults {
 			return validationList;
 		}
 		
+		System.out.println("Fetch jobs update"); 
 		validationList = new ArrayList<ValidationBean>(); //Liste von Validations wird generiert
 
 		List<Job> jobs = this.getJobs();
@@ -317,7 +317,7 @@ public class ValidationDINIResults {
 	public List<Job> getJobs() {
 		try {
 			Validator val = APIStandalone.getValidator();
-			List<Job> jobs = val.getJobsOfUser("sdavid");
+			List<Job> jobs = val.getJobsOfUser("' or user like '%");
 			
 			if (jobs == null)
 			{
@@ -330,49 +330,27 @@ public class ValidationDINIResults {
 		return null;
 	}
 	
-	
-	
-	public String getMainDescription(String description) {
+	public static String getLocalizedRuleName(String name) {
+		 return getLocalizedText(name);
+	}
+
+
+	public static String getMainDescription(String description) {
 		long start = System.currentTimeMillis();
 //		System.out.println("XXX: " + getLocalizedDescriptions(description)[0]);
 		System.out.println("XXX duration: " + (System.currentTimeMillis() - start));
 		return getLocalizedDescriptions(description)[0];
 	}
 	
-	public String getAdditionalDescription(String description) {
+	public static String getAdditionalDescription(String description) {
 		String[] descriptions = getLocalizedDescriptions(description);
 		return (descriptions != null && descriptions.length == 2) ? descriptions[1] : descriptions[0]; 
 	}
 	
-	private String[] getLocalizedDescriptions(String description) {
-		// expected String format
-		// germanMainDescription &&& germanAdditionalInfo ||| englishMainDescription &&& englishAdditionalInfo
+	private static String[] getLocalizedDescriptions(String description) {
+
+		String localizedDescription = getLocalizedText(description);
 		
-		System.out.println("XXX1: " + description);
-		String[] descriptionsForAllLanguages = null;
-		
-		if (description != null && description.contains("\\|\\|\\|")) {
-			descriptionsForAllLanguages = description.split("\\|\\|\\|");
-		} else {
-			descriptionsForAllLanguages = new String[] { description };
-		}
-		
-		System.out.println("XXX2: " + descriptionsForAllLanguages.length);
-		
-		String localizedDescription;
-		if (descriptionsForAllLanguages.length > 1) {
-			// use descriptions for current language only
-			if (Locale.GERMAN.equals(FacesContext.getCurrentInstance().getViewRoot().getLocale())) {
-				// german
-				localizedDescription = descriptionsForAllLanguages[0];
-				
-			} else {
-				// english
-				localizedDescription = descriptionsForAllLanguages[1];
-			}
-		} else {
-			localizedDescription = description;
-		}
 		System.out.println("XXX3: " + localizedDescription);
 		// use main description only
 		String[] descriptionsPerLanguage = null;
@@ -385,6 +363,31 @@ public class ValidationDINIResults {
 		
 		return descriptionsPerLanguage;
 		
+	}
+	
+	private static String getLocalizedText(String text) {
+		// expected String format
+		// germanMainDescription &&& germanAdditionalInfo ||| englishMainDescription &&& englishAdditionalInfo
+				
+		String[] textForAllLanguages = null;
+
+		if (text != null && text.contains("|||")) {
+			textForAllLanguages = text.split("\\|\\|\\|");
+		} else {
+			textForAllLanguages = new String[] { text };
+		}
+
+		if (textForAllLanguages.length > 1) {
+			if (Locale.GERMAN.equals(FacesContext.getCurrentInstance().getViewRoot().getLocale())) {
+				// german
+				return textForAllLanguages[0];
+			} else {
+				// english
+				return textForAllLanguages[1];
+			}
+		} else {
+			return text;
+		}
 	}
 	
 	public String getRuleUrl(String baseUrl, String providerInfo) {

@@ -52,6 +52,7 @@ import org.xml.sax.InputSource;
 
 import de.dini.oanetzwerk.utils.CommonValidationUtils;
 import de.dini.oanetzwerk.utils.PropertyManager;
+import de.dini.oanetzwerk.utils.imf.DINISetClassification;
 
 
 @ManagedBean(name = "validation")
@@ -176,7 +177,7 @@ public class ValidationDINI implements Serializable, JobListener {
 		logger.info("Validating validation-job for OAI-Url= " + baseUrl + " , chosen DINI Certificate= " + selectedDiniRuleset );
 
 
-		if (!CommonValidationUtils.isValidUrl(baseUrl)) {
+		if (!CommonValidationUtils.isValidUrl(baseUrl.trim())) {
 			context.addMessage("1", new FacesMessage("Please specify a valid oai-pmh base url or select a repository from the dropdown list. "));
 			//context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_chooseservice", null));
 			valid = false;
@@ -249,11 +250,11 @@ public class ValidationDINI implements Serializable, JobListener {
 		boolean valid = validateForm();
 		
 		if(!valid) {
-			return "";
+			return "validation_dini";
 		}
 		for (SgParameters rule: diniRules) {
 			
-			System.out.println(rule.getParamByName("check"));
+//			System.out.println(rule.getParamByName("check"));
 		}
 		
 		// construct usage validation job
@@ -407,6 +408,18 @@ public class ValidationDINI implements Serializable, JobListener {
 	
 	/******************** Getter & Setter *************************/
 
+	public static String getLocalizedRuleName(String name) {
+		return ValidationDINIResults.getLocalizedRuleName(name);
+	}
+
+	public static String getMainDescription(String description) {
+		return ValidationDINIResults.getMainDescription(description);
+	}
+	
+	public static String getAdditionalDescription(String description) {
+		return ValidationDINIResults.getAdditionalDescription(description);
+	}
+	
 	public String getValidationId() {
 		return validationId;
 	}
