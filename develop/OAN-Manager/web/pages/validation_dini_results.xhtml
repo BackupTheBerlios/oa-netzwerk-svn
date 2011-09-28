@@ -77,13 +77,14 @@
    
     <t:div rendered="#{not empty validationResults.mandatoryValidationResults or not empty validationResults.optionalValidationResults}">
 	    Nachfolgend erhalten sie eine Liste der geprüften Regeln und den jeweiligen Status darüber inwieweit diese Regel vom Repository umgesetzt wurde. <p />
-	    <b>Geprüftes Repository</b>: #{validationResults.baseUrl}<p />
-        <b>Score</b>(<a href="#" onclick="javascript:toggle_help('help_score'); return false;">?</a>): <font size="5">#{validationResults.score}</font><p />
+	    <b>Geprüftes Repository</b>: <a href="#{validationResults.baseUrl}?verb=Identify" target="_blank">#{validationResults.baseUrl}</a><p />
+        <font size="3">Score</font>(<a href="#" onclick="javascript:toggle_help('help_score'); return false;">?</a>): <font size="5">#{validationResults.score}</font><h:outputText value="&#160;&#160;" />
+        <font size="3">(<font color="#00AA00">+#{validationResults.bonus}</font>)</font><p />
+        
             <div class="help_box" id="help_score">
               <h:outputText value="Der Score gibt in einem Rahmen von 0-100 an, in welchem Umfang das geprüfte Repository die im DINI-Zertifikat enthaltenen Anforderungen erfüllt. Je höher der Wert desto besser entspricht das Repository den Anforderungen. Dieser Wert beruht auf einer eigens festgelegten, geeigneten Berechnungsgrundlage." /><br />
             </div>
-	    <br />
-	    <b>Bonus-Punkte: </b>(<a href="#" onclick="javascript:toggle_help('help_score'); return false;">?</a>): <font color="#00AA00" size="5">#{validationResults.bonus}</font><p />
+
 	    <br />
 	    											  
 	    <mc:ajaxStatus style="display: none; width: 300px; height: 100%;" />
@@ -98,7 +99,19 @@
    		<t:panelTabbedPane id="tabbedPane" serverSideTabSwitch="false" style="height: 100%;">
    		
     	<t:panelTab id="tab1" label="Anforderungen" rendered="#{true}">
-			<t:dataTable value="#{validationResults.mandatoryValidationResults}" var="row" rowIndexVar="count"
+    		<table width="100%">
+    			<tr width="100%">
+    				<td>
+			    		<h3>DINI-Zertifikat 2010 - Mindestanforderungen</h3>
+			    		Erreichte Punktzahl: <b>#{validationResults.score} von 100</b> 
+			    		<p /><p />
+			    	</td>
+			    	<td style="text-align:right; padding-right: 20px; margin-bottom: 20px;">
+			    		<img src="../images/DINI_Logo.gif" width="80px" height="80px"/>
+			    	</td>
+    			</tr>
+    		</table>
+			<t:dataTable id="requirements" value="#{validationResults.mandatoryValidationResults}" var="row" rowIndexVar="count1"
 				headerClass="pane-header" rowClasses="odd, even"
 				style="border-collapse: collapse; border: 1px #bbb solid; width : 650px;">
 				<t:column style="width: 100%;">
@@ -106,12 +119,13 @@
 					<table width="90%">
 					<tr>
 						<td style="width: 20%; padding-top: 15px; padding-left:15px"><b><h:outputText value="Regel" /></b></td>
-						<td style="width: 80%; padding-top: 15px;"><h:outputText value="#{row.entry.name}" /></td>
+						<td style="width: 80%; padding-top: 15px;"><h:outputText value="#{validationResults.getLocalizedRuleName(row.entry.name)}" /></td>
 					</tr>
 
 					<tr>
 						<td style="width: 20%; padding-left:15px"><b><h:outputText value="Beschreibung" /></b></td>
-						<td style="width: 80%;"><h:outputText value="#{validationResults.getMainDescription(row.entry.description)}" /><br />  
+						<td style="width: 80%;"><h:outputText value="#{validationResults.getMainDescription(row.entry.description)}" />
+						<h:outputText value="#{validationResults.getAdditionalDescription(row.entry.description)}" /><br />  
                     </td>
 					</tr>
 					<t:div rendered="#{row.successPercentage eq 100}">
@@ -125,22 +139,40 @@
 					
 					
 					</t:div>
-					<t:div rendered="#{row.successPercentage lt 100}">
+					<t:div forceId="#{true}" id="status#{count1}" rendered="#{row.successPercentage lt 100}">
 					<tr>
 						<td style="width: 20%; padding-left:15px"><b><h:outputText value="Regel-Status" /></b></td>
 						<td>
 							<img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" />
 							<h:outputText rendered="#{row.showDetails}" value="&#160; #{row.successPercentage}%  (#{row.entry.successes})" />
 							#{row.rule.parameters["provider_information"]}
+                        <t:div rendered="#{not row.showDetails}"> 
+                        <t:commandButton type="button" value="Fehler anzeigen" onclick="jsf.ajax.request(this, event, {execute: '', render: 'form:tab1:requirements:#{count1}:overlay'}); scrollTo(0,180); return false;">
+                        	<f:setPropertyActionListener target="#{validationResults.renderPopups}" value="#{true}"/>
+                        	<f:setPropertyActionListener target="#{validationResults.baseUrl}" value="#{validationResults.baseUrl}"/>
+                        </t:commandButton>  
+							
+						<t:div id="overlay" style="height: 100%;">
+							<t:div rendered="#{validationResults.renderPopups}"
+							styleClass="overlay_outside" onclick="hideElement('form:tab1:requirements:#{count1}:overlay'); return false;">
+                                <t:div styleClass="overlay_main">
+                                  <t:div style="padding: 20px;">
+                                    <h:outputText escape="false"
+                                       value="#{validationResults.getHighlightedResponse(validationResults.baseUrl, row.rule.parameters['provider_information'], null)}" />
 
+                                  </t:div>
+                                </t:div>
+							</t:div>
+						</t:div>
+						</t:div>
 						</td>	
 					</tr>
 					<t:div rendered="#{row.successPercentage lt 100 and row.showDetails}"> 
 					<tr style="align:center">
 						<td style="width: 20%; padding-left:15px"></td>
 						<td>	
-						<div id="ua#{count}"><a href="#" onclick="unfold(#{count}); return false;">Details</a></div>			
-						<div id="ia#{count}" style="display: none;"><a href="#" onclick="fold(#{count}); return false;">Details ausblenden</a></div>							
+						<div id="ua#{count1}"><a href="#" onclick="unfold(#{count1}); return false;">Details</a></div>			
+						<div id="ia#{count1}" style="display: none;"><a href="#" onclick="fold(#{count1}); return false;">Details ausblenden</a></div>							
 						</td>
 						<td></td>
 					</tr>
@@ -148,18 +180,33 @@
 					
 					<tr>
 						<td colspan="2" style="width: 20%; padding-left:15px">
-					<div id="fehlerliste#{count}" style="display: none">
-						<h:dataTable value="#{row.entry.errors}" var="error"
+					<div id="fehlerliste#{count1}" style="display: none">
+						<t:dataTable id="errors" value="#{row.entry.errors}" var="error" rowIndexVar="errorCount1"
 									headerClass="pane-header" rowClasses="odd, even"
 									style="border-collapse: collapse; border: 1px #bbb solid; width : 589px;">
 							<h:column
 								style="width: 30%; vertical-align: middle; height: 70px;">
 								<div align="center">			
-									<h:outputLink value="#{validationResults.baseUrl}?verb&#61;GetRecord&amp;metadataPrefix&#61;oai_dc&amp;identifier=#{error}" >#{error}</h:outputLink>
-
+								<h:outputLink value="#{validationResults.baseUrl}?verb&#61;GetRecord&amp;metadataPrefix&#61;oai_dc&amp;identifier=#{error}" target="_blank">#{error}</h:outputLink><h:outputText value="&#160;&#160;" />
+		  						<t:commandButton type="button" value="Fehler anzeigen" onclick="jsf.ajax.request(this, event, {execute: '', render: 'form:tab1:requirements:#{count1}:errors:#{errorCount1}:overlay'}); scrollTo(0,180); return false;">
+		                        	<f:setPropertyActionListener target="#{validationResults.renderPopups}" value="#{true}"/>
+		                        	<f:setPropertyActionListener target="#{validationResults.baseUrl}" value="#{validationResults.baseUrl}"/>
+		                        </t:commandButton>  
+		                        <t:div id="overlay" style="height: 100%; text-align: left;">
+									<t:div rendered="#{validationResults.renderPopups}"
+									styleClass="overlay_outside" onclick="hideElement('form:tab1:requirements:#{count1}:errors:#{errorCount1}:overlay'); return false;" >
+		                                <t:div styleClass="overlay_main">
+		                                  <t:div style="padding: 20px;">
+		                                    <h:outputText escape="false"
+		                                       value="#{validationResults.getHighlightedResponse(validationResults.baseUrl, row.rule.parameters['provider_information'], error)}" />
+		
+		                                  </t:div>
+		                                </t:div>
+									</t:div>
+								</t:div>
 								</div>
 							</h:column>
-						</h:dataTable>
+						</t:dataTable>
 					</div>							
 						</td>
 					</tr>
@@ -172,9 +219,18 @@
       
    
 		<t:panelTab id="tab2" label="Empfehlungen" rendered="#{true}" style="height: 100%;">
-      
-      
-            <h3>DINI-Empfehlungen</h3>
+    		<table width="100%">
+    			<tr width="100%">
+    				<td>
+			    		<h3>DINI-Zertifikat 2010 - Empfehlungen</h3>
+			    		Erzielte Bonus-Punkte: <b><font color="#00AA00">#{validationResults.bonus}</font> von 30</b> 
+			    		<p /><p />
+			    	</td>
+			    	<td style="text-align:right; padding-right: 20px; margin-bottom: 20px;">
+			    		<img src="../images/DINI_Logo.gif" width="80px" height="80px"/>
+			    	</td>
+    			</tr>
+    		</table>
 
             <t:dataTable id="recommendations" value="#{validationResults.optionalValidationResults}" var="row" rowIndexVar="count" headerClass="pane-header"
               rowClasses="odd, even" style="border-collapse: collapse; border: 1px #bbb solid; width : 650px;">
@@ -207,23 +263,16 @@
                       <td style="width: 20%; padding-left: 15px"><b><h:outputText value="Regel-Status" /></b></td>
                       <td><img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" /> <h:outputText
                         rendered="#{row.showDetails}" value="&#160; #{row.successPercentage}%  (#{row.entry.successes})" />
-                         
-                        <t:commandButton type="button" value="Antwort-Dokument anzeigen" onclick="jsf.ajax.request(this, event, {execute: '', render: 'form:tab2:recommendations:#{count}:overlay'}); return false;">
+                        <t:div rendered="#{not row.showDetails}"> 
+                        <t:commandButton type="button" value="Fehler anzeigen" onclick="jsf.ajax.request(this, event, {execute: '', render: 'form:tab2:recommendations:#{count}:overlay'}); return false;">
                         	<f:setPropertyActionListener target="#{validationResults.renderPopups}" value="#{true}"/>
                         	<f:setPropertyActionListener target="#{validationResults.baseUrl}" value="#{validationResults.baseUrl}"/>
                         </t:commandButton>  
-                        
-
-
-                        
-							
-
-
 							
 						<t:div id="overlay" style="height: 100%;">
 							<t:div rendered="#{validationResults.renderPopups}"
-							style="position:absolute; top: 0px; left: 0px; width: 100%; background-color: rgba(0,0,0,0.80);" onclick="hideElement('form:tab2:recommendations:#{count}:overlay'); scrollTo(0,0); return false;" >
-                                <t:div style="margin: auto; width: 800px; border: 2px #000000 solid; background-color: rgba(244,244,244,0.75); -moz-border-radius: 10px; -webkit-border-radius: 10px;">
+							styleClass="overlay_outside" onclick="hideElement('form:tab2:recommendations:#{count}:overlay'); scrollTo(0,180); return false;" >
+                                <t:div styleClass="overlay_main">
                                   <t:div style="padding: 20px;">
                                     <h:outputText escape="false"
                                        value="#{validationResults.getHighlightedResponse(validationResults.baseUrl, row.rule.parameters['provider_information'], null)}" />
@@ -231,6 +280,7 @@
                                   </t:div>
                                 </t:div>
 							</t:div>
+						</t:div>
 						</t:div>	
                         </td>
                     </tr>
@@ -253,20 +303,18 @@
                       <t:dataTable id="errors" value="#{row.entry.errors}" var="error" rowIndexVar="errorCount"
                         headerClass="pane-header" rowClasses="odd, even"
                         style="border-collapse: collapse; border: 1px #bbb solid; width : 589px;">
-                        <t:column style="width: 30%; vertical-align: middle;">
+                        <t:column  style="width: 30%; vertical-align: middle;">
                           <div align="center">
                           <h:outputLink
-                            value="#{validationResults.baseUrl}?verb&#61;GetRecord&amp;metadataPrefix&#61;oai_dc&amp;identifier=#{error}">#{error}</h:outputLink>
-  						<t:commandButton type="button" value="Fehler anzeigen" onclick="jsf.ajax.request(this, event, {execute: '', render: 'form:tab2:recommendations:#{count}:errors:#{errorCount}:overlay'}); scrollTo(0,0); return false;">
+                            value="#{validationResults.baseUrl}?verb&#61;GetRecord&amp;metadataPrefix&#61;oai_dc&amp;identifier=#{error}" target="_blank">#{error}</h:outputLink><h:outputText value="&#160;&#160;" />
+  						<t:commandButton type="button" value="Fehler anzeigen" onclick="jsf.ajax.request(this, event, {execute: '', render: 'form:tab2:recommendations:#{count}:errors:#{errorCount}:overlay'}); scrollTo(0,180); return false;">
                         	<f:setPropertyActionListener target="#{validationResults.renderPopups}" value="#{true}"/>
                         	<f:setPropertyActionListener target="#{validationResults.baseUrl}" value="#{validationResults.baseUrl}"/>
                         </t:commandButton>  
                         <t:div id="overlay" style="height: 100%; text-align: left;">
-    
-                                  
 							<t:div rendered="#{validationResults.renderPopups}"
-							style="position:absolute; top: 0px; left: 0px; width: 100%; background-color: rgba(0,0,0,0.80);" onclick="hideElement('form:tab2:recommendations:#{count}:errors:#{errorCount}:overlay'); return false;" >
-                                <t:div style="margin: auto; width: 800px; border: 2px #000000 solid; background-color: rgba(244,244,244,0.75); -moz-border-radius: 10px; -webkit-border-radius: 10px;">
+							styleClass="overlay_outside" onclick="hideElement('form:tab2:recommendations:#{count}:errors:#{errorCount}:overlay'); return false;" >
+                                <t:div styleClass="overlay_main">
                                   <t:div style="padding: 20px;">
                                     <h:outputText escape="false"
                                        value="#{validationResults.getHighlightedResponse(validationResults.baseUrl, row.rule.parameters['provider_information'], error)}" />

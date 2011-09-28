@@ -2,6 +2,7 @@ package de.dini.oanetzwerk.admin;
 
 import gr.uoa.di.validator.api.Entry;
 import gr.uoa.di.validator.api.IJob;
+import gr.uoa.di.validator.api.JobActionsAPI;
 import gr.uoa.di.validator.api.SgParameters;
 import gr.uoa.di.validator.api.Validator;
 import gr.uoa.di.validator.api.ValidatorException;
@@ -42,6 +43,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -50,6 +52,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import de.dini.oanetzwerk.admin.security.EncryptionUtils;
 import de.dini.oanetzwerk.utils.CommonValidationUtils;
 import de.dini.oanetzwerk.utils.PropertyManager;
 import de.dini.oanetzwerk.utils.imf.DINISetClassification;
@@ -312,7 +315,8 @@ public class ValidationDINI implements Serializable, JobListener {
 	public void sendInfoMail(int jobId, List<String> recipients) {
 		
 		// send email
-		String resultsUrl = "https://localhost:8443/oanadmin/pages/validation_dini_results.xhtml?vid=" + jobId;
+		String encryptedAndEncodedId = Base64.encodeBase64URLSafeString(EncryptionUtils.encrypt(Integer.toString(jobId)).getBytes());
+		String resultsUrl = "https://localhost:8443/oanadmin/pages/validation_dini_results.xhtml?vid=" + encryptedAndEncodedId;
 		System.out.println("url: " + resultsUrl);
 		String subject = "OA-Netzwerk Validator - Ergebnisse";
 		String message = "Die Validierung des Repositories ist beendet. Die Ergebnisse können sie unter " +
@@ -337,6 +341,8 @@ public class ValidationDINI implements Serializable, JobListener {
 		
 		try {
 			Validator val = APIStandalone.getValidator();
+			JobActionsAPI api  = new JobActionsAPI();
+			
 			Job job = val.getJob(Integer.toString(arg0));
 			
 			if (job == null)

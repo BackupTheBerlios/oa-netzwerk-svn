@@ -47,22 +47,23 @@ a:visited {
     cursor: pointer;
 }
 
-.myFaces_panelTabbedPane_pane {
-    background-color: #E8F2FC;
-    border: 1px solid #EEEEEE;
-    border-style: none none none;
+td.myFaces_panelTabbedPane_pane {
+    background-color: #D4E6D1;
+    border-style: none solid solid solid;
     border-width: 2px;
+    border-color: silver;
     padding: 10px;
 }
 
 
 td.myFaces_panelTabbedPane_activeHeaderCell {
 	border-style: solid;
+	background-color: #D4E6D1;
 	text-align: center;
 }
 
 td.myFaces_panelTabbedPane_inactiveHeaderCell {
-	border-style: solid;
+	border-style: solid solid solid none;
 	text-align: center;
 
 }
@@ -76,6 +77,52 @@ td.myFaces_panelTabbedPane_disabledHeaderCell {
 	background-color: #B8DFFF;
 }
 
+.myFaces_panelTabbedPane_subHeaderCell{
+ 	height: 2px;
+	font-size: 0;
+	border-bottom: 0px none;
+}
+td.myFaces_panelTabbedPane_subHeaderCell_active{
+	background-color: #D4E6D1;
+	border-top: 0px none;
+}
+td.myFaces_panelTabbedPane_subHeaderCell_inactive{
+	background-color: #D4E6D1;
+	border-top: 0px none;
+}
+td.myFaces_panelTabbedPane_subHeaderCell_first{
+	background-color: #D4E6D1;
+	border-left: 1px solid silver;
+}
+td.myFaces_panelTabbedPane_subHeaderCell_last{
+	background-color: #D4E6D1;
+	border-right: 1px solid silver;
+}
+ 
+ /** overlay **/
+ 
+div.overlay_main{
+
+	margin: auto; 
+	margin-top: 200px; 
+	margin-bottom: 100%; 
+	width: 800px; 
+	border: 4px #D4E6D1 solid; 
+	background-color: rgba(250,250,250,1.00); 
+	-moz-border-radius: 25px; 
+	-webkit-border-radius: 25px;	
+}
+
+div.overlay_outside{
+	
+	position:absolute; 
+	top: 0px; 
+	left: 0px; 
+	width: 100%; 
+	background-color: rgba(0,0,0,0.80);
+	
+}
+ 
  
  /** custom end  **/
  

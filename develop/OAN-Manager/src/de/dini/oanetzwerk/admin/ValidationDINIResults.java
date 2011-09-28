@@ -32,11 +32,14 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
+
+import de.dini.oanetzwerk.admin.security.EncryptionUtils;
 
 @ManagedBean(name="validationResults")
 @SessionScoped
@@ -48,7 +51,6 @@ public class ValidationDINIResults {
 	@ManagedProperty(value = "#{fileStorage}")
 	private FileStorage fileStorage;
 	
-	private String validationId = null;
 	private String baseUrl = "http://";
 	private String errorMessage;
 	private int score;
@@ -75,8 +77,14 @@ public class ValidationDINIResults {
 	private void fetchValidationResults(){
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
-		validationId = request.getParameter("vid");
-
+		String encryptedAndEncodedId = request.getParameter("vid");
+		
+		System.out.println("retreived param: " + encryptedAndEncodedId);
+		if (encryptedAndEncodedId == null) { 
+			return;
+		}
+		String validationId = EncryptionUtils.decrypt(new String(Base64.decodeBase64(encryptedAndEncodedId.getBytes())));
+		
 		int id;
 		if (validationId == null || validationId.length() == 0) {
 			FacesMessage msg = new FacesMessage("Could not find the requested validation results!");
