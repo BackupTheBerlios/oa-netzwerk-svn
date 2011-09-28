@@ -369,6 +369,11 @@ public class RepositoryOnlineStatusBean {
 	public void setRestConnector(RestConnector connector) {
 		restConnector = connector;
 	}
+
+	public void setPropertyManager(PropertyManager propertyManager) {
+    	this.propertyManager = propertyManager;
+    }
+	
 	
 //	public void deleteOnlineStatus() {
 //		if (this.onlineStatus != null) {

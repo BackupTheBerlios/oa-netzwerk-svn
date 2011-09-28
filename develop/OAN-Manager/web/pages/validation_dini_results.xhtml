@@ -22,17 +22,17 @@
   <ui:define name="content">
   
   <script type="text/javascript">
-  function fold(count) {
+  function fold(id, count) {
 		if (document.getElementById){
-			document.getElementById("fehlerliste" + count).style.display = "none";
+			document.getElementById(id + count).style.display = "none";
 			document.getElementById("ua" + count).style.display = "inline";
 			document.getElementById("ia" + count).style.display = "none";
 		}
 	}
 
-	function unfold(count) {
+	function unfold(id, count) {
 		if (document.getElementById){
-			document.getElementById("fehlerliste" + count).style.display = "inline";
+			document.getElementById(id + count).style.display = "inline";
 			document.getElementById("ua" + count).style.display = "none";
 			document.getElementById("ia" + count).style.display = "inline";
 		}
@@ -71,7 +71,7 @@
    </h2>
    <h:messages style="color:red;"/>
    	<t:div rendered="#{validationResults.mandatoryValidationResults == null and validationResults.optionalValidationResults == null}">
-   		Es konnten keine Ergebnisse gefunden werden.
+   		Es wurden keine Ergebnisse gefunden.
         <h:outputText value="#{msg.validation_failure_readspecs}" /><a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">http://www.openarchives.org/OAI/openarchivesprotocol.html</a>)
    	</t:div>
    
@@ -147,10 +147,12 @@
 							<h:outputText rendered="#{row.showDetails}" value="&#160; #{row.successPercentage}%  (#{row.entry.successes})" />
 							#{row.rule.parameters["provider_information"]}
                         <t:div rendered="#{not row.showDetails}"> 
-                        <t:commandButton type="button" value="Fehler anzeigen" onclick="jsf.ajax.request(this, event, {execute: '', render: 'form:tab1:requirements:#{count1}:overlay'}); scrollTo(0,180); return false;">
-                        	<f:setPropertyActionListener target="#{validationResults.renderPopups}" value="#{true}"/>
+                        
+                        <h:commandButton type="button" value="Fehler anzeigen" >
+                            <f:setPropertyActionListener target="#{validationResults.renderPopups}" value="#{true}"/>
                         	<f:setPropertyActionListener target="#{validationResults.baseUrl}" value="#{validationResults.baseUrl}"/>
-                        </t:commandButton>  
+                            <f:ajax event="click" execute="@this" render="form:tab1:requirements:#{count1}:overlay"/>
+                        </h:commandButton>  
 							
 						<t:div id="overlay" style="height: 100%;">
 							<t:div rendered="#{validationResults.renderPopups}"
@@ -171,8 +173,8 @@
 					<tr style="align:center">
 						<td style="width: 20%; padding-left:15px"></td>
 						<td>	
-						<div id="ua#{count1}"><a href="#" onclick="unfold(#{count1}); return false;">Details</a></div>			
-						<div id="ia#{count1}" style="display: none;"><a href="#" onclick="fold(#{count1}); return false;">Details ausblenden</a></div>							
+						<div id="ua#{count1}"><a href="#" onclick="unfold('errorList1_', #{count1}); return false;">Details</a></div>			
+						<div id="ia#{count1}" style="display: none;"><a href="#" onclick="fold('errorList1_', #{count1}); return false;">Details ausblenden</a></div>							
 						</td>
 						<td></td>
 					</tr>
@@ -180,7 +182,7 @@
 					
 					<tr>
 						<td colspan="2" style="width: 20%; padding-left:15px">
-					<div id="fehlerliste#{count1}" style="display: none">
+					<div id="errorList1_#{count1}" style="display: none">
 						<t:dataTable id="errors" value="#{row.entry.errors}" var="error" rowIndexVar="errorCount1"
 									headerClass="pane-header" rowClasses="odd, even"
 									style="border-collapse: collapse; border: 1px #bbb solid; width : 589px;">
@@ -239,7 +241,7 @@
                 <table width="90%">
                   <tr>
                     <td style="width: 20%; padding-top: 15px; padding-left: 15px"><b><h:outputText value="Regel" /></b></td>
-                    <td style="width: 80%; padding-top: 15px;"><h:outputText value="#{row.entry.name}" /></td>
+                    <td style="width: 80%; padding-top: 15px;"><h:outputText value="#{validationResults.getLocalizedRuleName(row.entry.name)}" /></td>
                   </tr>
   
                   <tr>
@@ -288,8 +290,8 @@
                       <tr style="align: center">
                         <td style="width: 20%; padding-left: 15px"></td>
                         <td>
-                        <div id="ua#{count}"><a href="#" onclick="unfold(#{count}); return false;">Details</a></div>
-                        <div id="ia#{count}" style="display: none;"><a href="#" onclick="fold(#{count}); return false;">Details
+                        <div id="ua#{count}"><a href="#" onclick="unfold('errorList2_', #{count}); return false;">Details</a></div>
+                        <div id="ia#{count}" style="display: none;"><a href="#" onclick="fold('errorList2_', #{count}); return false;">Details
                         ausblenden</a></div>
                         </td>
                         <td></td>
@@ -298,7 +300,7 @@
   
                     <tr>
                       <td colspan="2" style="width: 20%; padding-left: 15px">
-                      <div id="fehlerliste#{count}" style="display: none">
+                      <div id="errorList2_#{count}" style="display: none">
                       
                       <t:dataTable id="errors" value="#{row.entry.errors}" var="error" rowIndexVar="errorCount"
                         headerClass="pane-header" rowClasses="odd, even"

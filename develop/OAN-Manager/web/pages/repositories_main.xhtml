@@ -83,13 +83,13 @@
 									<t:column style="width: 20%; vertical-align: middle; text-align: center; height: 70px;">
 										<f:facet name="header">
 											<h:outputText value="Online-Status" />
-											<br />
-											<h:outputText value="(Last Status Check)" />
 										</f:facet>
-										<h:outputText value="#{row.status}" />
-										<br />
-										<h:outputText value="#{row.lastStatusCheck}" />
-										<br />
+										<t:div rendered="#{row.status eq 'online'}">
+                                          <img src="../images/24x24/status_green.png" width="16" height="16" title="last checked: #{row.lastStatusCheck}" />
+                                        </t:div>
+                                        <t:div rendered="#{row.status eq 'offline'}">
+                                          <img src="../images/24x24/status_red.png" width="16" height="16" title="last checked: #{row.lastStatusCheck}" />
+                                        </t:div>                                        
 										<a href="repositories_onlinestatus.xhtml?id=#{row.id}">View History</a>
 									</t:column>
 

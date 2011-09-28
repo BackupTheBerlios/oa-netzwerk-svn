@@ -6,6 +6,9 @@ import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -31,29 +34,8 @@ import de.dini.oanetzwerk.utils.PropertyManager;
 public class ServiceManagementBean {
 
 	private final static Logger logger = Logger.getLogger(ServiceManagementBean.class);
-	
-	private static final String SERVICE_NAME_HARVESTER 	= "HarvesterService";
-	private static final String SERVICE_NAME_AGGREGATOR = "AggregatorService";
-	private static final String SERVICE_NAME_MARKER 	= "MarkerService";
-
-	private boolean localHarvester = false;
-	private boolean localAggregator = false;
-	private boolean localMarker = false;
-
-	private ServiceStatus harvesterStatus;
-	private ServiceStatus aggregatorStatus;
-	private ServiceStatus markerStatus;
-
-	private String localPathToHarvester = null;
-	private String localPathToAggregator = null;
-	private String localPathToMarker = null;
-	
-	private String rmiHostForHarvester = null;
-	private String rmiHostForAggregator = null;
-	private String rmiHostForMarker = null;
-	
-	private boolean rmiRegistryNotStarted = false;
-	
+		
+	private boolean rmiRegistryNotStarted = false;	
 	private String javaPath = null;
 
 	@ManagedProperty(value="#{restConnector}")
@@ -63,50 +45,32 @@ public class ServiceManagementBean {
 	private PropertyManager propertyManager;
 
 	FacesContext ctx = FacesContext.getCurrentInstance();
+	List<ServiceBean> services = new ArrayList<ServiceBean>();
 	
 	public ServiceManagementBean() {
 		super();
 	}
 
+	public enum Service {
+		Harvester, Aggregator, Marker, Shingler, Indexer, LanguageDetector, Classifier, DuplicateScanner;
+	}
+	
 	@PostConstruct
 	private void init() {
 		
-		// retrieve file paths to services (harvester, aggregator and marker)
-		localPathToHarvester = propertyManager.getServiceProperties().getProperty("location.harvester");
-		localPathToAggregator = propertyManager.getServiceProperties().getProperty("location.aggregator");
-		localPathToMarker = propertyManager.getServiceProperties().getProperty("location.marker");
+		services.add(new ServiceBean(Service.Harvester));
+		services.add(new ServiceBean(Service.Aggregator));
+		services.add(new ServiceBean(Service.Marker));
+		services.add(new ServiceBean(Service.Shingler));
+		services.add(new ServiceBean(Service.Indexer));
+		services.add(new ServiceBean(Service.LanguageDetector));
+		services.add(new ServiceBean(Service.Classifier));
+		services.add(new ServiceBean(Service.DuplicateScanner));
 		
-		// retrieve rmi registry urls for each service
-		rmiHostForHarvester = propertyManager.getServiceProperties().getProperty("java.rmiregistry.host.harvester");
-		rmiHostForAggregator = propertyManager.getServiceProperties().getProperty("java.rmiregistry.host.aggregator");
-		rmiHostForMarker = propertyManager.getServiceProperties().getProperty("java.rmiregistry.host.marker");
+		initializeServiceProperties();
+		initializeServiceStatus();
 		
-		
-		if (localPathToHarvester != null && new File(localPathToHarvester).exists()) {
-
-			localHarvester = true;
-		}
-		
-		if (localPathToAggregator != null && new File(localPathToAggregator).exists()) {
-
-			localAggregator = true;
-		}
-		
-		if (localPathToMarker != null && new File(localPathToMarker).exists()) {
-
-			localMarker = true;
-		}
-
-		
-		harvesterStatus = checkServiceStatus("HarvesterService", rmiHostForHarvester);
-
-		if (!rmiRegistryNotStarted) {
-			aggregatorStatus = checkServiceStatus("AggregatorService", rmiHostForAggregator);
-		}
-		if (!rmiRegistryNotStarted) {
-			markerStatus = checkServiceStatus("MarkerService", rmiHostForMarker);
-		}
-		
+				
 		// try to fetch path to a specified java binary file
 		javaPath = propertyManager.getServiceProperties().getProperty("java.path");
 		if (javaPath == null || javaPath.trim().length() == 0) {
@@ -114,25 +78,50 @@ public class ServiceManagementBean {
 		}
 	}
 
-	
-	
-	private ServiceStatus checkServiceStatus(String serviceName, String serviceHost) {
-		FacesContext context = FacesContext.getCurrentInstance();
+	public void initializeServiceProperties() {
 		
+		Properties props = propertyManager.getServiceProperties();
+		
+		for (ServiceBean service : services) {
+	        
+			// retrieve file paths to services (harvester, aggregator and marker)
+			service.setLocalPath(props.getProperty("location." + service.getLowerCaseName()));
+
+			// retrieve rmi registry urls for each service
+			service.setRmiHost(props.getProperty("java.rmiregistry.host." + service.getLowerCaseName()));
+        }
+	}
+	
+	public void initializeServiceStatus() {
+	
+		for (ServiceBean service : services) {
+
+			if (rmiRegistryNotStarted) {
+	        	return;
+	        }
+
+			service.setStatus(checkServiceStatus(service.getServiceName(), service.getRmiHost()));
+        }
+	}
+	
+	private ServiceStatus checkServiceStatus(String serviceName, String rmiHost) {
+		
+		FacesContext context = FacesContext.getCurrentInstance();
 		Registry registry;
-		if (serviceHost == null || "".equals(serviceHost)) {
+		
+		if (rmiHost == null || "".equals(rmiHost)) {
 			registry = RMIRegistryHelper.getRegistry();
 		} else {
-			registry = RMIRegistryHelper.getRegistry(serviceHost);
+			registry = RMIRegistryHelper.getRegistry(rmiHost);
 		}
 
 		try {
-			IService service = (IService) registry.lookup(serviceName);
+			IService rmiService = (IService) registry.lookup(serviceName);
 
-			if (service != null) {
+			if (rmiService != null) {
 				System.out.println(serviceName + " running.");
 				try {
-					return service.getCurrentStatus();
+					return rmiService.getCurrentStatus();
 				} catch (ConnectException e) {
 					return ServiceStatus.Stopped;
 				}
@@ -149,69 +138,27 @@ public class ServiceManagementBean {
 		return ServiceStatus.Stopped;
 	}
 
-	public String startHarvesterService() {
+	public String startService(ServiceBean service) {
 		
-		boolean started = startService(SERVICE_NAME_HARVESTER, localPathToHarvester, getHarvesterStatus());
-		
-		if (started) {
-			harvesterStatus = checkServiceStatus(SERVICE_NAME_HARVESTER, rmiHostForHarvester);
-		}
-		logger.info(SERVICE_NAME_HARVESTER + " " + harvesterStatus);
-		return "services_main";
-	}
-	
-	public String stopHarvesterService() {
-		boolean stopped = stopService(SERVICE_NAME_HARVESTER, getHarvesterStatus(), rmiHostForHarvester);
-		
-		if (stopped) {
-			harvesterStatus = ServiceStatus.Stopped;
-		}
-		logger.info(SERVICE_NAME_HARVESTER + " " + harvesterStatus);
-		return "services_main";
-	}
-	
-	public String startAggregatorService() {
-		
-		boolean started = startService(SERVICE_NAME_AGGREGATOR, localPathToAggregator, getAggregatorStatus());
+		boolean started = startService(service.getServiceName(), service.getLocalPath(), service.getStatus());
 		
 		if (started) {
-			aggregatorStatus = checkServiceStatus(SERVICE_NAME_AGGREGATOR, rmiHostForAggregator);
+			service.setStatus(checkServiceStatus(service.getServiceName(), service.getRmiHost()));
 		}
-		logger.info(SERVICE_NAME_AGGREGATOR + " " + aggregatorStatus);
+		logger.info(service.getServiceName() + " " + service.getStatus());
 		return "services_main";
 	}
 	
-	public String stopAggregatorService() {
-		boolean stopped = stopService(SERVICE_NAME_AGGREGATOR, getAggregatorStatus(), rmiHostForAggregator);
+	public String stopService(ServiceBean service) {
+		boolean stopped = stopService(service.getServiceName(), service.getStatus(), service.getRmiHost());
 		
 		if (stopped) {
-			aggregatorStatus = ServiceStatus.Stopped;
+			service.setStatus(ServiceStatus.Stopped);
 		}
-		logger.info(SERVICE_NAME_AGGREGATOR + " " + aggregatorStatus);
+		logger.info(service.getServiceName() + " " + service.getStatus());
 		return "services_main";
 	}
-	
-	public String startMarkerService() {
 		
-		boolean started = startService(SERVICE_NAME_MARKER, localPathToMarker, getMarkerStatus());
-		
-		if (started) {
-			markerStatus = checkServiceStatus(SERVICE_NAME_MARKER, rmiHostForMarker);
-		}
-		logger.info(SERVICE_NAME_MARKER + " " + markerStatus);
-		return "services_main";
-	}
-	
-	public String stopMarkerService() {
-		boolean stopped = stopService(SERVICE_NAME_MARKER, getMarkerStatus(), rmiHostForMarker);
-		
-		if (stopped) {
-			markerStatus = ServiceStatus.Stopped;
-		}
-		logger.info(SERVICE_NAME_MARKER + " " + markerStatus);
-		return "services_main";
-	}
-	
 	
 	public boolean startService(String serviceName, String servicePath, ServiceStatus serviceStatus) {
 
@@ -290,15 +237,9 @@ public class ServiceManagementBean {
 				
 			} catch (ConnectException e) {
 				logger.warn("Could not connect to RMI registry, please make sure the registry is running");
-				
-				if (serviceName.equals(SERVICE_NAME_HARVESTER)) {
-					harvesterStatus = ServiceStatus.Stopped;
-				} else if (serviceName.equals(SERVICE_NAME_AGGREGATOR)) {
-					aggregatorStatus = ServiceStatus.Stopped;
-				} else if (serviceName.equals(SERVICE_NAME_MARKER)) {
-					markerStatus = ServiceStatus.Stopped;
-				}
 				e.printStackTrace();
+				
+				return true;
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			} catch (NotBoundException e) {
@@ -318,30 +259,6 @@ public class ServiceManagementBean {
 
 	/********************* Getter & Setter ***********************/
 
-	public ServiceStatus getHarvesterStatus() {
-		return harvesterStatus;
-	}
-
-	public void setHarvesterStatus(ServiceStatus harvesterStatus) {
-		this.harvesterStatus = harvesterStatus;
-	}
-
-	public ServiceStatus getAggregatorStatus() {
-		return aggregatorStatus;
-	}
-
-	public void setAggregatorStatus(ServiceStatus aggregatorStatus) {
-		this.aggregatorStatus = aggregatorStatus;
-	}
-
-	public ServiceStatus getMarkerStatus() {
-		return markerStatus;
-	}
-
-	public void setMarkerStatus(ServiceStatus markerStatus) {
-		this.markerStatus = markerStatus;
-	}
-
 	public void setPropertyManager(PropertyManager propertyManager) {
 		this.propertyManager = propertyManager;
 	}
@@ -350,40 +267,8 @@ public class ServiceManagementBean {
     	this.connector = connector;
     }
 
-	public boolean isHarvesterStarted() {
-		return ServiceStatus.Started.equals(harvesterStatus);
-	}
-	
-	public boolean isAggregatorStarted() {
-		return ServiceStatus.Started.equals(aggregatorStatus);
-	}
-	
-	public boolean isMarkerStarted() {
-		return ServiceStatus.Started.equals(markerStatus);
-	}
-	
-	public boolean isHarvesterBusy() {
-		return ServiceStatus.Busy.equals(harvesterStatus);
-	}
-	
-	public boolean isAggregatorBusy() {
-		return ServiceStatus.Busy.equals(aggregatorStatus);
-	}
-	
-	public boolean isMarkerBusy() {
-		return ServiceStatus.Busy.equals(markerStatus);
-	}
-
-	public boolean isLocalHarvester() {
-    	return localHarvester;
-    }
-
-	public boolean isLocalAggregator() {
-    	return localAggregator;
-    }
-
-	public boolean isLocalMarker() {
-    	return localMarker;
+	public List<ServiceBean> getServices() {
+    	return services;
     }
 
 }

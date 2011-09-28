@@ -136,7 +136,11 @@ public class UserListBean extends AbstractBean implements Serializable {
 					} else if (ROLE_REPORT_MANAGER.equals(role)) {
 						user.setRightReportManagement(true);
 					} else if (ROLE_OANADMIN.equals(role)) {
-						// TODO: add admin role
+						user.setRightValidator(true);
+						user.setRightUserManagement(true);
+						user.setRightServiceManagement(true);
+						user.setRightRepositoryManagement(true);
+						user.setRightReportManagement(true);
 					} else {
 						// unknown role, user should not be handled by us
 						manageableUser = false;

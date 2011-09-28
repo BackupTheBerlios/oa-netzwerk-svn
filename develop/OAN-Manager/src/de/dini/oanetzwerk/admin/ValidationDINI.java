@@ -277,7 +277,8 @@ public class ValidationDINI implements Serializable, JobListener {
 		// construct content validation job
 		
 		SgParameters oaiContentParams = new SgParameters();
-		oaiContentParams.addParam(FieldNames.JOB_GENERAL_USER, email);
+		oaiContentParams.addParam(FieldNames.JOB_GENERAL_USER, "sdavid");
+		oaiContentParams.addParam(FieldNames.JOB_GENERAL_RULESET, email); // TODO: using ruleset field for email storage
 		oaiContentParams.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Content Validation");
 		oaiContentParams.addParam(FieldNames.JOB_OAICONTENT_BASEURL, baseUrl);
 		oaiContentParams.addParam(FieldNames.JOB_OAICONTENT_RANDOM, Boolean.toString(randomRecords));
@@ -315,7 +316,7 @@ public class ValidationDINI implements Serializable, JobListener {
 	public void sendInfoMail(int jobId, List<String> recipients) {
 		
 		// send email
-		String encryptedAndEncodedId = Base64.encodeBase64URLSafeString(EncryptionUtils.encrypt(Integer.toString(jobId)).getBytes());
+		String encryptedAndEncodedId = EncryptionUtils.encryptAndEncode(Integer.toString(jobId));
 		String resultsUrl = "https://localhost:8443/oanadmin/pages/validation_dini_results.xhtml?vid=" + encryptedAndEncodedId;
 		System.out.println("url: " + resultsUrl);
 		String subject = "OA-Netzwerk Validator - Ergebnisse";
@@ -351,11 +352,13 @@ public class ValidationDINI implements Serializable, JobListener {
 				return;
 			} 
 			
-			recipient = job.getUser();
+			// TODO: fix this, we are using the ruleset field to store email adresses currently,
+			// as we are not able to change the code of the OpenAIRE Validator
+			recipient = job.getRuleset();
 		
 			String[] emails = null;
 			
-			System.out.println(job.getUser()); 
+			System.out.println(job.getRuleset()); 
 			if (recipient == null || recipient.trim().length() == 0) {
 				logger.info("Skipped email notification, no valid email adresses found for job with id " + arg0); 
 				return;

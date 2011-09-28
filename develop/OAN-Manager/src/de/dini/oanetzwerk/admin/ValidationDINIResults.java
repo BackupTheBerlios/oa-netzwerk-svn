@@ -5,8 +5,6 @@ import gr.uoa.di.validator.api.SgParameters;
 import gr.uoa.di.validator.api.Validator;
 import gr.uoa.di.validator.api.ValidatorException;
 import gr.uoa.di.validator.api.standalone.APIStandalone;
-import gr.uoa.di.validator.constants.FieldNames;
-import gr.uoa.di.validator.rules.Rule;
 import gr.uoa.di.validatorweb.actions.browsejobs.Job;
 
 import java.io.ByteArrayInputStream;
@@ -32,7 +30,6 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -45,12 +42,16 @@ import de.dini.oanetzwerk.admin.security.EncryptionUtils;
 @SessionScoped
 public class ValidationDINIResults {
 
+	
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(ValidationDINI.class);
-		
+	
+	private FacesMessage invalidURLMessage = new FacesMessage("Could not find the requested validation results! The specified URL parameter seems to be invalid!");
+	
 	@ManagedProperty(value = "#{fileStorage}")
 	private FileStorage fileStorage;
 	
+	private String validationId = null;
 	private String baseUrl = "http://";
 	private String errorMessage;
 	private int score;
@@ -68,10 +69,10 @@ public class ValidationDINIResults {
 	public void init(){
 		
 		System.out.println("URL: " + baseUrl);
-		fetchValidationResults();		
+		System.out.println(((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getParameter("validationId"));
+//		fetchValidationResults();		
 	}
-	
-	
+		
 	
 	// used by validation_dini_results.xhtml
 	private void fetchValidationResults(){
@@ -80,16 +81,22 @@ public class ValidationDINIResults {
 		String encryptedAndEncodedId = request.getParameter("vid");
 		
 		System.out.println("retreived param: " + encryptedAndEncodedId);
-		if (encryptedAndEncodedId == null) { 
-			return;
-		}
-		String validationId = EncryptionUtils.decrypt(new String(Base64.decodeBase64(encryptedAndEncodedId.getBytes())));
+//		if (encryptedAndEncodedId == null) { 
+//			return;
+//		}
 		
-		int id;
+		String id = null;
+		try {
+		
+			id = EncryptionUtils.decryptAndDecode(encryptedAndEncodedId);
+			validationId = id;
+		}catch (Exception e) {
+			logger.warn("Could not decrypt validation-id jor job! Results could not be fetched.");
+		}
+
 		if (validationId == null || validationId.length() == 0) {
-			FacesMessage msg = new FacesMessage("Could not find the requested validation results!");
-			if (!ctx.getMessageList().contains(msg)) {
-				ctx.addMessage("1", msg);
+			if (!ctx.getMessageList().contains(invalidURLMessage)) {
+				ctx.addMessage("1", invalidURLMessage);
 			}
 			return; // new ArrayList<ValidatorTask>();
 		}
@@ -325,7 +332,7 @@ public class ValidationDINIResults {
 	public List<Job> getJobs() {
 		try {
 			Validator val = APIStandalone.getValidator();
-			List<Job> jobs = val.getJobsOfUser("' or user like '%");
+			List<Job> jobs = val.getJobsOfUser("sdavid");
 			
 			if (jobs == null)
 			{
@@ -359,7 +366,7 @@ public class ValidationDINIResults {
 
 		String localizedDescription = getLocalizedText(description);
 		
-		System.out.println("XXX3: " + localizedDescription);
+//		System.out.println("XXX3: " + localizedDescription);
 		// use main description only
 		String[] descriptionsPerLanguage = null;
 		
@@ -400,8 +407,8 @@ public class ValidationDINIResults {
 	
 	public String getRuleUrl(String baseUrl, String providerInfo) {
 		
-		System.out.println("YYY: " + baseUrl);
-		System.out.println("YYY2: " + providerInfo);
+//		System.out.println("YYY: " + baseUrl);
+//		System.out.println("YYY2: " + providerInfo);
 		if (providerInfo == null || providerInfo.length() == 0) {
 			return null;
 		}
@@ -420,8 +427,8 @@ public class ValidationDINIResults {
 	
 	public String getHighlightedResponse(String baseUrl, String providerInfo, String optionalIdentifier) {
 		
-		System.out.println("YYY: " + baseUrl);
-		System.out.println("YYY2: " + providerInfo);
+//		System.out.println("YYY: " + baseUrl);
+//		System.out.println("YYY2: " + providerInfo);
 		if (providerInfo == null || providerInfo.length() == 0) {
 			return null;
 		}
@@ -429,10 +436,10 @@ public class ValidationDINIResults {
 		String url = null;
 		
 		try {
-			System.out.println("argh1");
+//			System.out.println("argh1");
 			String tag = null;
 			if (providerInfo.contains("verb=")) {
-				System.out.println("argh2");
+//				System.out.println("argh2");
 				url = baseUrl + "?" + providerInfo.substring(providerInfo.indexOf("verb="), providerInfo.indexOf(',', providerInfo.indexOf("verb=")));
 			}
 			
@@ -453,7 +460,7 @@ public class ValidationDINIResults {
 			// getXMLReponse();
 			String xml = getXMLResponse(url);
 //			System.out.println("break1" + xml);
-			System.out.println("break2" + tag);
+//			System.out.println("break2" + tag);
 			// String output = decorateXML(); 
 			renderPopups = false;
 			return decorateXml(xml, tag);
@@ -470,7 +477,7 @@ public class ValidationDINIResults {
 //	}
 	
 	private String getXMLResponse(String url) {
-		System.out.println("break: " + url);
+//		System.out.println("break: " + url);
 		HttpClient htc = new HttpClient();
 		GetMethod method = new GetMethod(url);
 		method.setFollowRedirects(true);
@@ -547,6 +554,10 @@ public class ValidationDINIResults {
     
     /*************************** Getters & Setters ************************/
 
+    public String getEncryptedValidationId(Integer id) {
+    	return EncryptionUtils.encryptAndEncode(Integer.toString(id));
+    }
+    
 	public List<ValidatorTask> getMandatoryValidationResults() {
 		if (mandatoryTasks == null || System.currentTimeMillis()-validationsLastFetched > 5000) {
 			System.out.println("FETCHING RESULTS");
@@ -603,5 +614,18 @@ public class ValidationDINIResults {
 	public String getBonus() {
 		return Integer.toString(bonus);
 	}
+
+
+
+	public String getValidationId() {
+    	return validationId;
+    }
+
+
+
+	public void setValidationId(String validationId) {
+    	this.validationId = validationId;
+    }
+	
 	
 }

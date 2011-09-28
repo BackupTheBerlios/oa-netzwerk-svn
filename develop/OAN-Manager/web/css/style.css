@@ -107,7 +107,7 @@ div.overlay_main{
 	margin-top: 200px; 
 	margin-bottom: 100%; 
 	width: 800px; 
-	border: 4px #D4E6D1 solid; 
+	border: 4px #AAFFAA solid; 
 	background-color: rgba(250,250,250,1.00); 
 	-moz-border-radius: 25px; 
 	-webkit-border-radius: 25px;	
@@ -123,6 +123,19 @@ div.overlay_outside{
 	
 }
  
+ /** online status table **/
+ 
+table.maximized{
+	
+	width: 100%;
+	
+} 
+ 
+td.centered{
+	
+	text-align: center;
+	
+}  
  
  /** custom end  **/
  

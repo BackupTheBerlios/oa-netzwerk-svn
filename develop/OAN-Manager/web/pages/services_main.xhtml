@@ -34,111 +34,50 @@
 	<h:messages style="color:red" />
     <br />
 
-
-
-
     <h:form>
-    <table width="80%" style="width: 80%; border-collapse: collapse; border: 1px #bbb solid;">
+      <t:dataTable value="#{services.services}" var="service"
+        headerClass="pane-header" rowClasses="odd, even"
+        style="width: 80%; border-collapse: collapse; border: 1px #bbb solid;">
+        
+        <t:column style="vertical-align: middle; text-align: center; height: 70px;">
+          <f:facet name="header">
+            <h:outputText value="Status" />
+          </f:facet>
+     		<t:div rendered="#{service.started}">
+			<img src="../images/24x24/status_green.png" width="18" height="18" title="#{service.prettyName} ready" />
+          </t:div>
+          <t:div rendered="#{service.busy}">
+			<img src="../images/24x24/status_yellow.png" width="19" height="19" title="#{service.prettyName} working" />
+          </t:div>
+     		<t:div rendered="#{not service.started and not service.busy}">
+			<img src="../images/24x24/status_red.png" width="18" height="18" title="#{service.prettyName} not started" />
+          </t:div>   
+        </t:column>
+        
+        <t:column  style="vertical-align: middle; text-align: center; height: 70px;">
+          <f:facet name="header">
+            <h:outputText value="Dienst" />
+          </f:facet>
+          <h:outputText value="#{service.prettyName}" />
+        </t:column>
+        
+        <t:column style="vertical-align: middle; text-align: center; height: 70px;">
+          <f:facet name="header">
+            <h:outputText value="Aktion" />
+          </f:facet>
+          <t:div rendered="#{not service.started and not service.busy}">
+          	<h:commandLink action="#{services.startService(service)}" title="Starten" ><h:outputText value="#{msg.serv_main10}" /></h:commandLink>
+          </t:div> 
+          <br />
+          <t:div rendered="#{service.started or service.busy}">
+          	<h:commandLink action="#{services.stopService(service)}" title="Stoppen" ><h:outputText value="#{msg.serv_main11}" /></h:commandLink> 
+          </t:div> 
+        </t:column>
+        
+      </t:dataTable>
 
-      <tr>
-        <th class="pane-header"><h:outputText value="#{msg.serv_main2}" /></th>
-        <th class="pane-header"><h:outputText value="#{msg.serv_main3}" /></th>
-        <th class="pane-header"><h:outputText value="#{msg.serv_main7}" /></th>
-      </tr>
-
-      <tr class="odd">
-        <td style="vertical-align: middle; text-align: center; height: 70px;">
-       		<t:div rendered="#{services.harvesterStarted}">
-				<img src="../images/24x24/status_green.png" width="18" height="18" title="Harvester ready" />
-            </t:div>
-            <t:div rendered="#{services.harvesterBusy}">
-				<img src="../images/24x24/status_yellow.png" width="19" height="19" title="Harvester working" />
-            </t:div>
-       		<t:div rendered="#{not services.harvesterStarted and not services.harvesterBusy}">
-				<img src="../images/24x24/status_red.png" width="18" height="18" title="Harvester-service not started" />
-            </t:div>            
-        </td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">Harvester</td>
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main8}" /></td>-->
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;">2h 15min</td>-->
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main9}" /></td>-->
-        <td style="vertical-align: middle; text-align: center; height: 70px;">
-        
-        <t:div rendered="#{not services.harvesterStarted and not services.harvesterBusy}">
-        	<h:commandLink action="#{services.startHarvesterService}" title="Starten" ><h:outputText value="#{msg.serv_main10}" /></h:commandLink>
-        </t:div> 
-        
-        <br />
-        
-        <t:div rendered="#{services.harvesterStarted or services.harvesterBusy}">
-        	<h:commandLink action="#{services.stopHarvesterService}" title="Stoppen" ><h:outputText value="#{msg.serv_main11}" /></h:commandLink> 
-        </t:div> 
-        
-        </td>
-      </tr>
-      <tr class="even">
-        <td style="vertical-align: middle; text-align: center; height: 70px;">
-       		<t:div rendered="#{services.aggregatorStarted}">
-				<img src="../images/24x24/status_green.png" width="18" height="18" title="Aggregator ready" />
-            </t:div>
-            <t:div rendered="#{services.aggregatorBusy}">
-				<img src="../images/24x24/status_yellow.png" width="19" height="19" title="Aggregator working" />
-            </t:div>
-       		<t:div rendered="#{not services.aggregatorStarted and not services.aggregatorBusy}">
-				<img src="../images/24x24/status_red.png" width="18" height="18" title="Aggregator-Service not started" />
-            </t:div>            
-        </td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">Aggregator</td>
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main12}" /></td>-->
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;">7min</td>-->
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main13}" /></td>-->
-        <td style="vertical-align: middle; text-align: center; height: 70px;">
-        
-        <t:div rendered="#{not services.aggregatorStarted and not services.aggregatorBusy}">
-        	<h:commandLink action="#{services.startAggregatorService}" title="Starten" ><h:outputText value="#{msg.serv_main14}" /></h:commandLink>
-        </t:div> 
-        
-        <br />
-        
-        <t:div rendered="#{services.aggregatorStarted or services.aggregatorBusy}">
-        	<h:commandLink action="#{services.stopAggregatorService}" title="Stoppen" ><h:outputText value="#{msg.serv_main15}" /></h:commandLink> 
-        </t:div> 
-        
-        </td>
-      </tr>
-      <tr class="even">
-        <td style="vertical-align: middle; text-align: center; height: 70px;">
-       		<t:div rendered="#{services.markerStarted}">
-				<img src="../images/24x24/status_green.png" width="18" height="18" title="Marker ready"/>
-            </t:div>
-            <t:div rendered="#{services.markerBusy}">
-				<img src="../images/24x24/status_yellow.png" width="19" height="19" title="Marker working" />
-            </t:div>
-       		<t:div rendered="#{not services.markerStarted and not services.markerBusy}">
-				<img src="../images/24x24/status_red.png" width="18" height="18" title="Marker-Service not started" />
-            </t:div>            
-        </td>
-        <td style="vertical-align: middle; text-align: center; height: 70px;">Marker</td>
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main16}" /></td>-->
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;">7min</td>-->
-<!--        <td style="vertical-align: middle; text-align: center; height: 70px;"><h:outputText value="#{msg.serv_main17}" /></td>-->
-        <td style="vertical-align: middle; text-align: center; height: 70px;">
-        
-        <t:div rendered="#{not services.markerStarted and not services.markerBusy}">
-        	<h:commandLink action="#{services.startMarkerService}" title="Starten" ><h:outputText value="#{msg.serv_main18}" /></h:commandLink>
-        </t:div> 
-        
-        <br />
-        
-        <t:div rendered="#{services.markerStarted or services.markerBusy}">
-        	<h:commandLink action="#{services.stopMarkerService}" title="Stoppen" ><h:outputText value="#{msg.serv_main19}" /></h:commandLink> 
-        </t:div> 
-        
-        </td>
-      </tr>
-
-    </table>
     </h:form>
+
 
 	</div>
     </div>

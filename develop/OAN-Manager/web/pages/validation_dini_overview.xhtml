@@ -81,11 +81,12 @@
 						</f:facet>
 						<div align="center">
 						<t:div rendered="#{row.state eq msg.validation_status_pending}"><h:outputText value="#{row.state}" /></t:div>
-						<t:div rendered="#{row.state eq msg.validation_status_finished}"><a href="validation_dini_results.xhtml?vid=#{row.id}"><h:outputText value="#{row.state}" /></a></t:div>
+						<t:div rendered="#{row.state eq msg.validation_status_finished}"><a href="validation_dini_results.xhtml?vid=#{validationResults.getEncryptedValidationId(row.id)}"><h:outputText value="#{row.state}" /></a></t:div>
 						</div>
 					</t:column>
 					
 				</t:dataTable>
+
                 </t:div>
                 <t:div rendered="#{validationResults.validations.size() > 20}">
                   <t:dataScroller id="dataScroller" for="jobs" fastStep="10" pageIndexVar="pageIndex" renderFacetsIfSinglePage="true"

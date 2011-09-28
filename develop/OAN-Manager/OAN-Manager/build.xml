@@ -67,6 +67,8 @@
 				<include name="admingui.xml" />
 				<include name="utils-taglib.xml" />
 				<include name="web.xml" />
+				<include name="mailsettings.xml" />
+				<include name="oapsprop.xml" />
 			</webinf>
 
 			<webinf dir="conf/production">
@@ -85,6 +87,7 @@
 			<zipfileset dir="web/css/" prefix="css/" />
 			<zipfileset dir="web/images/" prefix="images/" />
 			<zipfileset dir="web/pages/" prefix="pages/" />
+			<zipfileset dir="web/resources/" prefix="resources/" />
 		</war>
 	</target>
 
