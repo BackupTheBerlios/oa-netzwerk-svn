@@ -132,8 +132,7 @@
 					<tr>
 						<td style="width: 20%; padding-left:15px"><b><h:outputText value="Regel-Status" /></b></td>
 						<td><img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" /><h:outputText value="&#160; Erfüllt (#{row.successPercentage}%)" />
-							#{validationResults.getRuleUrl(validationResults.baseUrl, row.rule.parameters['provider_information'])}
-							#{row.rule.parameters['provider_information']}
+							
 						</td>	
 					</tr>
 					
@@ -145,13 +144,12 @@
 						<td>
 							<img width="14" height="14" src="../images/24x24/status_#{row.color}.png" alt="" />
 							<h:outputText rendered="#{row.showDetails}" value="&#160; #{row.successPercentage}%  (#{row.entry.successes})" />
-							#{row.rule.parameters["provider_information"]}
+							
                         <t:div rendered="#{not row.showDetails}"> 
                         
-                        <h:commandButton type="button" value="Fehler anzeigen" >
+                        <h:commandButton type="button" value="Fehler anzeigen" onclick="jsf.ajax.request(this, event, {execute: '', render: 'form:tab1:requirements:#{count1}:overlay'}); scrollTo(0,180); return false;">
                             <f:setPropertyActionListener target="#{validationResults.renderPopups}" value="#{true}"/>
                         	<f:setPropertyActionListener target="#{validationResults.baseUrl}" value="#{validationResults.baseUrl}"/>
-                            <f:ajax event="click" execute="@this" render="form:tab1:requirements:#{count1}:overlay"/>
                         </h:commandButton>  
 							
 						<t:div id="overlay" style="height: 100%;">

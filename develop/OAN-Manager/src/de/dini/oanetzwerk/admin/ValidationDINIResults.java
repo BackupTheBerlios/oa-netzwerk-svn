@@ -236,9 +236,6 @@ public class ValidationDINIResults {
 		
 		FacesContext ctx = FacesContext.getCurrentInstance();
 
-		if (validationList != null && validationList.size() > 0) {
-			return validationList;
-		}
 		
 		System.out.println("Fetch jobs update"); 
 		validationList = new ArrayList<ValidationBean>(); //Liste von Validations wird generiert

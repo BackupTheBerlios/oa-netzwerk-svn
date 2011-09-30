@@ -263,7 +263,7 @@ public class ValidationDINI implements Serializable, JobListener {
 		// construct usage validation job
 		
 		SgParameters oaiUsageParams = new SgParameters();		
-		oaiUsageParams.addParam(FieldNames.JOB_GENERAL_USER, "");
+		oaiUsageParams.addParam(FieldNames.JOB_GENERAL_USER, "sdavid");
 		oaiUsageParams.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Usage Validation");
 		oaiUsageParams.addParam(FieldNames.JOB_OAIUSAGE_BASEURL, baseUrl);
 		
@@ -316,8 +316,8 @@ public class ValidationDINI implements Serializable, JobListener {
 	public void sendInfoMail(int jobId, List<String> recipients) {
 		
 		// send email
-		String encryptedAndEncodedId = EncryptionUtils.encryptAndEncode(Integer.toString(jobId));
-		String resultsUrl = "https://localhost:8443/oanadmin/pages/validation_dini_results.xhtml?vid=" + encryptedAndEncodedId;
+		String encryptedAndEncodedId = EncryptionUtils.encryptAndEncode(Integer.toString(jobId - 1));
+		String resultsUrl = "https://oanet.cms.hu-berlin.de/oanadmin/pages/validation_dini_results.xhtml?vid=" + encryptedAndEncodedId;
 		System.out.println("url: " + resultsUrl);
 		String subject = "OA-Netzwerk Validator - Ergebnisse";
 		String message = "Die Validierung des Repositories ist beendet. Die Ergebnisse können sie unter " +
