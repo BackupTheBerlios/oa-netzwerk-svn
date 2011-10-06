@@ -5,6 +5,7 @@ import gr.uoa.di.validator.api.SgParameters;
 import gr.uoa.di.validator.api.Validator;
 import gr.uoa.di.validator.api.ValidatorException;
 import gr.uoa.di.validator.api.standalone.APIStandalone;
+import gr.uoa.di.validator.constants.FieldNames;
 import gr.uoa.di.validatorweb.actions.browsejobs.Job;
 
 import java.io.ByteArrayInputStream;
@@ -43,6 +44,8 @@ import de.dini.oanetzwerk.admin.security.EncryptionUtils;
 public class ValidationDINIResults {
 
 	
+	private static final String MANDATORY = "mandatory";
+	private static final String JOBTYPE_CONTENT = "OAI Content Validation";
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(ValidationDINI.class);
 	
@@ -106,7 +109,9 @@ public class ValidationDINIResults {
 
 		try {
 			Job job = val.getJob(validationId);
-			
+//			List<Rule> r = val.getAllRulesForPresentationByRuleSet(null);
+//			List<Rule> r = val.getRules(null,0);
+//			r.get(0).
 			if (job != null) {
 				baseUrl = job.getRepo();
 //				score = job.getScore() != null && job.getScore().length() > 0 ? Integer.parseInt(job.getScore()) : 0;
@@ -120,114 +125,85 @@ public class ValidationDINIResults {
 		}
 
 		
+		// fetch jobs from usage job
 		List<Entry> list = this.getJobSummary(validationId);
-
+		
+		// fetch related job tasks from content validation
+		String relatedJobId = Integer.toString((Integer.parseInt(validationId) + 1));
+		List<Entry> relatedJob = this.getJobSummary(relatedJobId);
+		
 		mandatoryTasks 	= new ArrayList<ValidatorTask>();
 		optionalTasks 	= new ArrayList<ValidatorTask>();
 		
-		boolean generalFailure = list == null || list.isEmpty();
+		boolean generalFailure = list == null || list.isEmpty() || relatedJob == null || relatedJob.isEmpty();
 		
-		if (!generalFailure) {
-			// entries from usage validation job
-			SgParameters params = null;
-			for (Entry entry : list) {
-				
-				
-				//fetch rule, too
-				try {
-					params = val.getRule(Integer.toString(entry.getRuleId()));
-				} catch (ValidatorException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				if (entry.getWeight() < 2) {
-					
-					optionalTasks.add(new ValidatorTask(entry, params, false));
-				} else {
-					
-					mandatoryTasks.add(new ValidatorTask(entry, params, false));
-				}
+		// abort processing, general oaipmh failure occured 
+		if (generalFailure) {
+			ctx.addMessage("1", new FacesMessage(LanguageSwitcherBean.getMessage(ctx, "validation_failure_oaipmh")));
+			return; // null;
+		}
+		
+		list.addAll(relatedJob);
+		
+		// entries from usage validation job
+		SgParameters params = null;
+		boolean mandatory = false;
+		boolean contentType = false;
+		
+		for (Entry entry : list) {
+			
+			//fetch rule, too
+			try {
+				params = val.getRule(Integer.toString(entry.getRuleId()));
+			} catch (ValidatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			mandatory = MANDATORY.equals(params.getParamByName(FieldNames.RULE_MANDATORY));
+			contentType = JOBTYPE_CONTENT.equals(params.getParamByName(FieldNames.JOB_GENERAL_TYPE));
+			System.out.println("getMandatory: " + params.getParamByName(MANDATORY));
+			
+			if (mandatory) {					
+				mandatoryTasks.add(new ValidatorTask(entry, params, contentType));
+			} else {
+				optionalTasks.add(new ValidatorTask(entry, params, contentType));
 			}
 		}
 		
-		// fetch related job tasks from content validation
-		String relatedJobId = null;
-		try {
-			relatedJobId = Integer.toString((Integer.parseInt(validationId) + 1));
-			List<Entry> relatedJob = this.getJobSummary(relatedJobId);
-
-			generalFailure = relatedJob == null || relatedJob.isEmpty();
-			
-			if (!generalFailure) {
-				// entries from content validation job
-				SgParameters params = null;
-				for (Entry entry : relatedJob) {
-					
-					// fetch rule, too
-					try {
-						params = val.getRule(Integer.toString(entry.getRuleId()));
-					} catch (ValidatorException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					System.out.println("getMandatory: " + params.getParamByName("mandatory"));
-					if (entry.getWeight() < 2) {
-						
-						optionalTasks.add(new ValidatorTask(entry, params, true));
-					} else {
-						
-						mandatoryTasks.add(new ValidatorTask(entry, params, true));
-					}
-				}
-			}
-			
-			// abort processing, general oaipmh failure occured 
-			if (generalFailure) {
-				ctx.addMessage("1", new FacesMessage(LanguageSwitcherBean.getMessage(ctx, "validation_failure_oaipmh")));
-				return; // null;
-			}
-			
 //			Job job = val.getJob(Integer.toString(Integer.parseInt(validationId) + 1));
 //			
 //			if (job != null) {
 //				float score2 = (float) (job.getScore() != null && job.getScore().length() > 0 ? Integer.parseInt(job.getScore()) : 0);
 //				score = Math.round( ((float)score / 3.0f)  + (score2 / 3.0f * 2.0f) );
 //			} 
-			
-			float points = 0.0f;
-			for (ValidatorTask task : mandatoryTasks) {
-				// calculate points per rule and add it to the overall points
-				points += task.getSuccessPercentage() / 100.0f * ((float)task.getEntry().getWeight()); 
-				System.out.println("current points: " + points + "   perc: " + task.getSuccessPercentage());
-			}
-			
-			score = Math.round(100.0f/38.0f * points);
-			System.out.println("Score: " + score);
-			
-			float extraPoints = 0.0f;
-			for (ValidatorTask task : optionalTasks) {
-				// calculate points per rule and add it to the overall points
-				extraPoints += task.getSuccessPercentage() / 100.0f * ((float)task.getEntry().getWeight()) * 2 ; // * 2; each rule should make 2 bonus points 
-				System.out.println("current bonus: " + extraPoints + "   perc: " + task.getSuccessPercentage());
-			}
-			
-			bonus = Math.round(extraPoints);
-			System.out.println("Bonus: " + bonus);
-			
-			// read and set error message if job failed
-			Map<Integer, String> errorMap = fileStorage.getValidatorErrors();
-			if (errorMap != null) {
-				errorMessage = errorMap.get(validationId);
-				errorMessage = errorMessage == null ? errorMap.get(validationId + 1) : errorMessage;
-			}
-//			FacesContext.getCurrentInstance().getExternalContext().get
-			
-		} catch (NumberFormatException e) {
-			logger.warn("Could not fetch related job with generated id.  (" + validationId + " + 1)", e);
-		} 
 		
-//		return mandatoryTasks;
+		float points = 0.0f;
+		for (ValidatorTask task : mandatoryTasks) {
+			// calculate points per rule and add it to the overall points
+			points += task.getSuccessPercentage() / 100.0f * ((float)task.getEntry().getWeight()); 
+			System.out.println("current points: " + points + "   perc: " + task.getSuccessPercentage());
+		}
+		
+		score = Math.round(100.0f/38.0f * points);
+		System.out.println("Score: " + score);
+		
+		float extraPoints = 0.0f;
+		for (ValidatorTask task : optionalTasks) {
+			// calculate points per rule and add it to the overall points
+			extraPoints += task.getSuccessPercentage() / 100.0f * ((float)task.getEntry().getWeight()) * 2 ; // * 2; each rule should make 2 bonus points 
+			System.out.println("current bonus: " + extraPoints + "   perc: " + task.getSuccessPercentage());
+		}
+		
+		bonus = Math.round(extraPoints);
+		System.out.println("Bonus: " + bonus);
+		
+		// read and set error message if job failed
+		Map<Integer, String> errorMap = fileStorage.getValidatorErrors();
+		if (errorMap != null) {
+			errorMessage = errorMap.get(validationId);
+			errorMessage = errorMessage == null ? errorMap.get(validationId + 1) : errorMessage;
+		}
+
 	}
 	
 	
@@ -257,7 +233,7 @@ public class ValidationDINIResults {
 			// check if the jobs are related in terms of a full dini analysis (usage and content validation)
 			if (job.getRepo().equals(job2.getRepo()) && job.getRuleset() != null 
 					&& job2.getRuleset() != null && job.getRuleset().equals(job2.getRuleset())
-					&& job.getType().equals("OAI Usage Validation") && job2.getType().equals("OAI Content Validation")
+					&& job.getType().equals("OAI Usage Validation") && job2.getType().equals(JOBTYPE_CONTENT)
 					&& (Integer.parseInt(job.getId()) + 1 == Integer.parseInt(job2.getId())) ) {
 				
 				// case: related jobs, combine 2 jobs to be shown as one
@@ -342,28 +318,31 @@ public class ValidationDINIResults {
 		return null;
 	}
 	
+	
+	/************************* Localized Rule title, descriptions, errors *************************/ 
+	
 	public static String getLocalizedRuleName(String name) {
 		 return getLocalizedText(name);
 	}
 
-
 	public static String getMainDescription(String description) {
-		long start = System.currentTimeMillis();
-//		System.out.println("XXX: " + getLocalizedDescriptions(description)[0]);
-		System.out.println("XXX duration: " + (System.currentTimeMillis() - start));
 		return getLocalizedDescriptions(description)[0];
 	}
 	
 	public static String getAdditionalDescription(String description) {
 		String[] descriptions = getLocalizedDescriptions(description);
-		return (descriptions != null && descriptions.length == 2) ? descriptions[1] : descriptions[0]; 
+		return (descriptions != null && descriptions.length == 2) ? descriptions[1] : ""; 
+	}
+	
+	public static String getErrorDescription(String description) {
+		String[] descriptions = getLocalizedDescriptions(description);
+		return (descriptions != null && descriptions.length == 3) ? descriptions[2] : ""; 
 	}
 	
 	private static String[] getLocalizedDescriptions(String description) {
 
 		String localizedDescription = getLocalizedText(description);
 		
-//		System.out.println("XXX3: " + localizedDescription);
 		// use main description only
 		String[] descriptionsPerLanguage = null;
 		
@@ -404,8 +383,6 @@ public class ValidationDINIResults {
 	
 	public String getRuleUrl(String baseUrl, String providerInfo) {
 		
-//		System.out.println("YYY: " + baseUrl);
-//		System.out.println("YYY2: " + providerInfo);
 		if (providerInfo == null || providerInfo.length() == 0) {
 			return null;
 		}
@@ -421,6 +398,10 @@ public class ValidationDINIResults {
 		}
 		return null;
 	}
+	
+	
+	/**************************** Error Highlighting *****************************/
+	
 	
 	public String getHighlightedResponse(String baseUrl, String providerInfo, String optionalIdentifier) {
 		
