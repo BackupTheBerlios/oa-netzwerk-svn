@@ -55,6 +55,7 @@ import org.xml.sax.InputSource;
 import de.dini.oanetzwerk.admin.security.EncryptionUtils;
 import de.dini.oanetzwerk.utils.CommonValidationUtils;
 import de.dini.oanetzwerk.utils.PropertyManager;
+import de.dini.oanetzwerk.utils.Utils;
 import de.dini.oanetzwerk.utils.imf.DINISetClassification;
 
 
@@ -78,6 +79,9 @@ public class ValidationDINI implements Serializable, JobListener {
 		
 	@ManagedProperty(value = "#{fileStorage}")
 	private FileStorage fileStorage;
+	
+	@ManagedProperty(value = "#{validatorFacade}")
+	private ValidatorFacade validatorFacade;
 	
 	private String validationId = null;
 	private String baseUrl = "http://";
@@ -108,23 +112,8 @@ public class ValidationDINI implements Serializable, JobListener {
 		dummy.setOaiUrl("http://");
 		repoList.add(0, dummy);
 
-		// fetch dini rule sets
-		try {
-
-			Validator validator = APIStandalone.getValidator();
-			List<RuleSet> rulesets = validator.getAllRuleSets();
-
-
-			for (RuleSet ruleset : rulesets) {
-				if (ruleset.getName().startsWith("DINI ")) {
-					ruleSets.add(ruleset);
-				}
-			}
-
-		} catch (ValidatorException e) {
-			logger.warn("Could not fetch DINI rule sets. ", e);
-		}
-
+		
+		ruleSets = validatorFacade.getDiniRuleSets();
 	}
 	
 	// used by validation_dini.xhtml
@@ -317,7 +306,9 @@ public class ValidationDINI implements Serializable, JobListener {
 		
 		// send email
 		String encryptedAndEncodedId = EncryptionUtils.encryptAndEncode(Integer.toString(jobId - 1));
-		String resultsUrl = "https://oanet.cms.hu-berlin.de/oanadmin/pages/validation_dini_results.xhtml?vid=" + encryptedAndEncodedId;
+		String webAppUrl = Utils.getWebApplicationUrl();
+		System.out.println("webapp url: " + webAppUrl);
+		String resultsUrl = webAppUrl + "/pages/validation_dini_results.xhtml?vid=" + encryptedAndEncodedId;
 		System.out.println("url: " + resultsUrl);
 		String subject = "OA-Netzwerk Validator - Ergebnisse";
 		String message = "Die Validierung des Repositories ist beendet. Die Ergebnisse können sie unter " +
@@ -335,65 +326,11 @@ public class ValidationDINI implements Serializable, JobListener {
 	/*********************** Interface Implementation ********************/
 	
 	@Override
-	public void done(int arg0, double arg1) {
-		logger.info("job finished! (" + arg0 + ")");
+	public void done(int jobId, double arg1) {
+		logger.info("job finished! (" + jobId + ")");
 		
-		String recipient = "";
-		
-		try {
-			Validator val = APIStandalone.getValidator();
-			JobActionsAPI api  = new JobActionsAPI();
-			
-			Job job = val.getJob(Integer.toString(arg0));
-			
-			if (job == null)
-			{
-				logger.warn("Could not fetch job with id " + arg0 + " ! Skipping email notification!");
-				return;
-			} 
-			
-			// TODO: fix this, we are using the ruleset field to store email adresses currently,
-			// as we are not able to change the code of the OpenAIRE Validator
-			recipient = job.getRuleset();
-		
-			String[] emails = null;
-			
-			System.out.println(job.getRuleset()); 
-			if (recipient == null || recipient.trim().length() == 0) {
-				logger.info("Skipped email notification, no valid email adresses found for job with id " + arg0); 
-				return;
-			}
-			
-			if (recipient.contains(";")) {
-				emails = recipient.split(";");
-			} else {
-				emails = new String[] {recipient};
-			}
-			
-			List<String>  validEmails = new ArrayList<String>();
-			
-			for (String email : emails) {
-	            
-				if (CommonValidationUtils.isValidEmail(email)) {
-					validEmails.add(email);
-				}
-            }
-			// check if the user-field is a valid e-mail address
-			if (validEmails.size() > 0) {
-				System.out.println(job.getType());
-				// only send emails for content job results
-				if ("OAI Content Validation".equals(job.getType())) {
-				
-					// send info mail
-					sendInfoMail(arg0, validEmails);
-				}
-			}
-			
-		} catch (ValidatorException e) {
-			logger.warn("An error occured while retrieving list of validation jobs! ", e);
-			return;
-		}
-		
+		// email
+		emailNotification(jobId);
 	}
 
 	@Override
@@ -412,8 +349,60 @@ public class ValidationDINI implements Serializable, JobListener {
 		}
 		
 		fileStorage.storeValidatorInfo(errors);
+		
+		// email
+		emailNotification(jobId);
 	}
 
+	private void emailNotification(int jobId) {
+
+		String recipient = "";
+		
+		Job job = validatorFacade.getJob(Integer.toString(jobId));
+		
+		if (job == null)
+		{
+			logger.warn("Skipping email notification!");
+			return;
+		} 
+		
+		// TODO: fix this, we are using the ruleset field to store email adresses currently,
+		// as we are not able to change the code of the OpenAIRE Validator
+		recipient = job.getRuleset();
+	
+		String[] emails = null;
+		
+		System.out.println(job.getRuleset()); 
+		if (recipient == null || recipient.trim().length() == 0) {
+			logger.info("Skipped email notification, no valid email adresses found for job with id " + jobId); 
+			return;
+		}
+		
+		if (recipient.contains(";")) {
+			emails = recipient.split(";");
+		} else {
+			emails = new String[] {recipient};
+		}
+		
+		List<String>  validEmails = new ArrayList<String>();
+		
+		for (String email : emails) {
+            
+			if (CommonValidationUtils.isValidEmail(email)) {
+				validEmails.add(email);
+			}
+        }
+		// check if the user-field is a valid e-mail address
+		if (validEmails.size() > 0) {
+			System.out.println(job.getType());
+			// only send emails for content job results
+			if ("OAI Content Validation".equals(job.getType())) {
+			
+				// send info mail
+				sendInfoMail(jobId, validEmails);
+			}
+		}
+    }
 	
 	/******************** Getter & Setter *************************/
 
@@ -515,6 +504,10 @@ public class ValidationDINI implements Serializable, JobListener {
 
 	public void setEmailer(Emailer emailer) {
     	this.emailer = emailer;
+    }
+
+	public void setValidatorFacade(ValidatorFacade validatorFacade) {
+    	this.validatorFacade = validatorFacade;
     }
 	
 }

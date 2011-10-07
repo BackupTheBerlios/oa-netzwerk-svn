@@ -1,6 +1,8 @@
 package de.dini.oanetzwerk.admin;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -9,6 +11,10 @@ import org.apache.log4j.Logger;
 public class ValidationBean implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
+	
+	private static SimpleDateFormat germanFormat = new SimpleDateFormat("dd.MM.yyyy");
+	private static SimpleDateFormat englishFormat = new SimpleDateFormat("yyyy-MM-dd");
+	
 	private Logger logger = Logger.getLogger(ValidationBean.class);
 	
 	private Integer id;
@@ -40,6 +46,15 @@ public class ValidationBean implements Serializable{
 	
 	public String getDate(){
 		return date;
+	}
+	
+	public String getPrettyDate() {
+		try {
+	        return germanFormat.format(englishFormat.parse(date));
+        } catch (ParseException e) {
+	        logger.warn("Could not format date according to current locale. " + date);
+	        return date;
+        }
 	}
 	
 	public void setDate(String date){

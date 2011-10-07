@@ -1,5 +1,8 @@
 package de.dini.oanetzwerk.utils;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+
 /**
  * @author Sammy David
  * sammy.david@cms.hu-berlin.de
@@ -24,5 +27,16 @@ public class Utils {
     	return DEFAULT_CONTEXT;
     }
 	
+	public static String getWebApplicationUrl() {
+		
+		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+		StringBuffer buffer = new StringBuffer(context.getRequestScheme()); // scheme
+		buffer.append("://")
+		.append(context.getRequestServerName()) // host
+		.append(":").append(context.getRequestServerPort()) // port
+		.append(context.getRequestContextPath()); // context path
+		
+		return buffer.toString();
+	}
 	
 }

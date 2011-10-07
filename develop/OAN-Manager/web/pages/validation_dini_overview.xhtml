@@ -24,6 +24,19 @@
    <div style="padding: 20px; background-color: #f5f9f4;">
       <div style="background-color: #f5f9f4;">
    
+   <ui:param name="emailMode" value="#{true}" />
+   
+   <t:div rendered="#{emailMode}">
+    <h2>
+      DINI-Check wird durchgeführt...
+    </h2>
+      Die DINI-Analyse wird bearbeitet. Bitte haben sie etwas Geduld, je nach Umfang des Repositories bzw. der gewünschten Prüfung kann die Dauer der Analyse variieren. Wir senden eine Benachrichtigung an die von ihnen gewählte E-Mail Adresse, sobald die Prüfung abgeschlossen ist.
+    <br />
+    
+    <br />
+   </t:div>
+   
+   <t:div rendered="#{not emailMode}">
    <h2>
    Validation - Übersicht
    </h2>
@@ -112,7 +125,7 @@
 			</td>
 		</tr>
 	</table>
-					
+    </t:div>			
 	</div>
 	</div>
 

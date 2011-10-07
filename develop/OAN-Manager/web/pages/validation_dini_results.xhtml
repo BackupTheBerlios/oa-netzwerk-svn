@@ -75,7 +75,7 @@
         <h:outputText value="#{msg.validation_failure_readspecs}" /><a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">http://www.openarchives.org/OAI/openarchivesprotocol.html</a>)
    	</t:div>
    
-    <t:div rendered="#{validationResults.jobFailed}">
+    <t:div rendered="#{validationResults.validationFailed}">
    		Bei der Überprüfung des Repositories ist ein Fehler aufgetreten.
    		<br /><br />
    		Fehlerhafte Anfrage: <b><h:outputText value="&#160; #{validationResults.errorMessage}" /></b>
@@ -83,7 +83,7 @@
         <h:outputText value="#{msg.validation_failure_readspecs}" /><a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">http://www.openarchives.org/OAI/openarchivesprotocol.html</a>)
    	</t:div>
    
-    <t:div rendered="#{not validationResults.jobFailed}">
+    <t:div rendered="#{not validationResults.validationFailed}">
 	    Nachfolgend erhalten sie eine Liste der geprüften Regeln und den jeweiligen Status darüber inwieweit diese Regel vom Repository umgesetzt wurde. <p />
 	    <b>Geprüftes Repository</b>: <a href="#{validationResults.baseUrl}?verb=Identify" target="_blank">#{validationResults.baseUrl}</a><p />
         <font size="3">Score</font>(<a href="#" onclick="javascript:toggle_help('help_score'); return false;">?</a>): <font size="5">#{validationResults.score}</font><h:outputText value="&#160;&#160;" />
@@ -157,7 +157,7 @@
 					<tr>
 						<td></td>
 						<td>
-						<t:div rendered="#{not row.showDetails}">
+						<t:div rendered="#{not row.showDetails and not row.successPercentage eq 100}">
 
 							<h:commandButton type="button" value="Details"
 								onclick="jsf.ajax.request(this, event, {execute: '', render: 'form:tab1:requirements:#{count1}:overlay'}); scrollTo(0,180); return false;">

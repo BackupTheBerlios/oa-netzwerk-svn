@@ -11,11 +11,16 @@
   
       <t:div styleClass="overlay_main">
         <t:div style="padding: 20px;">
-                                <h:outputText value="Request-URL: #{validationResults.getRuleUrl(validationResults.baseUrl, row.rule.parameters['provider_information'])}"></h:outputText>
-                                <h:outputText value="#{validationResults.getErrorDescription(row.entry.description)}"></h:outputText>
-          <hr />
-                                <h:outputText escape="false"
-            value="#{validationResults.getHighlightedResponse(validationResults.baseUrl, row.rule.parameters['provider_information'], null)}" />
+                <b>Request-URL:</b>&#160;&#160;<a href="#{validationResults.getRuleUrl(validationResults.baseUrl, row.rule.parameters['provider_information'])}"><h:outputText value="#{validationResults.getRuleUrl(validationResults.baseUrl, row.rule.parameters['provider_information'])}"></h:outputText></a>
+                <br /><br />
+                <b>Fehlerhinweis:</b>&#160;&#160;<h:outputText value="#{validationResults.getErrorDescription(row.entry.description)}"></h:outputText>
+                <br /><br />
+                <b>siehe nachfolgende XML-Antwort</b>
+                <br />
+                <hr />
+                <br />
+                <h:outputText escape="false"
+            value="&#160; #{validationResults.getHighlightedResponse(validationResults.baseUrl, row.rule.parameters['provider_information'], null)}" />
 
         </t:div>
       </t:div>

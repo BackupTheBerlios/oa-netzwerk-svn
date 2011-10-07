@@ -2,9 +2,6 @@ package de.dini.oanetzwerk.admin;
 
 import gr.uoa.di.validator.api.Entry;
 import gr.uoa.di.validator.api.SgParameters;
-import gr.uoa.di.validator.api.Validator;
-import gr.uoa.di.validator.api.ValidatorException;
-import gr.uoa.di.validator.api.standalone.APIStandalone;
 import gr.uoa.di.validator.constants.FieldNames;
 import gr.uoa.di.validatorweb.actions.browsejobs.Job;
 
@@ -44,7 +41,7 @@ import de.dini.oanetzwerk.admin.security.EncryptionUtils;
 public class ValidationDINIResults {
 
 	
-	private static final String MANDATORY = "mandatory";
+	private static final String MANDATORY = "1";
 	private static final String JOBTYPE_CONTENT = "OAI Content Validation";
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(ValidationDINI.class);
@@ -53,6 +50,9 @@ public class ValidationDINIResults {
 	
 	@ManagedProperty(value = "#{fileStorage}")
 	private FileStorage fileStorage;
+	
+	@ManagedProperty(value = "#{validatorFacade}")
+	private ValidatorFacade validatorFacade;
 	
 	private String validationId = null;
 	private String baseUrl = "http://";
@@ -65,7 +65,7 @@ public class ValidationDINIResults {
 	private List<ValidatorTask> optionalTasks 	= null;
 	private long validationsLastFetched 		= 0;
 	private long jobsLastFetched 				= 0;
-
+	private boolean validationFailed			= false;
 	private boolean renderPopups = false;
 	
 	@PostConstruct
@@ -80,65 +80,37 @@ public class ValidationDINIResults {
 	// used by validation_dini_results.xhtml
 	private void fetchValidationResults(){
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
-		String encryptedAndEncodedId = request.getParameter("vid");
 		
-		System.out.println("retreived param: " + encryptedAndEncodedId);
-//		if (encryptedAndEncodedId == null) { 
-//			return;
-//		}
-		
-		String id = null;
-		try {
-		
-			id = EncryptionUtils.decryptAndDecode(encryptedAndEncodedId);
-			validationId = id;
-		}catch (Exception e) {
-			logger.warn("Could not decrypt validation-id jor job! Results could not be fetched.");
+		if (! validationIdParamFound()) {
+			return;
 		}
-
-		if (validationId == null || validationId.length() == 0) {
-			if (!ctx.getMessageList().contains(invalidURLMessage)) {
-				ctx.addMessage("1", invalidURLMessage);
-			}
-			return; // new ArrayList<ValidatorTask>();
-		}
+		
 		logger.info("Fetching results... validation job-ID received: " + validationId);
-		
-		Validator val = APIStandalone.getValidator();
 
-		try {
-			Job job = val.getJob(validationId);
-//			List<Rule> r = val.getAllRulesForPresentationByRuleSet(null);
-//			List<Rule> r = val.getRules(null,0);
-//			r.get(0).
-			if (job != null) {
-				baseUrl = job.getRepo();
-//				score = job.getScore() != null && job.getScore().length() > 0 ? Integer.parseInt(job.getScore()) : 0;
-			} 
-            
+		// fetch job
+		Job job = validatorFacade.getJob(validationId);
 
-		} catch (ValidatorException e) {
-			logger.warn("Could not find a job for id " + validationId, e);
+		if (job == null) {
 			ctx.addMessage("1", new FacesMessage("The job-id " + validationId + " is not valid!"));
 			return; // new ArrayList<ValidatorTask>();
-		}
+		} 
 
+		baseUrl = job.getRepo();
 		
-		// fetch jobs from usage job
-		List<Entry> list = this.getJobSummary(validationId);
+		// fetch results from usage job
+		List<Entry> list = validatorFacade.getJobSummary(validationId);
 		
-		// fetch related job tasks from content validation
+		// fetch related job results from content validation
 		String relatedJobId = Integer.toString((Integer.parseInt(validationId) + 1));
-		List<Entry> relatedJob = this.getJobSummary(relatedJobId);
+		List<Entry> relatedJob = validatorFacade.getJobSummary(relatedJobId);
 		
 		mandatoryTasks 	= new ArrayList<ValidatorTask>();
 		optionalTasks 	= new ArrayList<ValidatorTask>();
 		
-		boolean generalFailure = list == null || list.isEmpty() || relatedJob == null || relatedJob.isEmpty();
+		validationFailed = list == null || list.isEmpty() || relatedJob == null || relatedJob.isEmpty();
 		
 		// abort processing, general oaipmh failure occured 
-		if (generalFailure) {
+		if (validationFailed) {
 			ctx.addMessage("1", new FacesMessage(LanguageSwitcherBean.getMessage(ctx, "validation_failure_oaipmh")));
 			return; // null;
 		}
@@ -153,12 +125,8 @@ public class ValidationDINIResults {
 		for (Entry entry : list) {
 			
 			//fetch rule, too
-			try {
-				params = val.getRule(Integer.toString(entry.getRuleId()));
-			} catch (ValidatorException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			params = validatorFacade.getRule(Integer.toString(entry.getRuleId()));	
 			mandatory = MANDATORY.equals(params.getParamByName(FieldNames.RULE_MANDATORY));
 			contentType = JOBTYPE_CONTENT.equals(params.getParamByName(FieldNames.JOB_GENERAL_TYPE));
 			System.out.println("getMandatory: " + params.getParamByName(MANDATORY));
@@ -211,12 +179,17 @@ public class ValidationDINIResults {
 	private List<ValidationBean> fetchJobs(){
 		
 		FacesContext ctx = FacesContext.getCurrentInstance();
+		System.out.println("Fetch jobs..."); 
 
+		// only get List of the job that has been explicitly requested
+		if (validationIdParamFound()) {
+			return fetchJob();
+		}		
 		
-		System.out.println("Fetch jobs update"); 
+		// get a list of all jobs
 		validationList = new ArrayList<ValidationBean>(); //Liste von Validations wird generiert
 
-		List<Job> jobs = this.getJobs();
+		List<Job> jobs = validatorFacade.getJobs();
 		Collections.sort(jobs, new JobComparator());
 		
 		String date = "";
@@ -262,7 +235,7 @@ public class ValidationDINIResults {
 			String id = job.getId();
 			vali.setId(Integer.parseInt(job.getId()));
 			
-			List<Entry> e = this.getJobSummary(id);
+			List<Entry> e = validatorFacade.getJobSummary(id);
 
 			// Setzen des Datums
 			date = job.getStarted().substring(0, 10);
@@ -282,40 +255,106 @@ public class ValidationDINIResults {
 		return validationList;
 	}
 	
-	//Liefert zum Entry mit der entsprechenden JobId Informationen
-	public List<Entry> getJobSummary(String jobId) {
+	private List<ValidationBean> fetchJob(){
+		
+		FacesContext ctx = FacesContext.getCurrentInstance();
 
-		try {
-			Validator val = APIStandalone.getValidator();
-			List<Entry> entries = val.getJobSummary(jobId);
+		
+		System.out.println("Fetch jobs update"); 
+		validationList = new ArrayList<ValidationBean>(); //Liste von Validations wird generiert
+
+		List<Job> jobs = new ArrayList<Job>();
+		jobs.add(validatorFacade.getJob(validationId));
+		jobs.add(validatorFacade.getJob(Integer.toString((Integer.parseInt(validationId) + 1))));
+		
+		Collections.sort(jobs, new JobComparator());
+		
+		String date = "";
+
+		Job job, job2;
+		
+		for (int j = 0; j < jobs.size()-1; j++) {
 			
-			if (entries == null)
-			{
-				logger.info("No summary available for job-id " + jobId + "!" );
+			job = jobs.get(j);
+			job2 = jobs.get(j+1);
+			
+			ValidationBean vali = new ValidationBean();
+			
+			// check if the jobs are related in terms of a full dini analysis (usage and content validation)
+			if (job.getRepo().equals(job2.getRepo()) && job.getRuleset() != null 
+					&& job2.getRuleset() != null && job.getRuleset().equals(job2.getRuleset())
+					&& job.getType().equals("OAI Usage Validation") && job2.getType().equals(JOBTYPE_CONTENT)
+					&& (Integer.parseInt(job.getId()) + 1 == Integer.parseInt(job2.getId())) ) {
+				
+				// case: related jobs, combine 2 jobs to be shown as one
+		
+				System.out.println("started: " + job.getStarted());
+				System.out.println("started2: " + job2.getStarted());
+	
+				// Setzen der Dauer
+				vali.setDuration(job2.getDuration());
+				System.out.println("duration1: " + job.getDuration());
+				System.out.println("duration2: " + job2.getDuration());
+				
+				// Setzen des Status
+				vali.setState(job.getStatus().equals("finished") && job2.getStatus().equals("finished") 
+						? LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "validation_status_finished", null).getSummary() 
+						: LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "validation_status_pending", null).getSummary());
+	
+				j++;
+				
+			} else { // not related
+				vali.setDuration(job.getDuration());
+				vali.setState(job.getStatus());
 			}
+			
+			// set job-id 
+			String id = job.getId();
+			vali.setId(Integer.parseInt(job.getId()));
+			
+			List<Entry> e = validatorFacade.getJobSummary(id);
 
-			return entries;
-		} catch (ValidatorException e) {
-			logger.warn("An error occured while retrieving job summary for job with id " + jobId + "! ", e);
+			// Setzen des Datums
+			date = job.getStarted().substring(0, 10);
+			vali.setDate(date);
+
+			// Setzen der OaiUrl
+			
+			vali.setOaiUrl(job.getRepo() != null ? job.getRepo().replace("\n", "") : "");
+			
+			// Aufnehmen in die Liste der Validations
+			validationList.add(vali);
+			
 		}
-		return null;
+
+		logger.debug("NUmber of validation-jobs to be shown: " + validationList.size()); 
+
+		return validationList;
 	}
 	
-	//Liefert alle Jobs, die entsprechend angefordert wurden (SQL-Not.)
-	public List<Job> getJobs() {
+	private boolean validationIdParamFound() {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
+		String encryptedAndEncodedId = request.getParameter("vid");
+		
+		System.out.println("retreived param: " + encryptedAndEncodedId);		
+		String id = null;
 		try {
-			Validator val = APIStandalone.getValidator();
-			List<Job> jobs = val.getJobsOfUser("sdavid");
-			
-			if (jobs == null)
-			{
-				logger.warn("No validation jobs are available!");
-			} 
-			return jobs;
-		} catch (ValidatorException e) {
-			logger.warn("An error occured while retrieving list of validation jobs! ", e);
+		
+			id = EncryptionUtils.decryptAndDecode(encryptedAndEncodedId);
+			validationId = id;
+		}catch (Exception e) {
+			logger.warn("Could not decrypt validation-id jor job! Results could not be fetched.");
+			validationId = null;
 		}
-		return null;
+
+		if (validationId == null || validationId.length() == 0) {
+			if (!ctx.getMessageList().contains(invalidURLMessage)) {
+				ctx.addMessage("1", invalidURLMessage);
+			}
+			return false; // new ArrayList<ValidatorTask>();
+		}
+		return true;
 	}
 	
 	
@@ -593,17 +632,19 @@ public class ValidationDINIResults {
 		return Integer.toString(bonus);
 	}
 
-
+	public boolean isValidationFailed() {
+		return validationFailed;
+	}
 
 	public String getValidationId() {
-    	return validationId;
-    }
-
-
+		return validationId;
+	}
 
 	public void setValidationId(String validationId) {
-    	this.validationId = validationId;
+		this.validationId = validationId;
+	}
+
+	public void setValidatorFacade(ValidatorFacade validatorFacade) {
+    	this.validatorFacade = validatorFacade;
     }
-	
-	
 }
