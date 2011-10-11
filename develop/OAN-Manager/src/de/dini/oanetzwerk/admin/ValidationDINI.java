@@ -1,8 +1,6 @@
 package de.dini.oanetzwerk.admin;
 
-import gr.uoa.di.validator.api.Entry;
 import gr.uoa.di.validator.api.IJob;
-import gr.uoa.di.validator.api.JobActionsAPI;
 import gr.uoa.di.validator.api.SgParameters;
 import gr.uoa.di.validator.api.Validator;
 import gr.uoa.di.validator.api.ValidatorException;
@@ -12,14 +10,11 @@ import gr.uoa.di.validator.jobs.JobListener;
 import gr.uoa.di.validatorweb.actions.browsejobs.Job;
 import gr.uoa.di.validatorweb.actions.rulesets.RuleSet;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -27,36 +22,26 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 import de.dini.oanetzwerk.admin.security.EncryptionUtils;
 import de.dini.oanetzwerk.utils.CommonValidationUtils;
-import de.dini.oanetzwerk.utils.PropertyManager;
 import de.dini.oanetzwerk.utils.Utils;
-import de.dini.oanetzwerk.utils.imf.DINISetClassification;
 
 
 @ManagedBean(name = "validation")
@@ -67,6 +52,7 @@ public class ValidationDINI implements Serializable, JobListener {
 	private static Logger logger = Logger.getLogger(ValidationDINI.class);
 	private static String defaultDiniRuleSetName = "DINI 2010";
 
+	public final static String SESSION_KEY_NAME = "oansession";
 		
 	FacesContext ctx = FacesContext.getCurrentInstance();
 	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(false);
@@ -88,6 +74,8 @@ public class ValidationDINI implements Serializable, JobListener {
 	private String selectedDiniRuleset;
 	private String selectedNumOfRecords = "100";
 	private String email;
+	private String captcha;
+	private String webApplicationUrl = "http://oanet.cms.hu-berlin.de/oanadmin";
 	private boolean adminEmail = false;
 	private boolean randomRecords;
 	private boolean allRecords = false;
@@ -100,9 +88,10 @@ public class ValidationDINI implements Serializable, JobListener {
 	@PostConstruct
 	public void initValidationBean() {
 
-		String path = FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath();
-
-		path = path.substring(path.lastIndexOf('/') + 1);
+		webApplicationUrl = getWebApplicationUrl();
+		
+//		String path = FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath();
+//		path = path.substring(path.lastIndexOf('/') + 1);
 
 		// fetch repositories
 		repoList = restConnector.fetchRepositories();
@@ -188,18 +177,27 @@ public class ValidationDINI implements Serializable, JobListener {
 			valid = false;
 		}
 		
-		// validate e-mail address 
-		if (adminEmail) {
-			// fetch admin email
-			String parameter = "?verb=Identify";
+		// check if base url is valid and check admin email if selected
+		String parameter = "?verb=Identify";
 
+		try {
 			HttpClient htc = new HttpClient();
 			GetMethod method = new GetMethod(baseUrl + parameter);
 			method.setFollowRedirects(true);
 			InputStream response = null;
-			try {
-				htc.executeMethod(method);
-				response = method.getResponseBodyAsStream();
+			htc.executeMethod(method);
+			response = method.getResponseBodyAsStream();
+			
+			// check if response succeeds
+			if (method.getStatusCode() != HttpStatus.SC_OK) {
+				System.out.println("Status: " + method.getStatusCode());
+				context.addMessage("1", new FacesMessage("Please specify a valid oai-pmh base url! The Identity-verb could not be requested under " + baseUrl + parameter));
+				valid = false;
+			}
+			
+			// validate e-mail address 
+			// fetch admin email
+			if (adminEmail) {
 				DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder builder = domFactory.newDocumentBuilder();
 				Document doc = builder.parse(response);
@@ -217,11 +215,16 @@ public class ValidationDINI implements Serializable, JobListener {
 						email = email + ";" + nodes.item(i).getTextContent();
 					}
 				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
+			response.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("testyyy");
+			context.addMessage("1", new FacesMessage("The specified base url seems to be invalid!"));
+			valid = false;
 		}
+	
 		
 		if (email != null && email.length() > 0) {
 
@@ -231,12 +234,32 @@ public class ValidationDINI implements Serializable, JobListener {
 			}
 		}
 		
+		if(!validCaptcha()) {
+			valid = false;
+			context.addMessage("1", new FacesMessage("The given captcha code is invalid, please re-enter the code!"));
+		}
+		
 		return valid;
 	}
 	
+
+    private boolean validCaptcha() {
+
+        // Compare the CAPTCHA value with the user entered value.
+        String captchaValue = (String)((HttpSession) FacesContext
+                .getCurrentInstance().getExternalContext().getSession(true))
+                .getAttribute(SESSION_KEY_NAME);
+        
+        if(captchaValue.equalsIgnoreCase(captcha)) {
+            return true;
+        } 
+        return false;
+    }
+    
+
 	// used by validation_dini.xhtml
 	
-	public String submitValidation() {
+	public synchronized String submitValidation() {
 		
 		boolean done = false;
 		boolean valid = validateForm();
@@ -244,11 +267,25 @@ public class ValidationDINI implements Serializable, JobListener {
 		if(!valid) {
 			return "validation_dini";
 		}
+		
 		for (SgParameters rule: diniRules) {
 			
 //			System.out.println(rule.getParamByName("check"));
 		}
 		
+		List<Integer> cvRules = new ArrayList<Integer>();
+		List<Integer> uvRules = new ArrayList<Integer>();
+		
+		SgParameters rule = null;
+		for (SgParameters r : diniRules) {
+			if ("OAI Usage Validation".equals(r.getParamByName(FieldNames.RULE_JOBTYPE))) {
+				uvRules.add(Integer.parseInt(r.getParamByName(FieldNames.RULE_ID)));
+			}
+			else {
+				cvRules.add(Integer.parseInt(r.getParamByName(FieldNames.RULE_ID)));
+			}
+		}		
+
 		// construct usage validation job
 		
 		SgParameters oaiUsageParams = new SgParameters();		
@@ -256,12 +293,6 @@ public class ValidationDINI implements Serializable, JobListener {
 		oaiUsageParams.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Usage Validation");
 		oaiUsageParams.addParam(FieldNames.JOB_OAIUSAGE_BASEURL, baseUrl);
 		
-		List<Integer> uvRules = new ArrayList<Integer>();
-		for (int i = 0; i < 14; i++) {
-			if ("true".equals(diniRules.get(i).getParamByName("check"))) {
-				uvRules.add(i+1);
-			}
-		}		
 		
 		// construct content validation job
 		
@@ -273,12 +304,6 @@ public class ValidationDINI implements Serializable, JobListener {
 		oaiContentParams.addParam(FieldNames.JOB_OAICONTENT_RANDOM, Boolean.toString(randomRecords));
 		oaiContentParams.addParam(FieldNames.JOB_OAICONTENT_RECORDS, selectedNumOfRecords);
 
-		List<Integer> cvRules = new ArrayList<Integer>();
-		for (int i = 14; i < 29; i++) {
-			if ("true".equals(diniRules.get(i).getParamByName("check"))) {
-				cvRules.add(i+1);
-			}
-		}
 
 		try {
 
@@ -306,9 +331,8 @@ public class ValidationDINI implements Serializable, JobListener {
 		
 		// send email
 		String encryptedAndEncodedId = EncryptionUtils.encryptAndEncode(Integer.toString(jobId - 1));
-		String webAppUrl = Utils.getWebApplicationUrl();
-		System.out.println("webapp url: " + webAppUrl);
-		String resultsUrl = webAppUrl + "/pages/validation_dini_results.xhtml?vid=" + encryptedAndEncodedId;
+		System.out.println("webapp url: " + webApplicationUrl);
+		String resultsUrl = webApplicationUrl + "/pages/validation_dini_results.xhtml?vid=" + encryptedAndEncodedId;
 		System.out.println("url: " + resultsUrl);
 		String subject = "OA-Netzwerk Validator - Ergebnisse";
 		String message = "Die Validierung des Repositories ist beendet. Die Ergebnisse können sie unter " +
@@ -344,10 +368,12 @@ public class ValidationDINI implements Serializable, JobListener {
 		
 		String errorMessage = ex.getMessage();
 		
-		if (errors != null) {
-			errors.put(jobId, errorMessage);
+		if (errors == null) {
+			errors = new HashMap<Integer, String>();
 		}
 		
+		errors.put(jobId, errorMessage);
+		System.out.println("STORING: " + jobId + "   " + errorMessage);
 		fileStorage.storeValidatorInfo(errors);
 		
 		// email
@@ -403,6 +429,18 @@ public class ValidationDINI implements Serializable, JobListener {
 			}
 		}
     }
+	
+	public String getWebApplicationUrl() {
+		
+		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+		StringBuffer buffer = new StringBuffer(context.getRequestScheme()); // scheme
+		buffer.append("://")
+		.append(context.getRequestServerName()) // host
+		.append(":").append(context.getRequestServerPort()) // port
+		.append(context.getRequestContextPath()); // context path
+		
+		return buffer.toString();
+	}
 	
 	/******************** Getter & Setter *************************/
 
@@ -484,6 +522,18 @@ public class ValidationDINI implements Serializable, JobListener {
 
 	public void setEmail(String email) {
     	this.email = email;
+    }
+	
+	public String getCaptcha() {
+    	return captcha;
+    }
+
+	public void setCaptcha(String captcha) {
+    	this.captcha = captcha;
+    }
+
+	public String getSessionKeyName() {
+    	return SESSION_KEY_NAME;
     }
 
 	public void setDiniRules(List<SgParameters> diniRules) {

@@ -119,8 +119,9 @@ public class ValidationDINIResults {
 		
 		// entries from usage validation job
 		SgParameters params = null;
-		boolean mandatory = false;
+		boolean mandatory 	= false;
 		boolean contentType = false;
+		ValidatorTask validatorTask	= null; 
 		
 		for (Entry entry : list) {
 			
@@ -128,13 +129,16 @@ public class ValidationDINIResults {
 
 			params = validatorFacade.getRule(Integer.toString(entry.getRuleId()));	
 			mandatory = MANDATORY.equals(params.getParamByName(FieldNames.RULE_MANDATORY));
-			contentType = JOBTYPE_CONTENT.equals(params.getParamByName(FieldNames.JOB_GENERAL_TYPE));
+			contentType = JOBTYPE_CONTENT.equals(params.getParamByName(FieldNames.RULE_JOBTYPE));
+			System.out.println("getType: " + params.getParamByName(FieldNames.RULE_JOBTYPE));
 			System.out.println("getMandatory: " + params.getParamByName(MANDATORY));
 			
+			validatorTask = new ValidatorTask(entry, params, contentType);
+			
 			if (mandatory) {					
-				mandatoryTasks.add(new ValidatorTask(entry, params, contentType));
+				mandatoryTasks.add(validatorTask);
 			} else {
-				optionalTasks.add(new ValidatorTask(entry, params, contentType));
+				optionalTasks.add(validatorTask);
 			}
 		}
 		
@@ -204,9 +208,8 @@ public class ValidationDINIResults {
 			ValidationBean vali = new ValidationBean();
 			
 			// check if the jobs are related in terms of a full dini analysis (usage and content validation)
-			if (job.getRepo().equals(job2.getRepo()) && job.getRuleset() != null 
-					&& job2.getRuleset() != null && job.getRuleset().equals(job2.getRuleset())
-					&& job.getType().equals("OAI Usage Validation") && job2.getType().equals(JOBTYPE_CONTENT)
+			if (job.getRepo().equals(job2.getRepo())
+					&& !job.getType().equals(job2.getType())
 					&& (Integer.parseInt(job.getId()) + 1 == Integer.parseInt(job2.getId())) ) {
 				
 				// case: related jobs, combine 2 jobs to be shown as one
@@ -420,7 +423,7 @@ public class ValidationDINIResults {
 		}
 	}
 	
-	public String getRuleUrl(String baseUrl, String providerInfo) {
+	public String getRuleUrl(String baseUrl, String providerInfo, String optionalIdentifier) {
 		
 		if (providerInfo == null || providerInfo.length() == 0) {
 			return null;
@@ -429,9 +432,19 @@ public class ValidationDINIResults {
 		String url = null;
 		
 		try {
+
 			if (providerInfo.contains("verb=")) {
 				return baseUrl + "?" + providerInfo.substring(providerInfo.indexOf("verb="), providerInfo.indexOf(',', providerInfo.indexOf("verb=")));
 			}
+			
+			if (!providerInfo.contains("field=")) {
+				System.out.println(optionalIdentifier);
+				if (optionalIdentifier == null || optionalIdentifier.length() == 0) {
+					logger.warn("This should not happen, rule with simple field information but no additional identifier.");
+				}
+				url = baseUrl + "?verb=GetRecord&metadataPrefix=oai_dc&identifier=" + optionalIdentifier;
+			}
+			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -444,8 +457,6 @@ public class ValidationDINIResults {
 	
 	public String getHighlightedResponse(String baseUrl, String providerInfo, String optionalIdentifier) {
 		
-//		System.out.println("YYY: " + baseUrl);
-//		System.out.println("YYY2: " + providerInfo);
 		if (providerInfo == null || providerInfo.length() == 0) {
 			return null;
 		}
@@ -453,45 +464,29 @@ public class ValidationDINIResults {
 		String url = null;
 		
 		try {
-//			System.out.println("argh1");
-			String tag = null;
-			if (providerInfo.contains("verb=")) {
-//				System.out.println("argh2");
-				url = baseUrl + "?" + providerInfo.substring(providerInfo.indexOf("verb="), providerInfo.indexOf(',', providerInfo.indexOf("verb=")));
-			}
+			String tagToMark = null;
 			
 			if (providerInfo.contains("field=")) {
-
-				tag = providerInfo.substring(providerInfo.indexOf("field=") + 6, providerInfo.length());
 				
+				tagToMark = providerInfo.substring(providerInfo.indexOf("field=") + 6, providerInfo.length());	
 			} else  {
-				System.out.println(optionalIdentifier);
-				if (optionalIdentifier == null || optionalIdentifier.length() == 0) {
-					logger.warn("This should not happen, rule with field information but no additional identifier.");
-				}
-				url = baseUrl + "?verb=GetRecord&metadataPrefix=oai_dc&identifier=" + optionalIdentifier;
-				tag = providerInfo;
+				tagToMark = providerInfo;
 			}
 			
 			
 			// getXMLReponse();
-			String xml = getXMLResponse(url);
+			String xml = getXMLResponse(getRuleUrl(baseUrl, providerInfo, optionalIdentifier));
 //			System.out.println("break1" + xml);
 //			System.out.println("break2" + tag);
 			// String output = decorateXML(); 
 			renderPopups = false;
-			return decorateXml(xml, tag);
+			return decorateXml(xml, tagToMark);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-//	private String getRecordUrl(String baseUrl) {
-//		
-//		
-//	}
 	
 	private String getXMLResponse(String url) {
 //		System.out.println("break: " + url);
@@ -601,6 +596,37 @@ public class ValidationDINIResults {
 		}
 		
 		return validationList;
+	}
+	
+	public boolean isJobFailed() {
+		
+		if (getErrorMessage() != null || mandatoryTasks == null || mandatoryTasks.size() == 0 || optionalTasks == null || optionalTasks.size() == 0) {
+			
+			//reset bean
+			score = 0;
+			bonus = 0;
+			return true;
+		}
+		return false;		
+	}
+	
+	public String getErrorMessage() {
+		if (validationId == null) {
+			return "Ein interner Fehler ist aufgetreten! Bitte versuchen sie es zu einem späteren Zeitpunkt erneut.";
+		}
+		
+		Map<Integer, String> errorMap = fileStorage.getValidatorErrors();
+		if (errorMap != null) {
+			errorMessage = errorMap.get(validationId);
+			System.out.println("err1" + errorMessage);
+			System.out.println(errorMap.size());
+			errorMessage = errorMessage == null ? errorMap.get(Integer.parseInt(validationId) + 1) : errorMessage;
+			System.out.println("err2" + errorMessage);
+			System.out.println("err3" + validationId + "   " + (Integer.parseInt(validationId) + 1));
+		}
+		
+		
+		return errorMessage;
 	}
 	
 	public void setFileStorage(FileStorage fileStorage) {

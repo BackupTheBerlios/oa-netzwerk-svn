@@ -148,6 +148,13 @@
 		  </tr>
   
           <tr>
+            <td colspan="2" align="right"><p />
+              <t:captcha captchaSessionKeyName="#{validation.sessionKeyName}" imageWidth="180" imageHeight="60" /><br />
+              <h:inputText value="#{validation.captcha}" style="width: 174px;" />
+            </td>
+          </tr>
+              
+          <tr>
             <td colspan="2" align="right"><p /><h:commandButton type="submit" style="width: 250px;height: 40px;" 
             	action="#{validation.submitValidation}" value="DINI-Konformität jetzt prüfen!"></h:commandButton>
             </td>

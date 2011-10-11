@@ -10,20 +10,19 @@
   <ui:composition>
   
       <t:div styleClass="overlay_main">
-        <t:div style="padding: 20px;">
-                <b>Request-URL:</b>&#160;&#160;<a href="#{validationResults.getRuleUrl(validationResults.baseUrl, row.rule.parameters['provider_information'])}"><h:outputText value="#{validationResults.getRuleUrl(validationResults.baseUrl, row.rule.parameters['provider_information'])}"></h:outputText></a>
+        <t:div style="padding: 20px; text-align: left;">
+                <b>Request-URL:</b>&#160;&#160;<h:outputText value="#{validationResults.getRuleUrl(validationResults.baseUrl, row.rule.parameters['provider_information'], error)}"></h:outputText>
                 <br /><br />
-                <b>Fehlerhinweis:</b>&#160;&#160;<h:outputText value="#{validationResults.getErrorDescription(row.entry.description)}"></h:outputText>
-                <br /><br />
-                <b>siehe nachfolgende XML-Antwort</b>
-                <br />
-                <hr />
-                <br />
+                <b>Fehlerhinweis:</b>&#160;&#160;<font color="#CC0000"><h:outputText value="#{validationResults.getErrorDescription(row.entry.description)}"></h:outputText></font>
+                <br /><br /><br />
+                <b>XML-Antwort des Servers</b>
+                <br /><hr /><br />
                 <h:outputText escape="false"
-            value="&#160; #{validationResults.getHighlightedResponse(validationResults.baseUrl, row.rule.parameters['provider_information'], null)}" />
+            value="&#160; #{validationResults.getHighlightedResponse(validationResults.baseUrl, row.rule.parameters['provider_information'], error)}" />
 
         </t:div>
       </t:div>
+      
       
   </ui:composition>
 </body>

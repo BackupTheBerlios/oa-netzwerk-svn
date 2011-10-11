@@ -16,7 +16,9 @@ public class ValidatorTask {
 		super();
 		this.entry = entry;
 		this.rule = rule;
-		this.showDetails = showDetails;
+		
+		// set showdetails flag if there have been errors
+		this.showDetails = showDetails && this.getSuccessPercentage() < 100.0f;
 	}
 
 	public Entry getEntry() {

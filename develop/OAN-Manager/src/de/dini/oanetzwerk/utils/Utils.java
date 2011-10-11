@@ -27,16 +27,4 @@ public class Utils {
     	return DEFAULT_CONTEXT;
     }
 	
-	public static String getWebApplicationUrl() {
-		
-		ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-		StringBuffer buffer = new StringBuffer(context.getRequestScheme()); // scheme
-		buffer.append("://")
-		.append(context.getRequestServerName()) // host
-		.append(":").append(context.getRequestServerPort()) // port
-		.append(context.getRequestContextPath()); // context path
-		
-		return buffer.toString();
-	}
-	
 }

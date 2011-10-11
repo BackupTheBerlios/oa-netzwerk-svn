@@ -123,6 +123,11 @@ div.overlay_outside{
 	
 }
  
+div.overlay {
+	height: 100%;
+	text-align: left;
+}
+	
  /** online status table **/
  
 table.maximized{
