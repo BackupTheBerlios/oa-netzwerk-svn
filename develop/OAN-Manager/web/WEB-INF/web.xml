@@ -90,12 +90,17 @@
 
 
 	<!-- General Application Parameters -->
+	
+	<context-param>
+		<param-name>oanmanager.PROJECT_NAME</param-name>
+		<param-value>OAN-Manager</param-value>
+	</context-param>
 	<context-param>
 		<param-name>oanmanager.DEBUG_MODE</param-name>
 		<param-value>true</param-value>
 	</context-param>
 	<context-param>
-		<param-name>oanmanager.MANAGER_VERSION</param-name>
+		<param-name>oanmanager.VERSION</param-name>
 		<param-value>0.3</param-value>
 	</context-param>
 

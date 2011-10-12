@@ -19,6 +19,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.application.FacesMessage.Severity;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -48,6 +49,7 @@ import de.dini.oanetzwerk.utils.Utils;
 @RequestScoped 
 public class ValidationDINI implements Serializable, JobListener {
 	
+	private static final Severity MSG_INFO = FacesMessage.SEVERITY_INFO;
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger.getLogger(ValidationDINI.class);
 	private static String defaultDiniRuleSetName = "DINI 2010";
@@ -159,7 +161,7 @@ public class ValidationDINI implements Serializable, JobListener {
 
 
 		if (!CommonValidationUtils.isValidUrl(baseUrl.trim())) {
-			context.addMessage("1", new FacesMessage("Please specify a valid oai-pmh base url or select a repository from the dropdown list. "));
+			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_repo", null));
 			//context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_chooseservice", null));
 			valid = false;
 		}
@@ -191,7 +193,7 @@ public class ValidationDINI implements Serializable, JobListener {
 			// check if response succeeds
 			if (method.getStatusCode() != HttpStatus.SC_OK) {
 				System.out.println("Status: " + method.getStatusCode());
-				context.addMessage("1", new FacesMessage("Please specify a valid oai-pmh base url! The Identity-verb could not be requested under " + baseUrl + parameter));
+				context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_identify", new Object[] { baseUrl + parameter + "." }));
 				valid = false;
 			}
 			
@@ -220,8 +222,7 @@ public class ValidationDINI implements Serializable, JobListener {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("testyyy");
-			context.addMessage("1", new FacesMessage("The specified base url seems to be invalid!"));
+			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_baseurl", null));
 			valid = false;
 		}
 	
@@ -229,14 +230,17 @@ public class ValidationDINI implements Serializable, JobListener {
 		if (email != null && email.length() > 0) {
 
 			if (!CommonValidationUtils.isValidEmail(email)) {
-				context.addMessage("1", new FacesMessage("The given email-adress is invalid, please specify a valid email!"));
+				context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_invalidemail", null));
 				valid = false;
 			}
+		} else {
+			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_noemail", null));
+			valid = false;
 		}
 		
 		if(!validCaptcha()) {
 			valid = false;
-			context.addMessage("1", new FacesMessage("The given captcha code is invalid, please re-enter the code!"));
+			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_captcha", null));
 		}
 		
 		return valid;
@@ -335,12 +339,11 @@ public class ValidationDINI implements Serializable, JobListener {
 		String resultsUrl = webApplicationUrl + "/pages/validation_dini_results.xhtml?vid=" + encryptedAndEncodedId;
 		System.out.println("url: " + resultsUrl);
 		String subject = "OA-Netzwerk Validator - Ergebnisse";
-		String message = "Die Validierung des Repositories ist beendet. Die Ergebnisse können sie unter " +
-				resultsUrl + " einsehen.";
+		String message = "Die Validierung des Repositories ist beendet. Die Ergebnisse können sie unter " + resultsUrl + " einsehen.";
 		
 		boolean success = emailer.sendValidatorInfoMail(recipients, subject, message);
 		if (success) {
-		logger.info("The validation results for job " + jobId + " have been successfully sent via email.");
+			logger.info("The validation results for job " + jobId + " have been successfully sent via email.");
 		} else {
 			logger.warn("The validation results for job " + jobId + " could not be sent via email !"); 
 		}

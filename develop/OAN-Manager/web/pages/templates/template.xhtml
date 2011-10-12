@@ -38,7 +38,15 @@
 
       <div id="navigation">
       <!-- <ui:insert name="menu" /-->
-      <ui:decorate template="../components/menu.xhtml"></ui:decorate>
+      
+      <t:div rendered="#{not initParam['oanmanager.MENU_DISABLED']}">
+        <ui:decorate template="../components/menu.xhtml" ></ui:decorate>
+      </t:div>
+      
+      <t:div rendered="#{initParam['oanmanager.MENU_DISABLED']}">
+        <ui:decorate template="../components/menu_validator.xhtml"></ui:decorate>
+      </t:div>
+      
       </div>
       </td>
 

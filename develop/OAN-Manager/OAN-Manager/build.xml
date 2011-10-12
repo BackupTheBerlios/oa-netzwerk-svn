@@ -55,7 +55,7 @@
 
 
 
-	<target name="war" depends="compile">
+	<target name="warManager" depends="compile">
 		<mkdir dir="${dist}" />
 
 		<war destfile="${dist}/OAN-Manager.war" webxml="web/WEB-INF/web.xml">
@@ -90,5 +90,45 @@
 			<zipfileset dir="web/resources/" prefix="resources/" />
 		</war>
 	</target>
+	
+	<target name="warValidator" depends="compile">
+		<mkdir dir="${dist}" />
+
+		<war destfile="${dist}/validator.war" webxml="conf/production/validator/web.xml">
+
+			<!--metainf dir="myfaces-root/admin-gui/META-INF/">
+			</metainf-->
+			<webinf dir="web/WEB-INF/">
+				<include name="faces-config.xml" />
+				<include name="admingui.xml" />
+				<include name="utils-taglib.xml" />
+				<include name="mailsettings.xml" />
+				<include name="oapsprop.xml" />
+				<include name="utils-taglib.xml" />
+			</webinf>
+
+			<webinf dir="conf/production">
+				<include name="services.properties" />
+				<include name="restclientprop.xml" />
+			</webinf>
+
+			<classes dir="${build}" />
+
+			<lib dir="${web.lib}/" />
+
+			<zipfileset dir="web/">
+				<include name="*.html" />
+			</zipfileset>
+			<zipfileset dir="web/js/" prefix="js/" />
+			<zipfileset dir="web/css/" prefix="css/" />
+			<zipfileset dir="web/images/" prefix="images/" />
+			<zipfileset dir="web/pages/" prefix="pages/">
+				<include name="validation*.xhtml" />
+				<include name="templates/*.xhtml" />
+				<include name="components/*.xhtml" />
+			</zipfileset>
+			<zipfileset dir="web/resources/" prefix="resources/" />
+		</war>
+	</target>	
 
 </project>

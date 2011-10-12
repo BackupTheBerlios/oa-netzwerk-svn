@@ -13,10 +13,12 @@
 
   <ui:param name="pageTitle" value="DINI Check - OA-Netzwerk Manager" />
 
-  <ui:define name="navigation">
-    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="validation_dini_overview.xhtml"><h:outputText value="Validator" /></a> » <a href="validation_dini.xhtml"><h:outputText value="DINI Check" /></a>
-  </ui:define>
-
+  <t:div rendered="#{not initParam['oanmanager.NAVIGATION_DISABLED']}"> 
+    <ui:define name="navigation">
+      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="validation_dini_overview.xhtml"><h:outputText value="Validator" /></a> » <a href="validation_dini.xhtml"><h:outputText value="DINI Check" /></a>
+    </ui:define>
+  </t:div>
+  
   <ui:param name="menu_validation_add" value="#{true}" />
 	
   <ui:define name="content">
@@ -52,18 +54,16 @@
     <h:form id="diniValidationForm">
     <table width="80%">
           <tr>
-            <td colspan="2">Mit dem DINI-Validator können sie die OAI-PMH Schnittstelle von Repositorien auf ihre Konformität zum 
-            DINI-Zertifikat prüfen. Diese Analyse ist ein nützliches Hilfsinstrument, mit dem sich anhand der Ergebnisse 
-            leicht erkennen lässt inwieweit das Repositorium den Regeln folgt und wo gegebenenfalls gezielt optimiert werden kann. <p />
-            Nachfolgend können sie das zu prüfende Repository angeben und festlegen welche Regeln des Zertifikats geprüft werden sollen.            
-            <p />
+            <td colspan="2">
+              <h:outputText value="#{msg.validation_dini_intro1}" /><p />
+              <h:outputText value="#{msg.validation_dini_intro2}" /><p />
             </td>
           </tr>
           <tr>
           	<td colspan="2"><h:messages style="color:red;"/></td>
           </tr>
           <tr>
-			<td width="30%"><i>Wählen sie zunächst den DINI Regelsatz</i><p /><br /></td>
+			<td width="30%"><i><h:outputText value="#{msg.validation_dini_chooseruleset}" /></i><p /><br /></td>
 			<td><h:selectOneMenu id="ruleset" value="#{validation.selectedDiniRuleset}" style="width : 200px;">
 					<f:selectItems value="#{validation.ruleSets}" var="ruleset"
 							itemLabel="#{ruleset.name}" itemValue="#{ruleset.name}" />
@@ -72,7 +72,7 @@
           </tr>
 
           <tr>
-            <td><i>Geben sie ein Repository an (<a href="#" onclick="javascript:toggle_help('help_repository'); return false;">Help</a>)</i></td>
+            <td><i><h:outputText value="#{msg.validation_dini_chooserepo}" /> (<a href="#" onclick="javascript:toggle_help('help_repository'); return false;">Help</a>)</i></td>
 			<td>
 
 				<h:selectOneMenu id="repositories" value="#{validation.baseUrl}" style=" width : 200px;" 
@@ -85,35 +85,34 @@
           	<td></td>
             <td class="form"><t:inputText id="url" size="70" value="#{validation.baseUrl}" />
             <div class="help_box" id="help_repository">
-            	<h:outputText value="Bitte wählen sie ein Repository aus der Dropdown-Liste oder geben sie im " /><br />
-            	<h:outputText value="Eingabefeld darunter eine gültige Basis-URL an!" />
+            	<h:outputText value="#{msg.validation_dini_chooserepo_help}" escape="#{false}"/>
             </div>
             </td>
           </tr>
           
           <tr>
-          	<td><i>Wieviele Records sollen maximal überprüft werden.</i></td>
+          	<td><i><h:outputText value="#{msg.validation_dini_numrecords}" /></i></td>
             <td class="form">
             	<t:inputText id="numRecords" size="10" maxlength="9" value="#{validation.selectedNumOfRecords}" />
-            	<t:selectBooleanCheckbox id="random" value="#{validation.randomRecords}" style="margin-left: 30px;" /><h:outputText value="zufällige Records prüfen" />
-            	<t:selectBooleanCheckbox id="all" value="#{validation.allRecords}" style="margin-left: 30px;" onclick="javascript:toggleRecordCount('numRecords', 'random', 'diniValidationForm');"/><h:outputText value="vollständige Analyse" />
+            	<t:selectBooleanCheckbox id="random" value="#{validation.randomRecords}" style="margin-left: 30px;" /><h:outputText value="#{msg.validation_dini_randomrecords}" />
+            	<t:selectBooleanCheckbox id="all" value="#{validation.allRecords}" style="margin-left: 30px;" onclick="javascript:toggleRecordCount('numRecords', 'random', 'diniValidationForm');"/><h:outputText value="#{msg.validation_dini_allrecords}" />
             </td>
           </tr>
 
           <tr>
-            <td width="30%"><p /><i>E-Mail Benachrichtigung (optional)</i></td>
+            <td width="30%"><p /><i>#{msg.validation_dini_emailnotification}</i></td>
             <td>
                <t:inputText id="email" size="70" value="#{validation.email}" /><br />
                <t:selectBooleanCheckbox value="#{validation.adminEmail}" /> 
-               <t:outputText value="E-Mail Adresse des Repository-Administrators verwenden (Identify-Verb)" />   
+               <t:outputText value="#{msg.validation_dini_emailnotification_owner}" />   
             <p />
             </td>
           </tr>
           
 		  <tr>
 		  	<td colspan="2">
-              <div id="fold" style="display: none;"><a href="#" onclick="fold(); return false;">Regeln ausblenden</a></div>			
-			  <div id="unfold"><a href="#" onclick="unfold(); return false;">Regeln einblenden</a></div>
+              <div id="fold" style="display: none;"><a href="#" onclick="fold(); return false;">#{msg.validation_dini_hiderules}</a></div>			
+			  <div id="unfold"><a href="#" onclick="unfold(); return false;">#{msg.validation_dini_showrules}</a></div>
 		  	  <div id="rules" style="display: none">
 		  		<t:dataTable value="#{validation.diniRules}" var="row"
 					headerClass="pane-header" rowClasses="odd, even"
@@ -156,7 +155,7 @@
               
           <tr>
             <td colspan="2" align="right"><p /><h:commandButton type="submit" style="width: 250px;height: 40px;" 
-            	action="#{validation.submitValidation}" value="DINI-Konformität jetzt prüfen!"></h:commandButton>
+            	action="#{validation.submitValidation}" value="#{msg.validation_dini_check}"></h:commandButton>
             </td>
           </tr>
     	</table>
