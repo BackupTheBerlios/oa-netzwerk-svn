@@ -49,15 +49,15 @@ import de.dini.oanetzwerk.utils.Utils;
 @RequestScoped 
 public class ValidationDINI implements Serializable, JobListener {
 	
-	private static final Severity MSG_INFO = FacesMessage.SEVERITY_INFO;
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(ValidationDINI.class);
+
+	private static final Severity MSG_INFO = FacesMessage.SEVERITY_INFO;
+	private static final String SESSION_KEY_NAME = "oansession";
+	private static final String DEFAULT_USER = "dini_user";
 	private static String defaultDiniRuleSetName = "DINI 2010";
 
-	public final static String SESSION_KEY_NAME = "oansession";
-		
-	FacesContext ctx = FacesContext.getCurrentInstance();
-	HttpSession session = (HttpSession) ctx.getExternalContext().getSession(false);
+	private static Logger logger = Logger.getLogger(ValidationDINI.class);
+	
 
 	@ManagedProperty(value = "#{restConnector}")
 	private RestConnector restConnector;
@@ -90,14 +90,15 @@ public class ValidationDINI implements Serializable, JobListener {
 	@PostConstruct
 	public void initValidationBean() {
 
+		// get Webapplication-URL to use to build an email link
 		webApplicationUrl = getWebApplicationUrl();
 		
-//		String path = FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath();
-//		path = path.substring(path.lastIndexOf('/') + 1);
+		FacesContext ctx = FacesContext.getCurrentInstance();
 
 		// fetch repositories
 		repoList = restConnector.fetchRepositories();
 
+		// default combobox entry 'choose' 
 		Repository dummy = new Repository();
 		dummy.setName(LanguageSwitcherBean.getMessage(ctx, "general_choose"));
 		dummy.setOaiUrl("http://");
@@ -152,16 +153,17 @@ public class ValidationDINI implements Serializable, JobListener {
 	
 	// used by validation_dini.xhtml
 	
+	@SuppressWarnings("unchecked")
 	public boolean validateForm()
 	{
-		FacesContext context = FacesContext.getCurrentInstance();
+		FacesContext ctx = FacesContext.getCurrentInstance();
 		boolean valid = true;
 
 		logger.info("Validating validation-job for OAI-Url= " + baseUrl + " , chosen DINI Certificate= " + selectedDiniRuleset );
 
 
 		if (!CommonValidationUtils.isValidUrl(baseUrl.trim())) {
-			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_repo", null));
+			ctx.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_repo", null));
 			//context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "scheduling_servicejob_error_chooseservice", null));
 			valid = false;
 		}
@@ -193,7 +195,7 @@ public class ValidationDINI implements Serializable, JobListener {
 			// check if response succeeds
 			if (method.getStatusCode() != HttpStatus.SC_OK) {
 				System.out.println("Status: " + method.getStatusCode());
-				context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_identify", new Object[] { baseUrl + parameter + "." }));
+				ctx.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_identify", new Object[] { baseUrl + parameter + "." }));
 				valid = false;
 			}
 			
@@ -222,7 +224,7 @@ public class ValidationDINI implements Serializable, JobListener {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_baseurl", null));
+			ctx.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_baseurl", null));
 			valid = false;
 		}
 	
@@ -230,17 +232,17 @@ public class ValidationDINI implements Serializable, JobListener {
 		if (email != null && email.length() > 0) {
 
 			if (!CommonValidationUtils.isValidEmail(email)) {
-				context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_invalidemail", null));
+				ctx.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_invalidemail", null));
 				valid = false;
 			}
 		} else {
-			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_noemail", null));
+			ctx.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_noemail", null));
 			valid = false;
 		}
 		
 		if(!validCaptcha()) {
 			valid = false;
-			context.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_captcha", null));
+			ctx.addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, MSG_INFO, "validation_dini_error_captcha", null));
 		}
 		
 		return valid;
@@ -293,7 +295,7 @@ public class ValidationDINI implements Serializable, JobListener {
 		// construct usage validation job
 		
 		SgParameters oaiUsageParams = new SgParameters();		
-		oaiUsageParams.addParam(FieldNames.JOB_GENERAL_USER, "sdavid");
+		oaiUsageParams.addParam(FieldNames.JOB_GENERAL_USER, DEFAULT_USER);
 		oaiUsageParams.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Usage Validation");
 		oaiUsageParams.addParam(FieldNames.JOB_OAIUSAGE_BASEURL, baseUrl);
 		
@@ -301,7 +303,7 @@ public class ValidationDINI implements Serializable, JobListener {
 		// construct content validation job
 		
 		SgParameters oaiContentParams = new SgParameters();
-		oaiContentParams.addParam(FieldNames.JOB_GENERAL_USER, "sdavid");
+		oaiContentParams.addParam(FieldNames.JOB_GENERAL_USER, DEFAULT_USER);
 		oaiContentParams.addParam(FieldNames.JOB_GENERAL_RULESET, email); // TODO: using ruleset field for email storage
 		oaiContentParams.addParam(FieldNames.JOB_GENERAL_TYPE, "OAI Content Validation");
 		oaiContentParams.addParam(FieldNames.JOB_OAICONTENT_BASEURL, baseUrl);

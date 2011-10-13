@@ -16,7 +16,7 @@
                   <td style="font-weight: bold; font-size: 2em;"><a href="/oanadmin/"><img alt=""
                      src="../images/logo_oan_small3.png" /></a></td>
                   <td style="vertical-align: middle; text-align: right; padding-right: 1em;">
-                  <t:div rendered="#{not empty userList.user}">
+                  <t:div rendered="#{not login_page and not initParam['oanmanager.L10N_DISABLED']}">
                     <h:selectOneMenu value="#{language.localeCode}" onchange="submit()"
                       valueChangeListener="#{language.countryLocaleCodeChanged}">
                         <f:selectItems value="#{language.countriesInMap}" /> 

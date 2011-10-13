@@ -13,11 +13,11 @@
 
   <ui:param name="pageTitle" value="Validation - Ergebnisse/Content" />
 
-  <t:div rendered="#{not initParam['oanmanager.NAVIGATION_DISABLED']}"> 
-    <ui:define name="navigation">
+  <ui:define name="navigation">
+    <t:div rendered="#{not initParam['oanmanager.NAVIGATION_DISABLED']}"> 
       <a href="/oanadmin/">OA-Netzwerk</a> » <a href="validation_dini_overview.xhtml"><h:outputText value="Validator" /></a>
-    </ui:define>
-  </t:div>
+    </t:div>
+  </ui:define>
   
   <ui:param name="menu_validation_results" value="#{true}" />
     

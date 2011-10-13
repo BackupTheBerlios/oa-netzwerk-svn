@@ -13,11 +13,12 @@
 
   <ui:param name="pageTitle" value="DINI Check - OA-Netzwerk Manager" />
 
-  <t:div rendered="#{not initParam['oanmanager.NAVIGATION_DISABLED']}"> 
-    <ui:define name="navigation">
+
+  <ui:define name="navigation">
+    <t:div rendered="#{not initParam['oanmanager.NAVIGATION_DISABLED']}"> 
       <a href="/oanadmin/">OA-Netzwerk</a> » <a href="validation_dini_overview.xhtml"><h:outputText value="Validator" /></a> » <a href="validation_dini.xhtml"><h:outputText value="DINI Check" /></a>
-    </ui:define>
-  </t:div>
+    </t:div>
+  </ui:define>
   
   <ui:param name="menu_validation_add" value="#{true}" />
 	

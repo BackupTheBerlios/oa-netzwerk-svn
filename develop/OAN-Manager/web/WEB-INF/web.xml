@@ -103,7 +103,18 @@
 		<param-name>oanmanager.VERSION</param-name>
 		<param-value>0.3</param-value>
 	</context-param>
-
+	<context-param>
+		<param-name>oanmanager.NAVIGATION_DISABLED</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>oanmanager.VALIDATOR_OVERVIEW_DISABLED</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>oanmanager.L10N_DISABLED</param-name>
+		<param-value>false</param-value>
+	</context-param>
 
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>

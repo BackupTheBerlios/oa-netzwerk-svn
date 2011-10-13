@@ -24,9 +24,9 @@
    <div style="padding: 20px; background-color: #f5f9f4;">
       <div style="background-color: #f5f9f4;">
    
-   <ui:param name="emailMode" value="#{true}" />
+
    
-   <t:div rendered="#{emailMode}">
+   <t:div rendered="#{initParam['oanmanager.VALIDATOR_OVERVIEW_DISABLED']}">
     <h2>
       DINI-Check wird durchgeführt...
     </h2>
@@ -36,7 +36,7 @@
     <br />
    </t:div>
    
-   <t:div rendered="#{not emailMode}">
+   <t:div rendered="#{not initParam['oanmanager.VALIDATOR_OVERVIEW_DISABLED']}">
    <h2>
    Validation - Übersicht
    </h2>
@@ -75,7 +75,7 @@
 							<h:outputText value="Datum" />
 						</f:facet>
 						<div align="center">
-						<h:outputText value="#{row.date}" />
+						<h:outputText value="#{row.prettyDate}" />
 						</div>
 					</t:column>
 					
@@ -93,8 +93,8 @@
 							<h:outputText value="Status" />
 						</f:facet>
 						<div align="center">
-						<t:div rendered="#{row.state eq msg.validation_status_pending}"><h:outputText value="#{row.state}" /></t:div>
-						<t:div rendered="#{row.state eq msg.validation_status_finished}"><a href="validation_dini_results.xhtml?vid=#{validationResults.getEncryptedValidationId(row.id)}"><h:outputText value="#{row.state}" /></a></t:div>
+						<t:div rendered="#{row.state eq 'pending'}"><h:outputText value="#{msg.validation_status_pending}" /></t:div>
+						<t:div rendered="#{row.state eq 'finished'}"><a href="validation_dini_results.xhtml?vid=#{validationResults.getEncryptedValidationId(row.id)}"><h:outputText value="#{msg.validation_status_finished}" /></a></t:div>
 						</div>
 					</t:column>
 					

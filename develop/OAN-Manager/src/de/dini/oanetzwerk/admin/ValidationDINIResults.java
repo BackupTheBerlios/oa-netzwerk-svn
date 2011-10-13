@@ -224,8 +224,7 @@ public class ValidationDINIResults {
 				
 				// Setzen des Status
 				vali.setState(job.getStatus().equals("finished") && job2.getStatus().equals("finished") 
-						? LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "validation_status_finished", null).getSummary() 
-						: LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "validation_status_pending", null).getSummary());
+						? "finished" : "pending");
 	
 				j++;
 				
@@ -347,7 +346,7 @@ public class ValidationDINIResults {
 			id = EncryptionUtils.decryptAndDecode(encryptedAndEncodedId);
 			validationId = id;
 		}catch (Exception e) {
-			logger.warn("Could not decrypt validation-id jor job! Results could not be fetched.");
+			logger.warn("Could not decrypt validation-id jor job!");
 			validationId = null;
 		}
 
@@ -355,7 +354,7 @@ public class ValidationDINIResults {
 			if (!ctx.getMessageList().contains(invalidURLMessage)) {
 				ctx.addMessage("1", invalidURLMessage);
 			}
-			return false; // new ArrayList<ValidatorTask>();
+			return false;
 		}
 		return true;
 	}

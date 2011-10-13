@@ -162,7 +162,7 @@
 		</div>  	
     </t:div>   
          
-    <t:div rendered="#{userList.validatorManager and not menu_validation_dini}">
+    <t:div rendered="#{userList.validatorManager and not (menu_validation_dini or menu_validation_add or menu_validation_results)}">
         <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
             href="validation_dini_overview.xhtml"><h:outputText value="Validator" /></a></div>          
     </t:div>  

@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
+
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
@@ -50,7 +53,9 @@ public class ValidationBean implements Serializable{
 	
 	public String getPrettyDate() {
 		try {
-	        return germanFormat.format(englishFormat.parse(date));
+	        return FacesContext.getCurrentInstance().getViewRoot().getLocale().equals(Locale.GERMAN) 
+	        		? germanFormat.format(englishFormat.parse(date))
+	        		: date;
         } catch (ParseException e) {
 	        logger.warn("Could not format date according to current locale. " + date);
 	        return date;
