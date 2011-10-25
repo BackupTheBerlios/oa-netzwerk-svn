@@ -160,15 +160,30 @@ public class RestXmlCodec {
 			
 			filter = new ElementFilter("entryset");
 			iterator = doc.getDescendants(filter);
+			
+			logger.info("YYY");
+			
+			int j = 1;
+			
+			
 			while (iterator.hasNext()) {
 				
-				logger.debug("** <entryset> found");
+				logger.info("YYY1 " + j++);
+				
+//				logger.debug("** <entryset> found");
 				
 				Element elementEntrySet = (Element) iterator.next();
 				RestEntrySet entrySet = new RestEntrySet();			
 				filter = new ElementFilter("entry");
-				Iterator <?> iterator2 = elementEntrySet.getDescendants(filter);
+				Iterator iterator2 = elementEntrySet.getDescendants(filter);
+				
+//				logger.info("XXX1: " + elementEntrySet.);
+				logger.info("XXX");
+				
+				int i = 1;
 				while (iterator2.hasNext()) {
+					
+					logger.info("XXX1 " + i++);
 					
 					logger.debug("** <entry> found");	
 					
@@ -180,7 +195,9 @@ public class RestXmlCodec {
 						key = elementEntry.getAttributeValue("key");
 					}		
 					
-					logger.debug("** key == " + key);
+					logger.info("XXX2");
+					
+//					logger.debug("** key == " + key);
 					
 					String value = "";
 					
@@ -200,10 +217,13 @@ public class RestXmlCodec {
 							}
 						}
 					}
+					logger.info("XXX3");
 					
-					logger.debug("** value == " + value);	
+//					logger.debug("** value == " + value);	
 					
 					entrySet.addEntry(key,value);
+					
+					logger.info("XXX4");
 				}
 				listEntrySets.add(entrySet);
 								

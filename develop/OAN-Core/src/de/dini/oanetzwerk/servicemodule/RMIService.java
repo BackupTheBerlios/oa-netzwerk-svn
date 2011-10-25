@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +30,7 @@ public abstract class RMIService implements IService {
 	private String applicationPath;
 	
 	private String restclientPropFileName = "restclientprop.xml";
-	
+	private boolean initializationComplete = false;
 	
 	public RMIService() {
 	    super();
@@ -38,34 +39,50 @@ public abstract class RMIService implements IService {
 	
 	private void initPropertyFiles() {
 		
+		logger.info("Initializing property files...");
 		
 		applicationPath = null;
-		try {
-			
+		
+		try{
+		
 			// retrieve property file path (application path)
 			applicationPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 
 			logger.debug("Retrieving application path: " + applicationPath);
 			if (applicationPath != null && applicationPath.contains(System.getProperty("file.separator"))) {
-				System.out.println(applicationPath);
+				logger.info(applicationPath);
 				
 				applicationPath = applicationPath.substring(0, applicationPath.lastIndexOf(System.getProperty("file.separator")) + 1 );
-				System.out.println("app path: " + applicationPath);
+				logger.info("Trying to resolve application path: " + applicationPath);
 			}
 			
+		} catch (AccessControlException e) {
+			logger.warn("Could not determine application path, access to directory has been denied!", e);
+			return;
+		}	
+			
+		try {
 			// read service property file
 			serviceProps = HelperMethods.loadPropertiesFromFile(applicationPath + getPropertyFile());
-			
+		} catch (Exception e) {
+			logger.warn("Could not load property file from " + applicationPath + getPropertyFile() + "!", e);
+			return;
+		}
+
+		try {
 			// read restclient property file
 			restclientProps = HelperMethods.loadPropertiesFromFile(applicationPath + restclientPropFileName);
 			
-			logger.info("Reading property files successful!");
-			
-        } catch (Exception e) {
-			logger.warn("Could not load property file '" + getPropertyFile() + "' or 'restclientprop.xml' from path " + applicationPath + "! Skipping harvesting ...");
-        }
-        System.out.println("Reading " + applicationPath + "log4j.xml!");
+		} catch (Exception e) {
+			logger.warn("Could not load property file from " + applicationPath + restclientPropFileName + "!", e);
+			return;
+		}	
+
+        logger.info("Reading " + applicationPath + "log4j.xml!");
 		DOMConfigurator.configureAndWatch((applicationPath == null ? "" : applicationPath) + "log4j.xml" , 60*1000 );
+
+		initializationComplete = true;
+		logger.info("Reading property files successful!");
 	}
 
 	protected List<Repository> getRepositories(String servicePropFile) {
@@ -77,7 +94,7 @@ public abstract class RMIService implements IService {
 			props = HelperMethods.loadPropertiesFromFile(getApplicationPath() + servicePropFile);
 
 		} catch (Exception e) {
-			logger.warn("Could not load property file '" + getApplicationPath() + servicePropFile + "'! Skipping harvesting ...");
+			logger.warn("Could not load property file '" + getApplicationPath() + servicePropFile + "'! Skipping service ...");
 		}
 
 		RestClient client = HelperMethods.prepareRestTransmission(new File(getApplicationPath() + "restclientprop.xml"), "Repository/", props);
@@ -221,5 +238,9 @@ public abstract class RMIService implements IService {
 	protected String getApplicationPath() {
     	return applicationPath;
     }
-		
+
+	protected boolean isInitializationComplete() {
+    	return initializationComplete;
+    }
+	
 }

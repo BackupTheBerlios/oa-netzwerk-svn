@@ -46,6 +46,8 @@ public class MarkerAndEraser {
 	private static final int LIMIT_PECULIAR = 3;
 	private static final int LIMIT_OUTDATED = 6;
 	
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+	
 	private Long repositoryID = null;
 
 	private Date lastRepositoryHarvestDate;
@@ -250,7 +252,8 @@ public class MarkerAndEraser {
 
 		res.addEntry("object_id", oid.toPlainString());
 		res.addEntry("service_id", serviceId.toPlainString());
-		res.addEntry("time", HelperMethods.today().toString() + " 00:00:00.1");
+//		res.addEntry("time", HelperMethods.today().toString() + " 00:00:00.1");
+		res.addEntry("time", dateFormat.format(new Date()));
 		rms.addEntrySet(res);
 
 		RestEntrySet resout = rms.getListEntrySets().get(0);

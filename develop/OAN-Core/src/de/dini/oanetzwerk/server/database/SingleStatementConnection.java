@@ -39,9 +39,8 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	public SingleStatementConnection (Connection dataSourceConnection) throws SQLException {
 		
-		logger.info("Creating new singlestatement connection!");
-//		if (logger.isDebugEnabled ( ))
-//			logger.debug ("SingleStatementConnection Instance will be prepared");
+		if (logger.isDebugEnabled ( ))
+			logger.debug("Creating new singlestatement connection!");
 		
 		this.connection = dataSourceConnection;
 		this.connection.setAutoCommit (true);
@@ -62,12 +61,10 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	public boolean loadStatement (PreparedStatement pstmt) {
 		
-		logger.info("loading statement...");
+		if (logger.isDebugEnabled ( ))
+			logger.debug("loading statement...");
 		
 		if (this.singleStatement == null) {
-			
-//			if (logger.isDebugEnabled ( ))
-//				logger.debug ("loading Statement");
 			
 			this.singleStatement = pstmt;
 			
@@ -88,12 +85,10 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	public QueryResult execute ( ) throws SQLException {
 		
-		logger.info("executing statement...");
+		if (logger.isDebugEnabled ( ))
+			logger.debug("executing statement...");
 		
 		QueryResult result = new QueryResult ( );
-		
-//		if (logger.isDebugEnabled ( ))
-//			logger.debug ("executing Statement");
 		
 		if (this.singleStatement.getWarnings ( ) != null)
 			logger.warn ("A SQL-Statement-Warning occured: " + this.singleStatement.getWarnings ( ).getMessage ( ) + " " + this.singleStatement.getWarnings ( ).getSQLState ( ) + " " + this.singleStatement.getWarnings ( ).getErrorCode ( ));
@@ -107,8 +102,8 @@ public class SingleStatementConnection implements StatementConnection {
 		result.setUpdateCount (this.singleStatement.getUpdateCount ( ));
 		result.setWarning (this.singleStatement.getWarnings ( ));
 		
-//		if (logger.isDebugEnabled ( ))
-//			logger.debug ("Returning Result");
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("Returning Result");
 		
 		return result;
 	}
@@ -119,9 +114,8 @@ public class SingleStatementConnection implements StatementConnection {
 	
 	public void close ( ) throws SQLException {
 		
-		logger.info("closing connection...");
-//		if (logger.isDebugEnabled ( ))
-//			logger.debug ("closing Statement and Connection");
+		if (logger.isDebugEnabled ( ))
+			logger.debug("closing connection...");
 		
 		if (!this.connection.isClosed ( )) {
 	
@@ -147,8 +141,8 @@ public class SingleStatementConnection implements StatementConnection {
 	@Override
 	protected void finalize ( ) throws Throwable {
 		
-//		if (logger.isDebugEnabled ( ))
-//			logger.debug ("finalizing SingleStatementConnection");
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("finalizing SingleStatementConnection");
 		
 		if (!this.connection.isClosed ( )) {
 		

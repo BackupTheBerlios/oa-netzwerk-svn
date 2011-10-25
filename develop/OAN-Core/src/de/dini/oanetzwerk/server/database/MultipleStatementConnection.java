@@ -43,10 +43,9 @@ public class MultipleStatementConnection implements StatementConnection {
 	
 	public MultipleStatementConnection (Connection dataSourceConnection) throws SQLException {
 		
-		logger.info("Creating new multistatement connection!");
 		
-//		if (logger.isDebugEnabled ( ))
-//			logger.debug ("MultipleStatementConnection Instance will be prepared");
+		if (logger.isDebugEnabled ( ))
+			logger.debug("Creating new multistatement connection!");
 		
 		this.connection = dataSourceConnection;
 		this.connection.setAutoCommit (false);
@@ -67,9 +66,8 @@ public class MultipleStatementConnection implements StatementConnection {
 	
 	public void close ( ) throws SQLException {
 		
-		logger.info("closing ms-connection...");
-//		if (logger.isDebugEnabled ( ))
-//			logger.debug ("closing Statement and Connection");
+		if (logger.isDebugEnabled ( ))
+			logger.debug("closing ms-connection...");
 		
 		if (!this.connection.isClosed ( )) {
 		
@@ -83,7 +81,7 @@ public class MultipleStatementConnection implements StatementConnection {
 			
 			this.connection.close ( );
 		} else {
-			logger.info("ms-connection was already closed...");
+			logger.debug("ms-connection was already closed...");
 		}
 	}
 
@@ -93,12 +91,11 @@ public class MultipleStatementConnection implements StatementConnection {
 	
 	public QueryResult execute ( ) throws SQLException {
 		
-		logger.info("executing ms-connection...");
+		if (logger.isDebugEnabled ( ))
+			logger.debug("executing ms-connection...");
 		
 		QueryResult result = new QueryResult ( );
 		
-//		if (logger.isDebugEnabled ( ))
-//			logger.debug ("Executing Statement: ");
 		
 		if (this.multipleStatement.getWarnings ( ) != null)
 			logger.warn ("A SQL-Statement-Warning occured: " + this.multipleStatement.getWarnings ( ).getMessage ( ) + " " + this.multipleStatement.getWarnings ( ).getSQLState ( ) + " " + this.multipleStatement.getWarnings ( ).getErrorCode ( ));
@@ -137,13 +134,11 @@ public class MultipleStatementConnection implements StatementConnection {
 	
 	public void commit ( ) throws SQLException {
 		
-		logger.info("committing ms-connection...");
+		if (logger.isDebugEnabled ( ))
+			logger.debug("committing ms-connection...");
 		
 		try {
-			
-//			if (logger.isDebugEnabled ( ))
-//				logger.debug ("Committing Transaction");
-			
+						
 			if (this.multipleStatement.getWarnings ( ) != null)
 				logger.warn ("A SQL-Statement-Warning occured: " + this.multipleStatement.getWarnings ( ).getMessage ( ) + " " + this.multipleStatement.getWarnings ( ).getSQLState ( ) + " " + this.multipleStatement.getWarnings ( ).getErrorCode ( ));
 			
@@ -171,7 +166,6 @@ public class MultipleStatementConnection implements StatementConnection {
 	
 	public void rollback ( ) throws SQLException {
 		
-//		logger.info ("Doing rollback!");
 		logger.info("rolling back ms-connection...");
 		
 		this.connection.rollback ( );
@@ -183,11 +177,9 @@ public class MultipleStatementConnection implements StatementConnection {
 	
 	public boolean loadStatement (PreparedStatement pstmt) {
 		
-		logger.info("loading ms-statement...");
-		
-//		if (logger.isDebugEnabled ( ))
-//			logger.debug ("loading Statement");
-		
+		if (logger.isDebugEnabled ( ))
+			logger.debug("loading ms-statement...");
+				
 		this.multipleStatement = pstmt;
 		
 		return true;
@@ -200,8 +192,8 @@ public class MultipleStatementConnection implements StatementConnection {
 	@Override
 	protected void finalize ( ) throws Throwable {
 		
-//		if (logger.isDebugEnabled ( ))
-//			logger.debug ("finalizing MultipleStatementConnection");
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("finalizing MultipleStatementConnection");
 		
 		if (!this.connection.isClosed ( )) {
 			

@@ -30,7 +30,7 @@ public class HarvesterRMI extends RMIService {
 //	}
 //	
 	
-	private final Logger logger = Logger.getLogger(HarvesterRMI.class);
+	private static final Logger logger = Logger.getLogger(HarvesterRMI.class);
 
 	private static final String SERVICE_NAME = "HarvesterService";
 
@@ -49,7 +49,7 @@ public class HarvesterRMI extends RMIService {
 
 //		PropertyConfigurator.configureAndWatch("log4j.properties", 60 * 1000);
 //		DOMConfigurator.configureAndWatch("log4j.xml" , 60*1000 );
-
+		logger.info("Harvester starting due to rmi call.");
 		
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
@@ -61,10 +61,14 @@ public class HarvesterRMI extends RMIService {
 
 	private void startService() {
 
-		logger.info("Harvester starting due to rmi call.");
+		if (!isInitializationComplete()) {
+			logger.error("Initialization failed! Stopping Harvester!");
+			return;
+		}
+		
+
 		try {
-			IService server = this;
-			IService stub = (IService) UnicastRemoteObject.exportObject(server, 0);
+			IService stub = (IService) UnicastRemoteObject.exportObject(this, 0);
 			registry = getRegistry();
 
 			if (registry == null) {
@@ -73,7 +77,7 @@ public class HarvesterRMI extends RMIService {
 			}
 
 			registry.rebind(SERVICE_NAME, stub);
-			System.out.println(SERVICE_NAME + " bound");
+			System.out.println(SERVICE_NAME + " ready and listening");
 		} catch (Exception e) {
 			System.err.println(SERVICE_NAME + " could not be bound: ");
 			e.printStackTrace();
@@ -264,16 +268,21 @@ public class HarvesterRMI extends RMIService {
 
 	@Override
 	public boolean stopService() throws RemoteException {
-		logger.info("Unbinding " + SERVICE_NAME + " !");
+		logger.info("Unbinding " + SERVICE_NAME + " ...");
 
 		try {
 			if (registry == null) {
 				registry = getRegistry();
 			}
 			registry.unbind(SERVICE_NAME);
+			UnicastRemoteObject.unexportObject(this, true);
+			
+			logger.info(SERVICE_NAME + " stopped successfully");
+			
 		} catch (NotBoundException e) {
 			logger.info(SERVICE_NAME + " already unbound.");
 		}
+
 		return true;
 	}
 

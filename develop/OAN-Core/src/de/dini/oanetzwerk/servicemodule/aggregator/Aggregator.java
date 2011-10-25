@@ -344,13 +344,14 @@ public class Aggregator {
 				throw new AggregationFailedException("extracted IMF-Object was null or empty");
 			}
 
+			logger.info("test1");
 			// schreiben der Metadaten
 			try {
 				imf = storeMetaData(imf);
 			} catch (AggregationWarningException aggw) {
 				aggrStateLog.error("OID " + id + " - WARNING:" + aggw.getLocalizedMessage());
 			}
-
+			logger.info("test2");
 			// Zustandsänderung für dieses Objekt speichern, falls es sich nicht
 			// um einen Testdurchlauf handelt
 			setAggregationCompleted(id);

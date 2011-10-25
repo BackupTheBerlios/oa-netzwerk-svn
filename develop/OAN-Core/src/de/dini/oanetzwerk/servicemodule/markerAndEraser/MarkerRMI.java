@@ -45,7 +45,7 @@ public class MarkerRMI extends RMIService {
 
 	public static void main(String[] args) {
 		
-//		DOMConfigurator.configureAndWatch("log4j.xml" , 60*1000 );
+		logger.info("Marker starting due to rmi call.");
 		
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
@@ -56,7 +56,11 @@ public class MarkerRMI extends RMIService {
 
 	private void startService() {
 
-		logger.info("Marker starting due to rmi call.");
+		if (!isInitializationComplete()) {
+			logger.error("Initialization failed! Stopping Marker!");
+			return;
+		}
+		
 		
 		try {
 			IService server = this;
@@ -69,7 +73,7 @@ public class MarkerRMI extends RMIService {
 			}
 
 			registry.rebind(SERVICE_NAME, stub);
-			System.out.println(SERVICE_NAME + " bound");
+			System.out.println(SERVICE_NAME + " ready and listening");
 		} catch (Exception e) {
 			System.err.println(SERVICE_NAME + " could not be bound: ");
 			e.printStackTrace();
@@ -209,13 +213,17 @@ public class MarkerRMI extends RMIService {
 	
 	@Override
 	public boolean stopService() throws RemoteException {
-		logger.info("Unbinding " + SERVICE_NAME + " !");
+		logger.info("Unbinding " + SERVICE_NAME + " ...");
 		
 		try {
 			if (registry == null) {
 				registry = getRegistry();
 			}
 			registry.unbind(SERVICE_NAME);
+			UnicastRemoteObject.unexportObject(this, true);
+			
+			logger.info(SERVICE_NAME + " stopped successfully");
+			
 		} catch (NotBoundException e) {
 			logger.info(SERVICE_NAME + " already unbound.");
 		}

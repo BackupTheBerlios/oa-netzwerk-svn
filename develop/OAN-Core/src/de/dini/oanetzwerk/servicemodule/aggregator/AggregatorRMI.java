@@ -30,29 +30,35 @@ public class AggregatorRMI extends RMIService {
 
 	private static final String SERVICE_NAME = "AggregatorService";
 	
-	private Aggregator aggregator = null;
-	private Registry registry = null;
+	private Aggregator aggregator 	= null;
+	private Registry registry 		= null;
 
-	private int updateInterval = 10000;
-	private StringBuffer messages = new StringBuffer();
-	private boolean working = false;
+	private int updateInterval 		= 10000;
+	private StringBuffer messages 	= new StringBuffer();
+	private boolean working 		= false;
 	
 	public AggregatorRMI() {
 		super();
 	}
 
 	public static void main(String[] args) {
-				
+		
+		logger.info("Aggregator starting due to rmi call.");
+		
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
-
+		
 		new AggregatorRMI().startService();
 	}
 
 	private void startService() {
 
-		logger.info("Aggregator starting due to rmi call.");
+		if (!isInitializationComplete()) {
+			logger.error("Initialization failed! Stopping Aggregator!");
+			return;
+		}
+		
 		
 		try {
 			IService server = this;
@@ -65,9 +71,9 @@ public class AggregatorRMI extends RMIService {
 			}
 
 			registry.rebind(SERVICE_NAME, stub);
-			System.out.println(SERVICE_NAME + " bound");
+			logger.info(SERVICE_NAME + " ready and listening");
 		} catch (Exception e) {
-			System.err.println(SERVICE_NAME + " could not be bound: ");
+			logger.error(SERVICE_NAME + " could not be bound: ");
 			e.printStackTrace();
 		}
 
@@ -193,6 +199,8 @@ public class AggregatorRMI extends RMIService {
 		// hier wird entweder die spezifische Objekt-ID übergeben
 		// oder ein Auto-Durchlauf gestartet
 		
+		logger.info("Starting to process records...");
+		
 		working = true;
 		if (id > 0) {
 			aggregator.startSingleRecord(id, time);
@@ -234,13 +242,17 @@ public class AggregatorRMI extends RMIService {
 	
 	@Override
 	public boolean stopService() throws RemoteException {
-		logger.info("Unbinding " + SERVICE_NAME + " !");
+		logger.info("Unbinding " + SERVICE_NAME + " ...");
 		
 		try {
 			if (registry == null) {
 				registry = getRegistry();
 			}
 			registry.unbind(SERVICE_NAME);
+			UnicastRemoteObject.unexportObject(this, true);
+			
+			logger.info(SERVICE_NAME + " stopped successfully");
+			
 		} catch (NotBoundException e) {
 			logger.info(SERVICE_NAME + " already unbound.");
 		}

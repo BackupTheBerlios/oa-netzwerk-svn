@@ -134,6 +134,7 @@ public class HelperMethods {
 		if (logger.isDebugEnabled())
 			logger.debug(new File(file).getAbsoluteFile());
 
+		logger.info("Reading file: " + System.getProperty("catalina.home") + System.getProperty("file.separator") + file);
 		props.loadFromXML(new FileInputStream(System.getProperty("catalina.home") + System.getProperty("file.separator") + file));
 
 		return props;
