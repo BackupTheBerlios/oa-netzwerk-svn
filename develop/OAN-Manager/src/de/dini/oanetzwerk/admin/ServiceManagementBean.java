@@ -195,12 +195,26 @@ public class ServiceManagementBean {
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 								+ servicePath);
 				// TODO: change directory to service directory first
-				Runtime.getRuntime().exec(
+				Process process = Runtime.getRuntime().exec(
 								javaBinaryPath + " -Dfile.encoding=UTF8 -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 								+ servicePath);
+				
+//				Process process = Runtime.getRuntime().exec(servicePath);
 
+				/* handling the streams to prevent blocks and deadlocks according to the javadocs. 
+				 * see: http://download.oracle.com/javase/6/docs/api/java/lang/Process.html */
+				ProcessStreamHandler inputStream =
+				new ProcessStreamHandler(process.getInputStream(),"INPUT");
+				ProcessStreamHandler errorStream =
+				new ProcessStreamHandler(process.getErrorStream(),"ERROR");
+
+				/* start the stream threads */
+				inputStream.start();
+				errorStream.start();
+				
 				logger.info("Starting " + serviceName + "...");
+				
 				synchronized (this) {
 					this.wait(5000);
 				}
@@ -230,9 +244,11 @@ public class ServiceManagementBean {
 
 				if (service != null) {
 					service.stopService();
+					logger.info(serviceName + " stopped.");
+				} else {
+					logger.warn(serviceName + " is not running! Cannot stop service!");
 				}
 
-				logger.info(serviceName + " stopped.");
 				return true;
 				
 			} catch (ConnectException e) {

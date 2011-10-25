@@ -65,9 +65,11 @@ public class MarkerJob  extends AbstractServiceJob {
 				boolean started = service.start(data);
 				System.out.println("Client: " + started);
 
-				for (int i = 0; i < 5; i++) {
-					this.wait(3000);
-					System.out.println(service.getCurrentStatus());
+				synchronized (this) {
+					for (int i = 0; i < 5; i++) {
+						this.wait(3000);
+						System.out.println(service.getCurrentStatus());
+					}
 				}
 				System.out.println("Marker initiated.");
 
