@@ -26,20 +26,16 @@ public class MarkerJob  extends AbstractServiceJob {
 
 		private static Logger logger = Logger.getLogger(MarkerJob.class);
 
-		public MarkerJob() {
+		public MarkerJob() {}
 
-		}
-
-
+		
 		public void execute(JobExecutionContext context) throws JobExecutionException {
 
-			System.out.println("Marker job called");
+			logger.info("Marker job called");
 
-			
 			JobDataMap jobData = context.getJobDetail().getJobDataMap();
 			String repoId = jobData.getString("repository_id");
 
-			
 			// initiate marker service via RMI
 			try {
 
@@ -71,7 +67,7 @@ public class MarkerJob  extends AbstractServiceJob {
 						System.out.println(service.getCurrentStatus());
 					}
 				}
-				System.out.println("Marker initiated.");
+				logger.info("Marker finished!");
 
 			} catch (RemoteException e) {
 				System.err.println("RemoteException: ");

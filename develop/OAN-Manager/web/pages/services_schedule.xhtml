@@ -61,7 +61,7 @@
                 <f:facet name="header">
                   <h:outputText value="Dienst" />
                 </f:facet>
-                  <h:outputText value="#{row.serviceId == 1 ? 'Harvester' : row.serviceId == 2 ? 'Aggregator' : row.serviceId == 3 ? 'Marker' : Unknown}" />
+                  <h:outputText value="#{row.getServiceName(row.serviceId)}" />
               </t:column>
                       
               <t:column style="width: 25%; vertical-align: middle; text-align: center; height: 50px;">

@@ -106,7 +106,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	}
 	
 	
-	/********************* Validations *********************/
+	/********************* Form Validation *********************/
 
 	public boolean validate()
 	{
@@ -174,7 +174,6 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	public String storeJob() {
 
 		
-//		System.out.println("radio1: " + radio1);
 		logger.info("Validating job with service= " + chosenService + " , job-type= " + jobType + " ,date= " + chosenDate + 
 				" ,time= " + chosenTime + " ,interval-type= " + intervalType );
 

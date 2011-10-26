@@ -4,6 +4,7 @@ import java.io.File;
 
 import de.dini.oanetzwerk.admin.ServiceManagementBean.Service;
 import de.dini.oanetzwerk.servicemodule.ServiceStatus;
+import de.dini.oanetzwerk.utils.StringUtils;
 
 public class ServiceBean {
 
@@ -49,12 +50,7 @@ public class ServiceBean {
 		return getService().toString().toLowerCase();
 	}
 	public String getPrettyName() {
-		return service.toString().replaceAll(
-						String.format("%s|%s|%s",
-					    			         "(?<=[A-Z])(?=[A-Z][a-z])",
-					    			         "(?<=[^A-Z])(?=[A-Z])",
-					    			         "(?<=[A-Za-z])(?=[^A-Za-z])"
-					    			      ), " ");
+		return StringUtils.getPrettyNameFromCamelCase(service.toString());
 	}
 	public String getServiceName() {
 		return service.toString() + "Service";

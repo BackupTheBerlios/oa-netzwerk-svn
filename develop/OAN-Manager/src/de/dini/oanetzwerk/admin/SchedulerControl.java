@@ -47,6 +47,7 @@ import de.dini.oanetzwerk.admin.scheduling.jobs.AggregatorJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.HarvesterJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.MarkerJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.RepositoryOnlineStatusUpdateJob;
+import de.dini.oanetzwerk.admin.scheduling.jobs.ScriptServiceJob;
 import de.dini.oanetzwerk.admin.scheduling.jobs.UpdateDDCCountJob;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestKeyword;
@@ -208,17 +209,25 @@ public class SchedulerControl implements Serializable { // ,
 	private AbstractServiceJob getJobforSchedulingBean(SchedulingBean bean) {
 
 		if (bean.getStatus() != null && !ServiceStatus.Finished.equals(bean.getStatus())) {
+
 			// setup job and schedule
 
-			AbstractServiceJob job = null;
+			AbstractServiceJob job 	= null;
+			JobDataMap data 		= new JobDataMap();
+
 			if (new BigDecimal(1).equals(bean.getServiceId())) {
 				job = new HarvesterJob();
 			} else if (new BigDecimal(2).equals(bean.getServiceId())) {
 				job = new AggregatorJob();
-			} else {
+			} else if (new BigDecimal(3).equals(bean.getServiceId())) {
 				job = new MarkerJob();
+			} else {
+				job = new ScriptServiceJob();
+				System.out.println("XXX: " + bean.getServices().get(bean.getServiceId().intValue() - 1).toString());
+				data.put("service_name", bean.getServices().get(bean.getServiceId().intValue() - 1).toString());
+				
 			}
-			JobDataMap data = new JobDataMap();
+			
 			data.put("repository_id", bean.getInfo());
 			data.put("job_name", bean.getName());
 			job.setData(data);
@@ -315,23 +324,18 @@ public class SchedulerControl implements Serializable { // ,
 		if (isNewJob) {
 			long now = new Date().getTime();
 			job.setName(Long.toString(now));
-		}
-
-		if (isNewJob) {
 			logger.info("Creating new job with name " + job.getName() + "!");
 		} else {
-			logger.info("Updating job!");
+			logger.info("Updating existing job with id " + job.getName() + "!");
 		}
 
 		// save to db, REST call
 		RestMessage rms = new RestMessage();
-		;
 		RestEntrySet res = new RestEntrySet();
-		;
 		RestMessage result = null;
-
 		rms.setKeyword(RestKeyword.ServiceJob);
 
+		// use existing job-id if its an update
 		boolean jobIdSpecified = false;
 
 		if (job.getJobId() != null && job.getJobId() > 0) {
@@ -347,11 +351,9 @@ public class SchedulerControl implements Serializable { // ,
 		res.addEntry("nonperiodic_date", new SimpleDateFormat("dd-MM-yyyy HH:mm").format(job.getNonperiodicTimestamp()));
 		res.addEntry("periodic_interval", job.getPeriodicInterval() != null ? job.getPeriodicInterval().toString() : null);
 		res.addEntry("periodic_days", Integer.toString(job.getPeriodicDays()));
-
-		// System.out.println("interval: " + job.getPeriodicInterval());
-		// System.out.println("days: " + job.getPeriodicDays());
 		rms.addEntrySet(res);
 
+		// execute the actual rest requests
 		try {
 			if (isNewJob) {
 				result = restConnector.prepareRestTransmission("ServiceJob/" + (jobIdSpecified ? job.getJobId().toString() : ""))
@@ -373,6 +375,8 @@ public class SchedulerControl implements Serializable { // ,
 
 		logger.info("PUT sent to /ServiceJob");
 
+		
+		// unschedule the old job that has been updated 
 		if (!isNewJob && job != null) {
 
 			try {
@@ -385,13 +389,13 @@ public class SchedulerControl implements Serializable { // ,
 		}
 
 		// schedule new job / reschedule updated job
-
 		AbstractServiceJob asj = getJobforSchedulingBean(job);
-		JobDataMap data = new JobDataMap();
-		data.put("repository_id", job.getInfo());
-		data.put("job_name", job.getName());
-		asj.setData(data);
+//		JobDataMap data = new JobDataMap();
+//		data.put("repository_id", job.getInfo());
+//		data.put("job_name", job.getName());
+//		asj.setData(data);
 
+		
 		// schedule job
 		return scheduleJob(asj);
 

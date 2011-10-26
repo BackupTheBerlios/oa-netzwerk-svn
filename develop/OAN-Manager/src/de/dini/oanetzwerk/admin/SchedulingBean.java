@@ -2,7 +2,12 @@ package de.dini.oanetzwerk.admin;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import de.dini.oanetzwerk.admin.ServiceManagementBean.Service;
+import de.dini.oanetzwerk.utils.StringUtils;
 
 /**
  * @author Sammy David
@@ -11,18 +16,32 @@ import java.util.Date;
  */
 public class SchedulingBean implements Comparable<SchedulingBean> {
 
-	private Integer jobId = null;
-	private String name = "";
-	private BigDecimal serviceId = null;
-	private ServiceStatus status = ServiceStatus.Open;
-	private String info = "";
-	private boolean periodic = false;
+	private Integer jobId 			= null;
+	private String name 			= "";
+	private BigDecimal serviceId 	= null;
+	private ServiceStatus status 	= ServiceStatus.Open;
+	private String info 			= "";
+	private boolean periodic 		= false;
 	private Date nonperiodicTimestamp = null;
 	private SchedulingIntervalType periodicInterval = null;
-	private int periodicDays = 0;
-	private boolean nonperiodicNow = false;
+	private int periodicDays 		= 0;
+	private boolean nonperiodicNow 	= false;
 	
+	private static List<Service> services = new ArrayList<Service>();
 
+	static {
+		
+		// TODO: load service names and ids dynamicall from the db
+		services.add(Service.Harvester);
+		services.add(Service.Aggregator);
+		services.add(Service.Marker);
+		services.add(Service.FulltextLinkFinder);
+		services.add(Service.LanguageDetector);
+		services.add(Service.Shingler);
+		services.add(Service.Indexer);
+		services.add(Service.Classifier);
+		services.add(Service.DuplicateScanner);
+	}
 	
 	public SchedulingBean() {
 		super();
@@ -168,5 +187,13 @@ public class SchedulingBean implements Comparable<SchedulingBean> {
 		}
 		
     }
+
+	public static List<Service> getServices() {
+    	return services;
+    }
 		
+	public static String getServiceName(BigDecimal id) {
+		return StringUtils.getPrettyNameFromCamelCase(services.get(id.intValue() - 1).toString());
+	}
+	
 }

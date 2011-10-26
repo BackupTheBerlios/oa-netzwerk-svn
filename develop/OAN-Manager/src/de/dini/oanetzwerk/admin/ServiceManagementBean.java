@@ -7,11 +7,14 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -21,6 +24,7 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.admin.utils.RMIRegistryHelper;
 import de.dini.oanetzwerk.servicemodule.IService;
+import de.dini.oanetzwerk.servicemodule.ProcessStreamHandler;
 import de.dini.oanetzwerk.servicemodule.ServiceStatus;
 import de.dini.oanetzwerk.utils.PropertyManager;
 
@@ -30,7 +34,7 @@ import de.dini.oanetzwerk.utils.PropertyManager;
  * 
  */
 @ManagedBean(name = "services")
-@RequestScoped
+@ApplicationScoped
 public class ServiceManagementBean {
 
 	private final static Logger logger = Logger.getLogger(ServiceManagementBean.class);
@@ -52,20 +56,25 @@ public class ServiceManagementBean {
 	}
 
 	public enum Service {
-		Harvester, Aggregator, Marker, Shingler, Indexer, LanguageDetector, Classifier, DuplicateScanner;
+		Harvester, Aggregator, Marker, FulltextLinkFinder, LanguageDetector, Shingler, Indexer, Classifier, DuplicateScanner;
 	}
 	
 	@PostConstruct
 	private void init() {
 		
-		services.add(new ServiceBean(Service.Harvester));
-		services.add(new ServiceBean(Service.Aggregator));
-		services.add(new ServiceBean(Service.Marker));
-		services.add(new ServiceBean(Service.Shingler));
-		services.add(new ServiceBean(Service.Indexer));
-		services.add(new ServiceBean(Service.LanguageDetector));
-		services.add(new ServiceBean(Service.Classifier));
-		services.add(new ServiceBean(Service.DuplicateScanner));
+		List<Service> services = SchedulingBean.getServices();
+
+		for (int i = 0; i < services.size(); i++) {
+			this.services.add(new ServiceBean(services.get(i)));
+        }
+//		this.services.add(new ServiceBean(Service.Aggregator));
+//		services.add(new ServiceBean(Service.Marker));
+//		services.add(new ServiceBean(Service.FulltextLinkFinder));
+//		services.add(new ServiceBean(Service.LanguageDetector));
+//		services.add(new ServiceBean(Service.Shingler));
+//		services.add(new ServiceBean(Service.Indexer));
+//		services.add(new ServiceBean(Service.Classifier));
+//		services.add(new ServiceBean(Service.DuplicateScanner));
 		
 		initializeServiceProperties();
 		initializeServiceStatus();
@@ -165,6 +174,11 @@ public class ServiceManagementBean {
 		if (ServiceStatus.Stopped.equals(serviceStatus)) {
 
 			try {
+				
+				if (servicePath == null || servicePath.length() == 0) {
+					logger.warn("Local path to service could not be found! Please make sure the service.properties have been set up correctly!" );
+					return false;
+				}
 				// java -jar
 				// -Djava.security.policy=/home/sam/Dev/TestDirectory/services/harvester/java.policy
 				// -Djava.rmi.server.codebase=file:/home/sam/Dev/TestDirectory/services/harvester/Harvester.jar
@@ -269,7 +283,6 @@ public class ServiceManagementBean {
 
 	
 	private boolean checkIfLocalPathToServiceIsValid(String path) {
-	
 		return new File(path).exists();
 	}
 
@@ -284,6 +297,8 @@ public class ServiceManagementBean {
     }
 
 	public List<ServiceBean> getServices() {
+		
+		initializeServiceStatus();
     	return services;
     }
 
