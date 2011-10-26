@@ -25,7 +25,7 @@ public abstract class RMIService implements IService {
 
 	private static final Logger logger = Logger.getLogger(RMIService.class);
 
-	private Properties serviceProps; 
+//	private Properties serviceProps; 
 	private Properties restclientProps;
 	private String applicationPath;
 	
@@ -61,13 +61,6 @@ public abstract class RMIService implements IService {
 			return;
 		}	
 			
-		try {
-			// read service property file
-			serviceProps = HelperMethods.loadPropertiesFromFile(applicationPath + getPropertyFile());
-		} catch (Exception e) {
-			logger.warn("Could not load property file from " + applicationPath + getPropertyFile() + "!", e);
-			return;
-		}
 
 		try {
 			// read restclient property file
@@ -78,11 +71,24 @@ public abstract class RMIService implements IService {
 			return;
 		}	
 
+		// try to fetch specific service properties
+		if (!readSpecificServiceProperties()) {
+			initializationComplete = false;
+		}
+		
         logger.info("Reading " + applicationPath + "log4j.xml!");
 		DOMConfigurator.configureAndWatch((applicationPath == null ? "" : applicationPath) + "log4j.xml" , 60*1000 );
-
+		logger.info("log4j.xml found!");
+		
 		initializationComplete = true;
-		logger.info("Reading property files successful!");
+		logger.info("Reading property files has been successful!");
+	}
+	
+	// hook for custom service property initialization
+	protected boolean readSpecificServiceProperties() {
+		
+		// no default init, but method can be overridden
+		return true;
 	}
 
 	protected List<Repository> getRepositories(String servicePropFile) {
@@ -184,19 +190,19 @@ public abstract class RMIService implements IService {
 		rms.setKeyword(RestKeyword.ServiceJob);
 		rms.addEntrySet(new RestEntrySet());
 
-		System.out.println("props == null : " + serviceProps == null);
+		System.out.println("props == null : " + restclientProps == null);
 		try {
 
 
 			
-			System.out.println("username: " + serviceProps.getProperty("username"));
+			System.out.println("username: " + restclientProps.getProperty("username"));
 						
 			
 //			RestClient client = RestClient.createRestClient(props.getProperty("host"), "ServiceJob/" + jobName + "/" + status, props.getProperty("username"),
 //			                props.getProperty("password"));
 		
-			RestClient client = RestClient.createRestClient(new File(applicationPath + "restclientprop.xml"), "ServiceJob/" + jobName + "/" + status, serviceProps.getProperty("username"),
-			                serviceProps.getProperty("password"));
+			RestClient client = RestClient.createRestClient(new File(applicationPath + "restclientprop.xml"), "ServiceJob/" + jobName + "/" + status, restclientProps.getProperty("username"),
+							restclientProps.getProperty("password"));
 							
 			System.out.println("client null : " + client == null);
 			
@@ -219,13 +225,13 @@ public abstract class RMIService implements IService {
 	
 	protected abstract String getPropertyFile();
 
-	public Properties getServiceProps() {
-    	return serviceProps;
-    }
-
-	public void setServiceProps(Properties serviceProps) {
-    	this.serviceProps = serviceProps;
-    }
+//	public Properties getServiceProps() {
+//    	return serviceProps;
+//    }
+//
+//	public void setServiceProps(Properties serviceProps) {
+//    	this.serviceProps = serviceProps;
+//    }
 
 	public Properties getRestclientProps() {
     	return restclientProps;

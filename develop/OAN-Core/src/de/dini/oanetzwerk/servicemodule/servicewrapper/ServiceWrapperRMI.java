@@ -17,13 +17,14 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.servicemodule.IService;
+import de.dini.oanetzwerk.servicemodule.ProcessStreamHandler;
 import de.dini.oanetzwerk.servicemodule.RMIService;
 import de.dini.oanetzwerk.servicemodule.ServiceStatus;
 
 public class ServiceWrapperRMI extends RMIService {
 
 	
-	private final Logger logger = Logger.getLogger(ServiceWrapperRMI.class);
+	private static final Logger logger = Logger.getLogger(ServiceWrapperRMI.class);
 
 	
 	private static String propertyFile	= "service.properties";
@@ -43,6 +44,8 @@ public class ServiceWrapperRMI extends RMIService {
 
 	public static void main(String[] args) {
 		
+		logger.info("Service starting due to rmi call.");
+
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
@@ -53,15 +56,11 @@ public class ServiceWrapperRMI extends RMIService {
 
 	private void startService() {
 
-		logger.info(" starting due to rmi call.");
-
-		String error = fetchProperties();
-		
-		if (error != null) {
-			
-			logger.error("Could not start service due to error:\n" + error);
+		if (!isInitializationComplete()) {
+			logger.error("Initialization failed! Stopping Service!");
 			return;
 		}
+		
 		
 		try {
 			IService server = this;
@@ -84,96 +83,41 @@ public class ServiceWrapperRMI extends RMIService {
 //		publishUpdates();
 	}
 
-	
-	private String fetchProperties() {
+	@Override
+	protected boolean readSpecificServiceProperties() {
 		
-		logger.info("Trying to fetch properties for service...");
+		logger.info("Reading specific service properties ...");
 		
 		Properties properties = new Properties();
 		
 		try {
 		
-			properties.load(new FileInputStream(propertyFile));
+			properties.load(new FileInputStream(getApplicationPath() + propertyFile));
 			serviceName	= properties.getProperty("service.name");
 			scriptCall 	= properties.getProperty("script.call");			
 			
 			if (serviceName == null || serviceName.length() == 0) {
-				return "Service name has not been specified. Please check the " + propertyFile + " and supply a value for 'service.name' !";
+				logger.warn("Service name has not been specified. Please check the " + propertyFile + " and supply a value for 'service.name' !");
 			}
 			
 			if (scriptCall == null || scriptCall.length() == 0) {
-				return "Script shell command has not been specified. Please check the " + propertyFile + " and supply a value for 'script.call' !";
+				logger.warn("Script shell command has not been specified. Please check the " + propertyFile + " and supply a value for 'script.call' !");
 			}
 			
 		} catch (FileNotFoundException e) {
 			String error = "Could not find properties file !" + new File(propertyFile).getAbsolutePath() + "/" + propertyFile;
 			logger.error(error, e);
-			return error;
+			return false;
 		} catch (IOException e) {
 			String error = "Could not properly read properties file !" + new File(propertyFile).getAbsolutePath() + "/" + propertyFile;
 			logger.error(error, e);
-			return error;
+			return false;
 		}
 		
-//		if (!new File(scriptCall).exists()) {
-//			System.out.println(new File(scriptCall).getAbsolutePath());
-//			return "The specified script '" + scriptCall + "' does not exist! "; 
-//		}
-		
 		logger.info("service.properties found!");
-		return null;
+		return true;
 	}
 	
-//	private void publishUpdates() {
-//
-//		String name = "HarvesterMonitorService";
-//
-//		try {
-//
-//			IHarvesterMonitor service = null;
-//			Map<String, String> data = new HashMap<String, String>();
-//
-//			synchronized (this) {
-//
-//				while (working) {
-//
-//					if (registry == null)
-//						registry = getRegistry();
-//
-//					if (registry == null) {
-//						logger.error("Could not obtain an existing RMI-Registry nor create one ourselves! Aborting to publish RMI-Updates!");
-//						this.wait(updateInterval);
-//						continue;
-//					}
-//
-//					if (service == null) {
-//						service = (IHarvesterMonitor) registry.lookup(name);
-//						logger.info("IHarvesterMonitor found!");
-//					}
-//
-//					if (service != null) {
-//						logger.info("Publishing Updates to Harvester monitor.");
-//						// create harvesting settings
-//						data.put("progress", String.valueOf(this.getCurrentStatus()));
-//						data.put("messages", messages.toString());
-//						service.publishServiceUpdates(data);
-//					}
-//					this.wait(updateInterval);
-//				}
-//			}
-//
-//		} catch (RemoteException e) {
-//			System.err.println("RemoteException: ");
-//			e.printStackTrace();
-//		} catch (NotBoundException e) {
-//			System.err.println("NotBoundException: ");
-//			e.printStackTrace();
-//		} catch (InterruptedException e) {
-//			System.err.println("InterruptedException: ");
-//			e.printStackTrace();
-//		}
-//	}
-
 
 	/********************** Contract Implementation **********************/
 
@@ -249,6 +193,9 @@ public class ServiceWrapperRMI extends RMIService {
 				registry = getRegistry();
 			}
 			registry.unbind(serviceName);
+			UnicastRemoteObject.unexportObject(this, true);
+			
+			logger.info(serviceName + " stopped successfully");
 		} catch (NotBoundException e) {
 			logger.info(serviceName + " already unbound.");
 		}
@@ -259,23 +206,26 @@ public class ServiceWrapperRMI extends RMIService {
 
 	private void startService(Map<String, String> data) {
 
-		System.out.println("start harvester method called");
+		System.out.println("start " + serviceName  + " method called");
 
 		
 		try {
-			Process process = Runtime.getRuntime().exec(scriptCall);
+			logger.info("app path1 : " + getApplicationPath() + scriptCall);
+			Process process = Runtime.getRuntime().exec(scriptCall.split(" "), null, new File(getApplicationPath()));
 			
-			// get pid 
-			// see http://www.coderanch.com/t/109334/Linux-UNIX/UNIX-process-ID-java-program
-			InputStream is = process.getInputStream();  
-			BufferedReader stdout = new BufferedReader(new InputStreamReader(is));  
-			String line = stdout.readLine();  
+			/* handling the streams to prevent blocks and deadlocks according to the javadocs. 
+			 * see: http://download.oracle.com/javase/6/docs/api/java/lang/Process.html */
+			ProcessStreamHandler inputStream =
+			new ProcessStreamHandler(process.getInputStream(),"INPUT");
+			ProcessStreamHandler errorStream =
+			new ProcessStreamHandler(process.getErrorStream(),"ERROR");
+
+			// start the stream threads 
+			inputStream.start();
+			errorStream.start();
 			
-			while (line != null) {  
-				System.out.println(line);  
-				line = stdout.readLine();  
-			} 
-			
+			// wait for process to finish
+			// see http://www.coderanch.com/t/109334/Linux-UNIX/UNIX-process-ID-java-program			
 			int exitValue = process.waitFor();  
 			logger.info("exit value: " + exitValue);  
 			
@@ -294,7 +244,7 @@ public class ServiceWrapperRMI extends RMIService {
 
 
 	protected String getPropertyFile() {
-		return "serviceprop.xml";
+		return propertyFile;
 	}
-
+	
 }
