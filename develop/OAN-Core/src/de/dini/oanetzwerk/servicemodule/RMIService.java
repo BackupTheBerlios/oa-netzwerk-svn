@@ -29,12 +29,14 @@ public abstract class RMIService implements IService {
 	private Properties restclientProps;
 	private String applicationPath;
 	
-	private String restclientPropFileName = "/../../config/restclientprop.xml";
+	private String restclientPropFileName = "/config/restclientprop.xml";
 	private boolean initializationComplete = false;
+	private String oanHome = System.getenv("OAN_HOME");
 	
 	public RMIService() {
 	    super();
 	    initPropertyFiles();
+	    
 	}
 	
 	private void initPropertyFiles() {
@@ -48,12 +50,10 @@ public abstract class RMIService implements IService {
 			// retrieve property file path (application path)
 			applicationPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 
-			logger.debug("Retrieving application path: " + applicationPath);
+			logger.debug("Retrieving application path...");
 			if (applicationPath != null && applicationPath.contains(System.getProperty("file.separator"))) {
-				logger.info(applicationPath);
-				
 				applicationPath = applicationPath.substring(0, applicationPath.lastIndexOf(System.getProperty("file.separator")) + 1 );
-				logger.info("Trying to resolve application path: " + applicationPath);
+				logger.info("Resolved application path: " + applicationPath);
 			}
 			
 		} catch (AccessControlException e) {
@@ -64,10 +64,10 @@ public abstract class RMIService implements IService {
 
 		try {
 			// read restclient property file
-			restclientProps = HelperMethods.loadPropertiesFromFile(applicationPath + restclientPropFileName);
+			restclientProps = HelperMethods.loadPropertiesFromFile(oanHome + restclientPropFileName);
 			
 		} catch (Exception e) {
-			logger.warn("Could not load property file from " + applicationPath + restclientPropFileName + "!", e);
+			logger.warn("Could not load property file from " + oanHome + restclientPropFileName + "!", e);
 			return;
 		}	
 
@@ -77,10 +77,7 @@ public abstract class RMIService implements IService {
 		}
 		
         logger.info("Reading " + applicationPath + "log4j.xml!");
-        System.out.println("log4j Prop: " + System.getProperty("oan.home"));
-//		DOMConfigurator.configureAndWatch(System.getProperty("oan.home") + "/log4j.xml");
         DOMConfigurator.configureAndWatch((applicationPath == null ? "" : applicationPath) + "log4j.xml" , 60*1000 );
-		logger.info("log4j.xml found!");
 		
 		initializationComplete = true;
 		logger.info("Reading property files has been successful!");
