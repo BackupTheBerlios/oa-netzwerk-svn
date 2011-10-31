@@ -62,26 +62,30 @@
               value="Validiere diesen Server" action="#{repoValidator.validateFromForm}" /></td>
           </tr>
         </table>
+        <br />
+        <a href="./rest_validator.xhtml?action=validateAll">Validate all Servers</a>
       </h:form> <t:dataTable value="#{repoValidator.results}" var="row" headerClass="pane-header" rowClasses="odd, even"
         style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
-        <t:column style="width: 5%; vertical-align: middle; height: 70px;">
-          <f:facet name="header">
-            <h:outputText value="Datum - Zeit" />
-          </f:facet>
-          <h:outputText value="#{row.timestamp}" />
-        </t:column>
-        <t:column style="width: 10%; vertical-align: middle; padding-left: 15px; height: 70px;">
+        <t:column style="width: 15%; vertical-align: top; padding-left: 15px; padding-top: 1em; min-height: 20px;">
           <f:facet name="header">
             <h:outputText value="Server" />
           </f:facet>
+          <h:outputText value="#{row.timestamp}" />
+          <br />
           <h:outputText value="#{row.serverAlias}" />
           <br />
           <h:outputLink value="./rest_validator.xhtml">
             <h:outputText value="Rerun Testset" />
             <f:param name="testOffset" value="#{row.testOffset}" />
           </h:outputLink>
+          <h:outputText value=" - "/>
+          <h:outputLink value="./rest_validator.xhtml">
+            <h:outputText value="Delete Testset" />
+            <f:param name="testOffset" value="#{row.testOffset}" />
+            <f:param name="delete" value="1" />
+          </h:outputLink>
         </t:column>
-        <t:column style="width: 30%; vertical-align: middle; height: 70px;">
+        <t:column style="width: 55%; vertical-align: middle; height: 70px;">
           <f:facet name="header">
             <h:outputText value="Testergebnis" />
           </f:facet>
@@ -101,13 +105,6 @@
               <f:param name="subTestOffset" value="#{subTestIndex}" />
             </h:outputLink>
           </t:dataList>
-        </t:column>
-        <t:column style="width: 5%; vertical-align: middle;">
-          <h:outputLink value="./rest_validator.xhtml">
-            <h:outputText value="Delete Testset" />
-            <f:param name="testOffset" value="#{row.testOffset}" />
-            <f:param name="delete" value="1" />
-          </h:outputLink>
         </t:column>
       </t:dataTable></div>
     </ui:define>

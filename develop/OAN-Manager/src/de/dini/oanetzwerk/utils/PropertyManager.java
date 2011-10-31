@@ -28,10 +28,11 @@ public class PropertyManager implements Serializable {
 //	private static FacesContext faces 				= FacesContext.getCurrentInstance();
 	
 	
-	private static String webappDir 				= "/webapps";
-	private static String webappDirFallback			= "/wtpwebapps";
-	private static String contextPath 				= "/oanadmin";
-	private static String contextPathFallback		= "/OAN-Manager";
+	private static String webappDir 				= "/wtpwebapps";
+	private static String webappDirFallback			= "/webapps";
+	private static String contextPath 				= "/OAN-Manager";
+	private static String contextPathFallback		= "/oanadmin";
+	private static String servletContextPathFallback= "";
 	
 	private static Properties serviceProperties = null;
 	private static Properties adminProperties = null;
@@ -55,7 +56,7 @@ public class PropertyManager implements Serializable {
 		String context = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
 		
 		if (context != null && context.length() > 0) {		
-			contextPath = context;
+			servletContextPathFallback = context;
 		}
 		
 		// try to guess property file path		
@@ -66,8 +67,11 @@ public class PropertyManager implements Serializable {
 		if (!isLoaded)
 			isLoaded = loadServiceProperties(webappDir, contextPathFallback);
 		if (!isLoaded)
-			isLoaded = loadServiceProperties(webappDirFallback, contextPathFallback);		
-		
+			isLoaded = loadServiceProperties(webappDirFallback, contextPathFallback);	
+		if (!isLoaded)
+			isLoaded = loadServiceProperties(webappDir, servletContextPathFallback);	
+		if (!isLoaded)
+			isLoaded = loadServiceProperties(webappDirFallback, servletContextPathFallback);
 
 		loadAdminProperties(webappDir, contextPath);
 		loadRestClientProperties(webappDir, contextPath);

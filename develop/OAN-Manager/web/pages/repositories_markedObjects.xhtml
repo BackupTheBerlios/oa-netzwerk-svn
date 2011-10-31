@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+
+<f:view>
+<!--	<f:loadBundle basename="messages.repositories" var="msg" />-->
+
+
+	<ui:composition template="templates/template.xhtml">
+
+		<ui:param name="pageTitle" value="Repositories - OA-Netzwerk Manager" />
+
+		<ui:define name="navigation">
+			<a href="/oanadmin/">OA-Netzwerk</a> » <a
+				href="repositories_main.xhtml"><h:outputText value="#{msg.repositories_main1}" /></a>
+		</ui:define>
+
+  		<ui:param name="menu_repository" value="#{true}" /> 
+
+		<ui:define name="content">
+			<!--      <form action="createItem" method="post">-->
+
+			<div style="padding: 20px; background-color: #f5f9f4;">
+			<div style="background-color: #f5f9f4;">
+
+			<h2>Repositorienverwaltung</h2>
+
+			<table width="830px">
+				<tr>
+					<td class="setting-leftspace"></td>
+
+					<td>
+						<t:dataTable
+							value		=	"#{Statistics.peculiarAndOutdatedObjects}"
+							var 		=	"row"
+							headerClass	=	"pane-header" rowClasses="odd, even"
+							style		=	"width: 100%; border-collapse: collapse; border: 1px #bbb solid;"
+						>
+							<t:column style="padding-left:10px; width: 25%; vertical-align: middle; padding-top: 0.5em; padding-bottom: 0.5em;">
+								<f:facet name="header">
+									<h:outputText value="Repository" />
+								</f:facet>
+								<h:outputText
+									value="#{row[4]}"
+								/>
+							</t:column>
+							<t:column style="padding-left:10px; width: 65%; vertical-align: middle;">
+								<f:facet name="header">
+									<h:outputText value="Title" escape="false" />
+								</f:facet>
+								<h:outputText
+									value="#{row[5]}"
+								/>
+							</t:column>
+							<t:column style="padding-left:10px; width: 5%; vertical-align: middle;">
+								<f:facet name="header">
+									<h:outputText value="Typ" />
+								</f:facet>
+								<h:outputText
+									value="peculiar"
+									rendered="#{(row[2] == 'true') and (row[3] == 'false')}"
+								/>
+								<h:outputText
+									value="outdated"
+									rendered="#{(row[2] == 'true') and (row[3] == 'true')}"
+								/>
+							</t:column>
+							<t:column style="width: 5%; text-align: center;">
+								<a 
+									href="repositories_markedObjects.xhtml?objectID=#{row[0]}&amp;action=deleteObject" 
+									onclick="if (!confirm('Sind sie sicher das sie dieses Objekt entfernen wollen?')) return false"
+								>
+									<img src="../images/16x16/edit-delete.gif" />
+								</a>
+							</t:column>
+						</t:dataTable>
+					
+					</td>
+				</tr>
+
+				<tr class="validation-error-area">
+					<td colspan="2"></td>
+					<td></td>
+				</tr>
+			</table>
+      			
+			</div>
+			</div>
+		</ui:define>
+	</ui:composition>
+
+</f:view>
+
+</body>
+
+</html>

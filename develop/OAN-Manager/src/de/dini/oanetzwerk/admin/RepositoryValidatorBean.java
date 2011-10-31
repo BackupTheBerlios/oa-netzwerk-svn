@@ -94,6 +94,7 @@ public class RepositoryValidatorBean extends AbstractBean implements Serializabl
 		rv = new RepositoryValidator();
 
 		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
+		String action = request.getParameter("action");
 		String testOffset = request.getParameter("testOffset");
 		String subTestOffset = request.getParameter("subTestOffset");
 		String delete = request.getParameter("delete");
@@ -118,6 +119,12 @@ public class RepositoryValidatorBean extends AbstractBean implements Serializabl
 			else {
 				rv.rerunTest(this.testOffset, this.subTestOffset);
 			}
+		}
+		if (action != null && !action.isEmpty() && action.equals("validateAll")){
+			rv.validateAllServers();
+		}
+		if (action != null && !action.isEmpty() && action.equals("deleteResults")) {
+			rv.deleteResultFile();
 		}
 		
 	}

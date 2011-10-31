@@ -63,6 +63,14 @@ public class RepositoryOnlineStatusBean {
 	
 	
 	
+	public PropertyManager getPropertyManager() {
+		return propertyManager;
+	}
+
+	public void setPropertyManager(PropertyManager propertyManager) {
+		this.propertyManager = propertyManager;
+	}
+
 	public RepositoryOnlineStatusBean() {
 		super();
 		
@@ -370,10 +378,6 @@ public class RepositoryOnlineStatusBean {
 		restConnector = connector;
 	}
 
-	public void setPropertyManager(PropertyManager propertyManager) {
-    	this.propertyManager = propertyManager;
-    }
-	
 	
 //	public void deleteOnlineStatus() {
 //		if (this.onlineStatus != null) {

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+
+<f:view>
+
+	<ui:composition template="templates/template.xhtml">
+
+		<ui:param name="pageTitle" value="Repositories - OA-Netzwerk Manager" />
+
+		<ui:define name="navigation">
+			<a href="/oanadmin/">OA-Netzwerk</a> » <a
+				href="repositories_main.xhtml"><h:outputText value="#{msg.repositories_main1}" /></a>
+		</ui:define>
+
+  		<ui:param name="menu_repository" value="#{true}" /> 
+
+		<ui:define name="content">
+			<div style="padding: 20px; background-color: #f5f9f4;">
+			<div style="background-color: #f5f9f4;">
+
+			<h2>Statistiken</h2>
+			<h:outputText value="#{Statistics.objectCount}" /> Records, <h:outputText value="#{Statistics.fullTextLinkCount}" /> with fulltext links
+			<table width="830px">
+				<tr>
+					<td class="setting-leftspace"></td>
+
+					<td>
+						<h3>Records per DINI Set Category</h3>
+						<table style="width: 100%;">
+							<tr>
+								<td><h:form>
+									<t:dataTable value="#{Statistics.recordsPerDINISetCategory}" var="row2"
+										headerClass="pane-header" rowClasses="odd, even"
+										style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
+										
+										
+										
+										<t:column style="width: 10%; vertical-align: middle; padding-left: 15px;">
+											<f:facet name="header">
+												<h:outputText value="DINI Set ID" />
+											</f:facet>
+											<h:outputText value="#{row2[1]}" />
+										</t:column >
+										
+										<t:column style="width: 20%; vertical-align: middle; text-align: center; text-align: left;">
+											<f:facet name="header">
+												<h:outputText value="Name" />
+											</f:facet>
+											<h:outputText value="#{row2[2]}" />
+										</t:column>
+	
+										<t:column style="width: 40%; vertical-align: middle; text-align: center; text-align: left;">
+											<f:facet name="header">
+												<h:outputText value="Set Name English" />
+											</f:facet>
+											<h:outputText value="#{row2[3]}" />
+										</t:column>
+										<t:column style="width: 25%; vertical-align: middle; text-align: center; text-align: left;">
+											<f:facet name="header">
+												<h:outputText value="Set Name Deutsch" />
+											</f:facet>
+											<h:outputText value="#{row2[4]}" />
+										</t:column>
+										<t:column style="padding-left:10px; width: 10%; vertical-align: middle; text-align: left;">
+											<f:facet name="header">
+												<h:outputText value="Record Count" />
+											</f:facet>
+											<h:outputText value="#{row2[0]}" />
+										</t:column>
+									</t:dataTable>
+								</h:form></td>
+							</tr>
+						</table>
+						
+						<h3>Records per ISO 639 Language</h3>
+						<table style="width: 100%;">
+							<tr>
+								<td><h:form>
+									<t:dataTable value="#{Statistics.recordsPerIso639Language}" var="row3"
+										headerClass="pane-header" rowClasses="odd, even"
+										style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
+										
+										<t:column style="width: 33%; vertical-align: middle; padding-left: 15px;">
+											<f:facet name="header">
+												<h:outputText value="Language ID" />
+											</f:facet>
+											<h:outputText value="#{row3[1]}" />
+										</t:column >
+										
+										<t:column style="width: 33%; vertical-align: middle; text-align: center;">
+											<f:facet name="header">
+												<h:outputText value="Language" />
+											</f:facet>
+											<h:outputText value="#{row3[2]}" />
+										</t:column>
+										
+										<t:column style="padding-left:10px; width: 33%; vertical-align: middle;">
+											<f:facet name="header">
+												<h:outputText value="Record Count" />
+											</f:facet>
+											<h:outputText value="#{row3[0]}" />
+										</t:column>
+									</t:dataTable>
+								</h:form></td>
+							</tr>
+						</table>
+					
+						<h3>Records per DDC Category</h3>
+						<table style="width: 100%;">
+							<tr>
+								<td><h:form>
+									<t:dataTable value="#{Statistics.recordsPerDDCCategory}" var="row"
+										headerClass="pane-header" rowClasses="odd, even"
+										style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
+										
+										<t:column style="padding-left:15px; width: 10%; vertical-align: middle;">
+											<f:facet name="header">
+												<h:outputText value="DDC" />
+											</f:facet>
+											<h:outputText value="#{row[1]}" />
+										</t:column>
+										<t:column style=" padding-left: 10px; width: 40%; vertical-align: middle; text-align: left;">
+											<f:facet name="header">
+												<h:outputText value="Name" />
+											</f:facet>
+											<h:outputText value="#{row[2]}" />
+										</t:column>
+	
+										<t:column style="width: 40%; vertical-align: middle; text-align: left;">
+											<f:facet name="header">
+												<h:outputText value="Name Englisch" />
+											</f:facet>
+											<h:outputText value="#{row[3]}" />
+										</t:column>
+										<t:column style="width: 10%; vertical-align: middle; padding-left: 15px;">
+											<f:facet name="header">
+												<h:outputText value="Record Count" />
+											</f:facet>
+											<h:outputText value="#{row[0]}" />
+										</t:column >
+										
+										
+									</t:dataTable>
+								</h:form></td>
+							</tr>
+						</table>
+						
+						
+					</td>
+				</tr>
+
+				<tr class="validation-error-area">
+					<td colspan="2"></td>
+					<td></td>
+				</tr>
+			</table>
+      			
+			</div>
+			</div>
+		</ui:define>
+	</ui:composition>
+
+</f:view>
+
+</body>
+
+</html>

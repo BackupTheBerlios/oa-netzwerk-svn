@@ -104,6 +104,7 @@ public class RepositoryListBean extends AbstractBean implements Serializable {
 					repo.setStatus("unknown");
 				}
 			}
+		
 		}
 		
 	}

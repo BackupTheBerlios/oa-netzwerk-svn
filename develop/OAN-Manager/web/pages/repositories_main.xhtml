@@ -51,12 +51,19 @@
 										<f:facet name="header">
 											<h:outputText value="Name" />
 										</f:facet>
-<!--										                           <h:form id="testForm">-->
-										<a href="repository_view.xhtml?rid=#{row.id}">#{row.name}</a>
-<!--										<h:inputHidden id="identifier" name="identifier" value="#{row.id}" />-->
-<!--										<input type="hidden" name="identifier" value="#{row.id}" />-->
-<!--										<h:commandButton action="repository_view.xhtml?rid=#{row.id}" value="#{row.name}" />-->
-<!--										                           </h:form>-->
+										<a href="repository_view.xhtml?rid=#{row.id}">#{row.name}</a><br />
+										<h:outputText 
+											value="#{Statistics.recordsPerRepository[row.id]}"
+										/> 
+										Entries <br />
+										<h:outputLink 
+											value="repositories_markedObjects.xhtml?repositoryID=#{row.id}"
+											rendered="#{(Statistics.peculiarAndOutdatedCount[row.id][0] > '0') or (Statistics.peculiarAndOutdatedCount[row.id][1] > '0')}" 
+										>
+											<h:outputText
+												value="#{Statistics.peculiarAndOutdatedCount[row.id][0]} peculiar and #{Statistics.peculiarAndOutdatedCount[row.id][1]} outdated objects"
+											/>
+										</h:outputLink>
 									</t:column>
 									
 									<t:column style="width: 25%; vertical-align: middle; padding-left: 15px; height: 70px;">

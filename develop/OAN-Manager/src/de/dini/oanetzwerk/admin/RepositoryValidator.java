@@ -36,6 +36,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -85,6 +86,13 @@ public class RepositoryValidator {
 				serverXML = this.read(serverFile, "UTF-8");
 			}
 			else {
+				if (!f.exists()) {
+					System.out.println("Datei existiert nicht");
+					System.out.println("Pfad: "+serverFile);
+				}
+				if (f.exists() && !f.canRead()) {
+					System.out.println("Datei existiert, ist aber nicht lesbar");
+				}
 				serverXML = serverFileFallback;
 				System.out.println("Wähle Fallback als serverFile");
 			}
@@ -94,6 +102,7 @@ public class RepositoryValidator {
 			Document document = builder.parse(new InputSource(s));
 			xpath = XPathFactory.newInstance().newXPath();
 			serverList = (NodeList) xpath.evaluate("serverList/server", document, XPathConstants.NODESET);
+			System.out.println("Serverliste hat "+serverList.getLength()+" Einträge");
 		}
 		catch ( Exception e ) {
 			e.printStackTrace();
@@ -116,9 +125,58 @@ public class RepositoryValidator {
 	    return text.toString();
 	}
 	
+	private Node getServerFromServerList(String serverAlias) {
+		int i = 0;
+		while (i < serverList.getLength()) {
+			Node currentServer = serverList.item(i);
+			try {
+				if (
+					(
+						(Node) xpath.evaluate(
+							"alias", 
+							currentServer, 
+							XPathConstants.NODE
+						)
+					).getTextContent().equals(serverAlias)
+				) {
+					return currentServer;
+				}
+				else {
+					i++;
+				}
+			} catch (DOMException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (XPathExpressionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
+	private Node getServerFromServerList(int number) {
+		if (0 <= number && number < serverList.getLength()) {
+			return serverList.item(number);
+		}
+		return null;
+	}
+	
 	public ValidationResultBean getValidationDataFromXML(String serverAlias) {
-		// TODO: Server aus XML suchen können
-		Node server = serverList.item(0);
+		Node server = getServerFromServerList(serverAlias);
+		return getValidationDataFromXML(server);
+		
+	}
+	public ValidationResultBean getValidationDataFromXML(int number) {
+		Node server = getServerFromServerList(number);
+		return getValidationDataFromXML(server);
+	}
+	
+	private ValidationResultBean getValidationDataFromXML(Node server) {
+		if (server == null) {
+			System.out.println("Serverliste leer?");
+			System.exit(-1);
+		}
 		
 		ValidationResultBean valiData = new ValidationResultBean();
 		
@@ -185,7 +243,7 @@ public class RepositoryValidator {
 			
 			htc.executeMethod(method);
             response = method.getResponseBodyAsString();
-            System.out.println(response);
+            //System.out.println(response);
             response = response.replace((String) "xsi:noNamespaceSchemaLocation=\"http://oanet.cms.hu-berlin.de/xsd/OANRESTMessage.xsd\"", (String)"");
 			
             
@@ -302,7 +360,7 @@ public class RepositoryValidator {
 			NodeList test = docRoot.getChildNodes();
 			System.out.println("Childcount :"+test.getLength());
 			for (int i = 0; i < test.getLength(); i++) {
-				System.out.println("Child "+i+": "+test.item(i).getNodeName());
+				//System.out.println("Child "+i+": "+test.item(i).getNodeName());
 			}
 			
 			Transformer t = TransformerFactory.newInstance().newTransformer();
@@ -441,6 +499,12 @@ public class RepositoryValidator {
 		
 	}
 
+	public void validateAllServers() {
+		for (int i = 0; i < serverList.getLength(); i++) {
+			validateServer(i);
+		}
+	}
+	
 	public void validateServer(ValidationResultBean valiData) {
 		valiData.setValidationResults(createValidationResultList(valiData));
 		formatResultsAsXML(valiData);
@@ -448,7 +512,10 @@ public class RepositoryValidator {
 	public void validateServer(String serverAlias) {
 		ValidationResultBean valiData = getValidationDataFromXML(serverAlias);
 		validateServer(valiData);
-		
+	}
+	public void validateServer(int number) {
+		ValidationResultBean valiData = getValidationDataFromXML(number);
+		validateServer(valiData);
 	}
 	public void validateServer(String serverAlias, String parameter) {
 		ValidationResultBean valiData = getValidationDataFromXML(serverAlias);
@@ -511,6 +578,13 @@ public class RepositoryValidator {
 		catch(Exception e) {
 			System.out.println("Fehler beim Löschen: "+e.getMessage());
 			e.printStackTrace();
+		}
+	}
+	
+	public void deleteResultFile() {
+		File f = new File(validationResults);
+		if (f.exists() && f.canWrite()) {
+			f.delete();
 		}
 	}
 	
