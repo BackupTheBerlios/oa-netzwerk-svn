@@ -73,7 +73,7 @@ public class MarkerRMI extends RMIService {
 			}
 
 			registry.rebind(SERVICE_NAME, stub);
-			System.out.println(SERVICE_NAME + " ready and listening");
+			logger.info(SERVICE_NAME + " ready and listening");
 		} catch (Exception e) {
 			System.err.println(SERVICE_NAME + " could not be bound: ");
 			e.printStackTrace();

@@ -49,13 +49,14 @@ public class HarvesterRMI extends RMIService {
 
 //		PropertyConfigurator.configureAndWatch("log4j.properties", 60 * 1000);
 //		DOMConfigurator.configureAndWatch("log4j.xml" , 60*1000 );
-		logger.info("Harvester starting due to rmi call.");
-		
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
 
-		new HarvesterRMI().startService();
+
+		HarvesterRMI server = new HarvesterRMI();
+		logger.info("Harvester starting due to rmi call.");
+		server.startService();
 		
 	}
 
@@ -77,7 +78,7 @@ public class HarvesterRMI extends RMIService {
 			}
 
 			registry.rebind(SERVICE_NAME, stub);
-			System.out.println(SERVICE_NAME + " ready and listening");
+			logger.info(SERVICE_NAME + " ready and listening");
 		} catch (Exception e) {
 			System.err.println(SERVICE_NAME + " could not be bound: ");
 			e.printStackTrace();

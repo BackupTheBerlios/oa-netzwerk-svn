@@ -73,7 +73,7 @@ public class ServiceWrapperRMI extends RMIService {
 			}
 
 			registry.rebind(serviceName, stub);
-			System.out.println(serviceName + " bound");
+			logger.info(serviceName + " ready and listening");
 		} catch (Exception e) {
 			System.err.println(serviceName + " could not be bound: ");
 			e.printStackTrace();
@@ -159,7 +159,7 @@ public class ServiceWrapperRMI extends RMIService {
 
 		// service finished
 		updateJobStatus(data.get("job_name"), "Finished");
-		logger.info("Harvesting job finished!");
+		logger.info(serviceName + " finished!");
 		working = false;
 		return true;
 	}

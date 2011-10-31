@@ -29,7 +29,7 @@ public abstract class RMIService implements IService {
 	private Properties restclientProps;
 	private String applicationPath;
 	
-	private String restclientPropFileName = "restclientprop.xml";
+	private String restclientPropFileName = "/../../config/restclientprop.xml";
 	private boolean initializationComplete = false;
 	
 	public RMIService() {
@@ -77,7 +77,9 @@ public abstract class RMIService implements IService {
 		}
 		
         logger.info("Reading " + applicationPath + "log4j.xml!");
-		DOMConfigurator.configureAndWatch((applicationPath == null ? "" : applicationPath) + "log4j.xml" , 60*1000 );
+        System.out.println("log4j Prop: " + System.getProperty("oan.home"));
+//		DOMConfigurator.configureAndWatch(System.getProperty("oan.home") + "/log4j.xml");
+        DOMConfigurator.configureAndWatch((applicationPath == null ? "" : applicationPath) + "log4j.xml" , 60*1000 );
 		logger.info("log4j.xml found!");
 		
 		initializationComplete = true;
