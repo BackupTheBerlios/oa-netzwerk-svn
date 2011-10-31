@@ -375,7 +375,7 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 			"WHERE (" +
 			"	keyword_id NOT IN (SELECT keyword_id FROM \"Object2Keywords\" GROUP BY keyword_id) " +
 			")");
-
+		
 		return preparedstmt;
 	}
 

@@ -1902,4 +1902,169 @@ public class SelectFromDBPostgres implements SelectFromDB {
 		preparedstmt.setInt(1, jobId);
 		return preparedstmt;
 	}
+
+
+	@Override
+	public PreparedStatement RecordsPerRepository(Connection connection) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(
+				"SELECT \"Repositories\".repository_id, coalesce(COUNT(object_id),0) as a FROM \"Object\" "+
+				"FULL JOIN \"Repositories\" on \"Object\".repository_id = \"Repositories\".repository_id "+
+				"GROUP BY \"Repositories\".repository_id "+
+				"ORDER BY repository_id ASC"
+		);
+		return stmt;
+	}
+
+
+	@Override
+	public PreparedStatement RecordsPerDDCCategory(Connection connection) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(
+				"SELECT " +
+			    	"COUNT(\"DDC_Classification\".*), " +
+			    	"\"DDC_Categories\".\"DDC_Categorie\", "+
+			    	"\"DDC_Categories\".\"name\", "+
+			    	" \"DDC_Categories\".\"name_en\" "+  
+			    "FROM \"DDC_Classification\" "+
+			    "FULL JOIN \"DDC_Categories\" "+
+			    "ON \"DDC_Categories\".\"DDC_Categorie\" = \"DDC_Classification\".\"DDC_Categorie\" "+
+			    "GROUP BY "+
+			    	"\"DDC_Categories\".\"DDC_Categorie\", "+
+			    	"\"DDC_Categories\".\"name\",  "+
+			    	"\"DDC_Categories\".\"name_en\"  "+
+			    "ORDER BY \"DDC_Categories\".\"DDC_Categorie\" ASC"
+		);
+		
+		return stmt;	
+	}
+	
+	@Override
+	public PreparedStatement getPeculiarAndOutdatedCount(Connection connection) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(
+			"SELECT coalesce(peculiar,0) as peculiar, coalesce(outdated,0) as outdated, a.repository_id, \"Repositories\".name FROM " +
+			"(" +
+				"SELECT COUNT(*) as peculiar, repository_id FROM \"Object\" " +
+				"WHERE peculiar = true and outdated = false " +
+				"GROUP BY repository_id" +
+			") AS a " +
+			"FULL JOIN "+
+			"(" +
+				"SELECT COUNT(*) as outdated, repository_id " +
+				"FROM \"Object\" " +
+				"WHERE peculiar = true and outdated = true " +
+				"GROUP BY repository_id" +
+			") AS b " +
+			"ON a.repository_id = b.repository_id " +
+			"JOIN \"Repositories\" ON a.repository_id = \"Repositories\".repository_id"
+		);
+		return stmt;
+	}
+	
+	@Override
+	public PreparedStatement getPeculiarAndOutdatedCount(Connection connection, BigDecimal repository_id) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(
+			"SELECT coalesce(peculiar,0) as peculiar, coalesce(outdated,0) as outdated, a.repository_id, \"Repositories\".name FROM" +
+			"(" +
+			"	SELECT COUNT(*) as peculiar, repository_id FROM \"Object\" " +
+			"   WHERE peculiar = true and outdated = false " +
+			"   GROUP BY repository_id" +
+			") AS a " +
+			"FULL JOIN "+
+			"(" +
+			"	SELECT COUNT(*) as outdated, repository_id " +
+			"	FROM \"Object\" " +
+			"	WHERE peculiar = true and outdated = true " +
+			"	GROUP BY repository_id" +
+			") AS b " +
+			"ON a.repository_id = b.repository_id" +
+			"WHERE a.repository_id = ?"
+		);
+		stmt.setBigDecimal(1, repository_id);
+		return stmt;
+	}
+	
+	@Override
+	public PreparedStatement getPeculiarAndOutdatedObjects(Connection connection) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(
+			"SELECT "+
+			"    \"Object\".object_id, "+
+			"    \"Object\".repository_id, "+
+			"    \"Object\".peculiar, "+
+			"    \"Object\".outdated, "+
+			"    \"Repositories\".name, "+
+			"    \"Titles\".title "+
+			"FROM \"Object\" "+
+			"JOIN \"Repositories\" "+
+			"    ON \"Object\".repository_id = \"Repositories\".repository_id "+
+			"JOIN \"Titles\" ON \"Object\".object_id = \"Titles\".object_id "+
+			"WHERE "+
+			"    (\"Object\".peculiar = true OR "+
+			"    \"Object\".outdated = true ) AND "+
+			"    \"Titles\".qualifier = 'main'"
+		);
+		return stmt;
+	}
+	
+	@Override
+	public PreparedStatement getPeculiarAndOutdatedObjects(Connection connection, BigDecimal repository_id) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement(
+			"SELECT "+
+			"    \"Object\".object_id,"+
+			"    \"Object\".repository_id,"+
+			"    \"Object\".peculiar,"+
+			"    \"Object\".outdated,"+
+			"    \"Repositories\".name,"+
+			"    \"Titles\".title "+
+			"FROM \"Object\" "+
+			"JOIN \"Repositories\" "+
+			"    ON \"Object\".repository_id = \"Repositories\".repository_id "+
+			"JOIN \"Titles\" ON \"Object\".object_id = \"Titles\".object_id "+
+			"WHERE "+
+			"    (\"Object\".peculiar = true OR "+
+			"    \"Object\".outdated = true ) AND "+
+			"    \"Titles\".qualifier = 'main' AND " +
+			"	\"Object\".repository_id = ?"
+		);
+		stmt.setBigDecimal(1, repository_id);
+		return stmt;
+	}
+
+
+	@Override
+	public PreparedStatement ObjectCount(Connection connection) throws SQLException {
+		PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(*) FROM \"Object\"");
+		return stmt;
+	}
+
+
+	@Override
+	public PreparedStatement FullTextLinkCount(Connection connection) throws SQLException {
+		return connection.prepareStatement("SELECT COUNT(*) FROM \"FullTextLinks\"");
+	}
+
+
+	@Override
+	public PreparedStatement RecordsPerIso639Language(Connection connection) throws SQLException {
+		return connection.prepareStatement(
+			"SELECT COUNT(\"Object2Iso639Language\".*), " +
+			"\"Iso639Language\".iso639language, \"Iso639Language\".language_id " +
+			"FROM \"Object2Iso639Language\" " +
+			"FULL JOIN \"Iso639Language\" " +
+			"ON \"Iso639Language\".language_id = \"Object2Iso639Language\".language_id " +
+			"GROUP BY \"Iso639Language\".iso639language, \"Iso639Language\".language_id " +
+			"ORDER BY \"Iso639Language\".language_id ASC"
+		);
+	}
+
+
+	@Override
+	public PreparedStatement RecordsPerDINISetCategory(Connection connection) throws SQLException {
+		return connection.prepareStatement(
+			"SELECT Count(class.*), cat.\"DINI_set_id\", cat.name, cat.\"setNameEng\", cat.\"setNameDeu\" "+
+			"FROM \"DINI_Set_Categories\" as cat "+
+			"FULL JOIN \"DINI_Set_Classification\" as class "+
+			"ON class.\"DINI_set_id\" = cat.\"DINI_set_id\" "+
+			"GROUP BY cat.\"DINI_set_id\", cat.name, cat.\"setNameEng\", cat.\"setNameDeu\" "+
+			"ORDER BY cat.\"DINI_set_id\" ASC"	
+		);
+	}
 }

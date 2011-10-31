@@ -151,15 +151,15 @@ public class TestRestServer {
 	/**
 	 * Test method for {@link de.dini.oanetzwerk.server.RestServer#getServerproperties()}.
 	 */
-	@Test
-	public final void testGetServerproperties ( ) {
-		
-		RestServer server = new RestServer ( );
-		
-		assertNull (server.getServerproperties ( ));
-		
-		server = null;
-	}
+//	@Test
+//	public final void testGetServerproperties ( ) {
+//		
+//		RestServer server = new RestServer ( );
+//		
+//		assertNull (server.getServerproperties ( ));
+//		
+//		server = null;
+//	}
 	
 	class NullHttpServletRequest implements HttpServletRequest {
 		

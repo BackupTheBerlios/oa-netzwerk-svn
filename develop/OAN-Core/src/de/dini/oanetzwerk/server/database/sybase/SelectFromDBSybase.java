@@ -1970,4 +1970,85 @@ public class SelectFromDBSybase implements SelectFromDB {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	@Override
+	public PreparedStatement RecordsPerRepository(Connection connection)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement RecordsPerDDCCategory(Connection connection)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement ObjectCount(Connection connection)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement FullTextLinkCount(Connection connection)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement RecordsPerIso639Language(Connection connection)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement RecordsPerDINISetCategory(Connection connection)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement getPeculiarAndOutdatedCount(Connection connection,
+			BigDecimal repository_id) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement getPeculiarAndOutdatedCount(Connection connection)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement getPeculiarAndOutdatedObjects(
+			Connection connection, BigDecimal repository_id)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement getPeculiarAndOutdatedObjects(Connection connection)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

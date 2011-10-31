@@ -883,14 +883,14 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 			
 			// cleanup overhead like keywords and persons
 			
-			logger.debug("BEFORE delete orphaned Keywords");
-			stmtconn.loadStatement(DBAccessNG.deleteFromDB().KeywordsWithoutReference(stmtconn.connection));
-			this.result = stmtconn.execute ( );
-			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
-			logger.debug("AFTER delete orphaned Keywords");
+//			logger.debug("BEFORE delete orphaned Keywords");
+//			stmtconn.loadStatement(DBAccessNG.deleteFromDB().KeywordsWithoutReference(stmtconn.connection));
+//			this.result = stmtconn.execute ( );
+//			
+//			if (this.result.getWarning ( ) != null) 
+//				for (Throwable warning : result.getWarning ( ))
+//					logger.warn (warning.getLocalizedMessage ( ));
+//			logger.debug("AFTER delete orphaned Keywords");
 			
 			logger.debug("BEFORE delete orphaned Persons");
 				stmtconn.loadStatement(DBAccessNG.deleteFromDB().PersonWithoutReference(stmtconn.connection));

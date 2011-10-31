@@ -25,5 +25,6 @@ public enum RestKeyword {
 	UsageStatistics,
 	DDCEntry,
 	DDCStatistics,
-	LanguageEntry
+	LanguageEntry,
+	Statistics
 }

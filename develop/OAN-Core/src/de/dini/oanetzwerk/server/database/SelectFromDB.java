@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface SelectFromDB {
 
+
 	public abstract PreparedStatement ServicesScheduling(Connection connection, int jobId) throws SQLException;
 
 	public abstract PreparedStatement ServicesScheduling(Connection connection) throws SQLException;
@@ -174,4 +175,24 @@ public interface SelectFromDB {
 	public abstract PreparedStatement DDCClassification2(Connection connection, BigDecimal object_id) throws SQLException;
 	
 	public abstract PreparedStatement Object2Iso639Language(Connection connection, BigDecimal object_id, String language) throws SQLException;
+	
+	public abstract PreparedStatement RecordsPerRepository(Connection connection) throws SQLException;
+	
+	public abstract PreparedStatement RecordsPerDDCCategory(Connection connection) throws SQLException;
+	
+	public abstract PreparedStatement ObjectCount(Connection connection) throws SQLException;
+	
+	public abstract PreparedStatement FullTextLinkCount(Connection connection) throws SQLException;
+	
+	public abstract PreparedStatement RecordsPerIso639Language(Connection connection) throws SQLException;
+	
+	public abstract PreparedStatement RecordsPerDINISetCategory(Connection connection) throws SQLException;
+
+	public abstract PreparedStatement getPeculiarAndOutdatedCount(Connection connection, BigDecimal repository_id) throws SQLException;
+
+	public abstract PreparedStatement getPeculiarAndOutdatedCount(Connection connection) throws SQLException;
+
+	public abstract PreparedStatement getPeculiarAndOutdatedObjects(Connection connection, BigDecimal repository_id) throws SQLException;
+
+	public abstract PreparedStatement getPeculiarAndOutdatedObjects(Connection connection) throws SQLException;
 }

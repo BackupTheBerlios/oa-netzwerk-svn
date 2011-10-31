@@ -23,13 +23,13 @@ import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.server.database.SingleStatementConnection;
 import de.dini.oanetzwerk.server.database.StatementConnection;
 
-public class Statistics {
+public class DataStatistics {
 
-	private static Logger logger = Logger.getLogger(Statistics.class);
+	private static Logger logger = Logger.getLogger(DataStatistics.class);
 
 	public static void main(String[] args) {
 
-		new Statistics().generate();
+		new DataStatistics().generate();
 
 	}
 
