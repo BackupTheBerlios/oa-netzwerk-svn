@@ -36,11 +36,11 @@ public class SchedulingBean implements Comparable<SchedulingBean> {
 		services.add(Service.Aggregator);
 		services.add(Service.Marker);
 		services.add(Service.FulltextLinkFinder);
-		services.add(Service.LanguageDetector);
+		services.add(Service.LanguageDetection);
 		services.add(Service.Shingler);
 		services.add(Service.Indexer);
 		services.add(Service.Classifier);
-		services.add(Service.DuplicateScanner);
+		services.add(Service.DuplicateCheck);
 	}
 	
 	public SchedulingBean() {

@@ -7,14 +7,13 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -34,11 +33,12 @@ import de.dini.oanetzwerk.utils.PropertyManager;
  * 
  */
 @ManagedBean(name = "services")
-@ApplicationScoped
+@RequestScoped
 public class ServiceManagementBean {
 
-	private final static Logger logger = Logger.getLogger(ServiceManagementBean.class);
-		
+	private final static Logger logger = Logger.getLogger(ServiceManagementBean.class);	
+	private final static Pattern p = Pattern.compile("\\$\\{(.*?)\\}");
+	
 	private boolean rmiRegistryNotStarted = false;	
 	private String javaPath = null;
 
@@ -49,33 +49,28 @@ public class ServiceManagementBean {
 	private PropertyManager propertyManager;
 
 	FacesContext ctx = FacesContext.getCurrentInstance();
-	List<ServiceBean> services = new ArrayList<ServiceBean>();
+	private static List<ServiceBean> services = new ArrayList<ServiceBean>();
+	
+	static {
+		
+		List<Service> services = SchedulingBean.getServices();
+
+		for (int i = 0; i < services.size(); i++) {
+			ServiceManagementBean.services.add(new ServiceBean(services.get(i)));
+        }
+	}
 	
 	public ServiceManagementBean() {
 		super();
 	}
 
 	public enum Service {
-		Harvester, Aggregator, Marker, FulltextLinkFinder, LanguageDetector, Shingler, Indexer, Classifier, DuplicateScanner;
+		Harvester, Aggregator, Marker, FulltextLinkFinder, LanguageDetection, Shingler, Indexer, Classifier, DuplicateCheck;
 	}
 	
 	@PostConstruct
 	private void init() {
-		
-		List<Service> services = SchedulingBean.getServices();
-
-		for (int i = 0; i < services.size(); i++) {
-			this.services.add(new ServiceBean(services.get(i)));
-        }
-//		this.services.add(new ServiceBean(Service.Aggregator));
-//		services.add(new ServiceBean(Service.Marker));
-//		services.add(new ServiceBean(Service.FulltextLinkFinder));
-//		services.add(new ServiceBean(Service.LanguageDetector));
-//		services.add(new ServiceBean(Service.Shingler));
-//		services.add(new ServiceBean(Service.Indexer));
-//		services.add(new ServiceBean(Service.Classifier));
-//		services.add(new ServiceBean(Service.DuplicateScanner));
-		
+				
 		initializeServiceProperties();
 		initializeServiceStatus();
 		
@@ -90,11 +85,15 @@ public class ServiceManagementBean {
 	public void initializeServiceProperties() {
 		
 		Properties props = propertyManager.getServiceProperties();
+		String path;
 		
 		for (ServiceBean service : services) {
 	        
+			// resolve environemnt variables within path
+			path = resolveSystemVariable(props.getProperty("location." + service.getLowerCaseName()));
+			
 			// retrieve file paths to services (harvester, aggregator and marker)
-			service.setLocalPath(props.getProperty("location." + service.getLowerCaseName()));
+			service.setLocalPath(path);
 
 			// retrieve rmi registry urls for each service
 			service.setRmiHost(props.getProperty("java.rmiregistry.host." + service.getLowerCaseName()));
@@ -177,6 +176,7 @@ public class ServiceManagementBean {
 				
 				if (servicePath == null || servicePath.length() == 0) {
 					logger.warn("Local path to service could not be found! Please make sure the service.properties have been set up correctly!" );
+					FacesContext.getCurrentInstance().addMessage("1", LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "services_failure_servicepropertiesnotfound", null));
 					return false;
 				}
 				// java -jar
@@ -205,12 +205,17 @@ public class ServiceManagementBean {
 				}
 				
 				
-				System.out.println("Running command: " + javaBinaryPath + " -Dfile.encoding=UTF8 -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
+				System.out.println("Running command: " + javaBinaryPath + " -Dfile.encoding=UTF8 -Doan.home=" + System.getenv("OAN_HOME") + " -jar -Djava.security.policy=" + System.getenv("OAN_HOME") + "/config/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 								+ servicePath);
 				// TODO: change directory to service directory first
+//				Process process = Runtime.getRuntime().exec(
+//								javaBinaryPath + " -Dfile.encoding=UTF8 -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
+//								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
+//								+ servicePath);
+				
 				Process process = Runtime.getRuntime().exec(
-								javaBinaryPath + " -Dfile.encoding=UTF8 -jar -Djava.security.policy=" + servicePath.substring(0, servicePath.lastIndexOf(System.getProperty("file.separator"))) + "/java.policy "
+								javaBinaryPath + " -Dfile.encoding=UTF8 -Doan.home=" + System.getenv("OAN_HOME") + " -jar -Djava.security.policy=" + System.getenv("OAN_HOME") + "/config/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 								+ servicePath);
 				
@@ -285,6 +290,42 @@ public class ServiceManagementBean {
 	private boolean checkIfLocalPathToServiceIsValid(String path) {
 		return new File(path).exists();
 	}
+	
+	private String resolveSystemVariable(String text) {
+		
+		if (text == null || text.length() == 0) {
+			return text;
+		}
+		
+		Matcher m = p.matcher(text);
+		String resolvedPath = "";
+		
+		if (m.find()) {	
+			String variable = m.group();
+			int length = variable.length();
+
+			variable = variable.substring(2, variable.length()-1);
+			
+//			if (logger.isDebugEnabled) {
+//			logger.debug("Found variable usage in services.properties: " + variable + ". Resolving variable...");
+//				if (System.getenv(variable) != null) {
+//					logger.debug("Variable successfully resolved! (" + variable + ")");
+//				} else {
+//					logger.debug("Variable could not be resolved! (" + variable + ")");
+//				}
+//			}
+			
+			if (m.start() == 0) {
+				resolvedPath = System.getenv(variable) + text.substring(length);				
+			} else {
+				resolvedPath = text.substring(0, m.start()) + System.getenv(variable) + text.substring(m.end());	
+			}
+		} else {
+			return text;
+		}
+		
+		return resolvedPath;
+	}
 
 	/********************* Getter & Setter ***********************/
 
@@ -297,8 +338,8 @@ public class ServiceManagementBean {
     }
 
 	public List<ServiceBean> getServices() {
-		
-		initializeServiceStatus();
+//		System.out.println("refreshing service status");
+//		initializeServiceStatus();
     	return services;
     }
 
