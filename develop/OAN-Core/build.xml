@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="OA-Netzwerk" default="warServer">
 
-	
-	<property name="mode" value="DEVELOPMENT" /><!-- DEVELOPMENT or PRODUCTION -->
-	
-	<property environment="env"/>
+
+	<property name="mode" value="DEVELOPMENT" />
+	<!-- DEVELOPMENT or PRODUCTION -->
+
+	<property environment="env" />
 	<property name="src" value="./src" />
 	<property name="ress" value="resources" />
 	<property name="build" value="build" />
@@ -17,6 +18,7 @@
 	<property name="build.inspector" value="build/inspector" />
 	<property name="build.aggregator" value="build/aggregator" />
 	<property name="build.markereraser" value="build/markereraser" />
+	<property name="build.servicewrapper" value="build/servicewrapper" />
 	<property name="build.adminservlet" value="build/adminservlet" />
 	<property name="build.findnbrowse" value="build/findnbrowse" />
 	<property name="build.oadminrealm" value="build/oadminrealm" />
@@ -28,13 +30,14 @@
 	<property name="build.indexeraccess" value="build/indexeraccess" />
 	<property name="dist" value="dist" />
 	<property name="lib" value="lib" />
+	<property name="jar.lib" value="../../lib/java" />
 	<property name="archive" value="arch" />
 	<property name="path" value="/restserver" />
 	<property name="url" value="http://oanet.cms.hu-berlin.de/manager" />
 	<property name="username" value="" />
 	<property name="password" value="" />
 
-	
+
 	<!-- ==================================================================== -->
 	<!-- Task Defintions                                                      -->
 	<!-- ==================================================================== -->
@@ -43,7 +46,7 @@
 	<taskdef name="bind" classname="org.jibx.binding.ant.CompileTask" classpathref="classpath.oaipmh" />
 
 
-	
+
 	<!--
 
   <taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask" />
@@ -53,7 +56,7 @@
   <taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask" />
   
  -->
-	
+
 
 	<path id="classpath.server">
 		<pathelement location="${lib}/log4j-1.2.15.jar" />
@@ -155,7 +158,7 @@
 	<path id="classpath.tokencleaner">
 		<pathelement location="${lib}/log4j-1.2.15.jar" />
 	</path>
-		
+
 	<path id="classpath.oaipmh">
 		<pathelement location="${lib}/servlet-api.jar" />
 		<pathelement location="${lib}/log4j-1.2.15.jar" />
@@ -210,7 +213,7 @@
 		<pathelement location="${lib}/commons-dbcp-1.4.jar" />
 		<pathelement location="${lib}/commons-lang-2.3.jar" />
 		<pathelement location="${lib}/jdom.jar" />
-		
+
 	</path>
 
 	<path id="classpath.oadminrealm">
@@ -263,7 +266,7 @@
 		<fail unless="binding-jars-found">Required JiBX binding jar jibx-bind.jar or
          jibx-run.jar was not found in lib directory (${lib.dir})</fail>
 	</target>
-         	
+
 	<target name="tarSourceAll" depends="initArch">
 		<tar destfile="${archive}/oa-netzwerk-${DSTAMP}.tar">
 			<tarfileset dir="${src}/de" prefix="de">
@@ -416,9 +419,9 @@
 			</fileset>
 		</zip>
 	</target>
-	
+
 	<target name="compileHarvester" depends="init">
-		<javac destdir="${build.harvester}" debug="true" debuglevel="lines,vars,source" srcdir="${src}" source="1.5" target="1.5">
+		<javac destdir="${build.harvester}" debug="true" debuglevel="lines,vars,source" srcdir="${src}" source="1.6" target="1.6">
 			<classpath refid="classpath.harvester" />
 			<include name="**/harvester/*.java" />
 			<include name="**/servicemodule/*.java" />
@@ -432,12 +435,12 @@
 	</target>
 
 	<target name="jarHarvester" depends="compileHarvester">
-		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
+		<property name="cp" value="${jar.lib}/commons-cli-1.1.jar ${jar.lib}/log4j-1.2.15.jar ${jar.lib}/commons-httpclient-3.1.jar ${jar.lib}/jdom.jar ${jar.lib}/commons-logging-1.1.jar ${jar.lib}/commons-codec-1.3.jar ." />
 		<jar jarfile="${build}/Harvester.jar">
 			<fileset dir="${build.harvester}" />
 			<manifest>
 				<!--attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.RunHarvester" /-->
-				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.HarvesterRMI" />
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.RunHarvester" />
 				<attribute name="Class-Path" value="${cp}" />
 			</manifest>
 		</jar>
@@ -468,7 +471,7 @@
 	</target>
 
 	<target name="compileAggregator" depends="init">
-		<javac destdir="${build.aggregator}" debug="true" debuglevel="lines,vars,source" srcdir="${src}" source="1.5" target="1.5">
+		<javac destdir="${build.aggregator}" debug="true" debuglevel="lines,vars,source" srcdir="${src}" source="1.6" target="1.6">
 			<classpath refid="classpath.aggregator" />
 			<include name="**/aggregator/*.java" />
 			<include name="**/servicemodule/*.java" />
@@ -485,11 +488,11 @@
 	</target>
 
 	<target name="jarAggregator" depends="compileAggregator">
-		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/jdom.jar lib/commons-httpclient-3.1.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar lib/commons-lang-2.3.jar ." />
+		<property name="cp" value="${jar.lib}/commons-cli-1.1.jar ${jar.lib}/log4j-1.2.15.jar ${jar.lib}/jdom.jar ${jar.lib}/commons-httpclient-3.1.jar ${jar.lib}/commons-logging-1.1.jar ${jar.lib}/commons-codec-1.3.jar ${jar.lib}/commons-lang-2.3.jar ." />
 		<jar jarfile="${build}/Aggregator.jar">
 			<fileset dir="${build.aggregator}" />
 			<manifest>
-				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.aggregator.AggregatorRMI" />
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.aggregator.RunAggregator" />
 				<attribute name="Class-Path" value="${cp}" />
 			</manifest>
 		</jar>
@@ -530,8 +533,8 @@
 	</target>
 
 	<target name="jarMarkerAndEraser" depends="compileMarkerAndEraser">
-		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
-		<jar  jarfile="${build}/MarkerAndEraser.jar">
+		<property name="cp" value="${jar.lib}/commons-cli-1.1.jar ${jar.lib}/log4j-1.2.15.jar ${jar.lib}/commons-httpclient-3.1.jar ${jar.lib}/jdom.jar ${jar.lib}/commons-logging-1.1.jar ${jar.lib}/commons-codec-1.3.jar ." />
+		<jar jarfile="${build}/MarkerAndEraser.jar">
 			<fileset dir="${build.markereraser}" />
 			<manifest>
 				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.markerAndEraser.MarkerRMI" />
@@ -560,7 +563,7 @@
 			</tarfileset>
 		</tar>
 	</target>
-	
+
 	<target name="compileServiceWrapper" depends="init">
 		<javac destdir="${build.servicewrapper}" debug="true" debuglevel="lines,vars,source" srcdir="${src}" source="1.5" target="1.5">
 			<classpath refid="classpath.harvester" />
@@ -569,9 +572,9 @@
 			<include name="**/HelperMethods.java" />
 		</javac>
 	</target>
-				
+
 	<target name="jarServiceWrapper" depends="compileServiceWrapper">
-		<property name="cp" value="lib/commons-cli-1.1.jar lib/log4j-1.2.15.jar lib/commons-httpclient-3.1.jar lib/jdom.jar lib/commons-logging-1.1.jar lib/commons-codec-1.3.jar ." />
+		<property name="cp" value="${jar.lib}/commons-cli-1.1.jar ${jar.lib}/log4j-1.2.15.jar ${jar.lib}/commons-httpclient-3.1.jar ${jar.lib}/jdom.jar ${jar.lib}/commons-logging-1.1.jar ${jar.lib}/commons-codec-1.3.jar ." />
 		<jar jarfile="${build}/Service.jar">
 			<fileset dir="${build.servicewrapper}" />
 			<manifest>
@@ -581,7 +584,7 @@
 			</manifest>
 		</jar>
 	</target>
-	
+
 
 	<target name="warServer" depends="compileServer">
 		<war destfile="${dist}/rest.war" webxml="conf/web.xml">
@@ -605,7 +608,7 @@
 			</classes>
 		</war>
 	</target>
-	
+
 
 	<target name="warLocalServer" depends="compileServer">
 		<war destfile="${dist}/rest.war" webxml="conf/web.xml">
@@ -629,7 +632,7 @@
 			</classes>
 		</war>
 	</target>
-	
+
 	<target name="warServer_ReadOnly" depends="compileServer_ReadOnly">
 		<war destfile="${dist}/rest.war" webxml="conf_readonly/web.xml">
 			<lib dir="${lib}">
@@ -822,14 +825,14 @@
 		</war>
 	</target>
 
-	
+
 	<target name="compileTokenCleaner" depends="init">
-		<javac destdir="${build.tokencleaner}" debug="true" verbose="yes" debuglevel="lines,vars,source" srcdir="${src}" >
+		<javac destdir="${build.tokencleaner}" debug="true" verbose="yes" debuglevel="lines,vars,source" srcdir="${src}">
 			<classpath refid="classpath.tokencleaner" />
 			<include name="**/tokencleaner/**" />
 		</javac>
 	</target>
-	
+
 	<target name="jarTokenCleaner" depends="compileTokenCleaner">
 		<property name="cp" value="lib/log4j-1.2.15.jar" />
 		<jar jarfile="${dist}/tokencleaner.jar">
@@ -839,17 +842,17 @@
 			<!--fileset file="conf_tokencleaner/.properties" /-->
 			<manifest>
 				<attribute name="Class-Path" value="${cp}" />
-				<attribute name="Main-Class" value="de.dini.oanetzwerk.oaipmh.tokencleaner.TokenCleaner"/>
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.oaipmh.tokencleaner.TokenCleaner" />
 			</manifest>
 		</jar>
 	</target>
-	
+
 	<target name="compileOAIPMH" depends="init">
-		<javac destdir="${build.oaipmh}" debug="true" verbose="yes" debuglevel="lines,vars,source" srcdir="${src}" >
+		<javac destdir="${build.oaipmh}" debug="true" verbose="yes" debuglevel="lines,vars,source" srcdir="${src}">
 			<classpath refid="classpath.oaipmh" />
 			<include name="**/oaipmh/**" />
 			<include name="**/server/database/*.java" />
-			<exclude name="**/oaipmh/tokencleaner/**"/>
+			<exclude name="**/oaipmh/tokencleaner/**" />
 			<exclude name="**/server/*.java" />
 			<exclude name="**/_2/*.java" />
 			<exclude name="**/technotest*" />
@@ -857,7 +860,7 @@
 			<exclude name="**/Test*" />
 		</javac>
 	</target>
-	
+
 	<target name="jibxBindOAIPMH" depends="checkForJibxLibs, compileOAIPMH">
 		<echo message="Running JiBX binding compiler" />
 		<bind verbose="true">
@@ -876,7 +879,7 @@
 				<include name="jibx-run-1.2.2.jar" />
 				<include name="commons-lang-2.3.jar" />
 			</lib>
-	
+
 			<metainf dir="conf/postgres">
 				<include name="context.xml" />
 			</metainf>
