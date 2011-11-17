@@ -1842,9 +1842,12 @@ public class SelectFromDBPostgres implements SelectFromDB {
 		}
 		if(!rowCountOnly) {
 			
-			sql.append(" ORDER BY o.object_id");
+			sql.append(" ORDER BY o.object_id LIMIT " + resultCount);
 		}
 
+//		if (!rowCountOnly) {
+//		}
+		
 		logger.info("sql: " + sql.toString() + "   using offset value " + idOffset);
 		logger.warn("blabla");
 		preparedstmt = connection.prepareStatement(sql.toString());
@@ -1862,9 +1865,7 @@ public class SelectFromDBPostgres implements SelectFromDB {
 				preparedstmt.setInt(i, ((BigInteger) param).intValue());
 			}
 		}
-		if (!rowCountOnly) {
-			sql.append(" LIMIT " + resultCount);
-		}
+
 
 		return preparedstmt;
 	}
