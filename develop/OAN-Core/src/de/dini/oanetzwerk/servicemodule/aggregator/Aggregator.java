@@ -60,6 +60,8 @@ public class Aggregator {
 	static Logger logger = Logger.getLogger(Aggregator.class);
 	static Logger aggrStateLog = Logger.getLogger("AggregationState");
 	
+	private static final String CONFIG_FILENAME = "config.xml";
+	
 	/**
 	 * Properties.
 	 */
@@ -71,8 +73,6 @@ public class Aggregator {
 	private Properties props; // special aggregator settings like connecting
 								// server
 	
-	private Properties restclientProps;
-
 	private boolean testing = false; // if set to true, aggregator stores data, but no update to workflow is saved
 
 	private BigDecimal serviceID;
@@ -95,10 +95,7 @@ public class Aggregator {
 
 			System.out.println("path: " + propertyFilePath);
 			this.props = HelperMethods
-					.loadPropertiesFromFile(propertyFilePath + "aggregatorprop.xml");
-			
-			this.restclientProps = HelperMethods
-			.loadPropertiesFromFile(propertyFilePath + "restclientprop.xml");
+					.loadPropertiesFromFile(propertyFilePath + CONFIG_FILENAME);
 
 		} catch (InvalidPropertiesFormatException ex) {
 
@@ -460,7 +457,7 @@ public class Aggregator {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("prepareRestTransmission");
 		
-		return HelperMethods.prepareRestTransmission(restclientProps, resource, props);
+		return HelperMethods.prepareRestTransmission(props, resource, props);
 	}
 
 	

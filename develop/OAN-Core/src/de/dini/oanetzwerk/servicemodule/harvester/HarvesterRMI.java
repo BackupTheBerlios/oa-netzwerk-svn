@@ -198,7 +198,7 @@ public class HarvesterRMI extends RMIService {
 		// harvest all active repositories
 		if (harvestAllRepositories) {
 
-			List<Repository> repositories = getRepositories(harvester.getPropertyfile());
+			List<Repository> repositories = getRepositories();
 			logger.info("br1");
 			for (Repository repository : repositories) {
 				logger.info("br2");
@@ -334,13 +334,6 @@ public class HarvesterRMI extends RMIService {
 //		// start sending updates to RMI-listener (HarvesterMonitorService)
 //		publishUpdates();
 
-	}
-
-
-	protected String getPropertyFile() {
-		if (harvester != null) {
-			return harvester.getPropertyfile();
-		} else return "harvesterprop.xml";
 	}
 
 }

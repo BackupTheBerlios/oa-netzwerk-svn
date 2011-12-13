@@ -29,7 +29,7 @@ public abstract class RMIService implements IService {
 	private Properties restclientProps;
 	private String applicationPath;
 	
-	private String restclientPropFileName = "/config/restclientprop.xml";
+	private String restclientPropFileName = "config.xml";
 	private boolean initializationComplete = false;
 	private String oanHome = System.getenv("OAN_HOME");
 	
@@ -48,8 +48,9 @@ public abstract class RMIService implements IService {
 		try{
 		
 			// retrieve property file path (application path)
+			
 			applicationPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-
+			System.out.println("apppath: " + applicationPath);
 			logger.debug("Retrieving application path...");
 			if (applicationPath != null && applicationPath.contains(System.getProperty("file.separator"))) {
 				applicationPath = applicationPath.substring(0, applicationPath.lastIndexOf(System.getProperty("file.separator")) + 1 );
@@ -64,10 +65,10 @@ public abstract class RMIService implements IService {
 
 		try {
 			// read restclient property file
-			restclientProps = HelperMethods.loadPropertiesFromFile(oanHome + restclientPropFileName);
+			restclientProps = HelperMethods.loadPropertiesFromFile(applicationPath + restclientPropFileName);
 			
 		} catch (Exception e) {
-			logger.warn("Could not load property file from " + oanHome + restclientPropFileName + "!", e);
+			logger.warn("Could not load property file from " + applicationPath + restclientPropFileName + "!", e);
 			return;
 		}	
 
@@ -90,19 +91,11 @@ public abstract class RMIService implements IService {
 		return true;
 	}
 
-	protected List<Repository> getRepositories(String servicePropFile) {
+	protected List<Repository> getRepositories() {
 
 		List<Repository> repoList = new ArrayList<Repository>();
 
-		Properties props = null;
-		try {
-			props = HelperMethods.loadPropertiesFromFile(getApplicationPath() + servicePropFile);
-
-		} catch (Exception e) {
-			logger.warn("Could not load property file '" + getApplicationPath() + servicePropFile + "'! Skipping service ...");
-		}
-
-		RestClient client = HelperMethods.prepareRestTransmission(new File(getApplicationPath() + "restclientprop.xml"), "Repository/", props);
+		RestClient client = HelperMethods.prepareRestTransmission(new File(getApplicationPath() + restclientPropFileName), "Repository/", restclientProps);
 		String result = client.GetData();
 
 		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
@@ -200,19 +193,22 @@ public abstract class RMIService implements IService {
 //			RestClient client = RestClient.createRestClient(props.getProperty("host"), "ServiceJob/" + jobName + "/" + status, props.getProperty("username"),
 //			                props.getProperty("password"));
 		
-			RestClient client = RestClient.createRestClient(new File(applicationPath + "restclientprop.xml"), "ServiceJob/" + jobName + "/" + status, restclientProps.getProperty("username"),
+			RestClient client = RestClient.createRestClient(restclientProps, "ServiceJob/" + jobName + "/" + status, restclientProps.getProperty("username"),
 							restclientProps.getProperty("password"));
 							
+			logger.info("YESSS");
 			System.out.println("client null : " + client == null);
 			
 			result = client.sendPostRestMessage(rms);
 			System.out.println("result null : " + result == null);
 
+			logger.info("YESSS1");
 			if (result.getStatus() != RestStatusEnum.OK) {
-
+				logger.info("YESSS7");
 				logger.error("/ServiceJob response failed: " + rms.getStatus() + "(" + rms.getStatusDescription() + ")");
 				return;
 			}
+			logger.info("YESSS8");
 		} catch (UnsupportedEncodingException e) {
 
 			logger.warn("Could not update status of service job! ", e);
@@ -222,16 +218,15 @@ public abstract class RMIService implements IService {
 		logger.info("POST sent to /ServiceJob");
 	}
 	
-	protected abstract String getPropertyFile();
 
-//	public Properties getServiceProps() {
-//    	return serviceProps;
-//    }
-//
-//	public void setServiceProps(Properties serviceProps) {
-//    	this.serviceProps = serviceProps;
-//    }
-
+	public Properties getConfig() {
+		return restclientProps;
+	}
+	
+	public String getConfigFilename() {
+		return restclientPropFileName;
+	}
+	
 	public Properties getRestclientProps() {
     	return restclientProps;
     }

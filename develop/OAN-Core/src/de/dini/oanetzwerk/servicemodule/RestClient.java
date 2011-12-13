@@ -8,6 +8,8 @@ import java.net.ConnectException;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
+import javax.net.ssl.SSLHandshakeException;
+
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -19,7 +21,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.commons.httpclient.params.HttpConnectionParams;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestMessage;
@@ -258,7 +259,7 @@ public class RestClient {
 		this.queryPath = filterpath (restQueryPath);
 		this.username = user;
 		this.password = pwd;
-		
+				
 		this.props = restclientProps;
 
 		if (this.props == null) {
@@ -481,6 +482,9 @@ public class RestClient {
 				
 			} while (cont);
 		
+		} catch (SSLHandshakeException e) {
+			logger.error ( "This could be caused due to a missing .keystore file, make sure the location set in restclientprop.xml points to a valid .keystore path! : " + e.getLocalizedMessage(), e);
+		
 		} catch (ConnectException ex) {
 			
 			logger.error (ex.getLocalizedMessage ( ), ex);
@@ -523,7 +527,8 @@ public class RestClient {
 		HttpClient newclient = new HttpClient ( );
 		StringBuffer buffer = new StringBuffer ("");
 		
-		newclient.getParams ( ).setAuthenticationPreemptive (true);
+		newclient.getParams().setAuthenticationPreemptive (true);
+		
 		Credentials defaultcreds = new UsernamePasswordCredentials (this.username, this.password);
 		
 		if (this.nossl) {
@@ -667,7 +672,7 @@ public class RestClient {
 	
 	public RestMessage sendPostRestMessage (RestMessage msg) throws UnsupportedEncodingException {
 		
-		String request = RestXmlCodec.encodeRestMessage (msg);
+		String request = RestXmlCodec.encodeRestMessage (msg);		
 		String response = this.PostData (request);
 		
 		if (logger.isDebugEnabled ( )) {
@@ -675,7 +680,6 @@ public class RestClient {
 			logger.debug ("Request: " + request);
 			logger.debug ("Response: " + response);
 		}
-		
 		return RestXmlCodec.decodeRestMessage (response);
 	}
 	

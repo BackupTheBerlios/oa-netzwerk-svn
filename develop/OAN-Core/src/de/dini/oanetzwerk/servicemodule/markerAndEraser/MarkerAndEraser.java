@@ -42,6 +42,7 @@ public class MarkerAndEraser {
 	private static Logger marknEraseStateLog = Logger
 	.getLogger("MarknEraseState");
 
+	private static final String CONFIG_FILENAME = "config.xml";
 	
 	private static final int LIMIT_PECULIAR = 3;
 	private static final int LIMIT_OUTDATED = 6;
@@ -53,10 +54,9 @@ public class MarkerAndEraser {
 	private Date lastRepositoryHarvestDate;
 	private Date lastRepositoryMarkAndEraseDate;
 
-	private Properties restclientProps;
 	private Properties props = new Properties();
 	private String propertyFilePath = "";
-	private String propertyfile = "markerprop.xml";
+	private String propertyfile = CONFIG_FILENAME;
 	
 	private boolean stopped = false;
 	
@@ -84,9 +84,6 @@ public class MarkerAndEraser {
 
 			this.props = HelperMethods.loadPropertiesFromFile(propertyFilePath + this
 					.getPropertyfile());
-
-			this.restclientProps = HelperMethods
-			.loadPropertiesFromFile(propertyFilePath + "restclientprop.xml");
 			
 			return true;
 		} catch (InvalidPropertiesFormatException ex) {
@@ -762,7 +759,7 @@ public class MarkerAndEraser {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("prepareRestTransmission");
 		
-		return HelperMethods.prepareRestTransmission(restclientProps, resource, props);
+		return HelperMethods.prepareRestTransmission(props, resource, props);
 	}
 	
 	/**

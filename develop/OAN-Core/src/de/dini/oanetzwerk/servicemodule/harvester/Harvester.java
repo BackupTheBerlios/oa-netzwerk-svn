@@ -55,6 +55,8 @@ import de.dini.oanetzwerk.utils.HelperMethods;
 
 public class Harvester {
 	
+	private static final String CONFIG_FILENAME = "config.xml";
+
 	/**
 	 * The Harvester which will process the data-import and handle the imported
 	 * objects
@@ -142,7 +144,7 @@ public class Harvester {
 	 * 
 	 */
 	
-	private String propertyfile = "harvesterprop.xml";
+	private String propertyfile = CONFIG_FILENAME;
 	
 	
 	private String propertyFilePath = "";
@@ -1945,7 +1947,7 @@ public class Harvester {
 		if (logger.isDebugEnabled ( ))
 			logger.debug ("prepareRestTransmission");
 		
-		return HelperMethods.prepareRestTransmission(new File(propertyFilePath + "restclientprop.xml"), resource, props);
+		return HelperMethods.prepareRestTransmission(new File(propertyFilePath + CONFIG_FILENAME), resource, props);
 	}
 	
 	/**

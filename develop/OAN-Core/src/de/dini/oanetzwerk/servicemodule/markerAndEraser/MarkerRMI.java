@@ -140,7 +140,7 @@ public class MarkerRMI extends RMIService {
 		// process all active repositories
 		if (processAllRepositories) {
 
-			List<Repository> repositories = getRepositories(getPropertyFile());
+			List<Repository> repositories = getRepositories();
 			
 			for (Repository repository : repositories) {
 	        
@@ -230,10 +230,5 @@ public class MarkerRMI extends RMIService {
 		return true;
 	}
 
-	
-	@Override
-    protected String getPropertyFile() {
-		return "markerprop.xml";
-    }
 
 }

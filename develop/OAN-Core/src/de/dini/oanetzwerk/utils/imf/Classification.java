@@ -21,7 +21,7 @@ public abstract class Classification implements ClassificationInterface {
 	
 	public static boolean isDINISet(String testvalue) {
 		String lower = testvalue.toLowerCase();
-		if (lower.startsWith("pub-type:")) {
+		if (lower.startsWith("doc-type:")) {
 			// bisland hier nur "true"
 			return true;
 			

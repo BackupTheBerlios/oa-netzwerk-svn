@@ -259,9 +259,4 @@ public class AggregatorRMI extends RMIService {
 		return true;
 	}
 
-	@Override
-    protected String getPropertyFile() {
-		return "aggregatorprop.xml";
-    }
-
 }
