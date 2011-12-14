@@ -11,6 +11,7 @@ public class ServiceBean {
 	
 	private Service service;
 	private String localPath;
+	private String localLogPath;
 	private String rmiHost;
 	private ServiceStatus status;
 	
@@ -64,5 +65,11 @@ public class ServiceBean {
 	public boolean isBusy() {
 		return ServiceStatus.Busy.equals(status);
 	}
+	public String getLocalLogPath() {
+    	return localLogPath;
+    }
+	public void setLocalLogPath(String localLogPath) {
+    	this.localLogPath = localLogPath;
+    }
 	
 }

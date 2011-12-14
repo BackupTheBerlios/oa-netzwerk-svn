@@ -26,6 +26,7 @@ import de.dini.oanetzwerk.servicemodule.IService;
 import de.dini.oanetzwerk.servicemodule.ProcessStreamHandler;
 import de.dini.oanetzwerk.servicemodule.ServiceStatus;
 import de.dini.oanetzwerk.utils.PropertyManager;
+import de.dini.oanetzwerk.utils.StringUtils;
 
 /**
  * @author Sammy David
@@ -37,7 +38,7 @@ import de.dini.oanetzwerk.utils.PropertyManager;
 public class ServiceManagementBean {
 
 	private final static Logger logger = Logger.getLogger(ServiceManagementBean.class);	
-	private final static Pattern p = Pattern.compile("\\$\\{(.*?)\\}");
+
 	
 	private boolean rmiRegistryNotStarted = false;	
 	private String javaPath = null;
@@ -90,7 +91,7 @@ public class ServiceManagementBean {
 		for (ServiceBean service : services) {
 	        
 			// resolve environemnt variables within path
-			path = resolveSystemVariable(props.getProperty("location." + service.getLowerCaseName()));
+			path = StringUtils.resolveSystemVariable(props.getProperty("location." + service.getLowerCaseName()));
 			
 			// retrieve file paths to services (harvester, aggregator and marker)
 			service.setLocalPath(path);
@@ -146,18 +147,37 @@ public class ServiceManagementBean {
 		return ServiceStatus.Stopped;
 	}
 
-	public String startService(ServiceBean service) {
+	public String startSingleService(ServiceBean service) { 
 		
 		boolean started = startService(service.getServiceName(), service.getLocalPath(), service.getStatus());
+		
+		timeout(2000);
 		
 		if (started) {
 			service.setStatus(checkServiceStatus(service.getServiceName(), service.getRmiHost()));
 		}
+		
 		logger.info(service.getServiceName() + " " + service.getStatus());
+		
 		return "services_main";
 	}
 	
-	public String stopService(ServiceBean service) {
+	public String startAllServices() {
+		
+		for (ServiceBean service : services) {
+			startService(service.getServiceName(), service.getLocalPath(), service.getStatus());
+			logger.info(service.getServiceName() + " " + service.getStatus());
+        }
+		timeout(5000);
+				
+		for (ServiceBean service : services) {
+			service.setStatus(checkServiceStatus(service.getServiceName(), service.getRmiHost()));
+		}
+		
+		return "services_main";
+	}	
+	
+	public String stopSingleService(ServiceBean service) {
 		boolean stopped = stopService(service.getServiceName(), service.getStatus(), service.getRmiHost());
 		
 		if (stopped) {
@@ -166,6 +186,14 @@ public class ServiceManagementBean {
 		logger.info(service.getServiceName() + " " + service.getStatus());
 		return "services_main";
 	}
+	
+	public String stopAllServices() {
+		
+		for (ServiceBean service : services) {
+	        stopSingleService(service);
+        }
+		return "services_main";
+	}	
 		
 	
 	public boolean startService(String serviceName, String servicePath, ServiceStatus serviceStatus) {
@@ -234,17 +262,11 @@ public class ServiceManagementBean {
 				
 				logger.info("Starting " + serviceName + "...");
 				
-				synchronized (this) {
-					this.wait(5000);
-				}
 
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return false;
-			}
+			} 
 		}
 		return true;
 	}
@@ -291,42 +313,17 @@ public class ServiceManagementBean {
 		return new File(path).exists();
 	}
 	
-	private String resolveSystemVariable(String text) {
-		
-		if (text == null || text.length() == 0) {
-			return text;
+	private void timeout(long ms) {
+		synchronized (this) {
+			try {
+	            this.wait(ms);
+            } catch (InterruptedException e) {
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+            }
 		}
-		
-		Matcher m = p.matcher(text);
-		String resolvedPath = "";
-		
-		if (m.find()) {	
-			String variable = m.group();
-			int length = variable.length();
-
-			variable = variable.substring(2, variable.length()-1);
-			
-//			if (logger.isDebugEnabled) {
-//			logger.debug("Found variable usage in services.properties: " + variable + ". Resolving variable...");
-//				if (System.getenv(variable) != null) {
-//					logger.debug("Variable successfully resolved! (" + variable + ")");
-//				} else {
-//					logger.debug("Variable could not be resolved! (" + variable + ")");
-//				}
-//			}
-			
-			if (m.start() == 0) {
-				resolvedPath = System.getenv(variable) + text.substring(length);				
-			} else {
-				resolvedPath = text.substring(0, m.start()) + System.getenv(variable) + text.substring(m.end());	
-			}
-		} else {
-			return text;
-		}
-		
-		return resolvedPath;
 	}
-
+	
 	/********************* Getter & Setter ***********************/
 
 	public void setPropertyManager(PropertyManager propertyManager) {

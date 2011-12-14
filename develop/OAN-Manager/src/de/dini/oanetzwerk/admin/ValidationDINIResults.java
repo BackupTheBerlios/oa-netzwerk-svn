@@ -90,16 +90,20 @@ public class ValidationDINIResults {
 		// fetch job
 		Job job = validatorFacade.getJob(validationId);
 
+		System.out.println("br1");
+		
 		if (job == null) {
+			System.out.println("br2");
 			ctx.addMessage("1", new FacesMessage("The job-id " + validationId + " is not valid!"));
 			return; // new ArrayList<ValidatorTask>();
 		} 
 
+		System.out.println("br3");
 		baseUrl = job.getRepo();
-		
+		System.out.println("br4");
 		// fetch results from usage job
 		List<Entry> list = validatorFacade.getJobSummary(validationId);
-		
+		System.out.println("br5");
 		// fetch related job results from content validation
 		String relatedJobId = Integer.toString((Integer.parseInt(validationId) + 1));
 		List<Entry> relatedJob = validatorFacade.getJobSummary(relatedJobId);
@@ -107,14 +111,21 @@ public class ValidationDINIResults {
 		mandatoryTasks 	= new ArrayList<ValidatorTask>();
 		optionalTasks 	= new ArrayList<ValidatorTask>();
 		
-		validationFailed = list == null || list.isEmpty() || relatedJob == null || relatedJob.isEmpty();
+		System.out.println("brx1: " + list == null);
+		System.out.println("brx2: " + list.isEmpty());
+		System.out.println("brx3: " + relatedJob == null);
+		System.out.println("brx4: " + relatedJob.isEmpty());
 		
+		validationFailed = list == null || list.isEmpty() || relatedJob == null || relatedJob.isEmpty();
+		System.out.println("br6");
 		// abort processing, general oaipmh failure occured 
 		if (validationFailed) {
+			System.out.println("brx62: " + relatedJob == null);
 			ctx.addMessage("1", new FacesMessage(LanguageSwitcherBean.getMessage(ctx, "validation_failure_oaipmh")));
 			return; // null;
 		}
 		
+		System.out.println("br7");
 		list.addAll(relatedJob);
 		
 		// entries from usage validation job
@@ -123,6 +134,7 @@ public class ValidationDINIResults {
 		boolean contentType = false;
 		ValidatorTask validatorTask	= null; 
 		
+		System.out.println("br8");
 		for (Entry entry : list) {
 			
 			//fetch rule, too

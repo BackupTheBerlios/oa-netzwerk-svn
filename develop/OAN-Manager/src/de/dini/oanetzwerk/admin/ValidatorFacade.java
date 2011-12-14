@@ -56,7 +56,7 @@ public class ValidatorFacade {
 
 		try {
 			List<Entry> entries = validator.getJobSummary(jobId);
-			
+			System.out.println("entries: " + entries.size());
 			if (entries == null)
 			{
 				logger.info("No summary available for job-id " + jobId + "!" );
