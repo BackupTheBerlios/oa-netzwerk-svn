@@ -183,11 +183,20 @@
 
   <!-- ********************* Others ******************** -->
   
+  
 <!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a-->
 <!--      href="reports.xhtml">Reports</a></div>-->
-<!---->
-<!--    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a-->
-<!--      href="livelog.xhtml">Live Log</a></div>-->
+
+    <t:div rendered="#{userList.serviceManager and not menu_livelog}">
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+        href="livelog.xhtml">Live-Log</a></div>
+    </t:div>
+    
+    <t:div rendered="#{userList.serviceManager and menu_livelog}">
+      <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+        href="livelog.xhtml"><b>Live-Log</b></a></div>
+    </t:div>
+    
       
     </div>
     </t:div>

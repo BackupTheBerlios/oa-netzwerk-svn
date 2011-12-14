@@ -29,7 +29,7 @@
 	<div id="main" style="width:900px;" > <!-- style="display: none" -->
 
 	<h2>Dienststeuerung</h2>
-
+  
 	<br />
 	<h:messages style="color:red" />
     <br />
@@ -68,13 +68,26 @@
             <h:outputText value="Aktion" />
           </f:facet>
           <t:div rendered="#{not service.started and not service.busy}">
-          	<h:commandLink action="#{services.startService(service)}" title="Starten" onclick="document.getElementById('loading#{count}').style.display = 'inline'; document.getElementById('status#{count}').style.display = 'none';"><h:outputText value="#{msg.serv_main10}" /></h:commandLink>
+          	<h:commandLink action="#{services.startSingleService(service)}" title="Starten" onclick="document.getElementById('loading#{count}').style.display = 'inline'; document.getElementById('status#{count}').style.display = 'none';"><h:outputText value="#{msg.serv_main10}" /></h:commandLink>
+          </t:div> 
+          <t:div rendered="#{not service.started and not service.busy}">
+            <h:commandLink action="#{services.startAllServices()}" title="(Alle starten)" onclick="document.getElementById('loading#{count}').style.display = 'inline'; document.getElementById('status#{count}').style.display = 'none';"><h:outputText value="(Alle starten)" /></h:commandLink>
           </t:div> 
           <br />
           <t:div rendered="#{service.started or service.busy}">
-          	<h:commandLink action="#{services.stopService(service)}" title="Stoppen" onclick="document.getElementById('loading#{count}').style.display = 'inline'; document.getElementById('status#{count}').style.display = 'none';"><h:outputText value="#{msg.serv_main11}" /></h:commandLink> 
+          	<h:commandLink action="#{services.stopSingleService(service)}" title="Stoppen" onclick="document.getElementById('loading#{count}').style.display = 'inline'; document.getElementById('status#{count}').style.display = 'none';"><h:outputText value="#{msg.serv_main11}" /></h:commandLink> 
           </t:div> 
+          <t:div rendered="#{service.started or service.busy}">
+            <h:commandLink action="#{services.stopAllServices()}" title="(Alle stoppen)" onclick="document.getElementById('loading#{count}').style.display = 'inline'; document.getElementById('status#{count}').style.display = 'none';"><h:outputText value="(Alle stoppen)" /></h:commandLink> 
+          </t:div>    
         </t:column>
+        
+        <t:column  style="vertical-align: middle; text-align: center; height: 70px; width: 28%;">
+          <f:facet name="header">
+            <h:outputText value="Log" />
+          </f:facet>
+          <a href="livelog.xhtml?service=#{service.service}">#{service.prettyName} Live-Log</a>
+        </t:column>        
         
       </t:dataTable>
 

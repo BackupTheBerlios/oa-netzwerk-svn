@@ -2,54 +2,131 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
 
 <head></head>
 
 <body>
 
-<ui:composition template="templates/template.xhtml">
+  <ui:composition template="templates/template.xhtml">
 
-	<ui:param name="pageTitle" value="Live Log - OA-Netzwerk Manager" />
-	<ui:param name="onLoadJS" value="updateBox();" />
-	
-	<ui:define name="navigation">
-		<a href="/oanadmin/">OA-Netzwerk</a> » <a href="livelog.xhtml">Live Log</a>
-	</ui:define>
+    <ui:param name="pageTitle" value="Live Log - OA-Netzwerk Manager" />
+    <ui:param name="onLoadJS" value="autoUpdate();" />
+    <ui:param name="menu_livelog" value="#{true}" />
+
+    <ui:define name="navigation">
+      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="livelog.xhtml">Live Log</a>
+    </ui:define>
 
 
-	<ui:define name="content">
+    <ui:define name="content">
 
-		<div style="padding: 20px; background-color: #f5f9f4;">
-		<div style="background-color: #f5f9f4;">
+      <div style="padding: 20px; background-color: #f5f9f4;">
+        <div style="background-color: #f5f9f4;">
 
-		<h2>Live Log</h2>
-		<br />
-		<h:outputLabel value="#{msg.live_log_description}" /> <!--</>b><i>Hinweis: </i></b--> <br />
+          <h2>Live Log</h2>
+          <h:outputLabel value="#{msg.live_log_description}" />
+          <!--</>b><i>Hinweis: </i></b-->
+          <br />
+          #{log.initializeMonitoring()}
+          <p />
+          <br />
 
-		<p />
-		<br />
+          Überwache Dienst: <b><h:outputLabel value="#{log.chosenService == null ? 'nein' : log.chosenService} "></h:outputLabel></b>
+          <h:outputLabel id="status" value=" (Überwachung angehalten!)" style="display:none;"/>
 
-		<h:outputScript name="jsf.js" library="javax.faces" target="head" />
-		<h:form id="form" prependId="false">
 
-			<t:div id="layer">
-				<t:inputTextarea rendered="#{log.renderPopups}" id="out" value="#{log.update}" cols="150" rows="70" wrap="physical" title="inputTextarea example" required="false" />
-			</t:div>
-			<br />
+          <h:form id="serviceForm" style="margin-top:5px;">
 
-			<h:commandButton id="updateButton" value="Update" type="button" onclick="jsf.ajax.request(this, event, {execute: '', render: 'layer'}); return false;" >
-              <f:setPropertyActionListener target="#{log.renderPopups}" value="#{true}"/>
-       
-          </h:commandButton>
+            <h:selectOneMenu id="service" value="#{log.chosenService}" onchange="document.getElementById('serviceForm:changeService').click();">
+              <f:selectItem itemLabel="Dienst wählen" itemValue="null" />
+              <f:selectItem itemLabel="Harvester" itemValue="#{log.services[0].service}" />
+              <f:selectItem itemLabel="Aggregator" itemValue="#{log.services[1].service}" />
+              <f:selectItem itemLabel="Marker" itemValue="#{log.services[2].service}" />
+              <f:selectItem itemLabel="Fulltextlink Finder" itemValue="#{log.services[3].service}" />
+              <f:selectItem itemLabel="Language Detection" itemValue="#{log.services[4].service}" />
+              <f:selectItem itemLabel="Shingling" itemValue="#{log.services[5].service}" />
+              <f:selectItem itemLabel="Indexing" itemValue="#{log.services[6].service}" />
+              <f:selectItem itemLabel="Classifier" itemValue="#{log.services[7].service}" />
+              <f:selectItem itemLabel="Duplicate Check" itemValue="#{log.services[8].service}" />
+            </h:selectOneMenu>
 
-		</h:form>
+            <h:commandButton id="changeService" type="submit" action="#{log.readLogFile()}" value="Log einsehen" style="display:none;"></h:commandButton>
+            <h:commandButton type="button" onclick="toggleLiveLog(); return false;" value="LiveLog stoppen"></h:commandButton>
+            <h:commandButton value="Anzeige leeren" onclick="clearLogOutput();">
+              <f:setPropertyActionListener target="#{log.clearLogCache}" value="null"/>
+            </h:commandButton>
+            <h:commandButton type="button" value="Nach unten scrollen" onclick="scrollToBottom(); return false;"></h:commandButton>
+            Update-Interval in ms: <h:inputText id="interval" size="10" value="#{log.updateInterval}" onchange="document.getElementById('serviceForm:changeInterval').click();" />
+            <h:commandButton id="changeInterval" type="submit" value="Interval ändern" style="display:none;" onclick="setUpdateInterval(document.getElementById('serviceForm:updateInterval').value);">
+               <f:ajax execute="interval" render="interval"/>
+            </h:commandButton>
 
-		</div>
-		</div>
-	</ui:define>
+          </h:form>
 
-</ui:composition>
+          <h:outputScript name="jsf.js" library="javax.faces" target="head" />
+          
+          <h:form id="form" prependId="false" style="margin-top:5px;">
+
+            <t:div id="layer">
+              <h:inputTextarea  id="out" value="#{log.update}" cols="150" rows="72" wrap="physical"
+                title="Log Output" required="false" />
+            </t:div>
+            <br />
+
+            <h:commandButton id="updateButton" value="Update" type="button"
+              onclick="jsf.ajax.request(this, event, {execute: '', render: 'layer'}); return false;">
+              <f:setPropertyActionListener target="#{log.renderPopups}" value="#{true}" />
+            </h:commandButton>
+
+          </h:form>
+
+        </div>
+      </div>
+
+      <script type="text/javascript">
+
+      var monitoringEnabled = true;
+      var updateInterval = #{log.updateInterval};
+        
+      function toggleLiveLog() {
+
+        monitoringEnabled = !monitoringEnabled;
+        if (monitoringEnabled) {
+          document.getElementById('status').style.display='none';  
+          autoUpdate();
+        } else {
+          document.getElementById('status').style.display='inline';
+        }
+      }
+
+      function autoUpdate() {
+        if (monitoringEnabled) {
+          document.getElementById('updateButton').click();
+          setTimeout("autoUpdate()", updateInterval);
+          setTimeout('scrollToBottom()',300);
+        }
+      }
+
+      function setUpdateInterval(ms) {
+    	  updateInterval = ms;
+      }
+
+      // scroll to bottom after update
+      function scrollToBottom() {
+          var textarea = document.getElementById("out");
+          textarea.scrollTop = textarea.scrollHeight;
+      }
+            
+      function clearLogOutput() {
+        document.getElementById("out").value="";
+      }
+      
+      </script>
+
+    </ui:define>
+
+  </ui:composition>
 
 </body>
 
