@@ -55,13 +55,14 @@ import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.utils.HelperMethods;
+import de.dini.oanetzwerk.utils.PropertyManager;
 import de.dini.oanetzwerk.utils.Utils;
 
 /**
  * @author Sammy David sammy.david@cms.hu-berlin.de
  * 
  */
-@ManagedBean(name = "schedulerControl")
+@ManagedBean(name = "schedulerControl", eager = true)
 @ApplicationScoped
 public class SchedulerControl implements Serializable { // ,
 														// ServletContextListener
@@ -78,55 +79,70 @@ public class SchedulerControl implements Serializable { // ,
 	
 	@ManagedProperty(value= "#{repositoryOnlineStatus}")
 	private RepositoryOnlineStatusBean repositoryOnlineStatus;
+	
+	@ManagedProperty(value = "#{propertyManager}")
+	private PropertyManager propertyManager;
 
 	public SchedulerControl() {
 		super();
+		System.out.println("CREATED!!!");
 	}
 
 	@PostConstruct
 	public void initAndStartScheduler() {
 
-		logger.info("SchedulerControl initiated!");
+		System.out.println("THREAD CREATED!!!");
+        new Thread(
+            new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(60000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    
+            		logger.info("SchedulerControl initiated!");
 
-		System.out.println("|||||||| Scheduler started |||||||||||||");
-		try {
+            		System.out.println("|||||||| Scheduler started |||||||||||||");
+            		try {
 
-			this.restProperties = HelperMethods.loadPropertiesFromFileWithinWebcontainerWebapps(Utils.getDefaultContext()
-					+ "/WEB-INF/admingui.xml");
+            			restProperties = propertyManager.getAdminProperties();
 
-			SchedulerFactory factory = new StdSchedulerFactory();
+            			SchedulerFactory factory = new StdSchedulerFactory();
 
-			// init quartz scheduler
-			scheduler = factory.getScheduler();
-			scheduler.start();
+            			// init quartz scheduler
+            			scheduler = factory.getScheduler();
+            			scheduler.start();
 
-			if (scheduler == null) {
-				logger.warn("scheduler is null after creation");
-			}
+            			if (scheduler == null) {
+            				logger.warn("scheduler is null after creation");
+            			}
 
-			// schedule ddc-count update job
-			scheduleDDCCounterJob();
-			
-			// schedule check for repository online status
-			scheduleRepositoryOnlineStatusUpdate();
-			
-			// load jobs from database
-			List<AbstractServiceJob> jobsToSchedule = loadJobsFromDB();
+            			// schedule ddc-count update job
+            			scheduleDDCCounterJob();
+            			
+            			// schedule regular check for repository online status
+            			scheduleRepositoryOnlineStatusUpdate();
+            			
+            			// schedule one time repo status check for server startup
+            			scheduleOneTimeRepositoryOnlineStatusUpdate();
+            			
+            			// load jobs from database
+            			List<AbstractServiceJob> jobsToSchedule = loadJobsFromDB();
 
-			// schedule jobs
-			for (AbstractServiceJob job : jobsToSchedule) {
-				scheduleJob(job);
-			}
+            			// schedule jobs
+            			for (AbstractServiceJob job : jobsToSchedule) {
+            				scheduleJob(job);
+            			}
 
-		} catch (InvalidPropertiesFormatException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SchedulerException e) {
-			e.printStackTrace();
-		}
+            		} catch (SchedulerException e) {
+            			e.printStackTrace();
+            		}
+
+                }
+            }
+        ).start();
+        
 	}
 
 	private boolean scheduleDDCCounterJob() {
@@ -172,6 +188,29 @@ public class SchedulerControl implements Serializable { // ,
 			logger.info("Successfully scheduled RepositoryOnlineStatusUpdate");
 		} catch (SchedulerException e) {
 			logger.warn("Could not schedule RepositoryOnlineStatusUpdate", e);
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean scheduleOneTimeRepositoryOnlineStatusUpdate() {
+		
+		JobDataMap data = new JobDataMap();
+		data.put("repositoryOnlineStatus", repositoryOnlineStatus);
+		
+		JobDetail jobdetail = newJob(RepositoryOnlineStatusUpdateJob.class).withIdentity("OneTimeRepositoryOnlineStatusUpdate").usingJobData(data).build();
+		
+		// from now plus one minute, to wait for server startup to finish
+		// repositoryOnlineStatusBean requests the Rest-Server, so if restserver runs on the same machine
+		// we need to delay startup, otherwise we could use the ManagedBean(eager = true) flag
+		Date inAMinute = new Date(new Date().getTime() + 60000); 
+		Trigger trigger = (SimpleTrigger) newTrigger().withIdentity("OneTimeRepositoryOnlineStatusUpdate").startAt(inAMinute).build();
+		
+		try {
+			scheduler.scheduleJob(jobdetail, trigger);
+			logger.info("Successfully scheduled OneTimeRepositoryOnlineStatusUpdate");
+		} catch (SchedulerException e) {
+			logger.warn("Could not schedule OneTimeRepositoryOnlineStatusUpdate", e);
 			return false;
 		}
 		return true;
@@ -530,6 +569,14 @@ public class SchedulerControl implements Serializable { // ,
 		return restConnector;
 	}
 
+	public PropertyManager getPropertyManager() {
+    	return propertyManager;
+    }
+
+	public void setPropertyManager(PropertyManager propertyManager) {
+    	this.propertyManager = propertyManager;
+    }
+
 	public RepositoryOnlineStatusBean getRepositoryOnlineStatus() {
 		return repositoryOnlineStatus;
 	}
@@ -538,35 +585,5 @@ public class SchedulerControl implements Serializable { // ,
 			RepositoryOnlineStatusBean repositoryOnlineStatus) {
 		this.repositoryOnlineStatus = repositoryOnlineStatus;
 	}
-
-
-	
-	
-
-	//
-	// @Override
-	// public void contextDestroyed(ServletContextEvent arg0) {
-	//
-	// try {
-	// if (scheduler != null) {
-	// scheduler.shutdown(false);
-	//
-	// synchronized (this) {
-	// Thread.sleep(1000);
-	// }
-	// }
-	// } catch (SchedulerException e) {
-	// e.printStackTrace();
-	// } catch (InterruptedException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	//
-	//
-	// @Override
-	// public void contextInitialized(ServletContextEvent arg0) {
-	// // TODO Auto-generated method stub
-	//
-	// }
 
 }

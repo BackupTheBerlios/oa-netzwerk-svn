@@ -53,11 +53,11 @@ public class PropertyManager implements Serializable {
 	
 	
 	public static void readPropertyFiles() {
-		String context = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
-		
-		if (context != null && context.length() > 0) {		
-			servletContextPathFallback = context;
-		}
+//		String context = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+//		
+//		if (context != null && context.length() > 0) {		
+//			servletContextPathFallback = context;
+//		}
 		
 		// try to guess property file path		
 		boolean isLoaded = loadServiceProperties(webappDir, contextPath);

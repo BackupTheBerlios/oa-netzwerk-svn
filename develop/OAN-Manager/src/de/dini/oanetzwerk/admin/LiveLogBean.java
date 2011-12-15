@@ -53,9 +53,14 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	
 	@ManagedProperty(value = "#{propertyManager}")
 	private PropertyManager propertyManager;
-
+	
+	
+	
 	private LogFileTailer tailer;
-	private StringBuffer logCache = new StringBuffer();
+	private StringBuffer logCache 		= new StringBuffer();
+	private String[] logArray;
+	private int logCounter 				= 0;
+	private int numberOfLastLinesToLog	= 50;
 	private static List<ServiceBean> services = new ArrayList<ServiceBean>();
 	private static Map<String, ServiceBean> serviceMap = new HashMap<String, ServiceBean>();
 
@@ -166,7 +171,7 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 			return;			
 		}
 		
-		logCache = new StringBuffer();
+		setClearLogCache(null);
 		
 		if (service.getLocalLogPath() == null || service.getLocalLogPath().isEmpty())
 		{
@@ -191,6 +196,10 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	// dummy parameter as <f:propertyActionListener> does not seem to be intended to 
 	// call a setter without a parameter
 	public void setClearLogCache(String dummy) {
+		
+		logArray = new String[numberOfLastLinesToLog];
+		logCounter = 0;
+		
 		logCache = new StringBuffer();
 	}
 
@@ -200,12 +209,43 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	 * @param line
 	 *            The new line that has been added to the tailed log file
 	 */
-	public void newLogFileLine(String line) {
+	public void newLogFileLine(String line) throws Exception{
+		
+		System.out.println("NEWLINE: " + line);
+//		System.out.println("logcounter: " + logCounter );
+//		if (logCounter == 1 )
+//			throw new Exception();
+		
+		if (logCounter > numberOfLastLinesToLog || logCounter == 0) {
+			logCounter = 1;
+		}
+		logArray[logCounter - 1] = line + "\n";
+		logCounter++;
 		logCache.append(line).append("\n");
 	}
 
 	public String getUpdate() {
-		return logCache.length() == 0 ? updateMessage : logCache.toString();
+//		return logCache.length() == 0 ? updateMessage : logCache.toString();
+		return logCounter == 0 ? updateMessage : getLastLinesOfLog();
+	}
+	
+	private synchronized String getLastLinesOfLog() {
+				
+		System.out.println("logcounter: " + logCounter );
+		logCache = new StringBuffer();
+		for (int i = logCounter; i <= numberOfLastLinesToLog; i++ ) {
+			if (logArray[i-1] != null) {
+				logCache.append(logArray[i-1]);
+			}
+		}
+		
+		for (int i = 1; i < logCounter; i++ ) {
+			if (logArray[i-1] != null) {
+				logCache.append(logArray[i-1]);
+			}
+		}
+		
+		return logCache.toString();
 	}
 
 	public void setUpdate(String update) {

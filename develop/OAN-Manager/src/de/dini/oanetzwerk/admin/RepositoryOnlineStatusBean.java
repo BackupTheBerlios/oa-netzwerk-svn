@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -61,21 +62,17 @@ public class RepositoryOnlineStatusBean {
 	private int saveIntervalInDays = 30; // save up to saveIntervalInDays days of onlineStatus information
 	
 	
-	
-	
-	public PropertyManager getPropertyManager() {
-		return propertyManager;
-	}
 
-	public void setPropertyManager(PropertyManager propertyManager) {
-		this.propertyManager = propertyManager;
-	}
-
-	public RepositoryOnlineStatusBean() {
-		super();
+	@PostConstruct
+	public void init() {
 		
 		this.onlineStatusPath = propertyManager.getWebApplicationRootDirectory() + "/WEB-INF/";
+	
+		//TODO: remove
+//		// trigger onlinestatus-check on startup of webapp (managedbean, eager=true)
+//		checkOnlineStatus();
 	}
+
 
 	public HashMap<Long, HashMap<String, Boolean>> getOnlineStatus() {
 		deserialize();
@@ -378,6 +375,13 @@ public class RepositoryOnlineStatusBean {
 		restConnector = connector;
 	}
 
+	public PropertyManager getPropertyManager() {
+		return propertyManager;
+	}
+
+	public void setPropertyManager(PropertyManager propertyManager) {
+		this.propertyManager = propertyManager;
+	}
 	
 //	public void deleteOnlineStatus() {
 //		if (this.onlineStatus != null) {

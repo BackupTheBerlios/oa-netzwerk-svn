@@ -74,7 +74,8 @@ public class LogFileTailer extends Thread {
 		this.listeners.remove(l);
 	}
 
-	protected void fireNewLogFileLine(String line) {
+	protected void fireNewLogFileLine(String line) throws Exception {
+		System.out.println("FIRE2");
 		for (Iterator i = this.listeners.iterator(); i.hasNext();) {
 			LogFileTailerListener l = (LogFileTailerListener) i.next();
 			l.newLogFileLine(line);
@@ -116,6 +117,7 @@ public class LogFileTailer extends Thread {
 						file.seek(filePointer);
 						String line = file.readLine();
 						while (line != null) {
+							System.out.println("FIRE1");
 							this.fireNewLogFileLine(line);
 							line = file.readLine();
 						}
