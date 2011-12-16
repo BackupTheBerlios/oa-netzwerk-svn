@@ -6,6 +6,9 @@ package de.dini.oanetzwerk.admin;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -24,6 +27,9 @@ import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestStatusEnum;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.server.database.DBAccessNG;
+import de.dini.oanetzwerk.server.database.SingleStatementConnection;
+import de.dini.oanetzwerk.utils.exceptions.WrongStatementException;
 
 /**
  * @author Sammy David
@@ -216,34 +222,29 @@ public class RepositoryBean extends AbstractBean implements Serializable {
 	}
 
 	// TODO: reimplement
-//	public String delete() {
-//
-//		System.out.println("delete!");
-//
-//		System.out.println("Name: " + repository.getName());
-//		System.out.println("Url: " + repository.getUrl());
-//		System.out.println("" + repository.getHarvestAmount());
-//
-//		try {
-//
-//			SingleStatementConnection stmtconn = (SingleStatementConnection) new DBAccessNG()
-//					.getSingleStatementConnection();
-//			PreparedStatement statement = DeleteFromDB.Repositories(
-//					stmtconn.connection, repository.getId());
-//
-//			new DBHelper().save(stmtconn, statement);
-//
-//			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-//					"info.success_deleted", null));
-//
-//		} catch (WrongStatementException ex) {
-//			logger.error(ex.getLocalizedMessage(), ex);
-//		} catch (SQLException ex) {
-//			logger.error(ex.getLocalizedMessage(), ex);
-//		}
-//
-//		return "";
-//	}
+	public String delete() {
+
+		System.out.println("delete!");
+
+		System.out.println("Name: " + repository.getName());
+		System.out.println("Url: " + repository.getUrl());
+		System.out.println("" + repository.getHarvestAmount());
+		String result = "";
+		try {
+
+			// präpariere REST Anfrage zum Löschen eines Repositories
+			result = connector.prepareRestTransmission("Repository/"+repository.getId()).DeleteData();
+			
+			
+			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"info.success_deleted", null));
+
+		} catch (Exception ex) {
+			logger.error(ex.getLocalizedMessage(), ex);
+		}
+
+		return result;
+	}
 
 	public String deactivate() {
 

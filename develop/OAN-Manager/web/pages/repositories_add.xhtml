@@ -40,8 +40,8 @@
           </tr>
           <tr>
 
-            <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.repository.name}" required="true" requiredMessage="Bitte geben sie einen Namen für das Repository ein!" >
-            <f:validateBean />   
+            <td class="form"><t:inputText id="repo_name" size="80" value="#{repo.repository.name}" >
+            <!-- <f:validateBean />  -->   
             </t:inputText>
             <div class="help_box" id="help_name"><h:outputText value="#{msg.repositories_add_name_help}" /></div>
             </td>
@@ -81,7 +81,7 @@
             <td><h:outputText value="#{msg.repositories_add_oai}*" /> (<a href="#" onclick="javascript:toggle_help('help_oaipmh'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.repository.oaiUrl}" required="true" requiredMessage="Bitte geben sie die URL der OAI/PMH-Schnittstelle ein!"/>
+            <td class="form"><t:inputText id="oaipmh" size="80" value="#{repo.repository.oaiUrl}" />
             <div class="help_box" id="help_oaipmh"><h:outputText value="#{msg.repositories_add_oai_help}" /></div>
             </td>
           </tr>
@@ -113,7 +113,7 @@
             <td><h:outputText value="#{msg.repositories_add_active}" /> (<a href="#" onclick="javascript:toggle_help('help_active'); return false;">Help</a>)</td>
           </tr>
           <tr>
-            <td class="form"><t:selectBooleanCheckbox id="active" value="#{true}" />
+            <td class="form"><t:selectBooleanCheckbox id="active" value="true" />
             <div class="help_box" id="help_active"><h:outputText value="#{msg.repositories_add_active_help}" /></div>
             </td>
           </tr>
