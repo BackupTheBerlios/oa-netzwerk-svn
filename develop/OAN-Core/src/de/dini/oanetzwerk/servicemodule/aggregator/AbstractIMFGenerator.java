@@ -123,7 +123,8 @@ abstract class AbstractIMFGenerator {
 			
 			String valDDC = null;			
 			// eine Zahl herausmatchen
-			for ( Matcher m = Pattern.compile("\\d+").matcher(StringUtils.substringAfterLast(value, ":")); m.find(); ) { 
+			// TODO: Matcher geändert, jetzt guggn ob der auch alles sauber erkennt!
+			for ( Matcher m = Pattern.compile("\\d\\d\\d(\\.\\d)?").matcher(StringUtils.substringAfterLast(value, ":")); m.find(); ) { 
 			  valDDC = m.toMatchResult().group();
 			  break;
 			}
@@ -132,7 +133,8 @@ abstract class AbstractIMFGenerator {
 				// hier wird der DDC-Wert DINI-konform "abgerundet" und - falls unterschiedlich - zusätzlich als Other gemerkt
 				valDDC = DDCMatcher_DINI.fillUpWithZeros(valDDC);
 				String s[] = DDCMatcher_DINI.convert(valDDC);
-				list.add(new DDCClassification(s[0]));			
+				DDCClassification newDDC = new DDCClassification(s[0]);
+				list.add(newDDC);			
 				if(s.length > 1) list.add(new OtherClassification(value));
 			} else {
 				list.add(new OtherClassification(value));
@@ -154,14 +156,10 @@ abstract class AbstractIMFGenerator {
 				list.add(new OtherClassification(value));
 			}
 		} else if (Classification.isDINISet(value)) {
-			String[] s = value.split(":");
-			if(s.length > 1 && s[0].equalsIgnoreCase("pub-type")) {
-			  s[0] = s[0].toLowerCase();
-			  value = s[0] + ":" + s[1];
-			  list.add(new DINISetClassification(value));
-			} else {
-			  list.add(new OtherClassification(value));
-			}
+			
+			DINISetClassification dsc = new DINISetClassification(value);
+			list.add(dsc);
+			
 		} else if (Classification.isOther(value)) {
 			list.add(new OtherClassification(value));
 		}

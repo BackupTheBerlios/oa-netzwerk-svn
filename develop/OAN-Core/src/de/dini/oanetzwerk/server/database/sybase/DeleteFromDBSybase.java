@@ -620,4 +620,11 @@ public class DeleteFromDBSybase implements DeleteFromDB {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public PreparedStatement PersonAsBatch(Connection connection, int batchSize)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

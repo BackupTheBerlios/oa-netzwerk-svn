@@ -18,6 +18,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
@@ -441,8 +442,12 @@ public class RestClient {
 		try {
 			
 			do {
-				
 				int statusCode = client.executeMethod (method);
+				
+				if (method instanceof HeadMethod) {
+					logger.debug("processed a HEAD request, returning only the status code");
+					return String.valueOf(statusCode);
+				}
 				
 				if (statusCode != HttpStatus.SC_OK) {
 					
@@ -569,6 +574,22 @@ public class RestClient {
 	}
 
 	/**
+	 * Provides a {@link HeadMethod} connection to the REST server.
+	 * 
+	 * @return the response received from the REST server
+	 */
+	
+	public final String HeadData ( ) {
+		
+		HttpClient client = prepareConnection ( );
+		HeadMethod method = new HeadMethod (this.qualifiedServerName);
+		
+		if (logger.isDebugEnabled ( ))
+			logger.debug ("headRequest will be used");
+		
+		return this.sendrequest (client, method);
+	}
+	/**
 	 * Provides a {@link GetMethod} connection to the REST server.
 	 * 
 	 * @return the response received from the REST server
@@ -660,6 +681,23 @@ public class RestClient {
 		}
 				
 		return RestXmlCodec.decodeRestMessage (response);
+	}
+	/**
+	 * Provides a {@link HeadMethod} connection to the REST server which returns an already decoded REST message.
+	 * 
+	 * @return the decoded response received from the REST server
+	 */
+	
+	public int sendHeadRestMessage ( ) {
+		
+		String response = this.HeadData ( );
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Response: " + response);
+		}
+				
+		return Integer.valueOf(response);
 	}
 	
 	/**

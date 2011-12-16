@@ -570,23 +570,23 @@ public class Aggregator {
 		String resource = "InternalMetadataEntry/" + this.currentRecordId;
 		RestClient restclient = prepareRestTransmission(resource);
 		
-		RestMessage msgGetResponse = null;
+		//RestMessage msgHeadResponse = null;
 
 		// -------------------------------------------		
 		
 		logger.debug("# GET ");
 			
-		// GET-Anfrage auf "InternalMetadataEntry"
+		// HEAD-Anfrage auf "InternalMetadataEntry"
 		
-		if (logger.isDebugEnabled()) logger.debug("BEFORE GET InternalMetadataEntry/"+this.currentRecordId);
-		msgGetResponse = restclient.sendGetRestMessage();
-		if (logger.isDebugEnabled()) logger.debug("AFTER GET InternalMetadataEntry/"+this.currentRecordId);		
+		if (logger.isDebugEnabled()) logger.debug("BEFORE HEAD InternalMetadataEntry/"+this.currentRecordId);
+		int headRequestHTTPStatusCode = restclient.sendHeadRestMessage();
+		if (logger.isDebugEnabled()) logger.debug("AFTER HEAD InternalMetadataEntry/"+this.currentRecordId);		
 		
 		// Gibt es das schon unter der OID?
-		if(msgGetResponse.getStatus() == RestStatusEnum.OK) {
+		if(headRequestHTTPStatusCode == 200) {
 			
 			// OK = existiert schon
-			logger.debug("# DELETE necessary:" + msgGetResponse);
+			logger.debug("# DELETE necessary as HEAD request returned HTTP Status " + headRequestHTTPStatusCode);
 			
 			// neue Anfrage auf Delete zum löschen des bereits existierenden Datensatzes
 			restclient = prepareRestTransmission(resource);
@@ -597,17 +597,17 @@ public class Aggregator {
 			
 			
 			logger.debug("### RESPONSE ###\n\n"+ msgDeleteResponse);
-			RestEntrySet tmpEntrySet = msgGetResponse.getListEntrySets().get(0);
-			logger.debug("oid nach Delete: " + tmpEntrySet.getValue("oid"));
+//			RestEntrySet tmpEntrySet = msgHeadResponse.getListEntrySets().get(0);
+//			logger.debug("oid nach Delete: " + tmpEntrySet.getValue("oid"));
 			
-		} else if (msgGetResponse.getStatus() == RestStatusEnum.NO_OBJECT_FOUND_ERROR) {
+		} else if (headRequestHTTPStatusCode == 404 || headRequestHTTPStatusCode == 204) {
 			
 			//existiert noch nicht - alles ok so!
-			logger.debug("# DELETE not necessary: " + msgGetResponse);
+			logger.debug("# DELETE not necessary as HEAD request replied with HTTP Status Code " + headRequestHTTPStatusCode);
 			
 		} else {
 			
-			logger.error("GET liefert Fehler: " + msgGetResponse);
+			logger.error("HEAD liefert Fehler: " + headRequestHTTPStatusCode);
 			
 			throw new AggregationFailedException("getting old InternalMetadata failed: ");
 		}
@@ -616,50 +616,50 @@ public class Aggregator {
 		
 
 
-			logger.debug("# PUT");
+		logger.debug("# PUT");
 
-			RestMessage msgPutRequest = new RestMessage();
-			msgPutRequest.setKeyword (RestKeyword.InternalMetadataEntry);
-			msgPutRequest.setStatus (RestStatusEnum.OK);
+		RestMessage msgPutRequest = new RestMessage();
+		msgPutRequest.setKeyword (RestKeyword.InternalMetadataEntry);
+		msgPutRequest.setStatus (RestStatusEnum.OK);
 
-			RestEntrySet res = new RestEntrySet ( );
-			res.addEntry ("internalmetadata", xmlInternalMetadata);
-			msgPutRequest.addEntrySet (res);
+		RestEntrySet res = new RestEntrySet ( );
+		res.addEntry ("internalmetadata", xmlInternalMetadata);
+		msgPutRequest.addEntrySet (res);
 
-			// abschicken der Daten	
-			restclient = prepareRestTransmission(resource);
+		// abschicken der Daten	
+		restclient = prepareRestTransmission(resource);
+		
+		RestMessage msgPutResponse = null;
+		try {
+			logger.debug("internal metadata to send via PUT: " + xmlInternalMetadata);
 			
-			RestMessage msgPutResponse = null;
-			try {
-				logger.debug("internal metadata to send via PUT: " + xmlInternalMetadata);
-				
-				if (logger.isDebugEnabled()) logger.debug("BEFORE PUT InternalMetadataEntry/"+this.currentRecordId);
-				msgPutResponse = restclient.sendPutRestMessage(msgPutRequest);
-				if (logger.isDebugEnabled()) logger.debug("AFTER PUT InternalMetadataEntry/"+this.currentRecordId);
-
-				
-			} catch (IOException ioex) {
-
-				logger.error (ioex.getLocalizedMessage ( ));
-				ioex.printStackTrace ( );
-				
-				throw new AggregationFailedException("putting InternalMetadata failed: ", ioex);
-			}	
+			if (logger.isDebugEnabled()) logger.debug("BEFORE PUT InternalMetadataEntry/"+this.currentRecordId);
+			msgPutResponse = restclient.sendPutRestMessage(msgPutRequest);
+			if (logger.isDebugEnabled()) logger.debug("AFTER PUT InternalMetadataEntry/"+this.currentRecordId);
 
 			
-			// auswerten des Resultats
-			// wenn gar keine Rückmeldung, dann auf jeden Fall ein Fehler
-			if (msgPutResponse == null || msgPutResponse.getStatus() != RestStatusEnum.OK) {
-				if (msgPutResponse.getStatus() == RestStatusEnum.AGGREGATION_WARNING) {
-					logger.error(msgPutResponse.getStatusDescription());
-					throw new AggregationWarningException(msgPutResponse.getStatusDescription());
-				} else {
-					logger.error("REST-Uebertragung fehlgeschlagen: " + msgPutResponse);
-					throw new AggregationFailedException("putting InternalMetadata failed, server responded with error:\n" + msgPutResponse.getStatus() + " - " + msgPutResponse.getStatusDescription());
-				}
+		} catch (IOException ioex) {
+
+			logger.error (ioex.getLocalizedMessage ( ));
+			ioex.printStackTrace ( );
+			
+			throw new AggregationFailedException("putting InternalMetadata failed: ", ioex);
+		}	
+
+		
+		// auswerten des Resultats
+		// wenn gar keine Rückmeldung, dann auf jeden Fall ein Fehler
+		if (msgPutResponse == null || msgPutResponse.getStatus() != RestStatusEnum.OK) {
+			if (msgPutResponse.getStatus() == RestStatusEnum.AGGREGATION_WARNING) {
+				logger.error(msgPutResponse.getStatusDescription());
+				throw new AggregationWarningException(msgPutResponse.getStatusDescription());
 			} else {
-				logger.debug("Resultat der Übertragung: " + msgPutResponse);
+				logger.error("REST-Uebertragung fehlgeschlagen: " + msgPutResponse);
+				throw new AggregationFailedException("putting InternalMetadata failed, server responded with error:\n" + msgPutResponse.getStatus() + " - " + msgPutResponse.getStatusDescription());
 			}
+		} else {
+			logger.debug("Resultat der Übertragung: " + msgPutResponse);
+		}
 
 		return data;
 	}

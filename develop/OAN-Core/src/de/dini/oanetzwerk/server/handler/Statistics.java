@@ -121,9 +121,7 @@ public class Statistics extends AbstractKeyWordHandler implements KeyWord2Databa
 			}
 			this.result = ssconn.execute();
 			
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 			
 			ResultSet rs = this.result.getResultSet();
 			while(rs.next()) {
@@ -166,9 +164,7 @@ public class Statistics extends AbstractKeyWordHandler implements KeyWord2Databa
 			}
 			this.result = ssconn.execute();
 			
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 			
 			ResultSet rs = this.result.getResultSet();
 			while(rs.next()) {
@@ -207,9 +203,7 @@ public class Statistics extends AbstractKeyWordHandler implements KeyWord2Databa
 			
 			this.result = ssconn.execute();
 			
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 			
 			ResultSet rs = this.result.getResultSet();
 			while(rs.next()) {
@@ -238,9 +232,7 @@ public class Statistics extends AbstractKeyWordHandler implements KeyWord2Databa
 			ssconn.loadStatement(DBAccessNG.selectFromDB().RecordsPerDDCCategory(ssconn.connection));
 			
 			this.result = ssconn.execute();
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 			
 			ResultSet rs = this.result.getResultSet();
 			while(rs.next()) {
@@ -273,9 +265,7 @@ public class Statistics extends AbstractKeyWordHandler implements KeyWord2Databa
 			ssconn.loadStatement(DBAccessNG.selectFromDB().ObjectCount(ssconn.connection));
 			
 			this.result = ssconn.execute();
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 			
 			ResultSet rs = this.result.getResultSet();
 			while(rs.next()) {
@@ -300,9 +290,7 @@ public class Statistics extends AbstractKeyWordHandler implements KeyWord2Databa
 			ssconn.loadStatement(DBAccessNG.selectFromDB().FullTextLinkCount(ssconn.connection));
 			
 			this.result = ssconn.execute();
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 			
 			ResultSet rs = this.result.getResultSet();
 			while(rs.next()) {
@@ -327,9 +315,7 @@ public class Statistics extends AbstractKeyWordHandler implements KeyWord2Databa
 			ssconn.loadStatement(DBAccessNG.selectFromDB().RecordsPerIso639Language(ssconn.connection));
 			
 			this.result = ssconn.execute();
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 			
 			ResultSet rs = this.result.getResultSet();
 			while(rs.next()) {
@@ -359,9 +345,7 @@ public class Statistics extends AbstractKeyWordHandler implements KeyWord2Databa
 			ssconn.loadStatement(DBAccessNG.selectFromDB().RecordsPerDINISetCategory(ssconn.connection));
 			
 			this.result = ssconn.execute();
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 			
 			ResultSet rs = this.result.getResultSet();
 			while(rs.next()) {

@@ -70,9 +70,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Interpolated_DDC_Classification(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				// da eh nichts gelöscht wurde, entsprechende Daten wieder in Ursprungszustand versetzen
@@ -173,9 +171,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 			stmtconn.loadStatement (DBAccessNG.selectFromDB().InterpolatedDDCClassification(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			counter = 0;
 			
@@ -331,9 +327,7 @@ public class InterpolatedDDC extends AbstractKeyWordHandler implements KeyWord2D
 						stmtconn.connection, object_id, ddc_value, percentage));
 				this.result = stmtconn.execute();
 				
-				if (this.result.getWarning ( ) != null) 
-					for (Throwable warning : result.getWarning ( ))
-						logger.warn (warning.getLocalizedMessage ( ));
+				logWarnings();
 				
 				if (this.result.getUpdateCount() < 1) {
 					errorHappended = true;

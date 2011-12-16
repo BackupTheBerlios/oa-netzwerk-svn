@@ -171,6 +171,7 @@ public class IMFGeneratorDCSimple extends AbstractIMFGenerator {
 			}
 		} catch(Exception e) {
 			logger.error("error while parsing XML String: " + e);
+			e.printStackTrace();
 		}
 
 		return im;

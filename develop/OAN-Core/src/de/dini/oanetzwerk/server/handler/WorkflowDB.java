@@ -124,9 +124,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			}
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			// Datumsformat wie in DB
 			
@@ -312,9 +310,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			logger.info("PUT WorkflowDB process " + Long.toString(System.currentTimeMillis() - putStart));
 			stmtconn.loadStatement (DBAccessNG.insertIntoDB().WorkflowDB (stmtconn.connection, object_id, service_id));
 			this.result = stmtconn.execute ( );
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			stmtconn.commit ( );
 			logger.info("PUT WorkflowDB process2 " + Long.toString(System.currentTimeMillis() - putStart));
@@ -323,9 +319,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 			stmtconn.loadStatement (DBAccessNG.selectFromDB().WorkflowDBInserted(stmtconn.connection, object_id, service_id));
 			this.result = stmtconn.execute ( );
 
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			if (this.result.getResultSet ( ).next ( )) {
 
@@ -344,9 +338,7 @@ public class WorkflowDB extends AbstractKeyWordHandler implements KeyWord2Databa
 					stmtconn.loadStatement (DBAccessNG.deleteFromDB().WorkflowDB (stmtconn.connection, object_id, new Timestamp(time.getTime()), service_id));
 					this.result = stmtconn.execute();
 
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 				}
 
 				stmtconn.commit ( );

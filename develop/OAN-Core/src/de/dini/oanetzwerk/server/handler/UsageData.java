@@ -523,10 +523,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 
 			this.result = stmtconn.execute();
 
-			// log warnings
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 
 			// extract oids from db response
 			while (this.result.getResultSet().next()) {
@@ -588,9 +585,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 		stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Metrics_AllNames(stmtconn.connection));
 		this.result = stmtconn.execute();
 
-		if (this.result.getWarning() != null)
-			for (Throwable warning : result.getWarning())
-				logger.warn(warning.getLocalizedMessage());
+		logWarnings();
 
 		while (this.result.getResultSet().next()) {
 			String strMetricsName = this.result.getResultSet().getString(1);
@@ -608,9 +603,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 		stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Metrics_AllNames(stmtconn.connection));
 		this.result = stmtconn.execute();
 
-		if (this.result.getWarning() != null)
-			for (Throwable warning : result.getWarning())
-				logger.warn(warning.getLocalizedMessage());
+		logWarnings();
 
 		while (this.result.getResultSet().next()) {
 			String strMetricsName = this.result.getResultSet().getString(1);
@@ -628,9 +621,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 			stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Months_ListForMetricsName(stmtconn.connection, object_id, strMetricsName));
 			this.result = stmtconn.execute();
 
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 
 			while (this.result.getResultSet().next()) {
 				UsageDataMonth usageDataMonth = new UsageDataMonth(object_id, strMetricsName, 0, null);
@@ -653,9 +644,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 			stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Overall_ForMetricsName(stmtconn.connection, object_id, strMetricsName));
 			this.result = stmtconn.execute();
 
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 
 			if (this.result.getResultSet().next()) {
 				UsageDataOverall usageDataOverall = new UsageDataOverall(object_id, strMetricsName, 0, null);
@@ -674,9 +663,7 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 		stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Metrics(stmtconn.connection, strMetricsName));
 		this.result = stmtconn.execute();
 
-		if (this.result.getWarning() != null)
-			for (Throwable warning : result.getWarning())
-				logger.warn(warning.getLocalizedMessage());
+		logWarnings();
 
 		if (this.result.getResultSet().next()) {
 			return this.result.getResultSet().getBigDecimal(1);
@@ -691,17 +678,13 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 		stmtconn.loadStatement(DBAccessNG.deleteFromDB().UsageData_Overall(stmtconn.connection, object_id, metrics_id));
 		this.result = stmtconn.execute();
 
-		if (this.result.getWarning() != null)
-			for (Throwable warning : result.getWarning())
-				logger.warn(warning.getLocalizedMessage());
+		logWarnings();
 
 		stmtconn.loadStatement(DBAccessNG.insertIntoDB().UsageData_Overall(stmtconn.connection, object_id, metrics_id, count_overall, HelperMethods
 				.java2sqlDate(last_update)));
 		this.result = stmtconn.execute();
 
-		if (this.result.getWarning() != null)
-			for (Throwable warning : result.getWarning())
-				logger.warn(warning.getLocalizedMessage());
+		logWarnings();
 
 	}
 
@@ -712,17 +695,13 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 				.java2sqlDate(relative_to_date)));
 		this.result = stmtconn.execute();
 
-		if (this.result.getWarning() != null)
-			for (Throwable warning : result.getWarning())
-				logger.warn(warning.getLocalizedMessage());
+		logWarnings();
 
 		stmtconn.loadStatement(DBAccessNG.insertIntoDB().UsageData_Months(stmtconn.connection, object_id, metrics_id, count_of_month, HelperMethods
 				.java2sqlDate(relative_to_date)));
 		this.result = stmtconn.execute();
 
-		if (this.result.getWarning() != null)
-			for (Throwable warning : result.getWarning())
-				logger.warn(warning.getLocalizedMessage());
+		logWarnings();
 
 	}
 
@@ -731,16 +710,12 @@ public class UsageData extends AbstractKeyWordHandler implements KeyWord2Databas
 		stmtconn.loadStatement(DBAccessNG.deleteFromDB().UsageData_ALL_Months(stmtconn.connection, object_id));
 		this.result = stmtconn.execute();
 
-		if (this.result.getWarning() != null)
-			for (Throwable warning : result.getWarning())
-				logger.warn(warning.getLocalizedMessage());
+		logWarnings();
 
 		stmtconn.loadStatement(DBAccessNG.deleteFromDB().UsageData_ALL_Overall(stmtconn.connection, object_id));
 		this.result = stmtconn.execute();
 
-		if (this.result.getWarning() != null)
-			for (Throwable warning : result.getWarning())
-				logger.warn(warning.getLocalizedMessage());
+		logWarnings();
 
 	}
 

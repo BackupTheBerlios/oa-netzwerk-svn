@@ -86,9 +86,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().ServicesScheduling(stmtconn.connection, jobId));
 			this.result = stmtconn.execute ( );
 						
-			if (this.result.getWarning ( ) != null)
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ), warning);
+			logWarnings();
 						
 			if (this.result.getUpdateCount ( ) < 1) {
 				
@@ -161,11 +159,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 				stmtconn.loadStatement(DBAccessNG.selectFromDB().ServicesScheduling(stmtconn.connection));
 				this.result = stmtconn.execute();
 
-				if (this.result.getWarning() != null) {
-
-					for (Throwable warning : result.getWarning())
-						logger.warn(warning.getLocalizedMessage(), warning);
-				}
+				logWarnings();
 
 				boolean foundOne = false;
 				while (this.result.getResultSet().next()) {
@@ -264,11 +258,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 			stmtconn.loadStatement(DBAccessNG.selectFromDB().ServicesScheduling(stmtconn.connection, jobId));
 			this.result = stmtconn.execute();
 
-			if (this.result.getWarning() != null) {
-
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage(), warning);
-			}
+			logWarnings();
 
 			if (this.result.getResultSet().next()) {
 
@@ -396,9 +386,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 							this.rms.setStatusDescription("No matching Service job found for id " + jobName);
 						}
 
-						if (this.result.getWarning() != null)
-							for (Throwable warning : result.getWarning())
-								logger.warn(warning.getLocalizedMessage(), warning);
+						logWarnings();
 
 						this.rms.setStatus(RestStatusEnum.OK);
 
@@ -572,9 +560,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 			// repository_identifier));
 			// this.result = stmtconn.execute();
 
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage(), warning);
+			logWarnings();
 
 			// if (this.result.getResultSet().next()) {
 			//
@@ -783,9 +769,7 @@ public class ServiceJob extends AbstractKeyWordHandler implements KeyWord2Databa
 			// repository_identifier));
 			// this.result = stmtconn.execute();
 
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage(), warning);
+			logWarnings();
 
 			// if (this.result.getResultSet().next()) {
 			//

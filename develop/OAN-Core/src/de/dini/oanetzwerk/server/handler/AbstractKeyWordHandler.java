@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.codec.RestKeyword;
 import de.dini.oanetzwerk.codec.RestMessage;
+import de.dini.oanetzwerk.codec.RestStatusEnum;
+import de.dini.oanetzwerk.codec.RestXmlCodec;
 import de.dini.oanetzwerk.server.database.QueryResult;
 import de.dini.oanetzwerk.utils.exceptions.MethodNotImplementedException;
 import de.dini.oanetzwerk.utils.exceptions.NotEnoughParametersException;
@@ -99,6 +101,13 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 		
 				return putKeyWord (path, data);
 				
+			case HEAD:
+				
+				if (logger.isDebugEnabled ( ))
+					logger.debug ("HEAD case chosen");
+				
+				return headKeyWord (path);
+				
 			default:
 				
 				logger.error ("This HTTP-Method is not supported! Please use GET, POST, PUT or DELETE!");
@@ -141,6 +150,22 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	private final void setDataSource (String dataSource) {
 	
 		this.dataSource = dataSource;
+	}
+	
+	/**
+	 * Auslagerung der in allen Handlerklassen exzessiv benutzten Warning-Codefragmente
+	 * Diese Methode kann für beliebige SQL Queries angewendet werden
+	 * @param queryResult Resultat eines SQL Queries
+	 */
+	protected void logWarnings(QueryResult queryResult) {
+		if (queryResult.getWarning ( ) != null) 
+			for (Throwable warning : result.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
+	}
+	protected void logWarnings() {
+		if (this.result.getWarning ( ) != null) 
+			for (Throwable warning : result.getWarning ( ))
+				logger.warn (warning.getLocalizedMessage ( ));
 	}
 	
 
@@ -193,4 +218,21 @@ public abstract class AbstractKeyWordHandler implements KeyWord2DatabaseInterfac
 	 */
 	
 	abstract protected String getKeyWord (String [ ] path) throws NotEnoughParametersException;
+	
+	/**
+	 * This method handles the HTTP-HEAD Request which selects data.
+	 * 
+	 * @param path the request path from the HTTP-Request
+	 * 
+	 * @return the response which will be sent back to the client
+	 * @throws NotEnoughParametersException 
+	 */
+	
+	protected String headKeyWord (String [ ] path) throws NotEnoughParametersException {
+		rms = new RestMessage ();
+		this.rms.setStatus (RestStatusEnum.NOT_IMPLEMENTED_ERROR);
+		this.rms.setStatusDescription("HEAD method is not implemented for ressource '"+ this.getClass().getSimpleName() +"'.");
+		return RestXmlCodec.encodeRestMessage (this.rms);	
+	}
+	
 } // end of class

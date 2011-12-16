@@ -995,4 +995,12 @@ public class InsertIntoDBSybase implements InsertIntoDB {
 	    // TODO Auto-generated method stub
 	    return null;
     }
+
+	@Override
+	public PreparedStatement DINISetClassification(Connection connection,
+			BigDecimal object_id, BigDecimal dini_set_id, boolean generated)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

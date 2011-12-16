@@ -603,6 +603,7 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 		
 		return preparedstmt;
 	}
+	
 
 	/**
 	 * @param object_id
@@ -682,6 +683,30 @@ static Logger logger = Logger.getLogger (InsertIntoDBPostgres.class);
 		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO \"DINI_Set_Classification\" (object_id, \"DINI_set_id\") VALUES (?, ?)");
 		preparedstmt.setBigDecimal(1, object_id);
 		preparedstmt.setBigDecimal(2, dini_set_id);
+		
+		return preparedstmt;
+	}
+	
+	/**
+	 * @param object_id
+	 * @param dini_set_id
+	 * @param generated
+	 * @return
+	 * @throws SQLException 
+	 */
+	
+	public PreparedStatement DINISetClassification (Connection connection, BigDecimal object_id, BigDecimal dini_set_id, boolean generated) throws SQLException {
+		
+		if (logger.isDebugEnabled ( )) {
+			
+			logger.debug ("Insert DINISetClassification: INSERT INTO \"DINI_Set_Classification\" (object_id, \"DINI_set_id\", generated) " +
+					"VALUES (" + object_id + ", " + dini_set_id + "," + generated + ")");
+		}
+		
+		PreparedStatement preparedstmt = connection.prepareStatement ("INSERT INTO \"DINI_Set_Classification\" (object_id, \"DINI_set_id\", generated) VALUES (?, ?, ?)");
+		preparedstmt.setBigDecimal(1, object_id);
+		preparedstmt.setBigDecimal(2, dini_set_id);
+		preparedstmt.setBoolean(3, generated);
 		
 		return preparedstmt;
 	}

@@ -111,10 +111,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			stmtconn.loadStatement (DBAccessNG.selectFromDB().ServiceNotify(stmtconn.connection, service_id));	
 			this.result = stmtconn.execute ( );
 			
-			// log warnings
-			if (this.result.getWarning ( ) != null)
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			// extract oids from db response
 			while(this.result.getResultSet ( ).next ( )) {
@@ -262,18 +259,14 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			stmtconn.commit ( );
 			stmtconn.loadStatement (DBAccessNG.selectFromDB().ServiceNotify(stmtconn.connection, service_id));
 			
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			if (this.result.getResultSet ( ).next ( )) {
 
@@ -366,9 +359,7 @@ public class ServiceNotifier extends AbstractKeyWordHandler implements KeyWord2D
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().ServiceNotify(stmtconn.connection, service_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				stmtconn.rollback ( );

@@ -11,5 +11,6 @@ public enum HttpVerbEnum {
 	DELETE,
 	GET,
 	PUT,
-	POST
+	POST,
+	HEAD
 }

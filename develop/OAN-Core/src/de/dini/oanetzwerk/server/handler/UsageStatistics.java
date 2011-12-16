@@ -80,10 +80,7 @@ public class UsageStatistics extends AbstractKeyWordHandler implements KeyWord2D
 	
 				this.result = stmtconn.execute();
 	
-				if (this.result.getWarning() != null)
-					for (Throwable warning : result.getWarning())
-						logger.warn(warning.getLocalizedMessage());
-	
+				logWarnings();
 	
 				while (this.result.getResultSet().next()) {
 	
@@ -108,9 +105,7 @@ public class UsageStatistics extends AbstractKeyWordHandler implements KeyWord2D
 				stmtconn.loadStatement(DBAccessNG.selectFromDB().UsageData_Counter_ForOID(stmtconn.connection, oid));
 				this.result = stmtconn.execute();
 				
-				if (this.result.getWarning() != null)
-					for (Throwable warning : result.getWarning())
-						logger.warn(warning.getLocalizedMessage());
+				logWarnings();
 				if (this.result.getResultSet().next()) {
 					
 					if (logger.isDebugEnabled())
@@ -160,5 +155,4 @@ public class UsageStatistics extends AbstractKeyWordHandler implements KeyWord2D
 
 		return RestXmlCodec.encodeRestMessage(this.rms);
 	}
-
 }

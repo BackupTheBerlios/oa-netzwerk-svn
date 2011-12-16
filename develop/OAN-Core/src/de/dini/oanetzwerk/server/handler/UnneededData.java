@@ -51,32 +51,24 @@ public class UnneededData extends AbstractKeyWordHandler implements KeyWord2Data
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().PersonWithoutReference (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-			for (Throwable warning : result.getWarning ( ))
-				logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			// Diese Anfrage braucht etwa 24 sec und sollte daher sparsam, nach einem Aggregatorlauf im Automodus gefeuert werden
 						
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().KeywordsWithoutReference (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-			for (Throwable warning : result.getWarning ( ))
-				logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().LanguagesWithoutReference(stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-			for (Throwable warning : result.getWarning ( ))
-				logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Iso639LanguagesWithoutReference(stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-			for (Throwable warning : result.getWarning ( ))
-				logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			stmtconn.commit ( );
 			

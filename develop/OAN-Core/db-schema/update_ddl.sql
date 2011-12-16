@@ -287,3 +287,55 @@ CREATE TABLE "public"."ServicesScheduling" (
 ) WITH (OIDS=FALSE);
 
 
+-- Update der pub-type: Daten der DINI_Set_Categories auf die doc-type Daten der DINI2010 Spezifikation
+
+--UPDATE "DINI_Set_Categories" SET name = 'doc-type:article' WHERE name = 'pub-type:article';
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:book' WHERE name = 'pub-type:monograph';
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:doctoralThesis' WHERE name = 'pub-type:dissertation';
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:masterThesis' WHERE name = 'pub-type:masterthesis';
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:report' WHERE name = 'pub-type:report';
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:Text' WHERE name = 'pub-type:paper';
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:conferenceObject' WHERE name = 'pub-type:conf-proceeding';
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:lecture' WHERE name = 'pub-type:lecture';
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:Sound' WHERE name = 'pub-type:music';
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:Software' WHERE name = 'pub-type:program';
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:Other' WHERE name = 'pub-type:play';
+
+-- has to be handled differently:
+-- 		news is mapped to report and as report has already been mapped, all join entries with the news id will be transferred to the doc-type:report id
+UPDATE "DINI_Set_Classification" SET "DINI_set_id" = (
+	SELECT "DINI_set_id" FROM "DINI_Set_Categories" WHERE name = 'doc-type:report'
+)
+WHERE "DINI_set_id" = (
+	SELECT "DINI_set_id" FROM "DINI_Set_Categories" WHERE name = 'pub-type:news'
+);
+DELETE FROM "DINI_Set_Categories" WHERE name = 'pub-type:news';
+
+
+
+-- siehe http://nbn-resolving.de/urn:nbn:de:kobv:11-100109998 Seite 31
+UPDATE "DINI_Set_Categories" SET name = 'doc-type:patent' WHERE name = 'pub-type:standards';
+
+-- Einfügen der noch fehlenden Klassifikationen
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:preprint', 'Preprint', 'Preprint', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:workingPaper', 'Working Paper', 'Arbeitspapier', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:contributionToPeriodical', 'Contribution to a periodical', 'Beitrag zu einem Periodikum', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:PeriodicalPart', 'Part of a periodical', 'Teil eines Periodikums', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:bookPart', 'Part of a book', 'Teil eines Buches oder einer Monographie', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:Manuscript','Manuscript', 'Handschrift oder Manuskript', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:StudyThesis', 'Study Thesis', 'Studienarbeit', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:bachelorThesis', 'Bachelor thesis', 'Abschlussarbeit (Bachelor)', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:review', 'Review','Rezension', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:annotation', 'Annotation', 'Entscheidungs- oder Urteilsanmerkung', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:MusicalNotation', 'Musical Notation', 'Noten (Musik)', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:Periodical', 'Periodical', 'Periodikum', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:Image', 'Image', 'Bild', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:MovingImage', 'Moving Image', 'Bewegte Bilder', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:StillImage', 'Still Image', 'Einzelbild', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:CourseMaterial', 'Course Material', 'Lehrmaterial', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:Website', 'Web Site', 'Internetseite', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:CartographicMaterial', 'Cartographic Material', 'Kartographisches Material', null);
+INSERT INTO "DINI_Set_Categories" (name, "setNameEng", "setNameDeu", setname) VALUES ('doc-type:ResearchData', 'Research Data', 'Forschungsdaten', null);
+
+-- Update der DINI_Set_Classification Tabelle; Einfügen der Spalte "generated" für generierte Daten
+ALTER TABLE "DINI_Set_Classification" ADD COLUMN generated bool;

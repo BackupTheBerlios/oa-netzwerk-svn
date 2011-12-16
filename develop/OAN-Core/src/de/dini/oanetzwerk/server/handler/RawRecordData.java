@@ -142,9 +142,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			this.rms.setStatus (RestStatusEnum.NO_OBJECT_FOUND_ERROR);
 			
@@ -277,9 +275,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 				
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			res.addEntry ("ObjectID", (object_id.toPlainString ( )));
 			
@@ -393,9 +389,7 @@ public class RawRecordData extends AbstractKeyWordHandler implements KeyWord2Dat
 			stmtconn.loadStatement (DBAccessNG.insertIntoDB().RawRecordData (stmtconn.connection, object_id, repository_timestamp, data, metaDataFormat));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			res.addEntry ("oid", Integer.toString (this.result.getUpdateCount ( )));
 			

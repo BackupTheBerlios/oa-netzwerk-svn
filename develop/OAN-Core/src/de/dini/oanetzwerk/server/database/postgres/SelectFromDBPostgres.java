@@ -2068,4 +2068,35 @@ public class SelectFromDBPostgres implements SelectFromDB {
 			"ORDER BY cat.\"DINI_set_id\" ASC"	
 		);
 	}
+	
+	/**
+	 * Sucht alle Personen heraus, die über die Tabellen Object2Author, Object2Editor und Object2Contributor mit einem Objekt verknüpft sind.
+	 * Die Suche ist parametrisiert mit einem Feld der Object-Tabelle (sinnvollerweise object_id oder repository_id).
+	 * Damit kann bei Löschung eines Objekts oder eines Repositories schnell eine Liste erstellt werden, welche Personen nun keine Join-Einträge 
+	 * mehr besitzen und damit gelöscht werden können. Das vereinfacht die Löschung von Personen-Orphans deutlich, da eine direkte Löschung vorgenommen werden kann.
+	 * <br />
+	 * <b>Achtung:</b> Da 3 Jointabellen beteiligt sind, muss 3x setBigDecimal aufgerufen werden!
+	 * @param connection
+	 * @param objectField String mit einem Feldnamen der Object-Tabelle. Sinnvolle Felder: object_id, repository_id
+	 * @return person_id von allen Personen die einen Joineintrag in einer der oben genannten Tabellen besitzen.
+	 */
+	@Override
+	public PreparedStatement GetPersonsPerObjectField(Connection connection, String objectField ) throws SQLException {
+		String sql =
+			"SELECT person_id FROM \"Person\" WHERE person_id IN ("+
+				"(SELECT person_id FROM \"Object2Author\" JOIN \"Object\" ON \"Object2Author\".object_id = \"Object\".object_id WHERE \"Object\"."+objectField+" = ?)" +
+				" UNION " +
+				"(SELECT person_id FROM \"Object2Editor\" JOIN \"Object\" ON \"Object2Editor\".object_id = \"Object\".object_id WHERE \"Object\"."+objectField+" = ?)" +
+				" UNION " + 
+				"(SELECT person_id FROM \"Object2Contributor\" JOIN \"Object\" ON \"Object2Contributor\".object_id = \"Object\".object_id WHERE \"Object\"."+objectField+" = ?)" +
+			")";
+		
+		return connection.prepareStatement(sql);
+	}
+
+
+	@Override
+	public PreparedStatement hasEntryForObjectID(Connection connection, String table) throws SQLException {
+		return connection.prepareStatement("SELECT count(*) FROM \""+table+"\" WHERE object_id = ?");
+	}
 }

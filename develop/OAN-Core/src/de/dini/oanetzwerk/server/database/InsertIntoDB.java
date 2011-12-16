@@ -39,6 +39,8 @@ public interface InsertIntoDB {
 
 	public abstract PreparedStatement DINISetClassification(Connection connection, BigDecimal object_id, BigDecimal dini_set_id) throws SQLException;
 
+	public abstract PreparedStatement DINISetClassification(Connection connection, BigDecimal object_id, BigDecimal dini_set_id, boolean generated) throws SQLException;
+	
 	public abstract PreparedStatement DNBClassification(Connection connection, BigDecimal object_id, String category) throws SQLException;
 
 	public abstract PreparedStatement DDCClassification(Connection connection, BigDecimal object_id, String ddcValue) throws SQLException;

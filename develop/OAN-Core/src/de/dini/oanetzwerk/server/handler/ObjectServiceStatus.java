@@ -250,10 +250,7 @@ public class ObjectServiceStatus extends AbstractKeyWordHandler implements KeyWo
 			}						
 			this.result = stmtconn.execute ( );
 			
-			// log warnings
-			if (this.result.getWarning ( ) != null)
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			// extract oids from db response
 			while(this.result.getResultSet ( ).next ( )) {

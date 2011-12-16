@@ -71,9 +71,7 @@ public class LanguageEntry extends AbstractKeyWordHandler implements KeyWord2Dat
 						ISO639LangNormalizer.getISO639_3(path[1])));
 				this.result = stmtconn.execute();
 
-				if (this.result.getWarning() != null)
-					for (Throwable warning : result.getWarning())
-						logger.warn(warning.getLocalizedMessage(), warning);
+				logWarnings();
 
 				this.result.getResultSet().next();
 
@@ -91,9 +89,7 @@ public class LanguageEntry extends AbstractKeyWordHandler implements KeyWord2Dat
 				this.result = stmtconn.execute();
 			}
 
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage(), warning);
+			logWarnings();
 
 			int deleteCount = this.result.getUpdateCount();
 			if (deleteCount == 0) {
@@ -171,11 +167,7 @@ public class LanguageEntry extends AbstractKeyWordHandler implements KeyWord2Dat
 			stmtconn.loadStatement(DBAccessNG.selectFromDB().Object2Iso639Language(stmtconn.connection, object_id, null));
 			this.result = stmtconn.execute();
 
-			if (this.result.getWarning() != null) {
-
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage(), warning);
-			}
+			logWarnings();
 
 			boolean foundOne = false;
 			while (this.result.getResultSet().next()) {
@@ -447,11 +439,7 @@ public class LanguageEntry extends AbstractKeyWordHandler implements KeyWord2Dat
 				stmtconn.loadStatement(DBAccessNG.selectFromDB().Iso639LanguageByName(stmtconn.connection, lang));
 				this.result = stmtconn.execute();
 
-				if (this.result.getWarning() != null) {
-
-					for (Throwable warning : result.getWarning())
-						logger.warn(warning.getLocalizedMessage(), warning);
-				}
+				logWarnings();
 
 				boolean hasNext = result.getResultSet().next();
 				BigDecimal language_id = null;
@@ -464,22 +452,14 @@ public class LanguageEntry extends AbstractKeyWordHandler implements KeyWord2Dat
 					stmtconn.loadStatement(DBAccessNG.insertIntoDB().Iso639Language(stmtconn.connection, lang));
 					this.result = stmtconn.execute();
 
-					if (this.result.getWarning() != null) {
-
-						for (Throwable warning : result.getWarning())
-							logger.warn(warning.getLocalizedMessage(), warning);
-					}
+					logWarnings();
 
 					stmtconn.loadStatement(DBAccessNG.selectFromDB().Iso639LanguageByName(stmtconn.connection, lang));
 					this.result = stmtconn.execute();
 
 					result.getResultSet().next();
 
-					if (this.result.getWarning() != null) {
-
-						for (Throwable warning : result.getWarning())
-							logger.warn(warning.getLocalizedMessage(), warning);
-					}
+					logWarnings();
 				}
 
 				language_id = result.getResultSet().getBigDecimal("language_id");

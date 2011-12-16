@@ -84,9 +84,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 				stmtconn.loadStatement (DBAccessNG.selectFromDB().AllDDCCategories(stmtconn.connection));
 				QueryResult allDDCResult = stmtconn.execute ( );
 
-				if (allDDCResult.getWarning ( ) != null)
-					for (Throwable warning : allDDCResult.getWarning ( ))
-						logger.warn (warning.getLocalizedMessage ( ));
+				logWarnings(allDDCResult);
 
 				while (allDDCResult.getResultSet ( ).next ( )) {
 					res = new RestEntrySet ( );
@@ -127,9 +125,7 @@ public class DDCCategories extends AbstractKeyWordHandler implements KeyWord2Dat
 				stmtconn.loadStatement (DBAccessNG.selectFromDB().DDCCategoryWildcard(stmtconn.connection, wildcardCategory));
 				QueryResult wildcardDDCResult = stmtconn.execute ( );
 
-				if (wildcardDDCResult.getWarning ( ) != null)
-					for (Throwable warning : wildcardDDCResult.getWarning ( ))
-						logger.warn (warning.getLocalizedMessage ( ));
+				logWarnings(wildcardDDCResult);
 				
 				logger.debug("wildcardDDCResult = " + wildcardDDCResult);
 				System.out.println("wildcardDDCResult = " + wildcardDDCResult);

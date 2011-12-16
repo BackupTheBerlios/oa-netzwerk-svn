@@ -5,9 +5,11 @@ package de.dini.oanetzwerk.server.handler;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -703,42 +705,6 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 			
 			stmtconn.loadStatement(DBAccessNG.deleteFromDB().DeleteFromTableByField(
 					stmtconn.connection,
-					"\"Object2Author\"",
-					"object_id",
-					"\"Object\"",
-					"object_id",
-					"repository_id",
-					repository_id
-				)
-			);
-			this.result = stmtconn.execute();
-			
-			stmtconn.loadStatement(DBAccessNG.deleteFromDB().DeleteFromTableByField(
-					stmtconn.connection,
-					"\"Object2Contributor\"",
-					"object_id",
-					"\"Object\"",
-					"object_id",
-					"repository_id",
-					repository_id
-				)
-			);
-			this.result = stmtconn.execute();
-			
-			stmtconn.loadStatement(DBAccessNG.deleteFromDB().DeleteFromTableByField(
-					stmtconn.connection,
-					"\"Object2Editor\"",
-					"object_id",
-					"\"Object\"",
-					"object_id",
-					"repository_id",
-					repository_id
-				)
-			);
-			this.result = stmtconn.execute();
-			
-			stmtconn.loadStatement(DBAccessNG.deleteFromDB().DeleteFromTableByField(
-					stmtconn.connection,
 					"\"Object2Iso639Language\"",
 					"object_id",
 					"\"Object\"",
@@ -892,13 +858,85 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 //					logger.warn (warning.getLocalizedMessage ( ));
 //			logger.debug("AFTER delete orphaned Keywords");
 			
-			logger.debug("BEFORE delete orphaned Persons");
-				stmtconn.loadStatement(DBAccessNG.deleteFromDB().PersonWithoutReference(stmtconn.connection));
-				this.result = stmtconn.execute ( );
-				
-				if (this.result.getWarning ( ) != null) 
-					for (Throwable warning : result.getWarning ( ))
-						logger.warn (warning.getLocalizedMessage ( ));
+			logger.info("BEFORE getting soon to be orphaned Persons");
+			
+			// Step 1: get all person IDs who are affected when deleting a repository
+			PreparedStatement selectPersons = DBAccessNG.selectFromDB().GetPersonsPerObjectField(stmtconn.connection, "repository_id");
+			selectPersons.setBigDecimal(1, repository_id);
+			selectPersons.setBigDecimal(2, repository_id);
+			selectPersons.setBigDecimal(3, repository_id);
+			stmtconn.loadStatement(selectPersons);
+			this.result = stmtconn.execute();
+			ResultSet rs = this.result.getResultSet();
+			ArrayList<BigDecimal> personIDs = new ArrayList<BigDecimal>();
+			
+			while (rs.next()) {
+				personIDs.add(rs.getBigDecimal(1));
+			}
+			logger.info("Found "+personIDs.size()+" persons to be deleted");
+			
+			
+			// Step 2: delete all joined entries
+			stmtconn.loadStatement(DBAccessNG.deleteFromDB().DeleteFromTableByField(
+					stmtconn.connection,
+					"\"Object2Author\"",
+					"object_id",
+					"\"Object\"",
+					"object_id",
+					"repository_id",
+					repository_id
+				)
+			);
+			this.result = stmtconn.execute();
+			
+			stmtconn.loadStatement(DBAccessNG.deleteFromDB().DeleteFromTableByField(
+					stmtconn.connection,
+					"\"Object2Contributor\"",
+					"object_id",
+					"\"Object\"",
+					"object_id",
+					"repository_id",
+					repository_id
+				)
+			);
+			this.result = stmtconn.execute();
+			
+			stmtconn.loadStatement(DBAccessNG.deleteFromDB().DeleteFromTableByField(
+					stmtconn.connection,
+					"\"Object2Editor\"",
+					"object_id",
+					"\"Object\"",
+					"object_id",
+					"repository_id",
+					repository_id
+				)
+			);
+			this.result = stmtconn.execute();
+			
+			// Step 3: delete the now orphaned persons
+			int run = 1;
+			while (personIDs.size() > 0) {
+				int batchSize = Math.min(100, personIDs.size());
+				logger.info("Durchlauf "+run+" - BatchSize = "+batchSize);
+				PreparedStatement stmt = DBAccessNG.deleteFromDB().PersonAsBatch(stmtconn.connection, batchSize);
+				for (int i = 1; i == batchSize; i++) {
+					// fill up to batchSize values into the query
+					stmt.setBigDecimal(i, personIDs.get(0));
+					personIDs.remove(0);
+				}
+				stmtconn.loadStatement(stmt);
+				this.result = stmtconn.execute();
+				logWarnings();
+			}
+			
+			
+			
+			
+			
+			
+			//stmtconn.loadStatement(DBAccessNG.deleteFromDB().PersonWithoutReference(stmtconn.connection));
+			//this.result = stmtconn.execute ( );
+			
 			logger.debug("AFTER delete orphaned Persons");
 			
 			// finally delete the objects
@@ -1017,9 +1055,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			this.result = stmtconn.execute();
 
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage());
+			logWarnings();
 
 			if (repositoryID != null) {
 
@@ -1236,9 +1272,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 	
 				this.result = stmtconn.execute();
 	
-				if (this.result.getWarning() != null)
-					for (Throwable warning : result.getWarning())
-						logger.warn(warning.getLocalizedMessage(), warning);
+				logWarnings();
 	
 			} catch (SQLException ex) {
 	
@@ -1287,9 +1321,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 	
 				this.result = stmtconn.execute();
 	
-				if (this.result.getWarning() != null)
-					for (Throwable warning : result.getWarning())
-						logger.warn(warning.getLocalizedMessage(), warning);
+				logWarnings();
 	
 			} catch (SQLException ex) {
 	
@@ -1351,9 +1383,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 
 				this.result = stmtconn.execute();
 
-				if (this.result.getWarning() != null)
-					for (Throwable warning : result.getWarning())
-						logger.warn(warning.getLocalizedMessage(), warning);
+				logWarnings();
 
 			} catch (SQLException ex) {
 
@@ -1469,9 +1499,7 @@ public class Repository extends AbstractKeyWordHandler implements KeyWord2Databa
 
 			this.result = stmtconn.execute();
 
-			if (this.result.getWarning() != null)
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage(), warning);
+			logWarnings();
 
 		} catch (SQLException ex) {
 

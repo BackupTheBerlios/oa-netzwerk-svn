@@ -79,9 +79,7 @@ public class DDCEntry  extends AbstractKeyWordHandler implements KeyWord2Databas
 			
 			this.result = stmtconn.execute ( );
 					
-			if (this.result.getWarning ( ) != null)
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ), warning);
+			logWarnings();
 						
 			int deleteCount =  this.result.getUpdateCount();
 			if (deleteCount == 0)
@@ -160,11 +158,7 @@ public class DDCEntry  extends AbstractKeyWordHandler implements KeyWord2Databas
 			stmtconn.loadStatement(DBAccessNG.selectFromDB().DDCClassification2(stmtconn.connection, object_id));
 			this.result = stmtconn.execute();
 
-			if (this.result.getWarning() != null) {
-
-				for (Throwable warning : result.getWarning())
-					logger.warn(warning.getLocalizedMessage(), warning);
-			}
+			logWarnings();
 
 			boolean foundOne = false;
 			while (this.result.getResultSet().next()) {
@@ -432,11 +426,7 @@ public class DDCEntry  extends AbstractKeyWordHandler implements KeyWord2Databas
 				stmtconn.loadStatement(DBAccessNG.selectFromDB().DDCCategoriesByCategorie(stmtconn.connection, category));
 				this.result = stmtconn.execute();
 	
-				if (this.result.getWarning() != null) {
-	
-					for (Throwable warning : result.getWarning())
-						logger.warn(warning.getLocalizedMessage(), warning);
-				}
+				logWarnings();
 				
 				result.getResultSet().next();
 				int row = result.getResultSet().getRow();
@@ -448,11 +438,7 @@ public class DDCEntry  extends AbstractKeyWordHandler implements KeyWord2Databas
 					stmtconn.loadStatement(DBAccessNG.insertIntoDB().DDCCategory(stmtconn.connection, category, "", ""));
 					this.result = stmtconn.execute();
 		
-					if (this.result.getWarning() != null) {
-		
-						for (Throwable warning : result.getWarning())
-							logger.warn(warning.getLocalizedMessage(), warning);
-					}
+					logWarnings();
 				}
 			
 				// check if relation exists already

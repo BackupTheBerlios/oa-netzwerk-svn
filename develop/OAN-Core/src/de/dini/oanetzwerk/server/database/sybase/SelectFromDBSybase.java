@@ -2051,4 +2051,20 @@ public class SelectFromDBSybase implements SelectFromDB {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	@Override
+	public PreparedStatement GetPersonsPerObjectField(Connection connection,
+			String objectField) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PreparedStatement hasEntryForObjectID(Connection connection,
+			String table) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

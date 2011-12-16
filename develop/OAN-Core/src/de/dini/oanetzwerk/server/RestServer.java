@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -340,6 +341,18 @@ public class RestServer extends HttpServlet implements Serializable {
 		
 		this.out = this.response.getWriter ( );
 		this.out.write (this.processRequest (req, HttpVerbEnum.DELETE));
+	}
+	
+	@Override
+	protected void doHead (HttpServletRequest req, HttpServletResponse res) throws IOException {
+		
+		this.response = res;
+		
+		this.setOANResponseHeader ( );
+		// hole HTTP STatuscode aus der zugehörigen Klasse und gib ihn in die Response
+		String httpStatusCode = this.processRequest (req, HttpVerbEnum.HEAD);
+		
+		res.setStatus(Integer.valueOf(httpStatusCode));
 	}
 	
 	/**

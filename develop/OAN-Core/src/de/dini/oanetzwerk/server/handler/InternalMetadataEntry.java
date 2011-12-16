@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -113,9 +115,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			logger.debug("BEFORE DeleteFromDB.Description");
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			
 			logger.debug("AFTER DeleteFromDB.Description");
@@ -125,116 +125,84 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			this.result = stmtconn.execute ( );
 			logger.debug("AFTER DeleteFromDB.DateValues");
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Formats (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Identifiers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().TypeValue (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Titles (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Publishers (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Author (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Editor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Contributor (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Language (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Iso639Language(stmtconn.connection, object_id, false));
 			logger.debug("BEFORE DeleteFromDB.Object2Iso639Language");
 			this.result = stmtconn.execute ( );
 			logger.debug("AFTER DeleteFromDB.Object2Iso639Language");
 
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Object2Keywords (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Other_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DDC_Classification (stmtconn.connection, object_id, false));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DNB_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DINI_Set_Classification (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 //			stmtconn.loadStatement (DeleteFromDB.PersonWithoutReference (stmtconn.connection));
 //			this.result = stmtconn.execute ( );
@@ -259,9 +227,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().Other_Categories (stmtconn.connection));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			logger.debug("BEFORE commit");
 			stmtconn.commit ( );
@@ -539,9 +505,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (DBAccessNG.insertIntoDB().Title (stmtconn.connection, object_id, title.getQualifier(), title.getTitle(), title.getLang()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 				}
 			}
@@ -558,9 +522,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (DBAccessNG.insertIntoDB().DateValue (stmtconn.connection, object_id, dateValue.getNumber(), HelperMethods.java2sqlDate(dateValue.getDateValue()), dateValue.getStringValue()));
 						this.result = stmtconn.execute ( );
 						
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 
 					} catch (ParseException ex) {
 						
@@ -578,9 +540,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (DBAccessNG.insertIntoDB().Format (stmtconn.connection, object_id, format.getNumber(), format.getSchema_f()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 				}
 			}
@@ -594,9 +554,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (DBAccessNG.insertIntoDB().Identifier (stmtconn.connection, object_id, identifier.getNumber(), identifier.getIdentifier()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 				}
 			}
@@ -609,24 +567,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (DBAccessNG.insertIntoDB().Description (stmtconn.connection, object_id, description.getNumber(), description.getDescription()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
-
-				}
-			}
-
-			if (typeValueList != null) {
-				for (TypeValue typeValue : typeValueList) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("TypeValue-Informationen hinzufügen" + typeValue.toString());
-					}
-					stmtconn.loadStatement (DBAccessNG.insertIntoDB().TypeValue (stmtconn.connection, object_id, typeValue.getTypeValue()));
-					this.result = stmtconn.execute ( );
-					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 				}
 			}
@@ -640,14 +581,13 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (DBAccessNG.insertIntoDB().Publisher (stmtconn.connection, object_id, publisher.getNumber(), publisher.getName()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 				}
 			}
 
 			if (authorList != null) {
+				System.out.println("========== Autoren eintragen ===========");
 				for (Author author : authorList) {
 					
 					
@@ -662,16 +602,12 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							.getInstitution(), author.getEmail()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 					stmtconn.loadStatement (DBAccessNG.selectFromDB().LatestPerson (stmtconn.connection, author.getFirstname(), author.getLastname()));
 					this.result = stmtconn.execute ( );
 
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 					while (this.result.getResultSet ( ).next ( )) {
 						
@@ -681,9 +617,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Author (stmtconn.connection, object_id, person_id, author.getNumber()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 				}
 			}
@@ -702,16 +636,12 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							.getInstitution(), editor.getEmail()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 					stmtconn.loadStatement (DBAccessNG.selectFromDB().LatestPerson (stmtconn.connection, editor.getFirstname(), editor.getLastname()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 					while (this.result.getResultSet ( ).next ( )) {
 						
@@ -721,9 +651,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Editor (stmtconn.connection, object_id, person_id, editor.getNumber()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 				}
 			}
@@ -741,16 +669,12 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							.getInstitution(), contributor.getEmail()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 					
 					stmtconn.loadStatement (DBAccessNG.selectFromDB().LatestPerson (stmtconn.connection, contributor.getFirstname(), contributor.getLastname()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 					while (this.result.getResultSet ( ).next ( )) {
 						
@@ -760,9 +684,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Editor (stmtconn.connection, object_id, person_id, contributor.getNumber()));
 					this.result = stmtconn.execute ( );
 					
-					if (this.result.getWarning ( ) != null) 
-						for (Throwable warning : result.getWarning ( ))
-							logger.warn (warning.getLocalizedMessage ( ));
+					logWarnings();
 
 					//TODO: Object2Editor für contributor???
 				}
@@ -770,6 +692,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 
 			if (keywordList != null) {
 				PreparedStatement checkForExistingKeyword = null;
+				ArrayList<BigDecimal> insertedKeywords = new ArrayList<BigDecimal>();
 				for (Keyword keyword : keywordList) {
 					
 					if (logger.isDebugEnabled()) {
@@ -788,9 +711,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 					if (!rs.next()) {
 						stmtconn.loadStatement (DBAccessNG.insertIntoDB().Keyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 						this.result = stmtconn.execute ( );
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 	
 						if (this.result.getUpdateCount ( ) < 1) {
 							logger.error("Fehler bei OID:" + object_id + " INSERT Keyword:'" + keyword.getKeyword() + "'");
@@ -799,9 +720,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (DBAccessNG.selectFromDB().LatestKeyword (stmtconn.connection, keyword.getKeyword(), keyword.getLanguage()));
 						this.result = stmtconn.execute ( );
 						
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 						
 						
 						while (this.result.getResultSet ( ).next ( )) {
@@ -813,21 +732,26 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						keyword_id = rs.getBigDecimal(1);
 					}
 					if(keyword_id != null) {
-						try {
-							stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Keyword (stmtconn.connection, object_id, keyword_id));
-							this.result = stmtconn.execute ( );
-							
-							if (this.result.getWarning ( ) != null) 
-								for (Throwable warning : result.getWarning ( ))
-									logger.warn (warning.getLocalizedMessage ( ));
-							
-							if (this.result.getUpdateCount ( ) < 1) {
-								logger.error("Fehler bei OID:" + object_id + " INSERT Object2Keyword:'" + keyword_id + "'");
+						if (!insertedKeywords.contains(keyword_id)) {
+							insertedKeywords.add(keyword_id);
+							try {
+								stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Keyword (stmtconn.connection, object_id, keyword_id));
+								this.result = stmtconn.execute ( );
+								
+								logWarnings();
+								
+								if (this.result.getUpdateCount ( ) < 1) {
+									logger.error("Fehler bei OID:" + object_id + " INSERT Object2Keyword:'" + keyword_id + "'");
+								}
+							} catch (SQLException e) {
+								logger.warn(e);
 							}
-						} catch (SQLException e) {
-							logger.warn(e);
 						}
-					}										
+						else {
+							logger.debug("Keyword with ID "+keyword_id+" already entered for this publication");
+						}
+					}
+					//
 				}
 			}
 			
@@ -849,27 +773,21 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (DBAccessNG.selectFromDB().LanguageByName (stmtconn.connection, language.getLanguage()));
 						this.result = stmtconn.execute ( );
 						
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 						
 						if (!this.result.getResultSet ( ).next ( )) {
 
 							stmtconn.loadStatement (DBAccessNG.insertIntoDB().Language (stmtconn.connection, language.getLanguage()));
 							this.result = stmtconn.execute ( );
 
-							if (this.result.getWarning ( ) != null) 
-								for (Throwable warning : result.getWarning ( ))
-									logger.warn (warning.getLocalizedMessage ( ));
+							logWarnings();
 
 						}
 
 						stmtconn.loadStatement (DBAccessNG.selectFromDB().LanguageByName (stmtconn.connection, language.getLanguage()));
 						this.result = stmtconn.execute ( );
 
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 
 						while (this.result.getResultSet ( ).next ( )) {
 
@@ -879,9 +797,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Language (stmtconn.connection, object_id, language_id, language.getNumber()));
 						this.result = stmtconn.execute ( );
 
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 
 					}
 					
@@ -896,27 +812,21 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (DBAccessNG.selectFromDB().Iso639LanguageByName (stmtconn.connection, language.getIso639language()));
 						this.result = stmtconn.execute ( );
 
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 
 						if (!this.result.getResultSet ( ).next ( )) {
 
 							stmtconn.loadStatement (DBAccessNG.insertIntoDB().Iso639Language (stmtconn.connection, language.getIso639language()));
 							this.result = stmtconn.execute ( );
 
-							if (this.result.getWarning ( ) != null) 
-								for (Throwable warning : result.getWarning ( ))
-									logger.warn (warning.getLocalizedMessage ( ));
+							logWarnings();
 
 						}
 
 						stmtconn.loadStatement (DBAccessNG.selectFromDB().Iso639LanguageByName (stmtconn.connection, language.getIso639language()));
 						this.result = stmtconn.execute ( );
 
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 
 						while (this.result.getResultSet ( ).next ( )) {
 
@@ -927,13 +837,15 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (DBAccessNG.insertIntoDB().Object2Iso639Language(stmtconn.connection, object_id, iso639language_id, language.getNumber(), false));
 						this.result = stmtconn.execute ( );
 
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 
 					}
 				}
 			}
+			
+			
+			HashMap<String, Boolean> usedDDCs = new HashMap<String, Boolean>();
+			HashMap<BigDecimal, Boolean> usedDINICategories = new HashMap<BigDecimal, Boolean>();
 			
 			if (classificationList != null) {
 				for (Classification classification : classificationList) {
@@ -946,9 +858,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (DBAccessNG.selectFromDB().DDCCategoriesByCategorie (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 
 						while (this.result.getResultSet ( ).next ( )) {
 							
@@ -958,12 +868,13 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						if (ddcValue != null) {
 							
 							// Daten zuordnen							
-							stmtconn.loadStatement (DBAccessNG.insertIntoDB().DDCClassification (stmtconn.connection, object_id, ddcValue));
+							stmtconn.loadStatement (DBAccessNG.insertIntoDB().DDCClassification (stmtconn.connection, object_id, ddcValue, classification.isGenerated()));
 							this.result = stmtconn.execute ( );
 							
-							if (this.result.getWarning ( ) != null) 
-								for (Throwable warning : result.getWarning ( ))
-									logger.warn (warning.getLocalizedMessage ( ));
+							logWarnings();
+							
+							// abspeichern dass ein Eintrag in die DDC_Classification Tabelle eingefügt wurde (zur Duplikaterkennung)
+							usedDDCs.put(ddcValue, true);
 							
 						} else {
 							logger.warn("Could not find a DDC_Value for '" + classification.getValue() + "', will be stored as OtherClassification");
@@ -978,9 +889,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (DBAccessNG.selectFromDB().DNBCategoriesByCategorie (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 
 						while (this.result.getResultSet ( ).next ( )) {
 							
@@ -993,9 +902,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							stmtconn.loadStatement (DBAccessNG.insertIntoDB().DNBClassification (stmtconn.connection, object_id, dnbValue));
 							this.result = stmtconn.execute ( );
 							
-							if (this.result.getWarning ( ) != null) 
-								for (Throwable warning : result.getWarning ( ))
-									logger.warn (warning.getLocalizedMessage ( ));
+							logWarnings();
 							
 						} else {
 							logger.warn("Could not find a DNB_Value for '" + classification.getValue() + "', will be stored as OtherClassification");
@@ -1012,9 +919,7 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (DBAccessNG.selectFromDB().DINISetCategoriesByName (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 
 						logger.debug("before result of DINI set id fetch for '"+classification.getValue()+"'");
 						
@@ -1035,27 +940,87 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						} else {
 						
 							// Daten zuordnen
-							stmtconn.loadStatement (DBAccessNG.insertIntoDB().DINISetClassification (stmtconn.connection, object_id, DINI_set_id));
+							stmtconn.loadStatement (DBAccessNG.insertIntoDB().DINISetClassification (stmtconn.connection, object_id, DINI_set_id, classification.isGenerated()));
 							this.result = stmtconn.execute ( );
 						
-							if (this.result.getWarning ( ) != null) 
-								for (Throwable warning : result.getWarning ( ))
-									logger.warn (warning.getLocalizedMessage ( ));
+							logWarnings();
+							
+							// abspeichern welche DINI Categorien bereits eingetragen wurden damit Duplikate verhindert werden
+							usedDINICategories.put(DINI_set_id, true);
 
 						}
 					}
 					
 					if ((classification instanceof OtherClassification) || (notParsed == true)) {
 						
+						// erstmal nachsehen ob es sich um einen mapbaren String handelt. Dann kann man nämlich zusätzlich ein
+						if (Classification.isDDCMappable(classification.getValue())) {
+							String ddcValue = null;
+							
+							stmtconn.loadStatement (DBAccessNG.selectFromDB().DDCCategoriesByCategorie (stmtconn.connection, classification.getValue()));
+							this.result = stmtconn.execute ( );
+							
+							logWarnings();
+
+							while (this.result.getResultSet ( ).next ( )) {
+								ddcValue = this.result.getResultSet ( ).getString(1);
+							}
+			
+							if (ddcValue != null && !usedDDCs.containsKey(ddcValue)) {
+								// sicherstellen dass klar ist, dass es sich hierbei um generierte Daten handelt!
+								classification.setGenerated(true);
+								// Daten zuordnen							
+								stmtconn.loadStatement (DBAccessNG.insertIntoDB().DDCClassification (stmtconn.connection, object_id, ddcValue, classification.isGenerated()));
+								this.result = stmtconn.execute ( );
+								
+								logWarnings();
+								
+								// ddc Code mit in die Liste speichern, falls danach doch nochmal irgendwas gemappt werden sollte was auf DDC passt
+								usedDDCs.put(ddcValue, true);
+							}
+						}
+						else if (Classification.isDINI2010Mappable(classification.getValue())) {
+							
+							BigDecimal DINI_set_id = null;
+							
+							// Der übergebene Wert ist vielleicht mapbar, aber in die DB soll nur der gemappte Wert.
+							// Daher muss hier erstmal konvertiert werden
+							String mappedValue = Classification.mapToDINI2010(classification.getValue());
+							logger.debug("mapped "+classification.getValue()+" to "+mappedValue);
+							
+							stmtconn.loadStatement (DBAccessNG.selectFromDB().DINISetCategoriesByName (stmtconn.connection, mappedValue));
+							this.result = stmtconn.execute ( );
+							
+							logWarnings();
+
+							logger.debug("before result of DINI set id fetch for mappable value '"+classification.getValue()+"'");
+							
+							while (this.result.getResultSet ( ).next ( )) {
+								logger.debug("result = " + this.result.getResultSet ( ).getBigDecimal(1));
+								DINI_set_id = this.result.getResultSet ( ).getBigDecimal(1);
+							}
+							
+							if (DINI_set_id != null && !usedDINICategories.containsKey(DINI_set_id)) {
+								// sicherstellen dass klar ist, dass es sich hierbei um generierte Daten handelt!
+								classification.setGenerated(true);
+								// Daten zuordnen
+								stmtconn.loadStatement (DBAccessNG.insertIntoDB().DINISetClassification (stmtconn.connection, object_id, DINI_set_id, classification.isGenerated()));
+								this.result = stmtconn.execute ( );
+							
+								logWarnings();
+								
+								// DINI Set ID mit in die Liste schreiben, damit beim Mapping der TypeValues auch keine Duplikate entstehen können
+								usedDINICategories.put(DINI_set_id, true);
+
+							}
+						}
 						BigDecimal other_id = null;
 
 						// ID zum Klassifikationswort aus DB suchen 						
 						stmtconn.loadStatement (DBAccessNG.selectFromDB().LatestOtherCategories (stmtconn.connection, classification.getValue()));
 						this.result = stmtconn.execute ( );
 						
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
+						logWarnings();
 
 						while (this.result.getResultSet ( ).next ( )) {
 							
@@ -1069,19 +1034,14 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 							stmtconn.loadStatement (DBAccessNG.insertIntoDB().OtherCategories (stmtconn.connection, classification.getValue()));
 							this.result = stmtconn.execute ( );
 							
-							if (this.result.getWarning ( ) != null) 
-								for (Throwable warning : result.getWarning ( ))
-									logger.warn (warning.getLocalizedMessage ( ));
+							logWarnings();
 
 							stmtconn.loadStatement (DBAccessNG.selectFromDB().LatestOtherCategories (stmtconn.connection, classification.getValue()));
 							this.result = stmtconn.execute ( );
 							
-							if (this.result.getWarning ( ) != null) 
-								for (Throwable warning : result.getWarning ( ))
-									logger.warn (warning.getLocalizedMessage ( ));
+							logWarnings();
 
 							while (this.result.getResultSet ( ).next ( )) {
-								
 								other_id = this.result.getResultSet ( ).getBigDecimal(1);
 							}
 						}
@@ -1089,11 +1049,54 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 						stmtconn.loadStatement (DBAccessNG.insertIntoDB().OtherClassification (stmtconn.connection, object_id, other_id));
 						this.result = stmtconn.execute ( );
 						
-						if (this.result.getWarning ( ) != null) 
-							for (Throwable warning : result.getWarning ( ))
-								logger.warn (warning.getLocalizedMessage ( ));
-
+						logWarnings();
 					}
+				}
+			}
+			
+			if (typeValueList != null) {
+				for (TypeValue typeValue : typeValueList) {
+					
+					if (logger.isDebugEnabled()) {
+						logger.debug("TypeValue-Information auf Mapping mit DINI2010 Kategorien überprüfen und ggf einsetzen");
+					}
+					if (Classification.isDINI2010Mappable(typeValue.getTypeValue())) {
+						BigDecimal DINI_set_id = null;
+						
+						stmtconn.loadStatement (DBAccessNG.selectFromDB().DINISetCategoriesByName (stmtconn.connection, typeValue.getTypeValue()));
+						this.result = stmtconn.execute ( );
+						
+						logWarnings();
+
+						logger.debug("before result of DINI set id fetch for mappable value '"+typeValue.getTypeValue()+"'");
+						
+						while (this.result.getResultSet ( ).next ( )) {
+							logger.debug("result = " + this.result.getResultSet ( ).getBigDecimal(1));
+							DINI_set_id = this.result.getResultSet ( ).getBigDecimal(1);
+						}
+						
+						if (DINI_set_id != null && !usedDINICategories.containsKey(DINI_set_id)) {
+							// sicherstellen dass klar ist, dass es sich hierbei um generierte Daten handelt!
+							DINISetClassification classification = new DINISetClassification(typeValue.getTypeValue());
+							classification.setGenerated(true);
+							// Daten zuordnen
+							stmtconn.loadStatement (DBAccessNG.insertIntoDB().DINISetClassification (stmtconn.connection, object_id, DINI_set_id, classification.isGenerated()));
+							this.result = stmtconn.execute ( );
+						
+							logWarnings();
+							
+							// DINI Set ID in die Liste schreiben, falls hiernach nochmal was kommen sollte was gemappt wird
+							usedDINICategories.put(DINI_set_id, true);
+						}
+					}
+					
+					if (logger.isDebugEnabled()) {
+						logger.debug("TypeValue-Informationen hinzufügen" + typeValue.toString());
+					}
+					stmtconn.loadStatement (DBAccessNG.insertIntoDB().TypeValue (stmtconn.connection, object_id, typeValue.getTypeValue()));
+					this.result = stmtconn.execute ( );
+					
+					logWarnings();
 				}
 			}
 
@@ -1109,31 +1112,27 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			res.addEntry ("oid", object_id.toPlainString ( ));
 			this.rms.addEntrySet (res);
 			
-		} catch (SQLException ex) {
-			
+		} 
+		catch (SQLException ex) {
 			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.SQL_ERROR);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
-			
-		} catch (WrongStatementException ex) {
-
+		} 
+		catch (WrongStatementException ex) {
 			logger.error (ex.getLocalizedMessage ( ), ex);
 			this.rms = new RestMessage (RestKeyword.InternalMetadataEntry);
 			this.rms.setStatus (RestStatusEnum.WRONG_STATEMENT);
 			this.rms.setStatusDescription (ex.getLocalizedMessage ( ));
-			
-		} finally {
+		} 
+		finally {
 			
 			if (stmtconn != null) {
 				
 				try {
-					
 					stmtconn.close ( );
 					stmtconn = null;
-					
 				} catch (SQLException ex) {
-					
 					logger.error (ex.getLocalizedMessage ( ), ex);
 				}
 			}
@@ -1142,7 +1141,74 @@ public class InternalMetadataEntry extends AbstractKeyWordHandler implements Key
 			this.result = null;
 			dbng = null;
 		}
-		
 		return RestXmlCodec.encodeRestMessage (this.rms);
 	}
+	
+	/**
+	 * Checks if aggregated data for a given object id exists
+	 * Returns a HTTP Status Code<br />
+	 * 		200 - if the Object and its metadata are present
+	 * 		204 - if the Object is present, but the metadata is not
+	 * 		404 - if neither object nor metadata are present
+	 * 		400 - if the provided parameter is not an object id
+	 * 		500 - if there are server errors
+	 */
+	@Override
+	protected String headKeyWord (String [ ] path) throws NotEnoughParametersException {
+		if (path.length < 1)
+			throw new NotEnoughParametersException ("This method needs at least 1 parameters: the internal object ID");
+		
+		BigDecimal object_id;
+		
+		try {
+			
+			object_id = new BigDecimal (path [0]);
+			
+		} catch (NumberFormatException ex) {
+			
+			logger.error (path [0] + " is NOT a number! - returning http status code 400", ex);
+			
+			return "400";
+		}
+		DBAccessNG dbng = DBAccessNG.getInstance(super.getDataSource());
+		MultipleStatementConnection stmtconn = null;
+		
+		try {
+			stmtconn = (MultipleStatementConnection) dbng.getMultipleStatementConnection();
+			if (MetadataDBMapper.objectAvailable(object_id, stmtconn)) {
+				// object is present in the database
+				logger.debug("object present in the database");
+				if (MetadataDBMapper.aggregatedMetadataForObjectPresent(object_id, stmtconn)) {
+					// object has metadata
+					logger.debug("object has metadata - returning http status code 200");
+					return "200";
+				}
+				else {
+					// object does not have metadata
+					logger.debug("object does not have metadata - returning http status code ");
+					return "204";
+				}
+			}
+			else {
+				// object is not present in the database
+				logger.debug("object not present in the database - returning http status code 404");
+				return "404";
+			}
+		}
+		catch (SQLException e) {
+			logger.debug("SQLException: "+e.getLocalizedMessage());
+			e.printStackTrace();
+			logger.debug("returning http status code 500");
+			return "500";
+			
+		}
+		catch (WrongStatementException e) {
+			logger.debug("WrongStatementException: "+e.getLocalizedMessage());
+			e.printStackTrace();
+			logger.debug("returning http status code 500");
+		}
+		// we should at least return something... so we return the code for "Object not found"
+		return "404";
+	}
+	
 }

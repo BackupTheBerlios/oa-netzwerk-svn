@@ -81,10 +81,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			stmtconn.loadStatement (DBAccessNG.selectFromDB().LoginData (stmtconn.connection, name));	
 			this.result = stmtconn.execute ( );
 			
-			// log warnings
-			if (this.result.getWarning ( ) != null)
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			// extract data from db response
 			while(this.result.getResultSet ( ).next ( )) {
@@ -245,9 +242,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 						stmtconn.connection, name, password, email));
 				this.result = stmtconn.execute();
 
-				if (this.result.getWarning ( ) != null) 
-					for (Throwable warning : result.getWarning ( ))
-						logger.warn (warning.getLocalizedMessage ( ));
+				logWarnings();
 
 				stmtconn.commit();
 
@@ -257,9 +252,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 
 				this.result = stmtconn.execute();
 
-				if (this.result.getWarning ( ) != null) 
-					for (Throwable warning : result.getWarning ( ))
-						logger.warn (warning.getLocalizedMessage ( ));
+				logWarnings();
 				
 				if (this.result.getResultSet().next()) {
 
@@ -347,9 +340,7 @@ public class LoginData extends AbstractKeyWordHandler implements KeyWord2Databas
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().LoginData(stmtconn.connection, name));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			if (this.result.getUpdateCount ( ) < 1) {
 				stmtconn.rollback ( );

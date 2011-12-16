@@ -300,6 +300,18 @@ public class RestServerReadOnly extends HttpServlet implements Serializable {
 		this.out.write (this.processRequest (req, HttpVerbEnum.DELETE));
 	}
 	
+	
+	@Override
+	protected void doHead (HttpServletRequest req, HttpServletResponse res) throws IOException {
+		
+		this.response = res;
+		this.setOANResponseHeader ( );
+		
+		this.out = this.response.getWriter ( );
+		this.out.write (this.processRequest (req, HttpVerbEnum.HEAD));
+	}
+	
+	
 	/**
 	 * The response's header will be set here.
 	 */

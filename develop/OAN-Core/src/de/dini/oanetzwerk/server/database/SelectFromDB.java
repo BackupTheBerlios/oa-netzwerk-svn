@@ -195,4 +195,8 @@ public interface SelectFromDB {
 	public abstract PreparedStatement getPeculiarAndOutdatedObjects(Connection connection, BigDecimal repository_id) throws SQLException;
 
 	public abstract PreparedStatement getPeculiarAndOutdatedObjects(Connection connection) throws SQLException;
+
+	public abstract PreparedStatement GetPersonsPerObjectField(Connection connection, String objectField) throws SQLException;
+
+	public abstract PreparedStatement hasEntryForObjectID(Connection connection, String table) throws SQLException;
 }

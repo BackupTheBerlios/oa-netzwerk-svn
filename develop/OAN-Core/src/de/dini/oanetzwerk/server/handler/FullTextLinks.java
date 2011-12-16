@@ -83,9 +83,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			stmtconn.loadStatement (dbng.deleteFromDB().FullTextLinks (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null)
-				for (Throwable warning : this.result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				
@@ -189,9 +187,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			stmtconn.loadStatement (dbng.selectFromDB().FullTextLinks (stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null)
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			RestEntrySet entrySet;
 			boolean resultSetWasEmpty = true;
@@ -354,9 +350,7 @@ public class FullTextLinks extends AbstractKeyWordHandler implements KeyWord2Dat
 			
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null)
-				for (Throwable warning : this.result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			stmtconn.commit ( );
 			stmtconn.loadStatement (dbng.selectFromDB().FullTextLinks (stmtconn.connection, object_id));

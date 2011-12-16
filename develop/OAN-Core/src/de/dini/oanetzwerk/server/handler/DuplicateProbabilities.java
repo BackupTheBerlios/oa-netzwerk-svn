@@ -79,9 +79,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			stmtconn.loadStatement (DBAccessNG.deleteFromDB().DuplicatePossibilities(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			if (this.result.getUpdateCount ( ) < 1) {
 				// da eh nichts gelöscht wurde, entsprechende Daten wieder in Ursprungszustand versetzen
@@ -181,9 +179,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 			stmtconn.loadStatement (DBAccessNG.selectFromDB().DuplicateProbabilities(stmtconn.connection, object_id));
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 
 			counter = 0;
 			
@@ -345,9 +341,7 @@ public class DuplicateProbabilities extends AbstractKeyWordHandler implements Ke
 						percentage, reverse_percentage));
 				this.result = stmtconn.execute();
 				
-				if (this.result.getWarning ( ) != null) 
-					for (Throwable warning : result.getWarning ( ))
-						logger.warn (warning.getLocalizedMessage ( ));
+				logWarnings();
 				
 				if (this.result.getUpdateCount() < 1) {
 					errorHappended = true;

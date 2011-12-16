@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import de.dini.oanetzwerk.server.database.DeleteFromDB;
@@ -359,6 +360,29 @@ public class DeleteFromDBPostgres implements DeleteFromDB {
 			"	)");
 
 		return preparedstmt;
+	}
+	
+	/**
+	 * Creates a batch deletion query for persons.
+	 * <br />
+	 * <b>Attention:</b> Please check that your batchSize is between 1 and 10000, otherwise intended behaviour can not be guaranteed
+	 * @param batchSize Value between 1 und 10000
+	 * @return PreparedStatement Database Query for deleting a set of persons
+	 */
+	@Override
+	public PreparedStatement PersonAsBatch(Connection connection, int batchSize) throws SQLException {
+		if (batchSize <= 0 || batchSize > 10000) {
+			batchSize = 100;
+		}
+		String sql = "DELETE FROM \"Person\" WHERE person_id IN (";
+		for (int i = 0; i < batchSize; i++) {
+			sql += "?,";
+		}
+		// remove trailing comma
+		sql = StringUtils.removeEnd(sql, ",");
+		sql += ")";
+		
+		return connection.prepareStatement(sql);
 	}
 
 	/**

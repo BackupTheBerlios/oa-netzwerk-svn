@@ -92,4 +92,5 @@ public interface DeleteFromDB {
 
 	public abstract PreparedStatement Repository_Sets(Connection connection, BigDecimal repository_id) throws SQLException;
 	public abstract PreparedStatement DeleteFromTableByField(Connection connection, String table, String field, String joinTable, String joinTableField, String joinTableFilterField, BigDecimal joinTableParam) throws SQLException;
+	public abstract PreparedStatement PersonAsBatch(Connection connection, int batchSize) throws SQLException;
 }

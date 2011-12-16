@@ -1,5 +1,7 @@
 package de.dini.oanetzwerk.server.database;
 
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
 
@@ -317,6 +319,49 @@ public class MetadataDBMapper {
 //		}
 //		hmf.setLanguageCounter(hmf.getLanguageList().size());
 
+		
+	}
+	
+	public static boolean objectAvailable(BigDecimal object_id, MultipleStatementConnection stmtconn) throws SQLException {
+		QueryResult qr;
+		
+		PreparedStatement stmt = DBAccessNG.selectFromDB().ObjectEntry(stmtconn.connection, object_id);
+		stmt.setBigDecimal(1, object_id);
+		stmtconn.loadStatement(stmt);
+		qr = stmtconn.execute();
+		if (qr.getResultSet().next() == true) {
+			// next returns true if object is present in the database
+			return true;
+		}
+		return false;
+		
+	}
+
+	public static boolean aggregatedMetadataForObjectPresent(BigDecimal object_id, MultipleStatementConnection stmtconn) throws SQLException {
+		String[] tables =  new String[] {
+				"Titles",
+				"Object2Author",
+				"Keywords",
+				"DDC_Classification",
+				"DINI_Set_Classification",
+				"Object2Keywords",
+				"Object2Language"
+		};
+		
+		for (String table : tables) {
+			QueryResult queryResult;
+			
+			PreparedStatement stmt = DBAccessNG.selectFromDB().hasEntryForObjectID (stmtconn.connection, table);
+			stmt.setBigDecimal(1, object_id);
+			stmtconn.loadStatement (stmt);
+			queryResult = stmtconn.execute ( );
+			// Auswertung der Titel
+			queryResult.getResultSet ( ).next();
+			if (!queryResult.getResultSet().getBigDecimal(1).equals(new BigDecimal(0))){
+				return true; // exit on first occurrence of metadata
+			}
+		}
+		return false;
 		
 	}
 }

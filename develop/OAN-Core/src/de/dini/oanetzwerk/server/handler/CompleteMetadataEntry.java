@@ -117,9 +117,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			stmtconn.loadStatement (DBAccessNG.selectFromDB().DuplicateProbabilities (stmtconn.connection, cmf.getOid()));
 			QueryResult dupproResult = stmtconn.execute ( );
 			
-			if (dupproResult.getWarning ( ) != null)
-				for (Throwable warning : dupproResult.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings(dupproResult);
 			
 			int num = 0;
 			while (dupproResult.getResultSet ( ).next ( )) {
@@ -143,9 +141,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			stmtconn.loadStatement (DBAccessNG.selectFromDB().FullTextLinks (stmtconn.connection, cmf.getOid()));
 			QueryResult ftlResult = stmtconn.execute ( );
 			
-			if (ftlResult.getWarning ( ) != null)
-				for (Throwable warning : ftlResult.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings(ftlResult);
 			
 			while (ftlResult.getResultSet ( ).next ( )) {				
 				FullTextLink ftl = new FullTextLink();					
@@ -161,9 +157,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			stmtconn.loadStatement (DBAccessNG.selectFromDB().RepositoryData(stmtconn.connection, cmf.getOid()));
 			QueryResult repdataResult = stmtconn.execute ( );
 			
-			if (repdataResult.getWarning ( ) != null)
-				for (Throwable warning : repdataResult.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings(repdataResult);
 			
 			while (repdataResult.getResultSet ( ).next ( )) {
 				RepositoryData repData = new RepositoryData(cmf.getOid());
@@ -182,9 +176,7 @@ public class CompleteMetadataEntry extends AbstractKeyWordHandler implements Key
 			stmtconn.loadStatement (DBAccessNG.selectFromDB().InterpolatedDDCClassification(stmtconn.connection, cmf.getOid()));
 			QueryResult interpolatedDDCResult = stmtconn.execute ( );
 			
-			if (interpolatedDDCResult.getWarning ( ) != null)
-				for (Throwable warning : interpolatedDDCResult.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings(interpolatedDDCResult);
 			
 			while (interpolatedDDCResult.getResultSet ( ).next ( )) {
 				InterpolatedDDCClassification interpolatedDDC = new InterpolatedDDCClassification();				

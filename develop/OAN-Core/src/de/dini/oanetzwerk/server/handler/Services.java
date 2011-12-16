@@ -115,9 +115,7 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 			
 			this.result = stmtconn.execute ( );
 			
-			if (this.result.getWarning ( ) != null) 
-				for (Throwable warning : result.getWarning ( ))
-					logger.warn (warning.getLocalizedMessage ( ));
+			logWarnings();
 			
 			boolean foundOne = false;			
 			while (this.result.getResultSet ( ).next ( )) {
