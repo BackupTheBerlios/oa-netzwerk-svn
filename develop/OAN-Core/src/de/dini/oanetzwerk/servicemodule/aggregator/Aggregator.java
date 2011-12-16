@@ -579,6 +579,7 @@ public class Aggregator {
 		// HEAD-Anfrage auf "InternalMetadataEntry"
 		
 		if (logger.isDebugEnabled()) logger.debug("BEFORE HEAD InternalMetadataEntry/"+this.currentRecordId);
+		// die HEAD Methode gibt als bislang einzige Methode ausschließlich einen HTTP Status Code als INT zurück!
 		int headRequestHTTPStatusCode = restclient.sendHeadRestMessage();
 		if (logger.isDebugEnabled()) logger.debug("AFTER HEAD InternalMetadataEntry/"+this.currentRecordId);		
 		
