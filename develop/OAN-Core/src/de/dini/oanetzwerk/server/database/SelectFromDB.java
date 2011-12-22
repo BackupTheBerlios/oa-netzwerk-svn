@@ -132,6 +132,8 @@ public interface SelectFromDB {
 
 	public abstract PreparedStatement ServicesOrder(Connection connection, BigDecimal service_id) throws SQLException;
 
+	public abstract PreparedStatement Services(Connection connection) throws SQLException;
+	
 	public abstract PreparedStatement Services(Connection connection, BigDecimal service_id) throws SQLException;
 
 	public abstract PreparedStatement Services(Connection connection, String name) throws SQLException;

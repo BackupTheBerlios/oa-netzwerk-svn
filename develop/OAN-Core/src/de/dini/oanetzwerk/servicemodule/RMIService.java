@@ -175,20 +175,13 @@ public abstract class RMIService implements IService {
 		
 		logger.info("Updating job status to '" + status + "' for job with name " + jobName);
 		
-
 		RestMessage rms;
 		RestMessage result = null;
 		rms = new RestMessage();
 		rms.setKeyword(RestKeyword.ServiceJob);
 		rms.addEntrySet(new RestEntrySet());
 
-		System.out.println("props == null : " + restclientProps == null);
-		try {
-
-
-			
-			System.out.println("username: " + restclientProps.getProperty("username"));
-						
+		try {				
 			
 //			RestClient client = RestClient.createRestClient(props.getProperty("host"), "ServiceJob/" + jobName + "/" + status, props.getProperty("username"),
 //			                props.getProperty("password"));
@@ -196,19 +189,13 @@ public abstract class RMIService implements IService {
 			RestClient client = RestClient.createRestClient(restclientProps, "ServiceJob/" + jobName + "/" + status, restclientProps.getProperty("username"),
 							restclientProps.getProperty("password"));
 							
-			logger.info("YESSS");
-			System.out.println("client null : " + client == null);
 			
 			result = client.sendPostRestMessage(rms);
-			System.out.println("result null : " + result == null);
 
-			logger.info("YESSS1");
 			if (result.getStatus() != RestStatusEnum.OK) {
-				logger.info("YESSS7");
 				logger.error("/ServiceJob response failed: " + rms.getStatus() + "(" + rms.getStatusDescription() + ")");
 				return;
 			}
-			logger.info("YESSS8");
 		} catch (UnsupportedEncodingException e) {
 
 			logger.warn("Could not update status of service job! ", e);

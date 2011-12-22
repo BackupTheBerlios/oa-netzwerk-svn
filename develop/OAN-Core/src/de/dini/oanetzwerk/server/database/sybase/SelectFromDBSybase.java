@@ -389,6 +389,24 @@ public class SelectFromDBSybase implements SelectFromDB {
 		return preparedstmt;
 	}
 
+	
+	/**
+	 * Fetch all information, including the service-id, for all services
+	 * 
+	 * 
+	 * @param connection
+	 * @param service_id
+	 * @return
+	 * @throws SQLException
+	 */
+	
+	public PreparedStatement Services(Connection connection) throws SQLException {
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT * FROM dbo.Services");
+
+		return preparedstmt;
+	}
+	
+	
 	/**
 	 * Fetch all information, including the service-id, for the service
 	 * specified by the service_id

@@ -98,7 +98,7 @@ public class Services extends AbstractKeyWordHandler implements KeyWord2Database
 			
 			if (bGetAll) {
 				
-				stmtconn.loadStatement (stmtconn.connection.prepareStatement ("SELECT * FROM dbo.Services"));
+				stmtconn.loadStatement (DBAccessNG.selectFromDB().Services(stmtconn.connection));
 				
 			} else {
 				

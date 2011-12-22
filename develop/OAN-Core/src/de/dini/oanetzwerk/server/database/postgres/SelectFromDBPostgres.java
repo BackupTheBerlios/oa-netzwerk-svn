@@ -375,6 +375,23 @@ public class SelectFromDBPostgres implements SelectFromDB {
 
 		return preparedstmt;
 	}
+	
+	/**
+	 * Fetch all information, including the service-id, for all services
+	 * 
+	 * 
+	 * @param connection
+	 * @param service_id
+	 * @return
+	 * @throws SQLException
+	 */
+	
+	public PreparedStatement Services(Connection connection) throws SQLException {
+
+		PreparedStatement preparedstmt = connection.prepareStatement("SELECT * FROM \"Services\" ORDER BY service_id");
+
+		return preparedstmt;
+	}
 
 	/**
 	 * Fetch all information, including the service-id, for the service
@@ -394,6 +411,7 @@ public class SelectFromDBPostgres implements SelectFromDB {
 		return preparedstmt;
 	}
 
+	
 	/**
 	 * Fetch the id of the service that is predecessor to the service specified
 	 * by service_id. Used in conjunction with workflow queries.
