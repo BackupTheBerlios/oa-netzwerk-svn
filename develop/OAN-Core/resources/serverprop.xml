@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 
-<properties> 
-	<comment>All harvester specific configurations must be entered here</comment>
-	<!-- Enter the package where the REST-handlers will found. Don't forget the final dot! -->
-	<entry key="handlerpath">de.dini.oanetzwerk.server.handler.</entry>
-	<!-- Enter the datasource for the jndi-lookup here (without java:comp/env) -->
-	<entry key="datasource"></entry>
-</properties>
