@@ -111,23 +111,24 @@ dt {
 }
 #div_option_tabs div {
   background:#EEEEEE none repeat scroll 0 50%;
-  border-left:1px solid gray;
-  border-right:1px solid gray;
-  border-top:1px solid gray;
+  border-left:1px solid #B9B9B9;
+  border-right:1px solid #B9B9B9;
+  border-top:1px solid #B9B9B9;
   float: left;
-  padding-left:5px;
-  padding-right:5px;
-  padding-bottom:5px;
+  padding-left:8px;
+  padding-right:8px;
+  padding-bottom:8px;
+  padding-top:6px;
   margin-left:5px;
   margin-right:5px;  
   
 }
 #div_search_widgets {
   background:#EEEEEE none repeat scroll 0;
-  border:1px solid gray;
+  border:1px solid #C2C2C2;
   float:left;
-  margin-left:40px;
-  padding:5px;
+  margin-left:30px;
+  padding:20px;
 }
 #box_grey{
 	background-color: #DDDDDD;
@@ -204,6 +205,40 @@ dt {
   font-weight: bold;
 }
 
+input.normal {
+	background-color: #F8F8F8;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: bold;
+	color: #444444;
+	margin-top: 20px;
+	margin-right:10px;
+	margin-left: 10px;
+	margin-bottom: 0px;
+	border: 1px #D4D4D4 solid;
+	min-height: 35px;
+	min-width:  160px;
+	
+}
+
+input.hover{
+	background-color: #F8F8F8;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: bold;
+	color: #222222;
+	margin-top: 20px;
+	margin-right:10px;
+	margin-left: 10px;
+	margin-bottom: 0px;
+	border: 1px #B4B4B4 solid;
+	min-height: 35px;
+	min-width:  160px;
+	
+}
+
+onmouseover="this.className='hover'"
+       
 /*
 .command_link_lupe {
   background: transparent url(../img/16x16_lupe.PNG) no-repeat scroll 0 100%;

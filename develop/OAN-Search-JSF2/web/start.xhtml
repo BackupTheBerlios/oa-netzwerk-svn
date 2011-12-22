@@ -29,9 +29,10 @@
 
 				<div id="div_search_widgets">
 					<h:inputText maxlength="2048" size="55" title="OAN-Suche" value="#{searchBean.strOneSlot}" />
-					<h:commandButton value="#{msg.find_meta}" action="#{searchBean.actionSearch2Button}" />
-				  <h:commandButton value="#{msg.find}" action="#{searchBean.actionSearchButton}" />
+					<h:commandButton styleClass="normal" value="#{msg.find_meta}" action="#{searchBean.actionSearch2Button}" onmouseover="this.className='hover'" onmouseout="this.className='normal'" />
+				    <h:commandButton styleClass="normal" value="#{msg.find}" action="#{searchBean.actionSearchButton}" onmouseover="this.className='hover'" onmouseout="this.className='normal'" />
 				</div>
+        
 
 				<t:div rendered='#{searchBean.strRepositoryFilterRID != ""}'>
 					<small><h:outputText value="#{msg.search_was_restricted}" />: </small><br />

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+
+<f:view>
+
+	<ui:composition template="templates/template.xhtml">
+	
+		<ui:define name="content">
+			<div 
+				style="
+					padding: 20px; 
+				
+					margin: 150px auto 0; 
+					text-align: center; 
+					width: 500px;
+				"
+			>
+				<h2>OA Plagiatsuche</h2>
+                <br />
+				<h:messages style="color:#33B300" /><br />
+				<h:form 
+					enctype="multipart/form-data" 
+					id="fileUpload" 
+					method="POST" 
+					style="
+						background-color: #EEE; 
+						border: 1px solid gray;
+						padding: 10px; 
+					"
+				>
+					<p align="left">Bitte wählen Sie ein Dokument aus (PDF-Format)</p> <br />
+					<t:inputFileUpload 
+						id="fileupload"
+   						accept="application/pdf"
+   						value="#{OAPSConnector.file}"
+   						storage="memory"
+   						required="true"
+   						maxlength="200000" 
+   					/>
+   					<br /><br />
+   					<p align="left">Bitte geben Sie Ihre Email-Adresse ein. Sie bekommen einen Link zugeschickt unter dem Sie den aktuellen Bearbeitungsstatus Ihres Dokuments einsehen können. </p><br/>
+   					<t:inputText id="userEmail" style="width: 250px;" value="#{OAPSConnector.bean.userEmail}" label="Ihre Email-Adresse" required="true" />
+   					<br /><br />
+   					<p align="left">Bitte geben Sie ein, in welcher Sprache Ihr Dokument verfasst wurde. </p><br />
+   					<t:selectOneListbox id="language" size="3" title="Welche Sprache hat Ihr Dokument?" binding="#{OAPSConnector.bean.language}">
+						<f:selectItem id="de" itemLabel="Deutsch" itemValue="de" />
+						<f:selectItem id="en" itemLabel="English" itemValue="en" />
+						<f:selectItem id="fr" itemLabel="Francais" itemValue="fr" />
+   					</t:selectOneListbox>
+   					<br />
+   					<br />
+   					<h:commandButton styleClass="normal" value="Hochladen" action="#{OAPSConnector.uploadFile}" onmouseover="this.className='hover'" onmouseout="this.className='normal'" />				
+				</h:form>
+			</div>
+		</ui:define>
+
+	</ui:composition>
+	
+
+</f:view>
+
+</body>
+
+</html>

@@ -13,7 +13,7 @@
 
 <t:div rendered="#{searchBean.hitlist.booleanListHitOIDNotEmpty}" >
 <div id="div_hitlist_scroller">
-		<h3><h:outputText value="#{msg.hitlist_scroller_title}"/>:&nbsp;<h:outputText value=" #{searchBean.hitlist.sizeListHitOID}"/></h3>
+		<h4><h:outputText value="#{msg.hitlist_scroller_title}"/>:&nbsp;<h:outputText value=" #{searchBean.hitlist.sizeListHitOID}"/></h4>
 		<t:dataScroller id="scroller_hitlist"
 	          for="thehitlist"
 	          fastStep="10"
@@ -25,18 +25,18 @@
 	          paginatorMaxPages="9"
 	          paginatorTableClass="paginator"
 	          paginatorActiveColumnStyle="font-weight:bold;">
-			<f:facet name="previous">
-				<h:graphicImage library="img" name="arrow_previous.png" alt="previous" title="Previous"/>
-			</f:facet>
-			<f:facet name="next">
-				<h:graphicImage library="img" name="arrow_next.png" alt="next" title="Next"/>
-			</f:facet>
-			<f:facet name="fastforward">
-				<h:graphicImage library="img" name="arrow_fastforward.png" alt="fastforward" title="Fastforward"/>
-			</f:facet>
-			<f:facet name="fastrewind">
-				<h:graphicImage library="img" name="arrow_fastrewind.png" alt="fastrewind" title="Fastrewind"/>
-			</f:facet>
+                    <f:facet name="first">
+                      <t:outputText value="Erste"></t:outputText>
+                    </f:facet>
+                    <f:facet name="last">
+                      <t:outputText value="Letzte"></t:outputText>
+                    </f:facet>
+                    <f:facet name="previous">
+                      <t:outputText value="Vorige"></t:outputText>
+                    </f:facet>
+                    <f:facet name="next">
+                      <t:outputText value="Nächste"></t:outputText>
+                    </f:facet>
 		</t:dataScroller>
 </div>
 <div id="div_hitlist_medium">
