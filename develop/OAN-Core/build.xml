@@ -304,7 +304,7 @@
 			<exclude name="**/dcgenerator/*.java" />
 			<exclude name="**/ResourceRealm.java" />
 			<exclude name="**/InspectorServlet.java" />
-			<exclude name="**/Statistics.java" />
+			<exclude name="**/DataStatistics.java" />
 			<exclude name="**/Test*.java" />
 			<exclude name="**/oai/**/*" />
 		</javac>
@@ -440,7 +440,7 @@
 			<fileset dir="${build.harvester}" />
 			<manifest>
 				<!--attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.RunHarvester" /-->
-				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.RunHarvester" />
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.harvester.HarvesterRMI" />
 				<attribute name="Class-Path" value="${cp}" />
 			</manifest>
 		</jar>
@@ -492,7 +492,7 @@
 		<jar jarfile="${build}/Aggregator.jar">
 			<fileset dir="${build.aggregator}" />
 			<manifest>
-				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.aggregator.RunAggregator" />
+				<attribute name="Main-Class" value="de.dini.oanetzwerk.servicemodule.aggregator.AggregatorRMI" />
 				<attribute name="Class-Path" value="${cp}" />
 			</manifest>
 		</jar>
@@ -524,7 +524,9 @@
 		<javac destdir="${build.markereraser}" debug="true" debuglevel="lines,vars,source" srcdir="${src}">
 			<classpath refid="classpath.markereraser" />
 			<include name="**/markerAndEraser/*.java" />
+			<include name="**/servicemodule/*.java" />
 			<include name="**/codec/*.java" />
+			<include name="**/exceptions/*.java" />
 			<include name="**/RestClient.java" />
 			<include name="**/HelperMethods.java" />
 			<exclude name="**/server/**" />
@@ -852,6 +854,7 @@
 			<classpath refid="classpath.oaipmh" />
 			<include name="**/oaipmh/**" />
 			<include name="**/server/database/*.java" />
+			<include name="**/server/database/postgres/*.java" />
 			<exclude name="**/oaipmh/tokencleaner/**" />
 			<exclude name="**/server/*.java" />
 			<exclude name="**/_2/*.java" />
