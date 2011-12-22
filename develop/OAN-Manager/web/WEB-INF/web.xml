@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-	id="WebApp_ID" version="2.5">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 	<display-name>OAN-Manager</display-name>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
@@ -90,7 +88,7 @@
 
 
 	<!-- General Application Parameters -->
-	
+
 	<context-param>
 		<param-name>oanmanager.PROJECT_NAME</param-name>
 		<param-value>OAN-Manager</param-value>
@@ -158,21 +156,23 @@
 	</filter-mapping>
 
 	<!-- MyFaces Listener -->
-<!--	<listener>-->
-<!--		<listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>-->
-<!--	</listener>-->
+	<!--	<listener>-->
+	<!--		<listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>-->
+	<!--	</listener>-->
 
 	<!-- Quartz Listener -->
 	<listener>
 		<listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
 	</listener>
 
-<!--	<listener>-->
-<!--		<listener-class>de.dini.oanetzwerk.admin.SchedulerControl</listener-class>-->
-<!--	</listener>-->
+
+
+	<!--	<listener>-->
+	<!--		<listener-class>de.dini.oanetzwerk.admin.SchedulerControl</listener-class>-->
+	<!--	</listener>-->
 
 	<!-- REALM Start -->
-	
+
 	<security-constraint>
 		<display-name>Security Constraint</display-name>
 		<web-resource-collection>
@@ -188,9 +188,9 @@
 			<role-name>validatorManager</role-name>
 			<role-name>userManager</role-name>
 			<role-name>reportManager</role-name>
-<!-- 			<role-name>oasysop</role-name> -->
+			<!-- 			<role-name>oasysop</role-name> -->
 		</auth-constraint>
-		
+
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
 		</user-data-constraint>
@@ -226,58 +226,58 @@
 	<security-role>
 		<description>OAN - Report Management</description>
 		<role-name>reportManager</role-name>
-	</security-role>				
+	</security-role>
 	<!-- 
 	<security-role>
 		<description>OANetzwerk-SysOP</description>
 		<role-name>oasysop</role-name>
 	</security-role>
 	-->
-	
+
 	<!--  Userzugriff auf einzelne Seiten -->
 	<security-constraint>
-  		<web-resource-collection>
-    		<web-resource-name>repositoryManager</web-resource-name>
-   		 	<url-pattern>/pages/repositories_main.xhtml</url-pattern>
-   		 	<url-pattern>/pages/repositories_add.xhtml</url-pattern>
-  		</web-resource-collection>
-  		<auth-constraint>
-    		<role-name>repositoryManager</role-name>
-    		<role-name>oanadmin</role-name>
-  		</auth-constraint>
+		<web-resource-collection>
+			<web-resource-name>repositoryManager</web-resource-name>
+			<url-pattern>/pages/repositories_main.xhtml</url-pattern>
+			<url-pattern>/pages/repositories_add.xhtml</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>repositoryManager</role-name>
+			<role-name>oanadmin</role-name>
+		</auth-constraint>
 	</security-constraint>
 	<security-constraint>
-  		<web-resource-collection>
-    		<web-resource-name>serviceManager</web-resource-name>
-   		 	<url-pattern>/pages/services_main.xhtml</url-pattern>
-   		 	<url-pattern>/pages/services_schedule.xhtml</url-pattern>
-   		 	<url-pattern>/pages/services_schedule_add.xhtml</url-pattern>
-  		</web-resource-collection>
-  		<auth-constraint>
-    		<role-name>serviceManager</role-name>
-    		<role-name>oanadmin</role-name> 
-  		</auth-constraint>
+		<web-resource-collection>
+			<web-resource-name>serviceManager</web-resource-name>
+			<url-pattern>/pages/services_main.xhtml</url-pattern>
+			<url-pattern>/pages/services_schedule.xhtml</url-pattern>
+			<url-pattern>/pages/services_schedule_add.xhtml</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>serviceManager</role-name>
+			<role-name>oanadmin</role-name>
+		</auth-constraint>
 	</security-constraint>
 	<security-constraint>
-  		<web-resource-collection>
-    		<web-resource-name>validatorManager</web-resource-name>
-   		 	<url-pattern>/pages/validation_overview.xhtml</url-pattern>
-   		 	<url-pattern>/pages/validation_overview.xhtml</url-pattern>
-  		</web-resource-collection>
-  		<auth-constraint>
-    		<role-name>validatorManager</role-name>
-    		<role-name>oanadmin</role-name>
-  		</auth-constraint>
+		<web-resource-collection>
+			<web-resource-name>validatorManager</web-resource-name>
+			<url-pattern>/pages/validation_overview.xhtml</url-pattern>
+			<url-pattern>/pages/validation_overview.xhtml</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>validatorManager</role-name>
+			<role-name>oanadmin</role-name>
+		</auth-constraint>
 	</security-constraint>
 	<security-constraint>
-  		<web-resource-collection>
-    		<web-resource-name>userManager</web-resource-name>
-   		 	<url-pattern>/pages/users_main.xhtml</url-pattern>
-   		 	<url-pattern>/pages/users_add.xhtml</url-pattern>
-  		</web-resource-collection>
-  		<auth-constraint>
-    		<role-name>userManager</role-name>
-    		<role-name>oanadmin</role-name>
-  		</auth-constraint>
+		<web-resource-collection>
+			<web-resource-name>userManager</web-resource-name>
+			<url-pattern>/pages/users_main.xhtml</url-pattern>
+			<url-pattern>/pages/users_add.xhtml</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>userManager</role-name>
+			<role-name>oanadmin</role-name>
+		</auth-constraint>
 	</security-constraint>
 </web-app>

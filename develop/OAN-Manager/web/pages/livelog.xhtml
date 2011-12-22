@@ -38,18 +38,9 @@
 
           <h:form id="serviceForm" style="margin-top:5px;">
 
-            <h:selectOneMenu id="service" value="#{log.chosenService}" onchange="document.getElementById('serviceForm:changeService').click();">
-              <f:selectItem itemLabel="Dienst wählen" itemValue="null" />
-              <f:selectItem itemLabel="Harvester" itemValue="#{log.services[0].service}" />
-              <f:selectItem itemLabel="Aggregator" itemValue="#{log.services[1].service}" />
-              <f:selectItem itemLabel="Marker" itemValue="#{log.services[2].service}" />
-              <f:selectItem itemLabel="Fulltextlink Finder" itemValue="#{log.services[3].service}" />
-              <f:selectItem itemLabel="Language Detection" itemValue="#{log.services[4].service}" />
-              <f:selectItem itemLabel="Shingling" itemValue="#{log.services[5].service}" />
-              <f:selectItem itemLabel="Indexing" itemValue="#{log.services[6].service}" />
-              <f:selectItem itemLabel="Classifier" itemValue="#{log.services[7].service}" />
-              <f:selectItem itemLabel="Duplicate Check" itemValue="#{log.services[8].service}" />
-            </h:selectOneMenu>
+             <h:selectOneMenu id="service" value="#{log.chosenService}" escape="#{false}" onchange="document.getElementById('serviceForm:changeService').click();" >
+                <t:selectItems value="#{scheduling.servicesForPresentation}" var="service" itemLabel="#{service.prettyName}" itemValue="#{service.service}" />
+             </h:selectOneMenu>
 
             <h:commandButton id="changeService" type="submit" action="#{log.readLogFile()}" value="Log einsehen" style="display:none;"></h:commandButton>
             <h:commandButton type="button" onclick="toggleLiveLog(); return false;" value="LiveLog stoppen"></h:commandButton>
@@ -69,7 +60,7 @@
           <h:form id="form" prependId="false" style="margin-top:5px;">
 
             <t:div id="layer">
-              <h:inputTextarea  id="out" value="#{log.update}" cols="150" rows="72" wrap="physical"
+              <h:inputTextarea  id="out" value="#{log.update}" cols="150" rows="50" wrap="physical"
                 title="Log Output" required="false" />
             </t:div>
             <br />
