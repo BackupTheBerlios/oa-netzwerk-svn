@@ -1,0 +1,15 @@
+SELECT setval('"Object_object_id_seq"', max(object_id)) FROM "Object"
+SELECT setval('"DINI_Set_Categories_DINI_set_id_seq"', max("DINI_set_id")) FROM "DINI_Set_Categories"
+SELECT setval('"Keywords_keyword_id_seq"', max(keyword_id)) FROM "Keywords"
+SELECT setval('"Language_language_id_seq"', max(language_id)) FROM "Language"
+SELECT setval('"Person_person_id_seq"', max(person_id)) FROM "Person"
+SELECT setval('"Repositories_repository_id_seq"', max(repository_id)) FROM "Repositories"
+SELECT setval('"Services_service_id_seq"', max(service_id)) FROM "Services"
+SELECT setval('"TypeValue_type_id_seq"', max(type_id)) FROM "TypeValue"
+SELECT setval('"UsageData_Metrics_metrics_id_seq"', max(metrics_id)) FROM "UsageData_Metrics"
+
+SELECT setval('"Iso639Language_language_id_seq"', max(language_id)) FROM "Iso639Language"
+
+SELECT setval('"Object_object_id_seq"', max(object_id)) FROM "Object"
+SELECT setval('"RawData_object_id_seq"', max(object_id)) FROM "RawData"
+SELECT setval('"WorkflowDB_workflow_id_seq"', max(workflow_id)) FROM "WorkflowDB"

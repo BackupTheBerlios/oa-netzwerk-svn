@@ -369,10 +369,11 @@ insert INTO "Services" (service_id, name) values (1, 'Harvester');
 insert INTO "Services" (service_id, name) values (2, 'Aggregator');
 insert INTO "Services" (service_id, name) values (3, 'MarkAndErase');
 insert INTO "Services" (service_id, name) values (4, 'Fulltextlink');
-insert INTO "Services" (service_id, name) values (5, 'OCR');
+insert INTO "Services" (service_id, name) values (5, 'Shingle');
 insert INTO "Services" (service_id, name) values (6, 'LanguageDetection');
-insert INTO "Services" (service_id, name) values (7, 'Classifier');
-insert INTO "Services" (service_id, name) values (8, 'DuplicateCheck');
+insert INTO "Services" (service_id, name) values (7, 'Index');
+insert INTO "Services" (service_id, name) values (8, 'Classifier');
+insert INTO "Services" (service_id, name) values (9, 'DuplicateCheck');
 
 
 insert INTO "ServicesOrder" (service_id, predecessor_id) values (1, null);
