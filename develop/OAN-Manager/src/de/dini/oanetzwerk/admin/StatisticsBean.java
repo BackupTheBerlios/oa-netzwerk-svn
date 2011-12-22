@@ -87,60 +87,61 @@ public class StatisticsBean {
 	}
 	
 	public HashMap<Long, ArrayList<String>> getPeculiarAndOutdatedCount(Long repoID) {
-		if (this.peculiarAndOutdatedCount != null) {
-			if (this.repositoryID != null) {
-				HashMap<Long, ArrayList<String>> retval = new HashMap<Long, ArrayList<String>>();
-				retval.put(repoID, this.peculiarAndOutdatedCount.get(repoID));
-				return retval;
-			}
-			else {
-				return this.peculiarAndOutdatedCount;
-			}
-		}
-		String result = "";
-		if (repoID != null) {
-			result = restConnector.prepareRestTransmission("Statistics/getMarkedPublicationsCount/"+repoID.toString()).GetData();
-		}
-		else {
-			result = restConnector.prepareRestTransmission("Statistics/getMarkedPublicationsCount").GetData();
-		}
-		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
-		HashMap<Long, ArrayList<String>> returnvalues = new HashMap<Long, ArrayList<String>>();
-		for (RestEntrySet res : rms.getListEntrySets()) {
-
-			Iterator<String> it = res.getKeyIterator();
-			String key = "";
-			ArrayList<String> data = new ArrayList<String>();
-			String peculiar = "";
-			String outdated  = "";
-			String repositoryID = "";
-			String repositoryName = "";
-			while (it.hasNext()) {
-
-				key = it.next();
-
-				if (key.equalsIgnoreCase("peculiar")) {
-					peculiar = res.getValue(key);
-				}
-				else if (key.equalsIgnoreCase("outdated")) {
-					outdated = res.getValue(key);
-				}
-				else if (key.equalsIgnoreCase("repositoryID")) {
-					repositoryID = res.getValue(key);
-				}
-				else if (key.equalsIgnoreCase("repositoryName")) {
-					repositoryName = res.getValue(key);
-				}
-				
-			}
-			data.add(peculiar);
-			data.add(outdated);
-			data.add(repositoryID);
-			data.add(repositoryName);
-			returnvalues.put(new Long(repositoryID), data);
-		}
-		this.peculiarAndOutdatedCount = returnvalues;
-		return returnvalues;
+		return new HashMap<Long, ArrayList<String>>();
+//		if (this.peculiarAndOutdatedCount != null) {
+//			if (this.repositoryID != null) {
+//				HashMap<Long, ArrayList<String>> retval = new HashMap<Long, ArrayList<String>>();
+//				retval.put(repoID, this.peculiarAndOutdatedCount.get(repoID));
+//				return retval;
+//			}
+//			else {
+//				return this.peculiarAndOutdatedCount;
+//			}
+//		}
+//		String result = "";
+//		if (repoID != null) {
+//			result = restConnector.prepareRestTransmission("Statistics/getMarkedPublicationsCount/"+repoID.toString()).GetData();
+//		}
+//		else {
+//			result = restConnector.prepareRestTransmission("Statistics/getMarkedPublicationsCount").GetData();
+//		}
+//		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+//		HashMap<Long, ArrayList<String>> returnvalues = new HashMap<Long, ArrayList<String>>();
+//		for (RestEntrySet res : rms.getListEntrySets()) {
+//
+//			Iterator<String> it = res.getKeyIterator();
+//			String key = "";
+//			ArrayList<String> data = new ArrayList<String>();
+//			String peculiar = "";
+//			String outdated  = "";
+//			String repositoryID = "";
+//			String repositoryName = "";
+//			while (it.hasNext()) {
+//
+//				key = it.next();
+//
+//				if (key.equalsIgnoreCase("peculiar")) {
+//					peculiar = res.getValue(key);
+//				}
+//				else if (key.equalsIgnoreCase("outdated")) {
+//					outdated = res.getValue(key);
+//				}
+//				else if (key.equalsIgnoreCase("repositoryID")) {
+//					repositoryID = res.getValue(key);
+//				}
+//				else if (key.equalsIgnoreCase("repositoryName")) {
+//					repositoryName = res.getValue(key);
+//				}
+//				
+//			}
+//			data.add(peculiar);
+//			data.add(outdated);
+//			data.add(repositoryID);
+//			data.add(repositoryName);
+//			returnvalues.put(new Long(repositoryID), data);
+//		}
+//		this.peculiarAndOutdatedCount = returnvalues;
+//		return returnvalues;
 	}
 	
 	
@@ -220,37 +221,37 @@ public class StatisticsBean {
 	}
 	
 	public HashMap<Long, Long> getRecordsPerRepository() {
-		
-		if (this.recordsPerRepository != null && !this.recordsPerRepository.isEmpty()) {
-			return this.recordsPerRepository;
-		}
-		String result = restConnector.prepareRestTransmission("Statistics/RecordsPerRepository").GetData();
-		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
-		HashMap<Long, Long> returnvalues = new HashMap<Long, Long>();
-		Long repository_id = null;
-		Long recordCount = null;
-		for (RestEntrySet res : rms.getListEntrySets()) {
-
-			Iterator<String> it = res.getKeyIterator();
-			String key = "";
-
-			while (it.hasNext()) {
-
-				key = it.next();
-
-				if (key.equalsIgnoreCase("repository_id")) {
-					repository_id = new Long(res.getValue(key));
-				}
-				else if (key.equalsIgnoreCase("recordCount")) {
-					recordCount = new Long(res.getValue(key));
-				}
-			}
-			if (repository_id != null && recordCount != null) {
-				returnvalues.put(repository_id, recordCount);
-			}
-		}
-		this.recordsPerRepository = returnvalues;
-		return returnvalues;
+		return new HashMap<Long, Long>();
+//		if (this.recordsPerRepository != null && !this.recordsPerRepository.isEmpty()) {
+//			return this.recordsPerRepository;
+//		}
+//		String result = restConnector.prepareRestTransmission("Statistics/RecordsPerRepository").GetData();
+//		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+//		HashMap<Long, Long> returnvalues = new HashMap<Long, Long>();
+//		Long repository_id = null;
+//		Long recordCount = null;
+//		for (RestEntrySet res : rms.getListEntrySets()) {
+//
+//			Iterator<String> it = res.getKeyIterator();
+//			String key = "";
+//
+//			while (it.hasNext()) {
+//
+//				key = it.next();
+//
+//				if (key.equalsIgnoreCase("repository_id")) {
+//					repository_id = new Long(res.getValue(key));
+//				}
+//				else if (key.equalsIgnoreCase("recordCount")) {
+//					recordCount = new Long(res.getValue(key));
+//				}
+//			}
+//			if (repository_id != null && recordCount != null) {
+//				returnvalues.put(repository_id, recordCount);
+//			}
+//		}
+//		this.recordsPerRepository = returnvalues;
+//		return returnvalues;
 	}
 	
 	public ArrayList<ArrayList<String>> getRecordsPerDDCCategory() {
