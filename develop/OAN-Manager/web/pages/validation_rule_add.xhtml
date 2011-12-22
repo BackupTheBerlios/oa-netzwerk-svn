@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:rich="http://richfaces.org/rich">
+
+<head></head>
+
+<body>
+<ui:debug hotkey="m" rendered="true" />
+
+<ui:composition template="templates/template.xhtml">
+
+
+  <ui:param name="pageTitle" value="Validation - Ergebnisse" />
+
+ <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a>
+  </ui:define>
+
+  <ui:param name="menu_rule_add" value="#{true}" /> 
+  	  
+  <ui:define name="content">
+  
+  <script type="text/javascript"> 
+
+  function show(help){
+	  if(document.getElementById(help).style.display == "inline"){
+			document.getElementById(help).style.display="none";
+	  }else{
+			document.getElementById(help).style.display="inline";
+	  }
+	  }
+  
+	function show2(){
+			document.getElementById("key1").style.display="none";
+		    document.getElementById("key2").style.display="none";
+		    document.getElementById("v1").style.display="none";
+		    document.getElementById("v2").style.display="none";
+		    document.getElementById("v3").style.display="none";
+		    document.getElementById("v4").style.display="none";
+		    document.getElementById("v5").style.display="none";
+		    document.getElementById("w1").style.display="none";
+		    document.getElementById("w2").style.display="none";
+		    document.getElementById("w3").style.display="none";
+		
+		   if(document.getElementById("form1:jt").value == "Cardinality"){
+			   document.getElementById("key1").style.display="inline";
+			   document.getElementById("key2").style.display="inline";
+			   document.getElementById("v1").style.display="inline";
+			   document.getElementById("w1").style.display="inline";
+			   }
+		   if(document.getElementById("form1:jt").value == "Vocabulary"){
+			   document.getElementById("key1").style.display="inline";
+			   document.getElementById("v2").style.display="inline";
+			   }
+		   if(document.getElementById("form1:jt").value == "Regular Expression"){
+			   document.getElementById("key1").style.display="inline";
+			   document.getElementById("v3").style.display="inline";
+			   }
+		   if(document.getElementById("form1:jt").value == "Retrievable Resource"){
+			   document.getElementById("key1").style.display="inline";
+			   document.getElementById("key2").style.display="inline";
+			   document.getElementById("v4").style.display="inline";
+			   document.getElementById("w2").style.display="inline";
+			   }
+		   if(document.getElementById("form1:jt").value == "Not Confused Fields"){
+			   document.getElementById("key1").style.display="inline";
+			   document.getElementById("key2").style.display="inline";
+			   document.getElementById("v5").style.display="inline";
+			   document.getElementById("w3").style.display="inline";
+			   }
+		}
+
+	function show3(){
+		document.getElementById("number").style.display="inline";
+		if(document.getElementById("form1:sp").value == "a"){
+			document.getElementById("number").style.display="none";
+			}
+
+
+		}
+
+	</script>
+
+  <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
+      
+      <h:form id="form1">
+      
+      <h2>#{msg.validation_rule_add_headline}</h2>
+      #{msg.validation_rule_add_intro}
+      
+      <br></br>
+      <br></br>
+      <br></br>
+      
+      <div style="margin-bottom: 2px">#{msg.validation_rule_add_name}  (<a href="#" onclick="show('help1')">Help</a>)</div>
+      <div style="margin-bottom: 10px">
+      <h:inputText style=" width : 500px;" value="#{vali_rule.ruleName}"/>
+      <br></br>
+      <div id="help1" style="display:none"><i>#{msg.validation_rule_add_name_help}</i></div>
+      </div>
+      
+      <div style="margin-bottom: 2px">#{msg.validation_rule_add_jobtype}  (<a href="#" onclick="show('help2')">Help</a>)</div>
+      <div style="margin-bottom: 10px">
+      <h:selectOneMenu value="#{vali_rule.ruleJobType}" style=" width : 226px;">
+      	  <f:selectItem itemValue="OAI Usage Validation" />
+      	  <f:selectItem itemValue="OAI Content Validation" />
+      </h:selectOneMenu>
+      <br></br>
+      <div id="help2" style="display:none"><i>#{msg.validation_rule_add_jobtype_help}</i></div>
+      </div>
+      
+      <div style="margin-bottom: 10px; margin-left:5px;">
+      <div id="field" style="display: inline">
+      #{msg.validation_rule_add_field}
+      <h:inputText id="field" value="#{vali_rule.ruleField}" style="margin-right:20px; margin-left:2px;"/>
+      </div>
+	  <div id="verb" style="display: inline"> 
+      Verb 
+      <h:inputText value="#{vali_rule.ruleVerb}" style="margin-right:20px; margin-left:2px;"/>
+      </div>
+      </div>
+  
+      <div style="margin-bottom: 2px">#{msg.validation_rule_add_ruletype}  (<a href="#" onclick="show('help4')">Help</a>)</div>
+      <div style="margin-bottom: 10px">
+      <h:selectOneMenu id="jt" value="#{vali_rule.ruleType}" onchange="show2()">
+	  	  <f:selectItem itemValue="Vocabulary" />
+	  	  <f:selectItem itemValue="Incremental Record Delivery" />
+	  	  <f:selectItem itemValue="Regular Expression" />
+	  	  <f:selectItem itemValue="Field Exists" />
+	  	  <f:selectItem itemValue="Cardinality" />
+	  	  <f:selectItem itemValue="Resumption Token Duration Check" />
+	  	  <f:selectItem itemValue="Valid URL" />
+	  	  <f:selectItem itemValue="Retrievable Resource" />
+	  	  <f:selectItem itemValue="Not Confused Fields" />
+	  	  <f:selectItem itemValue="Incremental Record Delivery" />
+	  	  <f:selectItem itemValue="Date Granularity" />
+	  	  <f:selectItem itemValue="Schema Validity Check" />
+	  </h:selectOneMenu>
+	  <br></br>
+	  <div id="help4" style="display:none"><i>#{msg.validation_rule_add_ruletype_help}</i></div>
+	  </div>
+	  
+	  <div style="margin-bottom: 10px">
+	  <div id="v1" style="display:none">RULE_CARDINALITY_LESSTHAN </div>
+	  <div id="v2" style="display:none">RULE_VOCABULARY_WORDS </div>
+	  <div id="v3" style="display:none">RULE_REGULAREXPRESSION_REGEXPR </div>
+	  <div id="v4" style="display:none">RULE_RETRIEVERESOURCE_MAXDEPTH </div>
+	  <div id="v5" style="display:none">RULE_NOTCONNFUSEDFIELDS_FIELD1 </div>
+	  <div id="key1" style="display:none">
+	  <h:inputText value="#{vali_rule.ruleKey1}" style="margin-right:20px" size="20"/>
+	  </div>
+	  <div id="w1" style="display:none">RULE_CARDINALITY_GREATERTHAN </div>
+	  <div id="w2" style="display:none">RULE_RETRIEVERESOURCE_MIMETYPES </div>
+	  <div id="w3" style="display:none">RULE_NOTCONNFUSEDFIELDS_FIELD2 </div>
+	  <div id="key2" style="display:none" size="20">
+	  <h:inputText value="#{vali_rule.ruleKey2}"/>
+	  </div>
+	  </div>
+	  
+      <div style="margin-bottom: 2px">#{msg.validation_rule_add_mandatory} (<a href="#" onclick="show('help5')">Help</a>)</div>
+      <div style="margin-bottom: 10px">
+      <h:selectOneMenu value="#{vali_rule.ruleMandatory}">
+      	  <f:selectItem itemValue="true" />
+      	  <f:selectItem itemValue="false" />
+      </h:selectOneMenu>
+      <br></br>
+	  <div id="help5" style="display:none"><i>#{msg.validation_rule_add_mandatory_help}</i></div>
+      </div>
+      
+      <div style="margin-bottom: 2px">#{msg.validation_rule_add_success}  (<a href="#" onclick="show('help6')">Help</a>)</div>
+      <div style="margin-bottom: 10px">
+      <h:selectOneMenu id="sp" value="#{vali_rule.ruleSuccess}" onchange="show3()">
+      	  <f:selectItem itemValue=">" />
+      	  <f:selectItem itemValue="=" />
+      	  <f:selectItem itemValue="a" />
+      </h:selectOneMenu>
+      <div id="number" style="display:inline">
+      <h:inputText value="#{vali_rule.ruleSuccessN}" style=" width : 36px;"/>
+      </div>
+      <br></br>
+      <div id="help6" style="display:none"><i>#{msg.validation_rule_add_success_help}</i></div>
+      </div>
+      
+      <div style="margin-bottom: 2px">#{msg.validation_rule_add_weight}  (<a href="#" onclick="show('help7')">Help</a>)</div>
+      <div style="margin-bottom: 10px">
+      <h:selectOneMenu id="wichtung" value="vali_rule.ruleWeight">
+      	  <f:selectItem itemValue="1" />
+      	  <f:selectItem itemValue="2" />
+      	  <f:selectItem itemValue="3" />
+      	  <f:selectItem itemValue="4" />
+      	  <f:selectItem itemValue="5" />
+      </h:selectOneMenu>
+      <br></br>
+      <div id="help7" style="display:none"><i>#{msg.validation_rule_add_weight_help}</i></div>
+      </div>
+      
+      <div style="margin-bottom: 2px">#{msg.validation_rule_add_visibility}  (<a href="#" onclick="show('help8')">Help</a>)</div>
+      <div style="margin-bottom: 10px">
+      <h:selectOneMenu>
+      	  <f:selectItem itemValue="true" />
+      	  <f:selectItem itemValue="false" />
+      </h:selectOneMenu>
+      <br></br>
+      <div id="help8" style="display:none"><i>#{msg.validation_rule_add_visibility_help}</i></div>
+      </div>
+      
+      <div style="margin-bottom: 2px">#{msg.validation_rule_add_description}  (<a href="#" onclick="show('help9')">Help</a>)</div>
+      <div style="margin-bottom: 10px">
+      <h:inputTextarea value="#{vali_rule.ruleDescription}" style=" width : 500px;">
+     	  </h:inputTextarea>
+     	  <br></br>
+      <div id="help9" style="display:none"><i>#{msg.validation_rule_add_description_help}
+      </i></div>
+      </div>
+     	  
+ 
+      <br></br>
+      <br></br>
+      
+      <div align="center">
+      <h:commandButton value="#{msg.validation_rule_add_button_destroy}" action="#{vali_rule.ruleDestroy}"/>
+      <h:commandButton value="#{msg.validation_rule_add_button_create}" action="#{vali_rule.ruleBuild}"/>
+      </div>
+   
+   	  </h:form>
+      
+      </div>
+      </div>	
+
+</ui:define>
+
+</ui:composition>
+</body>
+
+</html>

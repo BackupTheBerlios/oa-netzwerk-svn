@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:rich="http://richfaces.org/rich">
+
+<head></head>
+
+<body>
+<ui:debug hotkey="m" rendered="true" />
+
+<ui:composition template="templates/template.xhtml">
+
+
+  <ui:param name="pageTitle" value="Validation - Ergebnisse" />
+
+ <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a>
+  </ui:define>
+
+  <ui:param name="menu_ruleset_add" value="#{true}" /> 
+  
+  <ui:define name="content">
+  
+   <script type="text/javascript">
+  	 function show(help){
+		  if(document.getElementById(help).style.display == "inline"){
+				document.getElementById(help).style.display="none";
+		  }else{
+				document.getElementById(help).style.display="inline";
+		  }
+	}
+
+	function select(count){
+		if (document.getElementById("form1:table1:" + count + ":w").style.display == "inline"){
+			document.getElementById("form1:table1:" + count + ":w").style.display = "none";
+			document.getElementById("form1:table1:" + count + ":c").style.display = "inline";
+			alert(count);
+			}
+	}
+
+	function deselect(count){
+		if (document.getElementById("form:table:" + count + ":c").style.display == "inline"){
+			document.getElementById("form:table:" + count + ":c").style.display = "none";
+			document.getElementById("form:table:" + count + ":w").style.display = "inline";
+			}
+		}
+
+	 </script>
+  
+
+  <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
+      
+      <h:form id="form1">
+      
+      <h2>Erstellen von Regelsätzen</h2>
+      Auf dieser Seite können neue Regelsätze angelegt werden. Dazu sind ein Name
+      und die zugehörigen Regeln zu wählen.
+      <br></br>
+      <br></br>
+      
+      <div style="margin-bottom: 2px">
+      Name des Regelsatzes (<a href="#" onclick="show('help1')">Help</a>)
+      </div>
+      <div>
+      <h:inputText value="#{vali_rset.ruleSetName}" style=" width : 233px;"/>
+      </div>
+      <div id="help1" style="display:none"><i>Bitte hier den Namen eingeben, den der neu erstellte Regelsatz erhalten soll.</i></div>
+      
+      <br></br>
+      <br></br>
+      
+      <div>
+      <div style="margin-bottom: 2px">
+      Zugehörige Regeln (<a href="#" onclick="show('help2')">Help</a>)
+      </div>
+<!--      <t:dataTable id="table1" value="#{vali_ro.rules}" var="row"-->
+<!--									headerClass="pane-header" rowClasses="odd, even"-->
+<!--									style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">   	-->
+<!--      	<t:column text-align= "center">-->
+<!--			<h:outputText value="#{row.id}" />-->
+<!--		</t:column>-->
+<!--      	<t:column text-align= "center">-->
+<!--      		<h:outputText value="#{row.name}" />-->
+<!--      	</t:column>-->
+<!--		<t:column text-align= "center">-->
+<!--			<h:commandLink id="w#{count}" action="#{vali_rset.add(row.id)}" style="display:inline" onclick="select(1); return false;">-->
+<!--			<img src="../images/16x16/wrong.gif"/>-->
+<!--			</h:commandLink>-->
+<!--			-->
+<!--			<h:commandLink id="c#{count}" action="#{vali_rset.delete(row.id)}" style="display:none" >-->
+<!--			<img src="../images/16x16/correct.gif"/>-->
+<!--			</h:commandLink>-->
+<!--		</t:column>-->
+<!--      </t:dataTable>-->
+      <iframe src="validation_ruleset_add_datatable.xhtml" width="100%">
+	  </iframe>
+      </div>
+      <div id="help2" style="display:none"><i>Bitte die gewünschten Regeln durch Klick auf CheckBox an- oder abwählen.</i></div>
+ 
+      <br></br>
+      <br></br>
+      
+      <div align="center">      
+	  <h:commandButton value="Regelsatz anlegen" action="#{vali_rset.ruleSetAdd}"/>
+	  <h:commandButton value="Abbrechen" action="#{vali_rset.stop}" onclick="form.submit()"></h:commandButton>
+      </div> 
+      
+      
+      </h:form>
+      
+    
+
+      </div>
+      </div>	
+
+</ui:define>
+
+</ui:composition>
+</body>
+
+</html>

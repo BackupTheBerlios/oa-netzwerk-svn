@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:rich="http://richfaces.org/rich">
+
+<head></head>
+
+<body>
+
+<ui:debug hotkey="m" rendered="true" />
+
+<ui:composition template="templates/template.xhtml">
+
+
+  <ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
+
+  <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a>
+  </ui:define>
+
+  <ui:param name="menu_ruleset_overview" value="#{true}" /> 
+
+  <ui:define name="content">
+        
+        <div style="padding: 20px; background-color: #f5f9f4;">
+		<div style="background-color: #f5f9f4;">
+		
+		<h2>Regelsatzübersicht</h2>
+        
+       	<table width="100%">
+				<tr>
+					<td class="setting-leftspace"></td>
+
+					<td>
+
+					<table id="executors" >
+
+						<tr>
+							<td><h:form>
+								<t:dataTable value="#{vali_rset.rulesets}" var="row"
+									headerClass="pane-header" rowClasses="odd, even"
+									style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
+									
+									<t:column style="width: 25%; vertical-align: middle; padding-left: 15px; height: 70px;">
+										<f:facet name="header">
+											<h:outputText value="Name" />
+										</f:facet>
+										<a href="validation_rules_of_ruleset.xhtml?rid=#{row.id}"><h:outputText value="#{row.name}" /></a>
+									</t:column >
+									
+									<t:column style="padding-left:10px; width: 25%; vertical-align: middle; height: 70px;">
+										<f:facet name="header">
+											<h:outputText value="ID" />
+										</f:facet>
+										<div align="center">
+										<h:outputText value="#{row.id}" />
+										</div>			                           
+									</t:column>
+									
+									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+										<f:facet name="header">
+											<h:outputText value="Regeln" />
+										</f:facet>
+										<h:outputText value="#{row.rules}" />
+									</t:column>								
+									
+									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+										<f:facet name="header">
+											<h:outputLabel value="Ändern" />
+										</f:facet>
+										<a href="validation_ruleset_view.xhtml?rid=#{row.id}"><img
+											src="../images/16x16/document_edit.gif" /></a>
+									</t:column>
+									
+									<t:column style="width: 10%; vertical-align: middle; text-align: center; height: 70px;">
+										<f:facet name="header">
+											<h:outputLabel value="Löschen" />
+										</f:facet>
+										<a href="validation_ruleset_remove.xhtml?rid=#{row.id}"><img
+											src="../images/16x16/edit-delete.gif" /></a>
+									</t:column>
+									
+								</t:dataTable>
+							</h:form></td>
+						</tr>
+					</table>
+					</td>
+				</tr>
+
+				<tr class="validation-error-area">
+					<td colspan="2"></td>
+					<td></td>
+				</tr>
+			</table>
+			
+			
+		</div>
+		</div>
+		
+  </ui:define>
+</ui:composition>
+
+</body>
+
+</html>

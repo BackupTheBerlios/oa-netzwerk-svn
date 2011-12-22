@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+
+<ui:composition template="templates/template.xhtml">
+
+   <ui:param name="pageTitle" value="Repository aus OA-Netzwerk entfernen - OA-Netzwerk Manager" />
+
+   <ui:define name="navigation">
+      <a href="/oanadmin/">OA-Netzwerk</a> » <a href="repositories_main.xhtml"><h:outputLabel value="#{msg.repo_rem1}" /></a>
+   </ui:define>
+
+   <ui:param name="menu_pository" value="#{true}" /> 
+
+   <ui:define name="content">
+
+      <t:messages layout="table"></t:messages>
+
+      <p />
+      <br />
+
+      <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
+      <h2>Regelsatz aus Datenbank entfernen</h2>
+
+
+      <table width="100%">
+
+         <f:view>
+            <h:form>
+
+               <tr>
+                  <td colspan="2">
+                  <p />
+                  <br />
+                  <b>Soll die folgende Regel wirklich aus der Datenbank entfernt werden?</b>
+                  <p />
+
+                  </td>
+               </tr>
+               <tr>
+                  <td width="140">Regelsatz-ID:</td>
+                  <td charoff="10">#{vali_rset.ruleSetId}</td>              
+               </tr>
+               <tr>
+                  <td width="140">Regelsatz-Name:</td>
+                  <td charoff="10">#{vali_rset.ruleSetName}</td>
+               </tr>
+               <tr>
+                  <td>Regeln:</td>
+                  <td charoff="10">#{vali_rset.rulesInAString}</td>
+               </tr>
+               <tr>
+               
+               </tr>
+               <tr>
+               
+               </tr>      
+               <tr>
+               <td colspan="2" align="center">
+                   <t:commandButton type="submit" align="center"
+                     action="#{vali_rset.ruleSetDelete}" value="Endgültig Löschen" size="200"></t:commandButton></td>
+               </tr>
+            </h:form>
+         </f:view>
+      </table>
+      </div>
+      </div>
+
+   </ui:define>
+</ui:composition>
+
+</body>
+
+</html>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:rich="http://richfaces.org/rich">
+
+<head></head>
+
+<body>
+<ui:debug hotkey="m" rendered="true" />
+
+<ui:composition template="templates/template.xhtml">
+
+
+  <ui:param name="pageTitle" value="Validation - Ergebnisse" />
+
+ <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a>
+  </ui:define>
+
+  <ui:define name="menu">
+    <div id="tasks">
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
+      href="repositories_main.xhtml">Repositorien verwalten</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="services_main.faces">Dienste verwalten</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+      href="users_main.faces">Benutzer verwalten</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="reports.faces">Reports</a></div>
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/notepad.gif" /><a
+      href="livelog.faces">Live Log</a></div>
+    </div>
+  </ui:define>
+  
+  <ui:define name="content">
+  
+  <script type="text/javascript">
+  function show(help){
+	  if(document.getElementById(help).style.display == "inline"){
+			document.getElementById(help).style.display="none";
+	  }else{
+			document.getElementById(help).style.display="inline";
+	  }
+	  }
+
+  function select(count){
+		if (document.getElementById("form:table:" + count + ":w").style.display == "inline"){
+			document.getElementById("form:table:" + count + ":w").style.display = "none";
+			document.getElementById("form:table:" + count + ":c").style.display = "inline";
+			}
+	}
+
+	function deselect(count){
+		if (document.getElementById("form:table:" + count + ":c").style.display == "inline"){
+			document.getElementById("form:table:" + count + ":c").style.display = "none";
+			document.getElementById("form:table:" + count + ":w").style.display = "inline";
+			}
+		}
+	</script>
+
+  <div style="padding: 20px; background-color: #f5f9f4;">
+      <div style="background-color: #f5f9f4;">
+      
+      <h:form>
+      
+      <h2>Ändern von Regelsätzen</h2>
+      Auf dieser Seite können Regelsätze geändert werden. Dabei kann, wenn gewünscht,
+      der Name per Eingabe geändert und mittels Klick auf die zugehörigen Regeln gewählt
+      werden, welche Regeln zum Regelsatz gehören sollen.
+      <br></br>
+      <br></br>
+      <br></br>
+      
+      <div style="margin-bottom: 2px">
+      Name des Regelsatzes (<a href="#" onclick="show('help1')">Help</a>)
+      </div>
+      <div>
+      <h:inputText value="#{vali_rset2.ruleSetName}" style=" width : 233px;"/>
+      </div>
+      <div id="help1" style="display:none"><i>Bitte hier den Namen eingeben, den der neu erstellte Regelsatz erhalten soll.</i></div>
+      
+	  <br />  
+	  <br />
+      
+      <div>
+      <div style="margin-bottom: 2px">
+      Zugehörige Regeln (<a href="#" onclick="show('help2')">Help</a>) 
+      </div>
+      
+<!--      <t:dataTable id="table" value="#{vali_ro.rules}" var="row" rowIndexVar="count"-->
+<!--									headerClass="pane-header" rowClasses="odd, even"-->
+<!--									style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">   	-->
+<!--      	<t:column text-align= "center">-->
+<!--			<h:outputText value="#{row.id}" />-->
+<!--		</t:column>-->
+<!--      	<t:column text-align= "center">-->
+<!--      		<a href="validation_rule_view.xhtml?rid=#{row.id}"><h:outputText value="#{row.name}" /></a>-->
+<!--      	</t:column>-->
+<!--		<t:column text-align= "center">-->
+<!--		<t:div rendered="#{not vali_rset2.inRuleSet(row.id)}">-->
+<!--			<h:commandLink id="w#{count}" action="#{vali_rset2.add(row.id)}">-->
+<!--			<img src="../images/16x16/wrong.gif"/>-->
+<!--			</h:commandLink>-->
+<!--		</t:div>-->
+<!--		<t:div rendered="#{vali_rset2.inRuleSet(row.id)}">	-->
+<!--			<h:commandLink id="c#{count}" action="#{vali_rset2.delete(row.id)}">-->
+<!--			<img src="../images/16x16/correct.gif"/>-->
+<!--			</h:commandLink>-->
+<!--		</t:div>-->
+<!--		</t:column>-->
+<!--      </t:dataTable>-->
+<!--      -->
+      <iframe src="validation_ruleset_view_datatable.xhtml?rid=#{vali_rset2.rid}" width="100%">
+	  </iframe>
+      </div>
+      <div id="help2" style="display:none"><i>Bitte die gewünschten Regeln durch Klick auf CheckBox an- oder abwählen.</i></div>
+      
+      <br></br>
+      <br></br>
+       
+      <div align="center">      
+	  <h:commandButton value="Zurücksetzen" action="#{vali_rset2.stop}"/>     
+	  <h:commandButton value="Änderung speichern" action="#"/>
+      </div>
+      
+      
+   
+   	  </h:form>
+   	  
+      
+      </div>
+      </div>	
+
+</ui:define>
+
+</ui:composition>
+</body>
+
+</html>
