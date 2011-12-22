@@ -52,26 +52,29 @@ public class ServiceManagementBean {
 	FacesContext ctx = FacesContext.getCurrentInstance();
 	private static List<ServiceBean> services = new ArrayList<ServiceBean>();
 	
-	static {
-		
-		List<Service> services = SchedulingBean.getServices();
-
-		for (int i = 0; i < services.size(); i++) {
-			ServiceManagementBean.services.add(new ServiceBean(services.get(i)));
-        }
-	}
-	
+//	static {
+//		
+//		List<Service> services = SchedulingBean.getServices();
+//
+//		for (int i = 0; i < services.size(); i++) {
+//			ServiceManagementBean.services.add(new ServiceBean(services.get(i)));
+//        }
+//	}
+//	
 	public ServiceManagementBean() {
 		super();
 	}
 
-	public enum Service {
-		Harvester, Aggregator, Marker, FulltextLinkFinder, LanguageDetection, Shingler, Indexer, Classifier, DuplicateCheck;
-	}
+//	public enum Service {
+//		Harvester, Aggregator, Marker, FulltextLinkFinder, LanguageDetection, Shingler, Indexer, Classifier, DuplicateCheck;
+//	}
 	
 	@PostConstruct
 	private void init() {
 				
+		services = connector.fetchServices();
+		
+		
 		initializeServiceProperties();
 		initializeServiceStatus();
 		
@@ -242,8 +245,14 @@ public class ServiceManagementBean {
 //								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 //								+ servicePath);
 				
+				//TODO: remove hardcoding
+				String oanHome = System.getenv("OAN_HOME");
+				if (oanHome == null || oanHome.isEmpty()) {
+					oanHome = "/usr/local/www/clients/oan-services/";
+				}
+				
 				Process process = Runtime.getRuntime().exec(
-								javaBinaryPath + " -Dfile.encoding=UTF8 -Doan.home=" + System.getenv("OAN_HOME") + " -jar -Djava.security.policy=" + System.getenv("OAN_HOME") + "/config/java.policy "
+								javaBinaryPath + " -Dfile.encoding=UTF8 -Doan.home=" + oanHome + " -jar -Djava.security.policy=" + oanHome + "/config/java.policy "
 								+ " -Djava.rmi.server.codebase=file:" + servicePath + " "
 								+ servicePath);
 				

@@ -26,6 +26,7 @@ import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.utils.StringUtils;
 
 /**
  * @author Sammy David
@@ -50,6 +51,7 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 	
 
 	private List<SchedulingBean> jobList;
+	private List<ServiceBean> services;
 	
 	public ServiceJobListBean() {
 		super();
@@ -58,6 +60,9 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 
 	@PostConstruct
 	public void init() {
+		
+		// retrieve services for naming lookup
+		services = restConnector.fetchServices();
 		
 		// retrieve the jobs to be displayed
 		jobList = restConnector.fetchServiceJobs();
@@ -91,6 +96,9 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 		
 	}
 	
+	public String getServiceName(BigDecimal id) {
+		return services.get(id.intValue() - 1).getPrettyName().toString();
+	}
 	
 	/********************* Getter & Setter **********************/
 	

@@ -1,15 +1,16 @@
 package de.dini.oanetzwerk.admin;
 
 import java.io.File;
+import java.math.BigDecimal;
 
-import de.dini.oanetzwerk.admin.ServiceManagementBean.Service;
+//import de.dini.oanetzwerk.admin.ServiceManagementBean.Service;
 import de.dini.oanetzwerk.servicemodule.ServiceStatus;
 import de.dini.oanetzwerk.utils.StringUtils;
 
 public class ServiceBean {
 
-	
-	private Service service;
+	private BigDecimal id = new BigDecimal(0);
+	private String service;
 	private String localPath;
 	private String localLogPath;
 	private String rmiHost;
@@ -17,16 +18,21 @@ public class ServiceBean {
 	
 	
 	
-	public ServiceBean(Service service) {
+	
+	public ServiceBean() {
+	    super();
+    }
+
+	public ServiceBean(String service) {
 	    super();
 	    this.service = service;
     }
 	
 	
-	public Service getService() {
+	public String getService() {
     	return service;
     }
-	public void setService(Service service) {
+	public void setService(String service) {
     	this.service = service;
     }
 	public String getLocalPath() {
@@ -71,5 +77,11 @@ public class ServiceBean {
 	public void setLocalLogPath(String localLogPath) {
     	this.localLogPath = localLogPath;
     }
-	
+	public BigDecimal getId() {
+    	return id;
+    }
+	public void setId(BigDecimal id) {
+    	this.id = id;
+    }
+		
 }

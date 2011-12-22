@@ -44,15 +44,25 @@ public class StringUtils {
 //				}
 //			}
 			
+			//TODO: remove hardcoding
 			if (m.start() == 0) {
-				resolvedPath = System.getenv(variable) + text.substring(length);				
+				resolvedPath = toBeRemoved(variable) + text.substring(length);				
 			} else {
-				resolvedPath = text.substring(0, m.start()) + System.getenv(variable) + text.substring(m.end());	
+				resolvedPath = text.substring(0, m.start()) + toBeRemoved(variable) + text.substring(m.end());	
 			}
 		} else {
 			return text;
 		}
 		
 		return resolvedPath;
+	}
+	
+	private static String toBeRemoved(String var) {
+		
+		String oanHome = System.getenv(var);
+		if (oanHome == null || oanHome.isEmpty()) {
+			oanHome = "/usr/local/www/clients/oan-services/";
+		}
+		return oanHome;
 	}
 }

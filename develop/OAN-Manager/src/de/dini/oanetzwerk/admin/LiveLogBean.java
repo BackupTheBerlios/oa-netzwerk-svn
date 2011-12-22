@@ -20,7 +20,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import de.dini.oanetzwerk.admin.ServiceManagementBean.Service;
+//import de.dini.oanetzwerk.admin.ServiceManagementBean.Service;
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.servicemodule.IHarvesterMonitor;
 import de.dini.oanetzwerk.utils.LogFileTailer;
@@ -54,6 +54,8 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	@ManagedProperty(value = "#{propertyManager}")
 	private PropertyManager propertyManager;
 	
+	@ManagedProperty(value = "#{restConnector}")
+	private RestConnector restConnector;
 	
 	
 	private LogFileTailer tailer;
@@ -64,18 +66,18 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	private static List<ServiceBean> services = new ArrayList<ServiceBean>();
 	private static Map<String, ServiceBean> serviceMap = new HashMap<String, ServiceBean>();
 
-	static {
-
-		List<Service> services = SchedulingBean.getServices();
-
-		for (int i = 0; i < services.size(); i++) {
-			LiveLogBean.services.add(new ServiceBean(services.get(i)));
-			System.out.println("static");
-			System.out.println(services.get(i).toString());
-			LiveLogBean.serviceMap.put(services.get(i).toString(), LiveLogBean.services.get(i));
-		    
-		}
-	}
+//	static {
+//
+//		List<Service> services = SchedulingBean.getServices();
+//
+//		for (int i = 0; i < services.size(); i++) {
+//			LiveLogBean.services.add(new ServiceBean(services.get(i)));
+//			System.out.println("static");
+//			System.out.println(services.get(i).toString());
+//			LiveLogBean.serviceMap.put(services.get(i).toString(), LiveLogBean.services.get(i));
+//		    
+//		}
+//	}
 
 	public LiveLogBean() {
 		super();
@@ -110,8 +112,13 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	@PostConstruct
 	public void init() {
 
+		services = restConnector.fetchServices();
+		
+		for (int i = 0; i < services.size(); i++) {
+			LiveLogBean.serviceMap.put(LiveLogBean.services.get(i).getService(), LiveLogBean.services.get(i));
+		}
+		
 		initializeServiceProperties();
-
 		initializeMonitoring();
 	}
 	
@@ -273,6 +280,10 @@ public class LiveLogBean extends AbstractBean implements Serializable, IHarveste
 	public void setPropertyManager(PropertyManager propertyManager) {
 		this.propertyManager = propertyManager;
 	}
+
+	public void setRestConnector(RestConnector restConnector) {
+    	this.restConnector = restConnector;
+    }
 
 	public String getChosenService() {
     	return chosenService;

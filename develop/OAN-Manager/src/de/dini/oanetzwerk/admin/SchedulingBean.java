@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import de.dini.oanetzwerk.admin.ServiceManagementBean.Service;
+//import de.dini.oanetzwerk.admin.ServiceManagementBean.Service;
 import de.dini.oanetzwerk.utils.StringUtils;
 
 /**
@@ -27,21 +27,21 @@ public class SchedulingBean implements Comparable<SchedulingBean> {
 	private int periodicDays 		= 0;
 	private boolean nonperiodicNow 	= false;
 	
-	private static List<Service> services = new ArrayList<Service>();
+//	private static List<Service> services = new ArrayList<Service>();
 
-	static {
-		
-		// TODO: load service names and ids dynamicall from the db
-		services.add(Service.Harvester);
-		services.add(Service.Aggregator);
-		services.add(Service.Marker);
-		services.add(Service.FulltextLinkFinder);
-		services.add(Service.LanguageDetection);
-		services.add(Service.Shingler);
-		services.add(Service.Indexer);
-		services.add(Service.Classifier);
-		services.add(Service.DuplicateCheck);
-	}
+//	static {
+//		
+//		// TODO: load service names and ids dynamicall from the db
+//		services.add(Service.Harvester);
+//		services.add(Service.Aggregator);
+//		services.add(Service.Marker);
+//		services.add(Service.FulltextLinkFinder);
+//		services.add(Service.LanguageDetection);
+//		services.add(Service.Shingler);
+//		services.add(Service.Indexer);
+//		services.add(Service.Classifier);
+//		services.add(Service.DuplicateCheck);
+//	}
 	
 	public SchedulingBean() {
 		super();
@@ -188,12 +188,4 @@ public class SchedulingBean implements Comparable<SchedulingBean> {
 		
     }
 
-	public static List<Service> getServices() {
-    	return services;
-    }
-		
-	public static String getServiceName(BigDecimal id) {
-		return StringUtils.getPrettyNameFromCamelCase(services.get(id.intValue() - 1).toString());
-	}
-	
 }

@@ -59,7 +59,7 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 	
 	// service
 //	private Map<String, Integer> services = new HashMap<String, Integer>();
-	private String chosenService;
+	private String chosenService = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "general_choose", null).getSummary();
 	
 	// repeatedly or once only
 	private String jobType;
@@ -485,5 +485,10 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		this.radio1 = radio1;
 	}
 	
+	public List<ServiceBean> getServicesForPresentation() {
+		List<ServiceBean> services = restConnector.fetchServices();
+		services.add(0, new ServiceBean("Bitte wählen"));
+		return services;
+	}
 
 }

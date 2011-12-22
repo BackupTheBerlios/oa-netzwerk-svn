@@ -45,6 +45,11 @@ public class RestConnector implements Serializable {
 	@ManagedProperty(value = "#{propertyManager}")
 	private PropertyManager propertyManager;
 	
+	
+	private long serviceRefreshRate = 3 * 60000; // 3 * 60000ms = 3min 
+	private Date lastServiceRetrieval;
+	private List<ServiceBean> services = new ArrayList<ServiceBean>();
+	
 	public RestConnector() {
 	    super();
     }
@@ -61,7 +66,7 @@ public class RestConnector implements Serializable {
 
 		if (rms == null || rms.getListEntrySets().isEmpty()) {
 
-			logger.error("received no Repository Details at all from the server");
+			logger.error("Received no repository details at all from the server!");
 			return repoList;
 		}
 
@@ -111,6 +116,65 @@ public class RestConnector implements Serializable {
 		return repoList;
 	}
 	
+	// TODO: reload after a couple of minutes (cache meanwhile) and if services have changed via ServiceManager
+	
+	public List<ServiceBean> fetchServices() {
+		
+
+		if (lastServiceRetrieval != null && services != null && !serviceRefreshIsDue()) {
+			logger.info("Using cached services ...");
+			return services;
+		}
+		logger.info("Retrieving services from server ...");
+
+		String result = prepareRestTransmission("Services/").GetData();
+		List<ServiceBean> serviceList = new ArrayList<ServiceBean>();
+		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+
+		if (rms == null || rms.getListEntrySets().isEmpty()) {
+
+			logger.error("Received no service details at all from the server!");
+			return serviceList;
+		}
+
+		for (RestEntrySet res : rms.getListEntrySets()) {
+
+			Iterator<String> it = res.getKeyIterator();
+			String key = "";
+			ServiceBean repo = new ServiceBean();
+
+			while (it.hasNext()) {
+
+				key = it.next();
+
+				if (key.equalsIgnoreCase("name")) {
+
+					repo.setService(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("service_id")) {
+
+					repo.setId(new BigDecimal(res.getValue(key)));
+					
+				} else
+					continue;
+			}
+
+			serviceList.add(repo);
+		}
+		
+		logger.info(serviceList.size() + " services received from server!");
+		
+		synchronized (this) {
+	        services = serviceList;
+        }
+		
+		return services;
+	}
+	
+	private boolean serviceRefreshIsDue(){
+		
+		return lastServiceRetrieval.getTime() + serviceRefreshRate >= new Date().getTime();
+	}
 	
 	public List<SchedulingBean> fetchServiceJobs() {
 		

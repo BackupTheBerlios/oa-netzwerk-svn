@@ -262,8 +262,9 @@ public class SchedulerControl implements Serializable { // ,
 				job = new MarkerJob();
 			} else {
 				job = new ScriptServiceJob();
-				System.out.println("XXX: " + bean.getServices().get(bean.getServiceId().intValue() - 1).toString());
-				data.put("service_name", bean.getServices().get(bean.getServiceId().intValue() - 1).toString());
+				System.out.println("XXX: " + restConnector.fetchServices().get(bean.getServiceId().intValue() - 1).getService());
+//				System.out.println("XXX2: " + 
+				data.put("service_name", restConnector.fetchServices().get(bean.getServiceId().intValue() - 1).getService());
 				
 			}
 			
