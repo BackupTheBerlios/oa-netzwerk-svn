@@ -81,7 +81,7 @@
 	      href="services_main.xhtml"><h:outputText value="#{msg.menu_services_mgmt}" /></a></div>
 	</t:div>
 	
-	<t:div rendered="#{userList.serviceManager and menu_services or userList.serviceManager and menu_services_schedule or userList.serviceManager and menu_services_schedule_add}">
+	<t:div rendered="#{userList.serviceManager and menu_services or userList.serviceManager and menu_services_schedule or userList.serviceManager and menu_services_schedule_add or userList.serviceManager and menu_services_helper}">
 		<t:div rendered="#{menu_services}">	
 			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
 	      		href="services_main.xhtml"><b><h:outputText value="#{msg.menu_services_mgmt}" /></b></a></div>
@@ -93,22 +93,39 @@
       			href="services_schedule.xhtml"><b><h:outputText value="#{msg.menu_services_activityplan}" /></b></a></div>
             
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-                href="services_schedule_add.xhtml"><h:outputText value="#{msg.menu_services_newjob}" /></a></div>            
+                href="services_schedule_add.xhtml"><h:outputText value="#{msg.menu_services_newjob}" /></a></div>
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+                href="services_helper.xhtml"><h:outputText value="#{msg.menu_services_helper}" /></a></div>                             
 		</t:div>
 		
 		<t:div rendered="#{menu_services_schedule_add}">	 
 			<div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
       			href="services_schedule.xhtml"><h:outputText value="#{msg.menu_services_activityplan}" /></a></div>
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
-                href="services_schedule_add.xhtml"><b><h:outputText value="#{msg.menu_services_newjob}" /></b></a></div>              
+                href="services_schedule_add.xhtml"><b><h:outputText value="#{msg.menu_services_newjob}" /></b></a></div>     
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+                href="services_helper.xhtml"><h:outputText value="#{msg.menu_services_helper}" /></a></div>                          
 		</t:div>
     
-        <t:div rendered="#{not menu_services_schedule and not menu_services_schedule_add}">   
+        <t:div rendered="#{not menu_services_schedule and not menu_services_schedule_add and not menu_services_helper}">   
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
                 href="services_schedule.xhtml"><h:outputText value="#{msg.menu_services_activityplan}" /></a></div>
             <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
                 href="services_schedule_add.xhtml"><h:outputText value="#{msg.menu_services_newjob}" /></a></div>              
-        </t:div>    
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+                href="services_helper.xhtml"><h:outputText value="#{msg.menu_services_helper}" /></a></div>              
+         
+        </t:div>  
+
+        <t:div rendered="#{menu_services_helper}">   
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+                href="services_schedule.xhtml"><h:outputText value="#{msg.menu_services_activityplan}" /></a></div>
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+                href="services_schedule_add.xhtml"><h:outputText value="#{msg.menu_services_newjob}" /></a></div>              
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /><a
+                href="services_helper.xhtml"><b><h:outputText value="#{msg.menu_services_helper}" /></b></a></div>              
+        </t:div>         
+          
 		</div>
 	</t:div>
 	

@@ -36,6 +36,7 @@ public class AggregatorJob extends AbstractServiceJob {
 		System.out.println("Aggregator job called");
 
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
+		String internalId = jobData.getString("internal_id");
 		
 		// initiate harvesting via RMI
 		try {
@@ -50,7 +51,7 @@ public class AggregatorJob extends AbstractServiceJob {
 				return;
 			}
 
-			logger.info("Inititating Harvester job with name '" + jobData.getString("job_name") + "'...");
+			logger.info("Inititating Aggregator job with name '" + jobData.getString("job_name") + "'...");
 
 
 			IService service = (IService) registry.lookup(name);
@@ -58,9 +59,14 @@ public class AggregatorJob extends AbstractServiceJob {
 			// create harvesting settings
 			Map<String, String> data = new HashMap<String, String>();
 			data.put("job_name", jobData.getString("job_name"));
-			data.put("complete", "true");
+			if (internalId != null && !internalId.isEmpty()) {
+				// single object task
+				data.put("itemId", internalId);
+			} else {
+				// complete aggregation
+				data.put("complete", "true");
+			}
 
-			// data.put(key, )
 
 			boolean started = service.start(data);
 //			System.out.println("Client: " + started);

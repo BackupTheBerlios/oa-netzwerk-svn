@@ -29,6 +29,7 @@ import de.dini.oanetzwerk.admin.utils.AbstractBean;
 import de.dini.oanetzwerk.codec.RestEntrySet;
 import de.dini.oanetzwerk.codec.RestMessage;
 import de.dini.oanetzwerk.codec.RestXmlCodec;
+import de.dini.oanetzwerk.utils.Utils;
 
 /**
  * @author Sammy David
@@ -85,6 +86,10 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 
 	boolean updateCase;
 	private String radio1;
+	
+	// single-object-task fields
+	private String internalId;
+	private String originalId;
 	
 
 	public ServiceSchedulingBean() {
@@ -269,6 +274,86 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		ctx.addMessage(null, LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_ERROR, "scheduling_servicejob_error_storage", null));
 		
 		return "failed";
+	}
+	
+	
+	/********************** Single Object Task Storage ***********************/
+	
+
+	private boolean validateSingleObjectForm() {
+		
+		boolean internalIdSpecified = false, originalIdSpecified = false;
+		
+		System.out.println("CH: " + chosenService);
+		if (chosenService == null || "0".equals(chosenService)) {
+			ctx.addMessage(null, LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_ERROR, "services_helper_validation_chooseservice", null));
+			return false;
+		}
+		
+		if (internalId != null && !internalId.isEmpty()) {
+			System.out.println("1");
+			internalIdSpecified = true;
+		}
+			
+		if (originalId != null && !originalId.isEmpty()) {
+			System.out.println(2);
+			originalIdSpecified = true;
+		}
+		if (internalIdSpecified && originalIdSpecified) {
+			ctx.addMessage(null, LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_ERROR, "services_helper_validation_justoneidentifier", null));
+			return false;
+		}
+		
+		if (!internalIdSpecified && !originalIdSpecified) {
+			ctx.addMessage(null, LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_ERROR, "services_helper_validation_specifyidentifier", null));
+			return false;
+		}
+		
+		if (internalIdSpecified) {
+		
+			try {
+				Integer.parseInt(internalId);
+			} catch (NumberFormatException e) {
+				ctx.addMessage(null, LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_ERROR, "services_helper_validation_oidformat", null));
+				return false;
+			}
+			
+		}
+		
+		// check if object for specified oid actually exists
+		if (!restConnector.objectExists(internalId)) {
+			ctx.addMessage(null, LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_ERROR, "services_helper_validation_objectnotfound", null));
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public String storeSingleObjectTask() {
+
+		
+		boolean valid = validateSingleObjectForm();
+		
+		System.out.println("Job valid: " + valid);
+		
+		if (!valid) {
+			return "services_helper";
+		}
+		
+		boolean stored = schedulerControl.createNonPersistentJob(new BigDecimal(chosenService), internalId, originalId);
+		
+		FacesMessage msg;
+		
+		msg = LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_INFO, "services_helper_inprogress", null);
+		
+		if (stored) {
+			ctx.addMessage(null, msg);
+			return "services_helper";
+		}
+		
+		ctx.addMessage(null, LanguageSwitcherBean.getFacesMessage(ctx, FacesMessage.SEVERITY_ERROR, "scheduling_servicejob_error_storage", null));
+		
+		return "services_helper";
 	}
 	
 	
@@ -489,6 +574,22 @@ public class ServiceSchedulingBean extends AbstractBean implements Serializable 
 		List<ServiceBean> services = restConnector.fetchServices();
 		services.add(0, new ServiceBean("Bitte wählen"));
 		return services;
+	}
+
+	public String getInternalId() {
+		return internalId;
+	}
+
+	public void setInternalId(String internalId) {
+		this.internalId = internalId;
+	}
+
+	public String getOriginalId() {
+		return originalId;
+	}
+
+	public void setOriginalId(String originalId) {
+		this.originalId = originalId;
 	}
 
 }

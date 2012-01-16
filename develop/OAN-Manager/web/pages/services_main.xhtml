@@ -37,7 +37,7 @@
     <h:form>
       <t:dataTable value="#{services.services}" var="service"
         headerClass="pane-header" rowClasses="odd, even" rowIndexVar="count"
-        style="width: 80%; border-collapse: collapse; border: 1px #bbb solid;">
+        style="width: 100%; border-collapse: collapse; border: 1px #bbb solid;">
         
         <t:column style="vertical-align: middle; text-align: center; height: 70px;">
           <f:facet name="header">
@@ -82,13 +82,23 @@
           </t:div>    
         </t:column>
         
-        <t:column  style="vertical-align: middle; text-align: center; height: 70px; width: 28%;">
+        <t:column  style="vertical-align: middle; text-align: center; height: 70px; width: 25%;">
           <f:facet name="header">
             <h:outputText value="Log" />
           </f:facet>
           <a href="livelog.xhtml?service=#{service.service}">#{service.prettyName} Live-Log</a>
         </t:column>        
-        
+
+        <t:column  style="vertical-align: middle; text-align: center; height: 70px; width: 30%;">
+          <f:facet name="header">
+            <h:outputText value="Letzte vollständige Ausführung (Dauer)" />
+          </f:facet>
+          #{service.lastExecutionPrettyFormat} <br /> 
+          <t:outputLabel value="(#{service.prettyDuration})" rendered="#{not empty service.prettyDuration}" />
+         </t:column>
+
+
+                     
       </t:dataTable>
 
     </h:form>

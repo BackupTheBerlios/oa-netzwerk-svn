@@ -59,14 +59,7 @@ public class MarkerJob  extends AbstractServiceJob {
 
 
 				boolean started = service.start(data);
-				System.out.println("Client: " + started);
 
-				synchronized (this) {
-					for (int i = 0; i < 5; i++) {
-						this.wait(3000);
-						System.out.println(service.getCurrentStatus());
-					}
-				}
 				logger.info("Marker finished!");
 
 			} catch (RemoteException e) {
@@ -75,11 +68,7 @@ public class MarkerJob  extends AbstractServiceJob {
 			} catch (NotBoundException e) {
 				System.err.println("NotBoundException: ");
 				e.printStackTrace();
-			} catch (InterruptedException e) {
-				System.err.println("InterruptedException: ");
-				e.printStackTrace();
-			}
-
+			} 
 		}
 
 		public static int progress() {

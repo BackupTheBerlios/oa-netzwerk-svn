@@ -40,6 +40,8 @@ import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 
+import com.sun.istack.internal.Interned;
+
 import de.dini.oanetzwerk.admin.SchedulingBean.SchedulingIntervalType;
 import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
 import de.dini.oanetzwerk.admin.scheduling.AbstractServiceJob;
@@ -439,6 +441,44 @@ public class SchedulerControl implements Serializable { // ,
 		// schedule job
 		return scheduleJob(asj);
 
+	}
+	
+	public boolean createNonPersistentJob(BigDecimal serviceId, String internalId, String originalId) {
+		
+		AbstractServiceJob job 	= null;
+		JobDataMap data 		= new JobDataMap();
+
+		if (new BigDecimal(1).equals(serviceId)) {
+			job = new HarvesterJob();
+		} else if (new BigDecimal(2).equals(serviceId)) {
+			job = new AggregatorJob();
+		} else if (new BigDecimal(3).equals(serviceId)) {
+			job = new MarkerJob();
+		} else {
+			job = new ScriptServiceJob();
+			System.out.println("XXX: " + restConnector.fetchServices().get(serviceId.intValue() - 1).getService());
+//			System.out.println("XXX2: " + 
+			data.put("service_name", restConnector.fetchServices().get(serviceId.intValue() - 1).getService());
+		}
+
+		String jobName = "TEST-JOB_" + System.currentTimeMillis();
+		data.put("job_name", jobName);
+		
+		if (internalId != null && !internalId.isEmpty()) {
+			data.put("internal_id", internalId);
+		} else {
+			data.put("original_id", originalId);
+		}
+		
+		// start immediately
+		Trigger trigger = (SimpleTrigger) newTrigger().withIdentity(jobName).startAt(new Date()).build();
+
+		job.setData(data);
+		job.setTrigger(trigger);
+		
+		// schedule job
+		logger.info("Test-Job scheduled.");
+		return scheduleJob(job);
 	}
 
 	public boolean deleteJob(String jobId, String jobName) {

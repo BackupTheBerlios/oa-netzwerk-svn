@@ -77,6 +77,7 @@ public class ServiceManagementBean {
 		
 		initializeServiceProperties();
 		initializeServiceStatus();
+		initializeServiceStatistics();
 		
 				
 		// try to fetch path to a specified java binary file
@@ -86,7 +87,7 @@ public class ServiceManagementBean {
 		}
 	}
 
-	public void initializeServiceProperties() {
+	private void initializeServiceProperties() {
 		
 		Properties props = propertyManager.getServiceProperties();
 		String path;
@@ -104,7 +105,7 @@ public class ServiceManagementBean {
         }
 	}
 	
-	public void initializeServiceStatus() {
+	private void initializeServiceStatus() {
 	
 		for (ServiceBean service : services) {
 
@@ -148,6 +149,22 @@ public class ServiceManagementBean {
 			logger.info("RMI-Service with name " + serviceName + " is not yet registered with rmi-registry.");
 		}
 		return ServiceStatus.Stopped;
+	}
+	
+	private void initializeServiceStatistics() {
+		
+		List<SchedulingBean> jobs = connector.fetchSimpleServiceStatistics();
+		
+		for (ServiceBean service : services) {
+			for (SchedulingBean job : jobs) {
+				
+				if (service.getServiceId().equals(job.getServiceId())) {	
+					service.setLastFullExecution(job.getNonperiodicTimestamp());
+					service.setNewEntries(job.getNewEntries());
+					service.setLastFullExecutionDuration(job.getDuration());
+				}
+            }
+        }
 	}
 
 	public String startSingleService(ServiceBean service) { 

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:t="http://myfaces.apache.org/tomahawk" xmlns:u="http://oanet.cms.hu-berlin.de/jsf-utils">
+<head>
+<title>Menu</title>
+</head>
+<body>
+<ui:composition>
+
+  <t:div rendered="#{not noMenu}">
+    
+    <div id="tasks">
+
+    <!-- ********************* Repositories ******************** -->
+
+    <t:div rendered="#{userList.repositoryManager}" > 
+    
+        <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/new-package.gif" /><a
+             href="repositories_main.xhtml"><t:outputText value="#{u:bold(msg.menu_repo_mgmt,menu_repository)}" escape="#{false}" /></a>
+        </div>
+          
+        <t:div rendered="#{menu_repository}" styleClass="subtasks">
+            <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" />
+              <a href="repositories_add.xhtml"><t:outputText value="#{u:bold(msg.menu_repo_add,menu_repository_add)}" escape="#{false}" /></a></div>
+        </t:div>
+        
+    </t:div>
+
+
+    <!-- ********************* REST-Server ******************** -->
+
+
+    <div class="task"><img height="24" style="margin: 2px;" alt="" width="24"
+         src="../images/24x24/notepad.gif" /><a href="rest_main.xhtml"><t:outputText value="#{u:bold(msg.menu_rest,menu_rest)}" escape="#{false}" /></a></div>
+      
+    <t:div rendered="#{menu_rest}" styleClass="subtasks">
+	   <div class="task"><img height="24" style="margin: 2px;" alt="" width="24" src="../images/24x24/setting.gif" /> <a
+             href="rest_validator.xhtml"><t:outputText value="#{u:bold(msg.menu_rest_validate,menu_rest_validation)}" escape="#{false}" /></a></div>
+    </t:div>
+  
+
+    <!-- ********************************************************* -->
+
+    </div>    
+</t:div>
+    
+</ui:composition>
+</body>
+</html>

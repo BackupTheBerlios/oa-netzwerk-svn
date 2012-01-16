@@ -153,7 +153,7 @@ public class RestConnector implements Serializable {
 
 				} else if (key.equalsIgnoreCase("service_id")) {
 
-					repo.setId(new BigDecimal(res.getValue(key)));
+					repo.setServiceId(new BigDecimal(res.getValue(key)));
 					
 				} else
 					continue;
@@ -233,6 +233,12 @@ public class RestConnector implements Serializable {
 				} else if (key.equalsIgnoreCase("periodic_interval_type")) {
 					bean.setPeriodicInterval(res.getValue(key) == null ? null : SchedulingIntervalType.valueOf(res.getValue(key)));
 
+				} else if (key.equalsIgnoreCase("new_entries")) {
+					bean.setNewEntries(new Integer(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("duration")) {
+					bean.setDuration(new Long(res.getValue(key)));
+
 				} else
 					continue;
 			}
@@ -242,6 +248,111 @@ public class RestConnector implements Serializable {
 		
 		return jobList;
 	}
+	
+
+	public List<SchedulingBean> fetchSimpleServiceStatistics() {
+		
+		logger.info("Retrieving service jobs from server ...");
+
+		List<SchedulingBean> jobList = new ArrayList<SchedulingBean>();
+		String result = prepareRestTransmission("ServiceJob/recent").GetData();
+		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+
+		if (rms == null || rms.getListEntrySets().isEmpty()) {
+
+			logger.error("received no service statistics at all from the server");
+			return jobList;
+		}
+
+		for (RestEntrySet res : rms.getListEntrySets()) {
+
+			SchedulingBean bean = new SchedulingBean();
+			Iterator<String> it = res.getKeyIterator();
+			String key = "";
+
+			while (it.hasNext()) {
+
+				key = it.next();
+
+				if (key.equalsIgnoreCase("service_id")) {
+					bean.setServiceId(new BigDecimal(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("job_id")) {
+					bean.setJobId(new Integer(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("status")) {
+					bean.setStatus(ServiceStatus.valueOf(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("info")) {
+					bean.setInfo(res.getValue(key));
+
+				} else if (key.equalsIgnoreCase("nonperiodic_date")) {
+					try {
+						bean.setNonperiodicTimestamp(new Date(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").parse(res.getValue(key)).getTime()));
+					} catch (ParseException ex) {
+
+						logger.warn("Could not parse date received from server. " + res.getValue(key), ex);
+					}
+
+				} else if (key.equalsIgnoreCase("new_entries")) {
+					bean.setNewEntries(new Integer(res.getValue(key)));
+
+				} else if (key.equalsIgnoreCase("duration")) {
+					bean.setDuration(new Long(res.getValue(key)));
+
+				} else
+					continue;
+			}
+			jobList.add(bean);
+		}
+		logger.info("Received service statistics for " + jobList.size() + " services from the server.");
+		
+		return jobList;
+	}
+	
+	public boolean objectExists(String oid) {
+		
+		logger.info("Retrieving object with oid "+ oid +" from server ...");
+
+		String result = prepareRestTransmission("ObjectEntry/" + oid).GetData();
+		RestMessage rms = RestXmlCodec.decodeRestMessage(result);
+
+		if (rms == null || rms.getListEntrySets().isEmpty()) {
+
+			logger.error("received no data at all from the server");
+			return false;
+		}
+
+		String fetchedOID = null;
+		boolean exists = false;
+		
+		for (RestEntrySet res : rms.getListEntrySets()) {
+
+			SchedulingBean bean = new SchedulingBean();
+			Iterator<String> it = res.getKeyIterator();
+			String key = "";
+			
+			while (it.hasNext()) {
+
+				key = it.next();
+
+				if (key.equalsIgnoreCase("object_id")) {
+					fetchedOID = res.getValue(key);
+					if (oid.equals(fetchedOID)) {
+						exists = true;
+					}
+					break;
+				} else
+					continue;
+			}
+			
+		}
+		logger.info("Received object details for oid " + fetchedOID + " services from the server.");
+		
+		return exists;
+	}
+	
+	/****************** Conveniance Method ********************/
 	
 	public RestClient prepareRestTransmission(String resource) {
 
@@ -259,6 +370,8 @@ public class RestConnector implements Serializable {
 	}
 
 
+	/********************** Setter & Getter *******************/
+	
 	public void setPropertyManager(PropertyManager propertyManager) {
     	this.propertyManager = propertyManager;
     }

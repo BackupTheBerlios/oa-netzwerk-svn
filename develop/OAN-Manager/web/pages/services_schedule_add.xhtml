@@ -160,7 +160,7 @@
                           <td width="150px"></td>
                           <td>
                           <h:selectOneMenu id="service" value="#{scheduling.chosenService}" escape="#{false}" onchange="showRepositoryChoice(this.selectedIndex);" >
-                            <t:selectItems value="#{scheduling.servicesForPresentation}" var="service" itemLabel="#{service.prettyName}" itemValue="#{service.id}" />
+                            <t:selectItems value="#{scheduling.servicesForPresentation}" var="service" itemLabel="#{service.prettyName}" itemValue="#{service.serviceId}" />
                           </h:selectOneMenu>
                           <br />
                           <br />

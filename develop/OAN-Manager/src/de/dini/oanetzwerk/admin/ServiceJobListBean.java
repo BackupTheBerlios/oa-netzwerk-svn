@@ -1,12 +1,7 @@
 package de.dini.oanetzwerk.admin;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -15,18 +10,14 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.myfaces.custom.datascroller.ScrollerActionEvent;
 
-import de.dini.oanetzwerk.admin.SchedulingBean.SchedulingIntervalType;
-import de.dini.oanetzwerk.admin.SchedulingBean.ServiceStatus;
 import de.dini.oanetzwerk.admin.utils.AbstractBean;
-import de.dini.oanetzwerk.codec.RestEntrySet;
-import de.dini.oanetzwerk.codec.RestMessage;
-import de.dini.oanetzwerk.codec.RestXmlCodec;
-import de.dini.oanetzwerk.utils.StringUtils;
 
 /**
  * @author Sammy David
@@ -119,5 +110,29 @@ public class ServiceJobListBean extends AbstractBean implements Serializable {
 	public void setSchedulerControl(SchedulerControl schedulerControl) {
 		this.schedulerControl = schedulerControl;
 	}
-		
+	
+
+//	public int getRowCount() {
+//		if (jobList != null) {
+//			return jobList.size();
+//		}
+//		return 0;
+//    }
+//
+//	private int rowCount;
+//
+//	public void setRowCount(int rowCount) {
+//    	this.rowCount = rowCount;
+//    }
+	
+   public void scrollerAction(ActionEvent event)
+    {
+        ScrollerActionEvent scrollerEvent = (ScrollerActionEvent) event;
+        FacesContext.getCurrentInstance().getExternalContext().log(
+                        "scrollerAction: facet: "
+                                        + scrollerEvent.getScrollerfacet()
+                                        + ", pageindex: "
+                                        + scrollerEvent.getPageIndex());
+    }
+
 }

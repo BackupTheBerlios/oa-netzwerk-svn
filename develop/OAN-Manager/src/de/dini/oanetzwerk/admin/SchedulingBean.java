@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
+
 //import de.dini.oanetzwerk.admin.ServiceManagementBean.Service;
 import de.dini.oanetzwerk.utils.StringUtils;
+import de.dini.oanetzwerk.utils.Utils;
 
 /**
  * @author Sammy David
@@ -26,6 +29,8 @@ public class SchedulingBean implements Comparable<SchedulingBean> {
 	private SchedulingIntervalType periodicInterval = null;
 	private int periodicDays 		= 0;
 	private boolean nonperiodicNow 	= false;
+	private int newEntries			= -1;
+	private long duration			= -1;
 	
 //	private static List<Service> services = new ArrayList<Service>();
 
@@ -188,4 +193,25 @@ public class SchedulingBean implements Comparable<SchedulingBean> {
 		
     }
 
+	public int getNewEntries() {
+    	return newEntries;
+    }
+
+	public void setNewEntries(int newEntries) {
+    	this.newEntries = newEntries;
+    }
+
+	public long getDuration() {
+    	return duration;
+    }
+
+	public void setDuration(long duration) {
+    	this.duration = duration;
+    }
+	
+	/**************** conveniance methods ****************/
+		
+	public String getPrettyDuration() {
+		return Utils.millisToUserReadableTime(duration, FacesContext.getCurrentInstance().getViewRoot().getLocale());
+	}
 }

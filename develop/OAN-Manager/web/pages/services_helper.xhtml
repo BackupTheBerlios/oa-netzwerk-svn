@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:t="http://myfaces.apache.org/tomahawk">
+
+<head></head>
+
+<body>
+
+<ui:debug hotkey="m" rendered="true" />
+
+<ui:composition template="templates/template.xhtml">
+
+
+  <ui:param name="pageTitle" value="Übersicht - OA-Netzwerk Manager" />
+  <ui:param name="onLoadJS" value="showForm(document.getElementById('form:jobtype').selectedIndex);" />
+
+  <ui:define name="navigation">
+    <a href="/oanadmin/">OA-Netzwerk</a> » <a href="services.xhtml">Dienste</a>
+  </ui:define>
+
+    <ui:param name="menu_services_helper" value="#{true}" /> 
+
+  <ui:define name="content">
+
+
+    <div style="padding: 20px; background-color: #f5f9f4;">
+    <div style="background-color: #f5f9f4;">
+
+
+    <h2>Einzelnes Objekt nachbearbeiten</h2>
+
+    <div style="margin-left:40px;" id="aenderungsmenu" > <!-- style="display: none" -->
+
+    <h:outputText value="#{msg.services_schedule_add_description}" />     
+    <br />
+    <br />
+
+
+    <h:form styleClass="form" id="form">
+            
+<!--      <t:selectOneRadio id="radio0" value="#{scheduling.jobType}" -->
+<!--        layout="spread" border="1" forceId="true" forceIdIndex="false"-->
+<!--        style="font-weight:bold; background-color:#99CCFF;" onclick="disableTypeOptions('form','dayOfMonth', 'dayOfWeek', 'day');"-->
+<!--        required="true" >-->
+<!--        <f:selectItem itemLabel="regelmäßig"-->
+<!--          itemValue="#{scheduling.jobTypes[0]}" />-->
+<!--        <f:selectItem itemLabel="einmalig"-->
+<!--          itemValue="#{scheduling.jobTypes[1]}" />-->
+<!--      </t:selectOneRadio>-->
+            
+      <table>
+
+                <tr>
+                  <td width ="60%">
+                  </td>
+                  <td width ="40%"></td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <h:messages warnStyle="color:red" errorStyle="color:red" infoStyle="color:green;" />
+                  </td>
+                </tr>
+        <tr>            
+                     <td colspan="2" ><br /><h:outputText value="#{msg.services_schedule_add_select_service}" />
+          <br />
+          </td>
+                </tr>
+                <tr>
+          <td>
+                      <table>
+                        <tr>
+                          
+                          <td style="padding-left:103px;">
+                          <h:selectOneMenu id="service" value="#{scheduling.chosenService}" style="width:160px;" >
+                            <t:selectItems value="#{scheduling.servicesForPresentation}" var="service" itemLabel="#{service.prettyName}" itemValue="#{service.serviceId}" />
+                          </h:selectOneMenu>
+                          <br />
+                          <br />
+                          </td>
+                        </tr>
+
+                      <tr>
+
+                        </tr>
+                        <tr>
+                          <td colspan="2">
+                          
+                          <!-- *********************** Repeatedly ************************ --> 
+ 
+                            Bitte geben sie die interne Objekt-ID an <!-- oder den originalen Identifier des Host-Repositories -->
+                            <br />
+                            <table>
+                              <tr>
+                                <td style="padding-left:100px;"><h:inputText id="internal_id" value="#{scheduling.internalId}" /></td>
+                                <td> <!--  or <h:inputText id="original_id" value="#{scheduling.originalId}" /> --></td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+        </tr>
+      </table>
+
+
+      <div align="right">
+      <button name="Zurück">Zurück</button>
+      <h:commandButton type="submit" action="#{scheduling.storeSingleObjectTask}"
+        value="Job anlegen" /></div>
+    </h:form>
+    
+    </div>
+
+    </div>
+    </div>
+
+  </ui:define>
+</ui:composition>
+
+</body>
+
+</html>
